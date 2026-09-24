@@ -1,0 +1,28 @@
+name: Change request
+description: Propose an additive or backward-compatible change
+title: "[CHANGE] "
+labels:
+  - enhancement
+body:
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+    validations:
+      required: true
+  - type: textarea
+    id: existing
+    attributes:
+      label: Existing behavior and authority
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Impact and regression analysis
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Verification plan

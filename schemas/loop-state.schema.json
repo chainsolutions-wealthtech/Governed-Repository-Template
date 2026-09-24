@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Loop State",
+  "type": "object",
+  "required": [
+    "loop_id",
+    "state",
+    "phase",
+    "repository",
+    "canonical_branch",
+    "next_action"
+  ],
+  "properties": {
+    "loop_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "state": {
+      "enum": [
+        "NOT_STARTED",
+        "IN_PROGRESS",
+        "PAUSED",
+        "BLOCKED",
+        "CLOSED_OBJECTIVE_COMPLETE",
+        "CANCELLED_WITH_TRACEABILITY"
+      ]
+    },
+    "phase": {
+      "enum": [
+        "DISCOVER",
+        "BASELINE",
+        "SELECT",
+        "IMPACT_ANALYSIS",
+        "IMPLEMENT_COMPATIBLY",
+        "VERIFY",
+        "REGRESSION_CHECK",
+        "CORRECT_IF_REQUIRED",
+        "VERIFY_AGAIN",
+        "PERSIST_STATE",
+        "COMMIT",
+        "VERIFY_REMOTE_STATE",
+        "SELECT_NEXT"
+      ]
+    },
+    "repository": {
+      "type": "string",
+      "minLength": 1
+    },
+    "canonical_branch": {
+      "type": "string",
+      "minLength": 1
+    },
+    "baseline_head": {
+      "type": "string"
+    },
+    "next_action": {
+      "type": "string",
+      "minLength": 1
+    },
+    "last_verification": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

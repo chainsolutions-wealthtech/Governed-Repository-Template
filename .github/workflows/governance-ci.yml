@@ -1,0 +1,31 @@
+name: Governance CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  governance:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate governed repository structure
+        run: python3 scripts/validate_governance.py
+
+      - name: Compile governance scripts
+        run: python3 -m py_compile scripts/initialize_governance.py scripts/validate_governance.py
+
+      - name: Check textual integrity
+        run: git diff --check

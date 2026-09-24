@@ -1,0 +1,2 @@
+GENERIC_GOVERNED_REPOSITORY_TEMPLATE_SOURCE=TRUE
+This marker is removed by scripts/initialize_governance.py in an instantiated repository.

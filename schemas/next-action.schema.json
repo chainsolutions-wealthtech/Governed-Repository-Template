@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Next Action",
+  "type": "object",
+  "required": [
+    "action",
+    "state",
+    "done_when"
+  ],
+  "properties": {
+    "action": {
+      "type": "string",
+      "minLength": 1
+    },
+    "state": {
+      "enum": [
+        "REQUIRED",
+        "READY",
+        "BLOCKED",
+        "COMPLETE"
+      ]
+    },
+    "done_when": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence_required": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

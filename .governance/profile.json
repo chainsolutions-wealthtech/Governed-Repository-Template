@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "template_source": true,
+  "initialized": false,
+  "repository": "{{REPOSITORY}}",
+  "project_name": "{{PROJECT_NAME}}",
+  "project_type": "{{PROJECT_TYPE}}",
+  "owner": "{{OWNER}}",
+  "canonical_branch": "{{CANONICAL_BRANCH}}",
+  "initialized_at": "{{INITIALIZED_AT}}",
+  "policies": {
+    "force_push": "FORBIDDEN",
+    "history_rewrite": "FORBIDDEN",
+    "improvement_only": "REQUIRED",
+    "zero_regression": "REQUIRED",
+    "persistent_memory": "REQUIRED",
+    "loop_engineering": "REQUIRED",
+    "read_existing_before_create": "REQUIRED",
+    "document_role_analysis": "REQUIRED",
+    "delete_without_proof": "FORBIDDEN",
+    "simplify_with_information_loss": "FORBIDDEN",
+    "verify_before_write": "REQUIRED",
+    "verify_after_write": "REQUIRED",
+    "new_branch_creation": "OWNER_EXPLICIT_ONLY",
+    "normal_work_pr": "PROJECT_DEFINED"
+  }
+}

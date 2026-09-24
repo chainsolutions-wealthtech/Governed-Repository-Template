@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0.0",
+  "template_name": "Governed Repository Template",
+  "template_role": "GENERIC_GOVERNANCE_CORE",
+  "origin": "chainsolutions-wealthtech/Regulatory governance patterns, generalized without project state",
+  "categories": {
+    "generic_core": [
+      "00_START_HERE.md",
+      "GOVERNANCE.md",
+      "AGENTS.md",
+      "SOURCE_OF_TRUTH.md",
+      "LOOP_ENGINEERING.md",
+      "DEFINITION_OF_DONE.md",
+      "ASSUMPTIONS.md",
+      "CONSTRAINTS.md",
+      "RISKS.md",
+      "DEPENDENCIES.md"
+    ],
+    "project_state_templates": [
+      "PROJECT_CONTEXT.md",
+      "STATUS.md",
+      "SUIVI.md",
+      "TODO.md",
+      "NEXT_ACTION.md",
+      "LOOP_STATE.md",
+      "CURRENT_ITERATION.md",
+      "WORK_LOG.md",
+      "HANDOFF.md",
+      "CHANGELOG.md",
+      "ACCEPTANCE_CRITERIA.md"
+    ],
+    "decision_and_architecture": [
+      "docs/ARCHITECTURE.md",
+      "docs/DECISIONS.md",
+      "docs/adr/ADR-0000-template.md"
+    ],
+    "automation": [
+      "scripts/initialize_governance.py",
+      "scripts/validate_governance.py",
+      ".github/workflows/governance-ci.yml"
+    ]
+  },
+  "excluded_from_template": [
+    "Regulatory business rules",
+    "UMOA/OPCVM/FCP content",
+    "BCEAO/CENTIF/AMF-UMOA evidence",
+    "Regulatory loop history",
+    "production or submission status from source projects",
+    "project-specific application code"
+  ],
+  "initialization_required": true
+}
