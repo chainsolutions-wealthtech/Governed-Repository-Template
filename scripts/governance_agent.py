@@ -12,6 +12,15 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 GOV = ROOT / ".governance"
 MUTABLE_INTENTS = {"WORK_REQUEST", "CODE_CHANGE", "INFRASTRUCTURE"}
+ENTRY_ACTIONS = {
+    "CREATE_NEW_REPOSITORY",
+    "ADOPT_EXISTING_REPOSITORY",
+    "MAP_EXISTING_PROJECT",
+    "LAB_EVOLUTION",
+    "CONTINUE_GOVERNED_WORK",
+    "UNKNOWN",
+}
+LAB_BRANCH_PREFIXES = ("lab/", "claude/", "experiment/")
 
 
 def utcnow() -> str:
@@ -31,6 +40,13 @@ def git_head() -> str:
     cp = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, capture_output=True, check=False)
     if cp.returncode != 0:
         raise SystemExit("GOVERNANCE_AGENT_FAILED: unable to observe git HEAD")
+    return cp.stdout.strip()
+
+
+def git_branch() -> str:
+    cp = subprocess.run(["git", "branch", "--show-current"], cwd=ROOT, text=True, capture_output=True, check=False)
+    if cp.returncode != 0:
+        raise SystemExit("GOVERNANCE_AGENT_FAILED: unable to observe git branch")
     return cp.stdout.strip()
 
 
@@ -99,6 +115,17 @@ def command_observe(_: argparse.Namespace) -> None:
     }, ensure_ascii=False, indent=2))
 
 
+def command_entry_actions(_: argparse.Namespace) -> None:
+    policy = read_json(GOV / "entry-action-policy.json")
+    print(json.dumps({
+        "status": "ENTRY_ACTION_QUESTIONNAIRE",
+        "question": policy.get("question"),
+        "actions": policy.get("actions"),
+        "questionnaire": policy.get("questionnaire"),
+        "may_write": False,
+    }, ensure_ascii=False, indent=2))
+
+
 def command_session_start(a: argparse.Namespace) -> None:
     p = profile()
     head = guard_expected_head(a.expected_head)
@@ -109,6 +136,8 @@ def command_session_start(a: argparse.Namespace) -> None:
     connection_ref = a.connection_ref or None
     connection_intent = a.intent or "UNKNOWN"
     intent_provenance = "PROVIDED_BY_CLIENT" if a.intent else "DEFAULT_UNKNOWN"
+    entry_action = a.entry_action or "UNKNOWN"
+    entry_action_provenance = "PROVIDED_BY_CLIENT" if a.entry_action else "DEFAULT_UNKNOWN"
 
     eligible = [
         s for s in sessions
@@ -139,6 +168,12 @@ def command_session_start(a: argparse.Namespace) -> None:
         elif not session.get("connection_intent"):
             session["connection_intent"] = "UNKNOWN"
             session["connection_intent_provenance"] = "DEFAULT_UNKNOWN"
+        if a.entry_action:
+            session["entry_action"] = entry_action
+            session["entry_action_provenance"] = entry_action_provenance
+        elif not session.get("entry_action"):
+            session["entry_action"] = "UNKNOWN"
+            session["entry_action_provenance"] = "DEFAULT_UNKNOWN"
         resolution = "RESUME"
     else:
         strongest_ref = (
@@ -153,6 +188,8 @@ def command_session_start(a: argparse.Namespace) -> None:
             "provider_conversation_ref": provider_ref,
             "provider_conversation_ref_provenance": "PROVIDED_BY_CLIENT" if provider_ref else "UNAVAILABLE",
             "connection_ref": connection_ref,
+            "entry_action": entry_action,
+            "entry_action_provenance": entry_action_provenance,
             "connection_intent": connection_intent,
             "connection_intent_provenance": intent_provenance,
             "repository": p["repository"],
@@ -169,13 +206,24 @@ def command_session_start(a: argparse.Namespace) -> None:
     store["sessions"] = sessions
     write_json(store_path, store)
     policy = read_json(GOV / "connection-intent-policy.json")
+    entry_policy = read_json(GOV / "entry-action-policy.json")
     intent = session.get("connection_intent") or "UNKNOWN"
     intent_rule = policy.get("intents", {}).get(intent, policy.get("intents", {}).get("UNKNOWN", {}))
+    action = session.get("entry_action") or "UNKNOWN"
+    action_rule = entry_policy.get("actions", {}).get(action, entry_policy.get("actions", {}).get("UNKNOWN", {}))
+    branch = git_branch()
+    canonical_branch = p.get("canonical_branch")
+    lab_branch_active = action == "LAB_EVOLUTION" and branch != canonical_branch and branch.startswith(LAB_BRANCH_PREFIXES)
+    entry_dispatch_ready = action == "CONTINUE_GOVERNED_WORK" or lab_branch_active
+    entry_resolved = action != "UNKNOWN"
     print(json.dumps({
         "status": resolution,
         "session": session,
+        "entry_action_status": "RESOLVED" if entry_resolved else "ENTRY_ACTION_REQUIRED",
+        "entry_action_route": action_rule.get("initial_route"),
+        "entry_action_questionnaire": None if entry_resolved else entry_policy.get("questionnaire"),
         "intent_route": intent_rule.get("route"),
-        "may_dispatch_mutable_work": bool(intent_rule.get("may_dispatch_mutable_work")),
+        "may_dispatch_mutable_work": bool(intent_rule.get("may_dispatch_mutable_work")) and entry_dispatch_ready,
         "may_write": True,
     }, ensure_ascii=False, indent=2))
 
@@ -204,6 +252,74 @@ def command_dispatch(a: argparse.Namespace) -> None:
             "next_action": "RESOLVE_CONNECTION_INTENT" if intent == "UNKNOWN" else route,
         }, indent=2))
         raise SystemExit(5)
+
+    entry_policy = read_json(GOV / "entry-action-policy.json")
+    entry_action = session.get("entry_action") or "UNKNOWN"
+    action_rule = entry_policy.get("actions", {}).get(entry_action, entry_policy.get("actions", {}).get("UNKNOWN", {}))
+    branch = git_branch()
+    canonical_branch = p.get("canonical_branch")
+
+    if entry_action == "UNKNOWN":
+        print(json.dumps({
+            "status": "ENTRY_ACTION_REQUIRED",
+            "entry_action": entry_action,
+            "route": "RESOLVE_ENTRY_ACTION",
+            "questionnaire": entry_policy.get("questionnaire"),
+            "may_write": False,
+        }, ensure_ascii=False, indent=2))
+        raise SystemExit(6)
+
+    if entry_action == "CREATE_NEW_REPOSITORY":
+        print(json.dumps({
+            "status": "ENTRY_ACTION_SPECIAL_FLOW",
+            "entry_action": entry_action,
+            "route": action_rule.get("initial_route"),
+            "next_action": "RESOLVE_TARGET_SCOPE_AND_CREATE_AUTHORITY",
+            "may_write": False,
+        }, indent=2))
+        raise SystemExit(6)
+
+    if entry_action == "ADOPT_EXISTING_REPOSITORY":
+        print(json.dumps({
+            "status": "ENTRY_ACTION_SPECIAL_FLOW",
+            "entry_action": entry_action,
+            "route": action_rule.get("initial_route"),
+            "next_action": "RUN_ADOPTION_PLAN_BEFORE_APPLY",
+            "may_write": False,
+        }, indent=2))
+        raise SystemExit(6)
+
+    if entry_action == "MAP_EXISTING_PROJECT":
+        print(json.dumps({
+            "status": "ENTRY_ACTION_READ_ONLY",
+            "entry_action": entry_action,
+            "route": action_rule.get("initial_route"),
+            "next_action": "MAP_CURRENT_AND_TARGET_ARCHITECTURE",
+            "may_write": False,
+        }, indent=2))
+        raise SystemExit(6)
+
+    if entry_action == "LAB_EVOLUTION":
+        if branch == canonical_branch or not branch.startswith(LAB_BRANCH_PREFIXES):
+            print(json.dumps({
+                "status": "LAB_BRANCH_REQUIRED",
+                "entry_action": entry_action,
+                "current_branch": branch,
+                "canonical_branch": canonical_branch,
+                "allowed_lab_prefixes": list(LAB_BRANCH_PREFIXES),
+                "next_action": "OBTAIN_BRANCH_PR_AUTHORITY_THEN_ENTER_LAB_BRANCH",
+                "may_write": False,
+            }, indent=2))
+            raise SystemExit(6)
+
+    if entry_action != "CONTINUE_GOVERNED_WORK" and entry_action != "LAB_EVOLUTION":
+        print(json.dumps({
+            "status": "ENTRY_ACTION_BLOCKS_GENERIC_DISPATCH",
+            "entry_action": entry_action,
+            "route": action_rule.get("initial_route"),
+            "may_write": False,
+        }, indent=2))
+        raise SystemExit(6)
 
     work_path = GOV / "work" / "work-items.json"
     claims_path = GOV / "work" / "claims.json"
@@ -481,11 +597,15 @@ def parser() -> argparse.ArgumentParser:
     observe = sub.add_parser("observe")
     observe.set_defaults(fn=command_observe)
 
+    actions = sub.add_parser("entry-actions")
+    actions.set_defaults(fn=command_entry_actions)
+
     start = sub.add_parser("session-start")
     start.add_argument("--agent", required=True)
     start.add_argument("--provider", choices=["chatgpt","claude","codex","github-actions","human","other"], required=True)
     start.add_argument("--provider-ref")
     start.add_argument("--connection-ref")
+    start.add_argument("--entry-action", choices=["CREATE_NEW_REPOSITORY","ADOPT_EXISTING_REPOSITORY","MAP_EXISTING_PROJECT","LAB_EVOLUTION","CONTINUE_GOVERNED_WORK","UNKNOWN"])
     start.add_argument("--intent", choices=["OBSERVE","CONTEXT_INTAKE","INFORMATION_INTAKE","WORK_REQUEST","CODE_CHANGE","REVIEW","INFRASTRUCTURE","UNKNOWN"])
     start.add_argument("--expected-head")
     start.set_defaults(fn=command_session_start)
