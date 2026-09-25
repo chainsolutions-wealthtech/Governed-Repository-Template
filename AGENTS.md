@@ -59,3 +59,18 @@ python3 scripts/governance_agent.py session-start \
 Use `CONTEXT_INTAKE` or `INFORMATION_INTAKE` when the connection exists to add context or evidence rather than to code. `UNKNOWN` is the safe default and blocks mutable dispatch until resolved.
 
 An intent never grants infrastructure, production, secret, financial, legal or destructive authority.
+
+
+## Mandatory entry action
+
+Before mutable dispatch, resolve the macro workflow:
+
+```bash
+python3 scripts/governance_agent.py entry-actions
+```
+
+Then start/resume the session with `--entry-action`.
+
+The structural actions are `CREATE_NEW_REPOSITORY`, `ADOPT_EXISTING_REPOSITORY`, `MAP_EXISTING_PROJECT`, and `LAB_EVOLUTION`. `CONTINUE_GOVERNED_WORK` preserves normal work on an already governed repository.
+
+`ADOPT_EXISTING_REPOSITORY` and `MAP_EXISTING_PROJECT` start read-only. `LAB_EVOLUTION` cannot dispatch mutable work from the canonical branch. Missing entry action fails closed.
