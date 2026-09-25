@@ -29,9 +29,17 @@ The local control plane asks one question at a time:
 9. external systems;
 10. constraints;
 11. first concrete project objective;
-12. explicit baseline approval.
+12. explicit business baseline approval;
+13. choose whether to continue repository technical setup;
+14. choose whether to bind the repository to MCP;
+15. choose MCP transport and non-secret connection profile;
+16. verify required GitHub Actions secrets/variables;
+17. run read-only MCP discovery for servers/domains/write context;
+18. choose existing/new/unresolved domain binding;
+19. choose the governed work model;
+20. approve the technical setup and access matrix.
 
-After approval, the local workflow:
+After the two approvals, the local workflow:
 
 ```text
 REOBSERVE_REMOTE_HEAD
@@ -72,3 +80,23 @@ Machine invocation:
 ```
 
 The mere act of viewing a GitHub repository does not generate a GitHub event. A GitHub-connected agent must therefore invoke this local entry endpoint before governed work.
+
+
+## MCP-aware setup
+
+When MCP binding is selected, the repository fails closed until the required Actions secret/variables exist.
+
+Direct MCP mode uses:
+
+- `GOVERNED_MCP_URL` repository variable;
+- `GOVERNED_MCP_AUTH_TOKEN` repository secret.
+
+SSH fallback uses a private-key secret plus host/user/port variables and requires a governed server-side forced-command adapter. Arbitrary remote shell is forbidden.
+
+The first MCP discovery is read-only: `ping`, `get_project_context`, `list_domains_s1`, `list_domains_s2`, and `get_write_tools_context`.
+
+A new repository never receives MCP write authority merely because discovery succeeded. MCP project registration and explicit authority are separate gates.
+
+## Regulatory / AfricaFunds governed flow
+
+The reusable model is versioned in `.governance/workflow-model.json`: read authorities, observe GitHub, observe runtime when relevant, reconcile, verify exact HEAD, single writer, implement, verify/regression, persist, commit, verify remote, deploy only if authorized, verify production, then continue.
