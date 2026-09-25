@@ -43,6 +43,15 @@ jobs:
         run: python3 -m py_compile scripts/governed_request.py scripts/control_plane_issue_bridge.py
 
       - name: Process governed request
+        id: process
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python3 scripts/control_plane_issue_bridge.py
+
+      - name: Execute generate-from-template creation
+        if: steps.process.outputs.executor_required == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOVERNED_CREATOR_WEALTHTECH_TOKEN: ${{ secrets.GOVERNED_CREATOR_WEALTHTECH_TOKEN }}
+          GOVERNED_CREATOR_PATRICKED_TOKEN: ${{ secrets.GOVERNED_CREATOR_PATRICKED_TOKEN }}
+        run: python3 scripts/control_plane_create_repository.py --issue-number "${{ steps.process.outputs.issue_number }}"
