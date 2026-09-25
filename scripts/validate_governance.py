@@ -62,6 +62,7 @@ REQUIRED = [
     ".governance/entry-action-policy.json",
     ".governance/repository-scope-policy.json",
     ".governance/control-plane-policy.json",
+    ".governance/repository-creation-executor.json",
     "schemas/project-state.schema.json",
     "schemas/loop-state.schema.json",
     "schemas/next-action.schema.json",
@@ -95,6 +96,8 @@ REQUIRED = [
     "scripts/control_plane_issue_bridge.py",
     "scripts/test_control_plane_request.py",
     "scripts/test_control_plane_issue_contract.py",
+    "scripts/control_plane_create_repository.py",
+    "scripts/test_repository_creation_executor.py",
     ".github/workflows/governance-ci.yml",
     ".github/workflows/governance-auto-bootstrap.yml",
 ]
@@ -196,6 +199,7 @@ def validate_project_and_connection_intent(profile: dict, template_mode: bool) -
     intent_policy = load(".governance/connection-intent-policy.json")
     entry_policy = load(".governance/entry-action-policy.json")
     repository_scope = load(".governance/repository-scope-policy.json")
+    creation_executor = load(".governance/repository-creation-executor.json")
     sessions = load(".governance/sessions/sessions.json")
 
     if project_profile.get("selection_status") not in {"DISCOVERY_REQUIRED", "SELECTED", "HOLD_FOR_REVIEW"}:
@@ -269,19 +273,43 @@ def validate_project_and_connection_intent(profile: dict, template_mode: bool) -
     expected_targets = {
         ("chainsolutions-wealthtech", "ORGANIZATION"),
         ("Wealthtechinnovations", "PERSONAL_ACCOUNT"),
-        ("Patricked", "PERSONAL_ACCOUNT"),
+        ("Patricked-code", "PERSONAL_ACCOUNT"),
     }
     if actual_targets != expected_targets:
         fail("configured repository creation targets are invalid")
     creation_defaults = repository_scope.get("creation_defaults") or {}
     if creation_defaults.get("source_template") != CONTROL_PLANE_REPOSITORY:
         fail("repository creation must use the governed template source")
-    if creation_defaults.get("visibility") != "private":
-        fail("repository creation default visibility must be private")
+    if creation_defaults.get("visibility") != "ASK_AFTER_REPOSITORY_NAME":
+        fail("repository creation visibility must be explicitly asked after repository name")
     if creation_defaults.get("initialize_from_template") is not True:
         fail("repository creation must initialize from template")
     if creation_defaults.get("add_manual_readme_gitignore_license") is not False:
         fail("repository creation must not add manual starter files")
+
+    if creation_executor.get("executor") != "GITHUB_REST_GENERATE_FROM_TEMPLATE":
+        fail("repository creation executor must use GitHub generate-from-template")
+    if creation_executor.get("endpoint") != "POST /repos/chainsolutions-wealthtech/Governed-Repository-Template/generate":
+        fail("repository creation executor endpoint is invalid")
+    authentication = creation_executor.get("authentication") or {}
+    if authentication.get("mode") != "GITHUB_APP_USER_ACCESS_TOKEN_PER_CREATOR_IDENTITY":
+        fail("repository creation executor authentication mode is invalid")
+    permissions = authentication.get("required_app_repository_permissions") or {}
+    if permissions != {"administration": "write", "contents": "read"}:
+        fail("repository creation executor permissions are invalid")
+    creator_identities = authentication.get("creator_identities") or {}
+    required_creators = {
+        "chainsolutions-wealthtech": ("Wealthtechinnovations", "GOVERNED_CREATOR_WEALTHTECH_TOKEN", "chainsolutions-wealthtech"),
+        "Wealthtechinnovations": ("Wealthtechinnovations", "GOVERNED_CREATOR_WEALTHTECH_TOKEN", "Wealthtechinnovations"),
+        "Patricked": ("Patricked-code", "GOVERNED_CREATOR_PATRICKED_TOKEN", "Patricked-code"),
+    }
+    for label, expected in required_creators.items():
+        creator = creator_identities.get(label) or {}
+        actual = (creator.get("principal"), creator.get("token_secret"), creator.get("target_owner"))
+        if actual != expected:
+            fail(f"repository creation executor identity mapping invalid for {label}")
+    if creation_executor.get("fail_closed") is not True:
+        fail("repository creation executor must fail closed")
 
     for session in sessions.get("sessions", []):
         intent = session.get("connection_intent")
@@ -335,7 +363,9 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
         "TARGET_EVIDENCE_NE_ASSUMED_STATE",
         "CONTROL_PLANE_STATE_STAYS_OUT_OF_TEMPLATE_CONTENT",
         "HANDOFF_IS_EXPLICIT",
-        "NO_CROSS_REPOSITORY_MUTATION_BY_ISSUE_WORKFLOW",
+        "CROSS_REPOSITORY_MUTATION_ONLY_VIA_AUTHORIZED_EXECUTOR",
+        "STANDARD_GITHUB_TOKEN_CANNOT_CREATE_TARGET_REPOSITORIES",
+        "CREATOR_CREDENTIALS_STAY_OUTSIDE_GIT",
     }
     if not required_principles.issubset(principles):
         fail("control plane principles are incomplete")
@@ -356,6 +386,9 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
             "repository_dispatch:",
             "governed_request_start",
             "python3 scripts/control_plane_issue_bridge.py",
+            "python3 scripts/control_plane_create_repository.py",
+            "GOVERNED_CREATOR_WEALTHTECH_TOKEN",
+            "GOVERNED_CREATOR_PATRICKED_TOKEN",
         ]
         for fragment in workflow_requirements:
             if fragment not in workflow:
@@ -569,6 +602,8 @@ def validate_python_automation() -> None:
         "scripts/control_plane_issue_bridge.py",
         "scripts/test_control_plane_request.py",
         "scripts/test_control_plane_issue_contract.py",
+        "scripts/control_plane_create_repository.py",
+        "scripts/test_repository_creation_executor.py",
     ]:
         path = ROOT / relative
         try:
