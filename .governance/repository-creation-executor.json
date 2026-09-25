@@ -11,7 +11,8 @@
     "installation_token_ttl": "GITHUB_MANAGED_ONE_HOUR",
     "required_app_repository_permissions": {
       "administration": "write",
-      "contents": "write"
+      "contents": "write",
+      "workflows": "write"
     },
     "target_installations": {
       "chainsolutions-wealthtech": {
@@ -33,7 +34,8 @@
         "contents": "read"
       },
       "governed_target_upgrade": {
-        "contents": "write"
+        "contents": "write",
+        "workflows": "write"
       }
     }
   },
