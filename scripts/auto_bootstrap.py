@@ -36,6 +36,7 @@ def args() -> argparse.Namespace:
     p.add_argument("--repository")
     p.add_argument("--project-name")
     p.add_argument("--project-type")
+    p.add_argument("--project-profile", choices=["generic","application","chainsolutions-fullstack-web","data-platform"])
     p.add_argument("--owner")
     p.add_argument("--canonical-branch")
     return p.parse_args()
@@ -54,6 +55,7 @@ def main() -> None:
     project_name = a.project_name or os.getenv("GOVERNANCE_PROJECT_NAME") or repo_name
     project_type = a.project_type or os.getenv("GOVERNANCE_PROJECT_TYPE") or "generic"
     owner = a.owner or os.getenv("GOVERNANCE_OWNER") or f"@{org}"
+    project_profile = a.project_profile or os.getenv("GOVERNANCE_PROJECT_PROFILE")
     canonical_branch = (
         a.canonical_branch
         or os.getenv("GOVERNANCE_CANONICAL_BRANCH")
@@ -74,6 +76,7 @@ def main() -> None:
             "--repository", repository,
             "--project-name", project_name,
             "--project-type", project_type,
+            *(["--project-profile", project_profile] if project_profile else []),
             "--owner", owner,
             "--canonical-branch", canonical_branch,
         ], cwd=ROOT, check=False)
