@@ -49,6 +49,9 @@
       "items": {
         "type": "string"
       }
+    },
+    "baseline_declaration": {
+      "type": "string"
     }
   },
   "additionalProperties": false
