@@ -168,7 +168,16 @@ def command_session_start(a: argparse.Namespace) -> None:
     store["revision"] = int(store.get("revision", 0)) + 1
     store["sessions"] = sessions
     write_json(store_path, store)
-    print(json.dumps({"status": resolution, "session": session, "may_write": True}, ensure_ascii=False, indent=2))
+    policy = read_json(GOV / "connection-intent-policy.json")
+    intent = session.get("connection_intent") or "UNKNOWN"
+    intent_rule = policy.get("intents", {}).get(intent, policy.get("intents", {}).get("UNKNOWN", {}))
+    print(json.dumps({
+        "status": resolution,
+        "session": session,
+        "intent_route": intent_rule.get("route"),
+        "may_dispatch_mutable_work": bool(intent_rule.get("may_dispatch_mutable_work")),
+        "may_write": True,
+    }, ensure_ascii=False, indent=2))
 
 
 def dependency_done(item: dict, by_id: dict[str, dict]) -> bool:
