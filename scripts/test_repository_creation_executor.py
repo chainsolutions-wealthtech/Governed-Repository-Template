@@ -99,8 +99,6 @@ def main() -> None:
     run_case(
         owner_label="Wealthtechinnovations",
         canonical_owner="Wealthtechinnovations",
-        principal="Wealthtechinnovations",
-        token_env="GOVERNED_CREATOR_WEALTHTECH_TOKEN",
         visibility="public",
     )
     run_case(
