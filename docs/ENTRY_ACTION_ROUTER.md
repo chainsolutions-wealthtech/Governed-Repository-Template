@@ -12,6 +12,7 @@ The router asks:
 2. `ADOPT_EXISTING_REPOSITORY` — add compatible governance bricks to an existing repository without replacing existing content.
 3. `MAP_EXISTING_PROJECT` — map the current project and/or design a target architecture without requiring code mutation.
 4. `LAB_EVOLUTION` — evolve an existing project in an isolated laboratory branch/PR while keeping the canonical branch untouched until validated merge.
+5. `CONTINUE_GOVERNED_WORK` — resume normal work already governed by the repository current NEXT_ACTION/work-items.
 
 If no action is supplied, the session is created/resumed with `entry_action = UNKNOWN`, returns the questionnaire, and mutable dispatch fails closed.
 
