@@ -28,3 +28,10 @@ Files under `.governance/` are structured projections used for deterministic aut
 They do not outrank the hierarchy above. They must be derived from, and remain reconcilable with, versioned decisions, contracts, code, tests and Git evidence.
 
 If a machine projection contradicts a higher authority, the projection is stale or invalid and must be reconciled before writing.
+
+
+## Intent projections
+
+`.governance/project-profile.json`, `.governance/infrastructure-intent.json` and `.governance/connection-intent-policy.json` are projections, not higher authorities.
+
+A planned technical profile never overrides discovered code or an ADR. An infrastructure intent never proves that a server or directory exists. A connection intent never grants authority.
