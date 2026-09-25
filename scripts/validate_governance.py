@@ -85,6 +85,7 @@ REQUIRED = [
     "scripts/adopt_existing_repository.py",
     "scripts/test_entry_action_router.py",
     "scripts/test_repository_adoption.py",
+    "scripts/test_repository_scope.py",
     ".github/workflows/governance-ci.yml",
     ".github/workflows/governance-auto-bootstrap.yml",
 ]
