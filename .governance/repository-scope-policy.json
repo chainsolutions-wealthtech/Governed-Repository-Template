@@ -26,5 +26,28 @@
     "PERSONAL_ACCOUNT_SUPPORTED",
     "TARGET_OWNER_MUST_BE_RESOLVED_BEFORE_CREATE",
     "SAME_ZERO_TOUCH_GOVERNANCE_MODEL"
-  ]
+  ],
+  "configured_creation_targets": [
+    {
+      "owner": "chainsolutions-wealthtech",
+      "scope": "ORGANIZATION",
+      "label": "Organisation chainsolutions-wealthtech"
+    },
+    {
+      "owner": "Wealthtechinnovations",
+      "scope": "PERSONAL_ACCOUNT",
+      "label": "Compte administrateur Wealthtechinnovations"
+    },
+    {
+      "owner": "Patricked",
+      "scope": "PERSONAL_ACCOUNT",
+      "label": "Compte administrateur Patricked"
+    }
+  ],
+  "creation_defaults": {
+    "source_template": "chainsolutions-wealthtech/Governed-Repository-Template",
+    "visibility": "private",
+    "initialize_from_template": true,
+    "add_manual_readme_gitignore_license": false
+  }
 }
