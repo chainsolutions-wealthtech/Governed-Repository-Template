@@ -40,3 +40,17 @@ A planned technical profile never overrides discovered code or an ADR. An infras
 ## Entry workflow projections
 
 `.governance/entry-action-policy.json` and `.governance/repository-scope-policy.json` are routing projections. They do not override existing project authorities, branch rules, repository ownership, or explicit permissions. A lab branch is never a second source of truth, and a target architecture is never an observed architecture.
+
+
+## Control plane request state
+
+A Governed Request issue is operational orchestration state, not the canonical truth of the target project.
+
+The control plane may hold:
+- answers;
+- observations returned by the connected agent;
+- preparatory execution plans;
+- evidence;
+- the final handoff.
+
+After `HANDOFF_READY`, the target repository and its versioned authorities remain the source of truth for target work. A control-plane issue never outranks the target repository's code, ADRs, branch rules or validated state.
