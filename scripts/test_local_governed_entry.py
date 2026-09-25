@@ -46,6 +46,23 @@ def main():
     if persisted["handoff"]["setup"]["workflow_model"]!="REGULATORY_AFRICAFUNDS_GOVERNED_FLOW":
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: setup persistence")
 
+    ssh=first_base()
+    ssh=answer_expected(ssh,"baseline_approved",True)
+    ssh=answer_expected(ssh,"setup_repository_now",True)
+    ssh=answer_expected(ssh,"link_mcp_server",True)
+    ssh=answer_expected(ssh,"mcp_transport","SSH")
+    ssh=answer_expected(ssh,"mcp_endpoint","https://mcp.example.test/mcp")
+    ssh=answer_expected(ssh,"ssh_connection_profile",{"host":"212.227.212.33","user":"root","port":22})
+    ssh=answer_expected(ssh,"mcp_discovery_scope","FULL_GOVERNED_MAPPING")
+    ssh=answer_expected(ssh,"domain_strategy","DISCOVER_EXISTING_THEN_PROPOSE")
+    ssh=answer_expected(ssh,"runtime_mutation_policy","EXPLICIT_APPROVAL_FOR_SCOPED_WRITE")
+    if ssh["next_request"]["kind"]!="MCP_DISCOVERY":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: SSH-only must not require persistent credentials")
+    if ssh.get("credentials_verified") is not True:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: SSH-only credential state")
+    if any(item.get("name")=="GOVERNED_MCP_SSH_PRIVATE_KEY" for item in (ssh.get("setup_package") or {}).get("mcp",{}).get("credential_requirements",[])):
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: persistent SSH secret forbidden")
+
     n=new_request("LOCAL-2","owner/repo","c"*40,False,"later agent")
     for field,value in [
       ("agent_identity","Claude"),("provider","CLAUDE"),("connection_intent","CODE_CHANGE"),
@@ -54,8 +71,15 @@ def main():
     if n["status"]!="LOCAL_HANDOFF_READY": raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: normal handoff")
 
     wf=(ROOT/".github/workflows/governed-local-entry.yml").read_text(encoding="utf-8")
-    for fragment in ["governed_local_start","GOVERNED_MCP_AUTH_TOKEN","mcp_repository_discovery.py","local_entry_apply_baseline.py"]:
+    discovery=(ROOT/"scripts/mcp_repository_discovery.py").read_text(encoding="utf-8")
+    policy=(ROOT/".governance/mcp-connection-policy.json").read_text(encoding="utf-8")
+    for fragment in ["governed_local_start","GOVERNED_MCP_AUTH_TOKEN","id-token: write","mcp_repository_discovery.py","local_entry_apply_baseline.py"]:
         if fragment not in wf: raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: workflow contract "+fragment)
+    if "GOVERNED_MCP_SSH_PRIVATE_KEY" in wf or "GOVERNED_MCP_SSH_PRIVATE_KEY" in policy:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: persistent repository SSH private key must be absent")
+    for fragment in ["/access/github/repository-ssh/certificate","StrictHostKeyChecking=yes","ssh-keygen","GITHUB_OIDC_EPHEMERAL_SSH_CERTIFICATE"]:
+        if fragment not in discovery:
+            raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: ephemeral SSH discovery contract "+fragment)
     print("LOCAL_GOVERNED_ENTRY_SELFTEST_PASS")
 
 if __name__=="__main__": main()
