@@ -105,8 +105,13 @@ def main() -> None:
     if create_sequence["next_request"]["field"] != "repository_name":
         raise SystemExit("CONTROL_PLANE_SELFTEST_FAILED: create must ask repository name second")
     create_sequence = apply_answer(create_sequence, "repository_name", "sequence-selftest")
+    if create_sequence["next_request"]["field"] != "visibility":
+        raise SystemExit("CONTROL_PLANE_SELFTEST_FAILED: create must ask visibility after repository name")
+    if create_sequence["next_request"].get("choices") != ["private", "public"]:
+        raise SystemExit("CONTROL_PLANE_SELFTEST_FAILED: visibility choices are incorrect")
+    create_sequence = apply_answer(create_sequence, "visibility", "private")
     if create_sequence["next_request"]["kind"] != "ACTION_REQUEST":
-        raise SystemExit("CONTROL_PLANE_SELFTEST_FAILED: create must proceed directly to creation action")
+        raise SystemExit("CONTROL_PLANE_SELFTEST_FAILED: create must proceed to creation action after visibility")
     if create_sequence["next_request"]["action_id"] != "PREP-001":
         raise SystemExit("CONTROL_PLANE_SELFTEST_FAILED: create action PREP-001 missing")
     if create_sequence["next_request"].get("target") != "chainsolutions-wealthtech/sequence-selftest":
@@ -118,6 +123,7 @@ def main() -> None:
             "entry_action": "CREATE_NEW_REPOSITORY",
             "creation_target_owner": "chainsolutions-wealthtech",
             "repository_name": "control-plane-create-selftest",
+            "visibility": "private",
         },
         "chainsolutions-wealthtech/control-plane-create-selftest",
         "DISCOVER_PROJECT_BASELINE",
