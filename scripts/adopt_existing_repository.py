@@ -55,6 +55,11 @@ def template_paths() -> list[str]:
         for relative in values:
             if relative not in EXCLUDED and relative not in paths:
                 paths.append(relative)
+    for schema in sorted((SOURCE_ROOT / "schemas").glob("*.json")):
+        relative = str(schema.relative_to(SOURCE_ROOT))
+        if relative not in paths:
+            paths.append(relative)
+
     for relative in [
         ".governance/profile.json",
         ".governance/TEMPLATE_MANIFEST.json",
