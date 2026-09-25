@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0.0",
+  "supported_owner_scopes": {
+    "ORGANIZATION": {
+      "supported": true,
+      "default_example": "chainsolutions-wealthtech",
+      "bootstrap_model": "SAME_GOVERNED_TEMPLATE"
+    },
+    "PERSONAL_ACCOUNT": {
+      "supported": true,
+      "owner_resolution": "EXPLICIT_TARGET_OR_GITHUB_CONTEXT",
+      "bootstrap_model": "SAME_GOVERNED_TEMPLATE"
+    },
+    "OTHER_AUTHORIZED_OWNER": {
+      "supported": true,
+      "owner_resolution": "EXPLICIT_ONLY",
+      "bootstrap_model": "SAME_GOVERNED_TEMPLATE"
+    }
+  },
+  "current_repository_scope": "TEMPLATE_SOURCE",
+  "target_owner": null,
+  "target_scope": "UNRESOLVED",
+  "invariants": [
+    "OWNER_SCOPE_NE_AUTHORITY",
+    "NO_ORGANIZATION_ONLY_ASSUMPTION",
+    "PERSONAL_ACCOUNT_SUPPORTED",
+    "TARGET_OWNER_MUST_BE_RESOLVED_BEFORE_CREATE",
+    "SAME_ZERO_TOUCH_GOVERNANCE_MODEL"
+  ]
+}
