@@ -50,3 +50,22 @@ The repository includes a Git-only coordination layer:
 - new-information intake with contradiction hold-for-review.
 
 See `docs/AUTOMATION.md`, `docs/MULTI_AGENT_COORDINATION.md` and `docs/INFORMATION_INTAKE.md`.
+
+
+## Capability intent layer — V2.1
+
+The template now separates governance from technical and infrastructure intent.
+
+A newly created repository receives:
+
+- `.governance/project-profile.json`: profile discovery and the optional `chainsolutions-fullstack-web` candidate;
+- `.governance/infrastructure-intent.json`: server/domain/directory/database/MCP/SSH lifecycle, including resources that do not yet exist;
+- `.governance/connection-intent-policy.json`: deterministic routing for agent connections.
+
+The Chainsolutions full-stack candidate plans Node.js, Next.js + TypeScript and PostgreSQL without claiming that any of them are implemented or deployed.
+
+Direct governed MCP access is the preferred server transport. SSH is a governed fallback. Secrets and credentials are never stored in repository governance.
+
+A session intent is not an authorization. Context or information intake never grants code permission, and `UNKNOWN` fails closed for mutable dispatch.
+
+See `docs/PROJECT_PROFILES.md`, `docs/INFRASTRUCTURE_BOOTSTRAP.md` and `docs/CONNECTION_INTENT.md`.
