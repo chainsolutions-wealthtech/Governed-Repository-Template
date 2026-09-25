@@ -42,7 +42,8 @@ def main():
       "scripts/local_entry_issue_bridge.py","scripts/local_entry_apply_baseline.py","scripts/test_local_governed_entry.py",
       "scripts/validate_governance.py","scripts/adopt_existing_repository.py",".github/workflows/governed-local-entry.yml",
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml",".github/workflows/governance-ci.yml",
-      ".github/workflows/governance-auto-bootstrap.yml",".governance/TEMPLATE_MANIFEST.json"
+      ".github/workflows/governance-auto-bootstrap.yml",".governance/TEMPLATE_MANIFEST.json",
+      ".governance/repository-creation-executor.json"
     ]
     updates={p:(ROOT/p).read_text(encoding="utf-8") for p in static_paths}
 
