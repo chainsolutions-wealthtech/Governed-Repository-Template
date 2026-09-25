@@ -1,0 +1,79 @@
+{
+  "title": "Governed MCP Repository Binding",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "repository",
+    "linked",
+    "status",
+    "credential_names",
+    "project_registration_status",
+    "write_tools_status"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "repository": {
+      "type": "string"
+    },
+    "linked": {
+      "type": "boolean"
+    },
+    "status": {
+      "type": "string"
+    },
+    "transport": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "endpoint": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "ssh_connection_profile": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "credential_names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "discovery_status": {
+      "type": "string"
+    },
+    "discovery_observed_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "domain_strategy": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "domain_binding": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "project_registration_status": {
+      "type": "string"
+    },
+    "write_tools_status": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}
