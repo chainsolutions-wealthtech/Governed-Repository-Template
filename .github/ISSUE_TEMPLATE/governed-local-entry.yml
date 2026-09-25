@@ -1,0 +1,16 @@
+name: Governed Local Entry
+description: Start or resume a governed agent session inside this repository.
+title: "[Governed Local Entry] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is the repository-local governed entry point.
+        On the first agent after bootstrap, it will guide project baseline discovery before mutable project work.
+  - type: textarea
+    id: objective
+    attributes:
+      label: Initial objective
+      description: Describe why this agent is entering the repository.
+    validations:
+      required: true
