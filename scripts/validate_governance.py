@@ -466,6 +466,7 @@ def validate_python_automation() -> None:
         "scripts/adopt_existing_repository.py",
         "scripts/test_entry_action_router.py",
         "scripts/test_repository_adoption.py",
+        "scripts/test_repository_scope.py",
     ]:
         path = ROOT / relative
         try:
