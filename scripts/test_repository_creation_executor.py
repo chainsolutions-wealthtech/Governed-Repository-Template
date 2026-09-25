@@ -19,7 +19,7 @@ def state_for(owner_label: str, name: str, visibility: str) -> dict:
     return state
 
 
-def run_case(owner_label: str, canonical_owner: str, principal: str, token_env: str, visibility: str) -> None:
+def run_case(owner_label: str, canonical_owner: str, visibility: str) -> None:
     state = state_for(owner_label, "executor-selftest", visibility)
     issue_body = "selftest\n\n<!-- GOVERNED_REQUEST_STATE:" + encode_state(state) + " -->\n"
     captured = {"persisted": None, "comments": [], "generate_payload": None, "paths": []}
@@ -39,14 +39,10 @@ def run_case(owner_label: str, canonical_owner: str, principal: str, token_env: 
 
     def fake_github_api(token: str, method: str, path: str, payload: dict | None = None, allow_404: bool = False):
         captured["paths"].append((method, path))
-        if method == "GET" and path == "/user":
-            return {"login": principal}
         if method == "GET" and path == "/repos/chainsolutions-wealthtech/Governed-Repository-Template":
             return {"is_template": True, "full_name": "chainsolutions-wealthtech/Governed-Repository-Template"}
         if method == "GET" and path == f"/repos/{canonical_owner}/executor-selftest":
             return None
-        if method == "GET" and path == f"/user/memberships/orgs/{canonical_owner}":
-            return {"state": "active"}
         if method == "POST" and path == "/repos/chainsolutions-wealthtech/Governed-Repository-Template/generate":
             captured["generate_payload"] = payload
             return {"full_name": f"{canonical_owner}/executor-selftest", "default_branch": "main"}
@@ -61,7 +57,7 @@ def run_case(owner_label: str, canonical_owner: str, principal: str, token_env: 
         executor.comment = lambda issue_number, body: captured["comments"].append(("COMMENT", issue_number, body))
         os.environ.clear()
         os.environ.update(old_env)
-        os.environ[token_env] = "selftest-token"
+        os.environ["GOVERNED_CREATOR_TOKEN"] = "selftest-installation-token"
         sys.argv = ["control_plane_create_repository.py", "--issue-number", "99"]
         executor.main()
     finally:
@@ -98,8 +94,6 @@ def main() -> None:
     run_case(
         owner_label="chainsolutions-wealthtech",
         canonical_owner="chainsolutions-wealthtech",
-        principal="Wealthtechinnovations",
-        token_env="GOVERNED_CREATOR_WEALTHTECH_TOKEN",
         visibility="private",
     )
     run_case(
@@ -112,8 +106,6 @@ def main() -> None:
     run_case(
         owner_label="Patricked",
         canonical_owner="Patricked-code",
-        principal="Patricked-code",
-        token_env="GOVERNED_CREATOR_PATRICKED_TOKEN",
         visibility="private",
     )
     print("REPOSITORY_CREATION_EXECUTOR_SELFTEST_PASS")
