@@ -66,6 +66,10 @@ REQUIRED = [
     ".governance/repository-creation-executor.json",
     ".governance/local-entry-policy.json",
     ".governance/local-entry/state.json",
+    ".governance/mcp-connection-policy.json",
+    ".governance/mcp-binding.json",
+    ".governance/access-plan.json",
+    ".governance/workflow-model.json",
     "schemas/project-state.schema.json",
     "schemas/loop-state.schema.json",
     "schemas/next-action.schema.json",
@@ -86,6 +90,7 @@ REQUIRED = [
     "schemas/governed-handoff.schema.json",
     "schemas/local-entry-request.schema.json",
     "schemas/local-entry-receipt.schema.json",
+    "schemas/mcp-binding.schema.json",
     "scripts/initialize_governance.py",
     "scripts/auto_bootstrap.py",
     "scripts/finalize_bootstrap.py",
@@ -107,6 +112,7 @@ REQUIRED = [
     "scripts/local_entry_issue_bridge.py",
     "scripts/local_entry_apply_baseline.py",
     "scripts/test_local_governed_entry.py",
+    "scripts/mcp_repository_discovery.py",
     ".github/workflows/governed-local-entry.yml",
     ".github/ISSUE_TEMPLATE/governed-local-entry.yml",
     ".github/workflows/governance-ci.yml",
@@ -221,6 +227,10 @@ def validate_project_and_connection_intent(profile: dict, template_mode: bool) -
     creation_executor = load(".governance/repository-creation-executor.json")
     local_entry_policy = load(".governance/local-entry-policy.json")
     local_entry_state = load(".governance/local-entry/state.json")
+    mcp_policy = load(".governance/mcp-connection-policy.json")
+    mcp_binding = load(".governance/mcp-binding.json")
+    access_plan = load(".governance/access-plan.json")
+    workflow_model = load(".governance/workflow-model.json")
     sessions = load(".governance/sessions/sessions.json")
 
     if project_profile.get("selection_status") not in {"DISCOVERY_REQUIRED", "SELECTED", "HOLD_FOR_REVIEW"}:
@@ -338,6 +348,17 @@ def validate_project_and_connection_intent(profile: dict, template_mode: bool) -
     if creation_executor.get("fail_closed") is not True:
         fail("repository creation executor must fail closed")
 
+    if mcp_policy.get("role") != "REPOSITORY_TO_MCP_BINDING":
+        fail("MCP connection policy role is invalid")
+    if mcp_policy.get("direct_mcp", {}).get("token_secret") != "GOVERNED_MCP_AUTH_TOKEN":
+        fail("MCP token secret contract is invalid")
+    if mcp_policy.get("ssh", {}).get("arbitrary_shell") != "FORBIDDEN":
+        fail("MCP SSH fallback must forbid arbitrary shell")
+    if access_plan.get("mcp", {}).get("write_activation") != "REQUIRES_MCP_PROJECT_REGISTRATION_AND_EXPLICIT_AUTHORITY":
+        fail("MCP write activation must fail closed")
+    if "REGULATORY_AFRICAFUNDS_GOVERNED_FLOW" not in (workflow_model.get("supported_models") or {}):
+        fail("workflow model missing Regulatory/AfricaFunds governed flow")
+
     if local_entry_policy.get("role") != "REPOSITORY_LOCAL_CONTROL_PLANE":
         fail("local entry policy role is invalid")
     if "FIRST_AGENT_BOOTSTRAP" not in (local_entry_policy.get("modes") or {}):
@@ -381,6 +402,12 @@ def validate_project_and_connection_intent(profile: dict, template_mode: bool) -
             fail("infrastructure intent repository does not match governance profile")
         if infrastructure.get("github_binding", {}).get("repository") != repository:
             fail("infrastructure GitHub binding does not match governance profile")
+        if mcp_binding.get("repository") != repository:
+            fail("MCP binding repository does not match governance profile")
+        if access_plan.get("repository") != repository:
+            fail("access plan repository does not match governance profile")
+        if workflow_model.get("repository") != repository:
+            fail("workflow model repository does not match governance profile")
         target_owner = repository.split("/", 1)[0]
         if repository_scope.get("target_owner") not in {target_owner, None}:
             fail("repository scope target owner does not match repository")
@@ -660,6 +687,7 @@ def validate_python_automation() -> None:
         "scripts/local_entry_issue_bridge.py",
         "scripts/local_entry_apply_baseline.py",
         "scripts/test_local_governed_entry.py",
+        "scripts/mcp_repository_discovery.py",
     ]:
         path = ROOT / relative
         try:
