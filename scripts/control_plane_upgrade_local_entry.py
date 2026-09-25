@@ -84,20 +84,24 @@ def main():
         updates[path]=append_once(target_text(token,target,path) or "",marker,addition)
 
     change=target_text(token,target,"CHANGELOG.md") or "# CHANGELOG\n"
-    updates["CHANGELOG.md"]=append_once(change,"## Governance Automation V2.4.0","## Governance Automation V2.4.0\n\n- Added repository-local governed agent entry point.\n- Added FIRST_AGENT_BOOTSTRAP guided baseline.\n- Added NORMAL_GOVERNED_ENTRY routing for subsequent agents.\n- Added exact-HEAD guarded automatic baseline commit.")
+    updates["CHANGELOG.md"]=append_once(
+      change,
+      "## Governance Automation V2.6.0",
+      "## Governance Automation V2.6.0\n\n- Replaced persistent repository SSH private keys with GitHub OIDC-issued ephemeral SSH certificates.\n- Added strict host-key pinning from authenticated broker evidence.\n- Added read-only force-command SSH discovery fallback.\n- Preserved direct MCP + SSH BOTH mode without expanding server WRITE authority."
+    )
 
     entries=[]
     for path,text in updates.items():
         blob=gh(token,"POST",f"/repos/{target}/git/blobs",{"content":text,"encoding":"utf-8"})
         entries.append({"path":path,"mode":"100644","type":"blob","sha":blob["sha"]})
     tree=gh(token,"POST",f"/repos/{target}/git/trees",{"base_tree":base_tree,"tree":entries})
-    new_commit=gh(token,"POST",f"/repos/{target}/git/commits",{"message":"governance: upgrade repository-local setup to v2.5","tree":tree["sha"],"parents":[head]})
+    new_commit=gh(token,"POST",f"/repos/{target}/git/commits",{"message":"governance: upgrade repository-local setup to v2.6","tree":tree["sha"],"parents":[head]})
     gh(token,"PATCH",f"/repos/{target}/git/refs/heads/{branch}",{"sha":new_commit["sha"],"force":False})
 
     issue=a.issue_number
     central_token=os.environ.get("GITHUB_TOKEN")
     if issue and central_token:
-        gh(central_token,"POST",f"/repos/{CENTRAL}/issues/{issue}/comments",{"body":f"### Local entry upgrade applied\n\nTarget: {target}\nPrevious HEAD: {head}\nUpgrade commit: {new_commit['sha']}\nVersion: 2.5.0"})
-    print(json.dumps({"status":"LOCAL_SETUP_UPGRADE_APPLIED","target":target,"old_head":head,"new_head":new_commit["sha"]}))
+        gh(central_token,"POST",f"/repos/{CENTRAL}/issues/{issue}/comments",{"body":f"### Local entry upgrade applied\n\nTarget: {target}\nPrevious HEAD: {head}\nUpgrade commit: {new_commit['sha']}\nVersion: 2.6.0"})
+    print(json.dumps({"status":"LOCAL_SETUP_V2_6_UPGRADE_APPLIED","target":target,"old_head":head,"new_head":new_commit["sha"]}))
 
 if __name__=="__main__":main()
