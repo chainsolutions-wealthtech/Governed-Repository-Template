@@ -47,6 +47,7 @@ REQUIRED = [
     "docs/PROJECT_MAPPING.md",
     "docs/LAB_EVOLUTION.md",
     "docs/REPOSITORY_SCOPES.md",
+    "docs/CONTROL_PLANE.md",
     ".governance/profile.json",
     ".governance/TEMPLATE_MANIFEST.json",
     ".governance/bootstrap-state.json",
@@ -60,6 +61,7 @@ REQUIRED = [
     ".governance/connection-intent-policy.json",
     ".governance/entry-action-policy.json",
     ".governance/repository-scope-policy.json",
+    ".governance/control-plane-policy.json",
     "schemas/project-state.schema.json",
     "schemas/loop-state.schema.json",
     "schemas/next-action.schema.json",
@@ -75,6 +77,9 @@ REQUIRED = [
     "schemas/connection-intent.schema.json",
     "schemas/entry-action.schema.json",
     "schemas/repository-scope.schema.json",
+    "schemas/governed-request.schema.json",
+    "schemas/execution-package.schema.json",
+    "schemas/governed-handoff.schema.json",
     "scripts/initialize_governance.py",
     "scripts/auto_bootstrap.py",
     "scripts/finalize_bootstrap.py",
@@ -86,6 +91,10 @@ REQUIRED = [
     "scripts/test_entry_action_router.py",
     "scripts/test_repository_adoption.py",
     "scripts/test_repository_scope.py",
+    "scripts/governed_request.py",
+    "scripts/control_plane_issue_bridge.py",
+    "scripts/test_control_plane_request.py",
+    "scripts/test_control_plane_issue_contract.py",
     ".github/workflows/governance-ci.yml",
     ".github/workflows/governance-auto-bootstrap.yml",
 ]
@@ -113,6 +122,11 @@ ENTRY_ACTIONS = {
     "UNKNOWN",
 }
 ADOPTION_OPTIONAL_REQUIRED = {".github/workflows/governance-auto-bootstrap.yml"}
+SOURCE_ONLY_REQUIRED = {
+    ".github/workflows/governed-control-plane.yml",
+    ".github/ISSUE_TEMPLATE/governed-request.yml",
+}
+CONTROL_PLANE_REPOSITORY = "chainsolutions-wealthtech/Governed-Repository-Template"
 
 
 def fail(message: str) -> None:
@@ -165,6 +179,11 @@ def validate_policies(profile: dict) -> None:
         "existing_repository_adoption_additive": "REQUIRED",
         "lab_canonical_branch_protection": "REQUIRED",
         "personal_repository_scope_supported": "REQUIRED",
+        "central_control_plane": "REQUIRED",
+        "control_plane_request_state_external": "REQUIRED",
+        "control_plane_target_mutation": "AGENT_AUTHORITY_REQUIRED",
+        "control_plane_explicit_handoff": "REQUIRED",
+        "control_plane_single_next_request": "REQUIRED",
     }
     for key, expected in exact.items():
         if policies.get(key) != expected:
