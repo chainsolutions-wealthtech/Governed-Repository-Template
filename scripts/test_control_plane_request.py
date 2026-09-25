@@ -200,17 +200,19 @@ def main() -> None:
 
     denied = new_request("SELFTEST-DENIED", "agent", "test", None)
     denied_values = {
-        "entry_action": "CREATE_NEW_REPOSITORY",
-        "connection_intent": "WORK_REQUEST",
-        "objective": "Denied create",
-        "target_scope": "ORGANIZATION",
-        "target_owner": "chainsolutions-wealthtech",
-        "repository_name": "denied",
-        "visibility": "private",
-        "project_type": "application",
-        "project_profile": "generic",
-        "infrastructure_preference": "NO_SERVER_REQUIRED_YET",
-        "creation_authority": False,
+        "entry_action": "ADOPT_EXISTING_REPOSITORY",
+        "connection_intent": "CODE_CHANGE",
+        "objective": "Denied adoption",
+        "target_repository": "chainsolutions-wealthtech/denied-adoption",
+        "target_observation": {
+            "exists": True,
+            "default_branch": "main",
+            "head_sha": SHA_A,
+            "governance_detected": False,
+            "workflows_detected": 0,
+        },
+        "integration_strategy": "DIRECT_CANONICAL_IF_AUTHORIZED",
+        "adoption_authority": False,
     }
     denied = answer_required(denied, denied_values)
     if denied["status"] != "HOLD_FOR_REVIEW":
