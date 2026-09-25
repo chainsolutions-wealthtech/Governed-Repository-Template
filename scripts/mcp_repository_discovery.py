@@ -22,6 +22,8 @@ DIRECT_TO_SSH = {
     "get_write_tools_context": "write-tools-context",
 }
 SSH_OIDC_AUDIENCE = "https://mcp.wealthtechinnovations.com/access/github/repository-ssh"
+SSH_BROKER_BASE_URL = "https://mcp.wealthtechinnovations.com"
+REQUIRED_DISCOVERY_TOOLS = ("ping", "get_project_context")
 
 
 def parse_mcp_body(raw: str):
@@ -106,7 +108,11 @@ def discover_direct(endpoint, token):
             }
         except Exception as exc:
             observed[name] = {"status": "ERROR", "error": str(exc)[:1000]}
-    return {"initialize": init_result, "tools": observed}
+    for required in REQUIRED_DISCOVERY_TOOLS:
+        if observed.get(required, {}).get("status") != "PASS":
+            raise RuntimeError(f"DIRECT_DISCOVERY_REQUIRED_PROBE_FAILED:{required}")
+    status = "PASS" if all(item.get("status") == "PASS" for item in observed.values()) else "PARTIAL"
+    return {"status": status, "initialize": init_result, "tools": observed}
 
 
 def mcp_base_url(endpoint: str) -> str:
@@ -142,14 +148,14 @@ def github_oidc_token() -> str:
     return token
 
 
-def request_ssh_certificate(endpoint: str, repository: str, head_sha: str, public_key: str):
+def request_ssh_certificate(repository: str, head_sha: str, public_key: str):
     oidc = github_oidc_token()
     try:
         body = json.dumps(
             {"sha": head_sha, "repository": repository, "publicKey": public_key}
         ).encode()
         req = urllib.request.Request(
-            mcp_base_url(endpoint) + "/access/github/repository-ssh/certificate",
+            SSH_BROKER_BASE_URL + "/access/github/repository-ssh/certificate",
             method="POST",
             headers={
                 "Authorization": f"Bearer {oidc}",
@@ -244,7 +250,7 @@ def run_ssh_probe(profile, private_key, certificate, known_hosts, command):
         return {"raw": stdout}
 
 
-def discover_ssh(endpoint: str, repository: str, head_sha: str, profile: dict):
+def discover_ssh(repository: str, head_sha: str, profile: dict):
     with tempfile.TemporaryDirectory(prefix="governed-ssh-") as tmp:
         root = pathlib.Path(tmp)
         key = root / "id_ed25519"
@@ -257,7 +263,7 @@ def discover_ssh(endpoint: str, repository: str, head_sha: str, profile: dict):
         )
         os.chmod(key, 0o600)
         public_key = (root / "id_ed25519.pub").read_text(encoding="utf-8").strip()
-        cert_raw = request_ssh_certificate(endpoint, repository, head_sha, public_key)
+        cert_raw = request_ssh_certificate(repository, head_sha, public_key)
         cert = validate_ssh_certificate(cert_raw, repository, profile)
 
         certificate_path = root / "id_ed25519-cert.pub"
@@ -281,8 +287,15 @@ def discover_ssh(endpoint: str, repository: str, head_sha: str, profile: dict):
             except Exception as exc:
                 observed[direct_name] = {"status": "ERROR", "error": str(exc)[:1000]}
 
+        for required in REQUIRED_DISCOVERY_TOOLS:
+            if observed.get(required, {}).get("status") != "PASS":
+                raise RuntimeError(f"SSH_DISCOVERY_REQUIRED_PROBE_FAILED:{required}")
+        status = "PASS" if all(item.get("status") == "PASS" for item in observed.values()) else "PARTIAL"
+
         return {
+            "status": status,
             "authentication": "GITHUB_OIDC_EPHEMERAL_SSH_CERTIFICATE",
+            "broker": SSH_BROKER_BASE_URL,
             "certificate_fingerprint": cert["fingerprint"],
             "valid_for_seconds": cert["valid_for_seconds"],
             "host": cert["host"],
@@ -337,7 +350,6 @@ def main():
         if not isinstance(profile, dict):
             raise SystemExit("SSH_PROFILE_MISSING")
         evidence["ssh_certificate"] = discover_ssh(
-            endpoint,
             repository,
             expected_head,
             profile,
@@ -345,6 +357,15 @@ def main():
 
     if transport not in {"DIRECT_MCP_TOKEN", "SSH", "BOTH"}:
         raise SystemExit("MCP_TRANSPORT_INVALID")
+
+    component_statuses = [
+        part.get("status")
+        for part in (evidence.get("direct_mcp"), evidence.get("ssh_certificate"))
+        if isinstance(part, dict)
+    ]
+    if not component_statuses:
+        raise SystemExit("MCP_DISCOVERY_NO_EVIDENCE")
+    evidence["status"] = "PASS" if all(status == "PASS" for status in component_statuses) else "PARTIAL"
 
     state2 = record_mcp_discovery(state, evidence)
     persist(args.issue_number, issue.get("body"), state2)
