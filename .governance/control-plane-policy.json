@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0.0",
+  "control_plane_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+  "source_role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
+  "client_role_after_instantiation": "GOVERNED_TARGET_CLIENT",
+  "transport": {
+    "primary": "GITHUB_ISSUE_CONVERSATION",
+    "local_engine": "scripts/governed_request.py",
+    "issue_bridge": "scripts/control_plane_issue_bridge.py"
+  },
+  "lifecycle": [
+    "REQUEST_CREATED",
+    "WAITING_FOR_ANSWER",
+    "PLAN_READY",
+    "WAITING_FOR_PLAN_APPROVAL",
+    "EXECUTING_PREPARATION",
+    "HOLD_FOR_REVIEW",
+    "HANDOFF_READY",
+    "CLOSED"
+  ],
+  "principles": [
+    "CONTROL_PLANE_PREPARES_TARGET_WORK",
+    "ONE_QUESTION_OR_ACTION_REQUEST_AT_A_TIME",
+    "AGENT_RESPONSES_ADVANCE_STATE_MACHINE",
+    "TARGET_MUTATION_REQUIRES_EXPLICIT_AUTHORITY",
+    "TARGET_EVIDENCE_NE_ASSUMED_STATE",
+    "CONTROL_PLANE_STATE_STAYS_OUT_OF_TEMPLATE_CONTENT",
+    "HANDOFF_IS_EXPLICIT",
+    "NO_CROSS_REPOSITORY_MUTATION_BY_ISSUE_WORKFLOW"
+  ],
+  "source_only_paths": [
+    ".github/workflows/governed-control-plane.yml",
+    ".github/ISSUE_TEMPLATE/governed-request.yml",
+    "scripts/control_plane_issue_bridge.py"
+  ]
+}
