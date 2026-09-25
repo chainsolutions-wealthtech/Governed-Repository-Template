@@ -1,47 +1,50 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "executor": "GITHUB_REST_GENERATE_FROM_TEMPLATE",
   "endpoint": "POST /repos/chainsolutions-wealthtech/Governed-Repository-Template/generate",
   "authentication": {
-    "mode": "GITHUB_APP_USER_ACCESS_TOKEN_PER_CREATOR_IDENTITY",
+    "mode": "GITHUB_APP_INSTALLATION_TOKEN_MINTED_PER_TARGET_OWNER",
+    "app_client_id_variable": "GOVERNED_GITHUB_APP_CLIENT_ID",
+    "app_private_key_secret": "GOVERNED_GITHUB_APP_PRIVATE_KEY",
+    "installation_token_environment": "GOVERNED_CREATOR_TOKEN",
     "tokens_in_repository": "FORBIDDEN",
+    "installation_token_ttl": "GITHUB_MANAGED_ONE_HOUR",
     "required_app_repository_permissions": {
       "administration": "write",
       "contents": "read"
     },
-    "creator_identities": {
+    "target_installations": {
       "chainsolutions-wealthtech": {
-        "principal": "Wealthtechinnovations",
-        "token_secret": "GOVERNED_CREATOR_WEALTHTECH_TOKEN",
-        "target_owner": "chainsolutions-wealthtech"
+        "target_owner": "chainsolutions-wealthtech",
+        "account_type": "ORGANIZATION"
       },
       "Wealthtechinnovations": {
-        "principal": "Wealthtechinnovations",
-        "token_secret": "GOVERNED_CREATOR_WEALTHTECH_TOKEN",
-        "target_owner": "Wealthtechinnovations"
+        "target_owner": "Wealthtechinnovations",
+        "account_type": "PERSONAL_ACCOUNT"
       },
       "Patricked": {
-        "principal": "Patricked-code",
-        "token_secret": "GOVERNED_CREATOR_PATRICKED_TOKEN",
-        "target_owner": "Patricked-code"
+        "target_owner": "Patricked-code",
+        "account_type": "PERSONAL_ACCOUNT"
       }
     }
   },
   "preflight": [
-    "TOKEN_PRESENT",
-    "AUTHENTICATED_USER_MATCHES_CREATOR_PRINCIPAL",
+    "APP_CLIENT_ID_CONFIGURED",
+    "APP_PRIVATE_KEY_SECRET_CONFIGURED",
+    "TARGET_OWNER_INSTALLATION_AVAILABLE",
+    "INSTALLATION_HAS_REQUIRED_PERMISSIONS",
     "PRIVATE_TEMPLATE_READABLE",
     "TEMPLATE_FLAG_TRUE",
-    "TARGET_REPOSITORY_DOES_NOT_EXIST",
-    "TARGET_OWNER_AUTHORITY_AVAILABLE"
+    "TARGET_REPOSITORY_DOES_NOT_EXIST"
   ],
   "creation_defaults": {
     "include_all_branches": false
   },
   "fail_closed": true,
   "invariants": [
-    "NO_CREATION_WITH_GITHUB_TOKEN",
-    "NO_CREATOR_TOKEN_IN_REPOSITORY",
+    "NO_CREATION_WITH_STANDARD_GITHUB_TOKEN",
+    "NO_LONG_LIVED_CREATOR_TOKEN_IN_REPOSITORY",
+    "INSTALLATION_TOKEN_MINTED_FOR_SELECTED_OWNER",
     "NO_FAKE_CREATION_EVIDENCE",
     "API_201_REQUIRED",
     "INITIAL_HEAD_OBSERVED_AFTER_CREATION"
