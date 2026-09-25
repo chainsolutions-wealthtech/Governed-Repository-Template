@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import argparse
 import ast
 import json
 import re
@@ -65,10 +66,22 @@ REQUIRED = [
 ]
 
 PLACEHOLDER = re.compile(r"\{\{[A-Z0-9_]+\}\}")
+SHA40 = re.compile(r"^[0-9a-f]{40}$")
+ATTESTATION_MODEL = "CHILD_COMMIT_ATTESTS_INITIALIZATION_COMMIT"
 
 
 def fail(message: str) -> None:
     raise SystemExit(f"GOVERNANCE_VALIDATION_FAILED: {message}")
+
+
+def parse_args() -> argparse.Namespace:
+    p = argparse.ArgumentParser()
+    p.add_argument(
+        "--bootstrap-attestation",
+        action="store_true",
+        help="Require the strict bootstrap-finalization invariants used by the zero-touch workflow.",
+    )
+    return p.parse_args()
 
 
 def load(path: str) -> dict:
@@ -101,7 +114,7 @@ def validate_policies(profile: dict) -> None:
             fail(f"policy {key} must be {expected}, got {policies.get(key)!r}")
 
 
-def validate_machine_state(profile: dict, template_mode: bool) -> None:
+def validate_machine_state(profile: dict, template_mode: bool, require_bootstrap_attestation: bool = False) -> None:
     bootstrap = load(".governance/bootstrap-state.json")
     memory = load(".governance/canonical-memory/current.json")
     work = load(".governance/work/work-items.json")
@@ -156,6 +169,56 @@ def validate_machine_state(profile: dict, template_mode: bool) -> None:
     if receipt.get("initialized") is not True:
         fail("bootstrap receipt is not initialized")
 
+    bootstrap_status = bootstrap.get("status")
+    if bootstrap_status not in {"INITIALIZED_PENDING_ATTESTATION", "PASS"}:
+        fail(f"unexpected instantiated bootstrap status {bootstrap_status!r}")
+
+    if require_bootstrap_attestation:
+        if bootstrap_status != "PASS":
+            fail("strict bootstrap attestation requires bootstrap status PASS")
+        initialization_sha = receipt.get("initialization_commit_sha")
+        if not isinstance(initialization_sha, str) or not SHA40.fullmatch(initialization_sha):
+            fail("strict bootstrap attestation requires a valid initialization_commit_sha")
+        if receipt.get("validation") != "PASS":
+            fail("strict bootstrap attestation requires receipt validation PASS")
+        if receipt.get("attestation_subject_sha") != initialization_sha:
+            fail("receipt attestation subject does not match initialization commit")
+        if receipt.get("attestation_model") != ATTESTATION_MODEL:
+            fail("receipt attestation model is invalid")
+        if bootstrap.get("attested_initialization_commit_sha") != initialization_sha:
+            fail("bootstrap-state attested initialization commit does not match receipt")
+        if bootstrap.get("attestation_subject_sha") != initialization_sha:
+            fail("bootstrap-state attestation subject does not match receipt")
+        if bootstrap.get("attestation_model") != ATTESTATION_MODEL:
+            fail("bootstrap-state attestation model is invalid")
+        if memory.get("bootstrap_attestation_subject_sha") != initialization_sha:
+            fail("canonical memory bootstrap attestation subject does not match receipt")
+        if memory.get("attestation_model") != ATTESTATION_MODEL:
+            fail("canonical memory attestation model is invalid")
+        if memory.get("freshness") != "ATTESTED":
+            fail("strict bootstrap attestation requires canonical memory freshness ATTESTED")
+        if memory.get("current_checkpoint") != "bootstrap":
+            fail("strict bootstrap attestation requires bootstrap checkpoint")
+
+        status = (ROOT / "STATUS.md").read_text(encoding="utf-8")
+        required_status_fragments = [
+            "> State: `GOVERNANCE_INITIALIZED_BASELINE_REQUIRED`",
+            f"- Repository: `{profile.get('repository')}`",
+            f"- Branch: `{profile.get('canonical_branch')}`",
+            f"- Attested initialization commit: `{initialization_sha}`",
+            "- Governance validation: `PASS`",
+            "- Governance freshness: `ATTESTED`",
+            f"- Next action: `{memory.get('next_action')}`",
+        ]
+        missing_status = [fragment for fragment in required_status_fragments if fragment not in status]
+        if missing_status:
+            fail("STATUS.md is not synchronized with bootstrap attestation: " + " | ".join(missing_status))
+
+        next_action = (ROOT / "NEXT_ACTION.md").read_text(encoding="utf-8")
+        expected_next_action = f"NEXT_ACTION = {memory.get('next_action')}"
+        if expected_next_action not in next_action:
+            fail("NEXT_ACTION.md does not match canonical memory after bootstrap attestation")
+
     if memory.get("repository") != profile.get("repository"):
         fail("canonical memory repository does not match profile")
     if memory.get("canonical_branch") != profile.get("canonical_branch"):
@@ -198,6 +261,7 @@ def validate_python_automation() -> None:
 
 
 def main() -> None:
+    args = parse_args()
     missing = [path for path in REQUIRED if not (ROOT / path).exists()]
     if missing:
         fail("missing required files: " + ", ".join(missing))
@@ -212,7 +276,7 @@ def main() -> None:
             fail("template source marker exists but profile.template_source is not true")
         if profile.get("initialized") is not False:
             fail("template source must not be initialized")
-        validate_machine_state(profile, True)
+        validate_machine_state(profile, True, args.bootstrap_attestation)
         print("GOVERNANCE_VALIDATION_PASS: template source mode v2")
         return
 
@@ -226,7 +290,7 @@ def main() -> None:
         fail("canonical_branch not initialized")
 
     validate_placeholders()
-    validate_machine_state(profile, False)
+    validate_machine_state(profile, False, args.bootstrap_attestation)
     print("GOVERNANCE_VALIDATION_PASS: instantiated repository mode v2")
 
 
