@@ -22,13 +22,14 @@ def state_for(owner_label: str, name: str, visibility: str) -> dict:
 def run_case(owner_label: str, canonical_owner: str, visibility: str) -> None:
     state = state_for(owner_label, "executor-selftest", visibility)
     issue_body = "selftest\n\n<!-- GOVERNED_REQUEST_STATE:" + encode_state(state) + " -->\n"
-    captured = {"persisted": None, "comments": [], "generate_payload": None, "paths": []}
+    captured = {"persisted": None, "comments": [], "generate_payload": None, "paths": [], "commit_attempts": 0}
 
     original_cp_api = executor.control_plane_api
     original_github_api = executor.github_api
     original_persist = executor.persist_state
     original_comment = executor.comment
     original_argv = sys.argv[:]
+    original_sleep = executor.time.sleep
     old_env = dict(os.environ)
 
     def fake_cp_api(method: str, path: str, payload: dict | None = None):
@@ -47,6 +48,9 @@ def run_case(owner_label: str, canonical_owner: str, visibility: str) -> None:
             captured["generate_payload"] = payload
             return {"full_name": f"{canonical_owner}/executor-selftest", "default_branch": "main"}
         if method == "GET" and path == f"/repos/{canonical_owner}/executor-selftest/commits/main":
+            captured["commit_attempts"] += 1
+            if captured["commit_attempts"] == 1:
+                raise RuntimeError("GitHub API GET commit failed: 409 Git Repository is empty")
             return {"sha": "e" * 40}
         raise AssertionError(f"unexpected GitHub API call: {method} {path}")
 
@@ -55,6 +59,7 @@ def run_case(owner_label: str, canonical_owner: str, visibility: str) -> None:
         executor.github_api = fake_github_api
         executor.persist_state = lambda issue_number, body, new_state: captured.__setitem__("persisted", new_state)
         executor.comment = lambda issue_number, body: captured["comments"].append(("COMMENT", issue_number, body))
+        executor.time.sleep = lambda seconds: None
         os.environ.clear()
         os.environ.update(old_env)
         os.environ["GOVERNED_CREATOR_TOKEN"] = "selftest-installation-token"
@@ -65,6 +70,7 @@ def run_case(owner_label: str, canonical_owner: str, visibility: str) -> None:
         executor.github_api = original_github_api
         executor.persist_state = original_persist
         executor.comment = original_comment
+        executor.time.sleep = original_sleep
         sys.argv = original_argv
         os.environ.clear()
         os.environ.update(old_env)
@@ -78,6 +84,8 @@ def run_case(owner_label: str, canonical_owner: str, visibility: str) -> None:
         raise SystemExit("CREATE_EXECUTOR_SELFTEST_FAILED: visibility mismatch")
     if payload.get("include_all_branches") is not False:
         raise SystemExit("CREATE_EXECUTOR_SELFTEST_FAILED: include_all_branches must be false")
+    if captured["commit_attempts"] < 2:
+        raise SystemExit("CREATE_EXECUTOR_SELFTEST_FAILED: eventual-consistency retry was not exercised")
 
     persisted = captured["persisted"]
     if not persisted:
