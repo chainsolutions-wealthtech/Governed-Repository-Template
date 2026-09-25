@@ -66,6 +66,21 @@ INTAKE_NE_WORK_ITEM = REQUIRED
 CONTRADICTION = HOLD_FOR_REVIEW
 AUTOMATION_FAIL_CLOSED = REQUIRED
 RUNTIME_AUTHORITY_INFERENCE = FORBIDDEN
+PLANNED_NE_IMPLEMENTED = REQUIRED
+INFRASTRUCTURE_FACTS_REQUIRE_OBSERVATION = REQUIRED
+CREDENTIALS_IN_REPOSITORY = FORBIDDEN
+CONNECTION_INTENT_FAIL_CLOSED = REQUIRED
+CONTEXT_INTAKE_NE_CODE_PERMISSION = REQUIRED
+INTENT_NE_AUTHORITY = REQUIRED
 ```
 
 The generic automation layer is a repository-local coordination projection. It does not create runtime locks, deployment authority, production permission or a second source of truth.
+
+
+## Technical and infrastructure intent
+
+The generic governance core does not assert a framework, database, server, domain or deployment merely because the repository exists.
+
+A project profile may record planned defaults. Infrastructure may remain unknown, missing or unprovisioned. These are valid governed states.
+
+`DIRECT_MCP` is the preferred governed server access transport when available. `SSH` is a fallback transport, not a source of authority. Any server mutation or provisioning still requires the relevant authorization.
