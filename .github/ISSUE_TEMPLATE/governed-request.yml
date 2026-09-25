@@ -1,0 +1,28 @@
+name: Governed Request
+description: Start a governed preparation workflow before working on a repository.
+title: "[Governed Request] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue is handled by the Governed Repository control plane.
+        Provide only the initial objective here. The control plane will ask the remaining questions one at a time.
+  - type: textarea
+    id: objective
+    attributes:
+      label: Initial objective
+      description: Describe what you want to achieve. Do not assume the target repository state.
+      placeholder: Example: adopt governance into an existing repository without breaking its current architecture.
+    validations:
+      required: true
+  - type: input
+    id: agent
+    attributes:
+      label: Agent identity
+      description: Optional descriptive identity, e.g. ChatGPT, Claude, Codex, human.
+      placeholder: ChatGPT
+  - type: markdown
+    attributes:
+      value: |
+        After creation, reply only to the control-plane questions using the structured /governed-answer or /governed-evidence format shown in each response.
