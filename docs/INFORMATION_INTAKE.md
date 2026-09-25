@@ -51,3 +51,17 @@ Before a write, agents must consider:
 - work revision.
 
 HEAD drift always requires reconciliation. Knowledge revision drift requires reconciliation when it affects the selected work scope.
+
+
+## Connection intent boundary
+
+A session used to contribute context or information should declare `CONTEXT_INTAKE` or `INFORMATION_INTAKE`.
+
+These intents route to intake and cannot dispatch mutable work.
+
+```text
+CONTEXT_INTAKE != CODE_PERMISSION
+INFORMATION_INTAKE != CODE_PERMISSION
+```
+
+If the same conversation later requests code, the session intent must be explicitly reconciled to a mutable intent such as `WORK_REQUEST` or `CODE_CHANGE`; the change in intent still does not grant any higher authority.
