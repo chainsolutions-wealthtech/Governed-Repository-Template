@@ -162,6 +162,19 @@ def initialize_added_machine_state(target: Path, args: argparse.Namespace, head:
     control_plane["client_repository"] = args.repository
     control_plane_path.write_text(json.dumps(control_plane, indent=2) + "\n", encoding="utf-8")
 
+    local_entry_path = target / ".governance" / "local-entry" / "state.json"
+    local_entry = json.loads(local_entry_path.read_text(encoding="utf-8"))
+    local_entry.update({
+        "repository": args.repository,
+        "status": "WAITING_FOR_FIRST_AGENT",
+        "first_agent_completed": False,
+        "first_agent_session_id": None,
+        "baseline_subject_head": None,
+        "baseline_completed_at": None,
+        "last_local_entry_issue": None,
+    })
+    local_entry_path.write_text(json.dumps(local_entry, indent=2) + "\n", encoding="utf-8")
+
     bootstrap_path = target / ".governance" / "bootstrap-state.json"
     bootstrap = json.loads(bootstrap_path.read_text(encoding="utf-8"))
     bootstrap.update({
