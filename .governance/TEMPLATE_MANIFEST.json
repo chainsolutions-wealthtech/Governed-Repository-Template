@@ -105,7 +105,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.3.2",
+  "template_version": "2.3.3",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -141,7 +141,9 @@
     "explicit public/private repository visibility question",
     "GitHub generate-from-template creation executor",
     "per-creator GitHub App user-access authority",
-    "Patricked display alias to Patricked-code canonical owner"
+    "Patricked display alias to Patricked-code canonical owner",
+    "single GitHub App credential across organization and personal creation scopes",
+    "per-owner ephemeral GitHub App installation token minting"
   ],
   "automatic_initialization_supported": true
 }
