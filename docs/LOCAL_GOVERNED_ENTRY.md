@@ -86,12 +86,9 @@ The mere act of viewing a GitHub repository does not generate a GitHub event. A 
 
 When MCP binding is selected, the repository fails closed until the required Actions secret/variables exist.
 
-Direct MCP mode uses:
+Direct MCP mode uses the governed MCP endpoint captured during setup (optionally overridden by `GOVERNED_MCP_URL`) and the `GOVERNED_MCP_AUTH_TOKEN` repository secret.
 
-- `GOVERNED_MCP_URL` repository variable;
-- `GOVERNED_MCP_AUTH_TOKEN` repository secret.
-
-SSH fallback uses a private-key secret plus host/user/port variables and requires a governed server-side forced-command adapter. Arbitrary remote shell is forbidden.
+SSH fallback uses no persistent private-key secret. The workflow requests `id-token: write`, generates an ephemeral Ed25519 keypair on the runner, exchanges GitHub OIDC plus the public key for a short-lived MCP-signed OpenSSH certificate, pins the authenticated S1 host key, and executes only the server-side read-only force-command gateway. Arbitrary remote shell is forbidden.
 
 The first MCP discovery is read-only: `ping`, `get_project_context`, `list_domains_s1`, `list_domains_s2`, and `get_write_tools_context`.
 
