@@ -28,12 +28,13 @@ def python(repo: Path, *args: str, env: dict[str, str], check: bool = True) -> s
     return cp(repo, sys.executable, *args, env=env, check=check)
 
 
-def start(repo: Path, env: dict[str, str], agent: str, ref: str, intent: str | None) -> dict:
+def start(repo: Path, env: dict[str, str], agent: str, ref: str, intent: str | None, entry_action: str = "CONTINUE_GOVERNED_WORK") -> dict:
     args = [
         "scripts/governance_agent.py", "session-start",
         "--agent", agent,
         "--provider", "other",
         "--connection-ref", ref,
+        "--entry-action", entry_action,
     ]
     if intent:
         args.extend(["--intent", intent])
