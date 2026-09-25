@@ -31,7 +31,13 @@
     "intake_ne_work_item": "REQUIRED",
     "contradiction": "HOLD_FOR_REVIEW",
     "automation_fail_closed": "REQUIRED",
-    "runtime_authority_inference": "FORBIDDEN"
+    "runtime_authority_inference": "FORBIDDEN",
+    "planned_ne_implemented": "REQUIRED",
+    "infrastructure_facts_require_observation": "REQUIRED",
+    "credentials_in_repository": "FORBIDDEN",
+    "connection_intent_fail_closed": "REQUIRED",
+    "context_intake_ne_code_permission": "REQUIRED",
+    "intent_ne_authority": "REQUIRED"
   },
   "automation": {
     "auto_bootstrap": true,
@@ -39,6 +45,9 @@
     "canonical_memory": true,
     "multi_agent_coordination": true,
     "work_dispatch": true,
-    "information_intake": true
+    "information_intake": true,
+    "project_profiles": true,
+    "infrastructure_intent": true,
+    "connection_intent_routing": true
   }
 }
