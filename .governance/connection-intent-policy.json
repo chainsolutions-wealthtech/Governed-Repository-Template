@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0.0",
+  "intents": {
+    "OBSERVE": {
+      "may_dispatch_mutable_work": false,
+      "route": "OBSERVE_ONLY"
+    },
+    "CONTEXT_INTAKE": {
+      "may_dispatch_mutable_work": false,
+      "route": "INTAKE"
+    },
+    "INFORMATION_INTAKE": {
+      "may_dispatch_mutable_work": false,
+      "route": "INTAKE"
+    },
+    "WORK_REQUEST": {
+      "may_dispatch_mutable_work": true,
+      "route": "DISPATCH_AFTER_RECONCILIATION"
+    },
+    "CODE_CHANGE": {
+      "may_dispatch_mutable_work": true,
+      "route": "DISPATCH_AFTER_RECONCILIATION"
+    },
+    "REVIEW": {
+      "may_dispatch_mutable_work": false,
+      "route": "OBSERVE_REVIEW_NO_MUTATION_BY_DEFAULT"
+    },
+    "INFRASTRUCTURE": {
+      "may_dispatch_mutable_work": true,
+      "route": "INFRASTRUCTURE_DISCOVERY_THEN_DISPATCH"
+    },
+    "UNKNOWN": {
+      "may_dispatch_mutable_work": false,
+      "route": "RESOLVE_CONNECTION_INTENT"
+    }
+  },
+  "invariants": [
+    "CONTEXT_INTAKE_NE_CODE_PERMISSION",
+    "INFORMATION_INTAKE_NE_CODE_PERMISSION",
+    "UNKNOWN_FAILS_CLOSED",
+    "INTENT_NE_AUTHORITY",
+    "INFRASTRUCTURE_MUTATION_REQUIRES_SEPARATE_AUTHORITY"
+  ]
+}
