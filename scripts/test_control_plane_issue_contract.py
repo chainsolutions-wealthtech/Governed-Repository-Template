@@ -37,6 +37,8 @@ def main() -> None:
             "github.repository == 'chainsolutions-wealthtech/Governed-Repository-Template'",
             "issues: write",
             "github.actor != 'github-actions[bot]'",
+            "repository_dispatch:",
+            "governed_request_start",
             "python3 scripts/control_plane_issue_bridge.py",
         ]
         for fragment in required:
@@ -50,6 +52,10 @@ def main() -> None:
             raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: invalid control plane role")
         if workflow_path.exists() or issue_form_path.exists():
             raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: source-only surface leaked into client")
+
+    bridge = (ROOT / "scripts" / "control_plane_issue_bridge.py").read_text(encoding="utf-8")
+    if "def handle_repository_dispatch" not in bridge:
+        raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: repository dispatch handler missing")
 
     initializer = (ROOT / "scripts" / "initialize_governance.py").read_text(encoding="utf-8")
     if 'control_plane.get("source_only_paths", [])' not in initializer:
