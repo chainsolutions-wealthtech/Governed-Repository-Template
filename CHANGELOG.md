@@ -64,3 +64,23 @@ The V2.0.2 zero-touch governance baseline remains structurally compatible. The g
 ### Compatibility
 
 Entry action is separate from connection intent and authority. Adoption starts read-only and preserves existing project files. Mapping is read-only by default. Lab evolution cannot dispatch mutable work from the canonical branch. V2.1 zero-touch bootstrap remains the base behavior.
+
+
+## Governance Automation V2.3.0
+
+### Added
+
+- central Governed Repository control plane hosted by `chainsolutions-wealthtech/Governed-Repository-Template`;
+- GitHub Issue persisted request state, outside template content;
+- direct machine entry through `repository_dispatch: governed_request_start`;
+- one-question-or-action-at-a-time governed request state machine;
+- chronological preparation plans for create/adopt/map/lab/continue workflows;
+- plan approval gate before preparatory execution;
+- structured evidence validation for every preparatory action;
+- explicit `HANDOFF_READY` package before normal target work;
+- source-control-plane versus generated/adopted target-client role separation;
+- automatic removal of source-only control-plane workflow/issue form from generated clients.
+
+### Compatibility
+
+V2.3 is additive over V2.2. Repository-local governance, zero-touch bootstrap, connection intent, entry actions, adoption, mapping, lab evolution and personal/organization scopes remain intact. The control-plane issue workflow has no cross-repository write permission and cannot bypass target authority.
