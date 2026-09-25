@@ -1,0 +1,34 @@
+{
+  "schema_version": "1.0.0",
+  "role": "REPOSITORY_TO_MCP_BINDING",
+  "preferred_transport": "DIRECT_MCP_TOKEN",
+  "fallback_transport": "SSH",
+  "direct_mcp": {
+    "endpoint_variable": "GOVERNED_MCP_URL",
+    "token_secret": "GOVERNED_MCP_AUTH_TOKEN",
+    "default_endpoint": null,
+    "discovery_tools": [
+      "ping",
+      "get_project_context",
+      "list_domains_s1",
+      "list_domains_s2",
+      "get_write_tools_context"
+    ]
+  },
+  "ssh": {
+    "private_key_secret": "GOVERNED_MCP_SSH_PRIVATE_KEY",
+    "host_variable": "GOVERNED_MCP_SSH_HOST",
+    "user_variable": "GOVERNED_MCP_SSH_USER",
+    "port_variable": "GOVERNED_MCP_SSH_PORT",
+    "mode": "GOVERNED_FALLBACK_ONLY",
+    "arbitrary_shell": "FORBIDDEN",
+    "status": "SERVER_SIDE_FORCED_COMMAND_ADAPTER_REQUIRED"
+  },
+  "invariants": [
+    "NO_SECRET_IN_GIT",
+    "READ_ONLY_DISCOVERY_FIRST",
+    "WRITE_TOOLS_REQUIRE_PROJECT_REGISTRATION",
+    "DOMAIN_CREATION_REQUIRES_EXPLICIT_APPROVAL",
+    "MCP_STATE_NE_GITHUB_STATE"
+  ]
+}
