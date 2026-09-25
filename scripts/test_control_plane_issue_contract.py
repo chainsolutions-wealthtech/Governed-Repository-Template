@@ -27,20 +27,29 @@ def main() -> None:
     if evidence is None or evidence[0] != "evidence" or evidence[1]["action_id"] != "PREP-001":
         raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: evidence parsing")
 
-    workflow = (ROOT / ".github" / "workflows" / "governed-control-plane.yml").read_text(encoding="utf-8")
-    required = [
-        "github.repository == 'chainsolutions-wealthtech/Governed-Repository-Template'",
-        "issues: write",
-        "github.actor != 'github-actions[bot]'",
-        "python3 scripts/control_plane_issue_bridge.py",
-    ]
-    for fragment in required:
-        if fragment not in workflow:
-            raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: workflow boundary missing: " + fragment)
+    policy = __import__("json").loads((ROOT / ".governance" / "control-plane-policy.json").read_text(encoding="utf-8"))
+    workflow_path = ROOT / ".github" / "workflows" / "governed-control-plane.yml"
+    issue_form_path = ROOT / ".github" / "ISSUE_TEMPLATE" / "governed-request.yml"
 
-    issue_form = (ROOT / ".github" / "ISSUE_TEMPLATE" / "governed-request.yml").read_text(encoding="utf-8")
-    if 'title: "[Governed Request] "' not in issue_form:
-        raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: governed issue title missing")
+    if policy.get("current_role") == "CENTRAL_GOVERNANCE_CONTROL_PLANE":
+        workflow = workflow_path.read_text(encoding="utf-8")
+        required = [
+            "github.repository == 'chainsolutions-wealthtech/Governed-Repository-Template'",
+            "issues: write",
+            "github.actor != 'github-actions[bot]'",
+            "python3 scripts/control_plane_issue_bridge.py",
+        ]
+        for fragment in required:
+            if fragment not in workflow:
+                raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: workflow boundary missing: " + fragment)
+        issue_form = issue_form_path.read_text(encoding="utf-8")
+        if 'title: "[Governed Request] "' not in issue_form:
+            raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: governed issue title missing")
+    else:
+        if policy.get("current_role") != "GOVERNED_TARGET_CLIENT":
+            raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: invalid control plane role")
+        if workflow_path.exists() or issue_form_path.exists():
+            raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: source-only surface leaked into client")
 
     initializer = (ROOT / "scripts" / "initialize_governance.py").read_text(encoding="utf-8")
     if 'control_plane.get("source_only_paths", [])' not in initializer:
