@@ -31,22 +31,26 @@
     {
       "owner": "chainsolutions-wealthtech",
       "scope": "ORGANIZATION",
-      "label": "Organisation chainsolutions-wealthtech"
+      "label": "Organisation chainsolutions-wealthtech",
+      "creator_principal": "Wealthtechinnovations"
     },
     {
       "owner": "Wealthtechinnovations",
       "scope": "PERSONAL_ACCOUNT",
-      "label": "Compte administrateur Wealthtechinnovations"
+      "label": "Compte administrateur Wealthtechinnovations",
+      "creator_principal": "Wealthtechinnovations"
     },
     {
-      "owner": "Patricked",
+      "owner": "Patricked-code",
       "scope": "PERSONAL_ACCOUNT",
-      "label": "Compte administrateur Patricked"
+      "label": "Compte administrateur Patricked",
+      "selection_value": "Patricked",
+      "creator_principal": "Patricked-code"
     }
   ],
   "creation_defaults": {
     "source_template": "chainsolutions-wealthtech/Governed-Repository-Template",
-    "visibility": "private",
+    "visibility": "ASK_AFTER_REPOSITORY_NAME",
     "initialize_from_template": true,
     "add_manual_readme_gitignore_license": false
   }
