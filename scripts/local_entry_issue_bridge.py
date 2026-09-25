@@ -7,6 +7,7 @@ from local_governed_entry import answer, decode_state, encode_state, mark_creden
 ROOT=Path(__file__).resolve().parents[1]
 TITLE_PREFIX="[Governed Local Entry]"
 MARKER_RE=re.compile(r"\n?<!-- GOVERNED_LOCAL_ENTRY_STATE:([A-Za-z0-9_-]+) -->\s*$",re.S)
+TRUSTED_ASSOCIATIONS={"OWNER","MEMBER","COLLABORATOR"}
 
 def api(method,path,payload=None):
     token=os.environ["GITHUB_TOKEN"]
@@ -73,9 +74,19 @@ def emit_outputs(state,number):
         h.write(f"mcp_discovery_required={'true' if discover else 'false'}\n")
         h.write(f"issue_number={number}\nexpected_head={state.get('expected_head_sha','')}\n")
 
+def trusted_actor(record):
+    return isinstance(record,dict) and record.get("author_association") in TRUSTED_ASSOCIATIONS
+
+def refuse_untrusted(number):
+    api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{number}/comments",{
+      "body":"### Local entry refused\n\nThis command requires a repository OWNER, MEMBER or COLLABORATOR. No governed state advanced."
+    })
+
 def opened(event):
     issue=event["issue"]
     if not str(issue.get("title","")).startswith(TITLE_PREFIX):return
+    if not trusted_actor(issue):
+        refuse_untrusted(issue["number"]);return
     if (ROOT/".template-source").exists():return
     n=issue["number"];rid=f"LOCAL-{n:06d}"
     s=new_request(rid,os.environ["GITHUB_REPOSITORY"],head(),first_agent_required(),strip_marker(issue.get("body")))
@@ -84,6 +95,8 @@ def opened(event):
 def commented(event):
     issue=event["issue"]
     if not str(issue.get("title","")).startswith(TITLE_PREFIX):return
+    if not trusted_actor(event.get("comment") or {}):
+        refuse_untrusted(issue["number"]);return
     cmd=parse_command((event.get("comment") or {}).get("body"))
     if cmd is None:return
     s=extract_state(issue.get("body"));kind,payload=cmd
