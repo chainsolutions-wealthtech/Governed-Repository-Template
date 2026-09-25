@@ -49,24 +49,41 @@ def wait_for_initial_head(token: str, owner: str, name: str, branch: str, attemp
     raise RuntimeError(f"unable to observe initial target HEAD after creation: {last_error}")
 
 
+def _decode_manifest(content: dict | None) -> dict | None:
+    if not content:
+        return None
+    encoded = content.get("content")
+    if not isinstance(encoded, str):
+        return None
+    import base64
+    try:
+        return json.loads(base64.b64decode(encoded).decode("utf-8"))
+    except Exception:
+        return None
+
+
 def target_matches_governed_template(token: str, owner: str, name: str) -> bool:
-    manifest = github_api(
+    target_content = github_api(
         token,
         "GET",
         f"/repos/{owner}/{name}/contents/.governance/TEMPLATE_MANIFEST.json",
         allow_404=True,
     )
-    if not manifest:
+    source_content = github_api(
+        token,
+        "GET",
+        f"/repos/{TEMPLATE_OWNER}/{TEMPLATE_REPO}/contents/.governance/TEMPLATE_MANIFEST.json",
+        allow_404=True,
+    )
+    target_manifest = _decode_manifest(target_content)
+    source_manifest = _decode_manifest(source_content)
+    if not target_manifest or not source_manifest:
         return False
-    encoded = manifest.get("content")
-    if not isinstance(encoded, str):
-        return False
-    import base64
-    try:
-        payload = json.loads(base64.b64decode(encoded).decode("utf-8"))
-    except Exception:
-        return False
-    return payload.get("template_name") == "Governed Repository Template" and payload.get("template_version") == "2.3.3"
+    return (
+        target_manifest.get("template_name") == "Governed Repository Template"
+        and target_manifest.get("template_name") == source_manifest.get("template_name")
+        and target_manifest.get("template_version") == source_manifest.get("template_version")
+    )
 
 
 def github_api(token: str, method: str, path: str, payload: dict | None = None, allow_404: bool = False) -> dict | None:
