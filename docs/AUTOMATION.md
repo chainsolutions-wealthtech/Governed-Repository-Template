@@ -100,3 +100,21 @@ BOOTSTRAP_ATTESTED
 Zero-touch creation does not provision infrastructure by itself. It records that a server, domain, directory or database may be absent and preserves a governed future provisioning path.
 
 An explicitly supplied project profile can be passed to initialization. Without one, profile selection remains `DISCOVERY_REQUIRED`.
+
+
+## Central control plane lifecycle
+
+```text
+REQUEST_CREATED
+→ WAITING_FOR_ANSWER
+→ PLAN_READY
+→ WAITING_FOR_PLAN_APPROVAL
+→ EXECUTING_PREPARATION
+→ HANDOFF_READY
+```
+
+Any denied authority, failed evidence or contradiction transitions to `HOLD_FOR_REVIEW`.
+
+GitHub issues provide persistence for the interactive request. The issue workflow never writes to another repository. Cross-repository observations and authorized mutations are executed by the connected agent and returned as structured evidence.
+
+One state transition exposes exactly one next question, one targeted agent request, one action request, or the final handoff.
