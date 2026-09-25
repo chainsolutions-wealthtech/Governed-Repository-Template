@@ -43,7 +43,9 @@ def main():
       "scripts/validate_governance.py","scripts/adopt_existing_repository.py","scripts/test_bootstrap_consistency.py","scripts/test_repository_scope.py",".github/workflows/governed-local-entry.yml",
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml",".github/workflows/governance-ci.yml",
       ".github/workflows/governance-auto-bootstrap.yml",".governance/TEMPLATE_MANIFEST.json",
-      ".governance/repository-creation-executor.json"
+      ".governance/repository-creation-executor.json",
+      ".governance/mcp-connection-policy.json","schemas/mcp-binding.schema.json","docs/MCP_REPOSITORY_BINDING.md",
+      "scripts/mcp_repository_discovery.py"
     ]
     updates={p:(ROOT/p).read_text(encoding="utf-8") for p in static_paths}
 
@@ -59,6 +61,18 @@ def main():
     for k in ["local_governed_entry","first_agent_baseline_workflow","subsequent_agent_local_routing"]:
         profile.setdefault("automation",{})[k]=source_profile["automation"][k]
     updates[".governance/profile.json"]=json.dumps(profile,ensure_ascii=False,indent=2)+"\n"
+
+    mcp_binding=json.loads((ROOT/".governance/mcp-binding.json").read_text(encoding="utf-8"))
+    mcp_binding["repository"]=target
+    updates[".governance/mcp-binding.json"]=json.dumps(mcp_binding,ensure_ascii=False,indent=2)+"\n"
+
+    access_plan=json.loads((ROOT/".governance/access-plan.json").read_text(encoding="utf-8"))
+    access_plan["repository"]=target
+    updates[".governance/access-plan.json"]=json.dumps(access_plan,ensure_ascii=False,indent=2)+"\n"
+
+    workflow_model=json.loads((ROOT/".governance/workflow-model.json").read_text(encoding="utf-8"))
+    workflow_model["repository"]=target
+    updates[".governance/workflow-model.json"]=json.dumps(workflow_model,ensure_ascii=False,indent=2)+"\n"
 
     docs={
       "00_START_HERE.md":("## Local governed entry","## Local governed entry\n\nDans un repository cible initialisé, le point d'entrée préféré d'un agent est le workflow local décrit dans docs/LOCAL_GOVERNED_ENTRY.md. Le premier agent après bootstrap doit terminer FIRST_AGENT_BOOTSTRAP avant tout travail fonctionnel mutable."),
@@ -77,13 +91,13 @@ def main():
         blob=gh(token,"POST",f"/repos/{target}/git/blobs",{"content":text,"encoding":"utf-8"})
         entries.append({"path":path,"mode":"100644","type":"blob","sha":blob["sha"]})
     tree=gh(token,"POST",f"/repos/{target}/git/trees",{"base_tree":base_tree,"tree":entries})
-    new_commit=gh(token,"POST",f"/repos/{target}/git/commits",{"message":"governance: upgrade repository-local agent entry to v2.4","tree":tree["sha"],"parents":[head]})
+    new_commit=gh(token,"POST",f"/repos/{target}/git/commits",{"message":"governance: upgrade repository-local setup to v2.5","tree":tree["sha"],"parents":[head]})
     gh(token,"PATCH",f"/repos/{target}/git/refs/heads/{branch}",{"sha":new_commit["sha"],"force":False})
 
     issue=a.issue_number
     central_token=os.environ.get("GITHUB_TOKEN")
     if issue and central_token:
-        gh(central_token,"POST",f"/repos/{CENTRAL}/issues/{issue}/comments",{"body":f"### Local entry upgrade applied\n\nTarget: {target}\nPrevious HEAD: {head}\nUpgrade commit: {new_commit['sha']}\nVersion: 2.4.0"})
-    print(json.dumps({"status":"LOCAL_ENTRY_UPGRADE_APPLIED","target":target,"old_head":head,"new_head":new_commit["sha"]}))
+        gh(central_token,"POST",f"/repos/{CENTRAL}/issues/{issue}/comments",{"body":f"### Local entry upgrade applied\n\nTarget: {target}\nPrevious HEAD: {head}\nUpgrade commit: {new_commit['sha']}\nVersion: 2.5.0"})
+    print(json.dumps({"status":"LOCAL_SETUP_UPGRADE_APPLIED","target":target,"old_head":head,"new_head":new_commit["sha"]}))
 
 if __name__=="__main__":main()
