@@ -60,6 +60,9 @@ def main() -> None:
         loop_state = (target / "LOOP_STATE.md").read_text(encoding="utf-8")
         work_log = (target / "WORK_LOG.md").read_text(encoding="utf-8")
         suivi = (target / "SUIVI.md").read_text(encoding="utf-8")
+        project_profile = read_json(target, ".governance/project-profile.json")
+        infrastructure = read_json(target, ".governance/infrastructure-intent.json")
+        intent_policy = read_json(target, ".governance/connection-intent-policy.json")
 
         checks = {
             "receipt_validation": receipt.get("validation") == "PASS",
@@ -77,6 +80,21 @@ def main() -> None:
             "work_log_attested": "- Bootstrap attestation: `PASS`" in work_log,
             "suivi_state": "- State: `GOVERNANCE_INITIALIZED_BASELINE_REQUIRED`" in suivi,
             "suivi_attested": "- Bootstrap attestation: `PASS`" in suivi,
+            "project_profile_repo": project_profile.get("repository") == TEST_REPOSITORY,
+            "project_profile_discovery": project_profile.get("selection_status") == "DISCOVERY_REQUIRED",
+            "project_profile_candidate": project_profile.get("organization_default_candidate") == "chainsolutions-fullstack-web",
+            "planned_node": project_profile.get("profiles", {}).get("chainsolutions-fullstack-web", {}).get("planned_stack", {}).get("backend", {}).get("runtime") == "Node.js",
+            "planned_next": project_profile.get("profiles", {}).get("chainsolutions-fullstack-web", {}).get("planned_stack", {}).get("frontend", {}).get("framework") == "Next.js",
+            "planned_postgres": project_profile.get("profiles", {}).get("chainsolutions-fullstack-web", {}).get("planned_stack", {}).get("database", {}).get("engine") == "PostgreSQL",
+            "infrastructure_repo": infrastructure.get("repository") == TEST_REPOSITORY,
+            "infrastructure_unprovisioned": infrastructure.get("status") == "PLANNED_NOT_PROVISIONED",
+            "server_discovery": infrastructure.get("deployment_target", {}).get("server_status") == "DISCOVERY_REQUIRED",
+            "directory_discovery": infrastructure.get("deployment_target", {}).get("directory_status") == "DISCOVERY_REQUIRED",
+            "direct_mcp": infrastructure.get("server_access", {}).get("preferred") == "DIRECT_MCP",
+            "ssh_fallback": infrastructure.get("server_access", {}).get("fallback") == "SSH",
+            "no_repo_credentials": infrastructure.get("server_access", {}).get("credentials_in_repository") == "FORBIDDEN",
+            "unknown_intent_closed": intent_policy.get("intents", {}).get("UNKNOWN", {}).get("may_dispatch_mutable_work") is False,
+            "information_ne_code": intent_policy.get("intents", {}).get("INFORMATION_INTAKE", {}).get("may_dispatch_mutable_work") is False,
         }
         failed = [name for name, ok in checks.items() if not ok]
         if failed:
