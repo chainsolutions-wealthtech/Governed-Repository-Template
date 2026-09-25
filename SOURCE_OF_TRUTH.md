@@ -54,3 +54,8 @@ The control plane may hold:
 - the final handoff.
 
 After `HANDOFF_READY`, the target repository and its versioned authorities remain the source of truth for target work. A control-plane issue never outranks the target repository's code, ADRs, branch rules or validated state.
+
+
+## Local entry operational state
+
+A `[Governed Local Entry]` issue is orchestration state, not canonical project truth. Once the approved first-agent baseline is committed, the versioned repository files and machine projections become authoritative according to the normal hierarchy.
