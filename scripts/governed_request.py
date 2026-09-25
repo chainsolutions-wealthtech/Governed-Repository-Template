@@ -26,6 +26,12 @@ CONNECTION_INTENTS = [
     "INFRASTRUCTURE",
 ]
 OWNER_SCOPES = ["ORGANIZATION", "PERSONAL_ACCOUNT", "OTHER_AUTHORIZED_OWNER"]
+CREATE_OWNER_TARGETS = ["chainsolutions-wealthtech", "Wealthtechinnovations", "Patricked"]
+CREATE_OWNER_SCOPE = {
+    "chainsolutions-wealthtech": "ORGANIZATION",
+    "Wealthtechinnovations": "PERSONAL_ACCOUNT",
+    "Patricked": "PERSONAL_ACCOUNT",
+}
 PROJECT_PROFILES = ["generic", "application", "chainsolutions-fullstack-web", "data-platform"]
 LAB_PREFIXES = ("lab/", "claude/", "experiment/")
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
@@ -114,6 +120,8 @@ def validate_answer(field: str, value: Any, state: dict) -> str | None:
         return "invalid entry action"
     if field == "connection_intent" and value not in CONNECTION_INTENTS:
         return "invalid connection intent"
+    if field == "creation_target_owner" and value not in CREATE_OWNER_TARGETS:
+        return "invalid creation target owner"
     if field == "objective" and (not isinstance(value, str) or not value.strip()):
         return "objective must be non-empty text"
     if field == "target_scope" and value not in OWNER_SCOPES:
@@ -161,32 +169,39 @@ def ordered_requirements(state: dict) -> list[dict]:
             "Quel est le scénario principal de cette demande ?",
             choices=ENTRY_ACTIONS,
         ),
-        question(
-            "Q_CONNECTION_INTENT",
-            "connection_intent",
-            "Quelle est l'intention immédiate de l'agent pour cette demande ?",
-            choices=CONNECTION_INTENTS,
-        ),
-        question(
-            "Q_OBJECTIVE",
-            "objective",
-            "Décris l'objectif exact à atteindre, sans supposer l'état actuel du repository cible.",
-        ),
     ]
     action = a.get("entry_action")
 
     if action == "CREATE_NEW_REPOSITORY":
         requirements.extend([
-            question("Q_TARGET_SCOPE", "target_scope", "Où le nouveau repository doit-il être créé ?", choices=OWNER_SCOPES),
-            question("Q_TARGET_OWNER", "target_owner", "Quel est le propriétaire GitHub cible exact (organisation ou compte) ?"),
-            question("Q_REPOSITORY_NAME", "repository_name", "Quel est le nom exact du nouveau repository ?"),
-            question("Q_VISIBILITY", "visibility", "Quelle visibilité doit avoir le repository ?", choices=["private", "public", "internal"]),
-            question("Q_PROJECT_TYPE", "project_type", "Quel type de projet doit être initialisé ?"),
-            question("Q_PROJECT_PROFILE", "project_profile", "Quel profil technique doit être sélectionné ou utilisé comme point de départ ?", choices=PROJECT_PROFILES),
-            question("Q_INFRASTRUCTURE", "infrastructure_preference", "Quel est l'état attendu de l'infrastructure à la création ?", choices=["DISCOVER_AFTER_CREATION","NO_SERVER_REQUIRED_YET","KNOWN_TARGET_TO_VERIFY"]),
-            question("Q_CREATE_AUTHORITY", "creation_authority", "L'autorité explicite de créer ce repository dans ce scope est-elle confirmée ?", choices=[True, False], response_type="boolean"),
+            question(
+                "Q_CREATE_OWNER",
+                "creation_target_owner",
+                "Sur quel compte faut-il créer le repository depuis Governed-Repository-Template ?",
+                choices=CREATE_OWNER_TARGETS,
+            ),
+            question(
+                "Q_REPOSITORY_NAME",
+                "repository_name",
+                "Quel est le nom exact du nouveau repository ?",
+            ),
         ])
-    elif action == "ADOPT_EXISTING_REPOSITORY":
+    elif action is not None:
+        requirements.extend([
+            question(
+                "Q_CONNECTION_INTENT",
+                "connection_intent",
+                "Quelle est l'intention immédiate de l'agent pour cette demande ?",
+                choices=CONNECTION_INTENTS,
+            ),
+            question(
+                "Q_OBJECTIVE",
+                "objective",
+                "Décris l'objectif exact à atteindre, sans supposer l'état actuel du repository cible.",
+            ),
+        ])
+
+    if action == "ADOPT_EXISTING_REPOSITORY":
         target = a.get("target_repository")
         requirements.extend([
             question("Q_TARGET_REPOSITORY", "target_repository", "Quel repository existant doit être adopté ?"),
@@ -274,7 +289,9 @@ def build_plan(state: dict) -> list[dict]:
     action = a["entry_action"]
     target = None
     if action == "CREATE_NEW_REPOSITORY":
-        target = f"{a['target_owner']}/{a['repository_name']}"
+        owner = a["creation_target_owner"]
+        target = f"{owner}/{a['repository_name']}"
+        target_scope = CREATE_OWNER_SCOPE[owner]
         return [
             {
                 "id": "PREP-001",
@@ -282,8 +299,19 @@ def build_plan(state: dict) -> list[dict]:
                 "mutation_class": "TARGET_REPOSITORY_CREATE",
                 "target": target,
                 "status": "PENDING",
-                "instructions": f"Crée {target} depuis {CONTROL_PLANE_REPOSITORY} avec scope {a['target_scope']}, visibilité {a['visibility']} et sans ajout manuel parasite.",
-                "required_evidence": {"repository": target, "created": True, "initial_head_sha": "<40-hex-sha>"},
+                "instructions": (
+                    f"Crée {target} directement depuis le template {CONTROL_PLANE_REPOSITORY}, "
+                    f"scope {target_scope}, visibilité PRIVATE par défaut, sans README/.gitignore/licence ajoutés manuellement. "
+                    "Le repository doit recevoir le template complet afin de déclencher son zero-touch bootstrap."
+                ),
+                "required_evidence": {
+                    "repository": target,
+                    "template_repository": CONTROL_PLANE_REPOSITORY,
+                    "repository_scope": target_scope,
+                    "visibility": "private",
+                    "created": True,
+                    "initial_head_sha": "<40-hex-sha>"
+                },
             },
             {
                 "id": "PREP-002",
@@ -454,16 +482,14 @@ def build_plan(state: dict) -> list[dict]:
 
 def target_repository(state: dict) -> str | None:
     a = state["answers"]
-    if a.get("entry_action") == "CREATE_NEW_REPOSITORY" and a.get("target_owner") and a.get("repository_name"):
-        return f"{a['target_owner']}/{a['repository_name']}"
+    if a.get("entry_action") == "CREATE_NEW_REPOSITORY" and a.get("creation_target_owner") and a.get("repository_name"):
+        return f"{a['creation_target_owner']}/{a['repository_name']}"
     return a.get("target_repository")
 
 
 def authority_denied(state: dict) -> str | None:
     a = state["answers"]
     action = a.get("entry_action")
-    if action == "CREATE_NEW_REPOSITORY" and a.get("creation_authority") is False:
-        return "repository creation authority denied"
     if action == "ADOPT_EXISTING_REPOSITORY" and a.get("adoption_authority") is False:
         return "adoption authority denied"
     if action == "LAB_EVOLUTION" and a.get("lab_authority") is False:
@@ -543,18 +569,22 @@ def refresh(state: dict) -> dict:
 
     if not state["execution_plan"]:
         state["execution_plan"] = build_plan(state)
-        state["status"] = "PLAN_READY"
-        state["phase"] = "PLAN_APPROVAL"
-        state["next_request"] = {
-            "kind": "PLAN_APPROVAL",
-            "id": "Q_PLAN_APPROVAL",
-            "field": "plan_approved",
-            "text": "Le plan préparatoire chronologique ci-dessous est-il approuvé pour exécution par l'agent connecté ?",
-            "required": True,
-            "response_type": "boolean",
-            "plan": copy.deepcopy(state["execution_plan"]),
-        }
-        return state
+        if state["answers"].get("entry_action") == "CREATE_NEW_REPOSITORY":
+            state["answers"]["plan_approved"] = True
+            state["answers"]["creation_authority_basis"] = "EXPLICIT_CREATE_FLOW_OWNER_AND_NAME_SELECTION"
+        else:
+            state["status"] = "PLAN_READY"
+            state["phase"] = "PLAN_APPROVAL"
+            state["next_request"] = {
+                "kind": "PLAN_APPROVAL",
+                "id": "Q_PLAN_APPROVAL",
+                "field": "plan_approved",
+                "text": "Le plan préparatoire chronologique ci-dessous est-il approuvé pour exécution par l'agent connecté ?",
+                "required": True,
+                "response_type": "boolean",
+                "plan": copy.deepcopy(state["execution_plan"]),
+            }
+            return state
 
     if "plan_approved" not in state["answers"]:
         state["status"] = "WAITING_FOR_PLAN_APPROVAL"
