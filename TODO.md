@@ -28,3 +28,15 @@
 - [ ] Identify initial risks and dependencies.
 - [ ] Capture project baseline and CI.
 - [ ] Replace generic baseline discovery with the first project-specific unique action.
+
+
+## V2.2 entry workflow layer
+
+- [x] Require an entry action on every governed agent connection.
+- [x] Route new-repository creation separately from repo-local work.
+- [x] Support organization and personal-account repository scopes.
+- [x] Add plan-first additive adoption for existing repositories.
+- [x] Add read-only current/target project mapping mode.
+- [x] Add isolated lab branch/PR evolution mode.
+- [x] Preserve normal governed-work continuation.
+- [x] Add regression tests for routing, adoption preservation and repository scopes.
