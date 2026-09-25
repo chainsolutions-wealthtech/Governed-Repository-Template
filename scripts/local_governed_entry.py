@@ -91,7 +91,7 @@ def credential_requirements(a):
     t=a.get("mcp_transport")
     req=[]
     if t in {"DIRECT_MCP_TOKEN","BOTH"}:
-        req += [{"kind":"variable","name":"GOVERNED_MCP_URL"},{"kind":"secret","name":"GOVERNED_MCP_AUTH_TOKEN"}]
+        req += [{"kind":"secret","name":"GOVERNED_MCP_AUTH_TOKEN"}]
     # SSH/BOTH use a GitHub OIDC-issued ephemeral certificate. No persistent
     # repository SSH private-key secret is permitted.
     return req
