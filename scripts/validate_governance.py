@@ -372,6 +372,8 @@ def validate_python_automation() -> None:
         "scripts/finalize_bootstrap.py",
         "scripts/governance_agent.py",
         "scripts/validate_governance.py",
+        "scripts/test_bootstrap_consistency.py",
+        "scripts/test_connection_intent.py",
     ]:
         path = ROOT / relative
         try:
