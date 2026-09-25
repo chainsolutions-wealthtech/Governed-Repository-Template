@@ -46,3 +46,21 @@ All V1 governance files and manual initialization remain supported. No runtime M
 ### Compatibility
 
 The V2.0.2 zero-touch governance baseline remains structurally compatible. The generic core still does not force a framework or provision infrastructure. Existing projects can keep project-specific architecture and infrastructure decisions; V2.1 records planned/discovered intent separately.
+
+
+## Governance Automation V2.2.0
+
+### Added
+
+- mandatory macro entry-action questionnaire on agent connection;
+- repository creation routing with owner-scope and authority gates;
+- additive existing-repository adoption plan/apply helper;
+- current/target architecture mapping route;
+- isolated lab branch/PR evolution route;
+- normal governed-work continuation route;
+- organization, personal-account and explicitly authorized owner scopes;
+- CI tests for entry routing, adoption preservation and personal-account scope.
+
+### Compatibility
+
+Entry action is separate from connection intent and authority. Adoption starts read-only and preserves existing project files. Mapping is read-only by default. Lab evolution cannot dispatch mutable work from the canonical branch. V2.1 zero-touch bootstrap remains the base behavior.
