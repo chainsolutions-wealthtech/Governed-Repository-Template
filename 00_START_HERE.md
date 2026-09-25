@@ -27,12 +27,19 @@
 19. `docs/PROJECT_PROFILES.md`
 20. `docs/INFRASTRUCTURE_BOOTSTRAP.md`
 21. `docs/CONNECTION_INTENT.md`
-22. les spécifications, schémas, historiques, adaptateurs et preuves directement concernés ;
-23. les derniers commits pertinents et l'état des contrôles/CI disponibles.
+22. `docs/ENTRY_ACTION_ROUTER.md`
+23. `docs/EXISTING_REPOSITORY_ADOPTION.md`
+24. `docs/PROJECT_MAPPING.md`
+25. `docs/LAB_EVOLUTION.md`
+26. `docs/REPOSITORY_SCOPES.md`
+27. les spécifications, schémas, historiques, adaptateurs et preuves directement concernés ;
+28. les derniers commits pertinents et l'état des contrôles/CI disponibles.
 
 ## Avant toute écriture
 
-Dans un dépôt instancié, commencer par `python3 scripts/governance_agent.py observe` afin de reconstruire l'état machine courant.
+Dans un dépôt instancié, commencer par `python3 scripts/governance_agent.py observe`, puis `python3 scripts/governance_agent.py entry-actions`. Toute connexion doit résoudre son action d'entrée avant le dispatch mutable.
+
+Les actions d'entrée sont : création d'un nouveau repository, adoption additive d'un repository existant, cartographie/architecture cible, lab branche/PR, ou poursuite d'un travail déjà gouverné.
 
 Avant tout travail mutable, la session doit également résoudre son intention. Une intention `UNKNOWN`, `CONTEXT_INTAKE` ou `INFORMATION_INTAKE` ne peut pas être transformée silencieusement en permission de coder.
 
