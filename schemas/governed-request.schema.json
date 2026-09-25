@@ -1,0 +1,81 @@
+{
+  "title": "Governed Control Plane Request",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "request_id",
+    "control_plane_repository",
+    "status",
+    "phase",
+    "revision",
+    "agent",
+    "answers",
+    "execution_plan",
+    "evidence",
+    "next_request"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "request_id": {
+      "type": "string"
+    },
+    "control_plane_repository": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "phase": {
+      "type": "string"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "agent": {
+      "type": "object"
+    },
+    "initial_context": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "answers": {
+      "type": "object"
+    },
+    "execution_plan": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "next_request": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "handoff": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "hold_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}
