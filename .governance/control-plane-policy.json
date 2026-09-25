@@ -26,11 +26,18 @@
     "TARGET_EVIDENCE_NE_ASSUMED_STATE",
     "CONTROL_PLANE_STATE_STAYS_OUT_OF_TEMPLATE_CONTENT",
     "HANDOFF_IS_EXPLICIT",
-    "NO_CROSS_REPOSITORY_MUTATION_BY_ISSUE_WORKFLOW"
+    "CROSS_REPOSITORY_MUTATION_ONLY_VIA_AUTHORIZED_EXECUTOR",
+    "STANDARD_GITHUB_TOKEN_CANNOT_CREATE_TARGET_REPOSITORIES",
+    "CREATOR_CREDENTIALS_STAY_OUTSIDE_GIT"
   ],
   "source_only_paths": [
     ".github/workflows/governed-control-plane.yml",
     ".github/ISSUE_TEMPLATE/governed-request.yml"
   ],
-  "current_role": "CENTRAL_GOVERNANCE_CONTROL_PLANE"
+  "current_role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
+  "executor": {
+    "repository_creation": "scripts/control_plane_create_repository.py",
+    "authority_policy": ".governance/repository-creation-executor.json",
+    "github_endpoint": "POST /repos/chainsolutions-wealthtech/Governed-Repository-Template/generate"
+  }
 }
