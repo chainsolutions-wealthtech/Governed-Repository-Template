@@ -433,7 +433,7 @@ def build_plan(state: dict) -> list[dict]:
                 "target": target,
                 "status": "PENDING",
                 "instructions": "Vérifie que le laboratoire pointe sur la baseline attendue et que la branche canonique n'a pas bougé du fait de la préparation.",
-                "required_evidence": {"lab_branch": a["lab_branch_name"], "canonical_unchanged": True, "lab_ready": True},
+                "required_evidence": {"lab_branch": a["lab_branch_name"], "lab_head_sha": "<40-hex-sha>", "canonical_unchanged": True, "lab_ready": True},
             },
         ]
 
@@ -479,7 +479,7 @@ def make_handoff(state: dict) -> dict:
     branch = None
     for item in reversed(state["evidence"]):
         ev = item.get("evidence") or {}
-        expected_head = ev.get("head_sha") or ev.get("final_head_sha") or ev.get("resulting_head_sha") or expected_head
+        expected_head = ev.get("head_sha") or ev.get("final_head_sha") or ev.get("resulting_head_sha") or ev.get("lab_head_sha") or expected_head
         branch = ev.get("default_branch") or ev.get("lab_branch") or branch
     if branch is None:
         observation = a.get("target_observation") or {}
@@ -610,11 +610,58 @@ def apply_answer(state: dict, field: str, value: Any) -> dict:
     return refresh(state)
 
 
+def evidence_value_matches(expected: Any, actual: Any) -> bool:
+    if isinstance(expected, dict):
+        if not isinstance(actual, dict):
+            return False
+        return all(key in actual and evidence_value_matches(value, actual[key]) for key, value in expected.items())
+    if isinstance(expected, list):
+        if expected == []:
+            return isinstance(actual, list) and actual == []
+        return isinstance(actual, list)
+    if isinstance(expected, bool):
+        return actual is expected
+    if isinstance(expected, int):
+        return isinstance(actual, int) and not isinstance(actual, bool) and actual == expected
+    if isinstance(expected, str) and expected.startswith("<") and expected.endswith(">"):
+        token = expected[1:-1]
+        if token == "40-hex-sha":
+            return isinstance(actual, str) and SHA40.fullmatch(actual) is not None
+        if token in {"integer"}:
+            return isinstance(actual, int) and not isinstance(actual, bool)
+        if token in {"array"}:
+            return isinstance(actual, list)
+        if token in {"boolean"}:
+            return isinstance(actual, bool)
+        if token in {"integer-or-null"}:
+            return actual is None or (isinstance(actual, int) and not isinstance(actual, bool))
+        if token in {"boolean-or-null"}:
+            return actual is None or isinstance(actual, bool)
+        if token == "optional":
+            return True
+        return actual is not None and actual != ""
+    return actual == expected
+
+
+def validate_action_evidence(action: dict, evidence: dict) -> str | None:
+    required = action.get("required_evidence") or {}
+    for key, expected in required.items():
+        if key not in evidence:
+            return f"missing evidence field {key}"
+        if not evidence_value_matches(expected, evidence[key]):
+            return f"invalid evidence field {key}: expected {expected!r}, got {evidence[key]!r}"
+    return None
+
+
 def apply_evidence(state: dict, action_id: str, result: str, evidence: dict) -> dict:
     state = copy.deepcopy(state)
     current = state.get("next_request") or {}
     if current.get("kind") != "ACTION_REQUEST" or current.get("action_id") != action_id:
         raise ValueError(f"unexpected evidence for {action_id!r}")
+    action = next((item for item in state["execution_plan"] if item["id"] == action_id), None)
+    if action is None:
+        raise ValueError(f"unknown action {action_id}")
+
     if result != "PASS":
         state["status"] = "HOLD_FOR_REVIEW"
         state["phase"] = action_id
@@ -623,10 +670,11 @@ def apply_evidence(state: dict, action_id: str, result: str, evidence: dict) -> 
         state["revision"] += 1
         return state
 
-    for action in state["execution_plan"]:
-        if action["id"] == action_id:
-            action["status"] = "DONE"
-            break
+    evidence_error = validate_action_evidence(action, evidence)
+    if evidence_error:
+        raise ValueError(evidence_error)
+
+    action["status"] = "DONE"
     state["evidence"].append({"action_id": action_id, "result": result, "evidence": evidence})
     state["revision"] += 1
     return refresh(state)
