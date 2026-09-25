@@ -28,3 +28,21 @@
 ### Compatibility
 
 All V1 governance files and manual initialization remain supported. No runtime MCP, server lock, production authority or project-specific Regulatory state is introduced.
+
+
+## Governance Automation V2.1.0
+
+### Added
+
+- machine-readable project profiles with a non-binding `chainsolutions-fullstack-web` candidate;
+- planned Node.js, Next.js + TypeScript and PostgreSQL intent without claiming implementation;
+- infrastructure lifecycle that represents unknown or missing server/domain/directory/database resources;
+- preferred `DIRECT_MCP` server access with governed `SSH` fallback;
+- explicit prohibition on repository-stored infrastructure credentials;
+- connection intent classification and deterministic routing;
+- fail-closed mutable dispatch for `UNKNOWN`, context intake and information intake;
+- regression tests for bootstrap capability intent and session intent routing.
+
+### Compatibility
+
+The V2.0.2 zero-touch governance baseline remains structurally compatible. The generic core still does not force a framework or provision infrastructure. Existing projects can keep project-specific architecture and infrastructure decisions; V2.1 records planned/discovered intent separately.
