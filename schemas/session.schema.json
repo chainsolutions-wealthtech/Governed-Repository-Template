@@ -5,6 +5,8 @@
     "session_id",
     "agent_identity",
     "provider",
+    "connection_intent",
+    "connection_intent_provenance",
     "repository",
     "starting_head_sha",
     "last_observed_head_sha",
@@ -58,6 +60,24 @@
     },
     "last_seen_at": {
       "type": "string"
+    },
+    "connection_intent": {
+      "enum": [
+        "OBSERVE",
+        "CONTEXT_INTAKE",
+        "INFORMATION_INTAKE",
+        "WORK_REQUEST",
+        "CODE_CHANGE",
+        "REVIEW",
+        "INFRASTRUCTURE",
+        "UNKNOWN"
+      ]
+    },
+    "connection_intent_provenance": {
+      "enum": [
+        "PROVIDED_BY_CLIENT",
+        "DEFAULT_UNKNOWN"
+      ]
     }
   },
   "additionalProperties": false
