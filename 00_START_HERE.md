@@ -24,12 +24,17 @@
 16. `docs/AUTOMATION.md`
 17. `docs/MULTI_AGENT_COORDINATION.md`
 18. `docs/INFORMATION_INTAKE.md`
-19. les spécifications, schémas, historiques, adaptateurs et preuves directement concernés ;
-20. les derniers commits pertinents et l'état des contrôles/CI disponibles.
+19. `docs/PROJECT_PROFILES.md`
+20. `docs/INFRASTRUCTURE_BOOTSTRAP.md`
+21. `docs/CONNECTION_INTENT.md`
+22. les spécifications, schémas, historiques, adaptateurs et preuves directement concernés ;
+23. les derniers commits pertinents et l'état des contrôles/CI disponibles.
 
 ## Avant toute écriture
 
 Dans un dépôt instancié, commencer par `python3 scripts/governance_agent.py observe` afin de reconstruire l'état machine courant.
+
+Avant tout travail mutable, la session doit également résoudre son intention. Une intention `UNKNOWN`, `CONTEXT_INTAKE` ou `INFORMATION_INTAKE` ne peut pas être transformée silencieusement en permission de coder.
 
 
 - confirmer le dépôt et la branche courante ;
