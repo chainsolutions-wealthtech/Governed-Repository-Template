@@ -70,3 +70,8 @@ Sur le repository source `chainsolutions-wealthtech/Governed-Repository-Template
 Créer une issue `[Governed Request]` depuis le formulaire dédié. Le control plane pose ensuite une seule question ou requête d'action à la fois, construit le plan préparatoire, exige les preuves, puis émet `HANDOFF_READY`.
 
 Dans un repository cible déjà remis par handoff, suivre la gouvernance locale normale : `observe → entry-actions → session-start → dispatch`.
+
+
+## Local governed entry
+
+Dans un repository cible initialisé, le point d'entrée préféré d'un agent est le workflow local décrit dans `docs/LOCAL_GOVERNED_ENTRY.md`. Le premier agent après bootstrap doit terminer `FIRST_AGENT_BOOTSTRAP` avant tout travail fonctionnel mutable.
