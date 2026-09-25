@@ -1,0 +1,40 @@
+{
+  "schema_version": "1.0.0",
+  "repository": "{{REPOSITORY}}",
+  "status": "DISCOVERY_REQUIRED",
+  "git": {
+    "read": [
+      "repository metadata",
+      "contents",
+      "commits",
+      "branches",
+      "pull requests",
+      "issues",
+      "actions/checks",
+      "rulesets when available"
+    ],
+    "governed_write": [
+      "contents",
+      "issues",
+      "pull requests",
+      "workflow files when explicitly required"
+    ],
+    "forbidden": [
+      "force push",
+      "history rewrite",
+      "unreviewed destructive repository administration"
+    ]
+  },
+  "mcp": {
+    "discovery_read": [
+      "ping",
+      "get_project_context",
+      "list_domains_s1",
+      "list_domains_s2",
+      "get_write_tools_context"
+    ],
+    "project_read": [],
+    "project_write": [],
+    "write_activation": "REQUIRES_MCP_PROJECT_REGISTRATION_AND_EXPLICIT_AUTHORITY"
+  }
+}
