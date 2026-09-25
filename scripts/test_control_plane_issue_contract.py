@@ -41,6 +41,11 @@ def main() -> None:
             "repository_dispatch:",
             "governed_request_start",
             "python3 scripts/control_plane_issue_bridge.py",
+            "actions/create-github-app-token@v3",
+            "GOVERNED_GITHUB_APP_CLIENT_ID",
+            "GOVERNED_GITHUB_APP_PRIVATE_KEY",
+            "permission-administration: write",
+            "permission-contents: read",
         ]
         for fragment in required:
             if fragment not in workflow:
