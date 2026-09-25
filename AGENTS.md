@@ -74,3 +74,12 @@ Then start/resume the session with `--entry-action`.
 The structural actions are `CREATE_NEW_REPOSITORY`, `ADOPT_EXISTING_REPOSITORY`, `MAP_EXISTING_PROJECT`, and `LAB_EVOLUTION`. `CONTINUE_GOVERNED_WORK` preserves normal work on an already governed repository.
 
 `ADOPT_EXISTING_REPOSITORY` and `MAP_EXISTING_PROJECT` start read-only. `LAB_EVOLUTION` cannot dispatch mutable work from the canonical branch. Missing entry action fails closed.
+
+
+## Central control plane entry
+
+When the task begins before a target repository is prepared, start from `chainsolutions-wealthtech/Governed-Repository-Template` using a Governed Request issue.
+
+The control plane owns the preparation sequence. Answer only the current question or perform only the current requested preparatory action. Return structured evidence before expecting the next step.
+
+Do not start normal target-repository work until the control plane emits `HANDOFF_READY`. After handoff, reobserve the handed-off target HEAD before any write.
