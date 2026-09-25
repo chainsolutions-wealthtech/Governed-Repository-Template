@@ -11,6 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 GOV = ROOT / ".governance"
+MUTABLE_INTENTS = {"WORK_REQUEST", "CODE_CHANGE", "INFRASTRUCTURE"}
 
 
 def utcnow() -> str:
@@ -71,6 +72,8 @@ def command_observe(_: argparse.Namespace) -> None:
     work = read_json(GOV / "work" / "work-items.json")
     claims = read_json(GOV / "work" / "claims.json")
     sessions = read_json(GOV / "sessions" / "sessions.json")
+    project_profile = read_json(GOV / "project-profile.json")
+    infrastructure = read_json(GOV / "infrastructure-intent.json")
     print(json.dumps({
         "status": "OBSERVED",
         "repository": p["repository"],
@@ -79,6 +82,17 @@ def command_observe(_: argparse.Namespace) -> None:
         "work_revision": memory.get("work_revision", 0),
         "memory_observed_head_sha": memory.get("observed_head_sha"),
         "next_action": memory.get("next_action"),
+        "project_profile": {
+            "selection_status": project_profile.get("selection_status"),
+            "selected_profile": project_profile.get("selected_profile"),
+            "organization_default_candidate": project_profile.get("organization_default_candidate"),
+        },
+        "infrastructure": {
+            "status": infrastructure.get("status"),
+            "server_status": infrastructure.get("deployment_target", {}).get("server_status"),
+            "directory_status": infrastructure.get("deployment_target", {}).get("directory_status"),
+            "server_access": infrastructure.get("server_access"),
+        },
         "active_sessions": [s for s in sessions.get("sessions", []) if s.get("status") == "ACTIVE"],
         "active_claims": [c for c in claims.get("claims", []) if c.get("status") == "ACTIVE"],
         "ready_work_items": [i for i in work.get("items", []) if i.get("status") == "READY"],
@@ -93,6 +107,8 @@ def command_session_start(a: argparse.Namespace) -> None:
     sessions = store.get("sessions", [])
     provider_ref = a.provider_ref or None
     connection_ref = a.connection_ref or None
+    connection_intent = a.intent or "UNKNOWN"
+    intent_provenance = "PROVIDED_BY_CLIENT" if a.intent else "DEFAULT_UNKNOWN"
 
     eligible = [
         s for s in sessions
@@ -117,6 +133,12 @@ def command_session_start(a: argparse.Namespace) -> None:
         session = matches[0]
         session["last_seen_at"] = timestamp
         session["last_observed_head_sha"] = head
+        if a.intent:
+            session["connection_intent"] = connection_intent
+            session["connection_intent_provenance"] = intent_provenance
+        elif not session.get("connection_intent"):
+            session["connection_intent"] = "UNKNOWN"
+            session["connection_intent_provenance"] = "DEFAULT_UNKNOWN"
         resolution = "RESUME"
     else:
         strongest_ref = (
@@ -131,6 +153,8 @@ def command_session_start(a: argparse.Namespace) -> None:
             "provider_conversation_ref": provider_ref,
             "provider_conversation_ref_provenance": "PROVIDED_BY_CLIENT" if provider_ref else "UNAVAILABLE",
             "connection_ref": connection_ref,
+            "connection_intent": connection_intent,
+            "connection_intent_provenance": intent_provenance,
             "repository": p["repository"],
             "starting_head_sha": head,
             "last_observed_head_sha": head,
@@ -158,6 +182,19 @@ def command_dispatch(a: argparse.Namespace) -> None:
     session = next((s for s in sessions.get("sessions", []) if s.get("session_id") == a.session_id and s.get("status") == "ACTIVE"), None)
     if not session:
         raise SystemExit("DISPATCH_FAILED: active session not found")
+
+    intent = session.get("connection_intent") or "UNKNOWN"
+    if intent not in MUTABLE_INTENTS:
+        policy = read_json(GOV / "connection-intent-policy.json")
+        route = policy.get("intents", {}).get(intent, policy.get("intents", {}).get("UNKNOWN", {})).get("route")
+        print(json.dumps({
+            "status": "INTENT_BLOCKS_MUTABLE_DISPATCH",
+            "connection_intent": intent,
+            "route": route,
+            "may_write": False,
+            "next_action": "RESOLVE_CONNECTION_INTENT" if intent == "UNKNOWN" else route,
+        }, indent=2))
+        raise SystemExit(5)
 
     work_path = GOV / "work" / "work-items.json"
     claims_path = GOV / "work" / "claims.json"
@@ -440,6 +477,7 @@ def parser() -> argparse.ArgumentParser:
     start.add_argument("--provider", choices=["chatgpt","claude","codex","github-actions","human","other"], required=True)
     start.add_argument("--provider-ref")
     start.add_argument("--connection-ref")
+    start.add_argument("--intent", choices=["OBSERVE","CONTEXT_INTAKE","INFORMATION_INTAKE","WORK_REQUEST","CODE_CHANGE","REVIEW","INFRASTRUCTURE","UNKNOWN"])
     start.add_argument("--expected-head")
     start.set_defaults(fn=command_session_start)
 
