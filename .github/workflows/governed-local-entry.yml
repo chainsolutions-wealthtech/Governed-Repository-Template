@@ -11,6 +11,7 @@ on:
 permissions:
   contents: write
   issues: write
+  id-token: write
 
 concurrency:
   group: governed-local-entry-${{ github.event.issue.number || github.run_id }}
@@ -50,10 +51,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GOVERNED_MCP_URL: ${{ vars.GOVERNED_MCP_URL }}
           GOVERNED_MCP_AUTH_TOKEN: ${{ secrets.GOVERNED_MCP_AUTH_TOKEN }}
-          GOVERNED_MCP_SSH_PRIVATE_KEY: ${{ secrets.GOVERNED_MCP_SSH_PRIVATE_KEY }}
-          GOVERNED_MCP_SSH_HOST: ${{ vars.GOVERNED_MCP_SSH_HOST }}
-          GOVERNED_MCP_SSH_USER: ${{ vars.GOVERNED_MCP_SSH_USER }}
-          GOVERNED_MCP_SSH_PORT: ${{ vars.GOVERNED_MCP_SSH_PORT }}
         run: python3 scripts/local_entry_issue_bridge.py
 
       - name: Discover MCP infrastructure and domains
