@@ -160,6 +160,8 @@ def render_response(state: dict) -> str:
 
 def handle_opened(event: dict) -> None:
     issue = event["issue"]
+    if not str(issue.get("title", "")).startswith("[Governed Request]"):
+        return
     number = issue["number"]
     request_id = f"GR-{number:06d}"
     actor = (event.get("sender") or {}).get("login")
