@@ -57,6 +57,9 @@ def main() -> None:
         state = read_json(target, ".governance/bootstrap-state.json")
         memory = read_json(target, ".governance/canonical-memory/current.json")
         status = (target / "STATUS.md").read_text(encoding="utf-8")
+        loop_state = (target / "LOOP_STATE.md").read_text(encoding="utf-8")
+        work_log = (target / "WORK_LOG.md").read_text(encoding="utf-8")
+        suivi = (target / "SUIVI.md").read_text(encoding="utf-8")
 
         checks = {
             "receipt_validation": receipt.get("validation") == "PASS",
@@ -68,6 +71,12 @@ def main() -> None:
             "status_validation": "- Governance validation: `PASS`" in status,
             "status_freshness": "- Governance freshness: `ATTESTED`" in status,
             "status_subject": f"- Attested initialization commit: `{INITIALIZATION_HEAD}`" in status,
+            "loop_next_action": '"next_action": "DISCOVER_PROJECT_BASELINE"' in loop_state,
+            "loop_attested": '"last_verification": "GOVERNANCE_BOOTSTRAP_ATTESTED"' in loop_state,
+            "work_log_pass": "- Result: `PASS`" in work_log,
+            "work_log_attested": "- Bootstrap attestation: `PASS`" in work_log,
+            "suivi_state": "- State: `GOVERNANCE_INITIALIZED_BASELINE_REQUIRED`" in suivi,
+            "suivi_attested": "- Bootstrap attestation: `PASS`" in suivi,
         }
         failed = [name for name, ok in checks.items() if not ok]
         if failed:
