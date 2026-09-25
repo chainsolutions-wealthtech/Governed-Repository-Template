@@ -25,13 +25,22 @@ jobs:
         run: python3 scripts/validate_governance.py
 
       - name: Compile governance scripts
-        run: python3 -m py_compile scripts/initialize_governance.py scripts/auto_bootstrap.py scripts/finalize_bootstrap.py scripts/governance_agent.py scripts/validate_governance.py scripts/test_bootstrap_consistency.py scripts/test_connection_intent.py
+        run: python3 -m py_compile scripts/initialize_governance.py scripts/auto_bootstrap.py scripts/finalize_bootstrap.py scripts/governance_agent.py scripts/validate_governance.py scripts/adopt_existing_repository.py scripts/test_bootstrap_consistency.py scripts/test_connection_intent.py scripts/test_entry_action_router.py scripts/test_repository_adoption.py scripts/test_repository_scope.py
 
       - name: Test bootstrap state consistency
         run: python3 scripts/test_bootstrap_consistency.py
 
       - name: Test connection intent routing
         run: python3 scripts/test_connection_intent.py
+
+      - name: Test mandatory entry action routing
+        run: python3 scripts/test_entry_action_router.py
+
+      - name: Test additive existing repository adoption
+        run: python3 scripts/test_repository_adoption.py
+
+      - name: Test organization/personal repository scopes
+        run: python3 scripts/test_repository_scope.py
 
       - name: Check textual integrity
         run: git diff --check
