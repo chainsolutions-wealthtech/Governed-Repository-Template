@@ -61,6 +61,8 @@ REQUIRED = [
     "scripts/auto_bootstrap.py",
     "scripts/finalize_bootstrap.py",
     "scripts/governance_agent.py",
+    "scripts/validate_governance.py",
+    "scripts/test_bootstrap_consistency.py",
     ".github/workflows/governance-ci.yml",
     ".github/workflows/governance-auto-bootstrap.yml",
 ]
