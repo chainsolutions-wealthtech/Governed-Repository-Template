@@ -1,0 +1,74 @@
+{
+  "title": "Governed Local Entry Request",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "request_id",
+    "repository",
+    "mode",
+    "status",
+    "phase",
+    "revision",
+    "expected_head_sha",
+    "answers",
+    "next_request"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "request_id": {
+      "type": "string"
+    },
+    "repository": {
+      "type": "string"
+    },
+    "mode": {
+      "enum": [
+        "FIRST_AGENT_BOOTSTRAP",
+        "NORMAL_GOVERNED_ENTRY"
+      ]
+    },
+    "status": {
+      "type": "string"
+    },
+    "phase": {
+      "type": "string"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "expected_head_sha": {
+      "type": "string"
+    },
+    "answers": {
+      "type": "object"
+    },
+    "next_request": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "baseline_package": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "handoff": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "hold_reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}
