@@ -1,0 +1,31 @@
+{
+  "title": "Governed Execution Package",
+  "type": "object",
+  "required": [
+    "entry_action",
+    "target_repository",
+    "approved",
+    "actions"
+  ],
+  "properties": {
+    "entry_action": {
+      "type": "string"
+    },
+    "target_repository": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "approved": {
+      "type": "boolean"
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "additionalProperties": true
+}
