@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import control_plane_issue_bridge as bridge_module
 from control_plane_issue_bridge import extract_state, parse_command, strip_marker
 from governed_request import encode_state, new_request
 
@@ -56,6 +57,33 @@ def main() -> None:
     bridge = (ROOT / "scripts" / "control_plane_issue_bridge.py").read_text(encoding="utf-8")
     if "def handle_repository_dispatch" not in bridge:
         raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: repository dispatch handler missing")
+
+    calls = []
+    original_api = bridge_module.api
+    try:
+        def fake_api(method: str, path: str, payload: dict | None = None) -> dict:
+            calls.append((method, path, payload))
+            return {"number": 99, "html_url": "https://github.example.invalid/issues/99"}
+
+        bridge_module.api = fake_api
+        bridge_module.handle_repository_dispatch({
+            "client_payload": {
+                "objective": "Create a governed request through repository dispatch",
+                "agent": "selftest-agent",
+                "provider": "selftest",
+                "title": "Dispatch selftest",
+            }
+        })
+    finally:
+        bridge_module.api = original_api
+
+    if len(calls) != 1:
+        raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: repository dispatch did not create exactly one issue")
+    method, path, payload = calls[0]
+    if method != "POST" or path != "/repos/chainsolutions-wealthtech/Governed-Repository-Template/issues":
+        raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: repository dispatch issue endpoint invalid")
+    if not payload or not str(payload.get("title", "")).startswith("[Governed Request]"):
+        raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: repository dispatch issue title invalid")
 
     initializer = (ROOT / "scripts" / "initialize_governance.py").read_text(encoding="utf-8")
     if 'control_plane.get("source_only_paths", [])' not in initializer:
