@@ -84,3 +84,26 @@ Entry action is separate from connection intent and authority. Adoption starts r
 ### Compatibility
 
 V2.3 is additive over V2.2. Repository-local governance, zero-touch bootstrap, connection intent, entry actions, adoption, mapping, lab evolution and personal/organization scopes remain intact. The control-plane issue workflow has no cross-repository write permission and cannot bypass target authority.
+
+
+## Governance Automation V2.3.2
+
+### Fixed
+
+- corrected `CREATE_NEW_REPOSITORY` sequence to owner → repository name → visibility → creation;
+- removed the irrelevant connection-intent question before repository creation;
+- added explicit `private` / `public` visibility selection;
+- mapped human choice `Patricked` to canonical GitHub owner `Patricked-code`.
+
+### Added
+
+- fail-closed GitHub REST `generate from template` executor;
+- per-creator GitHub App user-access credential mapping;
+- automatic PREP-001 execution from the control-plane workflow;
+- `/governed-execute` retry path after credential/authority remediation;
+- executor preflight for authenticated principal, private-template visibility, target absence and organization membership;
+- CI self-test covering organization, Wealthtechinnovations and Patricked-code creation paths.
+
+### Security
+
+Creator tokens remain outside Git. The standard workflow `GITHUB_TOKEN` cannot create target repositories. Missing or insufficient creator authority leaves PREP-001 pending and never fabricates PASS evidence.
