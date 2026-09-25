@@ -67,7 +67,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.0.1",
+  "template_version": "2.0.2",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -81,7 +81,8 @@
     "contradiction hold-for-review",
     "fail-closed ambiguity",
     "non-self-referential bootstrap attestation",
-    "bootstrap state consistency self-test"
+    "bootstrap state consistency self-test",
+    "synchronized human and machine bootstrap projections"
   ],
   "automatic_initialization_supported": true
 }
