@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0.0",
+  "repository": "{{REPOSITORY}}",
+  "selection_status": "DISCOVERY_REQUIRED",
+  "selected_profile": null,
+  "organization_default_candidate": "chainsolutions-fullstack-web",
+  "profiles": {
+    "generic": {
+      "role": "GENERIC",
+      "technical_assumptions": "NONE",
+      "activation": "EXPLICIT_OR_DISCOVERED"
+    },
+    "application": {
+      "role": "APPLICATION_GENERIC",
+      "technical_assumptions": "PROJECT_DEFINED",
+      "activation": "EXPLICIT_OR_DISCOVERED"
+    },
+    "chainsolutions-fullstack-web": {
+      "role": "CHAIN SOLUTIONS FULLSTACK WEB DEFAULT CANDIDATE",
+      "activation": "EXPLICIT_AFTER_DISCOVERY",
+      "planned_stack": {
+        "backend": {
+          "runtime": "Node.js",
+          "framework": "PROJECT_DEFINED",
+          "status": "PLANNED"
+        },
+        "frontend": {
+          "framework": "Next.js",
+          "language": "TypeScript",
+          "status": "PLANNED"
+        },
+        "database": {
+          "engine": "PostgreSQL",
+          "status": "PLANNED"
+        }
+      }
+    },
+    "data-platform": {
+      "role": "DATA_PLATFORM",
+      "technical_assumptions": "PROJECT_DEFINED",
+      "activation": "EXPLICIT_OR_DISCOVERED"
+    }
+  },
+  "invariants": [
+    "PLANNED_NE_IMPLEMENTED",
+    "IMPLEMENTED_NE_DEPLOYED",
+    "DEPLOYED_NE_PRODUCTION_VERIFIED",
+    "DISCOVERY_PRECEDES_ACTIVATION"
+  ]
+}
