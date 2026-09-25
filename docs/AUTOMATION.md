@@ -118,3 +118,8 @@ Any denied authority, failed evidence or contradiction transitions to `HOLD_FOR_
 GitHub issues provide persistence for the interactive request. The issue workflow never writes to another repository. Cross-repository observations and authorized mutations are executed by the connected agent and returned as structured evidence.
 
 One state transition exposes exactly one next question, one targeted agent request, one action request, or the final handoff.
+
+
+## Repository-local agent entry
+
+Initialized target repositories include `.github/workflows/governed-local-entry.yml`. It accepts a local-entry issue or `repository_dispatch: governed_local_start`, persists one-question-at-a-time state in the issue, and applies the approved first-agent baseline under an exact-HEAD guard. The central template repository itself is excluded from local execution.
