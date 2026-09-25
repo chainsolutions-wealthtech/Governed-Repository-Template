@@ -42,6 +42,11 @@ REQUIRED = [
     "docs/PROJECT_PROFILES.md",
     "docs/INFRASTRUCTURE_BOOTSTRAP.md",
     "docs/CONNECTION_INTENT.md",
+    "docs/ENTRY_ACTION_ROUTER.md",
+    "docs/EXISTING_REPOSITORY_ADOPTION.md",
+    "docs/PROJECT_MAPPING.md",
+    "docs/LAB_EVOLUTION.md",
+    "docs/REPOSITORY_SCOPES.md",
     ".governance/profile.json",
     ".governance/TEMPLATE_MANIFEST.json",
     ".governance/bootstrap-state.json",
@@ -53,6 +58,8 @@ REQUIRED = [
     ".governance/project-profile.json",
     ".governance/infrastructure-intent.json",
     ".governance/connection-intent-policy.json",
+    ".governance/entry-action-policy.json",
+    ".governance/repository-scope-policy.json",
     "schemas/project-state.schema.json",
     "schemas/loop-state.schema.json",
     "schemas/next-action.schema.json",
@@ -66,6 +73,8 @@ REQUIRED = [
     "schemas/project-profile.schema.json",
     "schemas/infrastructure-intent.schema.json",
     "schemas/connection-intent.schema.json",
+    "schemas/entry-action.schema.json",
+    "schemas/repository-scope.schema.json",
     "scripts/initialize_governance.py",
     "scripts/auto_bootstrap.py",
     "scripts/finalize_bootstrap.py",
@@ -73,6 +82,9 @@ REQUIRED = [
     "scripts/validate_governance.py",
     "scripts/test_bootstrap_consistency.py",
     "scripts/test_connection_intent.py",
+    "scripts/adopt_existing_repository.py",
+    "scripts/test_entry_action_router.py",
+    "scripts/test_repository_adoption.py",
     ".github/workflows/governance-ci.yml",
     ".github/workflows/governance-auto-bootstrap.yml",
 ]
@@ -91,6 +103,15 @@ CONNECTION_INTENTS = {
     "UNKNOWN",
 }
 MUTABLE_INTENTS = {"WORK_REQUEST", "CODE_CHANGE", "INFRASTRUCTURE"}
+ENTRY_ACTIONS = {
+    "CREATE_NEW_REPOSITORY",
+    "ADOPT_EXISTING_REPOSITORY",
+    "MAP_EXISTING_PROJECT",
+    "LAB_EVOLUTION",
+    "CONTINUE_GOVERNED_WORK",
+    "UNKNOWN",
+}
+ADOPTION_OPTIONAL_REQUIRED = {".github/workflows/governance-auto-bootstrap.yml"}
 
 
 def fail(message: str) -> None:
@@ -137,6 +158,12 @@ def validate_policies(profile: dict) -> None:
         "connection_intent_fail_closed": "REQUIRED",
         "context_intake_ne_code_permission": "REQUIRED",
         "intent_ne_authority": "REQUIRED",
+        "entry_action_required": "REQUIRED",
+        "entry_action_ne_intent": "REQUIRED",
+        "entry_action_ne_authority": "REQUIRED",
+        "existing_repository_adoption_additive": "REQUIRED",
+        "lab_canonical_branch_protection": "REQUIRED",
+        "personal_repository_scope_supported": "REQUIRED",
     }
     for key, expected in exact.items():
         if policies.get(key) != expected:
@@ -147,6 +174,8 @@ def validate_project_and_connection_intent(profile: dict, template_mode: bool) -
     project_profile = load(".governance/project-profile.json")
     infrastructure = load(".governance/infrastructure-intent.json")
     intent_policy = load(".governance/connection-intent-policy.json")
+    entry_policy = load(".governance/entry-action-policy.json")
+    repository_scope = load(".governance/repository-scope-policy.json")
     sessions = load(".governance/sessions/sessions.json")
 
     if project_profile.get("selection_status") not in {"DISCOVERY_REQUIRED", "SELECTED", "HOLD_FOR_REVIEW"}:
@@ -191,6 +220,30 @@ def validate_project_and_connection_intent(profile: dict, template_mode: bool) -
     if intents["INFORMATION_INTAKE"].get("may_dispatch_mutable_work") is not False:
         fail("information intake must never imply code permission")
 
+    actions = entry_policy.get("actions") or {}
+    if set(actions) != ENTRY_ACTIONS:
+        fail("entry action policy does not define the complete action set")
+    if entry_policy.get("required_on_connection") is not True:
+        fail("entry action must be required on connection")
+    if actions["UNKNOWN"].get("initial_route") != "RESOLVE_ENTRY_ACTION":
+        fail("UNKNOWN entry action must fail closed")
+    if actions["ADOPT_EXISTING_REPOSITORY"].get("initial_mutable") is not False:
+        fail("existing repository adoption must start read-only")
+    if actions["MAP_EXISTING_PROJECT"].get("initial_mutable") is not False:
+        fail("project mapping must start read-only")
+    if actions["LAB_EVOLUTION"].get("initial_mutable") is not False:
+        fail("lab evolution must start on discovery gate")
+    if actions["CONTINUE_GOVERNED_WORK"].get("initial_mutable") is not True:
+        fail("normal governed work continuity must remain available")
+
+    scopes = repository_scope.get("supported_owner_scopes") or {}
+    if scopes.get("ORGANIZATION", {}).get("supported") is not True:
+        fail("organization repository scope must be supported")
+    if scopes.get("PERSONAL_ACCOUNT", {}).get("supported") is not True:
+        fail("personal account repository scope must be supported")
+    if scopes.get("OTHER_AUTHORIZED_OWNER", {}).get("supported") is not True:
+        fail("explicit other-owner scope must be supported")
+
     for session in sessions.get("sessions", []):
         intent = session.get("connection_intent")
         if intent not in CONNECTION_INTENTS:
@@ -198,6 +251,12 @@ def validate_project_and_connection_intent(profile: dict, template_mode: bool) -
         provenance = session.get("connection_intent_provenance")
         if provenance not in {"PROVIDED_BY_CLIENT", "DEFAULT_UNKNOWN"}:
             fail("session connection intent provenance is invalid")
+        entry_action = session.get("entry_action")
+        if entry_action not in ENTRY_ACTIONS:
+            fail(f"session has invalid entry action {entry_action!r}")
+        entry_provenance = session.get("entry_action_provenance")
+        if entry_provenance not in {"PROVIDED_BY_CLIENT", "DEFAULT_UNKNOWN"}:
+            fail("session entry action provenance is invalid")
 
     if not template_mode:
         repository = profile.get("repository")
@@ -207,6 +266,9 @@ def validate_project_and_connection_intent(profile: dict, template_mode: bool) -
             fail("infrastructure intent repository does not match governance profile")
         if infrastructure.get("github_binding", {}).get("repository") != repository:
             fail("infrastructure GitHub binding does not match governance profile")
+        target_owner = repository.split("/", 1)[0]
+        if repository_scope.get("target_owner") not in {target_owner, None}:
+            fail("repository scope target owner does not match repository")
 
 
 def validate_machine_state(profile: dict, template_mode: bool, require_bootstrap_attestation: bool = False) -> None:
@@ -255,20 +317,45 @@ def validate_machine_state(profile: dict, template_mode: bool, require_bootstrap
     if bootstrap.get("initialized") is not True:
         fail("instantiated bootstrap state is not initialized")
 
-    receipt_path = ROOT / ".governance" / "bootstrap-receipt.json"
-    if not receipt_path.exists():
-        fail("instantiated repository is missing bootstrap receipt")
-    receipt = load(".governance/bootstrap-receipt.json")
-    if receipt.get("repository") != profile.get("repository"):
-        fail("bootstrap receipt repository does not match profile")
-    if receipt.get("initialized") is not True:
-        fail("bootstrap receipt is not initialized")
-
+    initialization_mode = profile.get("initialization_mode") or "TEMPLATE_BOOTSTRAP"
     bootstrap_status = bootstrap.get("status")
-    if bootstrap_status not in {"INITIALIZED_PENDING_ATTESTATION", "PASS"}:
-        fail(f"unexpected instantiated bootstrap status {bootstrap_status!r}")
+
+    if initialization_mode == "EXISTING_REPOSITORY_ADOPTION":
+        if require_bootstrap_attestation:
+            fail("bootstrap attestation mode is not applicable to existing-repository adoption")
+        if bootstrap_status != "ADOPTED_EXISTING_REPOSITORY":
+            fail("adopted repository bootstrap-state status is invalid")
+        adoption_receipt_path = ROOT / ".governance" / "adoption-receipt.json"
+        adoption_state_path = ROOT / ".governance" / "adoption" / "state.json"
+        if not adoption_receipt_path.exists() or not adoption_state_path.exists():
+            fail("adopted repository is missing adoption receipt/state")
+        adoption_receipt = load(".governance/adoption-receipt.json")
+        adoption_state = load(".governance/adoption/state.json")
+        if adoption_receipt.get("repository") != profile.get("repository"):
+            fail("adoption receipt repository does not match profile")
+        if adoption_receipt.get("preservation_contract") != "NO_EXISTING_FILE_OVERWRITE":
+            fail("adoption preservation contract is invalid")
+        if adoption_state.get("existing_files_overwritten") != 0:
+            fail("adoption state reports an existing file overwrite")
+        if memory.get("freshness") != "ADOPTION_ATTESTED":
+            fail("adopted repository canonical memory must be ADOPTION_ATTESTED")
+        if memory.get("current_checkpoint") != "adoption":
+            fail("adopted repository checkpoint must be adoption")
+    else:
+        receipt_path = ROOT / ".governance" / "bootstrap-receipt.json"
+        if not receipt_path.exists():
+            fail("instantiated repository is missing bootstrap receipt")
+        receipt = load(".governance/bootstrap-receipt.json")
+        if receipt.get("repository") != profile.get("repository"):
+            fail("bootstrap receipt repository does not match profile")
+        if receipt.get("initialized") is not True:
+            fail("bootstrap receipt is not initialized")
+
+        if bootstrap_status not in {"INITIALIZED_PENDING_ATTESTATION", "PASS"}:
+            fail(f"unexpected instantiated bootstrap status {bootstrap_status!r}")
 
     if require_bootstrap_attestation:
+        receipt = load(".governance/bootstrap-receipt.json")
         if bootstrap_status != "PASS":
             fail("strict bootstrap attestation requires bootstrap status PASS")
         initialization_sha = receipt.get("initialization_commit_sha")
@@ -351,9 +438,10 @@ def validate_machine_state(profile: dict, template_mode: bool, require_bootstrap
         fail("canonical memory next_action is required")
 
 
-def validate_placeholders() -> None:
+def validate_placeholders(relative_paths: list[str] | None = None) -> None:
     unresolved = []
-    for path in ROOT.rglob("*"):
+    paths = [ROOT / p for p in relative_paths] if relative_paths is not None else list(ROOT.rglob("*"))
+    for path in paths:
         if not path.is_file() or ".git" in path.parts:
             continue
         if path.suffix not in {".md", ".json", ".yml", ".yaml", ".txt"}:
@@ -374,6 +462,9 @@ def validate_python_automation() -> None:
         "scripts/validate_governance.py",
         "scripts/test_bootstrap_consistency.py",
         "scripts/test_connection_intent.py",
+        "scripts/adopt_existing_repository.py",
+        "scripts/test_entry_action_router.py",
+        "scripts/test_repository_adoption.py",
     ]:
         path = ROOT / relative
         try:
@@ -384,11 +475,15 @@ def validate_python_automation() -> None:
 
 def main() -> None:
     args = parse_args()
-    missing = [path for path in REQUIRED if not (ROOT / path).exists()]
+    if not PROFILE.exists():
+        fail("missing required file: .governance/profile.json")
+    profile = load(".governance/profile.json")
+    adoption_mode = profile.get("initialization_mode") == "EXISTING_REPOSITORY_ADOPTION"
+    required = [path for path in REQUIRED if not (adoption_mode and path in ADOPTION_OPTIONAL_REQUIRED)]
+    missing = [path for path in required if not (ROOT / path).exists()]
     if missing:
         fail("missing required files: " + ", ".join(missing))
 
-    profile = load(".governance/profile.json")
     validate_policies(profile)
     validate_python_automation()
 
@@ -412,7 +507,11 @@ def main() -> None:
     if profile.get("canonical_branch") in {None, "", "TO_INITIALIZE"}:
         fail("canonical_branch not initialized")
 
-    validate_placeholders()
+    if profile.get("initialization_mode") == "EXISTING_REPOSITORY_ADOPTION":
+        adoption_receipt = load(".governance/adoption-receipt.json")
+        validate_placeholders(adoption_receipt.get("added_files") or [])
+    else:
+        validate_placeholders()
     validate_project_and_connection_intent(profile, False)
     validate_machine_state(profile, False, args.bootstrap_attestation)
     print("GOVERNANCE_VALIDATION_PASS: instantiated repository mode v2")
