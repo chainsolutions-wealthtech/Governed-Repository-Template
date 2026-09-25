@@ -19,10 +19,15 @@ jobs:
   request:
     if: >-
       github.repository == 'chainsolutions-wealthtech/Governed-Repository-Template' &&
-      startsWith(github.event.issue.title, '[Governed Request]') &&
       (
-        github.event_name == 'issues' ||
-        (github.event_name == 'issue_comment' && github.actor != 'github-actions[bot]')
+        github.event_name == 'repository_dispatch' ||
+        (
+          startsWith(github.event.issue.title, '[Governed Request]') &&
+          (
+            github.event_name == 'issues' ||
+            (github.event_name == 'issue_comment' && github.actor != 'github-actions[bot]')
+          )
+        )
       )
     runs-on: ubuntu-latest
     timeout-minutes: 5
