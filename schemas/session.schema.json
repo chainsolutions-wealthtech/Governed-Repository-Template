@@ -5,6 +5,8 @@
     "session_id",
     "agent_identity",
     "provider",
+    "entry_action",
+    "entry_action_provenance",
     "connection_intent",
     "connection_intent_provenance",
     "repository",
@@ -74,6 +76,22 @@
       ]
     },
     "connection_intent_provenance": {
+      "enum": [
+        "PROVIDED_BY_CLIENT",
+        "DEFAULT_UNKNOWN"
+      ]
+    },
+    "entry_action": {
+      "enum": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION",
+        "CONTINUE_GOVERNED_WORK",
+        "UNKNOWN"
+      ]
+    },
+    "entry_action_provenance": {
       "enum": [
         "PROVIDED_BY_CLIENT",
         "DEFAULT_UNKNOWN"
