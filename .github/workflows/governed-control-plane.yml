@@ -40,7 +40,7 @@ jobs:
           python-version: '3.12'
 
       - name: Compile control plane
-        run: python3 -m py_compile scripts/governed_request.py scripts/control_plane_issue_bridge.py scripts/control_plane_create_repository.py
+        run: python3 -m py_compile scripts/governed_request.py scripts/control_plane_issue_bridge.py scripts/control_plane_create_repository.py scripts/control_plane_upgrade_local_entry.py
 
       - name: Process governed request
         id: process
@@ -65,3 +65,21 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GOVERNED_CREATOR_TOKEN: ${{ steps.creator-token.outputs.token }}
         run: python3 scripts/control_plane_create_repository.py --issue-number "${{ steps.process.outputs.issue_number }}"
+
+      - name: Mint target-owner token for local-entry upgrade
+        if: steps.process.outputs.upgrade_required == 'true'
+        id: upgrade-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ steps.process.outputs.upgrade_target_owner }}
+          permission-contents: write
+
+      - name: Apply local-entry V2.4 upgrade to target
+        if: steps.process.outputs.upgrade_required == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOVERNED_TARGET_TOKEN: ${{ steps.upgrade-token.outputs.token }}
+        run: |
+          python3 scripts/control_plane_upgrade_local_entry.py             --target-repository "${{ steps.process.outputs.upgrade_target_repository }}"             --expected-head "${{ steps.process.outputs.upgrade_expected_head }}"             --issue-number "${{ steps.process.outputs.issue_number }}"
