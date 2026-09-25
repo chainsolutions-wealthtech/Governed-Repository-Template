@@ -24,7 +24,7 @@ GITHUB_REPOSITORY
 
 Preferred transport: `DIRECT_MCP`.
 
-Governed fallback: `SSH`.
+Governed fallback: `SSH` through a GitHub OIDC-issued ephemeral certificate and a read-only force-command gateway. Persistent repository SSH private keys are forbidden.
 
 If neither is available, state becomes `ACCESS_CONFIGURATION_REQUIRED`; agents must not fabricate a connection.
 
