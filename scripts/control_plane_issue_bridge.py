@@ -72,6 +72,9 @@ def parse_command(body: str) -> tuple[str, dict] | None:
     if stripped.startswith("/governed-evidence"):
         raw = stripped[len("/governed-evidence"):].strip()
         return "evidence", json.loads(raw)
+    if stripped.startswith("/governed-upgrade-local-entry"):
+        raw = stripped[len("/governed-upgrade-local-entry"):].strip()
+        return "upgrade_local_entry", json.loads(raw)
     return None
 
 
@@ -167,7 +170,7 @@ def render_response(state: dict) -> str:
     return "\n".join(lines)
 
 
-def emit_executor_outputs(state: dict, issue_number: int) -> None:
+def emit_executor_outputs(state: dict, issue_number: int, upgrade_payload: dict | None = None) -> None:
     output_path = os.environ.get("GITHUB_OUTPUT")
     if not output_path:
         return
@@ -179,8 +182,19 @@ def emit_executor_outputs(state: dict, issue_number: int) -> None:
     )
     lines = [
         f"executor_required={'true' if required else 'false'}",
+        f"upgrade_required={'true' if upgrade_payload else 'false'}",
         f"issue_number={issue_number}",
     ]
+    if upgrade_payload:
+        target_repository = str(upgrade_payload.get("target_repository") or "")
+        expected_head = str(upgrade_payload.get("expected_head") or "")
+        if "/" not in target_repository or len(expected_head) != 40:
+            raise ValueError("upgrade payload requires target_repository owner/name and expected_head")
+        lines.extend([
+            f"upgrade_target_repository={target_repository}",
+            f"upgrade_target_owner={target_repository.split('/',1)[0]}",
+            f"upgrade_expected_head={expected_head}",
+        ])
     if required:
         lines.extend([
             f"target_owner_label={state['answers'].get('creation_target_owner', '')}",
@@ -229,6 +243,9 @@ def handle_comment(event: dict) -> None:
             state = apply_evidence(state, payload["action_id"], payload["result"], payload["evidence"])
         elif kind == "execute":
             pass
+        elif kind == "upgrade_local_entry":
+            if set(payload) != {"target_repository", "expected_head"}:
+                raise ValueError("upgrade payload must contain target_repository and expected_head")
         else:
             raise ValueError("unsupported governed command")
     except Exception as exc:
@@ -237,10 +254,12 @@ def handle_comment(event: dict) -> None:
         })
         return
 
-    if kind != "execute":
+    if kind not in {"execute", "upgrade_local_entry"}:
         persist_state(issue["number"], issue.get("body"), state)
         api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}/comments", {"body": render_response(state)})
-    emit_executor_outputs(state, issue["number"])
+    if kind == "upgrade_local_entry":
+        api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}/comments", {"body": "### Governed local-entry upgrade requested\n\nThe control plane will apply V2.4 under the supplied exact-HEAD guard."})
+    emit_executor_outputs(state, issue["number"], payload if kind == "upgrade_local_entry" else None)
 
 
 def handle_repository_dispatch(event: dict) -> None:
