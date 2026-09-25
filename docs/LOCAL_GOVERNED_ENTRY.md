@@ -81,6 +81,15 @@ Machine invocation:
 
 The mere act of viewing a GitHub repository does not generate a GitHub event. A GitHub-connected agent must therefore invoke this local entry endpoint before governed work.
 
+### Actor authorization
+
+Issue creation and issue-comment commands are accepted only when both conditions hold:
+
+- GitHub reports `OWNER`, `MEMBER` or `COLLABORATOR` association; and
+- a fresh GitHub repository permission lookup reports `admin`, `maintain` or `write`.
+
+Read/triage-only members or collaborators cannot advance the governed state, expose the direct MCP token to discovery, mint an SSH OIDC certificate, or trigger the baseline write.
+
 
 ## MCP-aware setup
 
