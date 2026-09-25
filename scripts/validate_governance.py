@@ -291,6 +291,64 @@ def validate_project_and_connection_intent(profile: dict, template_mode: bool) -
             fail("repository scope target owner does not match repository")
 
 
+def validate_control_plane(profile: dict, template_mode: bool) -> None:
+    policy = load(".governance/control-plane-policy.json")
+    if policy.get("control_plane_repository") != CONTROL_PLANE_REPOSITORY:
+        fail("control plane repository binding is invalid")
+    if policy.get("source_role") != "CENTRAL_GOVERNANCE_CONTROL_PLANE":
+        fail("control plane source role is invalid")
+    if policy.get("client_role_after_instantiation") != "GOVERNED_TARGET_CLIENT":
+        fail("control plane client role is invalid")
+
+    expected_source_only = {
+        ".github/workflows/governed-control-plane.yml",
+        ".github/ISSUE_TEMPLATE/governed-request.yml",
+    }
+    if set(policy.get("source_only_paths") or []) != expected_source_only:
+        fail("control plane source-only path contract is invalid")
+
+    principles = set(policy.get("principles") or [])
+    required_principles = {
+        "CONTROL_PLANE_PREPARES_TARGET_WORK",
+        "ONE_QUESTION_OR_ACTION_REQUEST_AT_A_TIME",
+        "AGENT_RESPONSES_ADVANCE_STATE_MACHINE",
+        "TARGET_MUTATION_REQUIRES_EXPLICIT_AUTHORITY",
+        "TARGET_EVIDENCE_NE_ASSUMED_STATE",
+        "CONTROL_PLANE_STATE_STAYS_OUT_OF_TEMPLATE_CONTENT",
+        "HANDOFF_IS_EXPLICIT",
+        "NO_CROSS_REPOSITORY_MUTATION_BY_ISSUE_WORKFLOW",
+    }
+    if not required_principles.issubset(principles):
+        fail("control plane principles are incomplete")
+
+    if template_mode:
+        if policy.get("current_role") != "CENTRAL_GOVERNANCE_CONTROL_PLANE":
+            fail("template source must be the central governance control plane")
+        for relative in expected_source_only:
+            if not (ROOT / relative).is_file():
+                fail(f"control plane source-only file is missing: {relative}")
+
+        workflow = (ROOT / ".github/workflows/governed-control-plane.yml").read_text(encoding="utf-8")
+        workflow_requirements = [
+            "github.repository == 'chainsolutions-wealthtech/Governed-Repository-Template'",
+            "issues: write",
+            "contents: read",
+            "github.actor != 'github-actions[bot]'",
+            "python3 scripts/control_plane_issue_bridge.py",
+        ]
+        for fragment in workflow_requirements:
+            if fragment not in workflow:
+                fail(f"control plane workflow boundary missing: {fragment}")
+    else:
+        if policy.get("current_role") != "GOVERNED_TARGET_CLIENT":
+            fail("instantiated/adopted repository must be a control plane client")
+        if policy.get("client_repository") != profile.get("repository"):
+            fail("control plane client repository does not match governance profile")
+        for relative in expected_source_only:
+            if (ROOT / relative).exists():
+                fail(f"control plane source-only file leaked into target client: {relative}")
+
+
 def validate_machine_state(profile: dict, template_mode: bool, require_bootstrap_attestation: bool = False) -> None:
     bootstrap = load(".governance/bootstrap-state.json")
     memory = load(".governance/canonical-memory/current.json")
@@ -486,6 +544,10 @@ def validate_python_automation() -> None:
         "scripts/test_entry_action_router.py",
         "scripts/test_repository_adoption.py",
         "scripts/test_repository_scope.py",
+        "scripts/governed_request.py",
+        "scripts/control_plane_issue_bridge.py",
+        "scripts/test_control_plane_request.py",
+        "scripts/test_control_plane_issue_contract.py",
     ]:
         path = ROOT / relative
         try:
@@ -499,22 +561,24 @@ def main() -> None:
     if not PROFILE.exists():
         fail("missing required file: .governance/profile.json")
     profile = load(".governance/profile.json")
+    template_mode = TEMPLATE_MARKER.exists()
     adoption_mode = profile.get("initialization_mode") == "EXISTING_REPOSITORY_ADOPTION"
     required = [path for path in REQUIRED if not (adoption_mode and path in ADOPTION_OPTIONAL_REQUIRED)]
+    if template_mode:
+        required.extend(sorted(SOURCE_ONLY_REQUIRED))
     missing = [path for path in required if not (ROOT / path).exists()]
     if missing:
         fail("missing required files: " + ", ".join(missing))
 
     validate_policies(profile)
     validate_python_automation()
-
-    template_mode = TEMPLATE_MARKER.exists()
     if template_mode:
         if profile.get("template_source") is not True:
             fail("template source marker exists but profile.template_source is not true")
         if profile.get("initialized") is not False:
             fail("template source must not be initialized")
         validate_project_and_connection_intent(profile, True)
+        validate_control_plane(profile, True)
         validate_machine_state(profile, True, args.bootstrap_attestation)
         print("GOVERNANCE_VALIDATION_PASS: template source mode v2")
         return
@@ -534,6 +598,7 @@ def main() -> None:
     else:
         validate_placeholders()
     validate_project_and_connection_intent(profile, False)
+    validate_control_plane(profile, False)
     validate_machine_state(profile, False, args.bootstrap_attestation)
     print("GOVERNANCE_VALIDATION_PASS: instantiated repository mode v2")
 
