@@ -202,6 +202,35 @@ def handle_comment(event: dict) -> None:
     api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}/comments", {"body": render_response(state)})
 
 
+def handle_repository_dispatch(event: dict) -> None:
+    payload = event.get("client_payload") or {}
+    objective = payload.get("objective")
+    if not isinstance(objective, str) or not objective.strip():
+        raise SystemExit("CONTROL_PLANE_DISPATCH_FAILED: client_payload.objective is required")
+    agent = payload.get("agent")
+    provider = payload.get("provider")
+    requested_title = payload.get("title")
+    suffix = requested_title.strip() if isinstance(requested_title, str) and requested_title.strip() else objective.strip().splitlines()[0][:80]
+    body_lines = [
+        "### Initial objective",
+        "",
+        objective.strip(),
+    ]
+    if agent:
+        body_lines.extend(["", "### Agent identity", "", str(agent)])
+    if provider:
+        body_lines.extend(["", "### Provider", "", str(provider)])
+    created = api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues", {
+        "title": f"[Governed Request] {suffix}",
+        "body": "\n".join(body_lines) + "\n",
+    })
+    print(json.dumps({
+        "status": "GOVERNED_REQUEST_ISSUE_CREATED",
+        "issue_number": created.get("number"),
+        "issue_url": created.get("html_url"),
+    }, ensure_ascii=False))
+
+
 def main() -> None:
     if os.environ.get("GITHUB_REPOSITORY") != CONTROL_PLANE_REPOSITORY:
         print("CONTROL_PLANE_SKIPPED: source repository only")
@@ -210,6 +239,9 @@ def main() -> None:
     event = json.loads(event_path.read_text(encoding="utf-8"))
     event_name = os.environ.get("GITHUB_EVENT_NAME")
 
+    if event_name == "repository_dispatch" and event.get("action") == "governed_request_start":
+        handle_repository_dispatch(event)
+        return
     if event_name == "issues" and event.get("action") == "opened":
         handle_opened(event)
         return
