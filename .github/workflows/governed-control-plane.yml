@@ -40,7 +40,7 @@ jobs:
           python-version: '3.12'
 
       - name: Compile control plane
-        run: python3 -m py_compile scripts/governed_request.py scripts/control_plane_issue_bridge.py
+        run: python3 -m py_compile scripts/governed_request.py scripts/control_plane_issue_bridge.py scripts/control_plane_create_repository.py
 
       - name: Process governed request
         id: process
@@ -48,10 +48,20 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python3 scripts/control_plane_issue_bridge.py
 
+      - name: Mint target-owner GitHub App installation token
+        if: steps.process.outputs.executor_required == 'true'
+        id: creator-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ steps.process.outputs.target_owner_canonical }}
+          permission-administration: write
+          permission-contents: read
+
       - name: Execute generate-from-template creation
         if: steps.process.outputs.executor_required == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GOVERNED_CREATOR_WEALTHTECH_TOKEN: ${{ secrets.GOVERNED_CREATOR_WEALTHTECH_TOKEN }}
-          GOVERNED_CREATOR_PATRICKED_TOKEN: ${{ secrets.GOVERNED_CREATOR_PATRICKED_TOKEN }}
+          GOVERNED_CREATOR_TOKEN: ${{ steps.creator-token.outputs.token }}
         run: python3 scripts/control_plane_create_repository.py --issue-number "${{ steps.process.outputs.issue_number }}"
