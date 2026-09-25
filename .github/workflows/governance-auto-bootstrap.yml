@@ -73,14 +73,16 @@ jobs:
         run: |
           python3 scripts/finalize_bootstrap.py \
             --initialization-commit-sha "${{ steps.init_commit.outputs.sha }}"
-          python3 scripts/validate_governance.py
+          python3 scripts/validate_governance.py --bootstrap-attestation
 
       - name: Create attestation commit
         if: steps.pending.outputs.needed == 'true'
+        id: attestation_commit
         shell: bash
         run: |
-          git add .governance
+          git add .governance STATUS.md
           git commit -m "governance: attest automatic bootstrap"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Push with exact-HEAD guard and retry
         if: steps.pending.outputs.needed == 'true'
@@ -123,11 +125,14 @@ jobs:
         run: |
           set -euo pipefail
           local_head="$(git rev-parse HEAD)"
+          test "$local_head" = "${{ steps.attestation_commit.outputs.sha }}"
+          test "$(git rev-parse "$local_head^")" = "${{ steps.init_commit.outputs.sha }}"
           git fetch origin "$TARGET_BRANCH"
           remote_head="$(git rev-parse FETCH_HEAD)"
           test "$remote_head" = "$local_head"
           test ! -e .template-source
-          python3 scripts/validate_governance.py
+          test -z "$(git status --porcelain)"
+          python3 scripts/validate_governance.py --bootstrap-attestation
           echo "BOOTSTRAP_REMOTE_ATTESTATION_PASS=$remote_head"
 
       - name: Already initialized
