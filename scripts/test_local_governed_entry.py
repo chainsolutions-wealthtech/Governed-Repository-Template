@@ -85,7 +85,12 @@ def main():
                      'SSH_BROKER_BASE_URL = "https://mcp.wealthtechinnovations.com"',"SSH_DISCOVERY_REQUIRED_PROBE_FAILED"]:
         if fragment not in discovery:
             raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: ephemeral SSH discovery contract "+fragment)
-    for fragment in ['TRUSTED_ASSOCIATIONS={"OWNER","MEMBER","COLLABORATOR"}',"trusted_actor(event.get(\"comment\") or {})"]:
+    for fragment in [
+        'TRUSTED_ASSOCIATIONS={"OWNER","MEMBER","COLLABORATOR"}',
+        "trusted_actor(event.get(\"comment\") or {})",
+        "/collaborators/{encoded}/permission",
+        'permission in {"admin","maintain","write"}'
+    ]:
         if fragment not in bridge:
             raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: local entry actor authorization "+fragment)
     for fragment in ['"DISCOVERY_PARTIAL"','binding["discovery_status"]=discovery_status or "NOT_RUN"']:
