@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0.0",
+  "repository": "{{REPOSITORY}}",
+  "status": "PLANNED_NOT_PROVISIONED",
+  "github_binding": {
+    "repository": "{{REPOSITORY}}",
+    "status": "KNOWN"
+  },
+  "deployment_target": {
+    "server_id": null,
+    "server_status": "DISCOVERY_REQUIRED",
+    "domain": null,
+    "domain_status": "DISCOVERY_REQUIRED",
+    "directory": null,
+    "directory_status": "DISCOVERY_REQUIRED",
+    "provisioning_if_missing": "PLANNED_REQUIRES_AUTHORITY"
+  },
+  "runtime_intent": {
+    "project_profile_source": ".governance/project-profile.json",
+    "status": "DISCOVERY_REQUIRED"
+  },
+  "database_intent": {
+    "engine_candidate": "PostgreSQL",
+    "status": "PLANNED"
+  },
+  "server_access": {
+    "preferred": "DIRECT_MCP",
+    "fallback": "SSH",
+    "status": "UNRESOLVED",
+    "credentials_in_repository": "FORBIDDEN"
+  },
+  "lifecycle": [
+    "UNKNOWN",
+    "DISCOVERY_REQUIRED",
+    "KNOWN_SERVER",
+    "DIRECTORY_MISSING",
+    "PROVISIONING_REQUIRED",
+    "DIRECTORY_CREATED",
+    "REPOSITORY_BOUND",
+    "DEPLOYMENT_CONFIGURED",
+    "VERIFIED"
+  ],
+  "invariants": [
+    "NO_SERVER_FACT_WITHOUT_OBSERVATION",
+    "NO_DIRECTORY_FACT_WITHOUT_OBSERVATION",
+    "NO_SECRET_IN_REPOSITORY",
+    "MCP_DIRECT_PREFERRED_SSH_FALLBACK",
+    "PROVISIONING_REQUIRES_AUTHORITY"
+  ]
+}
