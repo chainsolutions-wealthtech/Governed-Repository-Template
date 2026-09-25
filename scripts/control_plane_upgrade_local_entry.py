@@ -40,7 +40,7 @@ def main():
       ".governance/local-entry-policy.json","schemas/local-entry-request.schema.json","schemas/local-entry-receipt.schema.json",
       "schemas/infrastructure-intent.schema.json","docs/LOCAL_GOVERNED_ENTRY.md","scripts/local_governed_entry.py",
       "scripts/local_entry_issue_bridge.py","scripts/local_entry_apply_baseline.py","scripts/test_local_governed_entry.py",
-      "scripts/validate_governance.py","scripts/adopt_existing_repository.py",".github/workflows/governed-local-entry.yml",
+      "scripts/validate_governance.py","scripts/adopt_existing_repository.py","scripts/test_bootstrap_consistency.py",".github/workflows/governed-local-entry.yml",
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml",".github/workflows/governance-ci.yml",
       ".github/workflows/governance-auto-bootstrap.yml",".governance/TEMPLATE_MANIFEST.json",
       ".governance/repository-creation-executor.json"
