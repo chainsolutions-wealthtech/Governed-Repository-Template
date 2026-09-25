@@ -1,0 +1,46 @@
+{
+  "schema_version": "1.0.0",
+  "repository": "{{REPOSITORY}}",
+  "selected_model": null,
+  "supported_models": {
+    "REGULATORY_AFRICAFUNDS_GOVERNED_FLOW": [
+      "READ_AUTHORITIES",
+      "OBSERVE_GITHUB_HEAD",
+      "OBSERVE_MCP_RUNTIME_IF_RELEVANT",
+      "RECONCILE_CURRENT_STATE",
+      "BASELINE",
+      "SELECT_WORK",
+      "IMPACT_ANALYSIS",
+      "VERIFY_HEAD",
+      "SINGLE_WRITER_CLAIM",
+      "IMPLEMENT",
+      "VERIFY",
+      "REGRESSION_CHECK",
+      "PERSIST_STATE",
+      "COMMIT",
+      "VERIFY_REMOTE",
+      "DEPLOY_IF_AUTHORIZED",
+      "VERIFY_PRODUCTION_IF_APPLICABLE",
+      "SELECT_NEXT"
+    ],
+    "STANDARD_GOVERNED_FLOW": [
+      "READ_AUTHORITIES",
+      "OBSERVE",
+      "RECONCILE",
+      "SELECT_WORK",
+      "VERIFY_HEAD",
+      "IMPLEMENT",
+      "VERIFY",
+      "PERSIST_STATE",
+      "COMMIT",
+      "VERIFY_REMOTE"
+    ]
+  },
+  "invariants": [
+    "GITHUB_IS_VERSIONED_AUTHORITY",
+    "SERVER_IS_RUNTIME_AUTHORITY",
+    "NEVER_ASSUME_GITHUB_SERVER_SYNC",
+    "HEAD_MOVED_STOPS_WRITE",
+    "ONE_WRITER_PER_COLLISION_DOMAIN"
+  ]
+}
