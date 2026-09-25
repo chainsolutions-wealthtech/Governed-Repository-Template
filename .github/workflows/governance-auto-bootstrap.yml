@@ -9,6 +9,8 @@ on:
   repository_dispatch:
     types:
       - governance-bootstrap
+  schedule:
+    - cron: "*/5 * * * *"
 
 permissions:
   contents: write
@@ -19,9 +21,11 @@ concurrency:
 
 jobs:
   bootstrap:
-    if: github.repository != 'chainsolutions-wealthtech/Governed-Repository-Template'
+    if: github.repository != 'chainsolutions-wealthtech/Governed-Repository-Template' && github.event.repository.is_template != true
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12
+    env:
+      TARGET_BRANCH: ${{ github.event.repository.default_branch || github.ref_name || 'main' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -38,6 +42,7 @@ jobs:
         run: |
           if [ -f .template-source ]; then
             echo "needed=true" >> "$GITHUB_OUTPUT"
+            echo "base_head=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           else
             echo "needed=false" >> "$GITHUB_OUTPUT"
           fi
@@ -45,7 +50,7 @@ jobs:
       - name: Auto initialize governance
         if: steps.pending.outputs.needed == 'true'
         env:
-          GOVERNANCE_TEMPLATE_REVISION: "37a065a166a18274e3bc243630a66b792afe4775"
+          GOVERNANCE_TEMPLATE_REVISION: "f3f6a303abb24313e6f764a95a00c81230a204b0"
         run: python3 scripts/auto_bootstrap.py
 
       - name: Validate initialized state
@@ -77,17 +82,57 @@ jobs:
           git add .governance
           git commit -m "governance: attest automatic bootstrap"
 
-      - name: Push bootstrap commits
+      - name: Push with exact-HEAD guard and retry
         if: steps.pending.outputs.needed == 'true'
         shell: bash
         env:
-          TARGET_BRANCH: ${{ github.event.repository.default_branch || github.ref_name }}
+          BASE_HEAD: ${{ steps.pending.outputs.base_head }}
         run: |
+          set -euo pipefail
           test -n "$TARGET_BRANCH"
-          git push origin "HEAD:$TARGET_BRANCH"
+          test -n "$BASE_HEAD"
+
+          pushed=false
+          for attempt in 1 2 3; do
+            if git fetch origin "$TARGET_BRANCH"; then
+              remote_head="$(git rev-parse FETCH_HEAD)"
+              if [ "$remote_head" != "$BASE_HEAD" ]; then
+                echo "HEAD_MOVED: expected=$BASE_HEAD remote=$remote_head"
+                exit 3
+              fi
+
+              if git push origin "HEAD:$TARGET_BRANCH"; then
+                pushed=true
+                break
+              fi
+            fi
+
+            if [ "$attempt" -lt 3 ]; then
+              sleep "$((attempt * 5))"
+            fi
+          done
+
+          if [ "$pushed" != "true" ]; then
+            echo "BOOTSTRAP_PUSH_FAILED_AFTER_RETRIES"
+            exit 2
+          fi
+
+      - name: Verify remote bootstrap attestation
+        if: steps.pending.outputs.needed == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          local_head="$(git rev-parse HEAD)"
+          git fetch origin "$TARGET_BRANCH"
+          remote_head="$(git rev-parse FETCH_HEAD)"
+          test "$remote_head" = "$local_head"
+          test ! -e .template-source
+          python3 scripts/validate_governance.py
+          echo "BOOTSTRAP_REMOTE_ATTESTATION_PASS=$remote_head"
 
       - name: Already initialized
         if: steps.pending.outputs.needed != 'true'
         run: |
+          test ! -e .template-source
           python3 scripts/validate_governance.py
           echo "Governance already initialized; no mutation required."
