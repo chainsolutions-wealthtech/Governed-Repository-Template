@@ -1,0 +1,41 @@
+{
+  "title": "First Agent Project Baseline Receipt",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "repository",
+    "request_id",
+    "session_id",
+    "baseline_subject_head",
+    "project_profile_status",
+    "next_action",
+    "completed_at"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "repository": {
+      "type": "string"
+    },
+    "request_id": {
+      "type": "string"
+    },
+    "session_id": {
+      "type": "string"
+    },
+    "baseline_subject_head": {
+      "type": "string"
+    },
+    "project_profile_status": {
+      "type": "string"
+    },
+    "next_action": {
+      "type": "string"
+    },
+    "completed_at": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}
