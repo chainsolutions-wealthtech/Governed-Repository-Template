@@ -22,6 +22,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--repository", required=True, help="owner/name")
     p.add_argument("--project-name", required=True)
     p.add_argument("--project-type", required=True)
+    p.add_argument("--project-profile", choices=["generic","application","chainsolutions-fullstack-web","data-platform"])
     p.add_argument("--owner", required=True)
     p.add_argument("--canonical-branch", default="main")
     return p.parse_args()
@@ -67,6 +68,26 @@ def main() -> None:
         "initialized_at": initialized_at,
     })
     profile_path.write_text(json.dumps(profile, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    project_profile_path = ROOT / ".governance" / "project-profile.json"
+    project_profile = json.loads(project_profile_path.read_text(encoding="utf-8"))
+    project_profile["repository"] = args.repository
+    if args.project_profile:
+        project_profile["selected_profile"] = args.project_profile
+        project_profile["selection_status"] = "SELECTED"
+    project_profile_path.write_text(
+        json.dumps(project_profile, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    infrastructure_path = ROOT / ".governance" / "infrastructure-intent.json"
+    infrastructure = json.loads(infrastructure_path.read_text(encoding="utf-8"))
+    infrastructure["repository"] = args.repository
+    infrastructure.setdefault("github_binding", {})["repository"] = args.repository
+    infrastructure_path.write_text(
+        json.dumps(infrastructure, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
 
     def _read_json(path: Path) -> dict:
         return json.loads(path.read_text(encoding="utf-8"))
