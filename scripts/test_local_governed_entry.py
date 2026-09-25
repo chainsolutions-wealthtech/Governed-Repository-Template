@@ -74,15 +74,23 @@ def main():
     discovery=(ROOT/"scripts/mcp_repository_discovery.py").read_text(encoding="utf-8")
     policy=(ROOT/".governance/mcp-connection-policy.json").read_text(encoding="utf-8")
     bridge=(ROOT/"scripts/local_entry_issue_bridge.py").read_text(encoding="utf-8")
+    apply=(ROOT/"scripts/local_entry_apply_baseline.py").read_text(encoding="utf-8")
     for fragment in ["governed_local_start","GOVERNED_MCP_AUTH_TOKEN","id-token: write","mcp_repository_discovery.py","local_entry_apply_baseline.py"]:
         if fragment not in wf: raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: workflow contract "+fragment)
     if "GOVERNED_MCP_SSH_PRIVATE_KEY" in wf or "GOVERNED_MCP_SSH_PRIVATE_KEY" in policy:
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: persistent repository SSH private key must be absent")
     if 'missing.append("GOVERNED_MCP_URL")' in bridge:
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: captured MCP endpoint must not require duplicate Actions variable")
-    for fragment in ["/access/github/repository-ssh/certificate","StrictHostKeyChecking=yes","ssh-keygen","GITHUB_OIDC_EPHEMERAL_SSH_CERTIFICATE"]:
+    for fragment in ["/access/github/repository-ssh/certificate","StrictHostKeyChecking=yes","ssh-keygen","GITHUB_OIDC_EPHEMERAL_SSH_CERTIFICATE",
+                     'SSH_BROKER_BASE_URL = "https://mcp.wealthtechinnovations.com"',"SSH_DISCOVERY_REQUIRED_PROBE_FAILED"]:
         if fragment not in discovery:
             raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: ephemeral SSH discovery contract "+fragment)
+    for fragment in ['TRUSTED_ASSOCIATIONS={"OWNER","MEMBER","COLLABORATOR"}',"trusted_actor(event.get(\"comment\") or {})"]:
+        if fragment not in bridge:
+            raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: local entry actor authorization "+fragment)
+    for fragment in ['"DISCOVERY_PARTIAL"','binding["discovery_status"]=discovery_status or "NOT_RUN"']:
+        if fragment not in apply:
+            raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: discovery status preservation "+fragment)
     print("LOCAL_GOVERNED_ENTRY_SELFTEST_PASS")
 
 if __name__=="__main__": main()
