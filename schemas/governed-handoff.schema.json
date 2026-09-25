@@ -1,0 +1,61 @@
+{
+  "title": "Governed Target Handoff",
+  "type": "object",
+  "required": [
+    "status",
+    "request_id",
+    "entry_action",
+    "target_repository",
+    "allowed_next_operation",
+    "required_reads",
+    "evidence_summary"
+  ],
+  "properties": {
+    "status": {
+      "const": "HANDOFF_READY"
+    },
+    "request_id": {
+      "type": "string"
+    },
+    "entry_action": {
+      "type": "string"
+    },
+    "target_repository": {
+      "type": "string"
+    },
+    "target_branch": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "expected_head_sha": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "allowed_next_operation": {
+      "type": "string"
+    },
+    "required_reads": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence_summary": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
