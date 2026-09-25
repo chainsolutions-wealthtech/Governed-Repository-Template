@@ -27,6 +27,11 @@ CONNECTION_INTENTS = [
 ]
 OWNER_SCOPES = ["ORGANIZATION", "PERSONAL_ACCOUNT", "OTHER_AUTHORIZED_OWNER"]
 CREATE_OWNER_TARGETS = ["chainsolutions-wealthtech", "Wealthtechinnovations", "Patricked"]
+CREATE_OWNER_CANONICAL = {
+    "chainsolutions-wealthtech": "chainsolutions-wealthtech",
+    "Wealthtechinnovations": "Wealthtechinnovations",
+    "Patricked": "Patricked-code",
+}
 CREATE_OWNER_SCOPE = {
     "chainsolutions-wealthtech": "ORGANIZATION",
     "Wealthtechinnovations": "PERSONAL_ACCOUNT",
@@ -185,6 +190,12 @@ def ordered_requirements(state: dict) -> list[dict]:
                 "repository_name",
                 "Quel est le nom exact du nouveau repository ?",
             ),
+            question(
+                "Q_VISIBILITY",
+                "visibility",
+                "Le nouveau repository doit-il être public ou privé ?",
+                choices=["private", "public"],
+            ),
         ])
     elif action is not None:
         requirements.extend([
@@ -289,9 +300,10 @@ def build_plan(state: dict) -> list[dict]:
     action = a["entry_action"]
     target = None
     if action == "CREATE_NEW_REPOSITORY":
-        owner = a["creation_target_owner"]
+        owner_label = a["creation_target_owner"]
+        owner = CREATE_OWNER_CANONICAL[owner_label]
         target = f"{owner}/{a['repository_name']}"
-        target_scope = CREATE_OWNER_SCOPE[owner]
+        target_scope = CREATE_OWNER_SCOPE[owner_label]
         return [
             {
                 "id": "PREP-001",
@@ -301,14 +313,14 @@ def build_plan(state: dict) -> list[dict]:
                 "status": "PENDING",
                 "instructions": (
                     f"Crée {target} directement depuis le template {CONTROL_PLANE_REPOSITORY}, "
-                    f"scope {target_scope}, visibilité PRIVATE par défaut, sans README/.gitignore/licence ajoutés manuellement. "
+                    f"scope {target_scope}, visibilité {a['visibility'].upper()}, sans README/.gitignore/licence ajoutés manuellement. "
                     "Le repository doit recevoir le template complet afin de déclencher son zero-touch bootstrap."
                 ),
                 "required_evidence": {
                     "repository": target,
                     "template_repository": CONTROL_PLANE_REPOSITORY,
                     "repository_scope": target_scope,
-                    "visibility": "private",
+                    "visibility": a["visibility"],
                     "created": True,
                     "initial_head_sha": "<40-hex-sha>"
                 },
@@ -483,7 +495,8 @@ def build_plan(state: dict) -> list[dict]:
 def target_repository(state: dict) -> str | None:
     a = state["answers"]
     if a.get("entry_action") == "CREATE_NEW_REPOSITORY" and a.get("creation_target_owner") and a.get("repository_name"):
-        return f"{a['creation_target_owner']}/{a['repository_name']}"
+        owner = CREATE_OWNER_CANONICAL[a["creation_target_owner"]]
+        return f"{owner}/{a['repository_name']}"
     return a.get("target_repository")
 
 
