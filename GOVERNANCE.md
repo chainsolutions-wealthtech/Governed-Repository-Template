@@ -78,6 +78,11 @@ ENTRY_ACTION_NE_AUTHORITY = REQUIRED
 EXISTING_REPOSITORY_ADOPTION_ADDITIVE = REQUIRED
 LAB_CANONICAL_BRANCH_PROTECTION = REQUIRED
 PERSONAL_REPOSITORY_SCOPE_SUPPORTED = REQUIRED
+CENTRAL_CONTROL_PLANE = REQUIRED
+CONTROL_PLANE_REQUEST_STATE_EXTERNAL = REQUIRED
+CONTROL_PLANE_TARGET_MUTATION = AGENT_AUTHORITY_REQUIRED
+CONTROL_PLANE_EXPLICIT_HANDOFF = REQUIRED
+CONTROL_PLANE_SINGLE_NEXT_REQUEST = REQUIRED
 ```
 
 The generic automation layer is a repository-local coordination projection. It does not create runtime locks, deployment authority, production permission or a second source of truth.
@@ -97,3 +102,12 @@ A project profile may record planned defaults. Infrastructure may remain unknown
 Every agent connection resolves a macro entry action before mutable dispatch. Entry action, connection intent and authority are independent gates.
 
 Existing-repository adoption is additive by default and preserves project content. Project mapping is read-only by default. Lab evolution keeps the canonical branch untouched until validated merge. The same governance template supports organization and explicitly targeted personal-account repositories.
+
+
+## Central governance control plane
+
+`chainsolutions-wealthtech/Governed-Repository-Template` is the preparation/control plane for governed cross-repository requests.
+
+The control-plane issue workflow may update only its own request issue. It must not mutate another repository directly. Target observations and authorized target actions are executed by the connected agent and returned as evidence.
+
+Interactive request state remains in the control-plane issue, not in template content. A target repository may only be entered for normal work after an explicit `HANDOFF_READY`.
