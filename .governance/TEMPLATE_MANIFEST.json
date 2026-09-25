@@ -53,7 +53,12 @@
       "scripts/test_control_plane_request.py",
       "scripts/test_control_plane_issue_contract.py",
       "scripts/control_plane_create_repository.py",
-      "scripts/test_repository_creation_executor.py"
+      "scripts/test_repository_creation_executor.py",
+      "scripts/local_governed_entry.py",
+      "scripts/local_entry_issue_bridge.py",
+      "scripts/local_entry_apply_baseline.py",
+      "scripts/test_local_governed_entry.py",
+      ".github/workflows/governed-local-entry.yml"
     ],
     "machine_governance": [
       ".governance/bootstrap-state.json",
@@ -68,7 +73,9 @@
       ".governance/entry-action-policy.json",
       ".governance/repository-scope-policy.json",
       ".governance/control-plane-policy.json",
-      ".governance/repository-creation-executor.json"
+      ".governance/repository-creation-executor.json",
+      ".governance/local-entry-policy.json",
+      ".governance/local-entry/state.json"
     ],
     "coordination_docs": [
       "docs/AUTOMATION.md",
@@ -82,18 +89,24 @@
       "docs/PROJECT_MAPPING.md",
       "docs/LAB_EVOLUTION.md",
       "docs/REPOSITORY_SCOPES.md",
-      "docs/CONTROL_PLANE.md"
+      "docs/CONTROL_PLANE.md",
+      "docs/LOCAL_GOVERNED_ENTRY.md"
     ],
     "schemas": [
       "schemas/entry-action.schema.json",
       "schemas/repository-scope.schema.json",
       "schemas/governed-request.schema.json",
       "schemas/execution-package.schema.json",
-      "schemas/governed-handoff.schema.json"
+      "schemas/governed-handoff.schema.json",
+      "schemas/local-entry-request.schema.json",
+      "schemas/local-entry-receipt.schema.json"
     ],
     "control_plane_source_only": [
       ".github/workflows/governed-control-plane.yml",
       ".github/ISSUE_TEMPLATE/governed-request.yml"
+    ],
+    "local_entry_ui": [
+      ".github/ISSUE_TEMPLATE/governed-local-entry.yml"
     ]
   },
   "excluded_from_template": [
@@ -105,7 +118,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.3.3",
+  "template_version": "2.4.0",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -143,7 +156,12 @@
     "per-creator GitHub App user-access authority",
     "Patricked display alias to Patricked-code canonical owner",
     "single GitHub App credential across organization and personal creation scopes",
-    "per-owner ephemeral GitHub App installation token minting"
+    "per-owner ephemeral GitHub App installation token minting",
+    "repository-local governed agent entry point",
+    "first-agent guided project baseline",
+    "subsequent-agent local routing",
+    "HEAD-guarded automatic baseline commit",
+    "local handoff ready"
   ],
   "automatic_initialization_supported": true
 }
