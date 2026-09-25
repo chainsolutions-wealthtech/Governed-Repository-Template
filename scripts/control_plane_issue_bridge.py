@@ -57,6 +57,8 @@ def persist_state(issue_number: int, original_body: str | None, state: dict) -> 
 
 def parse_command(body: str) -> tuple[str, dict] | None:
     stripped = body.strip()
+    if stripped == "/governed-execute":
+        return "execute", {}
     if stripped.startswith("/governed-answer"):
         raw = stripped[len("/governed-answer"):].strip()
         return "answer", json.loads(raw)
@@ -158,6 +160,30 @@ def render_response(state: dict) -> str:
     return "\n".join(lines)
 
 
+def emit_executor_outputs(state: dict, issue_number: int) -> None:
+    output_path = os.environ.get("GITHUB_OUTPUT")
+    if not output_path:
+        return
+    next_request = state.get("next_request") or {}
+    required = (
+        state.get("answers", {}).get("entry_action") == "CREATE_NEW_REPOSITORY"
+        and next_request.get("kind") == "ACTION_REQUEST"
+        and next_request.get("action_id") == "PREP-001"
+    )
+    lines = [
+        f"executor_required={'true' if required else 'false'}",
+        f"issue_number={issue_number}",
+    ]
+    if required:
+        lines.extend([
+            f"target_owner_label={state['answers'].get('creation_target_owner', '')}",
+            f"repository_name={state['answers'].get('repository_name', '')}",
+            f"visibility={state['answers'].get('visibility', '')}",
+        ])
+    with open(output_path, "a", encoding="utf-8") as handle:
+        handle.write("\n".join(lines) + "\n")
+
+
 def handle_opened(event: dict) -> None:
     issue = event["issue"]
     if not str(issue.get("title", "")).startswith("[Governed Request]"):
@@ -168,6 +194,7 @@ def handle_opened(event: dict) -> None:
     state = new_request(request_id, actor, "github", strip_marker(issue.get("body")))
     persist_state(number, issue.get("body"), state)
     api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{number}/comments", {"body": render_response(state)})
+    emit_executor_outputs(state, number)
 
 
 def handle_comment(event: dict) -> None:
@@ -186,20 +213,26 @@ def handle_comment(event: dict) -> None:
             if set(payload) != {"field", "value"}:
                 raise ValueError("answer payload must contain exactly field and value")
             state = apply_answer(state, payload["field"], payload["value"])
-        else:
+        elif kind == "evidence":
             if set(payload) != {"action_id", "result", "evidence"}:
                 raise ValueError("evidence payload must contain exactly action_id, result and evidence")
             if not isinstance(payload["evidence"], dict):
                 raise ValueError("evidence must be an object")
             state = apply_evidence(state, payload["action_id"], payload["result"], payload["evidence"])
+        elif kind == "execute":
+            pass
+        else:
+            raise ValueError("unsupported governed command")
     except Exception as exc:
         api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}/comments", {
             "body": f"### Governed Control Plane — réponse refusée\n\n`{type(exc).__name__}: {exc}`\n\nAucun état gouverné n'a été avancé."
         })
         return
 
-    persist_state(issue["number"], issue.get("body"), state)
-    api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}/comments", {"body": render_response(state)})
+    if kind != "execute":
+        persist_state(issue["number"], issue.get("body"), state)
+        api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}/comments", {"body": render_response(state)})
+    emit_executor_outputs(state, issue["number"])
 
 
 def handle_repository_dispatch(event: dict) -> None:
