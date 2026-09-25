@@ -73,10 +73,13 @@ def main():
     wf=(ROOT/".github/workflows/governed-local-entry.yml").read_text(encoding="utf-8")
     discovery=(ROOT/"scripts/mcp_repository_discovery.py").read_text(encoding="utf-8")
     policy=(ROOT/".governance/mcp-connection-policy.json").read_text(encoding="utf-8")
+    bridge=(ROOT/"scripts/local_entry_issue_bridge.py").read_text(encoding="utf-8")
     for fragment in ["governed_local_start","GOVERNED_MCP_AUTH_TOKEN","id-token: write","mcp_repository_discovery.py","local_entry_apply_baseline.py"]:
         if fragment not in wf: raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: workflow contract "+fragment)
     if "GOVERNED_MCP_SSH_PRIVATE_KEY" in wf or "GOVERNED_MCP_SSH_PRIVATE_KEY" in policy:
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: persistent repository SSH private key must be absent")
+    if 'missing.append("GOVERNED_MCP_URL")' in bridge:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: captured MCP endpoint must not require duplicate Actions variable")
     for fragment in ["/access/github/repository-ssh/certificate","StrictHostKeyChecking=yes","ssh-keygen","GITHUB_OIDC_EPHEMERAL_SSH_CERTIFICATE"]:
         if fragment not in discovery:
             raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: ephemeral SSH discovery contract "+fragment)
