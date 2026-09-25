@@ -19,18 +19,8 @@ from control_plane_issue_bridge import (
 TEMPLATE_OWNER = "chainsolutions-wealthtech"
 TEMPLATE_REPO = "Governed-Repository-Template"
 
-TOKEN_ENV_BY_LABEL = {
-    "chainsolutions-wealthtech": "GOVERNED_CREATOR_WEALTHTECH_TOKEN",
-    "Wealthtechinnovations": "GOVERNED_CREATOR_WEALTHTECH_TOKEN",
-    "Patricked": "GOVERNED_CREATOR_PATRICKED_TOKEN",
-}
 CANONICAL_OWNER_BY_LABEL = {
     "chainsolutions-wealthtech": "chainsolutions-wealthtech",
-    "Wealthtechinnovations": "Wealthtechinnovations",
-    "Patricked": "Patricked-code",
-}
-PRINCIPAL_BY_LABEL = {
-    "chainsolutions-wealthtech": "Wealthtechinnovations",
     "Wealthtechinnovations": "Wealthtechinnovations",
     "Patricked": "Patricked-code",
 }
@@ -101,25 +91,18 @@ def main() -> None:
     repository_name = answers["repository_name"]
     visibility = answers["visibility"]
 
-    token_env = TOKEN_ENV_BY_LABEL[owner_label]
-    token = os.environ.get(token_env)
+    token = os.environ.get("GOVERNED_CREATOR_TOKEN")
     if not token:
-        fail_without_advancing(args.issue_number, f"Secret requis absent: `{token_env}`.")
+        fail_without_advancing(
+            args.issue_number,
+            "Token d'installation GitHub App absent: `GOVERNED_CREATOR_TOKEN`. "
+            "Le workflow doit le générer à partir de l'App centrale pour le propriétaire cible.",
+        )
         return
 
-    expected_principal = PRINCIPAL_BY_LABEL[owner_label]
     canonical_owner = CANONICAL_OWNER_BY_LABEL[owner_label]
     scope = SCOPE_BY_LABEL[owner_label]
     full_name = f"{canonical_owner}/{repository_name}"
-
-    user = github_api(token, "GET", "/user")
-    login = (user or {}).get("login")
-    if login != expected_principal:
-        fail_without_advancing(
-            args.issue_number,
-            f"Le credential `{token_env}` s'authentifie comme `{login}`, attendu `{expected_principal}`.",
-        )
-        return
 
     template = github_api(token, "GET", f"/repos/{TEMPLATE_OWNER}/{TEMPLATE_REPO}")
     if not template or template.get("is_template") is not True:
@@ -133,20 +116,6 @@ def main() -> None:
     if existing is not None:
         fail_without_advancing(args.issue_number, f"Le repository cible `{full_name}` existe déjà.")
         return
-
-    if scope == "ORGANIZATION":
-        membership = github_api(
-            token,
-            "GET",
-            f"/user/memberships/orgs/{canonical_owner}",
-            allow_404=True,
-        )
-        if not membership or membership.get("state") != "active":
-            fail_without_advancing(
-                args.issue_number,
-                f"Le principal `{login}` n'a pas une adhésion active vérifiée à `{canonical_owner}`.",
-            )
-            return
 
     created = github_api(
         token,
