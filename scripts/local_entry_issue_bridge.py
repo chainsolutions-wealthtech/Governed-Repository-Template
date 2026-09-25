@@ -2,7 +2,7 @@
 from __future__ import annotations
 import json, os, re, subprocess, urllib.error, urllib.request
 from pathlib import Path
-from local_governed_entry import answer, decode_state, encode_state, new_request
+from local_governed_entry import answer, decode_state, encode_state, mark_credentials_verified, new_request
 
 ROOT=Path(__file__).resolve().parents[1]
 TITLE_PREFIX="[Governed Local Entry]"
@@ -65,9 +65,13 @@ def render(state):
 def emit_outputs(state,number):
     out=os.environ.get("GITHUB_OUTPUT")
     if not out:return
-    apply=(state.get("next_request") or {}).get("kind")=="APPLY_BASELINE"
+    kind=(state.get("next_request") or {}).get("kind")
+    apply=kind=="APPLY_BASELINE"
+    discover=kind=="MCP_DISCOVERY"
     with open(out,"a",encoding="utf-8") as h:
-        h.write(f"apply_required={'true' if apply else 'false'}\nissue_number={number}\nexpected_head={state.get('expected_head_sha','')}\n")
+        h.write(f"apply_required={'true' if apply else 'false'}\n")
+        h.write(f"mcp_discovery_required={'true' if discover else 'false'}\n")
+        h.write(f"issue_number={number}\nexpected_head={state.get('expected_head_sha','')}\n")
 
 def opened(event):
     issue=event["issue"]
@@ -89,7 +93,21 @@ def commented(event):
             s=answer(s,payload["field"],payload["value"])
             persist(issue["number"],issue.get("body"),s)
             api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{issue['number']}/comments",{"body":render(s)})
-        elif kind!="execute": raise ValueError("unsupported command")
+        elif kind=="execute":
+            if (s.get("next_request") or {}).get("kind")=="CREDENTIAL_GATE":
+                transport=s.get("answers",{}).get("mcp_transport")
+                missing=[]
+                if transport in {"DIRECT_MCP_TOKEN","BOTH"}:
+                    if not os.environ.get("GOVERNED_MCP_URL"): missing.append("GOVERNED_MCP_URL")
+                    if not os.environ.get("GOVERNED_MCP_AUTH_TOKEN"): missing.append("GOVERNED_MCP_AUTH_TOKEN")
+                if transport in {"SSH","BOTH"}:
+                    for name in ["GOVERNED_MCP_SSH_PRIVATE_KEY","GOVERNED_MCP_SSH_HOST","GOVERNED_MCP_SSH_USER","GOVERNED_MCP_SSH_PORT"]:
+                        if not os.environ.get(name): missing.append(name)
+                if missing: raise ValueError("missing GitHub Actions secret/variable: "+", ".join(missing))
+                s=mark_credentials_verified(s)
+                persist(issue["number"],issue.get("body"),s)
+                api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{issue['number']}/comments",{"body":render(s)})
+        else: raise ValueError("unsupported command")
     except Exception as exc:
         api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{issue['number']}/comments",{"body":f"### Local entry response refused\n\n`{type(exc).__name__}: {exc}`\n\nNo state advanced."});return
     emit_outputs(s,issue["number"])
