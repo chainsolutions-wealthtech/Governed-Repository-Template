@@ -1,0 +1,24 @@
+{
+  "title": "Governance Connection Intent Policy",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "intents",
+    "invariants"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "intents": {
+      "type": "object"
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
