@@ -101,17 +101,24 @@ After the entry action is selected, the control plane asks only:
 1. where to create the repository:
    - `chainsolutions-wealthtech`;
    - `Wealthtechinnovations`;
-   - `Patricked`;
-2. the exact repository name.
+   - `Patricked` (GitHub owner canonique: `Patricked-code`);
+2. the exact repository name;
+3. whether the repository is `private` or `public`.
 
-Those two explicit selections are the creation instruction for this workflow. The control plane then emits `CREATE_FROM_GOVERNED_TEMPLATE` immediately; it does not ask for a generic connection intent, project stack, visibility or infrastructure before creation.
+These explicit selections are the creation instruction for this workflow. The control plane then emits and automatically attempts `CREATE_FROM_GOVERNED_TEMPLATE`; it does not ask for a generic connection intent, project stack or infrastructure before creation.
 
-Creation defaults:
+Creation contract:
 - source: `chainsolutions-wealthtech/Governed-Repository-Template`;
-- visibility: private;
+- visibility: explicitly selected by the user;
 - no manually added README, gitignore or license;
 - full template content inherited;
 - zero-touch bootstrap expected immediately after creation;
 - project profile and infrastructure discovery continue inside the generated repository.
 
-If the connected GitHub agent cannot create repositories, the action remains pending and must be executed by an authorized GitHub executor; the control plane must not fake creation evidence.
+The source control plane contains a GitHub REST creation executor. It calls `POST /repos/chainsolutions-wealthtech/Governed-Repository-Template/generate` only after owner, name and visibility are resolved.
+
+Creator authority is fail-closed and uses external GitHub App user-access credentials:
+- `GOVERNED_CREATOR_WEALTHTECH_TOKEN` for `chainsolutions-wealthtech` and `Wealthtechinnovations`;
+- `GOVERNED_CREATOR_PATRICKED_TOKEN` for `Patricked-code`.
+
+Tokens are never stored in Git. If the credential is missing, wrong, cannot read the private template, or cannot create for the target owner, PREP-001 remains pending and no PASS evidence is fabricated. After fixing authority, `/governed-execute` retries the executor.
