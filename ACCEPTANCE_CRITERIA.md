@@ -17,3 +17,17 @@
 ## Project acceptance
 
 TO_INITIALIZE
+
+
+## Central control plane acceptance
+
+- [ ] Source template role is `CENTRAL_GOVERNANCE_CONTROL_PLANE`.
+- [ ] Generated/adopted target role is `GOVERNED_TARGET_CLIENT`.
+- [ ] Source-only workflow and issue form do not survive target initialization/adoption.
+- [ ] `governed_request_start` creates a Governed Request issue on the source control plane.
+- [ ] The request engine emits exactly one next question/action/handoff.
+- [ ] Target mutation cannot begin before authority and plan approval.
+- [ ] Invalid or missing evidence cannot advance the state machine.
+- [ ] All five entry workflows can reach a valid `HANDOFF_READY`.
+- [ ] The final handoff includes target repository, branch/HEAD when known, allowed next operation, evidence and constraints.
+- [ ] Existing V2.0/V2.1/V2.2 regression tests remain GREEN.
