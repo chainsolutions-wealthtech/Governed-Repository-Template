@@ -1,0 +1,39 @@
+{
+  "title": "Governance Entry Action Policy",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "question",
+    "required_on_connection",
+    "actions",
+    "questionnaire",
+    "invariants"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "question": {
+      "type": "string"
+    },
+    "required_on_connection": {
+      "const": true
+    },
+    "actions": {
+      "type": "object"
+    },
+    "questionnaire": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
