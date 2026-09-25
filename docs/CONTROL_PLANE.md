@@ -117,8 +117,17 @@ Creation contract:
 
 The source control plane contains a GitHub REST creation executor. It calls `POST /repos/chainsolutions-wealthtech/Governed-Repository-Template/generate` only after owner, name and visibility are resolved.
 
-Creator authority is fail-closed and uses external GitHub App user-access credentials:
-- `GOVERNED_CREATOR_WEALTHTECH_TOKEN` for `chainsolutions-wealthtech` and `Wealthtechinnovations`;
-- `GOVERNED_CREATOR_PATRICKED_TOKEN` for `Patricked-code`.
+Creator authority is fail-closed and uses one central GitHub App installed on all three target owners.
 
-Tokens are never stored in Git. If the credential is missing, wrong, cannot read the private template, or cannot create for the target owner, PREP-001 remains pending and no PASS evidence is fabricated. After fixing authority, `/governed-execute` retries the executor.
+Control-plane configuration:
+- Actions variable `GOVERNED_GITHUB_APP_CLIENT_ID`;
+- Actions secret `GOVERNED_GITHUB_APP_PRIVATE_KEY`.
+
+At runtime, `actions/create-github-app-token@v3` mints a short-lived installation token for the selected canonical owner:
+- `chainsolutions-wealthtech`;
+- `Wealthtechinnovations`;
+- `Patricked-code`.
+
+The App installations must grant at least repository `Administration: write` and `Contents: read` and should cover all repositories for these creation scopes. Installation tokens are not stored in Git or Actions secrets and are revoked by the action after the job.
+
+If the App credentials are missing, the App is not installed on the selected owner, or the installation lacks the required permissions, PREP-001 remains pending and no PASS evidence is fabricated. After fixing authority, `/governed-execute` retries the executor.
