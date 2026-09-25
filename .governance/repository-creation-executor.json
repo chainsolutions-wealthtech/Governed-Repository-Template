@@ -11,7 +11,7 @@
     "installation_token_ttl": "GITHUB_MANAGED_ONE_HOUR",
     "required_app_repository_permissions": {
       "administration": "write",
-      "contents": "read"
+      "contents": "write"
     },
     "target_installations": {
       "chainsolutions-wealthtech": {
@@ -25,6 +25,15 @@
       "Patricked": {
         "target_owner": "Patricked-code",
         "account_type": "PERSONAL_ACCOUNT"
+      }
+    },
+    "operation_scopes": {
+      "create_from_template": {
+        "administration": "write",
+        "contents": "read"
+      },
+      "governed_target_upgrade": {
+        "contents": "write"
       }
     }
   },
