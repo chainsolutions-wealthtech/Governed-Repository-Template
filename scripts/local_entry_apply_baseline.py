@@ -38,7 +38,7 @@ def main():
         f"- First governed agent: {a['agent_identity']} via {a['provider']}\n\n## Mission\n\n{a['project_mission']}\n\n## Scope\n\n### In scope\n{bullets(scope['in_scope'])}\n\n"
         f"### Out of scope\n{bullets(scope['out_of_scope'])}\n\n## Architecture / stack\n\nProfile selection: {a['project_profile']}. See docs/ARCHITECTURE.md.\n\n"
         f"## Infrastructure / deployment\n\nDeclared baseline status: {a['infrastructure_status']}.\n\n## External systems\n\n{bullets(a['external_systems'])}\n\n"
-        f"## Initial constraints\n\n{bullets(a['constraints'])}\n",encoding="utf-8")
+        f"## Initial constraints\n\n{bullets(a['constraints'])}\n\n## Governed repository setup\n\nWorkflow model: {a.get('workflow_model') or 'NOT_SELECTED'}\nMCP linked: {a.get('link_mcp_server') is True}\nDomain binding: {json.dumps(a.get('domain_binding'),ensure_ascii=False)}\n",encoding="utf-8")
 
     (ROOT/"docs/ARCHITECTURE.md").write_text(
         f"# ARCHITECTURE\n\n## Baseline\n\n- Subject HEAD: {expected}\n- Status: {a['architecture_status']}\n- Project profile: {a['project_profile']}\n\n"
@@ -64,6 +64,42 @@ def main():
     else:
         infra["status"]="DISCOVERY_REQUIRED"
         for k in ["server_status","domain_status","directory_status"]: infra["deployment_target"][k]="DISCOVERY_REQUIRED"
+    setup=state.get("setup_package") or {}
+    workflow=readj(".governance/workflow-model.json")
+    workflow["repository"]=repo
+    workflow["selected_model"]=a.get("workflow_model")
+    writej(".governance/workflow-model.json",workflow)
+
+    access=readj(".governance/access-plan.json")
+    access["repository"]=repo
+    access["status"]="CONFIGURED"
+    if a.get("link_mcp_server"):
+        access["mcp"]["project_write"]=[]
+        access["mcp"]["write_activation"]="REQUIRES_MCP_PROJECT_REGISTRATION_AND_EXPLICIT_AUTHORITY"
+    writej(".governance/access-plan.json",access)
+
+    binding=readj(".governance/mcp-binding.json")
+    binding["repository"]=repo
+    binding["linked"]=a.get("link_mcp_server") is True
+    if binding["linked"]:
+        binding["status"]="DISCOVERED_READONLY" if state.get("mcp_discovery") else "ACCESS_CONFIGURED"
+        binding["transport"]=a.get("mcp_transport")
+        binding["endpoint"]=a.get("mcp_endpoint")
+        binding["ssh_connection_profile"]=a.get("ssh_connection_profile")
+        binding["credential_names"]=[x["name"] for x in setup.get("mcp",{}).get("credential_requirements",[])]
+        binding["discovery_status"]="PASS" if state.get("mcp_discovery") else "NOT_RUN"
+        binding["discovery_observed_at"]=(state.get("mcp_discovery") or {}).get("observed_at")
+        binding["domain_strategy"]=a.get("domain_strategy")
+        binding["domain_binding"]=a.get("domain_binding")
+        binding["project_registration_status"]="UNVERIFIED"
+        binding["write_tools_status"]="DISABLED_UNTIL_REGISTERED_AND_AUTHORIZED"
+        infra["server_access"]["preferred"]="DIRECT_MCP" if a.get("mcp_transport") in {"DIRECT_MCP_TOKEN","BOTH"} else "SSH"
+        infra["server_access"]["fallback"]="SSH" if a.get("mcp_transport") in {"BOTH","DIRECT_MCP_TOKEN"} else None
+        infra["server_access"]["status"]="DISCOVERED_READONLY" if state.get("mcp_discovery") else "ACCESS_CONFIGURED"
+        if a.get("domain_binding"):
+            infra["deployment_target"]["domain"]=a["domain_binding"].get("domain")
+            infra["deployment_target"]["domain_status"]="OBSERVED_EXISTING" if a["domain_binding"].get("mode")=="EXISTING" else ("PROVISIONING_REQUIRED" if a["domain_binding"].get("mode")=="CREATE_NEW" else "DISCOVERY_REQUIRED")
+    writej(".governance/mcp-binding.json",binding)
     writej(".governance/infrastructure-intent.json",infra)
 
     local=readj(".governance/local-entry/state.json")
