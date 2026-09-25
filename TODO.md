@@ -40,3 +40,17 @@
 - [x] Add isolated lab branch/PR evolution mode.
 - [x] Preserve normal governed-work continuation.
 - [x] Add regression tests for routing, adoption preservation and repository scopes.
+
+
+## V2.3 central control plane
+
+- [x] Make Governed-Repository-Template the central preparation/control plane.
+- [x] Persist interactive governed requests outside template content.
+- [x] Add direct GitHub agent invocation through repository dispatch.
+- [x] Ask one question or action request at a time.
+- [x] Build action-specific chronological preparation packages.
+- [x] Require explicit plan approval.
+- [x] Validate preparatory evidence before advancing.
+- [x] Produce explicit target handoff packages.
+- [x] Keep generated/adopted repositories as clients, not duplicate control planes.
+- [x] Add CI regression tests for control-plane lifecycle and source/client boundary.
