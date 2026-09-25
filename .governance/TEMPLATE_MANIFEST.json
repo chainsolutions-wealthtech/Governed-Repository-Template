@@ -51,7 +51,9 @@
       "scripts/governed_request.py",
       "scripts/control_plane_issue_bridge.py",
       "scripts/test_control_plane_request.py",
-      "scripts/test_control_plane_issue_contract.py"
+      "scripts/test_control_plane_issue_contract.py",
+      "scripts/control_plane_create_repository.py",
+      "scripts/test_repository_creation_executor.py"
     ],
     "machine_governance": [
       ".governance/bootstrap-state.json",
@@ -65,7 +67,8 @@
       ".governance/connection-intent-policy.json",
       ".governance/entry-action-policy.json",
       ".governance/repository-scope-policy.json",
-      ".governance/control-plane-policy.json"
+      ".governance/control-plane-policy.json",
+      ".governance/repository-creation-executor.json"
     ],
     "coordination_docs": [
       "docs/AUTOMATION.md",
@@ -102,7 +105,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.3.1",
+  "template_version": "2.3.2",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -134,7 +137,11 @@
     "chronological preparatory execution packages",
     "evidence-gated explicit target handoff",
     "source-control-plane versus target-client boundary",
-    "new repository owner-then-name creation sequence"
+    "new repository owner-then-name creation sequence",
+    "explicit public/private repository visibility question",
+    "GitHub generate-from-template creation executor",
+    "per-creator GitHub App user-access authority",
+    "Patricked display alias to Patricked-code canonical owner"
   ],
   "automatic_initialization_supported": true
 }
