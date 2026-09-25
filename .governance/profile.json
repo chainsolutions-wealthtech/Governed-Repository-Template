@@ -52,7 +52,11 @@
     "repository_creation_executor": "REQUIRED",
     "repository_creation_visibility_explicit": "REQUIRED",
     "repository_creation_sequence": "OWNER_NAME_VISIBILITY_CREATE",
-    "creator_credentials_in_git": "FORBIDDEN"
+    "creator_credentials_in_git": "FORBIDDEN",
+    "local_control_plane": "REQUIRED",
+    "first_agent_baseline": "REQUIRED",
+    "local_entry_head_guard": "REQUIRED",
+    "local_entry_state_external_to_canonical_truth": "REQUIRED"
   },
   "automation": {
     "auto_bootstrap": true,
@@ -74,6 +78,9 @@
     "github_issue_control_plane": true,
     "explicit_target_handoff": true,
     "repository_creation_executor": true,
-    "generate_from_template": true
+    "generate_from_template": true,
+    "local_governed_entry": true,
+    "first_agent_baseline_workflow": true,
+    "subsequent_agent_local_routing": true
   }
 }
