@@ -56,6 +56,31 @@ provider_conversation_ref_provenance = UNAVAILABLE
 
 Never synthesize a fake provider identifier.
 
+## Connection intent before work claims
+
+A session declares why it is connected before mutable work is dispatched.
+
+```text
+OBSERVE / REVIEW
+  → no mutable dispatch by default
+
+CONTEXT_INTAKE / INFORMATION_INTAKE
+  → intake route
+  → no code claim
+
+WORK_REQUEST / CODE_CHANGE
+  → eligible for governed dispatch
+
+INFRASTRUCTURE
+  → infrastructure discovery
+  → governed dispatch only with separate authority
+
+UNKNOWN
+  → RESOLVE_CONNECTION_INTENT
+```
+
+Intent is a routing fact, not an authorization.
+
 ## Work claims
 
 Multiple readers/reviewers are allowed.
