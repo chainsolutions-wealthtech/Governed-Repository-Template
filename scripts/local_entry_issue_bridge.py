@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import json, os, re, subprocess, urllib.error, urllib.request
+import json, os, re, subprocess, urllib.error, urllib.parse, urllib.request
 from pathlib import Path
 from local_governed_entry import answer, decode_state, encode_state, mark_credentials_verified, new_request
 
@@ -75,11 +75,18 @@ def emit_outputs(state,number):
         h.write(f"issue_number={number}\nexpected_head={state.get('expected_head_sha','')}\n")
 
 def trusted_actor(record):
-    return isinstance(record,dict) and record.get("author_association") in TRUSTED_ASSOCIATIONS
+    if not isinstance(record,dict) or record.get("author_association") not in TRUSTED_ASSOCIATIONS:
+        return False
+    login=((record.get("user") or {}).get("login") or "")
+    if not isinstance(login,str) or not re.fullmatch(r"[A-Za-z0-9-]{1,39}",login):
+        return False
+    encoded=urllib.parse.quote(login,safe="")
+    permission=api("GET",f"/repos/{os.environ['GITHUB_REPOSITORY']}/collaborators/{encoded}/permission").get("permission")
+    return permission in {"admin","maintain","write"}
 
 def refuse_untrusted(number):
     api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{number}/comments",{
-      "body":"### Local entry refused\n\nThis command requires a repository OWNER, MEMBER or COLLABORATOR. No governed state advanced."
+      "body":"### Local entry refused\n\nThis command requires a repository actor with current admin, maintain or write permission. No governed state advanced."
     })
 
 def opened(event):
