@@ -48,6 +48,7 @@ REQUIRED = [
     "docs/LAB_EVOLUTION.md",
     "docs/REPOSITORY_SCOPES.md",
     "docs/CONTROL_PLANE.md",
+    "docs/LOCAL_GOVERNED_ENTRY.md",
     ".governance/profile.json",
     ".governance/TEMPLATE_MANIFEST.json",
     ".governance/bootstrap-state.json",
@@ -63,6 +64,8 @@ REQUIRED = [
     ".governance/repository-scope-policy.json",
     ".governance/control-plane-policy.json",
     ".governance/repository-creation-executor.json",
+    ".governance/local-entry-policy.json",
+    ".governance/local-entry/state.json",
     "schemas/project-state.schema.json",
     "schemas/loop-state.schema.json",
     "schemas/next-action.schema.json",
@@ -81,6 +84,8 @@ REQUIRED = [
     "schemas/governed-request.schema.json",
     "schemas/execution-package.schema.json",
     "schemas/governed-handoff.schema.json",
+    "schemas/local-entry-request.schema.json",
+    "schemas/local-entry-receipt.schema.json",
     "scripts/initialize_governance.py",
     "scripts/auto_bootstrap.py",
     "scripts/finalize_bootstrap.py",
@@ -98,6 +103,12 @@ REQUIRED = [
     "scripts/test_control_plane_issue_contract.py",
     "scripts/control_plane_create_repository.py",
     "scripts/test_repository_creation_executor.py",
+    "scripts/local_governed_entry.py",
+    "scripts/local_entry_issue_bridge.py",
+    "scripts/local_entry_apply_baseline.py",
+    "scripts/test_local_governed_entry.py",
+    ".github/workflows/governed-local-entry.yml",
+    ".github/ISSUE_TEMPLATE/governed-local-entry.yml",
     ".github/workflows/governance-ci.yml",
     ".github/workflows/governance-auto-bootstrap.yml",
 ]
@@ -191,6 +202,10 @@ def validate_policies(profile: dict) -> None:
         "repository_creation_visibility_explicit": "REQUIRED",
         "repository_creation_sequence": "OWNER_NAME_VISIBILITY_CREATE",
         "creator_credentials_in_git": "FORBIDDEN",
+        "local_control_plane": "REQUIRED",
+        "first_agent_baseline": "REQUIRED",
+        "local_entry_head_guard": "REQUIRED",
+        "local_entry_state_external_to_canonical_truth": "REQUIRED",
     }
     for key, expected in exact.items():
         if policies.get(key) != expected:
@@ -204,6 +219,8 @@ def validate_project_and_connection_intent(profile: dict, template_mode: bool) -
     entry_policy = load(".governance/entry-action-policy.json")
     repository_scope = load(".governance/repository-scope-policy.json")
     creation_executor = load(".governance/repository-creation-executor.json")
+    local_entry_policy = load(".governance/local-entry-policy.json")
+    local_entry_state = load(".governance/local-entry/state.json")
     sessions = load(".governance/sessions/sessions.json")
 
     if project_profile.get("selection_status") not in {"DISCOVERY_REQUIRED", "SELECTED", "HOLD_FOR_REVIEW"}:
@@ -320,6 +337,27 @@ def validate_project_and_connection_intent(profile: dict, template_mode: bool) -
             fail(f"repository creation installation mapping invalid for {label}")
     if creation_executor.get("fail_closed") is not True:
         fail("repository creation executor must fail closed")
+
+    if local_entry_policy.get("role") != "REPOSITORY_LOCAL_CONTROL_PLANE":
+        fail("local entry policy role is invalid")
+    if "FIRST_AGENT_BOOTSTRAP" not in (local_entry_policy.get("modes") or {}):
+        fail("local entry policy missing FIRST_AGENT_BOOTSTRAP")
+    if "NORMAL_GOVERNED_ENTRY" not in (local_entry_policy.get("modes") or {}):
+        fail("local entry policy missing NORMAL_GOVERNED_ENTRY")
+    if local_entry_state.get("repository") != project_profile.get("repository"):
+        fail("local entry state repository does not match project profile")
+    if template_mode:
+        if local_entry_state.get("status") != "WAITING_FOR_FIRST_AGENT":
+            fail("template local entry state must start WAITING_FOR_FIRST_AGENT")
+        if local_entry_state.get("first_agent_completed") is not False:
+            fail("template local entry state must not be completed")
+    elif local_entry_state.get("first_agent_completed") is True:
+        receipt_path = ROOT / ".governance" / "local-entry" / "receipt.json"
+        if not receipt_path.exists():
+            fail("completed first-agent baseline requires local-entry receipt")
+        local_receipt = load(".governance/local-entry/receipt.json")
+        if local_receipt.get("repository") != profile.get("repository"):
+            fail("local entry receipt repository mismatch")
 
     for session in sessions.get("sessions", []):
         intent = session.get("connection_intent")
@@ -618,6 +656,10 @@ def validate_python_automation() -> None:
         "scripts/test_control_plane_issue_contract.py",
         "scripts/control_plane_create_repository.py",
         "scripts/test_repository_creation_executor.py",
+        "scripts/local_governed_entry.py",
+        "scripts/local_entry_issue_bridge.py",
+        "scripts/local_entry_apply_baseline.py",
+        "scripts/test_local_governed_entry.py",
     ]:
         path = ROOT / relative
         try:
