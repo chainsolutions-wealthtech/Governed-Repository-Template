@@ -334,6 +334,8 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
             "issues: write",
             "contents: read",
             "github.actor != 'github-actions[bot]'",
+            "repository_dispatch:",
+            "governed_request_start",
             "python3 scripts/control_plane_issue_bridge.py",
         ]
         for fragment in workflow_requirements:
