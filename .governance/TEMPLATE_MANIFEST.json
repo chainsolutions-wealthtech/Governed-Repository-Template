@@ -102,7 +102,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.3.0",
+  "template_version": "2.3.1",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -133,7 +133,8 @@
     "GitHub issue persisted orchestration state",
     "chronological preparatory execution packages",
     "evidence-gated explicit target handoff",
-    "source-control-plane versus target-client boundary"
+    "source-control-plane versus target-client boundary",
+    "new repository owner-then-name creation sequence"
   ],
   "automatic_initialization_supported": true
 }
