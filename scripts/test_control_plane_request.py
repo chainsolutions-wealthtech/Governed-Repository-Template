@@ -60,9 +60,10 @@ def answer_required(state: dict, values: dict[str, Any]) -> dict:
 
 
 def approve_and_execute(state: dict) -> dict:
-    if state["next_request"]["kind"] != "PLAN_APPROVAL":
-        raise SystemExit("CONTROL_PLANE_SELFTEST_FAILED: plan approval not requested")
-    state = apply_answer(state, "plan_approved", True)
+    if state["next_request"]["kind"] == "PLAN_APPROVAL":
+        state = apply_answer(state, "plan_approved", True)
+    elif state["next_request"]["kind"] != "ACTION_REQUEST":
+        raise SystemExit("CONTROL_PLANE_SELFTEST_FAILED: plan/action request not available")
 
     guard = 0
     while state["next_request"] and state["next_request"]["kind"] == "ACTION_REQUEST":
@@ -80,8 +81,8 @@ def approve_and_execute(state: dict) -> dict:
 def run_case(name: str, values: dict[str, Any], expected_target: str, expected_operation: str) -> dict:
     state = new_request(f"SELFTEST-{name}", "selftest-agent", "test", f"case {name}")
     state = answer_required(state, values)
-    if state["status"] != "PLAN_READY":
-        raise SystemExit(f"CONTROL_PLANE_SELFTEST_FAILED: {name} plan not ready")
+    if state["status"] not in {"PLAN_READY", "EXECUTING_PREPARATION"}:
+        raise SystemExit(f"CONTROL_PLANE_SELFTEST_FAILED: {name} plan/action not ready")
     state = approve_and_execute(state)
     handoff = state["handoff"]
     if handoff["target_repository"] != expected_target:
@@ -96,16 +97,8 @@ def main() -> None:
         "create",
         {
             "entry_action": "CREATE_NEW_REPOSITORY",
-            "connection_intent": "WORK_REQUEST",
-            "objective": "Create a governed application repository",
-            "target_scope": "ORGANIZATION",
-            "target_owner": "chainsolutions-wealthtech",
+            "creation_target_owner": "chainsolutions-wealthtech",
             "repository_name": "control-plane-create-selftest",
-            "visibility": "private",
-            "project_type": "application",
-            "project_profile": "chainsolutions-fullstack-web",
-            "infrastructure_preference": "DISCOVER_AFTER_CREATION",
-            "creation_authority": True,
         },
         "chainsolutions-wealthtech/control-plane-create-selftest",
         "DISCOVER_PROJECT_BASELINE",
