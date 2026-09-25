@@ -40,3 +40,22 @@ before selecting mutable work.
 When multiple agents cooperate, create/resume a governed repository session and dispatch only dependency-safe, collision-safe work. A `HEAD_MOVED` result forbids writing until intervening changes are reconciled.
 
 New information must be registered/reconciled through the intake model. A contradiction is held for review and never becomes canonical automatically.
+
+
+## Connection intent
+
+When starting or resuming a governed session, classify the purpose of the connection before mutable dispatch.
+
+Example:
+
+```bash
+python3 scripts/governance_agent.py session-start \
+  --agent "<agent>" \
+  --provider "<provider>" \
+  --connection-ref "<ref>" \
+  --intent CODE_CHANGE
+```
+
+Use `CONTEXT_INTAKE` or `INFORMATION_INTAKE` when the connection exists to add context or evidence rather than to code. `UNKNOWN` is the safe default and blocks mutable dispatch until resolved.
+
+An intent never grants infrastructure, production, secret, financial, legal or destructive authority.
