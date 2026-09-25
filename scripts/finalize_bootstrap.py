@@ -35,6 +35,9 @@ def main() -> None:
     state_path = ROOT / ".governance" / "bootstrap-state.json"
     memory_path = ROOT / ".governance" / "canonical-memory" / "current.json"
     status_path = ROOT / "STATUS.md"
+    loop_state_path = ROOT / "LOOP_STATE.md"
+    work_log_path = ROOT / "WORK_LOG.md"
+    suivi_path = ROOT / "SUIVI.md"
 
     receipt = read_json(receipt_path)
     state = read_json(state_path)
@@ -86,6 +89,50 @@ def main() -> None:
         "No production, deployment, compliance, legal, financial or operational status is implied.\n",
         encoding="utf-8",
     )
+
+    loop_state_path.write_text(
+        "# LOOP_STATE — État de la boucle\n\n"
+        "```json\n"
+        "{\n"
+        '  "loop_id": "LOOP-INIT-001",\n'
+        '  "state": "IN_PROGRESS",\n'
+        '  "phase": "DISCOVER",\n'
+        f'  "repository": "{repository}",\n'
+        f'  "canonical_branch": "{canonical_branch}",\n'
+        '  "baseline_head": "TO_CAPTURE",\n'
+        f'  "next_action": "{next_action}",\n'
+        '  "last_verification": "GOVERNANCE_BOOTSTRAP_ATTESTED"\n'
+        "}\n"
+        "```\n",
+        encoding="utf-8",
+    )
+
+    work_log = work_log_path.read_text(encoding="utf-8")
+    if "- Result: `PENDING`" in work_log:
+        work_log = work_log.replace("- Result: `PENDING`", "- Result: `PASS`", 1)
+    if "- Bootstrap attestation: `PASS`" not in work_log:
+        work_log = work_log.rstrip() + (
+            "\n- Bootstrap attestation: `PASS`"
+            f"\n- Attested initialization commit: `{initialization_commit_sha}`"
+            f"\n- GitHub run: `{receipt.get('github_run_id') or 'UNKNOWN'}`\n"
+        )
+    work_log_path.write_text(work_log, encoding="utf-8")
+
+    suivi = suivi_path.read_text(encoding="utf-8")
+    if "- State: `INITIALIZATION_REQUIRED`" in suivi:
+        suivi = suivi.replace(
+            "- State: `INITIALIZATION_REQUIRED`",
+            "- State: `GOVERNANCE_INITIALIZED_BASELINE_REQUIRED`",
+            1,
+        )
+    if "- Bootstrap attestation: `PASS`" not in suivi:
+        suivi = suivi.rstrip() + (
+            "\n\n## Bootstrap attestation\n\n"
+            "- Bootstrap attestation: `PASS`\n"
+            f"- Attested initialization commit: `{initialization_commit_sha}`\n"
+            "- Next action: `DISCOVER_PROJECT_BASELINE`\n"
+        )
+    suivi_path.write_text(suivi, encoding="utf-8")
 
     print(f"BOOTSTRAP_ATTESTATION_PASS: {initialization_commit_sha}")
 
