@@ -322,7 +322,7 @@ def validate_project_and_connection_intent(profile: dict, template_mode: bool) -
     if authentication.get("installation_token_environment") != "GOVERNED_CREATOR_TOKEN":
         fail("repository creation executor token environment is invalid")
     permissions = authentication.get("required_app_repository_permissions") or {}
-    if permissions != {"administration": "write", "contents": "write"}:
+    if permissions != {"administration": "write", "contents": "write", "workflows": "write"}:
         fail("repository creation executor permissions are invalid")
     installations = authentication.get("target_installations") or {}
     expected_installations = {
