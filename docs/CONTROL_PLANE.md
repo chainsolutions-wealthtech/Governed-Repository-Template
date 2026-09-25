@@ -69,3 +69,24 @@ A failed action moves the request to `HOLD_FOR_REVIEW`. A successful full prepar
 `CONTROL_PLANE_PREPARATION != TARGET_WORK`
 
 The control plane resolves the workflow, gathers facts, enforces gates, creates the chronological preparation package and verifies evidence. The agent only starts normal work on the target when `HANDOFF_READY` is emitted.
+
+
+## Direct agent invocation
+
+An agent with GitHub permission on the control-plane repository may start a request without manually opening an issue by sending a repository dispatch:
+
+```json
+{
+  "event_type": "governed_request_start",
+  "client_payload": {
+    "objective": "Describe the governed objective",
+    "agent": "ChatGPT / Claude / Codex / human",
+    "provider": "github-connected-agent",
+    "title": "Optional concise title"
+  }
+}
+```
+
+The source-only workflow creates the `[Governed Request]` issue. The issue-opened event then initializes the governed state machine and asks the first question.
+
+The dispatch does not authorize target creation or target mutation. It only opens the governed preparation workflow.
