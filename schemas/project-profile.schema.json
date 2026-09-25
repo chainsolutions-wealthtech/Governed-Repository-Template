@@ -1,0 +1,49 @@
+{
+  "title": "Governance Project Profile",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "repository",
+    "selection_status",
+    "selected_profile",
+    "profiles",
+    "invariants"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "repository": {
+      "type": "string"
+    },
+    "selection_status": {
+      "enum": [
+        "DISCOVERY_REQUIRED",
+        "SELECTED",
+        "HOLD_FOR_REVIEW"
+      ]
+    },
+    "selected_profile": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "organization_default_candidate": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "profiles": {
+      "type": "object"
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
