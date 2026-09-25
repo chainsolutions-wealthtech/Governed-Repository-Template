@@ -131,6 +131,12 @@ def validate_policies(profile: dict) -> None:
         "contradiction": "HOLD_FOR_REVIEW",
         "automation_fail_closed": "REQUIRED",
         "runtime_authority_inference": "FORBIDDEN",
+        "planned_ne_implemented": "REQUIRED",
+        "infrastructure_facts_require_observation": "REQUIRED",
+        "credentials_in_repository": "FORBIDDEN",
+        "connection_intent_fail_closed": "REQUIRED",
+        "context_intake_ne_code_permission": "REQUIRED",
+        "intent_ne_authority": "REQUIRED",
     }
     for key, expected in exact.items():
         if policies.get(key) != expected:
