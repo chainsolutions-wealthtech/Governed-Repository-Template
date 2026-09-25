@@ -56,6 +56,8 @@ def template_paths() -> list[str]:
             if relative not in EXCLUDED and relative not in paths:
                 paths.append(relative)
     for relative in [
+        ".governance/profile.json",
+        ".governance/TEMPLATE_MANIFEST.json",
         "README.md",
         "PROJECT_CONTEXT.md",
         "STATUS.md",
