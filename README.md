@@ -82,3 +82,21 @@ Every agent connection now resolves a macro entry action before mutable dispatch
 5. continue normal governed work.
 
 The template supports organization and explicitly targeted personal-account repository scopes. Existing-project adoption is plan-first and preserves pre-existing project files by default.
+
+
+## Central Governed Control Plane — V2.3
+
+The template repository now acts as the central preparation/control plane for governed GitHub work.
+
+Start a `[Governed Request]` issue on `chainsolutions-wealthtech/Governed-Repository-Template`. The control plane will:
+
+1. resolve the macro entry action;
+2. resolve connection intent;
+3. identify/observe the target;
+4. resolve owner scope and authority;
+5. build a chronological preparatory execution package;
+6. request one action/evidence item at a time;
+7. stop on contradiction, denied authority or failed evidence;
+8. emit an explicit `HANDOFF_READY` package before normal target work begins.
+
+Generated/adopted repositories keep the central control-plane reference but are clients, not duplicate control planes.
