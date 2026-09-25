@@ -82,6 +82,21 @@
       "invariants": [
         "FAIL_CLOSED"
       ]
+    },
+    "CONTINUE_GOVERNED_WORK": {
+      "ordinal": 5,
+      "label": "Poursuivre un travail déjà gouverné sur le repository courant",
+      "initial_route": "GOVERNED_WORK_RECONCILIATION",
+      "initial_mutable": true,
+      "target_repository_state": "EXISTING_GOVERNED",
+      "required_gates": [
+        "EXACT_HEAD_OBSERVED",
+        "SESSION_INTENT_RESOLVED"
+      ],
+      "invariants": [
+        "EXISTING_GOVERNANCE_REMAINS_AUTHORITATIVE",
+        "DISPATCH_REMAINS_DEPENDENCY_AND_COLLISION_SAFE"
+      ]
     }
   },
   "questionnaire": [
@@ -93,7 +108,8 @@
         1,
         2,
         3,
-        4
+        4,
+        5
       ]
     },
     {
@@ -118,6 +134,13 @@
         "LAB_EVOLUTION"
       ],
       "text": "La création de branche/PR laboratoire est-elle explicitement autorisée pour ce projet ?"
+    },
+    {
+      "id": "Q5",
+      "required_when": [
+        "CONTINUE_GOVERNED_WORK"
+      ],
+      "text": "Quel work-item ou NEXT_ACTION existant doit être repris après réconciliation du HEAD ?"
     }
   ],
   "invariants": [
