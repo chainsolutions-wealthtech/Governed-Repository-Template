@@ -187,6 +187,10 @@ def validate_policies(profile: dict) -> None:
         "control_plane_target_mutation": "AGENT_AUTHORITY_REQUIRED",
         "control_plane_explicit_handoff": "REQUIRED",
         "control_plane_single_next_request": "REQUIRED",
+        "repository_creation_executor": "REQUIRED",
+        "repository_creation_visibility_explicit": "REQUIRED",
+        "repository_creation_sequence": "OWNER_NAME_VISIBILITY_CREATE",
+        "creator_credentials_in_git": "FORBIDDEN",
     }
     for key, expected in exact.items():
         if policies.get(key) != expected:
