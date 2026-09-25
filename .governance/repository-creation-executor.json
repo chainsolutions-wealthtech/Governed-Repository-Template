@@ -1,0 +1,49 @@
+{
+  "schema_version": "1.0.0",
+  "executor": "GITHUB_REST_GENERATE_FROM_TEMPLATE",
+  "endpoint": "POST /repos/chainsolutions-wealthtech/Governed-Repository-Template/generate",
+  "authentication": {
+    "mode": "GITHUB_APP_USER_ACCESS_TOKEN_PER_CREATOR_IDENTITY",
+    "tokens_in_repository": "FORBIDDEN",
+    "required_app_repository_permissions": {
+      "administration": "write",
+      "contents": "read"
+    },
+    "creator_identities": {
+      "chainsolutions-wealthtech": {
+        "principal": "Wealthtechinnovations",
+        "token_secret": "GOVERNED_CREATOR_WEALTHTECH_TOKEN",
+        "target_owner": "chainsolutions-wealthtech"
+      },
+      "Wealthtechinnovations": {
+        "principal": "Wealthtechinnovations",
+        "token_secret": "GOVERNED_CREATOR_WEALTHTECH_TOKEN",
+        "target_owner": "Wealthtechinnovations"
+      },
+      "Patricked": {
+        "principal": "Patricked-code",
+        "token_secret": "GOVERNED_CREATOR_PATRICKED_TOKEN",
+        "target_owner": "Patricked-code"
+      }
+    }
+  },
+  "preflight": [
+    "TOKEN_PRESENT",
+    "AUTHENTICATED_USER_MATCHES_CREATOR_PRINCIPAL",
+    "PRIVATE_TEMPLATE_READABLE",
+    "TEMPLATE_FLAG_TRUE",
+    "TARGET_REPOSITORY_DOES_NOT_EXIST",
+    "TARGET_OWNER_AUTHORITY_AVAILABLE"
+  ],
+  "creation_defaults": {
+    "include_all_branches": false
+  },
+  "fail_closed": true,
+  "invariants": [
+    "NO_CREATION_WITH_GITHUB_TOKEN",
+    "NO_CREATOR_TOKEN_IN_REPOSITORY",
+    "NO_FAKE_CREATION_EVIDENCE",
+    "API_201_REQUIRED",
+    "INITIAL_HEAD_OBSERVED_AFTER_CREATION"
+  ]
+}
