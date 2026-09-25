@@ -61,3 +61,12 @@ Avant tout travail mutable, la session doit également résoudre son intention. 
 ## Fin d'intervention
 
 Mettre à jour les documents d'état réellement concernés, exécuter les contrôles disponibles, persister les preuves, vérifier le remote et définir une prochaine action unique si le travail continue.
+
+
+## Control plane central
+
+Sur le repository source `chainsolutions-wealthtech/Governed-Repository-Template`, une nouvelle demande multi-repository doit commencer par le Governed Control Plane plutôt que par une écriture directe dans un repository cible.
+
+Créer une issue `[Governed Request]` depuis le formulaire dédié. Le control plane pose ensuite une seule question ou requête d'action à la fois, construit le plan préparatoire, exige les preuves, puis émet `HANDOFF_READY`.
+
+Dans un repository cible déjà remis par handoff, suivre la gouvernance locale normale : `observe → entry-actions → session-start → dispatch`.
