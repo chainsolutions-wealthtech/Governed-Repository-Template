@@ -48,10 +48,11 @@ CREATE_NEW_REPOSITORY
    Wealthtechinnovations
    Patricked
 → provide repository name
-→ CREATE_FROM_GOVERNED_TEMPLATE
+→ choose visibility: private / public
+→ CREATE_FROM_GOVERNED_TEMPLATE via authorized GitHub executor
 → verify zero-touch bootstrap
 → discover infrastructure/profile state
 → HANDOFF_READY
 ```
 
-The selected owner plus repository name is the explicit creation instruction for this route. Creation uses the central governed template, private visibility by default, and no manually added README/gitignore/license.
+The selected owner, repository name and explicit visibility are the creation instruction for this route. Creation uses the central governed template and no manually added README/gitignore/license. The display choice `Patricked` resolves to GitHub owner `Patricked-code`.
