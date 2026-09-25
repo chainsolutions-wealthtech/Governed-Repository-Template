@@ -1,0 +1,80 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import json
+import os
+import shutil
+import subprocess
+import sys
+import tempfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+TEST_REPOSITORY = "chainsolutions-wealthtech/governance-template-selftest"
+INPUT_HEAD = "1" * 40
+INITIALIZATION_HEAD = "2" * 40
+
+
+def run(repo: Path, *args: str, env: dict[str, str]) -> None:
+    subprocess.run([sys.executable, *args], cwd=repo, env=env, check=True)
+
+
+def read_json(repo: Path, relative: str) -> dict:
+    return json.loads((repo / relative).read_text(encoding="utf-8"))
+
+
+def main() -> None:
+    with tempfile.TemporaryDirectory(prefix="governance-bootstrap-selftest-") as tmp:
+        target = Path(tmp) / "repo"
+        shutil.copytree(
+            ROOT,
+            target,
+            ignore=shutil.ignore_patterns(".git", "__pycache__", "*.pyc"),
+        )
+
+        env = os.environ.copy()
+        env.update({
+            "GITHUB_REPOSITORY": TEST_REPOSITORY,
+            "GITHUB_REF_NAME": "main",
+            "GITHUB_SHA": INPUT_HEAD,
+            "GITHUB_RUN_ID": "SELFTEST",
+        })
+
+        run(target, "scripts/auto_bootstrap.py", env=env)
+        if (target / ".template-source").exists():
+            raise SystemExit("SELFTEST_FAILED: template marker survived auto bootstrap")
+
+        run(
+            target,
+            "scripts/finalize_bootstrap.py",
+            "--initialization-commit-sha",
+            INITIALIZATION_HEAD,
+            env=env,
+        )
+        run(target, "scripts/validate_governance.py", "--bootstrap-attestation", env=env)
+
+        receipt = read_json(target, ".governance/bootstrap-receipt.json")
+        state = read_json(target, ".governance/bootstrap-state.json")
+        memory = read_json(target, ".governance/canonical-memory/current.json")
+        status = (target / "STATUS.md").read_text(encoding="utf-8")
+
+        checks = {
+            "receipt_validation": receipt.get("validation") == "PASS",
+            "receipt_subject": receipt.get("attestation_subject_sha") == INITIALIZATION_HEAD,
+            "bootstrap_status": state.get("status") == "PASS",
+            "bootstrap_subject": state.get("attestation_subject_sha") == INITIALIZATION_HEAD,
+            "memory_freshness": memory.get("freshness") == "ATTESTED",
+            "memory_subject": memory.get("bootstrap_attestation_subject_sha") == INITIALIZATION_HEAD,
+            "status_validation": "- Governance validation: `PASS`" in status,
+            "status_freshness": "- Governance freshness: `ATTESTED`" in status,
+            "status_subject": f"- Attested initialization commit: `{INITIALIZATION_HEAD}`" in status,
+        }
+        failed = [name for name, ok in checks.items() if not ok]
+        if failed:
+            raise SystemExit("SELFTEST_FAILED: " + ", ".join(failed))
+
+        print("BOOTSTRAP_CONSISTENCY_SELFTEST_PASS")
+
+
+if __name__ == "__main__":
+    main()
