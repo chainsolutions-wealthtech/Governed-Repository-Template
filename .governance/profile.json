@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "template_source": true,
   "initialized": false,
   "repository": "{{REPOSITORY}}",
@@ -22,6 +22,23 @@
     "verify_before_write": "REQUIRED",
     "verify_after_write": "REQUIRED",
     "new_branch_creation": "OWNER_EXPLICIT_ONLY",
-    "normal_work_pr": "PROJECT_DEFINED"
+    "normal_work_pr": "PROJECT_DEFINED",
+    "observed_state_ne_assumed_state": "REQUIRED",
+    "head_moved_reconciliation": "REQUIRED",
+    "single_writer_per_collision_domain": "REQUIRED",
+    "unknown_provider_identity": "NULL_NEVER_INVENT",
+    "intake_ne_canonical_memory": "REQUIRED",
+    "intake_ne_work_item": "REQUIRED",
+    "contradiction": "HOLD_FOR_REVIEW",
+    "automation_fail_closed": "REQUIRED",
+    "runtime_authority_inference": "FORBIDDEN"
+  },
+  "automation": {
+    "auto_bootstrap": true,
+    "bootstrap_receipt": true,
+    "canonical_memory": true,
+    "multi_agent_coordination": true,
+    "work_dispatch": true,
+    "information_intake": true
   }
 }

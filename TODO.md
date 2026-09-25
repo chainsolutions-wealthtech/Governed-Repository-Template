@@ -1,12 +1,22 @@
 # TODO — Travail restant
 
-## Initialisation
+## Automatic initialization
 
-- [ ] Exécuter `scripts/initialize_governance.py`.
-- [ ] Compléter `PROJECT_CONTEXT.md`.
-- [ ] Décrire l'architecture dans `docs/ARCHITECTURE.md`.
-- [ ] Définir les critères d'acceptation.
-- [ ] Identifier les risques et dépendances.
-- [ ] Capturer la baseline du dépôt.
-- [ ] Définir la première action unique dans `NEXT_ACTION.md`.
-- [ ] Exécuter `python3 scripts/validate_governance.py`.
+- [x] Provide deterministic manual initialization.
+- [x] Provide automatic bootstrap workflow.
+- [x] Provide bootstrap receipt and attestation.
+- [x] Provide canonical-memory pointer and revision guards.
+- [x] Provide multi-agent sessions, work claims and collision domains.
+- [x] Provide dependency-safe deterministic dispatch.
+- [x] Provide machine-readable checkpoints and handoff.
+- [x] Provide new-information intake and contradiction hold-for-review.
+- [x] Provide source-CI simulation of the automatic path.
+
+## Project instance first work
+
+- [ ] Complete `PROJECT_CONTEXT.md`.
+- [ ] Describe architecture in `docs/ARCHITECTURE.md`.
+- [ ] Define project acceptance criteria.
+- [ ] Identify initial risks and dependencies.
+- [ ] Capture project baseline and CI.
+- [ ] Replace generic baseline discovery with the first project-specific unique action.

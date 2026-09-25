@@ -1,0 +1,72 @@
+{
+  "title": "Session Checkpoint",
+  "type": "object",
+  "required": [
+    "session_id",
+    "agent",
+    "observed_head_sha",
+    "status",
+    "next_action",
+    "checkpoint_at"
+  ],
+  "properties": {
+    "session_id": {
+      "type": "string"
+    },
+    "agent": {
+      "type": "string"
+    },
+    "starting_head_sha": {
+      "type": "string"
+    },
+    "observed_head_sha": {
+      "type": "string"
+    },
+    "work_item_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "type": "string"
+    },
+    "files_read": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "files_changed": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "checks_run": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "next_action": {
+      "type": "string"
+    },
+    "checkpoint_at": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

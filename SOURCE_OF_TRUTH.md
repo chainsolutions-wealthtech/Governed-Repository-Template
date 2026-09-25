@@ -20,3 +20,11 @@ Le dépôt versionné est la mémoire persistante du projet.
 ## Contradiction
 
 Une contradiction est enregistrée et résolue explicitement. Aucun agent ne choisit silencieusement l'interprétation la plus pratique.
+
+## Machine-readable projections
+
+Files under `.governance/` are structured projections used for deterministic automation, continuity and concurrency control.
+
+They do not outrank the hierarchy above. They must be derived from, and remain reconcilable with, versioned decisions, contracts, code, tests and Git evidence.
+
+If a machine projection contradicts a higher authority, the projection is stale or invalid and must be reconciled before writing.

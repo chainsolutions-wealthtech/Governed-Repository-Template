@@ -1,0 +1,9 @@
+{
+  "schema_version": "1.0.0",
+  "status": "TEMPLATE_SOURCE",
+  "initialized": false,
+  "repository": "{{REPOSITORY}}",
+  "canonical_branch": "{{CANONICAL_BRANCH}}",
+  "bootstrap_revision": 0,
+  "last_receipt": null
+}

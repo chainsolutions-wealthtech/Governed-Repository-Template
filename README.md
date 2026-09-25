@@ -30,3 +30,23 @@ python3 scripts/initialize_governance.py --repository "chainsolutions-wealthtech
 Puis compléter `PROJECT_CONTEXT.md`, `docs/ARCHITECTURE.md`, `ACCEPTANCE_CRITERIA.md` et `NEXT_ACTION.md`.
 
 Le dépôt créé devient sa propre source de vérité. Le template ne doit jamais injecter une décision métier, une source réglementaire, un statut de production ou un historique appartenant à un autre projet.
+
+<!-- GOVERNANCE_AUTOMATION_V2 -->
+## Automatic initialization
+
+The template includes `.github/workflows/governance-auto-bootstrap.yml`.
+
+When started by a supported GitHub event in an instantiated repository, it automatically infers repository metadata, initializes governance, validates it, creates a bootstrap receipt and attests the initialization. Manual commands remain available as a deterministic recovery path.
+
+## Multi-agent continuity
+
+The repository includes a Git-only coordination layer:
+
+- canonical-memory pointer and monotone revisions;
+- exact-HEAD guard;
+- agent sessions without invented provider identifiers;
+- dependency/collision-safe work dispatch;
+- structured checkpoints and handoff;
+- new-information intake with contradiction hold-for-review.
+
+See `docs/AUTOMATION.md`, `docs/MULTI_AGENT_COORDINATION.md` and `docs/INFORMATION_INTAKE.md`.

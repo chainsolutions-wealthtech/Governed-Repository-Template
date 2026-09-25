@@ -4,6 +4,8 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import os
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -65,6 +67,88 @@ def main() -> None:
         "initialized_at": initialized_at,
     })
     profile_path.write_text(json.dumps(profile, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    def _read_json(path: Path) -> dict:
+        return json.loads(path.read_text(encoding="utf-8"))
+
+    def _write_json(path: Path, value: dict) -> None:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    def _head() -> str:
+        value = os.getenv("GITHUB_SHA")
+        if value:
+            return value
+        cp = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, capture_output=True, check=False)
+        return cp.stdout.strip() if cp.returncode == 0 else "UNKNOWN"
+
+    input_head = _head()
+
+    bootstrap_state_path = ROOT / ".governance" / "bootstrap-state.json"
+    bootstrap_state = _read_json(bootstrap_state_path)
+    bootstrap_state.update({
+        "status": "INITIALIZED_PENDING_ATTESTATION",
+        "initialized": True,
+        "repository": args.repository,
+        "canonical_branch": args.canonical_branch,
+        "bootstrap_revision": int(bootstrap_state.get("bootstrap_revision", 0)) + 1,
+        "last_receipt": ".governance/bootstrap-receipt.json",
+    })
+    _write_json(bootstrap_state_path, bootstrap_state)
+
+    receipt = {
+        "schema_version": "1.0.0",
+        "repository": args.repository,
+        "project_name": args.project_name,
+        "project_type": args.project_type,
+        "owner": args.owner,
+        "canonical_branch": args.canonical_branch,
+        "bootstrap_revision": bootstrap_state["bootstrap_revision"],
+        "initialized": True,
+        "validation": "PENDING_ATTESTATION",
+        "input_head_sha": input_head,
+        "initialization_commit_sha": None,
+        "template_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+        "template_revision": None,
+        "generated_at": initialized_at,
+        "next_action": "DISCOVER_PROJECT_BASELINE",
+    }
+    _write_json(ROOT / ".governance" / "bootstrap-receipt.json", receipt)
+
+    memory_path = ROOT / ".governance" / "canonical-memory" / "current.json"
+    memory = _read_json(memory_path)
+    memory.update({
+        "repository": args.repository,
+        "canonical_branch": args.canonical_branch,
+        "canonical_revision": max(1, int(memory.get("canonical_revision", 0))),
+        "work_revision": max(1, int(memory.get("work_revision", 0))),
+        "observed_head_sha": input_head,
+        "next_action": "DISCOVER_PROJECT_BASELINE",
+        "freshness": "INITIALIZED_PENDING_ATTESTATION",
+        "blockers": [],
+    })
+    _write_json(memory_path, memory)
+
+    work_path = ROOT / ".governance" / "work" / "work-items.json"
+    work = _read_json(work_path)
+    items = list(work.get("items", []))
+    for item in items:
+        if item.get("work_item_id") == "WORK-INIT-001":
+            item["status"] = "DONE"
+    if not any(item.get("work_item_id") == "WORK-DISCOVER-001" for item in items):
+        items.append({
+            "work_item_id": "WORK-DISCOVER-001",
+            "title": "Discover and capture the project baseline",
+            "status": "READY",
+            "priority": 900,
+            "sequence": 2,
+            "dependencies": ["WORK-INIT-001"],
+            "collision_domains": ["governance-state"],
+            "next_action": "DISCOVER_PROJECT_BASELINE",
+        })
+    work["revision"] = int(work.get("revision", 0)) + 1
+    work["items"] = items
+    _write_json(work_path, work)
 
     marker = ROOT / ".template-source"
     if marker.exists():

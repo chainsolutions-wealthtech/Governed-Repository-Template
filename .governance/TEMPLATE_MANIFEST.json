@@ -1,8 +1,8 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "2.0.0",
   "template_name": "Governed Repository Template",
   "template_role": "GENERIC_GOVERNANCE_CORE",
-  "origin": "chainsolutions-wealthtech/Regulatory governance patterns, generalized without project state",
+  "origin": "Chainsolutions governed repository core; Regulatory governance generalized and enriched with generic continuity patterns derived from Patricked-code/MCP PRECODE laboratory",
   "categories": {
     "generic_core": [
       "00_START_HERE.md",
@@ -36,8 +36,25 @@
     ],
     "automation": [
       "scripts/initialize_governance.py",
+      "scripts/auto_bootstrap.py",
+      "scripts/finalize_bootstrap.py",
+      "scripts/governance_agent.py",
       "scripts/validate_governance.py",
-      ".github/workflows/governance-ci.yml"
+      ".github/workflows/governance-ci.yml",
+      ".github/workflows/governance-auto-bootstrap.yml"
+    ],
+    "machine_governance": [
+      ".governance/bootstrap-state.json",
+      ".governance/canonical-memory/current.json",
+      ".governance/sessions/sessions.json",
+      ".governance/work/work-items.json",
+      ".governance/work/claims.json",
+      ".governance/intake/cursor.json"
+    ],
+    "coordination_docs": [
+      "docs/AUTOMATION.md",
+      "docs/MULTI_AGENT_COORDINATION.md",
+      "docs/INFORMATION_INTAKE.md"
     ]
   },
   "excluded_from_template": [
@@ -48,5 +65,20 @@
     "production or submission status from source projects",
     "project-specific application code"
   ],
-  "initialization_required": true
+  "initialization_required": true,
+  "template_version": "2.0.0",
+  "generic_patterns_imported": [
+    "github-first bootstrap",
+    "canonical memory pointer",
+    "exact-head reconciliation guard",
+    "monotone canonical/work revisions",
+    "multi-agent session continuity",
+    "single writer per collision domain",
+    "dependency-safe deterministic dispatch",
+    "structured checkpoint and handoff",
+    "new-information intake separation",
+    "contradiction hold-for-review",
+    "fail-closed ambiguity"
+  ],
+  "automatic_initialization_supported": true
 }

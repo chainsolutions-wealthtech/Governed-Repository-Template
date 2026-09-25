@@ -52,3 +52,20 @@ Aucune étape ultérieure ne doit être déduite d'une étape antérieure sans p
 ## Opérations sensibles
 
 Toute opération irréversible, destructive, financière, réglementaire, juridique, de production, de secret, de permission élevée ou d'infrastructure critique exige l'autorité correspondante et les contrôles adaptés. Le template ne confère jamais cette autorisation.
+
+<!-- GOVERNANCE_AUTOMATION_V2 -->
+## Automation and coordination invariants
+
+```text
+OBSERVED_STATE_NE_ASSUMED_STATE = REQUIRED
+HEAD_MOVED_RECONCILIATION = REQUIRED
+SINGLE_WRITER_PER_COLLISION_DOMAIN = REQUIRED
+UNKNOWN_PROVIDER_IDENTITY = NULL_NEVER_INVENT
+INTAKE_NE_CANONICAL_MEMORY = REQUIRED
+INTAKE_NE_WORK_ITEM = REQUIRED
+CONTRADICTION = HOLD_FOR_REVIEW
+AUTOMATION_FAIL_CLOSED = REQUIRED
+RUNTIME_AUTHORITY_INFERENCE = FORBIDDEN
+```
+
+The generic automation layer is a repository-local coordination projection. It does not create runtime locks, deployment authority, production permission or a second source of truth.

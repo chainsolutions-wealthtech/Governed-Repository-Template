@@ -1,0 +1,64 @@
+{
+  "title": "Governance Session",
+  "type": "object",
+  "required": [
+    "session_id",
+    "agent_identity",
+    "provider",
+    "repository",
+    "starting_head_sha",
+    "last_observed_head_sha",
+    "status"
+  ],
+  "properties": {
+    "session_id": {
+      "type": "string"
+    },
+    "agent_identity": {
+      "type": "string"
+    },
+    "provider": {
+      "type": "string"
+    },
+    "provider_conversation_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "provider_conversation_ref_provenance": {
+      "enum": [
+        "PROVIDED_BY_CLIENT",
+        "UNAVAILABLE"
+      ]
+    },
+    "connection_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "repository": {
+      "type": "string"
+    },
+    "starting_head_sha": {
+      "type": "string"
+    },
+    "last_observed_head_sha": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "ACTIVE",
+        "CLOSED"
+      ]
+    },
+    "created_at": {
+      "type": "string"
+    },
+    "last_seen_at": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

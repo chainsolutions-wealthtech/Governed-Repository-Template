@@ -1,0 +1,93 @@
+name: Governance Auto Bootstrap
+
+on:
+  push:
+    branches:
+      - main
+  create:
+  workflow_dispatch:
+  repository_dispatch:
+    types:
+      - governance-bootstrap
+
+permissions:
+  contents: write
+
+concurrency:
+  group: governance-auto-bootstrap-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  bootstrap:
+    if: github.repository != 'chainsolutions-wealthtech/Governed-Repository-Template'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Detect pending template initialization
+        id: pending
+        shell: bash
+        run: |
+          if [ -f .template-source ]; then
+            echo "needed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "needed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Auto initialize governance
+        if: steps.pending.outputs.needed == 'true'
+        env:
+          GOVERNANCE_TEMPLATE_REVISION: "37a065a166a18274e3bc243630a66b792afe4775"
+        run: python3 scripts/auto_bootstrap.py
+
+      - name: Validate initialized state
+        if: steps.pending.outputs.needed == 'true'
+        run: python3 scripts/validate_governance.py
+
+      - name: Create initialization commit
+        if: steps.pending.outputs.needed == 'true'
+        id: init_commit
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "governance: auto-initialize repository"
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Finalize bootstrap receipt
+        if: steps.pending.outputs.needed == 'true'
+        run: |
+          python3 scripts/finalize_bootstrap.py \
+            --initialization-commit-sha "${{ steps.init_commit.outputs.sha }}"
+          python3 scripts/validate_governance.py
+
+      - name: Create attestation commit
+        if: steps.pending.outputs.needed == 'true'
+        shell: bash
+        run: |
+          git add .governance
+          git commit -m "governance: attest automatic bootstrap"
+
+      - name: Push bootstrap commits
+        if: steps.pending.outputs.needed == 'true'
+        shell: bash
+        env:
+          TARGET_BRANCH: ${{ github.event.repository.default_branch || github.ref_name }}
+        run: |
+          test -n "$TARGET_BRANCH"
+          git push origin "HEAD:$TARGET_BRANCH"
+
+      - name: Already initialized
+        if: steps.pending.outputs.needed != 'true'
+        run: |
+          python3 scripts/validate_governance.py
+          echo "Governance already initialized; no mutation required."

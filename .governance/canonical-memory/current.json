@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0.0",
+  "repository": "{{REPOSITORY}}",
+  "canonical_branch": "{{CANONICAL_BRANCH}}",
+  "canonical_revision": 0,
+  "work_revision": 0,
+  "observed_head_sha": "TO_CAPTURE",
+  "current_checkpoint": null,
+  "current_handoff": null,
+  "next_action": "INITIALIZE_PROJECT_GOVERNANCE",
+  "blockers": [],
+  "freshness": "TEMPLATE_SOURCE"
+}

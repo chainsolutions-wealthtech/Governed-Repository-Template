@@ -1,0 +1,44 @@
+{
+  "title": "Governed Work Claim",
+  "type": "object",
+  "required": [
+    "session_id",
+    "work_item_id",
+    "collision_domains",
+    "status",
+    "claimed_head_sha"
+  ],
+  "properties": {
+    "session_id": {
+      "type": "string"
+    },
+    "work_item_id": {
+      "type": "string"
+    },
+    "collision_domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "enum": [
+        "ACTIVE",
+        "RELEASED"
+      ]
+    },
+    "claimed_head_sha": {
+      "type": "string"
+    },
+    "claimed_at": {
+      "type": "string"
+    },
+    "released_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

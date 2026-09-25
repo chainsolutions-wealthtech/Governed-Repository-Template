@@ -1,0 +1,54 @@
+{
+  "title": "Governed Work Item",
+  "type": "object",
+  "required": [
+    "work_item_id",
+    "title",
+    "status",
+    "priority",
+    "sequence",
+    "dependencies",
+    "collision_domains"
+  ],
+  "properties": {
+    "work_item_id": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "status": {
+      "enum": [
+        "PENDING",
+        "READY",
+        "IN_PROGRESS",
+        "BLOCKED",
+        "DONE",
+        "CANCELLED",
+        "SUPERSEDED"
+      ]
+    },
+    "priority": {
+      "type": "integer"
+    },
+    "sequence": {
+      "type": "integer"
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "collision_domains": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "next_action": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}

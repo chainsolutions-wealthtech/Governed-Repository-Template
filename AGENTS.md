@@ -25,3 +25,18 @@ Après modification : exécuter les contrôles disponibles, comparer à la basel
 ## Handoff
 
 Toute interruption doit laisser le dépôt reprenable par un autre agent uniquement à partir des autorités versionnées, sans dépendre de la mémoire de la conversation.
+
+<!-- GOVERNANCE_AUTOMATION_V2 -->
+## Machine pre-write observation
+
+In an initialized repository, run:
+
+```bash
+python3 scripts/governance_agent.py observe
+```
+
+before selecting mutable work.
+
+When multiple agents cooperate, create/resume a governed repository session and dispatch only dependency-safe, collision-safe work. A `HEAD_MOVED` result forbids writing until intervening changes are reconciled.
+
+New information must be registered/reconciled through the intake model. A contradiction is held for review and never becomes canonical automatically.

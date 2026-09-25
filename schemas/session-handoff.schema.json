@@ -1,0 +1,5 @@
+{
+  "title": "Session Handoff",
+  "type": "object",
+  "required": ["from_session_id", "completed_head_sha", "next_action", "handoff_at"]
+}

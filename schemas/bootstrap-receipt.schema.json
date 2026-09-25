@@ -1,0 +1,40 @@
+{
+  "title": "Bootstrap Receipt",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "repository",
+    "canonical_branch",
+    "bootstrap_revision",
+    "initialized",
+    "validation",
+    "input_head_sha",
+    "generated_at"
+  ],
+  "properties": {
+    "repository": {
+      "type": "string",
+      "minLength": 1
+    },
+    "canonical_branch": {
+      "type": "string",
+      "minLength": 1
+    },
+    "initialized": {
+      "const": true
+    },
+    "validation": {
+      "type": "string"
+    },
+    "input_head_sha": {
+      "type": "string"
+    },
+    "initialization_commit_sha": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": true
+}

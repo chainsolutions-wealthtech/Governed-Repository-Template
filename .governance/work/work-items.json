@@ -1,0 +1,18 @@
+{
+  "schema_version": "1.0.0",
+  "revision": 0,
+  "items": [
+    {
+      "work_item_id": "WORK-INIT-001",
+      "title": "Initialize project governance",
+      "status": "READY",
+      "priority": 1000,
+      "sequence": 1,
+      "dependencies": [],
+      "collision_domains": [
+        "governance-state"
+      ],
+      "next_action": "INITIALIZE_PROJECT_GOVERNANCE"
+    }
+  ]
+}

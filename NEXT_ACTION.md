@@ -2,17 +2,29 @@
 
 ```text
 NEXT_ACTION = INITIALIZE_PROJECT_GOVERNANCE
-STATE = REQUIRED
+STATE = AUTOMATIC_OR_RECOVERY_REQUIRED
 ```
 
 ## Action
 
-Exécuter le bootstrap du template, compléter le contexte projet, capturer la baseline et remplacer cette action par la première action projet vérifiable.
+The preferred path is automatic: `.github/workflows/governance-auto-bootstrap.yml` initializes a repository instance when a supported GitHub event is received.
+
+If automatic triggering is unavailable, use `workflow_dispatch` or the deterministic manual fallback `scripts/initialize_governance.py`.
+
+## Automatic exit
+
+After successful bootstrap, this file is rewritten to:
+
+```text
+NEXT_ACTION = DISCOVER_PROJECT_BASELINE
+STATE = READY
+```
 
 ## Done when
 
-- aucun placeholder non résolu ;
-- contexte projet renseigné ;
-- baseline enregistrée ;
-- validation de gouvernance GREEN ;
-- prochaine action projet unique définie.
+- no unresolved template placeholder remains;
+- bootstrap receipt exists;
+- canonical memory is initialized;
+- governance validation is GREEN;
+- `WORK-DISCOVER-001` is READY;
+- next action is `DISCOVER_PROJECT_BASELINE`.

@@ -6,42 +6,46 @@
 - Name: `Governed-Repository-Template`
 - Default branch: `main`
 - GitHub template repository: `true`
-- Visibility: owner decision at creation time
-- Initialize with README: `false` (the blueprint already contains one)
-- Additional branch creation: `false` during materialization
 - Force push: `forbidden`
 - History rewrite: `forbidden`
 
 ## Source of truth
 
-Copy the complete contents of:
+The organization blueprint is:
 
 `chainsolutions-wealthtech/.github/repository-templates/governed-repository-template/`
 
-to the repository root without carrying the parent `repository-templates/` path.
+The standalone GitHub template repository mirrors that blueprint at repository root.
 
-The source commit must be recorded in the first commit message of the materialized template.
+## V2 automatic bootstrap
 
-## Required post-materialization checks
+A repository created from the template contains `.template-source` and the V2 machine-governance state.
 
-1. root contains `00_START_HERE.md`, `GOVERNANCE.md`, `AGENTS.md`, `SOURCE_OF_TRUTH.md`;
-2. `.template-source` is present in the template repository;
-3. `.governance/profile.json` has `template_source=true` and `initialized=false`;
-4. `python3 scripts/validate_governance.py` returns PASS in template-source mode;
-5. `.github/workflows/governance-ci.yml` is enabled;
-6. repository setting `is_template=true` is confirmed through GitHub repository settings/API;
-7. no Regulatory/UMOA/BCEAO/CENTIF/OPCVM project state is present.
+The preferred automatic path is:
 
-## Instantiated repository bootstrap
-
-After creating a new project from the GitHub template, run:
-
-```bash
-python3 scripts/initialize_governance.py \
-  --repository "chainsolutions-wealthtech/<repo>" \
-  --project-name "<project name>" \
-  --project-type "<project type>" \
-  --owner "<owner>"
+```text
+repository created from template
+→ governance-auto-bootstrap event
+→ initialize
+→ validate
+→ initialization commit
+→ bootstrap receipt attestation
+→ second validation
+→ attestation commit
+→ DISCOVER_PROJECT_BASELINE
 ```
 
-The bootstrap removes `.template-source`, resolves placeholders and changes the governance profile into instance mode.
+Supported local workflow triggers are push/main, create, workflow_dispatch and repository_dispatch type `governance-bootstrap`.
+
+For guaranteed organization-wide zero-touch creation, a trusted organization GitHub App/orchestrator should emit the repository_dispatch event after repository creation.
+
+## Required checks
+
+1. template source marker exists only in the template source/repository;
+2. template profile has `template_source=true` and `initialized=false`;
+3. template validation passes in source mode;
+4. instantiated bootstrap removes `.template-source`;
+5. instantiated profile becomes initialized;
+6. bootstrap receipt and canonical memory are created;
+7. V2 governance validation passes;
+8. repository setting `is_template=true` remains enabled.

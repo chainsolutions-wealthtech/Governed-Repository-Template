@@ -1,0 +1,5 @@
+{
+  "title": "Governance Information Intake",
+  "type": "object",
+  "required": ["intake_id", "sequence", "status", "source_type", "source_id", "source_digest", "observed_at"]
+}

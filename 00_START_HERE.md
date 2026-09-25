@@ -21,10 +21,16 @@
 13. `LOOP_ENGINEERING.md`
 14. `docs/DECISIONS.md`
 15. `docs/ARCHITECTURE.md`
-16. les spécifications, schémas, historiques, adaptateurs et preuves directement concernés ;
-17. les derniers commits pertinents et l'état des contrôles/CI disponibles.
+16. `docs/AUTOMATION.md`
+17. `docs/MULTI_AGENT_COORDINATION.md`
+18. `docs/INFORMATION_INTAKE.md`
+19. les spécifications, schémas, historiques, adaptateurs et preuves directement concernés ;
+20. les derniers commits pertinents et l'état des contrôles/CI disponibles.
 
 ## Avant toute écriture
+
+Dans un dépôt instancié, commencer par `python3 scripts/governance_agent.py observe` afin de reconstruire l'état machine courant.
+
 
 - confirmer le dépôt et la branche courante ;
 - relever le HEAD courant ;
