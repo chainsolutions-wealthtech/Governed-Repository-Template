@@ -1,8 +1,8 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "role": "REPOSITORY_TO_MCP_BINDING",
   "preferred_transport": "DIRECT_MCP_TOKEN",
-  "fallback_transport": "SSH",
+  "fallback_transport": "GITHUB_OIDC_EPHEMERAL_SSH_CERTIFICATE",
   "direct_mcp": {
     "endpoint_variable": "GOVERNED_MCP_URL",
     "token_secret": "GOVERNED_MCP_AUTH_TOKEN",
@@ -16,16 +16,32 @@
     ]
   },
   "ssh": {
-    "private_key_secret": "GOVERNED_MCP_SSH_PRIVATE_KEY",
-    "host_variable": "GOVERNED_MCP_SSH_HOST",
-    "user_variable": "GOVERNED_MCP_SSH_USER",
-    "port_variable": "GOVERNED_MCP_SSH_PORT",
-    "mode": "GOVERNED_FALLBACK_ONLY",
+    "mode": "GITHUB_OIDC_EPHEMERAL_CERTIFICATE",
+    "broker_path": "/access/github/repository-ssh/certificate",
+    "oidc_audience": "https://mcp.wealthtechinnovations.com/access/github/repository-ssh",
+    "workflow": ".github/workflows/governed-local-entry.yml",
+    "key_algorithm": "ed25519",
+    "key_lifetime": "RUNNER_EPHEMERAL_ONLY",
+    "certificate_max_seconds": 600,
+    "host_profile_source": "OWNER_ANSWER_CROSS_CHECKED_WITH_SIGNED_BROKER_RESPONSE",
+    "known_hosts_source": "AUTHENTICATED_BROKER_RESPONSE",
+    "strict_host_key_checking": "REQUIRED",
     "arbitrary_shell": "FORBIDDEN",
-    "status": "SERVER_SIDE_FORCED_COMMAND_ADAPTER_REQUIRED"
+    "persistent_private_key_secret": "FORBIDDEN",
+    "allowed_commands": [
+      "ping",
+      "project-context",
+      "list-domains-s1",
+      "list-domains-s2",
+      "docker-status-s1",
+      "docker-status-s2",
+      "write-tools-context"
+    ],
+    "write_authority": "MCP_SCOPED_WRITE_ONLY"
   },
   "invariants": [
     "NO_SECRET_IN_GIT",
+    "NO_PERSISTENT_REPOSITORY_SSH_PRIVATE_KEY",
     "READ_ONLY_DISCOVERY_FIRST",
     "WRITE_TOOLS_REQUIRE_PROJECT_REGISTRATION",
     "DOMAIN_CREATION_REQUIRES_EXPLICIT_APPROVAL",
