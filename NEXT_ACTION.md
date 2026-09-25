@@ -26,5 +26,6 @@ STATE = READY
 - bootstrap receipt exists;
 - canonical memory is initialized;
 - governance validation is GREEN;
+- project-profile and infrastructure-intent projections are present;
 - `WORK-DISCOVER-001` is READY;
-- next action is `DISCOVER_PROJECT_BASELINE`.
+- next action is `DISCOVER_PROJECT_BASELINE`, including profile and infrastructure discovery.
