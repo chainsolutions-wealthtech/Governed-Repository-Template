@@ -32,6 +32,38 @@ def main() -> None:
             ignore=shutil.ignore_patterns(".git", "__pycache__", "*.pyc"),
         )
 
+        # Build an explicit template-source fixture so this self-test is portable
+        # when executed from either the central template or an instantiated repository.
+        (target / ".template-source").write_text("SELFTEST_TEMPLATE_SOURCE\n", encoding="utf-8")
+
+        profile_path = target / ".governance" / "profile.json"
+        profile = read_json(target, ".governance/profile.json")
+        profile.update({
+            "template_source": True,
+            "initialized": False,
+            "repository": "TO_INITIALIZE",
+            "project_name": "TO_INITIALIZE",
+            "project_type": "TO_INITIALIZE",
+            "owner": "TO_INITIALIZE",
+            "canonical_branch": "main",
+            "initialized_at": None,
+            "initialization_mode": "TEMPLATE_BOOTSTRAP",
+        })
+        profile_path.write_text(json.dumps(profile, indent=2) + "\n", encoding="utf-8")
+
+        local_entry_path = target / ".governance" / "local-entry" / "state.json"
+        local_entry = read_json(target, ".governance/local-entry/state.json")
+        local_entry.update({
+            "repository": "{{REPOSITORY}}",
+            "status": "WAITING_FOR_FIRST_AGENT",
+            "first_agent_completed": False,
+            "first_agent_session_id": None,
+            "baseline_subject_head": None,
+            "baseline_completed_at": None,
+            "last_local_entry_issue": None,
+        })
+        local_entry_path.write_text(json.dumps(local_entry, indent=2) + "\n", encoding="utf-8")
+
         env = os.environ.copy()
         env.update({
             "GITHUB_REPOSITORY": TEST_REPOSITORY,
