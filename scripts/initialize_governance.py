@@ -102,6 +102,15 @@ def main() -> None:
         encoding="utf-8",
     )
 
+    control_plane_path = ROOT / ".governance" / "control-plane-policy.json"
+    control_plane = json.loads(control_plane_path.read_text(encoding="utf-8"))
+    control_plane["current_role"] = control_plane["client_role_after_instantiation"]
+    control_plane["client_repository"] = args.repository
+    control_plane_path.write_text(
+        json.dumps(control_plane, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
     def _read_json(path: Path) -> dict:
         return json.loads(path.read_text(encoding="utf-8"))
 
@@ -187,6 +196,11 @@ def main() -> None:
     marker = ROOT / ".template-source"
     if marker.exists():
         marker.unlink()
+
+    for relative in control_plane.get("source_only_paths", []):
+        source_only = ROOT / relative
+        if source_only.is_file():
+            source_only.unlink()
 
     unresolved = []
     pattern = re.compile(r"\{\{[A-Z0-9_]+\}\}")
