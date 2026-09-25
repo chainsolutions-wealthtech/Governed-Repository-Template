@@ -75,6 +75,7 @@ jobs:
           private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
           owner: ${{ steps.process.outputs.upgrade_target_owner }}
           permission-contents: write
+          permission-workflows: write
 
       - name: Apply local-entry V2.4 upgrade to target
         if: steps.process.outputs.upgrade_required == 'true'
