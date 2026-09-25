@@ -1,0 +1,39 @@
+{
+  "title": "Governance Repository Scope Policy",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "supported_owner_scopes",
+    "current_repository_scope",
+    "target_owner",
+    "target_scope",
+    "invariants"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "supported_owner_scopes": {
+      "type": "object"
+    },
+    "current_repository_scope": {
+      "type": "string"
+    },
+    "target_owner": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "target_scope": {
+      "type": "string"
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
