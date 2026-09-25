@@ -100,9 +100,6 @@ def commented(event):
                 if transport in {"DIRECT_MCP_TOKEN","BOTH"}:
                     if not os.environ.get("GOVERNED_MCP_URL"): missing.append("GOVERNED_MCP_URL")
                     if not os.environ.get("GOVERNED_MCP_AUTH_TOKEN"): missing.append("GOVERNED_MCP_AUTH_TOKEN")
-                if transport in {"SSH","BOTH"}:
-                    for name in ["GOVERNED_MCP_SSH_PRIVATE_KEY","GOVERNED_MCP_SSH_HOST","GOVERNED_MCP_SSH_USER","GOVERNED_MCP_SSH_PORT"]:
-                        if not os.environ.get(name): missing.append(name)
                 if missing: raise ValueError("missing GitHub Actions secret/variable: "+", ".join(missing))
                 s=mark_credentials_verified(s)
                 persist(issue["number"],issue.get("body"),s)
