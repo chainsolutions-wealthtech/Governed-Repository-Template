@@ -131,3 +131,15 @@ At runtime, `actions/create-github-app-token@v3` mints a short-lived installatio
 The App installations must grant at least repository `Administration: write` and `Contents: read` and should cover all repositories for these creation scopes. Installation tokens are not stored in Git or Actions secrets and are revoked by the action after the job.
 
 If the App credentials are missing, the App is not installed on the selected owner, or the installation lacks the required permissions, PREP-001 remains pending and no PASS evidence is fabricated. After fixing authority, `/governed-execute` retries the executor.
+
+
+### Target upgrade authority
+
+The central GitHub App must be granted repository permissions:
+
+- Administration: Read & write;
+- Contents: Read & write.
+
+Creation tokens are intentionally scoped down to Contents: read when only template generation is required. Governed upgrades of an existing target mint a separate installation token with Contents: write.
+
+If an installation has only Contents: read, repository creation may succeed while a later governed target upgrade fails closed with GitHub 403. The installation permission must then be upgraded and approved by the target owner before retrying.
