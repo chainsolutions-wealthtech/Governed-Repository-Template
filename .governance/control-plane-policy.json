@@ -30,7 +30,7 @@
   ],
   "source_only_paths": [
     ".github/workflows/governed-control-plane.yml",
-    ".github/ISSUE_TEMPLATE/governed-request.yml",
-    "scripts/control_plane_issue_bridge.py"
-  ]
+    ".github/ISSUE_TEMPLATE/governed-request.yml"
+  ],
+  "current_role": "CENTRAL_GOVERNANCE_CONTROL_PLANE"
 }
