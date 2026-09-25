@@ -23,6 +23,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--project-name", required=True)
     p.add_argument("--project-type", required=True)
     p.add_argument("--project-profile", choices=["generic","application","chainsolutions-fullstack-web","data-platform"])
+    p.add_argument("--repository-scope", choices=["ORGANIZATION","PERSONAL_ACCOUNT","OTHER_AUTHORIZED_OWNER","OWNER_AGNOSTIC"], default="OWNER_AGNOSTIC")
     p.add_argument("--owner", required=True)
     p.add_argument("--canonical-branch", default="main")
     return p.parse_args()
@@ -66,6 +67,7 @@ def main() -> None:
         "owner": args.owner,
         "canonical_branch": args.canonical_branch,
         "initialized_at": initialized_at,
+        "initialization_mode": "TEMPLATE_BOOTSTRAP",
     })
     profile_path.write_text(json.dumps(profile, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
@@ -86,6 +88,17 @@ def main() -> None:
     infrastructure.setdefault("github_binding", {})["repository"] = args.repository
     infrastructure_path.write_text(
         json.dumps(infrastructure, ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+    scope_path = ROOT / ".governance" / "repository-scope-policy.json"
+    scope = json.loads(scope_path.read_text(encoding="utf-8"))
+    repository_owner = args.repository.split("/", 1)[0]
+    scope["current_repository_scope"] = args.repository_scope
+    scope["target_owner"] = repository_owner
+    scope["target_scope"] = args.repository_scope
+    scope_path.write_text(
+        json.dumps(scope, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
 
