@@ -82,3 +82,21 @@ REMOTE_HEAD_AFTER_PUSH
 `STATUS.md` is finalized to `PASS / ATTESTED` before the attestation commit and is committed together with the machine-readable governance state.
 
 The strict check `python3 scripts/validate_governance.py --bootstrap-attestation` is used during zero-touch bootstrap. Normal repository validation remains compatible with later project evolution after the bootstrap phase.
+
+
+## Post-bootstrap capability discovery
+
+V2.1 adds a non-destructive intent layer after governance bootstrap:
+
+```text
+BOOTSTRAP_ATTESTED
+→ PROJECT_PROFILE_DISCOVERY
+→ INFRASTRUCTURE_DISCOVERY
+→ CONNECTION_INTENT_RESOLUTION
+→ PROJECT_BASELINE
+→ MUTABLE_WORK
+```
+
+Zero-touch creation does not provision infrastructure by itself. It records that a server, domain, directory or database may be absent and preserves a governed future provisioning path.
+
+An explicitly supplied project profile can be passed to initialization. Without one, profile selection remains `DISCOVERY_REQUIRED`.
