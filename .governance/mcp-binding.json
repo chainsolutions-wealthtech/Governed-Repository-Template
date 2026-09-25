@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "repository": "{{REPOSITORY}}",
+  "linked": false,
+  "status": "UNCONFIGURED",
+  "transport": null,
+  "endpoint": null,
+  "ssh_connection_profile": null,
+  "credential_names": [],
+  "discovery_status": "NOT_RUN",
+  "discovery_observed_at": null,
+  "domain_strategy": null,
+  "domain_binding": null,
+  "project_registration_status": "UNKNOWN",
+  "write_tools_status": "DISABLED_UNTIL_REGISTERED_AND_AUTHORIZED"
+}
