@@ -29,6 +29,8 @@ CRITICAL_MACHINE_PATHS = {
 EXCLUDED = {
     ".template-source",
     ".github/workflows/governance-auto-bootstrap.yml",
+    ".github/workflows/governed-control-plane.yml",
+    ".github/ISSUE_TEMPLATE/governed-request.yml",
     ".governance/bootstrap-receipt.json",
 }
 
@@ -153,6 +155,12 @@ def initialize_added_machine_state(target: Path, args: argparse.Namespace, head:
     scope["target_owner"] = args.repository.split("/", 1)[0]
     scope["target_scope"] = args.repository_scope
     scope_path.write_text(json.dumps(scope, indent=2) + "\n", encoding="utf-8")
+
+    control_plane_path = target / ".governance" / "control-plane-policy.json"
+    control_plane = json.loads(control_plane_path.read_text(encoding="utf-8"))
+    control_plane["current_role"] = control_plane["client_role_after_instantiation"]
+    control_plane["client_repository"] = args.repository
+    control_plane_path.write_text(json.dumps(control_plane, indent=2) + "\n", encoding="utf-8")
 
     bootstrap_path = target / ".governance" / "bootstrap-state.json"
     bootstrap = json.loads(bootstrap_path.read_text(encoding="utf-8"))
