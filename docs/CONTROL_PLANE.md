@@ -138,8 +138,9 @@ If the App credentials are missing, the App is not installed on the selected own
 The central GitHub App must be granted repository permissions:
 
 - Administration: Read & write;
-- Contents: Read & write.
+- Contents: Read & write;
+- Workflows: Read & write.
 
-Creation tokens are intentionally scoped down to Contents: read when only template generation is required. Governed upgrades of an existing target mint a separate installation token with Contents: write.
+Creation tokens are intentionally scoped down to Contents: read when only template generation is required. Governed upgrades of an existing target mint a separate installation token with Contents: write and Workflows: write, because the upgrade may add or modify files under `.github/workflows/`.
 
 If an installation has only Contents: read, repository creation may succeed while a later governed target upgrade fails closed with GitHub 403. The installation permission must then be upgraded and approved by the target owner before retrying.
