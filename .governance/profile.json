@@ -37,7 +37,13 @@
     "credentials_in_repository": "FORBIDDEN",
     "connection_intent_fail_closed": "REQUIRED",
     "context_intake_ne_code_permission": "REQUIRED",
-    "intent_ne_authority": "REQUIRED"
+    "intent_ne_authority": "REQUIRED",
+    "entry_action_required": "REQUIRED",
+    "entry_action_ne_intent": "REQUIRED",
+    "entry_action_ne_authority": "REQUIRED",
+    "existing_repository_adoption_additive": "REQUIRED",
+    "lab_canonical_branch_protection": "REQUIRED",
+    "personal_repository_scope_supported": "REQUIRED"
   },
   "automation": {
     "auto_bootstrap": true,
@@ -48,6 +54,11 @@
     "information_intake": true,
     "project_profiles": true,
     "infrastructure_intent": true,
-    "connection_intent_routing": true
+    "connection_intent_routing": true,
+    "entry_action_router": true,
+    "existing_repository_adoption": true,
+    "project_mapping_mode": true,
+    "lab_evolution_mode": true,
+    "multi_owner_repository_scope": true
   }
 }
