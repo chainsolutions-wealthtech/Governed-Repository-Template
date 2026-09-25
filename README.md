@@ -69,3 +69,16 @@ Direct governed MCP access is the preferred server transport. SSH is a governed 
 A session intent is not an authorization. Context or information intake never grants code permission, and `UNKNOWN` fails closed for mutable dispatch.
 
 See `docs/PROJECT_PROFILES.md`, `docs/INFRASTRUCTURE_BOOTSTRAP.md` and `docs/CONNECTION_INTENT.md`.
+
+
+## V2.2 entry workflow layer
+
+Every agent connection now resolves a macro entry action before mutable dispatch:
+
+1. create a new repository;
+2. adopt an existing repository additively;
+3. map an existing project and/or design a target architecture;
+4. evolve an existing project through an isolated lab branch or PR;
+5. continue normal governed work.
+
+The template supports organization and explicitly targeted personal-account repository scopes. Existing-project adoption is plan-first and preserves pre-existing project files by default.
