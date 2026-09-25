@@ -6,6 +6,7 @@ import json
 import os
 import urllib.error
 import urllib.request
+import time
 
 from governed_request import apply_evidence
 from control_plane_issue_bridge import (
@@ -29,6 +30,43 @@ SCOPE_BY_LABEL = {
     "Wealthtechinnovations": "PERSONAL_ACCOUNT",
     "Patricked": "PERSONAL_ACCOUNT",
 }
+
+
+def wait_for_initial_head(token: str, owner: str, name: str, branch: str, attempts: int = 15, delay_seconds: float = 2.0) -> str:
+    last_error: Exception | None = None
+    for attempt in range(attempts):
+        try:
+            commit = github_api(token, "GET", f"/repos/{owner}/{name}/commits/{branch}")
+            sha = (commit or {}).get("sha")
+            if isinstance(sha, str) and len(sha) == 40:
+                return sha
+        except RuntimeError as exc:
+            last_error = exc
+            if "failed: 409" not in str(exc):
+                raise
+        if attempt < attempts - 1:
+            time.sleep(delay_seconds)
+    raise RuntimeError(f"unable to observe initial target HEAD after creation: {last_error}")
+
+
+def target_matches_governed_template(token: str, owner: str, name: str) -> bool:
+    manifest = github_api(
+        token,
+        "GET",
+        f"/repos/{owner}/{name}/contents/.governance/TEMPLATE_MANIFEST.json",
+        allow_404=True,
+    )
+    if not manifest:
+        return False
+    encoded = manifest.get("content")
+    if not isinstance(encoded, str):
+        return False
+    import base64
+    try:
+        payload = json.loads(base64.b64decode(encoded).decode("utf-8"))
+    except Exception:
+        return False
+    return payload.get("template_name") == "Governed Repository Template" and payload.get("template_version") == "2.3.3"
 
 
 def github_api(token: str, method: str, path: str, payload: dict | None = None, allow_404: bool = False) -> dict | None:
@@ -113,30 +151,34 @@ def main() -> None:
         return
 
     existing = github_api(token, "GET", f"/repos/{canonical_owner}/{repository_name}", allow_404=True)
+    recovered_existing = False
     if existing is not None:
-        fail_without_advancing(args.issue_number, f"Le repository cible `{full_name}` existe déjà.")
-        return
+        if not target_matches_governed_template(token, canonical_owner, repository_name):
+            fail_without_advancing(
+                args.issue_number,
+                f"Le repository cible `{full_name}` existe déjà et n'est pas reconnu comme une génération V2.3.3 du template gouverné.",
+            )
+            return
+        recovered_existing = True
+        created = existing
+    else:
+        created = github_api(
+            token,
+            "POST",
+            f"/repos/{TEMPLATE_OWNER}/{TEMPLATE_REPO}/generate",
+            {
+                "owner": canonical_owner,
+                "name": repository_name,
+                "include_all_branches": False,
+                "private": visibility == "private",
+            },
+        )
 
-    created = github_api(
-        token,
-        "POST",
-        f"/repos/{TEMPLATE_OWNER}/{TEMPLATE_REPO}/generate",
-        {
-            "owner": canonical_owner,
-            "name": repository_name,
-            "include_all_branches": False,
-            "private": visibility == "private",
-        },
-    )
-
-    if not created or created.get("full_name") != full_name:
-        raise RuntimeError("GitHub generate-from-template response did not match expected target")
+        if not created or created.get("full_name") != full_name:
+            raise RuntimeError("GitHub generate-from-template response did not match expected target")
 
     default_branch = created.get("default_branch") or "main"
-    commit = github_api(token, "GET", f"/repos/{canonical_owner}/{repository_name}/commits/{default_branch}")
-    initial_head = (commit or {}).get("sha")
-    if not isinstance(initial_head, str) or len(initial_head) != 40:
-        raise RuntimeError("unable to observe initial target HEAD after creation")
+    initial_head = wait_for_initial_head(token, canonical_owner, repository_name, default_branch)
 
     evidence = {
         "repository": full_name,
@@ -144,6 +186,7 @@ def main() -> None:
         "repository_scope": scope,
         "visibility": visibility,
         "created": True,
+        "recovered_existing": recovered_existing,
         "initial_head_sha": initial_head,
     }
     state = apply_evidence(state, "PREP-001", "PASS", evidence)
