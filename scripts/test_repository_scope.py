@@ -21,6 +21,38 @@ def main() -> None:
         target = Path(tmp) / "repo"
         shutil.copytree(ROOT, target, ignore=shutil.ignore_patterns(".git", "__pycache__", "*.pyc"))
         env = os.environ.copy()
+
+        # Recreate template-source preconditions so the scope test is portable
+        # from both the central template and an already-instantiated repository.
+        (target / ".template-source").write_text("SELFTEST_TEMPLATE_SOURCE\n", encoding="utf-8")
+        profile_path = target / ".governance" / "profile.json"
+        profile = json.loads(profile_path.read_text(encoding="utf-8"))
+        profile.update({
+            "template_source": True,
+            "initialized": False,
+            "repository": "TO_INITIALIZE",
+            "project_name": "TO_INITIALIZE",
+            "project_type": "TO_INITIALIZE",
+            "owner": "TO_INITIALIZE",
+            "canonical_branch": "main",
+            "initialized_at": None,
+            "initialization_mode": "TEMPLATE_BOOTSTRAP",
+        })
+        profile_path.write_text(json.dumps(profile, indent=2) + "\n", encoding="utf-8")
+
+        local_entry_path = target / ".governance" / "local-entry" / "state.json"
+        local_entry = json.loads(local_entry_path.read_text(encoding="utf-8"))
+        local_entry.update({
+            "repository": "{{REPOSITORY}}",
+            "status": "WAITING_FOR_FIRST_AGENT",
+            "first_agent_completed": False,
+            "first_agent_session_id": None,
+            "baseline_subject_head": None,
+            "baseline_completed_at": None,
+            "last_local_entry_issue": None,
+        })
+        local_entry_path.write_text(json.dumps(local_entry, indent=2) + "\n", encoding="utf-8")
+
         run(target, "git", "init", "-b", "main", env=env)
         run(target, "git", "config", "user.name", "Scope Selftest", env=env)
         run(target, "git", "config", "user.email", "scope@example.invalid", env=env)
