@@ -9,7 +9,14 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
-from governed_request import apply_answer, apply_evidence, decode_state, encode_state, new_request
+from governed_request import (
+    CREATE_OWNER_CANONICAL,
+    apply_answer,
+    apply_evidence,
+    decode_state,
+    encode_state,
+    new_request,
+)
 
 CONTROL_PLANE_REPOSITORY = "chainsolutions-wealthtech/Governed-Repository-Template"
 MARKER_RE = re.compile(r"\n?<!-- GOVERNED_REQUEST_STATE:([A-Za-z0-9_-]+) -->\s*$", re.S)
@@ -177,6 +184,7 @@ def emit_executor_outputs(state: dict, issue_number: int) -> None:
     if required:
         lines.extend([
             f"target_owner_label={state['answers'].get('creation_target_owner', '')}",
+            f"target_owner_canonical={CREATE_OWNER_CANONICAL.get(state['answers'].get('creation_target_owner', ''), '')}",
             f"repository_name={state['answers'].get('repository_name', '')}",
             f"visibility={state['answers'].get('visibility', '')}",
         ])
