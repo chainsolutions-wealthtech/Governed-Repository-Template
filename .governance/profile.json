@@ -48,7 +48,11 @@
     "control_plane_request_state_external": "REQUIRED",
     "control_plane_target_mutation": "AGENT_AUTHORITY_REQUIRED",
     "control_plane_explicit_handoff": "REQUIRED",
-    "control_plane_single_next_request": "REQUIRED"
+    "control_plane_single_next_request": "REQUIRED",
+    "repository_creation_executor": "REQUIRED",
+    "repository_creation_visibility_explicit": "REQUIRED",
+    "repository_creation_sequence": "OWNER_NAME_VISIBILITY_CREATE",
+    "creator_credentials_in_git": "FORBIDDEN"
   },
   "automation": {
     "auto_bootstrap": true,
@@ -68,6 +72,8 @@
     "central_control_plane": true,
     "governed_request_state_machine": true,
     "github_issue_control_plane": true,
-    "explicit_target_handoff": true
+    "explicit_target_handoff": true,
+    "repository_creation_executor": true,
+    "generate_from_template": true
   }
 }
