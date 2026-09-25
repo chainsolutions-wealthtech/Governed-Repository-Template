@@ -175,6 +175,37 @@ def initialize_added_machine_state(target: Path, args: argparse.Namespace, head:
     })
     local_entry_path.write_text(json.dumps(local_entry, indent=2) + "\n", encoding="utf-8")
 
+    mcp_binding_path = target / ".governance" / "mcp-binding.json"
+    mcp_binding = json.loads(mcp_binding_path.read_text(encoding="utf-8"))
+    mcp_binding.update({
+        "repository": args.repository,
+        "linked": False,
+        "status": "UNCONFIGURED",
+        "transport": None,
+        "endpoint": None,
+        "ssh_connection_profile": None,
+        "credential_names": [],
+        "discovery_status": "NOT_RUN",
+        "discovery_observed_at": None,
+        "domain_strategy": None,
+        "domain_binding": None,
+        "project_registration_status": "UNKNOWN",
+        "write_tools_status": "DISABLED_UNTIL_REGISTERED_AND_AUTHORIZED",
+    })
+    mcp_binding_path.write_text(json.dumps(mcp_binding, indent=2) + "\n", encoding="utf-8")
+
+    access_plan_path = target / ".governance" / "access-plan.json"
+    access_plan = json.loads(access_plan_path.read_text(encoding="utf-8"))
+    access_plan["repository"] = args.repository
+    access_plan["status"] = "DISCOVERY_REQUIRED"
+    access_plan_path.write_text(json.dumps(access_plan, indent=2) + "\n", encoding="utf-8")
+
+    workflow_model_path = target / ".governance" / "workflow-model.json"
+    workflow_model = json.loads(workflow_model_path.read_text(encoding="utf-8"))
+    workflow_model["repository"] = args.repository
+    workflow_model["selected_model"] = None
+    workflow_model_path.write_text(json.dumps(workflow_model, indent=2) + "\n", encoding="utf-8")
+
     bootstrap_path = target / ".governance" / "bootstrap-state.json"
     bootstrap = json.loads(bootstrap_path.read_text(encoding="utf-8"))
     bootstrap.update({
