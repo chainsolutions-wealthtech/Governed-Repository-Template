@@ -35,3 +35,8 @@ If a machine projection contradicts a higher authority, the projection is stale 
 `.governance/project-profile.json`, `.governance/infrastructure-intent.json` and `.governance/connection-intent-policy.json` are projections, not higher authorities.
 
 A planned technical profile never overrides discovered code or an ADR. An infrastructure intent never proves that a server or directory exists. A connection intent never grants authority.
+
+
+## Entry workflow projections
+
+`.governance/entry-action-policy.json` and `.governance/repository-scope-policy.json` are routing projections. They do not override existing project authorities, branch rules, repository ownership, or explicit permissions. A lab branch is never a second source of truth, and a target architecture is never an observed architecture.
