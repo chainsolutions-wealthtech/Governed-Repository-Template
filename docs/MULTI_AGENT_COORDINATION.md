@@ -102,3 +102,12 @@ Selection is deterministic by priority, sequence and ID.
 ## Checkpoints and handoff
 
 Meaningful work boundaries should persist a machine-readable checkpoint. A yielding writer releases its claims and writes a handoff with the exact observed HEAD and unique next action.
+
+
+## Control plane coordination
+
+A Governed Request has one persisted state machine revision at a time. GitHub Actions concurrency serializes updates for a request issue.
+
+Multiple agents may contribute observations/evidence only through the same request state. No agent may skip ahead to a later preparatory action. The next action is determined by the persisted request revision, not by conversation memory.
+
+Once `HANDOFF_READY` is emitted, repository-local session/claim/collision-domain coordination resumes on the target repository.
