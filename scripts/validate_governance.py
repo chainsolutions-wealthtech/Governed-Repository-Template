@@ -264,6 +264,25 @@ def validate_project_and_connection_intent(profile: dict, template_mode: bool) -
     if scopes.get("OTHER_AUTHORIZED_OWNER", {}).get("supported") is not True:
         fail("explicit other-owner scope must be supported")
 
+    configured_targets = repository_scope.get("configured_creation_targets") or []
+    actual_targets = {(item.get("owner"), item.get("scope")) for item in configured_targets}
+    expected_targets = {
+        ("chainsolutions-wealthtech", "ORGANIZATION"),
+        ("Wealthtechinnovations", "PERSONAL_ACCOUNT"),
+        ("Patricked", "PERSONAL_ACCOUNT"),
+    }
+    if actual_targets != expected_targets:
+        fail("configured repository creation targets are invalid")
+    creation_defaults = repository_scope.get("creation_defaults") or {}
+    if creation_defaults.get("source_template") != CONTROL_PLANE_REPOSITORY:
+        fail("repository creation must use the governed template source")
+    if creation_defaults.get("visibility") != "private":
+        fail("repository creation default visibility must be private")
+    if creation_defaults.get("initialize_from_template") is not True:
+        fail("repository creation must initialize from template")
+    if creation_defaults.get("add_manual_readme_gitignore_license") is not False:
+        fail("repository creation must not add manual starter files")
+
     for session in sessions.get("sessions", []):
         intent = session.get("connection_intent")
         if intent not in CONNECTION_INTENTS:
