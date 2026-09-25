@@ -1,0 +1,55 @@
+{
+  "title": "Governance Infrastructure Intent",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "repository",
+    "status",
+    "github_binding",
+    "deployment_target",
+    "runtime_intent",
+    "database_intent",
+    "server_access",
+    "lifecycle",
+    "invariants"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "repository": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "github_binding": {
+      "type": "object"
+    },
+    "deployment_target": {
+      "type": "object"
+    },
+    "runtime_intent": {
+      "type": "object"
+    },
+    "database_intent": {
+      "type": "object"
+    },
+    "server_access": {
+      "type": "object"
+    },
+    "lifecycle": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "invariants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}
