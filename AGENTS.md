@@ -83,3 +83,8 @@ When the task begins before a target repository is prepared, start from `chainso
 The control plane owns the preparation sequence. Answer only the current question or perform only the current requested preparatory action. Return structured evidence before expecting the next step.
 
 Do not start normal target-repository work until the control plane emits `HANDOFF_READY`. After handoff, reobserve the handed-off target HEAD before any write.
+
+
+## Repository-local control plane
+
+After central handoff, start local work through a `[Governed Local Entry]` issue or `repository_dispatch: governed_local_start`. The first agent is routed through `FIRST_AGENT_BOOTSTRAP`; later agents are routed through `NORMAL_GOVERNED_ENTRY`. Do not bypass a pending first-agent baseline.
