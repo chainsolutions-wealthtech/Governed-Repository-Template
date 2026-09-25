@@ -221,6 +221,31 @@ def validate_machine_state(profile: dict, template_mode: bool, require_bootstrap
         if expected_next_action not in next_action:
             fail("NEXT_ACTION.md does not match canonical memory after bootstrap attestation")
 
+        loop_state = (ROOT / "LOOP_STATE.md").read_text(encoding="utf-8")
+        required_loop_fragments = [
+            f'"repository": "{profile.get("repository")}"',
+            f'"canonical_branch": "{profile.get("canonical_branch")}"',
+            f'"next_action": "{memory.get("next_action")}"',
+            '"last_verification": "GOVERNANCE_BOOTSTRAP_ATTESTED"',
+        ]
+        missing_loop = [fragment for fragment in required_loop_fragments if fragment not in loop_state]
+        if missing_loop:
+            fail("LOOP_STATE.md is not synchronized with bootstrap attestation: " + " | ".join(missing_loop))
+
+        work_log = (ROOT / "WORK_LOG.md").read_text(encoding="utf-8")
+        if "- Result: `PASS`" not in work_log or "- Bootstrap attestation: `PASS`" not in work_log:
+            fail("WORK_LOG.md does not record successful bootstrap attestation")
+
+        suivi = (ROOT / "SUIVI.md").read_text(encoding="utf-8")
+        required_suivi_fragments = [
+            "- State: `GOVERNANCE_INITIALIZED_BASELINE_REQUIRED`",
+            "- Bootstrap attestation: `PASS`",
+            "- Next action: `DISCOVER_PROJECT_BASELINE`",
+        ]
+        missing_suivi = [fragment for fragment in required_suivi_fragments if fragment not in suivi]
+        if missing_suivi:
+            fail("SUIVI.md is not synchronized with bootstrap attestation: " + " | ".join(missing_suivi))
+
     if memory.get("repository") != profile.get("repository"):
         fail("canonical memory repository does not match profile")
     if memory.get("canonical_branch") != profile.get("canonical_branch"):
