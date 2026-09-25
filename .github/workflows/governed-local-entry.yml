@@ -42,13 +42,27 @@ jobs:
           python-version: '3.12'
 
       - name: Compile local control plane
-        run: python3 -m py_compile scripts/local_governed_entry.py scripts/local_entry_issue_bridge.py scripts/local_entry_apply_baseline.py
+        run: python3 -m py_compile scripts/local_governed_entry.py scripts/local_entry_issue_bridge.py scripts/local_entry_apply_baseline.py scripts/mcp_repository_discovery.py
 
       - name: Process local governed entry
         id: process
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOVERNED_MCP_URL: ${{ vars.GOVERNED_MCP_URL }}
+          GOVERNED_MCP_AUTH_TOKEN: ${{ secrets.GOVERNED_MCP_AUTH_TOKEN }}
+          GOVERNED_MCP_SSH_PRIVATE_KEY: ${{ secrets.GOVERNED_MCP_SSH_PRIVATE_KEY }}
+          GOVERNED_MCP_SSH_HOST: ${{ vars.GOVERNED_MCP_SSH_HOST }}
+          GOVERNED_MCP_SSH_USER: ${{ vars.GOVERNED_MCP_SSH_USER }}
+          GOVERNED_MCP_SSH_PORT: ${{ vars.GOVERNED_MCP_SSH_PORT }}
         run: python3 scripts/local_entry_issue_bridge.py
+
+      - name: Discover MCP infrastructure and domains
+        if: steps.process.outputs.mcp_discovery_required == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOVERNED_MCP_URL: ${{ vars.GOVERNED_MCP_URL }}
+          GOVERNED_MCP_AUTH_TOKEN: ${{ secrets.GOVERNED_MCP_AUTH_TOKEN }}
+        run: python3 scripts/mcp_repository_discovery.py --issue-number "${{ steps.process.outputs.issue_number }}"
 
       - name: Apply approved first-agent baseline
         if: steps.process.outputs.apply_required == 'true'
