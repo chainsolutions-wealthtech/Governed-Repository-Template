@@ -68,6 +68,21 @@
         "string",
         "null"
       ]
+    },
+    "setup_package": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "mcp_discovery": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "credentials_verified": {
+      "type": "boolean"
     }
   },
   "additionalProperties": false
