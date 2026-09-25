@@ -93,6 +93,25 @@ def run_case(name: str, values: dict[str, Any], expected_target: str, expected_o
 
 
 def main() -> None:
+    create_sequence = new_request("SELFTEST-CREATE-SEQUENCE", "agent", "test", None)
+    if create_sequence["next_request"]["field"] != "entry_action":
+        raise SystemExit("CONTROL_PLANE_SELFTEST_FAILED: create sequence entry action missing")
+    create_sequence = apply_answer(create_sequence, "entry_action", "CREATE_NEW_REPOSITORY")
+    if create_sequence["next_request"]["field"] != "creation_target_owner":
+        raise SystemExit("CONTROL_PLANE_SELFTEST_FAILED: create must ask owner immediately")
+    if create_sequence["next_request"].get("choices") != ["chainsolutions-wealthtech", "Wealthtechinnovations", "Patricked"]:
+        raise SystemExit("CONTROL_PLANE_SELFTEST_FAILED: create owner choices are incorrect")
+    create_sequence = apply_answer(create_sequence, "creation_target_owner", "chainsolutions-wealthtech")
+    if create_sequence["next_request"]["field"] != "repository_name":
+        raise SystemExit("CONTROL_PLANE_SELFTEST_FAILED: create must ask repository name second")
+    create_sequence = apply_answer(create_sequence, "repository_name", "sequence-selftest")
+    if create_sequence["next_request"]["kind"] != "ACTION_REQUEST":
+        raise SystemExit("CONTROL_PLANE_SELFTEST_FAILED: create must proceed directly to creation action")
+    if create_sequence["next_request"]["action_id"] != "PREP-001":
+        raise SystemExit("CONTROL_PLANE_SELFTEST_FAILED: create action PREP-001 missing")
+    if create_sequence["next_request"].get("target") != "chainsolutions-wealthtech/sequence-selftest":
+        raise SystemExit("CONTROL_PLANE_SELFTEST_FAILED: create target is incorrect")
+
     create = run_case(
         "create",
         {
