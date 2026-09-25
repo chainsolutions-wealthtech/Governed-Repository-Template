@@ -72,6 +72,12 @@ CREDENTIALS_IN_REPOSITORY = FORBIDDEN
 CONNECTION_INTENT_FAIL_CLOSED = REQUIRED
 CONTEXT_INTAKE_NE_CODE_PERMISSION = REQUIRED
 INTENT_NE_AUTHORITY = REQUIRED
+ENTRY_ACTION_REQUIRED = REQUIRED
+ENTRY_ACTION_NE_INTENT = REQUIRED
+ENTRY_ACTION_NE_AUTHORITY = REQUIRED
+EXISTING_REPOSITORY_ADOPTION_ADDITIVE = REQUIRED
+LAB_CANONICAL_BRANCH_PROTECTION = REQUIRED
+PERSONAL_REPOSITORY_SCOPE_SUPPORTED = REQUIRED
 ```
 
 The generic automation layer is a repository-local coordination projection. It does not create runtime locks, deployment authority, production permission or a second source of truth.
@@ -84,3 +90,10 @@ The generic governance core does not assert a framework, database, server, domai
 A project profile may record planned defaults. Infrastructure may remain unknown, missing or unprovisioned. These are valid governed states.
 
 `DIRECT_MCP` is the preferred governed server access transport when available. `SSH` is a fallback transport, not a source of authority. Any server mutation or provisioning still requires the relevant authorization.
+
+
+## Repository entry workflows
+
+Every agent connection resolves a macro entry action before mutable dispatch. Entry action, connection intent and authority are independent gates.
+
+Existing-repository adoption is additive by default and preserves project content. Project mapping is read-only by default. Lab evolution keeps the canonical branch untouched until validated merge. The same governance template supports organization and explicitly targeted personal-account repositories.
