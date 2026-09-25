@@ -35,3 +35,23 @@ Examples:
 - `CREATE_NEW_REPOSITORY + WORK_REQUEST` → target owner/scope resolution and explicit create authority before creation.
 
 No combination silently creates repositories, branches, PRs, servers, directories or deployments.
+
+
+### CREATE_NEW_REPOSITORY sequence
+
+This route is special and does not ask for a generic connection intent before creation.
+
+```text
+CREATE_NEW_REPOSITORY
+→ choose owner:
+   chainsolutions-wealthtech
+   Wealthtechinnovations
+   Patricked
+→ provide repository name
+→ CREATE_FROM_GOVERNED_TEMPLATE
+→ verify zero-touch bootstrap
+→ discover infrastructure/profile state
+→ HANDOFF_READY
+```
+
+The selected owner plus repository name is the explicit creation instruction for this route. Creation uses the central governed template, private visibility by default, and no manually added README/gitignore/license.
