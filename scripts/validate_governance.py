@@ -296,22 +296,28 @@ def validate_project_and_connection_intent(profile: dict, template_mode: bool) -
     if creation_executor.get("endpoint") != "POST /repos/chainsolutions-wealthtech/Governed-Repository-Template/generate":
         fail("repository creation executor endpoint is invalid")
     authentication = creation_executor.get("authentication") or {}
-    if authentication.get("mode") != "GITHUB_APP_USER_ACCESS_TOKEN_PER_CREATOR_IDENTITY":
+    if authentication.get("mode") != "GITHUB_APP_INSTALLATION_TOKEN_MINTED_PER_TARGET_OWNER":
         fail("repository creation executor authentication mode is invalid")
+    if authentication.get("app_client_id_variable") != "GOVERNED_GITHUB_APP_CLIENT_ID":
+        fail("repository creation executor client-id variable is invalid")
+    if authentication.get("app_private_key_secret") != "GOVERNED_GITHUB_APP_PRIVATE_KEY":
+        fail("repository creation executor private-key secret is invalid")
+    if authentication.get("installation_token_environment") != "GOVERNED_CREATOR_TOKEN":
+        fail("repository creation executor token environment is invalid")
     permissions = authentication.get("required_app_repository_permissions") or {}
     if permissions != {"administration": "write", "contents": "read"}:
         fail("repository creation executor permissions are invalid")
-    creator_identities = authentication.get("creator_identities") or {}
-    required_creators = {
-        "chainsolutions-wealthtech": ("Wealthtechinnovations", "GOVERNED_CREATOR_WEALTHTECH_TOKEN", "chainsolutions-wealthtech"),
-        "Wealthtechinnovations": ("Wealthtechinnovations", "GOVERNED_CREATOR_WEALTHTECH_TOKEN", "Wealthtechinnovations"),
-        "Patricked": ("Patricked-code", "GOVERNED_CREATOR_PATRICKED_TOKEN", "Patricked-code"),
+    installations = authentication.get("target_installations") or {}
+    expected_installations = {
+        "chainsolutions-wealthtech": ("chainsolutions-wealthtech", "ORGANIZATION"),
+        "Wealthtechinnovations": ("Wealthtechinnovations", "PERSONAL_ACCOUNT"),
+        "Patricked": ("Patricked-code", "PERSONAL_ACCOUNT"),
     }
-    for label, expected in required_creators.items():
-        creator = creator_identities.get(label) or {}
-        actual = (creator.get("principal"), creator.get("token_secret"), creator.get("target_owner"))
+    for label, expected in expected_installations.items():
+        installation = installations.get(label) or {}
+        actual = (installation.get("target_owner"), installation.get("account_type"))
         if actual != expected:
-            fail(f"repository creation executor identity mapping invalid for {label}")
+            fail(f"repository creation installation mapping invalid for {label}")
     if creation_executor.get("fail_closed") is not True:
         fail("repository creation executor must fail closed")
 
@@ -391,8 +397,12 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
             "governed_request_start",
             "python3 scripts/control_plane_issue_bridge.py",
             "python3 scripts/control_plane_create_repository.py",
-            "GOVERNED_CREATOR_WEALTHTECH_TOKEN",
-            "GOVERNED_CREATOR_PATRICKED_TOKEN",
+            "actions/create-github-app-token@v3",
+            "GOVERNED_GITHUB_APP_CLIENT_ID",
+            "GOVERNED_GITHUB_APP_PRIVATE_KEY",
+            "GOVERNED_CREATOR_TOKEN",
+            "permission-administration: write",
+            "permission-contents: read",
         ]
         for fragment in workflow_requirements:
             if fragment not in workflow:
