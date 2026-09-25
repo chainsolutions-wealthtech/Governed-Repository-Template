@@ -90,3 +90,28 @@ An agent with GitHub permission on the control-plane repository may start a requ
 The source-only workflow creates the `[Governed Request]` issue. The issue-opened event then initializes the governed state machine and asks the first question.
 
 The dispatch does not authorize target creation or target mutation. It only opens the governed preparation workflow.
+
+
+## New repository creation sequence
+
+`CREATE_NEW_REPOSITORY` is intentionally shorter than the other workflows.
+
+After the entry action is selected, the control plane asks only:
+
+1. where to create the repository:
+   - `chainsolutions-wealthtech`;
+   - `Wealthtechinnovations`;
+   - `Patricked`;
+2. the exact repository name.
+
+Those two explicit selections are the creation instruction for this workflow. The control plane then emits `CREATE_FROM_GOVERNED_TEMPLATE` immediately; it does not ask for a generic connection intent, project stack, visibility or infrastructure before creation.
+
+Creation defaults:
+- source: `chainsolutions-wealthtech/Governed-Repository-Template`;
+- visibility: private;
+- no manually added README, gitignore or license;
+- full template content inherited;
+- zero-touch bootstrap expected immediately after creation;
+- project profile and infrastructure discovery continue inside the generated repository.
+
+If the connected GitHub agent cannot create repositories, the action remains pending and must be executed by an authorized GitHub executor; the control plane must not fake creation evidence.
