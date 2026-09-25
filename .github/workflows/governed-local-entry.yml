@@ -1,0 +1,57 @@
+name: Governed Local Entry
+
+on:
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+  repository_dispatch:
+    types: [governed_local_start]
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: governed-local-entry-${{ github.event.issue.number || github.run_id }}
+  cancel-in-progress: false
+
+jobs:
+  local-entry:
+    if: >-
+      github.repository != 'chainsolutions-wealthtech/Governed-Repository-Template' &&
+      (
+        github.event_name == 'repository_dispatch' ||
+        (
+          startsWith(github.event.issue.title, '[Governed Local Entry]') &&
+          (
+            github.event_name == 'issues' ||
+            (github.event_name == 'issue_comment' && github.actor != 'github-actions[bot]')
+          )
+        )
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Compile local control plane
+        run: python3 -m py_compile scripts/local_governed_entry.py scripts/local_entry_issue_bridge.py scripts/local_entry_apply_baseline.py
+
+      - name: Process local governed entry
+        id: process
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/local_entry_issue_bridge.py
+
+      - name: Apply approved first-agent baseline
+        if: steps.process.outputs.apply_required == 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 scripts/local_entry_apply_baseline.py --issue-number "${{ steps.process.outputs.issue_number }}"
