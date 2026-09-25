@@ -39,6 +39,9 @@ REQUIRED = [
     "docs/AUTOMATION.md",
     "docs/MULTI_AGENT_COORDINATION.md",
     "docs/INFORMATION_INTAKE.md",
+    "docs/PROJECT_PROFILES.md",
+    "docs/INFRASTRUCTURE_BOOTSTRAP.md",
+    "docs/CONNECTION_INTENT.md",
     ".governance/profile.json",
     ".governance/TEMPLATE_MANIFEST.json",
     ".governance/bootstrap-state.json",
@@ -47,6 +50,9 @@ REQUIRED = [
     ".governance/work/claims.json",
     ".governance/sessions/sessions.json",
     ".governance/intake/cursor.json",
+    ".governance/project-profile.json",
+    ".governance/infrastructure-intent.json",
+    ".governance/connection-intent-policy.json",
     "schemas/project-state.schema.json",
     "schemas/loop-state.schema.json",
     "schemas/next-action.schema.json",
@@ -57,6 +63,9 @@ REQUIRED = [
     "schemas/session-checkpoint.schema.json",
     "schemas/session-handoff.schema.json",
     "schemas/intake.schema.json",
+    "schemas/project-profile.schema.json",
+    "schemas/infrastructure-intent.schema.json",
+    "schemas/connection-intent.schema.json",
     "scripts/initialize_governance.py",
     "scripts/auto_bootstrap.py",
     "scripts/finalize_bootstrap.py",
@@ -70,6 +79,17 @@ REQUIRED = [
 PLACEHOLDER = re.compile(r"\{\{[A-Z0-9_]+\}\}")
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
 ATTESTATION_MODEL = "CHILD_COMMIT_ATTESTS_INITIALIZATION_COMMIT"
+CONNECTION_INTENTS = {
+    "OBSERVE",
+    "CONTEXT_INTAKE",
+    "INFORMATION_INTAKE",
+    "WORK_REQUEST",
+    "CODE_CHANGE",
+    "REVIEW",
+    "INFRASTRUCTURE",
+    "UNKNOWN",
+}
+MUTABLE_INTENTS = {"WORK_REQUEST", "CODE_CHANGE", "INFRASTRUCTURE"}
 
 
 def fail(message: str) -> None:
@@ -114,6 +134,72 @@ def validate_policies(profile: dict) -> None:
     for key, expected in exact.items():
         if policies.get(key) != expected:
             fail(f"policy {key} must be {expected}, got {policies.get(key)!r}")
+
+
+def validate_project_and_connection_intent(profile: dict, template_mode: bool) -> None:
+    project_profile = load(".governance/project-profile.json")
+    infrastructure = load(".governance/infrastructure-intent.json")
+    intent_policy = load(".governance/connection-intent-policy.json")
+    sessions = load(".governance/sessions/sessions.json")
+
+    if project_profile.get("selection_status") not in {"DISCOVERY_REQUIRED", "SELECTED", "HOLD_FOR_REVIEW"}:
+        fail("invalid project-profile selection_status")
+    selected = project_profile.get("selected_profile")
+    profiles = project_profile.get("profiles") or {}
+    if selected is not None and selected not in profiles:
+        fail("selected project profile is not defined")
+    if project_profile.get("organization_default_candidate") not in profiles:
+        fail("organization default candidate is not defined")
+    candidate = profiles.get("chainsolutions-fullstack-web") or {}
+    stack = candidate.get("planned_stack") or {}
+    if stack.get("backend", {}).get("runtime") != "Node.js":
+        fail("Chainsolutions fullstack candidate must plan Node.js runtime")
+    if stack.get("frontend", {}).get("framework") != "Next.js":
+        fail("Chainsolutions fullstack candidate must plan Next.js frontend")
+    if stack.get("database", {}).get("engine") != "PostgreSQL":
+        fail("Chainsolutions fullstack candidate must plan PostgreSQL")
+    if stack.get("backend", {}).get("status") != "PLANNED":
+        fail("planned backend must not be represented as implemented")
+
+    if infrastructure.get("server_access", {}).get("preferred") != "DIRECT_MCP":
+        fail("direct MCP must be preferred server transport")
+    if infrastructure.get("server_access", {}).get("fallback") != "SSH":
+        fail("SSH must remain the governed fallback transport")
+    if infrastructure.get("server_access", {}).get("credentials_in_repository") != "FORBIDDEN":
+        fail("infrastructure intent must forbid repository credentials")
+    if infrastructure.get("deployment_target", {}).get("provisioning_if_missing") != "PLANNED_REQUIRES_AUTHORITY":
+        fail("missing deployment resources must require authority before provisioning")
+
+    intents = intent_policy.get("intents") or {}
+    if set(intents) != CONNECTION_INTENTS:
+        fail("connection intent policy does not define the complete intent set")
+    for name, rule in intents.items():
+        expected_mutable = name in MUTABLE_INTENTS
+        if bool(rule.get("may_dispatch_mutable_work")) != expected_mutable:
+            fail(f"connection intent {name} mutable dispatch policy is invalid")
+    if intents["UNKNOWN"].get("route") != "RESOLVE_CONNECTION_INTENT":
+        fail("UNKNOWN connection intent must fail closed")
+    if intents["CONTEXT_INTAKE"].get("may_dispatch_mutable_work") is not False:
+        fail("context intake must never imply code permission")
+    if intents["INFORMATION_INTAKE"].get("may_dispatch_mutable_work") is not False:
+        fail("information intake must never imply code permission")
+
+    for session in sessions.get("sessions", []):
+        intent = session.get("connection_intent")
+        if intent not in CONNECTION_INTENTS:
+            fail(f"session has invalid connection intent {intent!r}")
+        provenance = session.get("connection_intent_provenance")
+        if provenance not in {"PROVIDED_BY_CLIENT", "DEFAULT_UNKNOWN"}:
+            fail("session connection intent provenance is invalid")
+
+    if not template_mode:
+        repository = profile.get("repository")
+        if project_profile.get("repository") != repository:
+            fail("project profile repository does not match governance profile")
+        if infrastructure.get("repository") != repository:
+            fail("infrastructure intent repository does not match governance profile")
+        if infrastructure.get("github_binding", {}).get("repository") != repository:
+            fail("infrastructure GitHub binding does not match governance profile")
 
 
 def validate_machine_state(profile: dict, template_mode: bool, require_bootstrap_attestation: bool = False) -> None:
@@ -303,6 +389,7 @@ def main() -> None:
             fail("template source marker exists but profile.template_source is not true")
         if profile.get("initialized") is not False:
             fail("template source must not be initialized")
+        validate_project_and_connection_intent(profile, True)
         validate_machine_state(profile, True, args.bootstrap_attestation)
         print("GOVERNANCE_VALIDATION_PASS: template source mode v2")
         return
@@ -317,6 +404,7 @@ def main() -> None:
         fail("canonical_branch not initialized")
 
     validate_placeholders()
+    validate_project_and_connection_intent(profile, False)
     validate_machine_state(profile, False, args.bootstrap_attestation)
     print("GOVERNANCE_VALIDATION_PASS: instantiated repository mode v2")
 
