@@ -43,7 +43,12 @@
     "entry_action_ne_authority": "REQUIRED",
     "existing_repository_adoption_additive": "REQUIRED",
     "lab_canonical_branch_protection": "REQUIRED",
-    "personal_repository_scope_supported": "REQUIRED"
+    "personal_repository_scope_supported": "REQUIRED",
+    "central_control_plane": "REQUIRED",
+    "control_plane_request_state_external": "REQUIRED",
+    "control_plane_target_mutation": "AGENT_AUTHORITY_REQUIRED",
+    "control_plane_explicit_handoff": "REQUIRED",
+    "control_plane_single_next_request": "REQUIRED"
   },
   "automation": {
     "auto_bootstrap": true,
@@ -59,6 +64,10 @@
     "existing_repository_adoption": true,
     "project_mapping_mode": true,
     "lab_evolution_mode": true,
-    "multi_owner_repository_scope": true
+    "multi_owner_repository_scope": true,
+    "central_control_plane": true,
+    "governed_request_state_machine": true,
+    "github_issue_control_plane": true,
+    "explicit_target_handoff": true
   }
 }
