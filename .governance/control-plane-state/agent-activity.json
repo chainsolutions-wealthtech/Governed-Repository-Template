@@ -247,6 +247,32 @@
       ],
       "proposals": [],
       "unique_next_action": "C1_12_I_B_APPLY_CURRENT_TEMPLATE_TO_CASE1_PILOT"
+    },
+    {
+      "activity_id": "AAL-20260926-V286-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "CREATE_NEW_REPOSITORY/C1-12",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "784e8738758ac9de1d59c3119304a833b720f213",
+      "pilot_repository": "Patricked-code/Gouvern",
+      "observed_pilot_head": "17f852c19ac8c5d26f40d3508338ce9c221697c8",
+      "objective": "Complete portable connection-intent synthetic bootstrap fixture in the framework after external pilot evidence.",
+      "evidence_refs": [
+        "Governed Control Plane run 36274976355",
+        "Pilot CI run 36275001208",
+        "CPD-024",
+        "CP-ARCH-001-R5"
+      ],
+      "discovered_tasks": [
+        "C1-12-J-A",
+        "C1-12-J-B",
+        "C1-12-J-C"
+      ],
+      "remarks": [
+        "Pilot upgrade succeeded; pilot CI exposed a generic Template fixture-isolation gap."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_J_B_COMPLETE_PORTABLE_INTENT_FIXTURE"
     }
   ]
 }
