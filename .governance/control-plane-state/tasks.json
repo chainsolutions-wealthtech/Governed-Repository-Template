@@ -28,7 +28,7 @@
     },
     {
       "id": "P12-S4",
-      "status": "IN_PROGRESS",
+      "status": "ACTIVE_PARENT",
       "depends_on": [
         "P12-S3"
       ],
