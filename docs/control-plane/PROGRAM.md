@@ -14,12 +14,15 @@ Operational issue: `#12`.
 
 ## Canonical six-step completion program
 
-### STEP 1 — Central MCP credential / BOTH transport completion
+### STEP 1 — MCP connectivity-choice contract completion
 State: `DONE`
 
 Exit proof:
+- optional MCP linking contract tested;
+- when MCP linking is enabled, transport choice remains owner-driven: `DIRECT_MCP_TOKEN`, `SSH`, or `BOTH`;
 - direct MCP credential contract tested;
-- SSH OIDC read-only fallback tested;
+- SSH OIDC read-only path tested;
+- `BOTH` tested as one valid combined mode, not as a mandatory mode;
 - target upgrade path tested;
 - external MCP gaps routed as intake rather than implemented here.
 
@@ -64,8 +67,11 @@ Goal:
 - create a second clean disposable repository from the current template;
 - run the entire path from creation to handoff without relying on `Gouvern` migration history.
 
-Required lifecycle:
-`CREATE → BOOTSTRAP → FIRST_AGENT → PROJECT BASELINE → MCP LINK → CREDENTIAL/BOTH → DISCOVERY → DOMAIN → SETUP → APPLY_BASELINE → HANDOFF → NORMAL ENTRY`.
+Required lifecycle adapts to the owner's choices:
+
+`CREATE → BOOTSTRAP → FIRST_AGENT → PROJECT BASELINE → OPTIONAL MCP LINK → [DIRECT_MCP_TOKEN | SSH | BOTH when linked] → DISCOVERY when applicable → DOMAIN when applicable → SETUP → APPLY_BASELINE → HANDOFF → NORMAL ENTRY`.
+
+If MCP linking is declined, the lifecycle must continue without inventing an MCP dependency.
 
 Exit gate:
 - uninterrupted governed lifecycle;
@@ -88,10 +94,11 @@ Goal:
 3. A later step cannot become IN_PROGRESS before the current step satisfies its exit gate.
 4. Generic defects found in a pilot are fixed in the template first, then propagated.
 5. Never patch only the pilot to hide a framework defect.
-6. `Patricked-code/MCP` is READ / OBSERVE / INTAKE only from this workstream.
-7. Every mutable action requires exact-HEAD reconciliation and verifiable CI.
-8. Historical answers/sessions/checkpoints are migrated or reconciled, never silently discarded.
-9. Keep one unique next action.
+6. MCP linkage and transport are choices, not framework mandates; the state machine must follow the selected path without forcing `BOTH`.
+7. `Patricked-code/MCP` is READ / OBSERVE / INTAKE only from this workstream.
+8. Every mutable action requires exact-HEAD reconciliation and verifiable CI.
+9. Historical answers/sessions/checkpoints are migrated or reconciled, never silently discarded.
+10. Keep one unique next action.
 
 ## Continuity contract
 
