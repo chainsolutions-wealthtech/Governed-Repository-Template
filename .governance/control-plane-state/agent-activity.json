@@ -188,6 +188,24 @@
       ],
       "proposals": [],
       "unique_next_action": "C1_12_G_FIX_GENERIC_INTENT_SELFTEST"
+    },
+    {
+      "activity_id": "AAL-20260926-V284-002",
+      "agent_identity": "ChatGPT",
+      "workstream": "CREATE_NEW_REPOSITORY/C1-12",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "608d29318d1b2df199e4ec304c4e2fe7bfb94263",
+      "objective": "Attest V2.8.4 product release and move C1-12 to external pilot validation.",
+      "evidence_refs": [
+        "Template PR #33",
+        "Governance CI run 36274141697"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "Framework product remains the Template; pilot repositories are validation-only."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_I_VALIDATE_V2_8_4_ON_CASE1_PILOT"
     }
   ]
 }
