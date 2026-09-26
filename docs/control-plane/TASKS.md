@@ -18,7 +18,7 @@ Objective: V2.7.0 Self-Governed Control Plane.
 
 | Task | Status | Dependency | Exit evidence |
 |---|---|---|---|
-| P12-S1 BOTH/credential transport completion | DONE | — | transport/fallback tests + pilot evidence |
+| P12-S1 MCP connectivity-choice contract completion | DONE | — | optional MCP linkage + DIRECT/SSH/BOTH choice contract tests + pilot evidence |
 | P12-S2 Gouvern MCP discovery | DONE | P12-S1 | PASS/non-degraded discovery |
 | P12-S3 Setup approval + APPLY_BASELINE | DONE | P12-S2 | baseline commit + first-agent handoff |
 | P12-S4 Prove subsequent NORMAL_GOVERNED_ENTRY on Gouvern | IN_PROGRESS | P12-S3 | live normal-entry handoff, no baseline reset |
