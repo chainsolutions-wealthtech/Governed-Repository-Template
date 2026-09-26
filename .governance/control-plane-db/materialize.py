@@ -71,6 +71,33 @@ def insert_runtime(conn, seed):
     for i in seed.get("intakes", []):
         conn.execute("INSERT INTO intakes(intake_id,originating_case_id,originating_run_id,target_system,status,summary,source_ref,created_at) VALUES(?,?,?,?,?,?,?,?)",
                      (i["intake_id"],i.get("originating_case_id"),i.get("originating_run_id"),i["target_system"],i["status"],i["summary"],i.get("source_ref"),i.get("created_at")))
+    for a in seed.get("run_answers", []):
+        conn.execute("INSERT INTO run_answers(run_answer_id,run_id,question_id,field_key,value_json,revision,source_ref,answered_at,supersedes_run_answer_id) VALUES(?,?,?,?,?,?,?,?,?)",
+                     (a["run_answer_id"],a["run_id"],a.get("question_id"),a["field_key"],jdump(a["value"]),a["revision"],a.get("source_ref"),a.get("answered_at"),a.get("supersedes_run_answer_id")))
+    for e in seed.get("run_events", []):
+        conn.execute("INSERT INTO run_events(event_id,run_id,phase_id,event_type,payload_json,source_ref,occurred_at) VALUES(?,?,?,?,?,?,?)",
+                     (e["event_id"],e.get("run_id"),e.get("phase_id"),e["event_type"],jdump(e.get("payload",{})),e.get("source_ref"),e.get("occurred_at")))
+    for ev in seed.get("evidence", []):
+        conn.execute("INSERT INTO evidence(evidence_id,run_id,phase_id,evidence_type,status,payload_json,source_ref,observed_at) VALUES(?,?,?,?,?,?,?,?)",
+                     (ev["evidence_id"],ev.get("run_id"),ev.get("phase_id"),ev["evidence_type"],ev["status"],jdump(ev.get("payload",{})),ev.get("source_ref"),ev.get("observed_at")))
+    for h in seed.get("handoffs", []):
+        conn.execute("INSERT INTO handoffs(handoff_id,run_id,checkpoint_id,status,next_action,payload_json,source_ref,created_at) VALUES(?,?,?,?,?,?,?,?)",
+                     (h["handoff_id"],h.get("run_id"),h.get("checkpoint_id"),h["status"],h.get("next_action"),jdump(h.get("payload",{})),h.get("source_ref"),h.get("created_at")))
+    for fb in seed.get("owner_feedback", []):
+        conn.execute("INSERT INTO owner_feedback(feedback_id,run_id,phase_id,feedback_class,content,effect,earliest_affected_phase_id,dependent_revalidation_json,source_ref,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
+                     (fb["feedback_id"],fb.get("run_id"),fb.get("phase_id"),fb["feedback_class"],fb["content"],fb["effect"],fb.get("earliest_affected_phase_id"),jdump(fb.get("dependent_revalidation",[])),fb.get("source_ref"),fb.get("created_at")))
+    for art in seed.get("artifacts", []):
+        conn.execute("INSERT INTO artifacts(artifact_id,run_id,phase_id,artifact_type,path_or_ref,sha,source_ref,created_at) VALUES(?,?,?,?,?,?,?,?)",
+                     (art["artifact_id"],art.get("run_id"),art.get("phase_id"),art["artifact_type"],art["path_or_ref"],art.get("sha"),art.get("source_ref"),art.get("created_at")))
+    for auth in seed.get("canonical_authorities", []):
+        conn.execute("INSERT INTO canonical_authorities(authority_id,authority_type,canonical_path,scope,status,current_revision,source_decision_id,created_at) VALUES(?,?,?,?,?,?,?,?)",
+                     (auth["authority_id"],auth["authority_type"],auth["canonical_path"],auth["scope"],auth["status"],auth["current_revision"],auth.get("source_decision_id"),auth.get("created_at")))
+    for rev in seed.get("canonical_authority_revisions", []):
+        conn.execute("INSERT INTO canonical_authority_revisions(revision_id,authority_id,revision_number,subject_head_sha,content_sha,supersedes_revision_id,reason,source_decision_id,source_ref,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
+                     (rev["revision_id"],rev["authority_id"],rev["revision_number"],rev.get("subject_head_sha"),rev.get("content_sha"),rev.get("supersedes_revision_id"),rev["reason"],rev.get("source_decision_id"),rev.get("source_ref"),rev.get("created_at")))
+    for ev in seed.get("canonical_memory_events", []):
+        conn.execute("INSERT INTO canonical_memory_events(event_id,event_type,scope_type,scope_id,payload_json,source_ref,occurred_at) VALUES(?,?,?,?,?,?,?)",
+                     (ev["event_id"],ev["event_type"],ev["scope_type"],ev["scope_id"],jdump(ev.get("payload",{})),ev.get("source_ref"),ev.get("occurred_at")))
 
 def validate(conn):
     conn.execute("PRAGMA foreign_key_check")
@@ -95,8 +122,17 @@ def validate(conn):
         raise SystemExit("CONTROL_PLANE_DB_FAILED: question catalog unexpectedly small")
     if conn.execute("SELECT COUNT(*) FROM activities").fetchone()[0] < 8:
         raise SystemExit("CONTROL_PLANE_DB_FAILED: activity catalog unexpectedly small")
-    for table in ["agent_sessions","agent_activity_events"]:
+    for table in ["agent_sessions","agent_activity_events","canonical_authorities","canonical_authority_revisions","canonical_memory_events"]:
         conn.execute(f"SELECT 1 FROM {table} LIMIT 1")
+    authority = conn.execute("SELECT authority_id,current_revision FROM canonical_authorities WHERE authority_id='CP-ARCH-001'").fetchone()
+    if authority != ("CP-ARCH-001",1):
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: canonical architecture authority missing or invalid: {authority}")
+    revision = conn.execute("SELECT revision_id FROM canonical_authority_revisions WHERE authority_id='CP-ARCH-001' AND revision_number=1").fetchone()
+    if revision != ("CP-ARCH-001-R1",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: canonical architecture revision missing")
+    required_event_types = {row[0] for row in conn.execute("SELECT event_type FROM canonical_memory_events WHERE scope_id='CP-ARCH-001'").fetchall()}
+    if not {"ARCHITECTURE_AUTHORITY_CREATED","ARCHITECTURE_REVISION_ACCEPTED"}.issubset(required_event_types):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: canonical architecture event history incomplete")
     print("CONTROL_PLANE_DB_VALIDATION_PASS")
     print("cases=4")
     print(f"questions={conn.execute('SELECT COUNT(*) FROM questions').fetchone()[0]}")
@@ -111,7 +147,7 @@ def build(path: Path):
     try:
         for migration in sorted(DB_ROOT.glob("[0-9][0-9][0-9]_*.sql")):
             conn.executescript(migration.read_text(encoding="utf-8"))
-        conn.execute("INSERT INTO schema_meta(key,value) VALUES('schema_version','1.1.0')")
+        conn.execute("INSERT INTO schema_meta(key,value) VALUES('schema_version','1.2.0')")
         insert_case_data(conn,catalog)
         insert_replay(conn,replay)
         insert_questions_activities(conn,catalog)
