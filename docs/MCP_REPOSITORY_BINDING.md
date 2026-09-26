@@ -36,6 +36,8 @@ For `DIRECT_MCP_TOKEN`, if the central secret is unavailable, the flow stops wit
 
 This is a one-time control-plane configuration pattern: the control plane holds the MCP credential centrally so future governed repositories do not require manual secret copying.
 
+For `BOTH`, provisioning is opportunistic: every governed local command may reconcile the target repository secret. If the central credential exists, it is written/attested before dispatch even when the session has already advanced beyond the historical credential gate. If it is absent, `BOTH` may continue only through the governed SSH OIDC read-only fallback.
+
 ## Governed SSH fallback — ephemeral certificate
 
 SSH fallback does **not** use a persistent repository private-key secret.

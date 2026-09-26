@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from control_plane_provision_mcp_credential import SECRET_NAME, validate_requirements
+from control_plane_provision_mcp_credential import SECRET_NAME, provisioning_decision
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -15,26 +15,31 @@ def main() -> None:
         return
 
     required = {
+        "answers":{"mcp_transport":"DIRECT_MCP_TOKEN"},
         "next_request": {
             "kind": "CREDENTIAL_GATE",
             "requirements": [{"kind": "secret", "name": SECRET_NAME}],
         }
     }
-    if validate_requirements(required) is not True:
+    if provisioning_decision(required) != "MANDATORY":
         raise SystemExit("MCP_CREDENTIAL_PROVISION_SELFTEST_FAILED: expected token requirement")
 
-    not_required = {"next_request": {"kind": "MCP_DISCOVERY", "requirements": []}}
-    if validate_requirements(not_required) is not False:
+    not_required = {"answers":{"mcp_transport":"SSH"},"next_request": {"kind": "MCP_DISCOVERY", "requirements": []}}
+    both = {"answers":{"mcp_transport":"BOTH"},"next_request":{"kind":"QUESTION","id":"Q_DOMAIN_BINDING"}}
+    if provisioning_decision(both) != "OPPORTUNISTIC":
+        raise SystemExit("MCP_CREDENTIAL_PROVISION_SELFTEST_FAILED: BOTH must provision opportunistically")
+    if provisioning_decision(not_required) != "NOT_REQUIRED":
         raise SystemExit("MCP_CREDENTIAL_PROVISION_SELFTEST_FAILED: non-gate must be no-op")
 
     unsupported = {
+        "answers":{"mcp_transport":"DIRECT_MCP_TOKEN"},
         "next_request": {
             "kind": "CREDENTIAL_GATE",
             "requirements": [{"kind": "secret", "name": "UNSUPPORTED_SECRET"}],
         }
     }
     try:
-        validate_requirements(unsupported)
+        provisioning_decision(unsupported)
     except RuntimeError as exc:
         if str(exc) != "CREDENTIAL_REQUIREMENTS_UNSUPPORTED":
             raise
@@ -50,7 +55,6 @@ def main() -> None:
         "permission-issues: read",
         "control_plane_provision_mcp_credential.py",
         "GOVERNED_MCP_AUTH_TOKEN",
-        "local_command_kind == 'execute'",
         "continue-on-error: true",
         "Report governed MCP credential provisioning failure",
         "steps.mcp-credential.outcome == 'failure'",
@@ -79,6 +83,7 @@ def main() -> None:
         "TARGET_ISSUE_READ_FAILED",
         "TARGET_LOCAL_STATE_DECODE_FAILED",
         "TARGET_CREDENTIAL_GATE_CONTRACT_INVALID",
+        "provisioning_status",
         "MCP_CREDENTIAL_PROVISION_DEFERRED",
         "DEFERRED_TO_SSH_FALLBACK",
         "SSH_OIDC_READONLY",

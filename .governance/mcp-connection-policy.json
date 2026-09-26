@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.4.0",
+  "schema_version": "1.5.0",
   "role": "REPOSITORY_TO_MCP_BINDING",
   "preferred_transport": "DIRECT_MCP_TOKEN",
   "fallback_transport": "GITHUB_OIDC_EPHEMERAL_SSH_CERTIFICATE",
@@ -21,13 +21,16 @@
       "transport": "GITHUB_APP_INSTALLATION_TOKEN",
       "required_target_permission": "repository:Secrets:write",
       "source_value_exposure": "FORBIDDEN",
-      "trigger": "LOCAL_MACHINE_EXECUTE_AT_CREDENTIAL_GATE",
+      "trigger": "ANY_GOVERNED_LOCAL_COMMAND_WHEN_DIRECT_CREDENTIAL_APPLIES",
       "attestation": "TARGET_SECRET_METADATA_ONLY",
       "fallback": "BOTH_MAY_DEGRADE_TO_GITHUB_OIDC_EPHEMERAL_SSH_READONLY",
       "mandatory_for": [
         "DIRECT_MCP_TOKEN"
       ],
       "optional_for": [
+        "BOTH"
+      ],
+      "opportunistic_for": [
         "BOTH"
       ]
     }
@@ -74,7 +77,8 @@
     "BOTH_DIRECT_CREDENTIAL_ABSENCE_MUST_NOT_BLOCK_READ_ONLY_SSH_DISCOVERY",
     "BOTH_SSH_ONLY_EVIDENCE_MUST_BE_RECORDED_AS_PARTIAL_DEGRADED",
     "MCP_DISCOVERY_FAILURES_ON_EXACT_HEAD_ARE_PERSISTED_RETRYABLE",
-    "HEAD_MOVED_NEVER_PERSISTS_AS_DISCOVERY_EVIDENCE"
+    "HEAD_MOVED_NEVER_PERSISTS_AS_DISCOVERY_EVIDENCE",
+    "BOTH_USES_CENTRAL_DIRECT_CREDENTIAL_WHEN_AVAILABLE"
   ],
   "discovery_failure_policy": {
     "persist_exact_head_failures": true,

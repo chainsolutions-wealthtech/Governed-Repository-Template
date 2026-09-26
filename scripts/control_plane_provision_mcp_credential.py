@@ -62,22 +62,28 @@ def decode_state(issue_body: str | None) -> dict:
     return state
 
 
-def validate_requirements(state: dict) -> bool:
+def provisioning_decision(state: dict) -> str:
+    answers = state.get("answers") or {}
+    transport = answers.get("mcp_transport")
     next_request = state.get("next_request") or {}
-    if next_request.get("kind") != "CREDENTIAL_GATE":
-        return False
-    requirements = next_request.get("requirements")
-    if not isinstance(requirements, list) or not requirements:
-        raise RuntimeError("CREDENTIAL_GATE_REQUIREMENTS_INVALID")
-    normalized = []
-    for item in requirements:
-        if not isinstance(item, dict):
+    if transport == "DIRECT_MCP_TOKEN":
+        if next_request.get("kind") != "CREDENTIAL_GATE":
+            return "NOT_REQUIRED"
+        requirements = next_request.get("requirements")
+        if not isinstance(requirements, list) or not requirements:
             raise RuntimeError("CREDENTIAL_GATE_REQUIREMENTS_INVALID")
-        normalized.append((item.get("kind"), item.get("name")))
-    allowed = {("secret", SECRET_NAME)}
-    if not set(normalized).issubset(allowed):
-        raise RuntimeError("CREDENTIAL_REQUIREMENTS_UNSUPPORTED")
-    return ("secret", SECRET_NAME) in normalized
+        normalized = []
+        for item in requirements:
+            if not isinstance(item, dict):
+                raise RuntimeError("CREDENTIAL_GATE_REQUIREMENTS_INVALID")
+            normalized.append((item.get("kind"), item.get("name")))
+        allowed = {("secret", SECRET_NAME)}
+        if not set(normalized).issubset(allowed):
+            raise RuntimeError("CREDENTIAL_REQUIREMENTS_UNSUPPORTED")
+        return "MANDATORY" if ("secret", SECRET_NAME) in normalized else "NOT_REQUIRED"
+    if transport == "BOTH":
+        return "OPPORTUNISTIC"
+    return "NOT_REQUIRED"
 
 
 def set_repository_secret(token: str, repository: str, value: str) -> None:
@@ -149,12 +155,13 @@ def main() -> None:
         fail("LOCAL_STATE_HEAD_MOVED")
 
     try:
-        credential_required = validate_requirements(state)
+        decision = provisioning_decision(state)
     except RuntimeError:
         fail("TARGET_CREDENTIAL_GATE_CONTRACT_INVALID")
 
-    if not credential_required:
+    if decision == "NOT_REQUIRED":
         emit_output("failure_code", "NONE")
+        emit_output("provisioning_status", "NOT_REQUIRED")
         print(json.dumps({
             "status": "MCP_CREDENTIAL_PROVISION_NOT_REQUIRED",
             "target_repository": args.target_repository,
@@ -165,8 +172,7 @@ def main() -> None:
 
     source_secret = os.environ.get(SECRET_NAME)
     if not source_secret:
-        transport=(state.get("answers") or {}).get("mcp_transport")
-        if transport=="BOTH":
+        if decision == "OPPORTUNISTIC":
             emit_output("failure_code", "NONE")
             emit_output("provisioning_status", "DEFERRED_TO_SSH_FALLBACK")
             print(json.dumps({
