@@ -139,3 +139,16 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - C1-12-F is DONE.
 - C1-12-G is IN_PROGRESS pending full Template Governance CI.
 - Decision `CPD-022` codifies Template = product/framework, pilots = external validation only.
+
+
+## 2026-09-26 — V2.8.4 framework release merged
+
+- Product repository: `chainsolutions-wealthtech/Governed-Repository-Template`.
+- PR #33 merged.
+- Release subject HEAD: `608d29318d1b2df199e4ec304c4e2fe7bfb94263`.
+- Governance CI run `36274141697`: PASS.
+- Portable connection-intent self-test passed in the Template.
+- C1-12-G: DONE.
+- C1-12-H: DONE.
+- C1-12-I: IN_PROGRESS — validate released V2.8.4 on an external CASE 1 pilot.
+- Pilot validation must not introduce generic implementation changes directly into the pilot.

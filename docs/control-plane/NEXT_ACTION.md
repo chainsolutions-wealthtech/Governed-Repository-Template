@@ -1,45 +1,47 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_12_G_FIX_GENERIC_INTENT_SELFTEST
+NEXT_ACTION = C1_12_I_VALIDATE_V2_8_4_ON_CASE1_PILOT
 STATE = IN_PROGRESS
 ```
 
 ## Objective
 
-Fix the generic connection-intent self-test in the **framework product**:
+Validate the **released framework product V2.8.4** on an external CASE 1 pilot without treating the pilot as the implementation target.
+
+Product/framework:
 
 `chainsolutions-wealthtech/Governed-Repository-Template`
 
-Root cause already proven by C1-12-F:
+Current external pilot:
 
-```text
-test_connection_intent.py
-copied the executing repository's real work/session state
-→ an instantiated client could carry WORK-PROJECT-001 READY
-→ synthetic dispatch selected that real work item
-→ test expected WORK-DISCOVER-001
-→ INTENT_SELFTEST_FAILED: unexpected work item
-```
+`Patricked-code/Gouvern`
 
-## Required implementation
+## Required sequence
 
-1. build an explicit synthetic template fixture inside `test_connection_intent.py`;
-2. reset only self-test state: profile/template marker, work-items, claims, sessions and canonical-memory pointer;
-3. keep real repository/project state untouched;
-4. assert the synthetic bootstrap produces exactly `WORK-INIT-001 DONE` + `WORK-DISCOVER-001 READY`;
-5. run full Template Governance CI;
-6. release V2.8.4 only if all checks pass.
+1. reobserve exact pilot HEAD;
+2. apply the governed Template V2.8.4 upgrade to the pilot;
+3. verify pilot Governance CI is fully green, including `scripts/test_connection_intent.py`;
+4. do not modify pilot business work-items to satisfy framework tests;
+5. if CI is green, resume the existing subsequent-agent proof;
+6. verify `NORMAL_GOVERNED_ENTRY` with no first-agent baseline/session/work duplication;
+7. persist evidence back into the Template control-plane memory.
 
 ## Product / pilot boundary
 
-- Product/framework implementation target: `chainsolutions-wealthtech/Governed-Repository-Template`.
-- `Patricked-code/Gouvern` is a CASE 1 validation pilot only.
-- Pilot validation happens only after the Template fix is merged.
+The Template is the product. The pilot is evidence only.
+
+```text
+FRAMEWORK FIX
+→ TEMPLATE CI
+→ RELEASE
+→ PILOT VALIDATION
+→ EVIDENCE BACK TO TEMPLATE
+```
 
 ## Do not
 
-- patch project business state in `Gouvern`;
-- use pilot work-items as framework truth;
-- skip Template CI;
-- advance C1-12 to normal-entry proof before V2.8.4 is validated.
+- implement generic framework changes directly in the pilot;
+- promote pilot project state into framework truth;
+- modify `Patricked-code/MCP`;
+- advance C1-13 before the normal-entry proof is complete.

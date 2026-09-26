@@ -7,7 +7,7 @@
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
   "current_phase": "C1-12",
   "current_status": "IN_PROGRESS",
-  "unique_next_action": "C1_12_G_FIX_GENERIC_INTENT_SELFTEST",
+  "unique_next_action": "C1_12_I_VALIDATE_V2_8_4_ON_CASE1_PILOT",
   "phases": [
     {
       "id": "C1-00",
@@ -93,18 +93,21 @@
       "live_state": {
         "issue": "Patricked-code/Gouvern#3",
         "pilot_head": "3a1b7689be5aa38b4b6fdb6456526e618f9b0dd5",
-        "template_version": "2.8.3",
+        "template_version": "2.8.4",
         "completed_fixes": [
           "V2.8.1_MACHINE_LOCAL_START",
           "V2.8.2_CLIENT_POLICY_SYNC",
-          "V2.8.3_PORTABLE_BOOTSTRAP_FIXTURE"
+          "V2.8.3_PORTABLE_BOOTSTRAP_FIXTURE",
+          "V2.8.4_PORTABLE_CONNECTION_INTENT_FIX"
         ],
-        "current_blocker": "INTENT_SELFTEST_FAILED: unexpected work item",
+        "current_blocker": null,
         "ci_run": 36262734626,
         "root_cause": "CONNECTION_INTENT_SELFTEST_INHERITED_INSTANTIATED_CLIENT_WORK_ITEMS",
         "framework_fix_version_candidate": "2.8.4",
         "product_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-        "pilot_repository_role": "EXTERNAL_VALIDATION_ONLY"
+        "pilot_repository_role": "EXTERNAL_VALIDATION_ONLY",
+        "framework_fix_release_subject": "608d29318d1b2df199e4ec304c4e2fe7bfb94263",
+        "current_step": "EXTERNAL_CASE1_PILOT_VALIDATION"
       }
     },
     {
