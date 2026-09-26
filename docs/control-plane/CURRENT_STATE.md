@@ -9,8 +9,9 @@
 - Role: `CENTRAL_GOVERNANCE_CONTROL_PLANE`
 - Canonical branch: `main`
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
-- Template version entering this migration: `2.6.10`
-- Source-state revision: `3`
+- Template version: `2.7.0`
+- V2.7.0 release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`
+- Source-state revision: `4`
 
 ## Current framework program
 
@@ -24,7 +25,7 @@
 
 ## Current control-plane hardening
 
-State: `READY_TO_RELEASE`
+State: `SELF_GOVERNED`
 
 Objective: make the template source obey the same persistent-memory principles that it imposes on generated repositories, without leaking source-project history into clients.
 
@@ -52,7 +53,7 @@ None for the self-governance migration.
 
 ## Unique next action
 
-`MERGE_V2_7_0_AND_ATTEST_RELEASE_HEAD`
+`RESUME_PROGRAM_12_SECOND_FRESH_REPOSITORY_E2E`
 
 ## Latest proof
 
@@ -60,3 +61,11 @@ None for the self-governance migration.
 - Source-state validation: `PASS`.
 - Instantiated-client bootstrap test: `PASS`.
 - Source-only directories absent after client initialization: `PASS`.
+
+## V2.7.0 release attestation
+
+- Release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`.
+- Self-governance migration: COMPLETE.
+- Client source-memory non-leak proof: PASS.
+- Durable source checkpoint/handoff: ACTIVE.
+- Canonical framework program #12 may resume.
