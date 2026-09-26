@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 6,
+  "revision": 7,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -177,6 +177,66 @@
         "C1-12-O"
       ],
       "next_action": "RECONCILE_RELATIONAL_MEMORY"
+    },
+    {
+      "id": "ARCH-001",
+      "status": "DONE",
+      "depends_on": [],
+      "next_action": "ESTABLISH_CANONICAL_ARCHITECTURE"
+    },
+    {
+      "id": "ARCH-002",
+      "status": "DONE",
+      "depends_on": [],
+      "next_action": "ADD_AUTHORITY_REVISION_REGISTRY"
+    },
+    {
+      "id": "ARCH-003",
+      "status": "DONE",
+      "depends_on": [],
+      "next_action": "COMPLETE_HISTORY_MATERIALIZER_LOADERS"
+    },
+    {
+      "id": "ARCH-004",
+      "status": "PLANNED",
+      "depends_on": [],
+      "next_action": "ADD_EVENT_REDUCER_RECONSTRUCTION_VALIDATION"
+    },
+    {
+      "id": "ARCH-005",
+      "status": "PLANNED",
+      "depends_on": [],
+      "next_action": "FORMALIZE_ROLE_CAPABILITY_AUTHORIZATION"
+    },
+    {
+      "id": "ARCH-006",
+      "status": "PLANNED",
+      "depends_on": [],
+      "next_action": "STRENGTHEN_CROSS_PROJECTION_CI"
+    },
+    {
+      "id": "ARCH-007",
+      "status": "PLANNED",
+      "depends_on": [],
+      "next_action": "GENERATE_DERIVED_PDF_FROM_MARKDOWN"
+    },
+    {
+      "id": "ARCH-008",
+      "status": "FUTURE",
+      "depends_on": [],
+      "next_action": "EXPOSE_GOVERNANCE_API"
+    },
+    {
+      "id": "ARCH-009",
+      "status": "FUTURE",
+      "depends_on": [],
+      "next_action": "ADD_POSTGRES_RUNTIME_PROJECTION"
+    },
+    {
+      "id": "ARCH-010",
+      "status": "FUTURE",
+      "depends_on": [],
+      "next_action": "BUILD_ADMIN_WEB_APPLICATION"
     }
   ],
   "unique_executable_item": "C1-12-F"
