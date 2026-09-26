@@ -162,3 +162,16 @@ No authentication contract changes. V2.6.5 is diagnostic and fail-closed over V2
 
 An open local-entry issue is not migrated across unrelated project commits. If the comparison chain contains any non-governance mutation, its expected HEAD remains unchanged and later mutable commands continue to fail closed.
 
+## Governance Automation V2.6.7
+
+### Changed
+
+- `BOTH` now means direct MCP preferred plus governed GitHub OIDC SSH fallback for initial read-only discovery;
+- absence of the central direct MCP credential no longer blocks `BOTH` discovery when the SSH fallback is available;
+- the direct path is preserved as `UNAVAILABLE_CREDENTIAL` evidence and the combined discovery is recorded as `PARTIAL` / degraded rather than a false `PASS`;
+- `DIRECT_MCP_TOKEN` continues to require `GOVERNED_MCP_AUTH_TOKEN`.
+
+### Safety
+
+The SSH fallback remains read-only and cannot grant MCP scoped-write authority. Project registration, explicit mutation approval and MCP write-tool gates are unchanged. No change is made to `Patricked-code/MCP` by this release.
+
