@@ -136,6 +136,20 @@
       },
       "status": "ACCEPTED",
       "source_ref": "docs/control-plane/DECISIONS_LOG.md"
+    },
+    {
+      "decision_id": "CPD-019",
+      "scope_type": "CANONICAL_MEMORY",
+      "scope_id": "CONTROL_PLANE",
+      "decision_key": "CONTINUOUS_RELATIONAL_MEMORY_PROJECTION",
+      "value": {
+        "git_authority_first": true,
+        "relational_projection_in_same_governed_change": true,
+        "pending_projection_must_be_explicit": true
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "decided_at": "2026-09-26"
     }
   ],
   "checkpoints": [
@@ -164,7 +178,20 @@
   "run_events": [],
   "evidence": [],
   "handoffs": [],
-  "owner_feedback": [],
+  "owner_feedback": [
+    {
+      "feedback_id": "FB-20260926-DB-001",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-12",
+      "feedback_class": "NEW_REQUIREMENT",
+      "content": "Persist all meaningful project/governance information and build/populate the relational database continuously in parallel with the governed work.",
+      "effect": "ENRICH_CANONICAL_MEMORY_AND_RELATIONAL_PROJECTION_POLICY_WITHOUT_CHANGING_ACTIVE_EXECUTION_GATE",
+      "earliest_affected_phase_id": "C1-12",
+      "dependent_revalidation": [],
+      "source_ref": "CPD-019",
+      "created_at": "2026-09-26"
+    }
+  ],
   "artifacts": [
     {
       "artifact_id": "CP-ARCH-001",
@@ -224,6 +251,30 @@
       "payload": {
         "revision_id": "CP-ARCH-001-R1",
         "decision_id": "CPD-014"
+      },
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "occurred_at": "2026-09-26"
+    },
+    {
+      "event_id": "CME-20260926-DB-001",
+      "event_type": "OWNER_FEEDBACK_RECEIVED",
+      "scope_type": "CANONICAL_MEMORY",
+      "scope_id": "CONTROL_PLANE",
+      "payload": {
+        "feedback_id": "FB-20260926-DB-001",
+        "classification": "NEW_REQUIREMENT"
+      },
+      "source_ref": "CPD-019",
+      "occurred_at": "2026-09-26"
+    },
+    {
+      "event_id": "CME-20260926-DB-002",
+      "event_type": "DECISION_ACCEPTED",
+      "scope_type": "CANONICAL_MEMORY",
+      "scope_id": "CONTROL_PLANE",
+      "payload": {
+        "decision_id": "CPD-019",
+        "decision_key": "CONTINUOUS_RELATIONAL_MEMORY_PROJECTION"
       },
       "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "occurred_at": "2026-09-26"
