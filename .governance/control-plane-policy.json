@@ -67,7 +67,8 @@
       "docs/control-plane/CASE1_REPLAY_LEDGER.md",
       "docs/control-plane/DATA_MODEL.md",
       "docs/control-plane/AGENT_ACTIVITY_LOG.md",
-      "docs/control-plane/CANONICAL_ARCHITECTURE.md"
+      "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+      "docs/control-plane/IMPORTED_MEMORY_VERIFICATION.md"
     ],
     "machine_authorities": [
       ".governance/control-plane-state/current.json",
