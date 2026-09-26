@@ -32,9 +32,14 @@
   "knowledge_enrichment": {
     "canonical_architecture": {
       "authority_id": "CP-ARCH-001",
-      "revision": 1,
-      "source_head": "3ee944eccd3e2578aaf590a2006fa452fe9ae21b",
+      "revision": 2,
+      "source_head": "bf75a1ff56e0450c87a72ba91124bf55257647c6",
       "execution_gate_unchanged": true
+    },
+    "agent_purpose_routing": {
+      "status": "PLANNED_NOT_ACTIVE",
+      "decision_id": "CPD-021",
+      "active_task_unchanged": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM"
     }
   }
 }
