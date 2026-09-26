@@ -25,3 +25,12 @@ Decision: introduce a separate source-only memory namespace instead of convertin
 ## 2026-09-26 — V2.7.0 started
 
 Purpose: make the control-plane source self-governed while guaranteeing that its own historical state never becomes client project history.
+
+## 2026-09-26 — V2.7.0 source/client boundary proven
+
+- Governance CI run: `36258871067` — PASS.
+- Source authority coherence validation: PASS.
+- Bootstrap client simulation: PASS.
+- `docs/control-plane/` removed from initialized client: PASS.
+- `.governance/control-plane-state/` removed from initialized client: PASS.
+- Next: merge V2.7.0 and attest resulting canonical main HEAD.
