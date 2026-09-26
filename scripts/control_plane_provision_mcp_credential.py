@@ -129,7 +129,7 @@ def main() -> None:
         fail("TARGET_GITHUB_CONTEXT_READ_FAILED")
     remote_head = ((ref.get("object") or {}).get("sha"))
     if remote_head != args.expected_head:
-        raise SystemExit(f"HEAD_MOVED: expected={args.expected_head} remote={remote_head}")
+        fail("TARGET_HEAD_MOVED")
 
     try:
         issue = api(
@@ -144,11 +144,9 @@ def main() -> None:
     except (RuntimeError, ValueError, json.JSONDecodeError):
         fail("TARGET_LOCAL_STATE_DECODE_FAILED")
     if state.get("repository") != args.target_repository:
-        raise SystemExit("LOCAL_ENTRY_REPOSITORY_MISMATCH")
+        fail("LOCAL_ENTRY_REPOSITORY_MISMATCH")
     if state.get("expected_head_sha") != args.expected_head:
-        raise SystemExit(
-            f"LOCAL_STATE_HEAD_MOVED: expected={args.expected_head} state={state.get('expected_head_sha')}"
-        )
+        fail("LOCAL_STATE_HEAD_MOVED")
 
     try:
         credential_required = validate_requirements(state)
