@@ -43,7 +43,10 @@
     "APPEND_HISTORY_PLUS_CURRENT_PROJECTION",
     "WORKFLOW_SEMANTICS_BEFORE_FRONTEND",
     "CANONICAL_MEMORY_AND_RELATIONAL_PROJECTION_EVOLVE_TOGETHER",
-    "STRUCTURED_DURABLE_CHANGES_MUST_BE_PROJECTED_OR_MARKED_PENDING"
+    "STRUCTURED_DURABLE_CHANGES_MUST_BE_PROJECTED_OR_MARKED_PENDING",
+    "TWO_STAGE_AGENT_PURPOSE_ROUTING_TARGET",
+    "HUMAN_TECHNICAL_EXECUTION_NOT_REQUIRED",
+    "AUTOMATION_MUST_NOT_BYPASS_AUTHORITY_OR_APPROVAL"
   ],
   "source_only_paths": [
     ".github/workflows/governed-control-plane.yml",
@@ -138,5 +141,26 @@
     "machine_projection": ".governance/control-plane-state/canonical-architecture.json",
     "scope": "CONTROL_PLANE_SOURCE_ONLY",
     "status": "ACCEPTED_TARGET_ARCHITECTURE"
+  },
+  "agent_purpose_routing": {
+    "status": "PLANNED_NOT_ACTIVE",
+    "stage_1": [
+      "WORK_ON_CONTROL_PLANE",
+      "APPLY_GOVERNANCE_CASE"
+    ],
+    "stage_2_control_plane": [
+      "CODE_IMPLEMENTATION",
+      "EXECUTE_EXISTING_TASK",
+      "ADD_OR_ENRICH_INFORMATION"
+    ],
+    "stage_2_cases": [
+      "CREATE_NEW_REPOSITORY",
+      "ADOPT_EXISTING_REPOSITORY",
+      "MAP_EXISTING_PROJECT",
+      "LAB_EVOLUTION"
+    ],
+    "human_interaction": "ANSWERS_CHOICES_AND_EXPLICIT_APPROVALS_ONLY",
+    "technical_execution": "AUTOMATED_WHEN_AUTHORIZED",
+    "activation_gate": "IMPLEMENT_AND_PASS_ROUTER_REGRESSION_MATRIX"
   }
 }
