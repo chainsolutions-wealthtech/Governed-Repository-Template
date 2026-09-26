@@ -154,6 +154,21 @@ def validate(conn):
     rte_feedback = conn.execute("SELECT feedback_id FROM owner_feedback WHERE feedback_id='FB-20260926-RTE-001'").fetchone()
     if rte_feedback != ("FB-20260926-RTE-001",):
         raise SystemExit("CONTROL_PLANE_DB_FAILED: two-stage purpose routing owner feedback missing")
+    entry_purpose = [json.loads(r[0]) for r in conn.execute(
+        "SELECT value_json FROM question_options WHERE question_id='CP-Q-ENTRY-PURPOSE' ORDER BY ordinal"
+    ).fetchall()]
+    if entry_purpose != ["WORK_ON_CONTROL_PLANE","APPLY_GOVERNANCE_CASE"]:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: entry purpose choices mismatch: {entry_purpose}")
+    work_kinds = [json.loads(r[0]) for r in conn.execute(
+        "SELECT value_json FROM question_options WHERE question_id='CP-Q-CONTROL-PLANE-WORK-KIND' ORDER BY ordinal"
+    ).fetchall()]
+    if work_kinds != ["CODE_IMPLEMENTATION","EXECUTE_EXISTING_TASK","ADD_OR_ENRICH_INFORMATION"]:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: control-plane work kinds mismatch: {work_kinds}")
+    structuring_cases = [json.loads(r[0]) for r in conn.execute(
+        "SELECT value_json FROM question_options WHERE question_id='CP-Q-STRUCTURING-CASE' ORDER BY ordinal"
+    ).fetchall()]
+    if structuring_cases != ["CREATE_NEW_REPOSITORY","ADOPT_EXISTING_REPOSITORY","MAP_EXISTING_PROJECT","LAB_EVOLUTION"]:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: structuring case choices mismatch: {structuring_cases}")
     print("CONTROL_PLANE_DB_VALIDATION_PASS")
     print("cases=4")
     print(f"questions={conn.execute('SELECT COUNT(*) FROM questions').fetchone()[0]}")
