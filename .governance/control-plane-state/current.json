@@ -2,15 +2,23 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 13,
-  "template_version": "2.8.5",
+  "source_state_revision": 14,
+  "template_version": "2.8.6",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
   "program_issue": 12,
-  "current_checkpoint": "C1-12_V2_8_5_RELEASED_PENDING_GOVERNED_PILOT_UPGRADE",
+  "current_checkpoint": "C1-12_COMPLETE_PORTABLE_INTENT_FIXTURE_IN_PROGRESS",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "unique_next_action": "C1_12_I_B_APPLY_CURRENT_TEMPLATE_TO_CASE1_PILOT",
-  "blockers": [],
+  "unique_next_action": "C1_12_J_B_COMPLETE_PORTABLE_INTENT_FIXTURE",
+  "blockers": [
+    {
+      "type": "GENERIC_FRAMEWORK_SELFTEST_PORTABILITY_DEFECT",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "evidence_run": 36275001208,
+      "root_cause": "INTENT_SELFTEST_INHERITS_BOOTSTRAP_INFLUENCING_CLIENT_BASELINE_STATE",
+      "fix_candidate": "2.8.6"
+    }
+  ],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
   "freshness": "SOURCE_STATE_ATTESTS_V2_8_5_RELEASE_SUBJECT",
   "last_ci_run": 36274765257,
@@ -25,7 +33,7 @@
   },
   "canonical_architecture": {
     "authority_id": "CP-ARCH-001",
-    "revision": 4,
+    "revision": 5,
     "path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
     "status": "ACCEPTED_TARGET_ARCHITECTURE",
     "target_ne_current": true
