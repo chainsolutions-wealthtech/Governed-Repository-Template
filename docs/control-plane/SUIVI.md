@@ -177,3 +177,14 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Client-safe source-only DB CI guard: PASS.
 - C1-12-I-A: DONE.
 - C1-12-I-B: IN_PROGRESS — apply current Template via governed exact-HEAD upgrade to external CASE 1 pilot.
+
+
+## 2026-09-26 — V2.8.6 complete portable intent fixture
+
+- Governed V2.8.5 pilot upgrade: PASS to `17f852c19ac8c5d26f40d3508338ce9c221697c8`.
+- Pilot CI `36275001208`: FAIL at connection-intent synthetic bootstrap.
+- Generic root cause returned to Template: copied client project-profile/infrastructure/local-entry/MCP/access/workflow state still influenced the fresh-template simulation.
+- Added C1-12-J-A (diagnosis DONE), C1-12-J-B (Template fix IN_PROGRESS), C1-12-J-C (release/re-upgrade PENDING).
+- V2.8.6 candidate aligns the intent test fixture with the already-proven bootstrap-consistency fixture domains.
+- Subprocess diagnostics now include stdout/stderr.
+- Pilot remains an external evidence surface; implementation remains in the Template.
