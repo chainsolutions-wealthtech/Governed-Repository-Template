@@ -131,7 +131,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.6.9",
+  "template_version": "2.6.10",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -209,7 +209,10 @@
     "exact-head MCP discovery retry",
     "BOTH opportunistic direct MCP credential provisioning after credential gate",
     "central token provisioning on any governed local command",
-    "BOTH fallback preserved when central token absent"
+    "BOTH fallback preserved when central token absent",
+    "BOTH discovery refresh when preferred direct credential becomes available",
+    "bounded prior MCP discovery evidence history",
+    "setup answer preservation across discovery reconciliation"
   ],
   "automatic_initialization_supported": true
 }
