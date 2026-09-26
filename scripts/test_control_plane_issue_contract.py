@@ -24,6 +24,10 @@ def main() -> None:
     if answer is None or answer[0] != "answer" or answer[1]["field"] != "entry_action":
         raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: answer parsing")
 
+    machine = parse_command('/governed-local-command\n{"target_repository":"owner/repo","issue_number":2,"expected_head":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","command":{"kind":"execute"}}')
+    if machine is None or machine[0] != "local_command" or machine[1]["command"]["kind"] != "execute":
+        raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: machine command parsing")
+
     evidence = parse_command('/governed-evidence\n{"action_id":"PREP-001","result":"PASS","evidence":{"created":true}}')
     if evidence is None or evidence[0] != "evidence" or evidence[1]["action_id"] != "PREP-001":
         raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: evidence parsing")
@@ -46,6 +50,10 @@ def main() -> None:
             "GOVERNED_GITHUB_APP_PRIVATE_KEY",
             "permission-administration: write",
             "permission-contents: read",
+            "scripts/control_plane_local_command.py",
+            "local_command_required",
+            "permission-contents: write",
+            "Dispatch governed machine local command",
         ]
         for fragment in required:
             if fragment not in workflow:
@@ -60,6 +68,10 @@ def main() -> None:
             raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: source-only surface leaked into client")
 
     bridge = (ROOT / "scripts" / "control_plane_issue_bridge.py").read_text(encoding="utf-8")
+    local_dispatcher = (ROOT / "scripts" / "control_plane_local_command.py").read_text(encoding="utf-8")
+    for fragment in ["/dispatches", "governed_local_command", "HEAD_MOVED", "GOVERNED_TARGET_TOKEN"]:
+        if fragment not in local_dispatcher:
+            raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: machine local dispatcher missing: " + fragment)
     if "def handle_repository_dispatch" not in bridge:
         raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: repository dispatch handler missing")
 
