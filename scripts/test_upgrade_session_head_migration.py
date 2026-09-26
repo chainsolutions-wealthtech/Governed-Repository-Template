@@ -98,6 +98,34 @@ def main() -> None:
     assert 'local.update({"repository":target,"status":"WAITING_FOR_FIRST_AGENT"' not in source
     assert 'existing_local=target_text(token,target,".governance/local-entry/state.json")' in source
 
+    # The client upgrader must follow the current Template version rather than
+    # silently freezing one historical release.
+    assert 'current_template_version()' in source
+    assert 'TEMPLATE_MANIFEST.json' in source
+    assert 'LOCAL_SETUP_UPGRADE_APPLIED' in source
+    assert 'LOCAL_SETUP_V2_8_3_UPGRADE_APPLIED' not in source
+    assert '"message":"governance: upgrade repository-local setup to v2.8.3"' not in source
+
+    # Portable client CI requires the generic intent runtime/test surface.
+    for required in [
+        '"scripts/governance_agent.py"',
+        '"scripts/test_connection_intent.py"',
+        '".governance/connection-intent-policy.json"',
+        '".governance/entry-action-policy.json"',
+        '"docs/CONNECTION_INTENT.md"',
+        '"docs/ENTRY_ACTION_ROUTER.md"',
+    ]:
+        assert required in source, required
+
+    # Stateful client work/session stores must never be overwritten by upgrade.
+    for forbidden in [
+        '".governance/work/work-items.json"',
+        '".governance/work/claims.json"',
+        '".governance/sessions/sessions.json"',
+        '".governance/canonical-memory/current.json"',
+    ]:
+        assert forbidden not in source.split("static_paths=[", 1)[1].split("]", 1)[0], forbidden
+
     print("UPGRADE_SESSION_HEAD_MIGRATION_SELFTEST_PASS")
 
 
