@@ -4,7 +4,7 @@
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "template_version_before": "2.6.10",
-  "state": "SELF_GOVERNANCE_IMPLEMENTED_PENDING_CI_PROOF",
+  "state": "SELF_GOVERNANCE_CI_PROVEN_READY_TO_RELEASE",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
@@ -12,6 +12,9 @@
     "direct_mcp_discovery": "PASS",
     "ssh_oidc_discovery": "PASS"
   },
-  "next_action": "RUN_V2_7_0_CI_AND_PROVE_CLIENT_NON_LEAK",
-  "reconciliation_required_before_write": true
+  "next_action": "MERGE_V2_7_0_AND_ATTEST_RELEASE_HEAD",
+  "reconciliation_required_before_write": true,
+  "ci_run": 36258871067,
+  "ci_result": "PASS",
+  "client_source_memory_removal": "PASS"
 }
