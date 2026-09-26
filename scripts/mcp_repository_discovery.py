@@ -342,8 +342,15 @@ def main():
     if transport in {"DIRECT_MCP_TOKEN", "BOTH"}:
         token = os.environ.get("GOVERNED_MCP_AUTH_TOKEN")
         if not token:
-            raise SystemExit("MCP_DIRECT_CREDENTIAL_MISSING")
-        evidence["direct_mcp"] = discover_direct(endpoint, token)
+            if transport=="DIRECT_MCP_TOKEN":
+                raise SystemExit("MCP_DIRECT_CREDENTIAL_MISSING")
+            evidence["direct_mcp"] = {
+                "status": "UNAVAILABLE_CREDENTIAL",
+                "reason": "GOVERNED_MCP_AUTH_TOKEN_MISSING",
+                "fallback": "SSH_OIDC_READONLY",
+            }
+        else:
+            evidence["direct_mcp"] = discover_direct(endpoint, token)
 
     if transport in {"SSH", "BOTH"}:
         profile = answers.get("ssh_connection_profile")
@@ -358,14 +365,17 @@ def main():
     if transport not in {"DIRECT_MCP_TOKEN", "SSH", "BOTH"}:
         raise SystemExit("MCP_TRANSPORT_INVALID")
 
-    component_statuses = [
-        part.get("status")
-        for part in (evidence.get("direct_mcp"), evidence.get("ssh_certificate"))
+    components = [
+        part for part in (evidence.get("direct_mcp"), evidence.get("ssh_certificate"))
         if isinstance(part, dict)
     ]
-    if not component_statuses:
+    if not components:
         raise SystemExit("MCP_DISCOVERY_NO_EVIDENCE")
-    evidence["status"] = "PASS" if all(status == "PASS" for status in component_statuses) else "PARTIAL"
+    successful = [part for part in components if part.get("status") in {"PASS","PARTIAL"}]
+    if not successful:
+        raise SystemExit("MCP_DISCOVERY_NO_USABLE_EVIDENCE")
+    evidence["status"] = "PASS" if all(part.get("status")=="PASS" for part in components) else "PARTIAL"
+    evidence["degraded"] = any(part.get("status")=="UNAVAILABLE_CREDENTIAL" for part in components)
 
     state2 = record_mcp_discovery(state, evidence)
     persist(args.issue_number, issue.get("body"), state2)
