@@ -1,39 +1,45 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM
+NEXT_ACTION = C1_12_G_FIX_GENERIC_INTENT_SELFTEST
 STATE = IN_PROGRESS
 ```
 
 ## Objective
 
-Diagnose the remaining generic client CI failure exposed after the V2.8.3 upgrade of `Patricked-code/Gouvern`:
+Fix the generic connection-intent self-test in the **framework product**:
+
+`chainsolutions-wealthtech/Governed-Repository-Template`
+
+Root cause already proven by C1-12-F:
 
 ```text
-scripts/test_connection_intent.py
-INTENT_SELFTEST_FAILED: unexpected work item
+test_connection_intent.py
+copied the executing repository's real work/session state
+→ an instantiated client could carry WORK-PROJECT-001 READY
+→ synthetic dispatch selected that real work item
+→ test expected WORK-DISCOVER-001
+→ INTENT_SELFTEST_FAILED: unexpected work item
 ```
 
-Fix the generic framework/test assumption in the template first, prove template CI, propagate through exact-HEAD governed upgrade, restore all-green client CI, then resume the live subsequent-agent normal-entry proof.
+## Required implementation
 
-## Immediate required evidence
+1. build an explicit synthetic template fixture inside `test_connection_intent.py`;
+2. reset only self-test state: profile/template marker, work-items, claims, sessions and canonical-memory pointer;
+3. keep real repository/project state untouched;
+4. assert the synthetic bootstrap produces exactly `WORK-INIT-001 DONE` + `WORK-DISCOVER-001 READY`;
+5. run full Template Governance CI;
+6. release V2.8.4 only if all checks pass.
 
-1. inspect `scripts/test_connection_intent.py` and the instantiated Gouvern work-item state;
-2. identify why the synthetic connection-intent test sees an unexpected work item;
-3. prove whether the defect is fixture contamination, first-agent assumption, or normal-entry incompatibility;
-4. fix only the generic source/template behavior;
-5. obtain green template CI before any pilot upgrade;
-6. upgrade Gouvern under exact HEAD;
-7. obtain green client CI;
-8. then resume the existing `Gouvern#3` normal-entry proof.
+## Product / pilot boundary
 
-## After STEP 4
-
-Only then start STEP 5: the second fresh `CREATE_NEW_REPOSITORY` E2E proof.
+- Product/framework implementation target: `chainsolutions-wealthtech/Governed-Repository-Template`.
+- `Patricked-code/Gouvern` is a CASE 1 validation pilot only.
+- Pilot validation happens only after the Template fix is merged.
 
 ## Do not
 
-- skip directly to the fresh repository test;
-- reset/replay the first-agent baseline on `Gouvern`;
-- modify `Patricked-code/MCP`;
-- infer write authority from MCP/SSH connectivity.
+- patch project business state in `Gouvern`;
+- use pilot work-items as framework truth;
+- skip Template CI;
+- advance C1-12 to normal-entry proof before V2.8.4 is validated.

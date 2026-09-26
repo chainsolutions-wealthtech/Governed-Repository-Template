@@ -7,7 +7,7 @@
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
   "current_phase": "C1-12",
   "current_status": "IN_PROGRESS",
-  "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM",
+  "unique_next_action": "C1_12_G_FIX_GENERIC_INTENT_SELFTEST",
   "phases": [
     {
       "id": "C1-00",
@@ -100,7 +100,11 @@
           "V2.8.3_PORTABLE_BOOTSTRAP_FIXTURE"
         ],
         "current_blocker": "INTENT_SELFTEST_FAILED: unexpected work item",
-        "ci_run": 36262734626
+        "ci_run": 36262734626,
+        "root_cause": "CONNECTION_INTENT_SELFTEST_INHERITED_INSTANTIATED_CLIENT_WORK_ITEMS",
+        "framework_fix_version_candidate": "2.8.4",
+        "product_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+        "pilot_repository_role": "EXTERNAL_VALIDATION_ONLY"
       }
     },
     {

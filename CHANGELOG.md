@@ -362,3 +362,23 @@ No CASE 1 execution gate is advanced by this memory enrichment.
 Humans answer governed questions and give explicit approvals where required. Authorized Git/GitHub/CI/file operations are performed by the governed system; automation never bypasses authority or fail-closed gates.
 
 The current runtime router is intentionally unchanged until implementation and regression tests complete. CASE 1 C1-12-F remains the unique executable task.
+
+
+## Governance Automation V2.8.4 — Portable Connection-Intent Self-Test
+
+### Fixed
+
+- `scripts/test_connection_intent.py` no longer inherits real work-items, claims, sessions or canonical-memory state from an already-instantiated client executing the self-test;
+- the test builds an explicit temporary template-source fixture before auto bootstrap;
+- the fixture asserts exactly `WORK-INIT-001 DONE` and `WORK-DISCOVER-001 READY` before validating intent dispatch;
+- a real project `WORK-PROJECT-001` can no longer contaminate the synthetic routing test.
+
+### Product boundary
+
+- `chainsolutions-wealthtech/Governed-Repository-Template` is the framework product and generic implementation target;
+- repositories such as `Patricked-code/Gouvern` are external validation pilots only;
+- generic defects discovered by pilots are fixed in the Template first and then revalidated on pilots.
+
+### Safety
+
+The correction changes only the copied temporary self-test fixture. It never rewrites or resets the real project work-items, sessions, claims or business state of an instantiated client.

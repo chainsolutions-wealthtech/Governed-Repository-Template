@@ -4,18 +4,17 @@
   "authority_type": "CANONICAL_TARGET_ARCHITECTURE",
   "scope": "CONTROL_PLANE_SOURCE_ONLY",
   "status": "ACCEPTED_TARGET_ARCHITECTURE",
-  "current_revision": 2,
+  "current_revision": 3,
   "canonical_path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
   "revision": {
-    "revision_id": "CP-ARCH-001-R2",
-    "revision_number": 2,
-    "subject_head_sha": "bf75a1ff56e0450c87a72ba91124bf55257647c6",
-    "supersedes_revision_id": "CP-ARCH-001-R1",
+    "revision_id": "CP-ARCH-001-R3",
+    "revision_number": 3,
+    "subject_head_sha": "9d8c3936576888709830ba03309c3880367f1943",
+    "supersedes_revision_id": "CP-ARCH-001-R2",
     "source_decision_ids": [
-      "CPD-020",
-      "CPD-021"
+      "CPD-022"
     ],
-    "reason": "Add explicit identity/session separation and two-stage automated purpose routing while preserving current runtime behavior.",
+    "reason": "Clarify that the Template is the framework product and pilot repositories are external validation fixtures only.",
     "approval_eligible_from_imported_memory": false
   },
   "source_provenance": {
@@ -165,5 +164,17 @@
       "AMBIGUITY_FAILS_CLOSED"
     ],
     "backlog_prefix": "RTE"
+  },
+  "framework_product_boundary": {
+    "product_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+    "pilot_role": "EXTERNAL_VALIDATION_FIXTURE",
+    "pilot_example": "Patricked-code/Gouvern",
+    "generic_fix_sequence": [
+      "PILOT_REVEALS_DEFECT",
+      "FIX_TEMPLATE",
+      "TEMPLATE_CI",
+      "RELEASE_OR_UPGRADE",
+      "VALIDATE_ON_PILOT"
+    ]
   }
 }

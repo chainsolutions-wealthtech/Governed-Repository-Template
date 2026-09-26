@@ -2,21 +2,21 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 9,
-  "template_version": "2.8.3",
+  "source_state_revision": 10,
+  "template_version": "2.8.4",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
   "program_issue": 12,
-  "current_checkpoint": "C1-12_CONNECTION_INTENT_SELFTEST_BLOCKED",
+  "current_checkpoint": "C1-12_GENERIC_INTENT_SELFTEST_FIX_IN_PROGRESS",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM",
+  "unique_next_action": "C1_12_G_FIX_GENERIC_INTENT_SELFTEST",
   "blockers": [
     {
-      "repository": "Patricked-code/Gouvern",
-      "head": "3a1b7689be5aa38b4b6fdb6456526e618f9b0dd5",
-      "ci_run": 36262734626,
-      "step": "scripts/test_connection_intent.py",
-      "error": "INTENT_SELFTEST_FAILED: unexpected work item"
+      "type": "GENERIC_FRAMEWORK_TEST_DEFECT",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "script": "scripts/test_connection_intent.py",
+      "root_cause": "SELFTEST_INHERITS_INSTANTIATED_CLIENT_WORK_STATE",
+      "fix_candidate": "2.8.4"
     }
   ],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
@@ -33,7 +33,7 @@
   },
   "canonical_architecture": {
     "authority_id": "CP-ARCH-001",
-    "revision": 2,
+    "revision": 3,
     "path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
     "status": "ACCEPTED_TARGET_ARCHITECTURE",
     "target_ne_current": true
@@ -49,5 +49,10 @@
       "backlog_prefix": "RTE",
       "execution_gate_unchanged": true
     }
+  },
+  "framework_product_boundary": {
+    "product_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+    "pilot_repository_example": "Patricked-code/Gouvern",
+    "pilot_role": "EXTERNAL_VALIDATION_ONLY"
   }
 }

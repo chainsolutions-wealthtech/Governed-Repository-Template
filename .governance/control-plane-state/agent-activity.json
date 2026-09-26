@@ -165,6 +165,29 @@
       ],
       "proposals": [],
       "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM"
+    },
+    {
+      "activity_id": "AAL-20260926-V284-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "CREATE_NEW_REPOSITORY/C1-12",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "9d8c3936576888709830ba03309c3880367f1943",
+      "pilot_repository": "Patricked-code/Gouvern",
+      "observed_pilot_head": "3a1b7689be5aa38b4b6fdb6456526e618f9b0dd5",
+      "objective": "Fix the generic connection-intent self-test defect in the framework product, using Gouvern only as external evidence.",
+      "evidence_refs": [
+        "Gouvern Actions run 36262734626",
+        "scripts/test_connection_intent.py",
+        "CPD-022"
+      ],
+      "discovered_tasks": [
+        "C1-12-G"
+      ],
+      "remarks": [
+        "Pilot work-items are validation evidence only and must not become framework truth."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_G_FIX_GENERIC_INTENT_SELFTEST"
     }
   ]
 }

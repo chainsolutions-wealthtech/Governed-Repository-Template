@@ -126,3 +126,16 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Added decision `CPD-021` and planned tasks `RTE-001` through `RTE-013`.
 - The active runtime router is intentionally unchanged until implementation + regression tests are complete.
 - Active CASE 1 execution remains `C1-12-F`.
+
+
+## 2026-09-26 — V2.8.4 portable connection-intent self-test
+
+- Framework product: `chainsolutions-wealthtech/Governed-Repository-Template`.
+- Pilot repositories such as `Patricked-code/Gouvern` are validation-only fixtures.
+- C1-12-F root cause confirmed: `test_connection_intent.py` copied real instantiated-client work/session state into its synthetic test.
+- This allowed a real `WORK-PROJECT-001 READY` item to win dispatch while the test expected `WORK-DISCOVER-001`.
+- V2.8.4 candidate rebuilds a deterministic synthetic template fixture: template marker/profile, work-items, claims, sessions and canonical-memory pointer.
+- The real executing repository state is never reset; only the temporary copied self-test fixture is changed.
+- C1-12-F is DONE.
+- C1-12-G is IN_PROGRESS pending full Template Governance CI.
+- Decision `CPD-022` codifies Template = product/framework, pilots = external validation only.

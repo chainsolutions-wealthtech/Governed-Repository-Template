@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "checkpoint_id": "CP-CHECKPOINT-20260926-005",
+  "checkpoint_id": "CP-CHECKPOINT-20260926-006",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-  "subject_head": "892f793a0202cb4f69169001821014f47db45c3f",
+  "subject_head": "9d8c3936576888709830ba03309c3880367f1943",
   "template_version_before": "2.7.0",
-  "state": "C1_12_CLIENT_CI_BLOCKED_AFTER_V2_8_3",
+  "state": "C1_12_GENERIC_INTENT_SELFTEST_FIX_IN_PROGRESS",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
@@ -15,9 +15,10 @@
     "v2_8_2_client_policy_sync": "PASS",
     "v2_8_3_portable_bootstrap_fixture": "PASS",
     "gouvern_validation": "PASS",
-    "gouvern_bootstrap_selftest": "PASS"
+    "gouvern_bootstrap_selftest": "PASS",
+    "c1_12_f_root_cause": "PASS"
   },
-  "next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM",
+  "next_action": "C1_12_G_FIX_GENERIC_INTENT_SELFTEST",
   "reconciliation_required_before_write": true,
   "ci_run": 36258871067,
   "ci_result": "PASS",
@@ -26,8 +27,10 @@
   "reconciliation_reason": "STEP_4_AND_STEP_5_WERE_COMPRESSED_IN_SOURCE_SUMMARY",
   "canonical_memory_database": "PASS",
   "blocker": {
-    "run": 36262734626,
-    "error": "INTENT_SELFTEST_FAILED: unexpected work item"
+    "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+    "script": "scripts/test_connection_intent.py",
+    "root_cause": "SELFTEST_INHERITS_INSTANTIATED_CLIENT_WORK_STATE",
+    "pilot_evidence_run": 36262734626
   },
   "knowledge_enrichment": {
     "canonical_architecture": {

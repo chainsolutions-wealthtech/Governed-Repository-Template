@@ -510,3 +510,19 @@ CASE 1 is replayable only when a new agent can determine, without this chat:
 - which later phases depend on it;
 - what to invalidate if the owner changes that choice;
 - the one unique next action.
+
+
+#### Framework product boundary during pilot validation
+
+CASE 1 pilots are evidence surfaces, not framework implementation targets.
+
+```text
+PILOT REVEALS DEFECT
+→ DIAGNOSE GENERIC CAUSE
+→ FIX Governed-Repository-Template
+→ TEMPLATE CI / RELEASE
+→ UPGRADE OR REPLAY PILOT
+→ CAPTURE VALIDATION EVIDENCE
+```
+
+Current example: the `unexpected work item` failure was traced to `scripts/test_connection_intent.py` in the Template. V2.8.4 fixes the synthetic test fixture in the Template; no pilot business work-item is rewritten to satisfy the test.
