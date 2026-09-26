@@ -43,8 +43,10 @@ No later task may become executable before its dependency is complete.
 | C1-12-F | Diagnose `INTENT_SELFTEST_FAILED: unexpected work item` | DONE | root cause: self-test inherited real instantiated client work-items |
 | C1-12-G | Fix generic connection-intent self-test portability in template | DONE | V2.8.4 merged via PR #33; Template CI PASS |
 | C1-12-H | Run template CI and release next compatible version if needed | DONE | V2.8.4 merge `608d29318d1b2df199e4ec304c4e2fe7bfb94263` |
-| C1-12-I | Validate V2.8.4 on external CASE 1 pilot (current pilot: Gouvern) | IN_PROGRESS | governed upgrade from exact pilot HEAD `3a1b7689...` |
-| C1-12-J | Obtain all-green Gouvern Governance CI | PENDING | depends on C1-12-I |
+| C1-12-I | Validate current framework release on external CASE 1 pilot (current pilot: Gouvern) | ACTIVE_PARENT | validation blocked until Template upgrader can distribute current client surface |
+| C1-12-I-A | Make client upgrader version-dynamic and client-CI-safe in Template | IN_PROGRESS | discovered before pilot mutation; include portable intent test and skip source-only DB materializer on clients |
+| C1-12-I-B | Apply current governed Template upgrade to external CASE 1 pilot | PENDING | depends on C1-12-I-A; exact pilot HEAD required |
+| C1-12-J | Obtain all-green external pilot Governance CI | PENDING | depends on C1-12-I-B |
 | C1-12-K | Re-run Gouvern#3 through machine local-entry start | PENDING | depends on C1-12-J |
 | C1-12-L | Verify mode = `NORMAL_GOVERNED_ENTRY` | PENDING | depends on C1-12-K |
 | C1-12-M | Verify no first-agent baseline/session/work duplication | PENDING | depends on C1-12-L |
@@ -52,7 +54,7 @@ No later task may become executable before its dependency is complete.
 | C1-12-O | Mark C1-12 / STEP 4 DONE and unlock C1-13 | PENDING | depends on C1-12-N |
 | C1-12-P | Reconcile canonical relational memory with completed C1-12 evidence | PENDING | depends on C1-12-O |
 
-Current unique executable sub-task: `C1-12-I_VALIDATE_V2_8_4_ON_CASE1_PILOT`.
+Current unique executable sub-task: `C1-12-I-A_FIX_DYNAMIC_CLIENT_UPGRADER`.
 
 ## Canonical architecture hardening backlog
 

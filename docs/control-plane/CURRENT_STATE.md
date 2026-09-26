@@ -9,7 +9,7 @@
 - Role: `CENTRAL_GOVERNANCE_CONTROL_PLANE`
 - Canonical branch: `main`
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
-- Template version: `2.8.4`
+- Template version: `2.8.5`
 - V2.7.0 release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`
 - Source-state revision: `8`
 
@@ -59,7 +59,7 @@ From this framework program:
 
 ## Unique next action
 
-`C1_12_I_VALIDATE_V2_8_4_ON_CASE1_PILOT`
+`C1_12_I_A_FIX_DYNAMIC_CLIENT_UPGRADER`
 
 ## Latest proof
 
@@ -163,3 +163,14 @@ The future admin web application is intentionally deferred until all structuring
 - Portable connection-intent self-test: PASS in Template CI.
 - Product/pilot boundary: ACTIVE.
 - Current next action: validate the released Template on an external CASE 1 pilot.
+
+
+## V2.8.5 candidate — dynamic governed client upgrader
+
+- Product repository: `chainsolutions-wealthtech/Governed-Repository-Template`.
+- Pilot validation exposed a framework distribution gap before any pilot mutation.
+- Prior upgrader hard-coded V2.8.3 and omitted the V2.8.4 portable connection-intent self-test surface.
+- Client CI also attempted unconditional source-only control-plane DB materialization.
+- V2.8.5 candidate derives the upgrade version from the Template manifest, synchronizes the required static governance/runtime/test surface, preserves mutable client state, and makes source-only DB materialization skip cleanly on clients.
+- Active task: `C1-12-I-A_FIX_DYNAMIC_CLIENT_UPGRADER`.
+- External pilot mutation remains blocked until Template CI/release passes.

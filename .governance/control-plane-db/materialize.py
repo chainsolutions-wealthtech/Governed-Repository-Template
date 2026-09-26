@@ -125,10 +125,10 @@ def validate(conn):
     for table in ["agent_sessions","agent_activity_events","canonical_authorities","canonical_authority_revisions","canonical_memory_events"]:
         conn.execute(f"SELECT 1 FROM {table} LIMIT 1")
     authority = conn.execute("SELECT authority_id,current_revision FROM canonical_authorities WHERE authority_id='CP-ARCH-001'").fetchone()
-    if authority != ("CP-ARCH-001",3):
+    if authority != ("CP-ARCH-001",4):
         raise SystemExit(f"CONTROL_PLANE_DB_FAILED: canonical architecture authority missing or invalid: {authority}")
     revisions = conn.execute("SELECT revision_id,revision_number,supersedes_revision_id FROM canonical_authority_revisions WHERE authority_id='CP-ARCH-001' ORDER BY revision_number").fetchall()
-    if revisions != [("CP-ARCH-001-R1",1,None),("CP-ARCH-001-R2",2,"CP-ARCH-001-R1"),("CP-ARCH-001-R3",3,"CP-ARCH-001-R2")]:
+    if revisions != [("CP-ARCH-001-R1",1,None),("CP-ARCH-001-R2",2,"CP-ARCH-001-R1"),("CP-ARCH-001-R3",3,"CP-ARCH-001-R2"),("CP-ARCH-001-R4",4,"CP-ARCH-001-R3")]:
         raise SystemExit(f"CONTROL_PLANE_DB_FAILED: canonical architecture revision chain mismatch: {revisions}")
     required_event_types = {row[0] for row in conn.execute("SELECT event_type FROM canonical_memory_events WHERE scope_id='CP-ARCH-001'").fetchall()}
     if not {"ARCHITECTURE_AUTHORITY_CREATED","ARCHITECTURE_REVISION_ACCEPTED"}.issubset(required_event_types):
@@ -160,6 +160,12 @@ def validate(conn):
     scope_feedback = conn.execute("SELECT feedback_id FROM owner_feedback WHERE feedback_id='FB-20260926-SCOPE-001'").fetchone()
     if scope_feedback != ("FB-20260926-SCOPE-001",):
         raise SystemExit("CONTROL_PLANE_DB_FAILED: framework product boundary feedback missing")
+    upgrade_decision = conn.execute("SELECT decision_id FROM decisions WHERE decision_id='CPD-023'").fetchone()
+    if upgrade_decision != ("CPD-023",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: dynamic client upgrade decision missing")
+    upgrade_event = conn.execute("SELECT event_id FROM run_events WHERE event_id='RUNEV-C1-12-UPGRADER-GAP'").fetchone()
+    if upgrade_event != ("RUNEV-C1-12-UPGRADER-GAP",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: client upgrader defect event missing")
     entry_purpose = [json.loads(r[0]) for r in conn.execute(
         "SELECT value_json FROM question_options WHERE question_id='CP-Q-ENTRY-PURPOSE' ORDER BY ordinal"
     ).fetchall()]

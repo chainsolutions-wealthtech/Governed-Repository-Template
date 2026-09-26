@@ -64,7 +64,12 @@ jobs:
         run: python3 scripts/test_upgrade_session_head_migration.py
 
       - name: Materialize canonical control-plane database
-        run: python3 .governance/control-plane-db/materialize.py
+        run: |
+          if [ -f .governance/control-plane-db/materialize.py ]; then
+            python3 .governance/control-plane-db/materialize.py
+          else
+            echo "CONTROL_PLANE_DB_SOURCE_ONLY_SKIP: client repository has no source-only control-plane database"
+          fi
 
       - name: Check textual integrity
         run: git diff --check

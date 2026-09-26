@@ -215,6 +215,22 @@
       "status": "ACCEPTED",
       "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "decided_at": "2026-09-26"
+    },
+    {
+      "decision_id": "CPD-023",
+      "scope_type": "CLIENT_UPGRADE",
+      "scope_id": "FRAMEWORK",
+      "decision_key": "DYNAMIC_NON_DESTRUCTIVE_CLIENT_UPGRADE",
+      "value": {
+        "version_from_manifest": true,
+        "exact_head_required": true,
+        "static_surface_sync": true,
+        "preserve_mutable_client_state": true,
+        "source_only_ci_skip_on_client": true
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "decided_at": "2026-09-26"
     }
   ],
   "checkpoints": [
@@ -240,7 +256,21 @@
     }
   ],
   "run_answers": [],
-  "run_events": [],
+  "run_events": [
+    {
+      "event_id": "RUNEV-C1-12-UPGRADER-GAP",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-12",
+      "event_type": "GENERIC_FRAMEWORK_DEFECT_DISCOVERED",
+      "payload": {
+        "product_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+        "defect": "CLIENT_UPGRADER_HARDCODED_2_8_3_AND_INCOMPLETE_STATIC_SURFACE",
+        "source_only_ci_gap": "UNCONDITIONAL_CONTROL_PLANE_DB_MATERIALIZATION"
+      },
+      "source_ref": "C1-12-I-A",
+      "occurred_at": "2026-09-26"
+    }
+  ],
   "evidence": [
     {
       "evidence_id": "EVID-C1-12-V284-TEMPLATE-CI",
@@ -351,7 +381,7 @@
       "canonical_path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
       "scope": "CONTROL_PLANE_SOURCE_ONLY",
       "status": "ACCEPTED_TARGET_ARCHITECTURE",
-      "current_revision": 3,
+      "current_revision": 4,
       "source_decision_id": "CPD-014",
       "created_at": "2026-09-26"
     }
@@ -390,6 +420,18 @@
       "supersedes_revision_id": "CP-ARCH-001-R2",
       "reason": "Clarify product/framework versus external pilot validation boundary.",
       "source_decision_id": "CPD-022",
+      "source_ref": ".governance/control-plane-state/canonical-architecture.json",
+      "created_at": "2026-09-26"
+    },
+    {
+      "revision_id": "CP-ARCH-001-R4",
+      "authority_id": "CP-ARCH-001",
+      "revision_number": 4,
+      "subject_head_sha": "9782af27a1b8c97cdbbc8e2bc15ac2b02d649488",
+      "content_sha": null,
+      "supersedes_revision_id": "CP-ARCH-001-R3",
+      "reason": "Add dynamic non-destructive client upgrade and client-safe source-only CI boundary.",
+      "source_decision_id": "CPD-023",
       "source_ref": ".governance/control-plane-state/canonical-architecture.json",
       "created_at": "2026-09-26"
     }
@@ -547,6 +589,30 @@
         "ci_run": 36274141697
       },
       "source_ref": "Template PR #33",
+      "occurred_at": "2026-09-26"
+    },
+    {
+      "event_id": "CME-20260926-UPGRADE-001",
+      "event_type": "DECISION_ACCEPTED",
+      "scope_type": "CLIENT_UPGRADE",
+      "scope_id": "FRAMEWORK",
+      "payload": {
+        "decision_id": "CPD-023"
+      },
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "occurred_at": "2026-09-26"
+    },
+    {
+      "event_id": "CME-20260926-ARCH-005",
+      "event_type": "ARCHITECTURE_REVISION_ACCEPTED",
+      "scope_type": "AUTHORITY",
+      "scope_id": "CP-ARCH-001",
+      "payload": {
+        "revision_id": "CP-ARCH-001-R4",
+        "decision_id": "CPD-023",
+        "supersedes": "CP-ARCH-001-R3"
+      },
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "occurred_at": "2026-09-26"
     }
   ]

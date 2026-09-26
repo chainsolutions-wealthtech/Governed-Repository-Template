@@ -2,15 +2,26 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 11,
-  "template_version": "2.8.4",
+  "source_state_revision": 12,
+  "template_version": "2.8.5",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
   "program_issue": 12,
-  "current_checkpoint": "C1-12_V2_8_4_RELEASED_PENDING_EXTERNAL_PILOT_VALIDATION",
+  "current_checkpoint": "C1-12_DYNAMIC_CLIENT_UPGRADER_FIX_IN_PROGRESS",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "unique_next_action": "C1_12_I_VALIDATE_V2_8_4_ON_CASE1_PILOT",
-  "blockers": [],
+  "unique_next_action": "C1_12_I_A_FIX_DYNAMIC_CLIENT_UPGRADER",
+  "blockers": [
+    {
+      "type": "GENERIC_FRAMEWORK_UPGRADE_DISTRIBUTION_DEFECT",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "defects": [
+        "UPGRADER_HARDCODED_2_8_3",
+        "PORTABLE_CONNECTION_INTENT_TEST_NOT_DISTRIBUTED",
+        "CLIENT_CI_UNCONDITIONAL_SOURCE_ONLY_DB_MATERIALIZATION"
+      ],
+      "fix_candidate": "2.8.5"
+    }
+  ],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
   "freshness": "SOURCE_STATE_ATTESTS_V2_8_4_RELEASE_SUBJECT",
   "last_ci_run": 36274141697,
@@ -25,7 +36,7 @@
   },
   "canonical_architecture": {
     "authority_id": "CP-ARCH-001",
-    "revision": 3,
+    "revision": 4,
     "path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
     "status": "ACCEPTED_TARGET_ARCHITECTURE",
     "target_ne_current": true

@@ -46,7 +46,10 @@
     "STRUCTURED_DURABLE_CHANGES_MUST_BE_PROJECTED_OR_MARKED_PENDING",
     "TWO_STAGE_AGENT_PURPOSE_ROUTING_TARGET",
     "HUMAN_TECHNICAL_EXECUTION_NOT_REQUIRED",
-    "AUTOMATION_MUST_NOT_BYPASS_AUTHORITY_OR_APPROVAL"
+    "AUTOMATION_MUST_NOT_BYPASS_AUTHORITY_OR_APPROVAL",
+    "CLIENT_UPGRADE_VERSION_FROM_TEMPLATE_MANIFEST",
+    "CLIENT_UPGRADE_PRESERVES_MUTABLE_PROJECT_STATE",
+    "CLIENT_CI_SOURCE_ONLY_STEPS_SKIP_CLEANLY"
   ],
   "source_only_paths": [
     ".github/workflows/governed-control-plane.yml",
@@ -162,5 +165,17 @@
     "human_interaction": "ANSWERS_CHOICES_AND_EXPLICIT_APPROVALS_ONLY",
     "technical_execution": "AUTOMATED_WHEN_AUTHORIZED",
     "activation_gate": "IMPLEMENT_AND_PASS_ROUTER_REGRESSION_MATRIX"
+  },
+  "client_upgrade_contract": {
+    "version_source": ".governance/TEMPLATE_MANIFEST.json",
+    "exact_head_required": true,
+    "static_surface_sync_only": true,
+    "preserve_mutable_paths": [
+      ".governance/work/work-items.json",
+      ".governance/work/claims.json",
+      ".governance/sessions/sessions.json",
+      ".governance/canonical-memory/current.json"
+    ],
+    "source_only_ci_behavior": "SKIP_IF_ABSENT"
   }
 }

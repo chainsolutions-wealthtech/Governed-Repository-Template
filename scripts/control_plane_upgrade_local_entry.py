@@ -8,6 +8,14 @@ CENTRAL="chainsolutions-wealthtech/Governed-Repository-Template"
 LOCAL_STATE_RE=re.compile(r"<!-- GOVERNED_LOCAL_ENTRY_STATE:([A-Za-z0-9_-]+) -->")
 SHA_RE=re.compile(r"^[0-9a-f]{40}$")
 UPGRADE_PREFIX="governance: upgrade repository-local setup to v2."
+VERSION_RE=re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
+
+def current_template_version():
+    manifest=json.loads((ROOT/".governance/TEMPLATE_MANIFEST.json").read_text(encoding="utf-8"))
+    version=str(manifest.get("template_version") or "").strip()
+    if not VERSION_RE.fullmatch(version):
+        raise RuntimeError(f"TEMPLATE_VERSION_INVALID: {version!r}")
+    return version
 
 def gh(token,method,path,payload=None,allow_404=False):
     req=urllib.request.Request("https://api.github.com"+path,method=method,
@@ -98,10 +106,13 @@ def main():
       ".governance/local-entry-policy.json","schemas/local-entry-request.schema.json","schemas/local-entry-receipt.schema.json",
       "schemas/infrastructure-intent.schema.json","docs/LOCAL_GOVERNED_ENTRY.md","scripts/local_governed_entry.py",
       "scripts/local_entry_issue_bridge.py","scripts/local_entry_apply_baseline.py","scripts/test_local_governed_entry.py",
-      "scripts/validate_governance.py","scripts/adopt_existing_repository.py","scripts/test_bootstrap_consistency.py","scripts/test_repository_scope.py",".github/workflows/governed-local-entry.yml",
+      "scripts/initialize_governance.py","scripts/auto_bootstrap.py","scripts/finalize_bootstrap.py","scripts/governance_agent.py",
+      "scripts/validate_governance.py","scripts/adopt_existing_repository.py","scripts/test_bootstrap_consistency.py","scripts/test_connection_intent.py","scripts/test_entry_action_router.py","scripts/test_repository_scope.py",".github/workflows/governed-local-entry.yml",
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml",".github/workflows/governance-ci.yml",
       ".github/workflows/governance-auto-bootstrap.yml",".governance/TEMPLATE_MANIFEST.json",
       ".governance/repository-creation-executor.json",
+      ".governance/connection-intent-policy.json",".governance/entry-action-policy.json",
+      "docs/CONNECTION_INTENT.md","docs/ENTRY_ACTION_ROUTER.md",
       ".governance/mcp-connection-policy.json","schemas/mcp-binding.schema.json","docs/MCP_REPOSITORY_BINDING.md",
       "scripts/mcp_repository_discovery.py","scripts/control_plane_local_command.py","scripts/control_plane_local_start.py","scripts/control_plane_provision_mcp_credential.py","scripts/test_mcp_credential_provisioning.py","scripts/test_mcp_both_ssh_fallback.py","scripts/control_plane_upgrade_local_entry.py","scripts/test_upgrade_session_head_migration.py"
     ]
@@ -140,6 +151,8 @@ def main():
     workflow_model["repository"]=target
     updates[".governance/workflow-model.json"]=json.dumps(workflow_model,ensure_ascii=False,indent=2)+"\n"
 
+    version=current_template_version()
+
     docs={
       "00_START_HERE.md":("## Local governed entry","## Local governed entry\n\nDans un repository cible initialisé, le point d'entrée préféré d'un agent est le workflow local décrit dans docs/LOCAL_GOVERNED_ENTRY.md. Le premier agent après bootstrap doit terminer FIRST_AGENT_BOOTSTRAP avant tout travail fonctionnel mutable."),
       "AGENTS.md":("## Repository-local control plane","## Repository-local control plane\n\nAfter central handoff, start local work through a [Governed Local Entry] issue or repository_dispatch: governed_local_start. The first agent is routed through FIRST_AGENT_BOOTSTRAP; later agents are routed through NORMAL_GOVERNED_ENTRY. Do not bypass a pending first-agent baseline."),
@@ -152,8 +165,8 @@ def main():
     change=target_text(token,target,"CHANGELOG.md") or "# CHANGELOG\n"
     updates["CHANGELOG.md"]=append_once(
       change,
-      "## Governance Automation V2.8.3",
-      "## Governance Automation V2.8.3\n\n- Preserves V2.8.2 client policy synchronization and machine local-entry start.\n- Makes bootstrap consistency self-tests portable by rebuilding generic project-profile and infrastructure fixtures before simulation.\n- Prevents instantiated project choices from contaminating template bootstrap tests."
+      f"## Governance Automation V{version}",
+      f"## Governance Automation V{version}\n\n- Governed client upgrade synchronized from the current Template manifest version.\n- Preserves client business state while refreshing the generic governance/runtime/test surface.\n- Client CI remains portable and source-only control-plane memory stays excluded."
     )
 
     entries=[]
@@ -161,14 +174,14 @@ def main():
         blob=gh(token,"POST",f"/repos/{target}/git/blobs",{"content":text,"encoding":"utf-8"})
         entries.append({"path":path,"mode":"100644","type":"blob","sha":blob["sha"]})
     tree=gh(token,"POST",f"/repos/{target}/git/trees",{"base_tree":base_tree,"tree":entries})
-    new_commit=gh(token,"POST",f"/repos/{target}/git/commits",{"message":"governance: upgrade repository-local setup to v2.8.3","tree":tree["sha"],"parents":[head]})
+    new_commit=gh(token,"POST",f"/repos/{target}/git/commits",{"message":f"governance: upgrade repository-local setup to v{version}","tree":tree["sha"],"parents":[head]})
     gh(token,"PATCH",f"/repos/{target}/git/refs/heads/{branch}",{"sha":new_commit["sha"],"force":False})
     migrated_local_entries=migrate_open_local_entry_heads(token,target,head,new_commit["sha"])
 
     issue=a.issue_number
     central_token=os.environ.get("GITHUB_TOKEN")
     if issue and central_token:
-        gh(central_token,"POST",f"/repos/{CENTRAL}/issues/{issue}/comments",{"body":f"### Local entry upgrade applied\n\nTarget: {target}\nPrevious HEAD: {head}\nUpgrade commit: {new_commit['sha']}\nVersion: 2.8.3\nMigrated open local entries: {len(migrated_local_entries)}"})
-    print(json.dumps({"status":"LOCAL_SETUP_V2_8_3_UPGRADE_APPLIED","target":target,"old_head":head,"new_head":new_commit["sha"],"migrated_local_entries":migrated_local_entries}))
+        gh(central_token,"POST",f"/repos/{CENTRAL}/issues/{issue}/comments",{"body":f"### Local entry upgrade applied\n\nTarget: {target}\nPrevious HEAD: {head}\nUpgrade commit: {new_commit['sha']}\nVersion: {version}\nMigrated open local entries: {len(migrated_local_entries)}"})
+    print(json.dumps({"status":"LOCAL_SETUP_UPGRADE_APPLIED","version":version,"target":target,"old_head":head,"new_head":new_commit["sha"],"migrated_local_entries":migrated_local_entries}))
 
 if __name__=="__main__":main()
