@@ -131,7 +131,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.6.7",
+  "template_version": "2.6.8",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -203,7 +203,10 @@
     "upgrade preservation of existing local-entry projection state",
     "BOTH direct MCP preferred with secretless SSH OIDC discovery fallback",
     "BOTH degraded discovery recorded as PARTIAL not PASS",
-    "legacy BOTH credential gate compatibility under recomputed mandatory requirements"
+    "legacy BOTH credential gate compatibility under recomputed mandatory requirements",
+    "retryable MCP discovery failure evidence",
+    "stable SSH certificate broker refusal classification",
+    "exact-head MCP discovery retry"
   ],
   "automatic_initialization_supported": true
 }
