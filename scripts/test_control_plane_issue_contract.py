@@ -102,6 +102,10 @@ def main() -> None:
     if not payload or not str(payload.get("title", "")).startswith("[Governed Request]"):
         raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: repository dispatch issue title invalid")
 
+    upgrader = (ROOT / "scripts" / "control_plane_upgrade_local_entry.py").read_text(encoding="utf-8")
+    if '"scripts/control_plane_local_command.py"' not in upgrader:
+        raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: target upgrader missing machine local command script")
+
     initializer = (ROOT / "scripts" / "initialize_governance.py").read_text(encoding="utf-8")
     if 'control_plane.get("source_only_paths", [])' not in initializer:
         raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: client source-only removal missing")
