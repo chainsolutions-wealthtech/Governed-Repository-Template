@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 12,
+  "revision": 13,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -422,20 +422,20 @@
     },
     {
       "id": "C1-12-I-A",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-12-H"
       ],
-      "next_action": "FIX_DYNAMIC_CLIENT_UPGRADER"
+      "next_action": null
     },
     {
       "id": "C1-12-I-B",
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "depends_on": [
         "C1-12-I-A"
       ],
       "next_action": "APPLY_CURRENT_TEMPLATE_TO_CASE1_PILOT"
     }
   ],
-  "unique_executable_item": "C1-12-I-A"
+  "unique_executable_item": "C1-12-I-B"
 }
