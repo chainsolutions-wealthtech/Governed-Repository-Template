@@ -274,3 +274,16 @@ The logical model is designed for later PostgreSQL-backed use by an admin web ap
 - database work does not change the active CASE 1 checkpoint;
 - `Patricked-code/MCP` remains outside implementation scope.
 
+## Governance Automation V2.8.1 — Machine Local Entry Start
+
+### Fixed
+
+- the documented `governed_local_start` machine path is now exposed through the central control plane;
+- the central GitHub App dispatches a new local entry under an exact-HEAD guard;
+- the target creates and initializes the local-entry issue/state in the same dispatch rather than depending on a second GitHub issue event;
+- subsequent entries after `first_agent_completed=true` can now be proven through the machine path as `NORMAL_GOVERNED_ENTRY`.
+
+### Safety
+
+Human issue/comment authorization remains unchanged. Machine start requires a GitHub App bot sender, the canonical central source repository, and an exact target HEAD.
+
