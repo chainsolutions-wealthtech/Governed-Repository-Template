@@ -51,5 +51,61 @@
     "current_state": "docs/control-plane/CURRENT_STATE.md",
     "tasks": "docs/control-plane/TASKS.md",
     "next_action": "docs/control-plane/NEXT_ACTION.md"
-  }
+  },
+  "structuring_cases": [
+    "CREATE_NEW_REPOSITORY",
+    "ADOPT_EXISTING_REPOSITORY",
+    "MAP_EXISTING_PROJECT",
+    "LAB_EVOLUTION"
+  ],
+  "post_case_modes": [
+    "CONTINUE_GOVERNED_WORK"
+  ],
+  "target_agent_roles": [
+    "INTAKER",
+    "SUPERVISOR",
+    "CODE_AGENT",
+    "REVIEWER"
+  ],
+  "task_lineage": [
+    "GLOBAL_ARCHITECTURE",
+    "PROGRAM",
+    "CASE_OR_WORKSTREAM",
+    "PHASE",
+    "INTEGRATION_SLOT",
+    "TASK",
+    "SUBTASK"
+  ],
+  "target_capabilities": [
+    "CAPABILITY_AGENT_ENTRY",
+    "CAPABILITY_CANONICAL_MEMORY",
+    "CAPABILITY_SESSION",
+    "CAPABILITY_PROGRAM",
+    "CAPABILITY_TASK_QUEUE",
+    "CAPABILITY_CLAIMS",
+    "CAPABILITY_CHECKPOINT",
+    "CAPABILITY_HANDOFF",
+    "CAPABILITY_INTAKE",
+    "CAPABILITY_VALIDATION",
+    "CAPABILITY_AUTO_BOOTSTRAP",
+    "CAPABILITY_RECONCILIATION",
+    "CAPABILITY_EXISTING_REPO_ADOPTION",
+    "CAPABILITY_PROJECT_MAPPING",
+    "CAPABILITY_LAB_EVOLUTION"
+  ],
+  "roadmap": [
+    "STABILIZE_CASE_1",
+    "PROVE_NORMAL_GOVERNED_ENTRY",
+    "PROVE_SECOND_FRESH_REPOSITORY_E2E",
+    "CLOSE_CASE_1",
+    "TEST_CASE_2",
+    "TEST_CASE_3",
+    "TEST_CASE_4",
+    "RECONCILE_COMMON_PATTERNS",
+    "STABILIZE_RELATIONAL_MODEL",
+    "STRENGTHEN_RECONCILIATION_UPGRADE_REPAIR",
+    "EXPOSE_GOVERNANCE_API",
+    "OPTIONAL_POSTGRES_RUNTIME",
+    "ADMIN_WEB_APPLICATION"
+  ]
 }
