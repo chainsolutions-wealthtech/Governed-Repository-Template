@@ -48,3 +48,14 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Canonical issue chronology retained a distinct STEP 4 for live `NORMAL_GOVERNED_ENTRY` proof on `Gouvern`.
 - Reconciliation decision: preserve both gates; STEP 4 normal-entry proof must complete before STEP 5 fresh-repository E2E.
 - No test or mutable target action was started while the contradiction was unresolved.
+
+## 2026-09-26 — Canonical relational memory started
+
+- Introduced a source-only relational memory model for all framework cases.
+- Added reusable tables for cases, modes, phases, questions/options, activities, repositories/runs, answers, decisions, events, evidence, checkpoints, handoffs, owner feedback, intakes and artifacts.
+- CASE 1 is the first populated replay dataset.
+- Cases 2–4 are registered and will be progressively populated from their real tests.
+- CI materializes an ephemeral SQLite database and validates relational consistency.
+- The committed authority remains versioned SQL/JSON; no mutable binary database is committed.
+- Future target: PostgreSQL-backed admin web application after all case/parcours semantics are validated.
+

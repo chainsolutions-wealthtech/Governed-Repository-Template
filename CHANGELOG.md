@@ -250,3 +250,27 @@ The refresh is read-only, exact-HEAD governed, and does not widen MCP write auth
 
 A later agent can replay CASE 1 in detail without depending on chat history, and owner comments can safely return execution to the earliest affected checkpoint without erasing historical evidence.
 
+## Governance Automation V2.8.0 — Canonical Relational Memory
+
+### Added
+
+- source-only relational schema for reusable framework cases, phases, dependencies, modes, questions/options and activities;
+- execution/history tables for repositories, runs, answers, decisions, events and evidence;
+- continuity tables for checkpoints, handoffs, owner feedback, external intakes and artifacts;
+- CASE 1 seed data and current pilot checkpoint;
+- registration of the four structuring cases plus `CONTINUE_GOVERNED_WORK` as a post-case mode;
+- deterministic SQLite materialization/validation in Governance CI.
+
+### Architecture
+
+Git-versioned SQL migrations, JSON catalogues and governed source authorities remain canonical. A mutable SQLite database binary is materialized for validation/queryability but is not committed as the source of truth.
+
+The logical model is designed for later PostgreSQL-backed use by an admin web application after all cases and parcours have been validated.
+
+### Safety / non-regression
+
+- the database directory is source-only and is removed from newly initialized or adopted client repositories;
+- owner feedback and decision changes preserve history instead of destructive overwrite;
+- database work does not change the active CASE 1 checkpoint;
+- `Patricked-code/MCP` remains outside implementation scope.
+

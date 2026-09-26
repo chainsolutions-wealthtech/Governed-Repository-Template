@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1.0",
+  "schema_version": "1.2.0",
   "control_plane_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "source_role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
   "client_role_after_instantiation": "GOVERNED_TARGET_CLIENT",
@@ -33,13 +33,16 @@
     "CONTROL_PLANE_MEMORY_FRESHNESS_REQUIRED",
     "SOURCE_ONLY_MEMORY_REMOVED_FROM_CLIENTS",
     "CASE_REPLAY_LEDGER_REQUIRED_FOR_ACTIVE_MACRO_CASE",
-    "OWNER_FEEDBACK_MUST_BE_RECONCILED_BEFORE_CONTINUATION"
+    "OWNER_FEEDBACK_MUST_BE_RECONCILED_BEFORE_CONTINUATION",
+    "CANONICAL_MEMORY_HAS_QUERYABLE_RELATIONAL_PROJECTION",
+    "DATABASE_EVOLVES_BY_VERSIONED_MIGRATIONS"
   ],
   "source_only_paths": [
     ".github/workflows/governed-control-plane.yml",
     ".github/ISSUE_TEMPLATE/governed-request.yml",
     "docs/control-plane",
-    ".governance/control-plane-state"
+    ".governance/control-plane-state",
+    ".governance/control-plane-db"
   ],
   "current_role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
   "executor": {
@@ -55,7 +58,8 @@
       "docs/control-plane/DECISIONS_LOG.md",
       "docs/control-plane/TASKS.md",
       "docs/control-plane/PROGRAM.md",
-      "docs/control-plane/CASE1_REPLAY_LEDGER.md"
+      "docs/control-plane/CASE1_REPLAY_LEDGER.md",
+      "docs/control-plane/DATA_MODEL.md"
     ],
     "machine_authorities": [
       ".governance/control-plane-state/current.json",
@@ -66,5 +70,27 @@
     ],
     "issue_role": "ORCHESTRATION_AND_EVIDENCE_NOT_CANONICAL_SOURCE",
     "conversation_role": "SUPPLEMENTAL_CONTEXT_ONLY"
+  },
+  "canonical_memory_database": {
+    "role": "QUERYABLE_PROJECTION_OF_VERSIONED_CANONICAL_MEMORY",
+    "source_of_truth": "VERSIONED_SQL_JSON_AND_CONTROL_PLANE_AUTHORITIES",
+    "runtime_database": "MATERIALIZED_NOT_COMMITTED_BINARY",
+    "current_engine": "SQLITE_VALIDATION_PROJECTION",
+    "target_engine": "POSTGRESQL_COMPATIBLE_APPLICATION_DATABASE",
+    "frontend_future": true,
+    "source_paths": [
+      ".governance/control-plane-db/001_schema.sql",
+      ".governance/control-plane-db/catalog.json",
+      ".governance/control-plane-db/runtime-seed.json",
+      ".governance/control-plane-db/materialize.py"
+    ],
+    "invariants": [
+      "DATABASE_BINARY_NOT_CANONICAL_IN_GIT",
+      "SCHEMA_AND_SEEDS_AUDITABLE_IN_GIT",
+      "ALL_STRUCTURING_CASES_SHARE_THE_SAME_RELATIONAL_MODEL",
+      "OWNER_FEEDBACK_AND_DECISIONS_ARE_FIRST_CLASS_RECORDS",
+      "CHECKPOINTS_AND_HANDOFFS_ARE_QUERYABLE",
+      "CLIENT_REPOSITORIES_DO_NOT_RECEIVE_CONTROL_PLANE_DATABASE"
+    ]
   }
 }

@@ -63,5 +63,8 @@ jobs:
       - name: Test governed upgrade session HEAD continuity
         run: python3 scripts/test_upgrade_session_head_migration.py
 
+      - name: Materialize canonical control-plane database
+        run: python3 .governance/control-plane-db/materialize.py
+
       - name: Check textual integrity
         run: git diff --check
