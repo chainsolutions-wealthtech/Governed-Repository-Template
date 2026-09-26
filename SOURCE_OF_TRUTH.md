@@ -21,6 +21,19 @@ Le dépôt versionné est la mémoire persistante du projet.
 
 Une contradiction est enregistrée et résolue explicitement. Aucun agent ne choisit silencieusement l'interprétation la plus pratique.
 
+## Template source/control-plane authority
+
+When `.template-source` exists, the repository has two deliberately separate state surfaces:
+
+1. distributed client templates at the repository root and generic `.governance/` paths;
+2. live source/control-plane state under `docs/control-plane/` and `.governance/control-plane-state/`.
+
+For the source repository's own work, the source/control-plane state is authoritative for current program, tasks, checkpoint, handoff and next action. Root template placeholders are not evidence that the source repository is uninitialized.
+
+The source-only memory must be removed from instantiated clients during initialization. If it survives in a client, governance validation must fail.
+
+GitHub issues remain orchestration/evidence surfaces and do not outrank versioned source/control-plane authorities.
+
 ## Machine-readable projections
 
 Files under `.governance/` are structured projections used for deterministic automation, continuity and concurrency control.
