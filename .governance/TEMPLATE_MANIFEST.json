@@ -122,7 +122,10 @@
       ".governance/control-plane-state",
       "docs/control-plane/CASE1_REPLAY_LEDGER.md",
       ".governance/control-plane-state/case1-replay.json",
-      ".governance/control-plane-db"
+      ".governance/control-plane-db",
+      "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+      ".governance/control-plane-state/canonical-architecture.json",
+      ".governance/control-plane-db/003_canonical_authorities.sql"
     ],
     "local_entry_ui": [
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml"
@@ -238,7 +241,13 @@
     "upgraded clients preserve GOVENED_TARGET_CLIENT role with current source-only contract",
     "portable bootstrap self-test resets project-profile fixture",
     "portable bootstrap self-test resets infrastructure-intent fixture",
-    "bootstrap tests independent of instantiated client business state"
+    "bootstrap tests independent of instantiated client business state",
+    "canonical target architecture distinct from live state",
+    "monotone canonical authority revisioning",
+    "append-oriented canonical memory event history",
+    "architecture to program to task lineage",
+    "workflow semantics before frontend",
+    "imported memory never grants live approval"
   ],
   "automatic_initialization_supported": true
 }
