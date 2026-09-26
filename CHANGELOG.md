@@ -107,3 +107,22 @@ V2.3 is additive over V2.2. Repository-local governance, zero-touch bootstrap, c
 ### Security
 
 Creator tokens remain outside Git. The standard workflow `GITHUB_TOKEN` cannot create target repositories. Missing or insufficient creator authority leaves PREP-001 pending and never fabricates PASS evidence.
+
+## Governance Automation V2.6.3
+
+### Added
+
+- central control-plane provisioning of the direct MCP Actions credential into a governed target repository when its local first-agent state is exactly at the MCP credential gate;
+- target-owner GitHub App token narrowed to repository Contents, Issues and Secrets permissions required by the machine command path;
+- exact repository, issue and HEAD verification before provisioning;
+- target secret metadata attestation after provisioning without reading or exposing the secret value;
+- regression test for unsupported credential requirements, command-line secret leakage and provisioning workflow wiring.
+
+### Security
+
+The MCP credential remains stored only as a GitHub Actions secret. Its value is never written to Git, issue state, comments, handoff evidence or logs. Provisioning fails closed if the central secret is absent, the GitHub App lacks repository Secrets write permission, the target HEAD moved, the local state moved, or the credential gate requests an unsupported secret.
+
+### Compatibility
+
+V2.6.3 preserves the V2.6.2 direct-MCP token contract and the V2.6 OIDC ephemeral SSH fallback. It automates distribution of the existing direct MCP credential; it does not grant MCP write authority, bypass project registration, or widen the SSH read-only boundary.
+

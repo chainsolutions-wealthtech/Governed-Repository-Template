@@ -45,7 +45,7 @@ def main():
       ".github/workflows/governance-auto-bootstrap.yml",".governance/TEMPLATE_MANIFEST.json",
       ".governance/repository-creation-executor.json",
       ".governance/mcp-connection-policy.json","schemas/mcp-binding.schema.json","docs/MCP_REPOSITORY_BINDING.md",
-      "scripts/mcp_repository_discovery.py","scripts/control_plane_local_command.py"
+      "scripts/mcp_repository_discovery.py","scripts/control_plane_local_command.py","scripts/control_plane_provision_mcp_credential.py","scripts/test_mcp_credential_provisioning.py"
     ]
     updates={p:(ROOT/p).read_text(encoding="utf-8") for p in static_paths}
 
@@ -86,8 +86,8 @@ def main():
     change=target_text(token,target,"CHANGELOG.md") or "# CHANGELOG\n"
     updates["CHANGELOG.md"]=append_once(
       change,
-      "## Governance Automation V2.6.2",
-      "## Governance Automation V2.6.1\n\n- Added GitHub App repository_dispatch machine commands for local-entry automation.\n- Preserved human write-permission authorization for issue commands.\n- Added exact-HEAD guards across central-to-local machine dispatch."
+      "## Governance Automation V2.6.3",
+      "## Governance Automation V2.6.3\n\n- Added central control-plane provisioning of the direct MCP Actions credential for target repositories.\n- Provisioning is limited to exact-HEAD local credential gates and uses the target-owner GitHub App with repository Secrets write permission.\n- Secret values are never written to Git, issues, evidence or logs; only target secret metadata is attested.\n- Existing direct MCP token semantics and OIDC ephemeral SSH fallback remain unchanged."
     )
 
     entries=[]
@@ -95,13 +95,13 @@ def main():
         blob=gh(token,"POST",f"/repos/{target}/git/blobs",{"content":text,"encoding":"utf-8"})
         entries.append({"path":path,"mode":"100644","type":"blob","sha":blob["sha"]})
     tree=gh(token,"POST",f"/repos/{target}/git/trees",{"base_tree":base_tree,"tree":entries})
-    new_commit=gh(token,"POST",f"/repos/{target}/git/commits",{"message":"governance: upgrade repository-local setup to v2.6.2","tree":tree["sha"],"parents":[head]})
+    new_commit=gh(token,"POST",f"/repos/{target}/git/commits",{"message":"governance: upgrade repository-local setup to v2.6.3","tree":tree["sha"],"parents":[head]})
     gh(token,"PATCH",f"/repos/{target}/git/refs/heads/{branch}",{"sha":new_commit["sha"],"force":False})
 
     issue=a.issue_number
     central_token=os.environ.get("GITHUB_TOKEN")
     if issue and central_token:
-        gh(central_token,"POST",f"/repos/{CENTRAL}/issues/{issue}/comments",{"body":f"### Local entry upgrade applied\n\nTarget: {target}\nPrevious HEAD: {head}\nUpgrade commit: {new_commit['sha']}\nVersion: 2.6.2"})
-    print(json.dumps({"status":"LOCAL_SETUP_V2_6_2_UPGRADE_APPLIED","target":target,"old_head":head,"new_head":new_commit["sha"]}))
+        gh(central_token,"POST",f"/repos/{CENTRAL}/issues/{issue}/comments",{"body":f"### Local entry upgrade applied\n\nTarget: {target}\nPrevious HEAD: {head}\nUpgrade commit: {new_commit['sha']}\nVersion: 2.6.3"})
+    print(json.dumps({"status":"LOCAL_SETUP_V2_6_3_UPGRADE_APPLIED","target":target,"old_head":head,"new_head":new_commit["sha"]}))
 
 if __name__=="__main__":main()

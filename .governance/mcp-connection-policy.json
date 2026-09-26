@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1.0",
+  "schema_version": "1.2.0",
   "role": "REPOSITORY_TO_MCP_BINDING",
   "preferred_transport": "DIRECT_MCP_TOKEN",
   "fallback_transport": "GITHUB_OIDC_EPHEMERAL_SSH_CERTIFICATE",
@@ -13,7 +13,18 @@
       "list_domains_s1",
       "list_domains_s2",
       "get_write_tools_context"
-    ]
+    ],
+    "credential_provisioning": {
+      "mode": "CENTRAL_CONTROL_PLANE_REPOSITORY_SECRET",
+      "source_secret": "GOVERNED_MCP_AUTH_TOKEN",
+      "target_secret": "GOVERNED_MCP_AUTH_TOKEN",
+      "transport": "GITHUB_APP_INSTALLATION_TOKEN",
+      "required_target_permission": "repository:Secrets:write",
+      "source_value_exposure": "FORBIDDEN",
+      "trigger": "LOCAL_MACHINE_EXECUTE_AT_CREDENTIAL_GATE",
+      "attestation": "TARGET_SECRET_METADATA_ONLY",
+      "fallback": "FAIL_CLOSED"
+    }
   },
   "ssh": {
     "mode": "GITHUB_OIDC_EPHEMERAL_CERTIFICATE",
@@ -45,6 +56,8 @@
     "READ_ONLY_DISCOVERY_FIRST",
     "WRITE_TOOLS_REQUIRE_PROJECT_REGISTRATION",
     "DOMAIN_CREATION_REQUIRES_EXPLICIT_APPROVAL",
-    "MCP_STATE_NE_GITHUB_STATE"
+    "MCP_STATE_NE_GITHUB_STATE",
+    "CONTROL_PLANE_MCP_SECRET_PROVISIONING_NEVER_EXPOSES_SECRET_VALUE",
+    "TARGET_MCP_SECRET_IS_PROVISIONED_ONLY_AT_EXACT_HEAD_CREDENTIAL_GATE"
   ]
 }

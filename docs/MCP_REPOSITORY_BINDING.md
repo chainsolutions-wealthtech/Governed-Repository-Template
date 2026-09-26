@@ -17,6 +17,25 @@ Direct MCP mode currently uses:
 
 The token is never printed into the issue, repository state, evidence, or logs.
 
+### Automatic direct MCP credential provisioning — V2.6.3
+
+For repositories created or managed through the central control plane, the direct MCP token is provisioned automatically when the local first-agent state reaches the exact `CREDENTIAL_GATE`.
+
+The central control plane:
+
+1. verifies the target repository, local-entry issue and exact HEAD;
+2. verifies that the pending requirement is specifically `GOVERNED_MCP_AUTH_TOKEN`;
+3. mints a short-lived target-owner GitHub App installation token with repository `Secrets: write` plus the minimum read/dispatch permissions required by the flow;
+4. writes the central `GOVERNED_MCP_AUTH_TOKEN` into the target repository as an Actions secret using GitHub's encrypted secret API path;
+5. verifies only the target secret metadata;
+6. dispatches the existing machine `execute` command so local discovery can continue.
+
+The source secret value must never appear on a command line, in Git, issue comments, state markers, evidence, or logs.
+
+If the central secret is unavailable, the target GitHub App installation lacks `Secrets: write`, the HEAD differs, or the local credential requirements differ from the supported contract, the flow stops without advancing governed state.
+
+This is a one-time control-plane configuration pattern: the control plane holds the MCP credential centrally so future governed repositories do not require manual secret copying.
+
 ## Governed SSH fallback — ephemeral certificate
 
 SSH fallback does **not** use a persistent repository private-key secret.
