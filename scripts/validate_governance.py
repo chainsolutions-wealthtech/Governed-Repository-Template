@@ -145,6 +145,16 @@ ADOPTION_OPTIONAL_REQUIRED = {".github/workflows/governance-auto-bootstrap.yml"}
 SOURCE_ONLY_REQUIRED = {
     ".github/workflows/governed-control-plane.yml",
     ".github/ISSUE_TEMPLATE/governed-request.yml",
+    "docs/control-plane/CURRENT_STATE.md",
+    "docs/control-plane/SUIVI.md",
+    "docs/control-plane/NEXT_ACTION.md",
+    "docs/control-plane/DECISIONS_LOG.md",
+    "docs/control-plane/TASKS.md",
+    "docs/control-plane/PROGRAM.md",
+    ".governance/control-plane-state/current.json",
+    ".governance/control-plane-state/checkpoint.json",
+    ".governance/control-plane-state/handoff.json",
+    ".governance/control-plane-state/tasks.json",
 }
 CONTROL_PLANE_REPOSITORY = "chainsolutions-wealthtech/Governed-Repository-Template"
 
@@ -437,6 +447,8 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
     expected_source_only = {
         ".github/workflows/governed-control-plane.yml",
         ".github/ISSUE_TEMPLATE/governed-request.yml",
+        "docs/control-plane",
+        ".governance/control-plane-state",
     }
     if set(policy.get("source_only_paths") or []) != expected_source_only:
         fail("control plane source-only path contract is invalid")
@@ -461,8 +473,37 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
         if policy.get("current_role") != "CENTRAL_GOVERNANCE_CONTROL_PLANE":
             fail("template source must be the central governance control plane")
         for relative in expected_source_only:
-            if not (ROOT / relative).is_file():
-                fail(f"control plane source-only file is missing: {relative}")
+            if not (ROOT / relative).exists():
+                fail(f"control plane source-only path is missing: {relative}")
+        source_current = load(".governance/control-plane-state/current.json")
+        source_checkpoint = load(".governance/control-plane-state/checkpoint.json")
+        source_handoff = load(".governance/control-plane-state/handoff.json")
+        source_tasks = load(".governance/control-plane-state/tasks.json")
+        if source_current.get("repository") != CONTROL_PLANE_REPOSITORY:
+            fail("control-plane source current repository mismatch")
+        if source_current.get("role") != "CENTRAL_GOVERNANCE_CONTROL_PLANE":
+            fail("control-plane source current role mismatch")
+        if source_current.get("unique_next_action") != source_handoff.get("unique_next_action"):
+            fail("control-plane source next action/handoff mismatch")
+        if source_checkpoint.get("next_action") != source_current.get("unique_next_action"):
+            fail("control-plane source checkpoint next action mismatch")
+        executable = [x for x in source_tasks.get("items", []) if x.get("status") == "IN_PROGRESS"]
+        if len(executable) != 1:
+            fail("control-plane source tasks must have exactly one IN_PROGRESS item")
+        if source_tasks.get("unique_executable_item") != executable[0].get("id"):
+            fail("control-plane source unique executable task mismatch")
+        source_docs = [
+            "docs/control-plane/CURRENT_STATE.md",
+            "docs/control-plane/SUIVI.md",
+            "docs/control-plane/NEXT_ACTION.md",
+            "docs/control-plane/DECISIONS_LOG.md",
+            "docs/control-plane/TASKS.md",
+            "docs/control-plane/PROGRAM.md",
+        ]
+        for relative in source_docs:
+            text = (ROOT / relative).read_text(encoding="utf-8")
+            if PLACEHOLDER.search(text):
+                fail(f"control-plane source authority contains unresolved template placeholder: {relative}")
 
         workflow = (ROOT / ".github/workflows/governed-control-plane.yml").read_text(encoding="utf-8")
         workflow_requirements = [
@@ -491,7 +532,7 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
             fail("control plane client repository does not match governance profile")
         for relative in expected_source_only:
             if (ROOT / relative).exists():
-                fail(f"control plane source-only file leaked into target client: {relative}")
+                fail(f"control plane source-only path leaked into target client: {relative}")
 
 
 def validate_machine_state(profile: dict, template_mode: bool, require_bootstrap_attestation: bool = False) -> None:

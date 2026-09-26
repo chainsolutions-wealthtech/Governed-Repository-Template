@@ -4,6 +4,23 @@
 > Dépôt : `{{REPOSITORY}}`  
 > Projet : `{{PROJECT_NAME}}`
 
+## Source/control-plane special entry
+
+If `.template-source` exists, this repository is the source/control plane itself. Before using the distributed project-state templates below, read the source-only authorities in this order:
+
+1. `docs/control-plane/CURRENT_STATE.md`
+2. `docs/control-plane/PROGRAM.md`
+3. `docs/control-plane/TASKS.md`
+4. `docs/control-plane/NEXT_ACTION.md`
+5. `docs/control-plane/DECISIONS_LOG.md`
+6. `docs/control-plane/SUIVI.md`
+7. `.governance/control-plane-state/current.json`
+8. `.governance/control-plane-state/checkpoint.json`
+9. `.governance/control-plane-state/handoff.json`
+10. `.governance/control-plane-state/tasks.json`
+
+Reobserve `main` HEAD before any write and reconcile it with the source checkpoint. The root files containing template placeholders remain distributed client templates and are not the source repository's live project state.
+
 ## Ordre de lecture obligatoire
 
 1. `00_START_HERE.md`

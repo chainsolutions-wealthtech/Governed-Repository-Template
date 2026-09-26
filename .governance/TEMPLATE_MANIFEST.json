@@ -116,7 +116,9 @@
     ],
     "control_plane_source_only": [
       ".github/workflows/governed-control-plane.yml",
-      ".github/ISSUE_TEMPLATE/governed-request.yml"
+      ".github/ISSUE_TEMPLATE/governed-request.yml",
+      "docs/control-plane",
+      ".governance/control-plane-state"
     ],
     "local_entry_ui": [
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml"
@@ -131,7 +133,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.6.10",
+  "template_version": "2.7.0",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -212,7 +214,12 @@
     "BOTH fallback preserved when central token absent",
     "BOTH discovery refresh when preferred direct credential becomes available",
     "bounded prior MCP discovery evidence history",
-    "setup answer preservation across discovery reconciliation"
+    "setup answer preservation across discovery reconciliation",
+    "self-governed source control-plane memory",
+    "source control-plane memory separated from distributed project state",
+    "source-only directory removal during client initialization",
+    "conversation-independent source checkpoint and handoff",
+    "source memory freshness and unique-next-action validation"
   ],
   "automatic_initialization_supported": true
 }

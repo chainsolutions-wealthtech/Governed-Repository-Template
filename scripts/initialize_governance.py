@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import re
+import shutil
 import os
 import subprocess
 from datetime import datetime, timezone
@@ -199,8 +200,10 @@ def main() -> None:
 
     for relative in control_plane.get("source_only_paths", []):
         source_only = ROOT / relative
-        if source_only.is_file():
+        if source_only.is_file() or source_only.is_symlink():
             source_only.unlink()
+        elif source_only.is_dir():
+            shutil.rmtree(source_only)
 
     unresolved = []
     pattern = re.compile(r"\{\{[A-Z0-9_]+\}\}")

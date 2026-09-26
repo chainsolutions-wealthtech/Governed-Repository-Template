@@ -114,3 +114,16 @@ A newly governed repository therefore does not require a persistent SSH private 
 
 Credential provisioning does not grant server WRITE authority. MCP project registration, scoped-write gates and explicit mutation approval remain separate controls.
 
+## Source repository self-governance — V2.7
+
+The template source is itself governed without converting distributed project-state templates into source history.
+
+When `.template-source` exists:
+- human source state lives under `docs/control-plane/`;
+- machine checkpoint/handoff/task projections live under `.governance/control-plane-state/`;
+- those paths are `SOURCE_ONLY`;
+- client initialization removes them;
+- Governance CI verifies both source completeness and client non-leakage.
+
+This enables exact conversation/agent continuity through versioned Git state while preserving a clean generic template for newly generated repositories.
+
