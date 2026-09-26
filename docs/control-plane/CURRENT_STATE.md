@@ -59,7 +59,7 @@ From this framework program:
 
 ## Unique next action
 
-`C1_12_G_FIX_GENERIC_INTENT_SELFTEST`
+`C1_12_I_VALIDATE_V2_8_4_ON_CASE1_PILOT`
 
 ## Latest proof
 
@@ -138,8 +138,9 @@ The future admin web application is intentionally deferred until all structuring
 - Framework evolution, generic automation, schemas, tests, canonical architecture and reusable memory/database model are implemented here first.
 - `Patricked-code/Gouvern` is an external CASE 1 validation pilot only.
 - Pilot state can reveal generic defects but never becomes the framework source of truth or implementation target.
-- Current generic defect: connection-intent self-test fixture contamination by instantiated client work-items.
-- V2.8.4 candidate fixes this in the Template by rebuilding a deterministic synthetic routing fixture.
+- Generic defect fixed in Template V2.8.4: connection-intent self-test fixture contamination by instantiated client work-items.
+- V2.8.4 release subject HEAD: `608d29318d1b2df199e4ec304c4e2fe7bfb94263`.
+- Next step is external CASE 1 pilot validation only; no generic implementation moves to the pilot.
 
 
 ## V2.8.4 candidate — portable connection-intent self-test
@@ -149,5 +150,16 @@ The future admin web application is intentionally deferred until all structuring
 - Root cause: `scripts/test_connection_intent.py` inherited real instantiated-client work/session state.
 - Fix: synthetic self-test fixture resets only test profile/work-items/claims/sessions/canonical-memory state before bootstrap.
 - Real client project state is not modified by the test.
-- Active sub-task: `C1-12-G_FIX_GENERIC_INTENT_SELFTEST`.
+- Product fix status: `C1-12-G DONE`, `C1-12-H DONE`.
+- Active sub-task: `C1-12-I_VALIDATE_V2_8_4_ON_CASE1_PILOT`.
 - Pilot validation repository example: `Patricked-code/Gouvern` — external validation only after Template CI/release.
+
+
+## V2.8.4 release attestation
+
+- Framework product release: `2.8.4`.
+- Release subject HEAD: `608d29318d1b2df199e4ec304c4e2fe7bfb94263`.
+- PR #33 Governance CI: PASS.
+- Portable connection-intent self-test: PASS in Template CI.
+- Product/pilot boundary: ACTIVE.
+- Current next action: validate the released Template on an external CASE 1 pilot.
