@@ -106,6 +106,9 @@ def main() -> None:
         run(target, "scripts/auto_bootstrap.py", env=env)
         if (target / ".template-source").exists():
             raise SystemExit("SELFTEST_FAILED: template marker survived auto bootstrap")
+        for relative in ["docs/control-plane", ".governance/control-plane-state"]:
+            if (target / relative).exists():
+                raise SystemExit("SELFTEST_FAILED: source-only control-plane memory leaked into client: " + relative)
 
         run(
             target,
