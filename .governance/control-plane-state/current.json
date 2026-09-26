@@ -33,7 +33,7 @@
   },
   "canonical_architecture": {
     "authority_id": "CP-ARCH-001",
-    "revision": 1,
+    "revision": 2,
     "path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
     "status": "ACCEPTED_TARGET_ARCHITECTURE",
     "target_ne_current": true
@@ -41,5 +41,13 @@
   "imported_memory_verification": {
     "path": "docs/control-plane/IMPORTED_MEMORY_VERIFICATION.md",
     "imported_memory_grants_live_approval": false
+  },
+  "knowledge_enrichment": {
+    "agent_purpose_routing": {
+      "status": "PLANNED_NOT_ACTIVE",
+      "decision_id": "CPD-021",
+      "backlog_prefix": "RTE",
+      "execution_gate_unchanged": true
+    }
   }
 }
