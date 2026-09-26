@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 11,
+  "revision": 12,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -116,17 +116,17 @@
     },
     {
       "id": "C1-12-I",
-      "status": "IN_PROGRESS",
+      "status": "ACTIVE_PARENT",
       "depends_on": [
         "C1-12-H"
       ],
-      "next_action": "VALIDATE_V2_8_4_ON_CASE1_PILOT"
+      "next_action": "VALIDATE_CURRENT_RELEASE_ON_CASE1_PILOT"
     },
     {
       "id": "C1-12-J",
       "status": "PENDING",
       "depends_on": [
-        "C1-12-I"
+        "C1-12-I-B"
       ],
       "next_action": "GREEN_GOUVERN_CI"
     },
@@ -419,7 +419,23 @@
         "IDN-006"
       ],
       "next_action": "EXPOSE_ROUTER_API_UI"
+    },
+    {
+      "id": "C1-12-I-A",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "C1-12-H"
+      ],
+      "next_action": "FIX_DYNAMIC_CLIENT_UPGRADER"
+    },
+    {
+      "id": "C1-12-I-B",
+      "status": "PENDING",
+      "depends_on": [
+        "C1-12-I-A"
+      ],
+      "next_action": "APPLY_CURRENT_TEMPLATE_TO_CASE1_PILOT"
     }
   ],
-  "unique_executable_item": "C1-12-I"
+  "unique_executable_item": "C1-12-I-A"
 }
