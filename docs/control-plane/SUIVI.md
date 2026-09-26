@@ -152,3 +152,15 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - C1-12-H: DONE.
 - C1-12-I: IN_PROGRESS — validate released V2.8.4 on an external CASE 1 pilot.
 - Pilot validation must not introduce generic implementation changes directly into the pilot.
+
+
+## 2026-09-26 — V2.8.5 dynamic client-upgrader correction
+
+- Product repository remains `chainsolutions-wealthtech/Governed-Repository-Template`.
+- Before any pilot mutation, validation found the client upgrader was still hard-coded to V2.8.3.
+- The upgrader also omitted the V2.8.4 portable connection-intent test/runtime surface.
+- Client CI still contained an unconditional source-only control-plane DB materialization step.
+- Added C1-12-I-A as the unique executable framework task; external pilot validation remains the parent objective.
+- V2.8.5 candidate now derives release version from the Template manifest, synchronizes the required generic static governance surface, preserves mutable client state, and skips source-only DB materialization cleanly on clients.
+- Added CPD-023 and canonical architecture revision `CP-ARCH-001-R4`.
+- No pilot repository was modified while this framework gap remained open.
