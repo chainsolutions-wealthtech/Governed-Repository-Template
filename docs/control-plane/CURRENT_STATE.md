@@ -59,7 +59,7 @@ From this framework program:
 
 ## Unique next action
 
-`C1_12_J_B_COMPLETE_PORTABLE_INTENT_FIXTURE`
+`C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`
 
 ## Latest proof
 
@@ -185,3 +185,13 @@ The future admin web application is intentionally deferred until all structuring
 - Real pilot/client state remains untouched.
 - Subprocess failures now expose captured stdout/stderr.
 - Active task: `C1-12-J-B_COMPLETE_PORTABLE_INTENT_FIXTURE`.
+
+
+## V2.8.6 release attestation
+
+- Framework product release: `2.8.6`.
+- Release subject HEAD: `02173120acfa3941e84bf69c89dac0e8d74b47ce`.
+- Template Governance CI run `36275324940`: PASS.
+- Complete portable connection-intent fixture: PASS.
+- Real client/pilot state mutation by self-test: NONE.
+- Current next action: governed exact-HEAD re-upgrade of the external CASE 1 pilot.
