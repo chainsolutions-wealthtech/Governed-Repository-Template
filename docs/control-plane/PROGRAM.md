@@ -14,7 +14,7 @@ Operational issue: `#12`.
 
 Current checkpoint: `STEP_4_SECOND_FRESH_REPOSITORY_E2E`.
 
-The second fresh-repository test is temporarily gated by work package `SG-20260926-001` so that the control plane first becomes self-governed.
+The self-governance gate `SG-20260926-001` is complete. The program now resumes at `STEP_4_SECOND_FRESH_REPOSITORY_E2E`.
 
 ## Continuity contract
 
