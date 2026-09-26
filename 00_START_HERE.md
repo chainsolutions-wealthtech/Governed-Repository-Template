@@ -14,10 +14,12 @@ If `.template-source` exists, this repository is the source/control plane itself
 4. `docs/control-plane/NEXT_ACTION.md`
 5. `docs/control-plane/DECISIONS_LOG.md`
 6. `docs/control-plane/SUIVI.md`
-7. `.governance/control-plane-state/current.json`
-8. `.governance/control-plane-state/checkpoint.json`
-9. `.governance/control-plane-state/handoff.json`
-10. `.governance/control-plane-state/tasks.json`
+7. `docs/control-plane/CASE1_REPLAY_LEDGER.md`
+8. `.governance/control-plane-state/current.json`
+9. `.governance/control-plane-state/checkpoint.json`
+10. `.governance/control-plane-state/handoff.json`
+11. `.governance/control-plane-state/tasks.json`
+12. `.governance/control-plane-state/case1-replay.json`
 
 Reobserve `main` HEAD before any write and reconcile it with the source checkpoint. The root files containing template placeholders remain distributed client templates and are not the source repository's live project state.
 
