@@ -59,7 +59,7 @@ From this framework program:
 
 ## Unique next action
 
-`STEP_4_PROVE_NORMAL_GOVERNED_ENTRY_ON_GOUVERN`
+`C1_12_G_FIX_GENERIC_INTENT_SELFTEST`
 
 ## Latest proof
 
@@ -140,3 +140,14 @@ The future admin web application is intentionally deferred until all structuring
 - Pilot state can reveal generic defects but never becomes the framework source of truth or implementation target.
 - Current generic defect: connection-intent self-test fixture contamination by instantiated client work-items.
 - V2.8.4 candidate fixes this in the Template by rebuilding a deterministic synthetic routing fixture.
+
+
+## V2.8.4 candidate — portable connection-intent self-test
+
+- Product repository: `chainsolutions-wealthtech/Governed-Repository-Template`.
+- Generic defect diagnosis: DONE.
+- Root cause: `scripts/test_connection_intent.py` inherited real instantiated-client work/session state.
+- Fix: synthetic self-test fixture resets only test profile/work-items/claims/sessions/canonical-memory state before bootstrap.
+- Real client project state is not modified by the test.
+- Active sub-task: `C1-12-G_FIX_GENERIC_INTENT_SELFTEST`.
+- Pilot validation repository example: `Patricked-code/Gouvern` — external validation only after Template CI/release.
