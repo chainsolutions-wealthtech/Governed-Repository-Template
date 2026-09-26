@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 from pathlib import Path
-from local_governed_entry import answer, complete_baseline, decode_state, encode_state, mark_credentials_verified, new_request, record_mcp_discovery
+from local_governed_entry import answer, complete_baseline, decode_state, encode_state, mark_credentials_verified, new_request, record_mcp_discovery, record_mcp_discovery_failure
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -77,6 +77,24 @@ def main():
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: BOTH must allow secretless SSH discovery fallback")
     if both.get("credentials_verified") is not True:
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: BOTH mandatory credential gate should be satisfied by secretless fallback")
+    failed=record_mcp_discovery_failure(both,{
+      "status":"ERROR",
+      "failure_code":"SSH_CERTIFICATE_BROKER_FORBIDDEN",
+      "transport":"BOTH",
+      "retryable":True
+    })
+    if failed["status"]!="MCP_DISCOVERY_FAILED_RETRYABLE" or failed["next_request"]["kind"]!="MCP_DISCOVERY":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: retryable discovery failure state")
+    if failed["mcp_discovery"]["failure_code"]!="SSH_CERTIFICATE_BROKER_FORBIDDEN":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: failure evidence lost")
+    recovered=record_mcp_discovery(failed,{
+      "status":"PARTIAL",
+      "degraded":True,
+      "direct_mcp":{"status":"UNAVAILABLE_CREDENTIAL"},
+      "ssh_certificate":{"status":"PASS"}
+    })
+    if recovered["next_request"]["field"]!="domain_binding":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: discovery retry did not resume setup")
 
     n=new_request("LOCAL-2","owner/repo","c"*40,False,"later agent")
     for field,value in [
@@ -97,7 +115,8 @@ def main():
     if 'missing.append("GOVERNED_MCP_URL")' in bridge:
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: captured MCP endpoint must not require duplicate Actions variable")
     for fragment in ["/access/github/repository-ssh/certificate","StrictHostKeyChecking=yes","ssh-keygen","GITHUB_OIDC_EPHEMERAL_SSH_CERTIFICATE",
-                     'SSH_BROKER_BASE_URL = "https://mcp.wealthtechinnovations.com"',"SSH_DISCOVERY_REQUIRED_PROBE_FAILED"]:
+                     'SSH_BROKER_BASE_URL = "https://mcp.wealthtechinnovations.com"',"SSH_DISCOVERY_REQUIRED_PROBE_FAILED",
+                     "SSH_CERTIFICATE_BROKER_FORBIDDEN","record_mcp_discovery_failure"]:
         if fragment not in discovery:
             raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: ephemeral SSH discovery contract "+fragment)
     for fragment in [
@@ -108,7 +127,9 @@ def main():
         'MACHINE_SOURCE_REPOSITORY="chainsolutions-wealthtech/Governed-Repository-Template"',
         'sender.get("type")!="Bot"',
         '"LOCAL_STATE_HEAD_MOVED',
-        'dispatch_machine_command(e)'
+        'dispatch_machine_command(e)',
+        'elif gate=="MCP_DISCOVERY"',
+        'MCP discovery retry requested'
     ]:
         if fragment not in bridge:
             raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: local entry actor authorization "+fragment)
