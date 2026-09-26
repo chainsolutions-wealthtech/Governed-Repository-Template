@@ -74,6 +74,11 @@ def run_case(messages: list[str]) -> tuple[list[dict], list[dict]]:
 
 
 def main() -> None:
+    manifest = __import__("json").loads(
+        (upgrade.ROOT / ".governance" / "TEMPLATE_MANIFEST.json").read_text(encoding="utf-8")
+    )
+    assert upgrade.current_template_version() == manifest["template_version"]
+
     patched, comments = run_case([
         "governance: upgrade repository-local setup to v2.6.3",
         "governance: upgrade repository-local setup to v2.6.4",
