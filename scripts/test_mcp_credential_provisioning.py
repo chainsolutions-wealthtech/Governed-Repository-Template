@@ -9,6 +9,11 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main() -> None:
+    control_plane_workflow = ROOT / ".github/workflows/governed-control-plane.yml"
+    if not control_plane_workflow.exists():
+        print("MCP_CREDENTIAL_PROVISION_SELFTEST_SKIP: target client has no central control-plane workflow")
+        return
+
     required = {
         "next_request": {
             "kind": "CREDENTIAL_GATE",
