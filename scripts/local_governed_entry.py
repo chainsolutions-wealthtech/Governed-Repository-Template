@@ -90,10 +90,11 @@ def build_baseline(s):
 def credential_requirements(a):
     t=a.get("mcp_transport")
     req=[]
-    if t in {"DIRECT_MCP_TOKEN","BOTH"}:
+    if t=="DIRECT_MCP_TOKEN":
         req += [{"kind":"secret","name":"GOVERNED_MCP_AUTH_TOKEN"}]
-    # SSH/BOTH use a GitHub OIDC-issued ephemeral certificate. No persistent
-    # repository SSH private-key secret is permitted.
+    # BOTH prefers direct MCP when a token is available, but its secretless
+    # OIDC SSH fallback is sufficient for initial read-only discovery.
+    # SSH/BOTH never require a persistent repository SSH private-key secret.
     return req
 
 def build_setup(s):
@@ -113,6 +114,7 @@ def build_setup(s):
           "transport":a.get("mcp_transport"),"endpoint":a.get("mcp_endpoint"),
           "ssh_connection_profile":a.get("ssh_connection_profile"),
           "credential_requirements":credential_requirements(a),
+          "optional_credentials":[{"kind":"secret","name":"GOVERNED_MCP_AUTH_TOKEN","purpose":"PREFERRED_DIRECT_MCP"}] if a.get("mcp_transport")=="BOTH" else [],
           "ssh_authentication":"GITHUB_OIDC_EPHEMERAL_CERTIFICATE" if a.get("mcp_transport") in {"SSH","BOTH"} else None,
           "discovery_scope":a.get("mcp_discovery_scope"),"domain_strategy":a.get("domain_strategy"),
           "domain_binding":a.get("domain_binding"),"runtime_mutation_policy":a.get("runtime_mutation_policy"),
