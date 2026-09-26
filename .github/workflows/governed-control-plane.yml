@@ -118,14 +118,18 @@ jobs:
         run: |
           code="${{ steps.mcp-credential.outputs.failure_code }}"
           if [ -z "$code" ]; then code="MCP_CREDENTIAL_PROVISIONING_FAILED"; fi
-          gh api "repos/${{ github.repository }}/issues/${{ steps.process.outputs.issue_number }}/comments"             -f body="### Governed MCP credential provisioning blocked
+          body=$(cat <<EOF
+          ### Governed MCP credential provisioning blocked
 
-Target: `${{ steps.process.outputs.local_command_target_repository }}`
-Target issue: `#${{ steps.process.outputs.local_command_target_issue }}`
-Expected HEAD: `${{ steps.process.outputs.local_command_expected_head }}`
-Failure code: `$code`
+          Target: \`${{ steps.process.outputs.local_command_target_repository }}\`
+          Target issue: \`#${{ steps.process.outputs.local_command_target_issue }}\`
+          Expected HEAD: \`${{ steps.process.outputs.local_command_expected_head }}\`
+          Failure code: \`$code\`
 
-No target governed state advanced and the machine command was not dispatched."
+          No target governed state advanced and the machine command was not dispatched.
+          EOF
+          )
+          gh api "repos/${{ github.repository }}/issues/${{ steps.process.outputs.issue_number }}/comments" -f body="$body"
 
       - name: Dispatch governed machine local command
         if: steps.process.outputs.local_command_required == 'true' && (steps.process.outputs.local_command_kind != 'execute' || steps.mcp-credential.outcome == 'success')
