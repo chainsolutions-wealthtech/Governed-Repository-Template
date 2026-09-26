@@ -51,6 +51,51 @@ def main() -> None:
         })
         profile_path.write_text(json.dumps(profile, indent=2) + "\n", encoding="utf-8")
 
+        project_profile_path = target / ".governance" / "project-profile.json"
+        project_profile = read_json(target, ".governance/project-profile.json")
+        project_profile.update({
+            "repository": "{{REPOSITORY}}",
+            "selection_status": "DISCOVERY_REQUIRED",
+            "selected_profile": None,
+            "organization_default_candidate": "chainsolutions-fullstack-web",
+        })
+        project_profile_path.write_text(json.dumps(project_profile, indent=2) + "\n", encoding="utf-8")
+
+        infrastructure_path = target / ".governance" / "infrastructure-intent.json"
+        infrastructure = read_json(target, ".governance/infrastructure-intent.json")
+        infrastructure.update({
+            "repository": "{{REPOSITORY}}",
+            "status": "PLANNED_NOT_PROVISIONED",
+        })
+        infrastructure.setdefault("github_binding", {}).update({
+            "repository": "{{REPOSITORY}}",
+            "status": "KNOWN",
+        })
+        infrastructure.setdefault("deployment_target", {}).update({
+            "server_id": None,
+            "server_status": "DISCOVERY_REQUIRED",
+            "domain": None,
+            "domain_status": "DISCOVERY_REQUIRED",
+            "directory": None,
+            "directory_status": "DISCOVERY_REQUIRED",
+            "provisioning_if_missing": "PLANNED_REQUIRES_AUTHORITY",
+        })
+        infrastructure.setdefault("runtime_intent", {}).update({
+            "project_profile_source": ".governance/project-profile.json",
+            "status": "DISCOVERY_REQUIRED",
+        })
+        infrastructure.setdefault("database_intent", {}).update({
+            "engine_candidate": "PostgreSQL",
+            "status": "PLANNED",
+        })
+        infrastructure.setdefault("server_access", {}).update({
+            "preferred": "DIRECT_MCP",
+            "fallback": "SSH",
+            "status": "UNRESOLVED",
+            "credentials_in_repository": "FORBIDDEN",
+        })
+        infrastructure_path.write_text(json.dumps(infrastructure, indent=2) + "\n", encoding="utf-8")
+
         local_entry_path = target / ".governance" / "local-entry" / "state.json"
         local_entry = read_json(target, ".governance/local-entry/state.json")
         local_entry.update({

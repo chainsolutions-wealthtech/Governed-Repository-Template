@@ -299,3 +299,15 @@ Human issue/comment authorization remains unchanged. Machine start requires a Gi
 
 V2.8.1 exposed that an upgraded historical client could receive the new manifest/validator while retaining an older control-plane policy. This created a validation contradiction even though the source-only directories were correctly absent.
 
+## Governance Automation V2.8.3 — Portable Bootstrap Self-Test
+
+### Fixed
+
+- bootstrap consistency self-tests now reset `.governance/project-profile.json` to generic discovery state before simulation;
+- bootstrap consistency self-tests now reset `.governance/infrastructure-intent.json` to generic discovery state before simulation;
+- an already-baselined client can therefore execute the same bootstrap self-test without its real project choices contaminating the synthetic template fixture.
+
+### Safety
+
+This changes only the test fixture. It does not reset or mutate the real instantiated repository project profile or infrastructure intent.
+
