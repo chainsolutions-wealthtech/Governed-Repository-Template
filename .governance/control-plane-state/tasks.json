@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 8,
+  "revision": 9,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -315,6 +315,110 @@
       "status": "FUTURE",
       "depends_on": [],
       "next_action": "EXPOSE_IDENTITY_SESSION_TO_API_UI"
+    },
+    {
+      "id": "RTE-001",
+      "status": "PLANNED",
+      "depends_on": [
+        "IDN-006"
+      ],
+      "next_action": "DEFINE_ENTRY_PURPOSE"
+    },
+    {
+      "id": "RTE-002",
+      "status": "PLANNED",
+      "depends_on": [
+        "IDN-006"
+      ],
+      "next_action": "DEFINE_CONTROL_PLANE_WORK_KINDS"
+    },
+    {
+      "id": "RTE-003",
+      "status": "PLANNED",
+      "depends_on": [
+        "IDN-006"
+      ],
+      "next_action": "DEFINE_EXACT_FOUR_CASE_SELECTION"
+    },
+    {
+      "id": "RTE-004",
+      "status": "PLANNED",
+      "depends_on": [
+        "IDN-006"
+      ],
+      "next_action": "BUILD_TWO_STAGE_AUTOMATED_ROUTER"
+    },
+    {
+      "id": "RTE-005",
+      "status": "PLANNED",
+      "depends_on": [
+        "IDN-006"
+      ],
+      "next_action": "AUTO_LOAD_CONTROL_PLANE_AUTHORITIES"
+    },
+    {
+      "id": "RTE-006",
+      "status": "PLANNED",
+      "depends_on": [
+        "IDN-006"
+      ],
+      "next_action": "AUTO_RESOLVE_TASK_OR_INFORMATION_INTAKE"
+    },
+    {
+      "id": "RTE-007",
+      "status": "PLANNED",
+      "depends_on": [
+        "IDN-006"
+      ],
+      "next_action": "DISPATCH_CASE_STATE_MACHINE"
+    },
+    {
+      "id": "RTE-008",
+      "status": "PLANNED",
+      "depends_on": [
+        "IDN-006"
+      ],
+      "next_action": "PERSIST_PURPOSE_AND_ROUTING_EVENTS"
+    },
+    {
+      "id": "RTE-009",
+      "status": "PLANNED",
+      "depends_on": [
+        "IDN-006"
+      ],
+      "next_action": "AUTOMATE_AUTHORIZED_TECHNICAL_EXECUTION"
+    },
+    {
+      "id": "RTE-010",
+      "status": "PLANNED",
+      "depends_on": [
+        "IDN-006"
+      ],
+      "next_action": "FAIL_CLOSED_AMBIGUOUS_ROUTING"
+    },
+    {
+      "id": "RTE-011",
+      "status": "PLANNED",
+      "depends_on": [
+        "IDN-006"
+      ],
+      "next_action": "ADD_ROUTER_REGRESSION_MATRIX"
+    },
+    {
+      "id": "RTE-012",
+      "status": "PLANNED",
+      "depends_on": [
+        "IDN-006"
+      ],
+      "next_action": "RESUME_EXACT_UNANSWERED_STEP"
+    },
+    {
+      "id": "RTE-013",
+      "status": "FUTURE",
+      "depends_on": [
+        "IDN-006"
+      ],
+      "next_action": "EXPOSE_ROUTER_API_UI"
     }
   ],
   "unique_executable_item": "C1-12-F"
