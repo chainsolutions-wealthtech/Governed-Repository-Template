@@ -99,6 +99,8 @@ jobs:
           permission-secrets: write
 
       - name: Provision governed MCP credential when required
+        id: mcp-credential
+        continue-on-error: true
         if: steps.process.outputs.local_command_required == 'true' && steps.process.outputs.local_command_kind == 'execute'
         env:
           GOVERNED_TARGET_TOKEN: ${{ steps.local-command-token.outputs.token }}
@@ -109,8 +111,24 @@ jobs:
             --target-issue "${{ steps.process.outputs.local_command_target_issue }}" \
             --expected-head "${{ steps.process.outputs.local_command_expected_head }}"
 
+      - name: Report governed MCP credential provisioning failure
+        if: steps.process.outputs.local_command_required == 'true' && steps.process.outputs.local_command_kind == 'execute' && steps.mcp-credential.outcome == 'failure'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          code="${{ steps.mcp-credential.outputs.failure_code }}"
+          if [ -z "$code" ]; then code="MCP_CREDENTIAL_PROVISIONING_FAILED"; fi
+          gh api "repos/${{ github.repository }}/issues/${{ steps.process.outputs.issue_number }}/comments"             -f body="### Governed MCP credential provisioning blocked
+
+Target: `${{ steps.process.outputs.local_command_target_repository }}`
+Target issue: `#${{ steps.process.outputs.local_command_target_issue }}`
+Expected HEAD: `${{ steps.process.outputs.local_command_expected_head }}`
+Failure code: `$code`
+
+No target governed state advanced and the machine command was not dispatched."
+
       - name: Dispatch governed machine local command
-        if: steps.process.outputs.local_command_required == 'true'
+        if: steps.process.outputs.local_command_required == 'true' && (steps.process.outputs.local_command_kind != 'execute' || steps.mcp-credential.outcome == 'success')
         env:
           GOVERNED_TARGET_TOKEN: ${{ steps.local-command-token.outputs.token }}
         run: |
