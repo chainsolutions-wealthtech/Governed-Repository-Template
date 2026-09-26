@@ -86,8 +86,8 @@ def main():
     change=target_text(token,target,"CHANGELOG.md") or "# CHANGELOG\n"
     updates["CHANGELOG.md"]=append_once(
       change,
-      "## Governance Automation V2.6.4",
-      "## Governance Automation V2.6.4\n\n- Preserves V2.6.3 automatic direct MCP credential provisioning.\n- Emits stable non-secret failure evidence in the central request when provisioning is blocked.\n- Prevents machine dispatch after failed credential provisioning.\n- Keeps the central credential provisioning self-test safe in target clients where the central control-plane workflow is intentionally absent."
+      "## Governance Automation V2.6.5",
+      "## Governance Automation V2.6.5\n\n- Preserves automatic direct MCP credential provisioning and V2.6.4 fail-closed reporting.\n- Classifies target GitHub context, issue read, local-state decode and credential-gate contract failures before secret provisioning.\n- Keeps failure evidence non-secret and blocks machine dispatch until the credential path is valid."
     )
 
     entries=[]
@@ -95,13 +95,13 @@ def main():
         blob=gh(token,"POST",f"/repos/{target}/git/blobs",{"content":text,"encoding":"utf-8"})
         entries.append({"path":path,"mode":"100644","type":"blob","sha":blob["sha"]})
     tree=gh(token,"POST",f"/repos/{target}/git/trees",{"base_tree":base_tree,"tree":entries})
-    new_commit=gh(token,"POST",f"/repos/{target}/git/commits",{"message":"governance: upgrade repository-local setup to v2.6.4","tree":tree["sha"],"parents":[head]})
+    new_commit=gh(token,"POST",f"/repos/{target}/git/commits",{"message":"governance: upgrade repository-local setup to v2.6.5","tree":tree["sha"],"parents":[head]})
     gh(token,"PATCH",f"/repos/{target}/git/refs/heads/{branch}",{"sha":new_commit["sha"],"force":False})
 
     issue=a.issue_number
     central_token=os.environ.get("GITHUB_TOKEN")
     if issue and central_token:
-        gh(central_token,"POST",f"/repos/{CENTRAL}/issues/{issue}/comments",{"body":f"### Local entry upgrade applied\n\nTarget: {target}\nPrevious HEAD: {head}\nUpgrade commit: {new_commit['sha']}\nVersion: 2.6.4"})
-    print(json.dumps({"status":"LOCAL_SETUP_V2_6_4_UPGRADE_APPLIED","target":target,"old_head":head,"new_head":new_commit["sha"]}))
+        gh(central_token,"POST",f"/repos/{CENTRAL}/issues/{issue}/comments",{"body":f"### Local entry upgrade applied\n\nTarget: {target}\nPrevious HEAD: {head}\nUpgrade commit: {new_commit['sha']}\nVersion: 2.6.5"})
+    print(json.dumps({"status":"LOCAL_SETUP_V2_6_5_UPGRADE_APPLIED","target":target,"old_head":head,"new_head":new_commit["sha"]}))
 
 if __name__=="__main__":main()
