@@ -1,42 +1,48 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_12_I_B_APPLY_CURRENT_TEMPLATE_TO_CASE1_PILOT
+NEXT_ACTION = C1_12_J_B_COMPLETE_PORTABLE_INTENT_FIXTURE
 STATE = IN_PROGRESS
 ```
 
 ## Objective
 
-Validate the current framework product through the governed upgrade path on the external CASE 1 pilot.
+Complete the **framework product** connection-intent self-test fixture so it is fully portable when executed from an already-baselined client.
 
-Product/framework:
+Product repository:
 
 `chainsolutions-wealthtech/Governed-Repository-Template`
 
-Released product version:
+## External validation evidence
 
-`2.8.5`
+V2.8.5 was applied through the governed control-plane upgrade path to the current CASE 1 pilot:
 
-External validation pilot:
+- previous pilot HEAD: `3a1b7689be5aa38b4b6fdb6456526e618f9b0dd5`
+- upgraded pilot HEAD: `17f852c19ac8c5d26f40d3508338ce9c221697c8`
+- upgrade version reported: `2.8.5`
+- control-plane upgrade run: `36274976355`
+- pilot CI run: `36275001208` → FAILED at `test_connection_intent.py`
 
-`Patricked-code/Gouvern`
+## Root cause
 
-## Required sequence
+The V2.8.4 fixture isolated work-items, claims, sessions and canonical-memory state but still inherited instantiated client values for:
+- project profile;
+- infrastructure intent;
+- repository-local first-agent state;
+- MCP binding;
+- access plan;
+- workflow model.
 
-1. reobserve exact pilot `main` HEAD;
-2. invoke the central governed client-upgrade command under that exact HEAD;
-3. verify the upgrade reports the current Template manifest version;
-4. verify pilot project work-items/sessions/claims/business state are preserved;
-5. verify pilot Governance CI is fully green;
-6. if a new generic defect appears, return to the Template and insert a new framework task before any further pilot mutation.
+The synthetic `auto_bootstrap.py` therefore did not represent a true template-source fixture on an already-baselined client.
 
-## Boundary
+## Required Template fix
 
-```text
-TEMPLATE RELEASE
-→ GOVERNED PILOT UPGRADE
-→ PILOT CI / EVIDENCE
-→ EVIDENCE BACK TO TEMPLATE
-```
+1. reuse the same generic fixture semantics already proven by `test_bootstrap_consistency.py`;
+2. reset only the temporary copied test fixture;
+3. preserve the real client state untouched;
+4. surface subprocess stdout/stderr on fixture failures;
+5. run full Template CI;
+6. release the next Template version only if green;
+7. re-apply via governed exact-HEAD pilot upgrade.
 
-Never patch pilot business state to satisfy framework validation.
+No direct pilot patching is permitted.
