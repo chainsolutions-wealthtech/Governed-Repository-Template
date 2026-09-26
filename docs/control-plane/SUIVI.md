@@ -164,3 +164,16 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - V2.8.5 candidate now derives release version from the Template manifest, synchronizes the required generic static governance surface, preserves mutable client state, and skips source-only DB materialization cleanly on clients.
 - Added CPD-023 and canonical architecture revision `CP-ARCH-001-R4`.
 - No pilot repository was modified while this framework gap remained open.
+
+
+## 2026-09-26 — V2.8.5 framework release merged
+
+- Product repository: `chainsolutions-wealthtech/Governed-Repository-Template`.
+- PR #35 merged.
+- Release subject HEAD: `556011ea20310a483f77a9a382b66b79bed4b31c`.
+- Governance CI run `36274765257`: PASS.
+- Dynamic version-from-manifest client upgrader: PASS.
+- Required connection-intent client surface synchronization: PASS.
+- Client-safe source-only DB CI guard: PASS.
+- C1-12-I-A: DONE.
+- C1-12-I-B: IN_PROGRESS — apply current Template via governed exact-HEAD upgrade to external CASE 1 pilot.
