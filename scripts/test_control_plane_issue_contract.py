@@ -28,6 +28,10 @@ def main() -> None:
     if machine is None or machine[0] != "local_command" or machine[1]["command"]["kind"] != "execute":
         raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: machine command parsing")
 
+    local_start = parse_command('/governed-local-start\n{"target_repository":"owner/repo","expected_head":"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa","objective":"Continue governed work"}')
+    if local_start is None or local_start[0] != "local_start" or local_start[1]["target_repository"] != "owner/repo":
+        raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: machine local start parsing")
+
     evidence = parse_command('/governed-evidence\n{"action_id":"PREP-001","result":"PASS","evidence":{"created":true}}')
     if evidence is None or evidence[0] != "evidence" or evidence[1]["action_id"] != "PREP-001":
         raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: evidence parsing")
@@ -54,6 +58,9 @@ def main() -> None:
             "local_command_required",
             "permission-contents: write",
             "Dispatch governed machine local command",
+            "Dispatch governed machine local start",
+            "scripts/control_plane_local_start.py",
+            "local_start_required",
         ]
         for fragment in required:
             if fragment not in workflow:
@@ -69,9 +76,13 @@ def main() -> None:
 
     bridge = (ROOT / "scripts" / "control_plane_issue_bridge.py").read_text(encoding="utf-8")
     local_dispatcher = (ROOT / "scripts" / "control_plane_local_command.py").read_text(encoding="utf-8")
+    local_starter = (ROOT / "scripts" / "control_plane_local_start.py").read_text(encoding="utf-8")
     for fragment in ["/dispatches", "governed_local_command", "HEAD_MOVED", "GOVERNED_TARGET_TOKEN"]:
         if fragment not in local_dispatcher:
             raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: machine local dispatcher missing: " + fragment)
+    for fragment in ["/dispatches", "governed_local_start", "HEAD_MOVED", "GOVERNED_TARGET_TOKEN"]:
+        if fragment not in local_starter:
+            raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: machine local starter missing: " + fragment)
     if "def handle_repository_dispatch" not in bridge:
         raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: repository dispatch handler missing")
 
