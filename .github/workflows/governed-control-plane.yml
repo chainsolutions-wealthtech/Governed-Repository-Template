@@ -102,7 +102,7 @@ jobs:
       - name: Provision governed MCP credential when required
         id: mcp-credential
         continue-on-error: true
-        if: steps.process.outputs.local_command_required == 'true' && steps.process.outputs.local_command_kind == 'execute'
+        if: steps.process.outputs.local_command_required == 'true'
         env:
           GOVERNED_TARGET_TOKEN: ${{ steps.local-command-token.outputs.token }}
           GOVERNED_MCP_AUTH_TOKEN: ${{ secrets.GOVERNED_MCP_AUTH_TOKEN }}
@@ -113,7 +113,7 @@ jobs:
             --expected-head "${{ steps.process.outputs.local_command_expected_head }}"
 
       - name: Report governed MCP credential provisioning failure
-        if: steps.process.outputs.local_command_required == 'true' && steps.process.outputs.local_command_kind == 'execute' && steps.mcp-credential.outcome == 'failure'
+        if: steps.process.outputs.local_command_required == 'true' && steps.mcp-credential.outcome == 'failure'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -133,7 +133,7 @@ jobs:
           gh api "repos/${{ github.repository }}/issues/${{ steps.process.outputs.issue_number }}/comments" -f body="$body"
 
       - name: Dispatch governed machine local command
-        if: steps.process.outputs.local_command_required == 'true' && (steps.process.outputs.local_command_kind != 'execute' || steps.mcp-credential.outcome == 'success')
+        if: steps.process.outputs.local_command_required == 'true' && steps.mcp-credential.outcome == 'success'
         env:
           GOVERNED_TARGET_TOKEN: ${{ steps.local-command-token.outputs.token }}
         run: |
