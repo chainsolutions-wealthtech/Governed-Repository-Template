@@ -213,3 +213,27 @@ The token value is never read back or exposed. Exact-HEAD and target issue guard
 
 The refresh is read-only, exact-HEAD governed, and does not widen MCP write authority. Fresh non-degraded evidence does not trigger repeated refresh loops.
 
+## Governance Automation V2.7.0 — Self-Governed Control Plane
+
+### Added
+
+- source-only human continuity authorities under `docs/control-plane/`:
+  `CURRENT_STATE.md`, `SUIVI.md`, `NEXT_ACTION.md`, `DECISIONS_LOG.md`, `TASKS.md`, and `PROGRAM.md`;
+- source-only machine projections under `.governance/control-plane-state/`:
+  `current.json`, `checkpoint.json`, `handoff.json`, and `tasks.json`;
+- explicit source-entry reading order for agents working on the template/control plane itself;
+- validation that source current state, checkpoint, handoff, and unique executable task remain coherent.
+
+### Changed
+
+- source-only paths may now be directories as well as files;
+- client initialization removes source-only directories recursively;
+- source/control-plane history is explicitly separated from the generic root project-state templates distributed to new repositories;
+- GitHub issues remain orchestration/evidence surfaces rather than the durable source-project authority.
+
+### Safety / non-regression
+
+- root template files with placeholders remain unchanged as distributed client templates;
+- bootstrap self-test proves `docs/control-plane/` and `.governance/control-plane-state/` do not survive client initialization;
+- `Patricked-code/MCP` remains outside this workstream's implementation scope.
+
