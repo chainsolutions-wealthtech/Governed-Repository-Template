@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.5.0",
+  "schema_version": "1.6.0",
   "role": "REPOSITORY_TO_MCP_BINDING",
   "preferred_transport": "DIRECT_MCP_TOKEN",
   "fallback_transport": "GITHUB_OIDC_EPHEMERAL_SSH_CERTIFICATE",
@@ -78,7 +78,9 @@
     "BOTH_SSH_ONLY_EVIDENCE_MUST_BE_RECORDED_AS_PARTIAL_DEGRADED",
     "MCP_DISCOVERY_FAILURES_ON_EXACT_HEAD_ARE_PERSISTED_RETRYABLE",
     "HEAD_MOVED_NEVER_PERSISTS_AS_DISCOVERY_EVIDENCE",
-    "BOTH_USES_CENTRAL_DIRECT_CREDENTIAL_WHEN_AVAILABLE"
+    "BOTH_USES_CENTRAL_DIRECT_CREDENTIAL_WHEN_AVAILABLE",
+    "BOTH_STALE_DEGRADED_DISCOVERY_MUST_REFRESH_BEFORE_SETUP_APPROVAL",
+    "DISCOVERY_REFRESH_PRESERVES_EXISTING_SETUP_ANSWERS"
   ],
   "discovery_failure_policy": {
     "persist_exact_head_failures": true,
@@ -86,5 +88,13 @@
     "retry_state": "MCP_DISCOVERY",
     "head_moved_mutates_state": false,
     "failure_evidence_secrecy": "NON_SECRET_CODES_ONLY"
+  },
+  "discovery_reconciliation_policy": {
+    "both_refresh_when_direct_credential_becomes_available": true,
+    "preserve_existing_answers": true,
+    "preserve_prior_evidence": "BOUNDED_HISTORY",
+    "max_prior_evidence_entries": 5,
+    "setup_approval_requires_current_evidence": true,
+    "authority_change": "NONE_READ_ONLY_REFRESH"
   }
 }
