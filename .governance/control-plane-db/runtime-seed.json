@@ -201,6 +201,20 @@
       "status": "ACCEPTED",
       "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "decided_at": "2026-09-26"
+    },
+    {
+      "decision_id": "CPD-022",
+      "scope_type": "FRAMEWORK_BOUNDARY",
+      "scope_id": "CONTROL_PLANE",
+      "decision_key": "TEMPLATE_IS_PRODUCT_PILOTS_ARE_VALIDATION_ONLY",
+      "value": {
+        "product_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+        "pilot_repositories_are_validation_fixtures": true,
+        "generic_defects_fixed_in_template_first": true
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "decided_at": "2026-09-26"
     }
   ],
   "checkpoints": [
@@ -265,6 +279,18 @@
       "dependent_revalidation": [],
       "source_ref": "CPD-021",
       "created_at": "2026-09-26"
+    },
+    {
+      "feedback_id": "FB-20260926-SCOPE-001",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-12",
+      "feedback_class": "CLARIFICATION",
+      "content": "The global project to evolve is chainsolutions-wealthtech/Governed-Repository-Template. Patricked-code/Gouvern is only a CASE 1 usage test/pilot.",
+      "effect": "CLARIFY_FRAMEWORK_PRODUCT_BOUNDARY_NO_CASE_ROLLBACK",
+      "earliest_affected_phase_id": "C1-12",
+      "dependent_revalidation": [],
+      "source_ref": "CPD-022",
+      "created_at": "2026-09-26"
     }
   ],
   "artifacts": [
@@ -286,7 +312,7 @@
       "canonical_path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
       "scope": "CONTROL_PLANE_SOURCE_ONLY",
       "status": "ACCEPTED_TARGET_ARCHITECTURE",
-      "current_revision": 2,
+      "current_revision": 3,
       "source_decision_id": "CPD-014",
       "created_at": "2026-09-26"
     }
@@ -313,6 +339,18 @@
       "supersedes_revision_id": "CP-ARCH-001-R1",
       "reason": "Add identity/session separation and two-stage automated purpose routing.",
       "source_decision_id": "CPD-021",
+      "source_ref": ".governance/control-plane-state/canonical-architecture.json",
+      "created_at": "2026-09-26"
+    },
+    {
+      "revision_id": "CP-ARCH-001-R3",
+      "authority_id": "CP-ARCH-001",
+      "revision_number": 3,
+      "subject_head_sha": "9d8c3936576888709830ba03309c3880367f1943",
+      "content_sha": null,
+      "supersedes_revision_id": "CP-ARCH-001-R2",
+      "reason": "Clarify product/framework versus external pilot validation boundary.",
+      "source_decision_id": "CPD-022",
       "source_ref": ".governance/control-plane-state/canonical-architecture.json",
       "created_at": "2026-09-26"
     }
@@ -420,6 +458,30 @@
         "revision_id": "CP-ARCH-001-R2",
         "decision_id": "CPD-021",
         "supersedes": "CP-ARCH-001-R1"
+      },
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "occurred_at": "2026-09-26"
+    },
+    {
+      "event_id": "CME-20260926-SCOPE-001",
+      "event_type": "OWNER_FEEDBACK_RECEIVED",
+      "scope_type": "FRAMEWORK_BOUNDARY",
+      "scope_id": "CONTROL_PLANE",
+      "payload": {
+        "feedback_id": "FB-20260926-SCOPE-001"
+      },
+      "source_ref": "CPD-022",
+      "occurred_at": "2026-09-26"
+    },
+    {
+      "event_id": "CME-20260926-ARCH-004",
+      "event_type": "ARCHITECTURE_REVISION_ACCEPTED",
+      "scope_type": "AUTHORITY",
+      "scope_id": "CP-ARCH-001",
+      "payload": {
+        "revision_id": "CP-ARCH-001-R3",
+        "decision_id": "CPD-022",
+        "supersedes": "CP-ARCH-001-R2"
       },
       "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "occurred_at": "2026-09-26"
