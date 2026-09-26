@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 2,
+  "revision": 3,
   "work_package_id": "SG-20260926-001",
   "objective": "V2.7.0 Self-Governed Control Plane",
   "items": [
@@ -36,7 +36,7 @@
     },
     {
       "id": "SG-005",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "SG-004"
       ],
@@ -44,7 +44,7 @@
     },
     {
       "id": "SG-006",
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "depends_on": [
         "SG-005"
       ],
@@ -59,5 +59,5 @@
       "next_action": "RESUME_PROGRAM_12"
     }
   ],
-  "unique_executable_item": "SG-005"
+  "unique_executable_item": "SG-006"
 }
