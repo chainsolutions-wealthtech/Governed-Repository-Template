@@ -100,3 +100,17 @@ Start a `[Governed Request]` issue on `chainsolutions-wealthtech/Governed-Reposi
 8. emit an explicit `HANDOFF_READY` package before normal target work begins.
 
 Generated/adopted repositories keep the central control-plane reference but are clients, not duplicate control planes.
+
+## V2.6 governed repository connectivity
+
+The current governed creation path includes:
+
+- V2.6.0 — GitHub OIDC-issued ephemeral SSH certificates for read-only fallback;
+- V2.6.1 — central-to-local GitHub App machine command transport;
+- V2.6.2 — complete packaging of the machine-command target upgrader;
+- V2.6.3 — automatic provisioning of the existing direct MCP Actions credential from the central control plane into a target repository under an exact-HEAD credential gate.
+
+A newly governed repository therefore does not require a persistent SSH private key and, once the central control plane is configured, does not require the owner to manually copy the direct MCP token into each target repository.
+
+Credential provisioning does not grant server WRITE authority. MCP project registration, scoped-write gates and explicit mutation approval remain separate controls.
+
