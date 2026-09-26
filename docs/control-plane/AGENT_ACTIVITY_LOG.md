@@ -107,3 +107,18 @@
   - projected owner feedback and routing events to relational memory;
   - preserved active runtime router until tests exist.
 - Unique active execution remains `C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM`.
+
+
+## Entry AAL-20260926-V284-001
+
+- Agent identity: ChatGPT
+- Workstream: CASE 1 / C1-12 generic framework correction
+- Product repository: `chainsolutions-wealthtech/Governed-Repository-Template`
+- Starting product HEAD: `9d8c3936576888709830ba03309c3880367f1943`
+- Pilot evidence source: `Patricked-code/Gouvern` at `3a1b7689be5aa38b4b6fdb6456526e618f9b0dd5`
+- Diagnosis: `test_connection_intent.py` inherited instantiated client work-items; dispatch therefore selected a real project work item instead of the synthetic discovery item.
+- Product fix: rebuild deterministic self-test-only profile/work/claims/sessions/canonical-memory fixture before auto bootstrap.
+- Safety: no pilot business state is edited to satisfy the test.
+- Decision added: `CPD-022` — Template is the product; pilots are validation fixtures.
+- C1-12-F: DONE.
+- C1-12-G: IN_PROGRESS pending Template CI.
