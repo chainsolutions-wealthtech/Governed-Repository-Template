@@ -282,3 +282,27 @@ CAPTURE AUTHENTICATED ACTOR
 ```
 
 Opening/viewing a repository alone is not currently sufficient to trigger this full flow; this backlog exists to make the governed arrival explicit and eventually automatable.
+
+
+## Planned two-stage purpose routing data
+
+The automated source-entry router adds three durable questionnaire fields:
+
+- `entry_purpose`
+  - `WORK_ON_CONTROL_PLANE`
+  - `APPLY_GOVERNANCE_CASE`
+- `control_plane_work_kind`
+  - `CODE_IMPLEMENTATION`
+  - `EXECUTE_EXISTING_TASK`
+  - `ADD_OR_ENRICH_INFORMATION`
+- `selected_structuring_case`
+  - `CREATE_NEW_REPOSITORY`
+  - `ADOPT_EXISTING_REPOSITORY`
+  - `MAP_EXISTING_PROJECT`
+  - `LAB_EVOLUTION`
+
+These choices are stored as governed answers/events and must be resumable. A reconnecting session resumes at the first unresolved applicable question/action instead of replaying completed questions.
+
+The existing active `entry_action` router is preserved until the two-stage router is implemented and regression-tested. The new fields are currently target/planned semantics, not a silent runtime behavior change.
+
+Human users provide decisions/approvals only; the system performs authorized technical actions.
