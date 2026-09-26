@@ -14,7 +14,9 @@
     "docs/control-plane/TASKS.md",
     "docs/control-plane/NEXT_ACTION.md",
     "docs/control-plane/DECISIONS_LOG.md",
-    "docs/control-plane/SUIVI.md"
+    "docs/control-plane/SUIVI.md",
+    "docs/control-plane/CASE1_REPLAY_LEDGER.md",
+    ".governance/control-plane-state/case1-replay.json"
   ],
   "rules": [
     "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",

@@ -1,0 +1,119 @@
+{
+  "schema_version": "1.0.0",
+  "case_id": "CREATE_NEW_REPOSITORY",
+  "authority": "docs/control-plane/CASE1_REPLAY_LEDGER.md",
+  "issue_mirror": 12,
+  "historical_pilot": "Patricked-code/Gouvern",
+  "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
+  "current_phase": "C1-12",
+  "current_status": "IN_PROGRESS",
+  "unique_next_action": "STEP_4_PROVE_NORMAL_GOVERNED_ENTRY_ON_GOUVERN",
+  "phases": [
+    {
+      "id": "C1-00",
+      "name": "creation request",
+      "status": "DONE",
+      "owner_feedback": "owner/name/visibility"
+    },
+    {
+      "id": "C1-01",
+      "name": "automatic bootstrap",
+      "status": "DONE"
+    },
+    {
+      "id": "C1-02",
+      "name": "business baseline",
+      "status": "DONE",
+      "owner_feedback": "baseline answers/approval"
+    },
+    {
+      "id": "C1-03",
+      "name": "setup-now choice",
+      "status": "DONE",
+      "owner_feedback": "setup_repository_now"
+    },
+    {
+      "id": "C1-04",
+      "name": "optional MCP link choice",
+      "status": "DONE",
+      "owner_feedback": "link_mcp_server"
+    },
+    {
+      "id": "C1-05",
+      "name": "MCP transport choice",
+      "status": "DONE",
+      "choice_space": [
+        "DIRECT_MCP_TOKEN",
+        "SSH",
+        "BOTH"
+      ],
+      "historical_choice": "BOTH"
+    },
+    {
+      "id": "C1-06",
+      "name": "MCP discovery configuration",
+      "status": "DONE"
+    },
+    {
+      "id": "C1-07",
+      "name": "credential/discovery",
+      "status": "DONE",
+      "historical_result": "PASS_NON_DEGRADED"
+    },
+    {
+      "id": "C1-08",
+      "name": "domain binding",
+      "status": "DONE",
+      "historical_choice": {
+        "mode": "UNRESOLVED"
+      }
+    },
+    {
+      "id": "C1-09",
+      "name": "workflow model",
+      "status": "DONE",
+      "historical_choice": "STANDARD_GOVERNED_FLOW"
+    },
+    {
+      "id": "C1-10",
+      "name": "setup approval",
+      "status": "DONE",
+      "owner_approval_required": true
+    },
+    {
+      "id": "C1-11",
+      "name": "apply baseline",
+      "status": "DONE",
+      "evidence_sha": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f"
+    },
+    {
+      "id": "C1-12",
+      "name": "normal governed entry proof",
+      "status": "IN_PROGRESS"
+    },
+    {
+      "id": "C1-13",
+      "name": "second fresh repository E2E",
+      "status": "PENDING",
+      "depends_on": [
+        "C1-12"
+      ]
+    },
+    {
+      "id": "C1-14",
+      "name": "case closure",
+      "status": "PENDING",
+      "depends_on": [
+        "C1-13"
+      ]
+    }
+  ],
+  "change_protocol": {
+    "clarification": "NO_ROLLBACK",
+    "pre_gate_choice_change": "REENTER_SAME_PHASE",
+    "post_gate_pre_baseline_change": "RETURN_TO_EARLIEST_AFFECTED_PHASE_AND_REVALIDATE_DEPENDENTS",
+    "post_baseline_change": "GOVERNED_UPDATE_PRESERVE_HISTORY",
+    "generic_framework_defect": "FIX_TEMPLATE_TEST_MERGE_UPGRADE_RESUME",
+    "mcp_dependency_defect": "INTAKE_ONLY_NO_MCP_IMPLEMENTATION"
+  }
+}

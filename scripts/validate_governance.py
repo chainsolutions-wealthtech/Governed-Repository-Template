@@ -151,10 +151,12 @@ SOURCE_ONLY_REQUIRED = {
     "docs/control-plane/DECISIONS_LOG.md",
     "docs/control-plane/TASKS.md",
     "docs/control-plane/PROGRAM.md",
+    "docs/control-plane/CASE1_REPLAY_LEDGER.md",
     ".governance/control-plane-state/current.json",
     ".governance/control-plane-state/checkpoint.json",
     ".governance/control-plane-state/handoff.json",
     ".governance/control-plane-state/tasks.json",
+    ".governance/control-plane-state/case1-replay.json",
 }
 CONTROL_PLANE_REPOSITORY = "chainsolutions-wealthtech/Governed-Repository-Template"
 
@@ -479,6 +481,7 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
         source_checkpoint = load(".governance/control-plane-state/checkpoint.json")
         source_handoff = load(".governance/control-plane-state/handoff.json")
         source_tasks = load(".governance/control-plane-state/tasks.json")
+        case1_replay = load(".governance/control-plane-state/case1-replay.json")
         if source_current.get("repository") != CONTROL_PLANE_REPOSITORY:
             fail("control-plane source current repository mismatch")
         if source_current.get("role") != "CENTRAL_GOVERNANCE_CONTROL_PLANE":
@@ -492,6 +495,15 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
             fail("control-plane source tasks must have exactly one IN_PROGRESS item")
         if source_tasks.get("unique_executable_item") != executable[0].get("id"):
             fail("control-plane source unique executable task mismatch")
+        if case1_replay.get("case_id") != "CREATE_NEW_REPOSITORY":
+            fail("CASE 1 replay ledger case id mismatch")
+        if case1_replay.get("unique_next_action") != source_current.get("unique_next_action"):
+            fail("CASE 1 replay ledger next action mismatch")
+        if case1_replay.get("current_phase") not in {p.get("id") for p in case1_replay.get("phases", [])}:
+            fail("CASE 1 replay current phase missing from phases")
+        active_case_phases = [p for p in case1_replay.get("phases", []) if p.get("status") == "IN_PROGRESS"]
+        if len(active_case_phases) != 1 or active_case_phases[0].get("id") != case1_replay.get("current_phase"):
+            fail("CASE 1 replay must have exactly one active phase matching current_phase")
         source_docs = [
             "docs/control-plane/CURRENT_STATE.md",
             "docs/control-plane/SUIVI.md",
@@ -499,6 +511,7 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
             "docs/control-plane/DECISIONS_LOG.md",
             "docs/control-plane/TASKS.md",
             "docs/control-plane/PROGRAM.md",
+            "docs/control-plane/CASE1_REPLAY_LEDGER.md",
         ]
         for relative in source_docs:
             text = (ROOT / relative).read_text(encoding="utf-8")

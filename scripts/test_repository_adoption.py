@@ -57,6 +57,9 @@ def main() -> None:
             raise SystemExit("ADOPTION_SELFTEST_FAILED: README changed")
         if (target / "app.txt").read_text(encoding="utf-8") != "existing-application-data\n":
             raise SystemExit("ADOPTION_SELFTEST_FAILED: application content changed")
+        for relative in ["docs/control-plane", ".governance/control-plane-state"]:
+            if (target / relative).exists():
+                raise SystemExit("ADOPTION_SELFTEST_FAILED: source-only control-plane memory leaked: " + relative)
 
         profile = json.loads((target / ".governance" / "profile.json").read_text(encoding="utf-8"))
         if profile.get("initialization_mode") != "EXISTING_REPOSITORY_ADOPTION":

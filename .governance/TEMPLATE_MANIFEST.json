@@ -118,7 +118,9 @@
       ".github/workflows/governed-control-plane.yml",
       ".github/ISSUE_TEMPLATE/governed-request.yml",
       "docs/control-plane",
-      ".governance/control-plane-state"
+      ".governance/control-plane-state",
+      "docs/control-plane/CASE1_REPLAY_LEDGER.md",
+      ".governance/control-plane-state/case1-replay.json"
     ],
     "local_entry_ui": [
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml"
@@ -219,7 +221,9 @@
     "source control-plane memory separated from distributed project state",
     "source-only directory removal during client initialization",
     "conversation-independent source checkpoint and handoff",
-    "source memory freshness and unique-next-action validation"
+    "source memory freshness and unique-next-action validation",
+    "case-specific replay ledger with owner feedback return points",
+    "machine-readable replay phases and dependency invalidation protocol"
   ],
   "automatic_initialization_supported": true
 }

@@ -50,16 +50,27 @@ def sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def source_only_paths() -> list[str]:
+    policy = json.loads((SOURCE_ROOT / ".governance" / "control-plane-policy.json").read_text(encoding="utf-8"))
+    return [str(p).rstrip("/") for p in policy.get("source_only_paths", [])]
+
+def is_source_only(relative: str) -> bool:
+    normalized = relative.rstrip("/")
+    for source_only in source_only_paths():
+        if normalized == source_only or normalized.startswith(source_only + "/"):
+            return True
+    return False
+
 def template_paths() -> list[str]:
     manifest = json.loads((SOURCE_ROOT / ".governance" / "TEMPLATE_MANIFEST.json").read_text(encoding="utf-8"))
     paths: list[str] = []
     for values in manifest.get("categories", {}).values():
         for relative in values:
-            if relative not in EXCLUDED and relative not in paths:
+            if relative not in EXCLUDED and not is_source_only(relative) and relative not in paths:
                 paths.append(relative)
     for schema in sorted((SOURCE_ROOT / "schemas").glob("*.json")):
         relative = str(schema.relative_to(SOURCE_ROOT))
-        if relative not in paths:
+        if not is_source_only(relative) and relative not in paths:
             paths.append(relative)
 
     for relative in [

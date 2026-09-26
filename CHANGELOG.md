@@ -237,3 +237,16 @@ The refresh is read-only, exact-HEAD governed, and does not widen MCP write auth
 - bootstrap self-test proves `docs/control-plane/` and `.governance/control-plane-state/` do not survive client initialization;
 - `Patricked-code/MCP` remains outside this workstream's implementation scope.
 
+## Control-plane continuity — CASE 1 replay ledger
+
+### Added
+
+- a source-only phase-by-phase replay authority for `CREATE_NEW_REPOSITORY`;
+- a machine-readable replay projection with current phase, dependencies, historical pilot choices, and return semantics;
+- explicit owner-comment handling for clarification, choice changes, post-baseline changes, generic framework defects, and MCP-side dependencies;
+- governance validation requiring exactly one active CASE 1 replay phase and next-action consistency.
+
+### Purpose
+
+A later agent can replay CASE 1 in detail without depending on chat history, and owner comments can safely return execution to the earliest affected checkpoint without erasing historical evidence.
+
