@@ -2,7 +2,7 @@
 from __future__ import annotations
 import json, os, re, subprocess, urllib.error, urllib.parse, urllib.request
 from pathlib import Path
-from local_governed_entry import answer, decode_state, encode_state, mark_credentials_verified, new_request
+from local_governed_entry import answer, credential_requirements, decode_state, encode_state, mark_credentials_verified, new_request
 
 ROOT=Path(__file__).resolve().parents[1]
 TITLE_PREFIX="[Governed Local Entry]"
@@ -165,10 +165,11 @@ def dispatch_machine_command(event):
         else:
             if set(command)!={"kind"}:raise ValueError("execute requires only kind")
             if (s.get("next_request") or {}).get("kind")=="CREDENTIAL_GATE":
-                transport=s.get("answers",{}).get("mcp_transport")
+                requirements=credential_requirements(s.get("answers",{}))
                 missing=[]
-                if transport in {"DIRECT_MCP_TOKEN","BOTH"} and not os.environ.get("GOVERNED_MCP_AUTH_TOKEN"):
-                    missing.append("GOVERNED_MCP_AUTH_TOKEN")
+                for requirement in requirements:
+                    if requirement.get("kind")=="secret" and requirement.get("name")=="GOVERNED_MCP_AUTH_TOKEN" and not os.environ.get("GOVERNED_MCP_AUTH_TOKEN"):
+                        missing.append("GOVERNED_MCP_AUTH_TOKEN")
                 if missing:raise ValueError("missing GitHub Actions secret/variable: "+", ".join(missing))
                 s=mark_credentials_verified(s)
             else:
