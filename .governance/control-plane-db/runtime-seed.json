@@ -1,0 +1,102 @@
+{
+  "schema_version": "1.0.0",
+  "repositories": [
+    {
+      "repository_id": "repo-control-plane",
+      "full_name": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "role": "CONTROL_PLANE_SOURCE",
+      "canonical_branch": "main",
+      "current_head_sha": "903e8196ac8ae2f4e47785adf6629e03d5c44301",
+      "source_ref": "docs/control-plane/CURRENT_STATE.md"
+    },
+    {
+      "repository_id": "repo-gouvern",
+      "full_name": "Patricked-code/Gouvern",
+      "role": "CASE1_PILOT",
+      "canonical_branch": "main",
+      "current_head_sha": null,
+      "source_ref": "docs/control-plane/CASE1_REPLAY_LEDGER.md"
+    }
+  ],
+  "runs": [
+    {
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "repository_id": "repo-gouvern",
+      "status": "IN_PROGRESS",
+      "current_phase_id": "C1-12",
+      "source_issue": "Patricked-code/Gouvern#2",
+      "started_at": "2026-09-26"
+    }
+  ],
+  "decisions": [
+    {
+      "decision_id": "CPD-008",
+      "scope_type": "CASE",
+      "scope_id": "CREATE_NEW_REPOSITORY",
+      "decision_key": "MCP_LINK_AND_TRANSPORT_ARE_OWNER_CHOICES",
+      "value": {
+        "mcp_link_optional": true,
+        "transports": [
+          "DIRECT_MCP_TOKEN",
+          "SSH",
+          "BOTH"
+        ],
+        "both_mandatory": false
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md"
+    },
+    {
+      "decision_id": "CASE1-PILOT-MCP",
+      "scope_type": "RUN",
+      "scope_id": "CASE1-PILOT-GOUVERN",
+      "decision_key": "MCP_TRANSPORT",
+      "value": "BOTH",
+      "status": "HISTORICAL",
+      "source_ref": "docs/control-plane/CASE1_REPLAY_LEDGER.md"
+    },
+    {
+      "decision_id": "CASE1-PILOT-DOMAIN",
+      "scope_type": "RUN",
+      "scope_id": "CASE1-PILOT-GOUVERN",
+      "decision_key": "DOMAIN_BINDING",
+      "value": {
+        "mode": "UNRESOLVED"
+      },
+      "status": "HISTORICAL",
+      "source_ref": "docs/control-plane/CASE1_REPLAY_LEDGER.md"
+    },
+    {
+      "decision_id": "CASE1-PILOT-WORKFLOW",
+      "scope_type": "RUN",
+      "scope_id": "CASE1-PILOT-GOUVERN",
+      "decision_key": "WORKFLOW_MODEL",
+      "value": "STANDARD_GOVERNED_FLOW",
+      "status": "HISTORICAL",
+      "source_ref": "docs/control-plane/CASE1_REPLAY_LEDGER.md"
+    }
+  ],
+  "checkpoints": [
+    {
+      "checkpoint_id": "CASE1-CP-FIRST-HANDOFF",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-11",
+      "subject_head_sha": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
+      "state": "LOCAL_HANDOFF_READY",
+      "next_action": "PROVE_NORMAL_GOVERNED_ENTRY",
+      "source_ref": "docs/control-plane/CASE1_REPLAY_LEDGER.md"
+    }
+  ],
+  "intakes": [
+    {
+      "intake_id": "MCP-192",
+      "originating_case_id": "CREATE_NEW_REPOSITORY",
+      "originating_run_id": "CASE1-PILOT-GOUVERN",
+      "target_system": "Patricked-code/MCP",
+      "status": "OPEN_EXTERNAL",
+      "summary": "Repository-SSH OIDC certificate broker returned 403 during pilot; intake only, no MCP implementation from this workstream.",
+      "source_ref": "Patricked-code/MCP#192"
+    }
+  ]
+}
