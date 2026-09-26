@@ -175,3 +175,16 @@ An open local-entry issue is not migrated across unrelated project commits. If t
 
 The SSH fallback remains read-only and cannot grant MCP scoped-write authority. Project registration, explicit mutation approval and MCP write-tool gates are unchanged. No change is made to `Patricked-code/MCP` by this release.
 
+## Governance Automation V2.6.8
+
+### Fixed
+
+- MCP discovery failures are persisted into the governed local-entry state with a stable non-secret failure code and retryable evidence;
+- HTTP 403 from the repository-SSH certificate broker is classified as `SSH_CERTIFICATE_BROKER_FORBIDDEN`;
+- `/local-execute` can retry read-only discovery while the exact local state remains at `MCP_DISCOVERY`;
+- human and machine execute paths now use the same current credential-requirement logic.
+
+### Safety
+
+`HEAD_MOVED` still stops before any discovery-state mutation. Discovery retry does not widen project or runtime authority, and failed external discovery never advances to domain binding.
+

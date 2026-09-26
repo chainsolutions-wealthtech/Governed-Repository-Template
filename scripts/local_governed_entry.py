@@ -219,8 +219,26 @@ def mark_credentials_verified(s):
 def record_mcp_discovery(s,evidence):
     s=copy.deepcopy(s)
     if (s.get("next_request") or {}).get("kind")!="MCP_DISCOVERY":raise ValueError("not awaiting MCP discovery")
-    s["mcp_discovery"]=evidence;s["revision"]+=1
+    s["mcp_discovery"]=evidence;s["hold_reason"]=None;s["revision"]+=1
     return refresh(s)
+
+def record_mcp_discovery_failure(s,evidence):
+    s=copy.deepcopy(s)
+    if (s.get("next_request") or {}).get("kind")!="MCP_DISCOVERY":raise ValueError("not awaiting MCP discovery")
+    code=str((evidence or {}).get("failure_code") or "MCP_DISCOVERY_FAILED")
+    s["mcp_discovery"]=copy.deepcopy(evidence)
+    s["status"]="MCP_DISCOVERY_FAILED_RETRYABLE"
+    s["phase"]="MCP_DISCOVERY"
+    s["hold_reason"]=code
+    s["revision"]+=1
+    s["next_request"]={
+      "kind":"MCP_DISCOVERY",
+      "id":"MCP_DISCOVERY",
+      "text":"Read-only MCP discovery failed. Retry after remediation with /local-execute.",
+      "tools":["ping","get_project_context","list_domains_s1","list_domains_s2","get_write_tools_context"],
+      "last_failure":copy.deepcopy(evidence)
+    }
+    return s
 
 def complete_baseline(s,new_head,session_id):
     s=copy.deepcopy(s)

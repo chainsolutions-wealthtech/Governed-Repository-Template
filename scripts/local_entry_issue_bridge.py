@@ -115,15 +115,20 @@ def commented(event):
             persist(issue["number"],issue.get("body"),s)
             api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{issue['number']}/comments",{"body":render(s)})
         elif kind=="execute":
-            if (s.get("next_request") or {}).get("kind")=="CREDENTIAL_GATE":
-                transport=s.get("answers",{}).get("mcp_transport")
+            gate=(s.get("next_request") or {}).get("kind")
+            if gate=="CREDENTIAL_GATE":
                 missing=[]
-                if transport in {"DIRECT_MCP_TOKEN","BOTH"}:
-                    if not os.environ.get("GOVERNED_MCP_AUTH_TOKEN"): missing.append("GOVERNED_MCP_AUTH_TOKEN")
+                for requirement in credential_requirements(s.get("answers",{})):
+                    if requirement.get("kind")=="secret" and requirement.get("name")=="GOVERNED_MCP_AUTH_TOKEN" and not os.environ.get("GOVERNED_MCP_AUTH_TOKEN"):
+                        missing.append("GOVERNED_MCP_AUTH_TOKEN")
                 if missing: raise ValueError("missing GitHub Actions secret/variable: "+", ".join(missing))
                 s=mark_credentials_verified(s)
                 persist(issue["number"],issue.get("body"),s)
                 api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{issue['number']}/comments",{"body":render(s)})
+            elif gate=="MCP_DISCOVERY":
+                api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{issue['number']}/comments",{"body":"### MCP discovery retry requested\n\nThe current exact-HEAD discovery will be retried. No project authority was widened."})
+            else:
+                raise ValueError("execute is only valid at an executable local gate")
         else: raise ValueError("unsupported command")
     except Exception as exc:
         api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{issue['number']}/comments",{"body":f"### Local entry response refused\n\n`{type(exc).__name__}: {exc}`\n\nNo state advanced."});return
@@ -164,7 +169,8 @@ def dispatch_machine_command(event):
             s=answer(s,command["field"],command["value"])
         else:
             if set(command)!={"kind"}:raise ValueError("execute requires only kind")
-            if (s.get("next_request") or {}).get("kind")=="CREDENTIAL_GATE":
+            gate=(s.get("next_request") or {}).get("kind")
+            if gate=="CREDENTIAL_GATE":
                 requirements=credential_requirements(s.get("answers",{}))
                 missing=[]
                 for requirement in requirements:
@@ -172,6 +178,8 @@ def dispatch_machine_command(event):
                         missing.append("GOVERNED_MCP_AUTH_TOKEN")
                 if missing:raise ValueError("missing GitHub Actions secret/variable: "+", ".join(missing))
                 s=mark_credentials_verified(s)
+            elif gate=="MCP_DISCOVERY":
+                api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{number}/comments",{"body":"### Governed MCP discovery retry requested\n\nThe machine command will retry read-only discovery on the exact current HEAD. No project authority was widened."})
             else:
                 raise ValueError("execute is only valid at an executable local gate")
     except Exception as exc:
