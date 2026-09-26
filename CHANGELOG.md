@@ -400,3 +400,22 @@ Client work-items, claims, sessions, canonical project-memory pointers, business
 ### Product boundary
 
 The fix is implemented and validated in `chainsolutions-wealthtech/Governed-Repository-Template` before any external CASE 1 pilot upgrade is attempted.
+
+
+## Governance Automation V2.8.6 — Complete Portable Intent Fixture
+
+### Fixed
+
+- connection-intent self-test now resets all bootstrap-influencing copied client state before simulating a fresh template lifecycle;
+- added resets for project profile, infrastructure intent, local-entry state, MCP binding, access plan and workflow model in addition to profile/work/claims/sessions/canonical-memory;
+- temporary test subprocess failures now expose stdout/stderr instead of collapsing into an opaque `CalledProcessError`.
+
+### Evidence
+
+- V2.8.5 governed pilot upgrade succeeded;
+- external pilot CI run `36275001208` isolated the remaining generic fixture defect;
+- real pilot/client state is never rewritten by the self-test.
+
+### Architecture
+
+Adds `CPD-024` and canonical architecture revision `CP-ARCH-001-R5` for the portable self-test isolation contract.

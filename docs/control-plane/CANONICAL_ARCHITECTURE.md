@@ -4,7 +4,7 @@
 > Authority type: `CANONICAL_TARGET_ARCHITECTURE`  
 > Scope: `CONTROL_PLANE_SOURCE_ONLY`  
 > Status: `ACCEPTED_TARGET_ARCHITECTURE`  
-> Revision: `4`  
+> Revision: `5`  
 > Repository: `chainsolutions-wealthtech/Governed-Repository-Template`  
 > Distribution: `SOURCE_ONLY / DO_NOT_COPY_TO_CLIENTS`
 
@@ -655,6 +655,30 @@ PRESERVE
 → MIGRATE COMPATIBLY
 → HOLD_FOR_REVIEW
 ```
+
+## 24A. Portable self-test isolation contract
+
+Regression/self-tests may execute from either the source Template or an already-instantiated client.
+
+A test that simulates a fresh template/bootstrap must create a temporary synthetic fixture and explicitly neutralize all copied client state that can influence the simulated lifecycle.
+
+Minimum bootstrap-influencing fixture domains include:
+
+- repository/profile identity;
+- project-profile selection;
+- infrastructure intent;
+- local-entry / first-agent state;
+- MCP binding;
+- access plan;
+- workflow model;
+- work-items;
+- claims;
+- sessions;
+- canonical-memory current pointer.
+
+The test mutates only the temporary copy. Real client project state is evidence, never test fixture input.
+
+Subprocess failures must expose enough stdout/stderr to identify the failing governance gate instead of collapsing into an opaque `CalledProcessError`.
 
 ## 25. Construction roadmap
 

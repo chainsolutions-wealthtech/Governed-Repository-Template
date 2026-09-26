@@ -140,7 +140,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.5",
+  "template_version": "2.8.6",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -253,7 +253,10 @@
     "framework product separated from external pilot validation repositories",
     "version-dynamic governed client upgrade derived from template manifest",
     "client upgrade synchronizes generic static runtime and test surface without overwriting mutable project state",
-    "source-only relational materialization CI skips cleanly on clients"
+    "source-only relational materialization CI skips cleanly on clients",
+    "complete portable connection-intent synthetic bootstrap fixture",
+    "self-tests reset all bootstrap-influencing copied client state before template simulation",
+    "connection-intent self-test surfaces subprocess stdout and stderr on failure"
   ],
   "automatic_initialization_supported": true
 }

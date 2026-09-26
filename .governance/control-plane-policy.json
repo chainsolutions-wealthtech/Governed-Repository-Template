@@ -49,7 +49,10 @@
     "AUTOMATION_MUST_NOT_BYPASS_AUTHORITY_OR_APPROVAL",
     "CLIENT_UPGRADE_VERSION_FROM_TEMPLATE_MANIFEST",
     "CLIENT_UPGRADE_PRESERVES_MUTABLE_PROJECT_STATE",
-    "CLIENT_CI_SOURCE_ONLY_STEPS_SKIP_CLEANLY"
+    "CLIENT_CI_SOURCE_ONLY_STEPS_SKIP_CLEANLY",
+    "PORTABLE_SELFTESTS_RESET_ALL_BOOTSTRAP_INFLUENCING_SYNTHETIC_STATE",
+    "SELFTEST_MUTATES_TEMPORARY_COPY_ONLY",
+    "SELFTEST_SUBPROCESS_FAILURES_EXPOSE_DIAGNOSTICS"
   ],
   "source_only_paths": [
     ".github/workflows/governed-control-plane.yml",
@@ -177,5 +180,23 @@
       ".governance/canonical-memory/current.json"
     ],
     "source_only_ci_behavior": "SKIP_IF_ABSENT"
+  },
+  "portable_selftest_contract": {
+    "fixture_scope": "TEMPORARY_COPY_ONLY",
+    "reset_domains": [
+      "PROFILE",
+      "PROJECT_PROFILE",
+      "INFRASTRUCTURE_INTENT",
+      "LOCAL_ENTRY",
+      "MCP_BINDING",
+      "ACCESS_PLAN",
+      "WORKFLOW_MODEL",
+      "WORK_ITEMS",
+      "CLAIMS",
+      "SESSIONS",
+      "CANONICAL_MEMORY"
+    ],
+    "real_client_state_mutated": false,
+    "subprocess_diagnostics": true
   }
 }

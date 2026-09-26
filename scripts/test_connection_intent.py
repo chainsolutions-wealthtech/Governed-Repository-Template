@@ -14,14 +14,23 @@ TEST_REPOSITORY = "chainsolutions-wealthtech/governance-intent-selftest"
 
 
 def cp(repo: Path, *args: str, env: dict[str, str] | None = None, check: bool = True) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
+    result = subprocess.run(
         list(args),
         cwd=repo,
         env=env,
         text=True,
         capture_output=True,
-        check=check,
+        check=False,
     )
+    if check and result.returncode != 0:
+        raise SystemExit(
+            "INTENT_SELFTEST_SUBPROCESS_FAILED: "
+            + " ".join(args)
+            + f" returncode={result.returncode}\n"
+            + "--- stdout ---\n" + result.stdout
+            + "--- stderr ---\n" + result.stderr
+        )
+    return result
 
 
 def python(repo: Path, *args: str, env: dict[str, str], check: bool = True) -> subprocess.CompletedProcess[str]:
@@ -62,6 +71,94 @@ def build_synthetic_template_fixture(repo: Path) -> None:
         "initialization_mode": "TEMPLATE_BOOTSTRAP",
     })
     write_json(repo, ".governance/profile.json", profile)
+
+    project_profile = read_json(repo, ".governance/project-profile.json")
+    project_profile.update({
+        "repository": "{{REPOSITORY}}",
+        "selection_status": "DISCOVERY_REQUIRED",
+        "selected_profile": None,
+        "organization_default_candidate": "chainsolutions-fullstack-web",
+    })
+    write_json(repo, ".governance/project-profile.json", project_profile)
+
+    infrastructure = read_json(repo, ".governance/infrastructure-intent.json")
+    infrastructure.update({
+        "repository": "{{REPOSITORY}}",
+        "status": "PLANNED_NOT_PROVISIONED",
+    })
+    infrastructure.setdefault("github_binding", {}).update({
+        "repository": "{{REPOSITORY}}",
+        "status": "KNOWN",
+    })
+    infrastructure.setdefault("deployment_target", {}).update({
+        "server_id": None,
+        "server_status": "DISCOVERY_REQUIRED",
+        "domain": None,
+        "domain_status": "DISCOVERY_REQUIRED",
+        "directory": None,
+        "directory_status": "DISCOVERY_REQUIRED",
+        "provisioning_if_missing": "PLANNED_REQUIRES_AUTHORITY",
+    })
+    infrastructure.setdefault("runtime_intent", {}).update({
+        "project_profile_source": ".governance/project-profile.json",
+        "status": "DISCOVERY_REQUIRED",
+    })
+    infrastructure.setdefault("database_intent", {}).update({
+        "engine_candidate": "PostgreSQL",
+        "status": "PLANNED",
+    })
+    infrastructure.setdefault("server_access", {}).update({
+        "preferred": "DIRECT_MCP",
+        "fallback": "SSH",
+        "status": "UNRESOLVED",
+        "credentials_in_repository": "FORBIDDEN",
+    })
+    infrastructure.pop("baseline_declaration", None)
+    write_json(repo, ".governance/infrastructure-intent.json", infrastructure)
+
+    local_entry = read_json(repo, ".governance/local-entry/state.json")
+    local_entry.update({
+        "repository": "{{REPOSITORY}}",
+        "status": "WAITING_FOR_FIRST_AGENT",
+        "first_agent_completed": False,
+        "first_agent_session_id": None,
+        "baseline_subject_head": None,
+        "baseline_completed_at": None,
+        "last_local_entry_issue": None,
+    })
+    write_json(repo, ".governance/local-entry/state.json", local_entry)
+
+    mcp_binding = read_json(repo, ".governance/mcp-binding.json")
+    mcp_binding.update({
+        "repository": "{{REPOSITORY}}",
+        "linked": False,
+        "status": "UNCONFIGURED",
+        "transport": None,
+        "endpoint": None,
+        "ssh_connection_profile": None,
+        "credential_names": [],
+        "discovery_status": "NOT_RUN",
+        "discovery_observed_at": None,
+        "domain_strategy": None,
+        "domain_binding": None,
+        "project_registration_status": "UNKNOWN",
+        "write_tools_status": "DISABLED_UNTIL_REGISTERED_AND_AUTHORIZED",
+    })
+    write_json(repo, ".governance/mcp-binding.json", mcp_binding)
+
+    access_plan = read_json(repo, ".governance/access-plan.json")
+    access_plan.update({
+        "repository": "{{REPOSITORY}}",
+        "status": "DISCOVERY_REQUIRED",
+    })
+    write_json(repo, ".governance/access-plan.json", access_plan)
+
+    workflow_model = read_json(repo, ".governance/workflow-model.json")
+    workflow_model.update({
+        "repository": "{{REPOSITORY}}",
+        "selected_model": None,
+    })
+    write_json(repo, ".governance/workflow-model.json", workflow_model)
 
     write_json(repo, ".governance/work/work-items.json", {
         "schema_version": "1.0.0",

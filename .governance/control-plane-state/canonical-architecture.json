@@ -4,17 +4,17 @@
   "authority_type": "CANONICAL_TARGET_ARCHITECTURE",
   "scope": "CONTROL_PLANE_SOURCE_ONLY",
   "status": "ACCEPTED_TARGET_ARCHITECTURE",
-  "current_revision": 4,
+  "current_revision": 5,
   "canonical_path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
   "revision": {
-    "revision_id": "CP-ARCH-001-R4",
-    "revision_number": 4,
-    "subject_head_sha": "9782af27a1b8c97cdbbc8e2bc15ac2b02d649488",
-    "supersedes_revision_id": "CP-ARCH-001-R3",
+    "revision_id": "CP-ARCH-001-R5",
+    "revision_number": 5,
+    "subject_head_sha": "784e8738758ac9de1d59c3119304a833b720f213",
+    "supersedes_revision_id": "CP-ARCH-001-R4",
     "source_decision_ids": [
-      "CPD-023"
+      "CPD-024"
     ],
-    "reason": "Add version-dynamic, non-destructive governed client upgrade contract and source/client CI portability.",
+    "reason": "Add complete portable self-test isolation contract for fresh-template simulations executed from instantiated clients.",
     "approval_eligible_from_imported_memory": false
   },
   "source_provenance": {
@@ -191,5 +191,23 @@
     ],
     "source_only_memory_on_client": false,
     "source_only_ci_steps": "SKIP_CLEANLY_ON_CLIENT"
+  },
+  "portable_selftest_contract": {
+    "temporary_fixture_only": true,
+    "reset_domains": [
+      "PROFILE",
+      "PROJECT_PROFILE",
+      "INFRASTRUCTURE_INTENT",
+      "LOCAL_ENTRY",
+      "MCP_BINDING",
+      "ACCESS_PLAN",
+      "WORKFLOW_MODEL",
+      "WORK_ITEMS",
+      "CLAIMS",
+      "SESSIONS",
+      "CANONICAL_MEMORY"
+    ],
+    "real_client_state_mutated": false,
+    "subprocess_diagnostics": "STDOUT_STDERR_REQUIRED"
   }
 }

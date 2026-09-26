@@ -163,3 +163,16 @@
 - C1-12-I-A: DONE.
 - Pilot remained untouched during framework correction.
 - Next action: `C1_12_I_B_APPLY_CURRENT_TEMPLATE_TO_CASE1_PILOT`.
+
+
+## Entry AAL-20260926-V286-001
+
+- Agent identity: ChatGPT
+- Workstream: CASE 1 / C1-12 portable self-test validation
+- Product repository: `chainsolutions-wealthtech/Governed-Repository-Template`
+- External pilot evidence head: `17f852c19ac8c5d26f40d3508338ce9c221697c8`
+- Pilot CI evidence: `36275001208`
+- Discovery: connection-intent synthetic fixture still inherited project-profile/infrastructure/local-entry/MCP/access/workflow state.
+- Product action: V2.8.6 complete synthetic fixture reset + explicit subprocess diagnostics.
+- Pilot direct patching: none.
+- Unique next action: `C1_12_J_B_COMPLETE_PORTABLE_INTENT_FIXTURE`.
