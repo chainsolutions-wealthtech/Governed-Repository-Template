@@ -7,11 +7,12 @@ import os
 import pathlib
 import subprocess
 import tempfile
+import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 
-from local_governed_entry import record_mcp_discovery
+from local_governed_entry import record_mcp_discovery, record_mcp_discovery_failure
 from local_entry_issue_bridge import api, extract_state, persist, render
 
 DIRECT_TO_SSH = {
@@ -189,8 +190,15 @@ def request_ssh_certificate(repository: str, head_sha: str, public_key: str):
             },
             data=body,
         )
-        with urllib.request.urlopen(req, timeout=20) as response:
-            raw = response.read(32769)
+        try:
+            with urllib.request.urlopen(req, timeout=20) as response:
+                raw = response.read(32769)
+        except urllib.error.HTTPError as exc:
+            if exc.code == 403:
+                raise RuntimeError("SSH_CERTIFICATE_BROKER_FORBIDDEN") from exc
+            raise RuntimeError(f"SSH_CERTIFICATE_BROKER_HTTP_{exc.code}") from exc
+        except urllib.error.URLError as exc:
+            raise RuntimeError("SSH_CERTIFICATE_BROKER_UNREACHABLE") from exc
     finally:
         oidc = ""
     if len(raw) > 32768:
@@ -363,32 +371,50 @@ def main():
         "ssh_certificate": None,
     }
 
-    if transport in {"DIRECT_MCP_TOKEN", "BOTH"}:
-        token = os.environ.get("GOVERNED_MCP_AUTH_TOKEN")
-        if not token:
-            if transport=="DIRECT_MCP_TOKEN":
-                raise SystemExit("MCP_DIRECT_CREDENTIAL_MISSING")
-            evidence["direct_mcp"] = unavailable_direct_credential_evidence()
-        else:
-            evidence["direct_mcp"] = discover_direct(endpoint, token)
-
-    if transport in {"SSH", "BOTH"}:
-        profile = answers.get("ssh_connection_profile")
-        if not isinstance(profile, dict):
-            raise SystemExit("SSH_PROFILE_MISSING")
-        evidence["ssh_certificate"] = discover_ssh(
-            repository,
-            expected_head,
-            profile,
-        )
-
-    if transport not in {"DIRECT_MCP_TOKEN", "SSH", "BOTH"}:
-        raise SystemExit("MCP_TRANSPORT_INVALID")
-
     try:
+        if transport in {"DIRECT_MCP_TOKEN", "BOTH"}:
+            token = os.environ.get("GOVERNED_MCP_AUTH_TOKEN")
+            if not token:
+                if transport=="DIRECT_MCP_TOKEN":
+                    raise RuntimeError("MCP_DIRECT_CREDENTIAL_MISSING")
+                evidence["direct_mcp"] = unavailable_direct_credential_evidence()
+            else:
+                evidence["direct_mcp"] = discover_direct(endpoint, token)
+
+        if transport in {"SSH", "BOTH"}:
+            profile = answers.get("ssh_connection_profile")
+            if not isinstance(profile, dict):
+                raise RuntimeError("SSH_PROFILE_MISSING")
+            evidence["ssh_certificate"] = discover_ssh(
+                repository,
+                expected_head,
+                profile,
+            )
+
+        if transport not in {"DIRECT_MCP_TOKEN", "SSH", "BOTH"}:
+            raise RuntimeError("MCP_TRANSPORT_INVALID")
+
         evidence = summarize_discovery_evidence(evidence)
-    except RuntimeError as exc:
-        raise SystemExit(str(exc)) from exc
+    except Exception as exc:
+        code = str(exc)[:200] or type(exc).__name__
+        failure = {
+            "status": "ERROR",
+            "failure_code": code,
+            "transport": transport,
+            "endpoint": endpoint,
+            "observed_at": observed_at,
+            "direct_mcp": evidence.get("direct_mcp"),
+            "ssh_certificate": evidence.get("ssh_certificate"),
+            "retryable": True,
+        }
+        state2 = record_mcp_discovery_failure(state, failure)
+        persist(args.issue_number, issue.get("body"), state2)
+        api(
+            "POST",
+            f"/repos/{repository}/issues/{args.issue_number}/comments",
+            {"body": render(state2)},
+        )
+        raise SystemExit(code)
 
     state2 = record_mcp_discovery(state, evidence)
     persist(args.issue_number, issue.get("body"), state2)
