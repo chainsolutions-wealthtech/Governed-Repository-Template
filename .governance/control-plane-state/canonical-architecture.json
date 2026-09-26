@@ -137,5 +137,37 @@
       "ENTER_GOVERNED_FLOW"
     ],
     "backlog_prefix": "IDN"
+  },
+  "agent_purpose_routing": {
+    "status": "PLANNED",
+    "top_level_options": [
+      "WORK_ON_CONTROL_PLANE",
+      "APPLY_GOVERNANCE_CASE"
+    ],
+    "control_plane_work_kinds": [
+      "CODE_IMPLEMENTATION",
+      "EXECUTE_EXISTING_TASK",
+      "ADD_OR_ENRICH_INFORMATION"
+    ],
+    "governance_cases": [
+      "CREATE_NEW_REPOSITORY",
+      "ADOPT_EXISTING_REPOSITORY",
+      "MAP_EXISTING_PROJECT",
+      "LAB_EVOLUTION"
+    ],
+    "post_case_mode_excluded_from_case_choice": "CONTINUE_GOVERNED_WORK",
+    "human_boundary": {
+      "manual_technical_operations": false,
+      "answers_and_choices": true,
+      "explicit_approvals_when_required": true
+    },
+    "automation_invariants": [
+      "AUTOMATION_NE_AUTHORITY",
+      "HUMAN_TECHNICAL_STEPS_NOT_REQUIRED",
+      "FOUR_CASES_EXACTLY",
+      "RESUME_FROM_EXACT_UNANSWERED_STEP",
+      "AMBIGUITY_FAILS_CLOSED"
+    ],
+    "backlog_prefix": "RTE"
   }
 }
