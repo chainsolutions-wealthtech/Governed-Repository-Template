@@ -94,3 +94,10 @@ The future admin web application is intentionally deferred until all structuring
 - Structuring cases registered: 4.
 - CASE 1 replay data: ACTIVE.
 - Future admin frontend: DEFERRED until all case/parcours validation is complete.
+
+## V2.8.0 memory freshness reconciliation
+
+- Current canonical main HEAD observed before this reconciliation: `2ad88338fc3f02efbbf2c5e0572dd0a1754701fd`.
+- CASE 1 step-1 wording reconciled to the adaptive MCP contract: MCP optional; if linked, DIRECT/SSH/BOTH are owner choices.
+- Relational runtime seed and machine current-state HEAD reconciled to the observed main HEAD.
+- Active workflow checkpoint remains `C1-12 / STEP_4_PROVE_NORMAL_GOVERNED_ENTRY_ON_GOUVERN`.
