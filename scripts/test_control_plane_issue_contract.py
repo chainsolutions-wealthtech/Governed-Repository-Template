@@ -116,6 +116,13 @@ def main() -> None:
     upgrader = (ROOT / "scripts" / "control_plane_upgrade_local_entry.py").read_text(encoding="utf-8")
     if '"scripts/control_plane_local_command.py"' not in upgrader:
         raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: target upgrader missing machine local command script")
+    for fragment in [
+        '".governance/control-plane-policy.json"',
+        'control_plane_policy["current_role"]="GOVERNED_TARGET_CLIENT"',
+        'control_plane_policy["client_repository"]=target',
+    ]:
+        if fragment not in upgrader:
+            raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: target upgrader missing client policy sync: " + fragment)
 
     initializer = (ROOT / "scripts" / "initialize_governance.py").read_text(encoding="utf-8")
     if 'control_plane.get("source_only_paths", [])' not in initializer:
