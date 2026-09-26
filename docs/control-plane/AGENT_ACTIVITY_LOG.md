@@ -58,3 +58,18 @@
   - preserved C1-12-F as unique active execution task.
 - Proposal retained for later: reducer/reconstruction validation, role/capability enforcement, stronger cross-projection CI, derived PDF generation, Governance API, PostgreSQL projection, Admin Web UI.
 - Unique execution next action remains: `C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM`.
+
+
+## Entry AAL-20260926-DB-001
+
+- Agent identity: ChatGPT
+- Workstream: Canonical memory / continuous relational projection
+- Starting source HEAD observed: `acafebdf3cd3194ad6c1b3ceee4426559e2b70fe`
+- Owner instruction: record all meaningful information and construct/populate the relational database continuously alongside governed work.
+- Classification: durable new requirement; architecture-compatible; no execution-phase rollback required.
+- Actions:
+  - appended decision `CPD-019`;
+  - added continuous projection contract to control-plane policy;
+  - documented the relational projection rule;
+  - projected owner feedback and canonical memory events into `runtime-seed.json`.
+- Unique execution next action remains: `C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM`.

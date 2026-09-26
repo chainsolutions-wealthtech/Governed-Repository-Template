@@ -202,3 +202,38 @@ HISTORY     → decisions / events / evidence / owner feedback
 ```
 
 A current projection may be regenerated; history must remain explainable and revisioned.
+
+
+## Continuous projection rule
+
+The relational database is built **while** the governance workflows are built; it is not a later reconstruction project.
+
+For every durable structured change:
+
+```text
+OWNER / AGENT / WORKFLOW INFORMATION
+        ↓
+canonical Git authority / history
+        ↓
+relational seed/event projection
+        ↓
+deterministic materialization
+        ↓
+validation
+```
+
+Categories covered include:
+- owner feedback;
+- decisions and supersessions;
+- agent sessions/activity;
+- program/task/subtask changes;
+- evidence;
+- checkpoints;
+- handoffs;
+- intakes;
+- artifacts;
+- canonical authority revisions.
+
+If a structured record cannot yet be represented by the current schema, it must be explicitly recorded as `PENDING_PROJECTION` and become a schema/migration task. Silent omission is forbidden.
+
+This preserves the future Admin UI objective without allowing the UI/database to outrank Git authorities.

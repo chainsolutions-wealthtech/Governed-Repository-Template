@@ -72,6 +72,26 @@
         "Defer API/PostgreSQL/UI until workflow semantics stabilize."
       ],
       "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM"
+    },
+    {
+      "activity_id": "AAL-20260926-DB-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "CANONICAL_MEMORY_CONTINUOUS_RELATIONAL_PROJECTION",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "acafebdf3cd3194ad6c1b3ceee4426559e2b70fe",
+      "objective": "Persist the owner's requirement that canonical memory and the relational database evolve together.",
+      "evidence_refs": [
+        "CPD-019",
+        ".governance/control-plane-policy.json",
+        ".governance/control-plane-db/runtime-seed.json",
+        "docs/control-plane/DATA_MODEL.md"
+      ],
+      "remarks": [
+        "Database construction is continuous and governed, not deferred as a separate rebuild.",
+        "Structured information not yet representable must be explicitly marked PENDING_PROJECTION."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM"
     }
   ]
 }

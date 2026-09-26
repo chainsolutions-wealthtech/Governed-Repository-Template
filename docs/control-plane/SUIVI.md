@@ -94,3 +94,12 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Added migration `003_canonical_authorities.sql` for authority revisions and canonical memory events.
 - Completed deterministic materializer support for history tables already defined in the schema.
 - Preserved current execution gate: CASE 1 / C1-12 / `C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM`.
+
+
+## 2026-09-26 — Continuous relational projection requirement
+
+- Owner requirement: keep recording all meaningful information and build/populate the database at the same time as framework work progresses.
+- Accepted as `CPD-019`.
+- Canonical rule: durable structured information is persisted in Git authorities/history and projected to the relational seed/event model in the same governed change when representable.
+- If the schema cannot represent a required record yet, the gap must be explicit as `PENDING_PROJECTION` and handled by an additive migration/task.
+- This enrichment does not change the active CASE 1 execution gate; C1-12-F remains the unique executable task.
