@@ -206,6 +206,29 @@
       ],
       "proposals": [],
       "unique_next_action": "C1_12_I_VALIDATE_V2_8_4_ON_CASE1_PILOT"
+    },
+    {
+      "activity_id": "AAL-20260926-V285-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "CREATE_NEW_REPOSITORY/C1-12",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "9782af27a1b8c97cdbbc8e2bc15ac2b02d649488",
+      "objective": "Fix generic client-upgrade distribution gaps in the framework before external pilot validation.",
+      "evidence_refs": [
+        "scripts/control_plane_upgrade_local_entry.py",
+        ".github/workflows/governance-ci.yml",
+        "CPD-023",
+        "CP-ARCH-001-R4"
+      ],
+      "discovered_tasks": [
+        "C1-12-I-A",
+        "C1-12-I-B"
+      ],
+      "remarks": [
+        "No pilot mutation is allowed until the Template upgrader can distribute the current release safely."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_I_A_FIX_DYNAMIC_CLIENT_UPGRADER"
     }
   ]
 }
