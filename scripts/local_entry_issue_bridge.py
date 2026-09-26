@@ -8,6 +8,7 @@ ROOT=Path(__file__).resolve().parents[1]
 TITLE_PREFIX="[Governed Local Entry]"
 MARKER_RE=re.compile(r"\n?<!-- GOVERNED_LOCAL_ENTRY_STATE:([A-Za-z0-9_-]+) -->\s*$",re.S)
 TRUSTED_ASSOCIATIONS={"OWNER","MEMBER","COLLABORATOR"}
+MACHINE_SOURCE_REPOSITORY="chainsolutions-wealthtech/Governed-Repository-Template"
 
 def api(method,path,payload=None):
     token=os.environ["GITHUB_TOKEN"]
@@ -128,17 +129,63 @@ def commented(event):
         api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{issue['number']}/comments",{"body":f"### Local entry response refused\n\n`{type(exc).__name__}: {exc}`\n\nNo state advanced."});return
     emit_outputs(s,issue["number"])
 
-def dispatch(event):
+def dispatch_start(event):
     p=event.get("client_payload") or {};objective=p.get("objective")
     if not isinstance(objective,str) or not objective.strip():raise SystemExit("LOCAL_DISPATCH_FAILED: objective required")
     created=api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues",{"title":f"{TITLE_PREFIX} {str(p.get('title') or objective.splitlines()[0])[:80]}","body":f"### Initial objective\n\n{objective.strip()}\n"})
     print(json.dumps({"status":"LOCAL_ENTRY_ISSUE_CREATED","issue_number":created.get("number"),"issue_url":created.get("html_url")}))
 
+def dispatch_machine_command(event):
+    p=event.get("client_payload") or {}
+    sender=event.get("sender") or {}
+    if sender.get("type")!="Bot":
+        raise SystemExit("LOCAL_MACHINE_COMMAND_FAILED: sender must be a GitHub App bot")
+    if p.get("source_repository")!=MACHINE_SOURCE_REPOSITORY:
+        raise SystemExit("LOCAL_MACHINE_COMMAND_FAILED: invalid source repository")
+    number=p.get("issue_number");expected=p.get("expected_head");command=p.get("command")
+    if not isinstance(number,int) or number<1:
+        raise SystemExit("LOCAL_MACHINE_COMMAND_FAILED: issue_number")
+    if not isinstance(expected,str) or not re.fullmatch(r"[0-9a-f]{40}",expected):
+        raise SystemExit("LOCAL_MACHINE_COMMAND_FAILED: expected_head")
+    observed=head()
+    if observed!=expected:
+        raise SystemExit(f"HEAD_MOVED: expected={expected} observed={observed}")
+    if not isinstance(command,dict) or command.get("kind") not in {"execute","answer"}:
+        raise SystemExit("LOCAL_MACHINE_COMMAND_FAILED: command")
+    issue=api("GET",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{number}")
+    if not str(issue.get("title","")).startswith(TITLE_PREFIX):
+        raise SystemExit("LOCAL_MACHINE_COMMAND_FAILED: target issue")
+    s=extract_state(issue.get("body"))
+    if s.get("expected_head_sha")!=expected:
+        raise SystemExit(f"LOCAL_STATE_HEAD_MOVED: expected={expected} state={s.get('expected_head_sha')}")
+    try:
+        if command["kind"]=="answer":
+            if set(command)!={"kind","field","value"}:raise ValueError("answer requires kind/field/value")
+            s=answer(s,command["field"],command["value"])
+        else:
+            if set(command)!={"kind"}:raise ValueError("execute requires only kind")
+            if (s.get("next_request") or {}).get("kind")=="CREDENTIAL_GATE":
+                transport=s.get("answers",{}).get("mcp_transport")
+                missing=[]
+                if transport in {"DIRECT_MCP_TOKEN","BOTH"} and not os.environ.get("GOVERNED_MCP_AUTH_TOKEN"):
+                    missing.append("GOVERNED_MCP_AUTH_TOKEN")
+                if missing:raise ValueError("missing GitHub Actions secret/variable: "+", ".join(missing))
+                s=mark_credentials_verified(s)
+            else:
+                raise ValueError("execute is only valid at an executable local gate")
+    except Exception as exc:
+        api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{number}/comments",{"body":f"### Governed machine local command refused\n\n`{type(exc).__name__}: {exc}`\n\nNo state advanced."})
+        return
+    persist(number,issue.get("body"),s)
+    api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{number}/comments",{"body":render(s)})
+    emit_outputs(s,number)
+
 def main():
     if os.environ.get("GITHUB_REPOSITORY")=="chainsolutions-wealthtech/Governed-Repository-Template":
         print("LOCAL_ENTRY_SKIPPED: central template source");return
     e=json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text(encoding="utf-8"));name=os.environ.get("GITHUB_EVENT_NAME")
-    if name=="repository_dispatch" and e.get("action")=="governed_local_start":dispatch(e)
+    if name=="repository_dispatch" and e.get("action")=="governed_local_start":dispatch_start(e)
+    elif name=="repository_dispatch" and e.get("action")=="governed_local_command":dispatch_machine_command(e)
     elif name=="issues" and e.get("action")=="opened":opened(e)
     elif name=="issue_comment" and e.get("action")=="created":
         if (e.get("sender") or {}).get("login")!="github-actions[bot]":commented(e)
