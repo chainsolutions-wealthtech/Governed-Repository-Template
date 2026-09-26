@@ -1,13 +1,13 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = MERGE_V2_7_0_AND_ATTEST_RELEASE_HEAD
-STATE = READY_TO_RELEASE
+NEXT_ACTION = RESUME_PROGRAM_12_SECOND_FRESH_REPOSITORY_E2E
+STATE = READY
 ```
 
 ## Objective
 
-Merge the green V2.7.0 release, then create a source-state attestation checkpoint against the resulting canonical main HEAD before resuming framework program #12.
+Resume canonical framework program #12 at `STEP_4_SECOND_FRESH_REPOSITORY_E2E`: create and prove a second clean repository from V2.7.0 without relying on the historical migrations of `Patricked-code/Gouvern`.
 
 ## Required completion evidence
 
