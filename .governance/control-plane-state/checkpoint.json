@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "checkpoint_id": "CP-CHECKPOINT-20260926-009",
+  "checkpoint_id": "CP-CHECKPOINT-20260926-010",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-  "subject_head": "556011ea20310a483f77a9a382b66b79bed4b31c",
+  "subject_head": "784e8738758ac9de1d59c3119304a833b720f213",
   "template_version_before": "2.7.0",
-  "state": "C1_12_V2_8_5_RELEASED_PENDING_GOVERNED_PILOT_UPGRADE",
+  "state": "C1_12_COMPLETE_PORTABLE_INTENT_FIXTURE_IN_PROGRESS",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
@@ -21,9 +21,11 @@
     "c1_12_h_template_release": "PASS",
     "v2_8_4_release_subject": "608d29318d1b2df199e4ec304c4e2fe7bfb94263",
     "c1_12_i_a_dynamic_client_upgrader": "PASS",
-    "v2_8_5_release_subject": "556011ea20310a483f77a9a382b66b79bed4b31c"
+    "v2_8_5_release_subject": "556011ea20310a483f77a9a382b66b79bed4b31c",
+    "c1_12_i_b_governed_pilot_upgrade": "PASS",
+    "c1_12_j_a_root_cause": "PASS"
   },
-  "next_action": "C1_12_I_B_APPLY_CURRENT_TEMPLATE_TO_CASE1_PILOT",
+  "next_action": "C1_12_J_B_COMPLETE_PORTABLE_INTENT_FIXTURE",
   "reconciliation_required_before_write": true,
   "ci_run": 36274765257,
   "ci_result": "PASS",
@@ -31,12 +33,16 @@
   "self_governance": "PASS",
   "reconciliation_reason": "STEP_4_AND_STEP_5_WERE_COMPRESSED_IN_SOURCE_SUMMARY",
   "canonical_memory_database": "PASS",
-  "blocker": null,
+  "blocker": {
+    "product_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+    "external_evidence_run": 36275001208,
+    "root_cause": "INCOMPLETE_SYNTHETIC_BOOTSTRAP_FIXTURE"
+  },
   "knowledge_enrichment": {
     "canonical_architecture": {
       "authority_id": "CP-ARCH-001",
-      "revision": 4,
-      "source_head": "9782af27a1b8c97cdbbc8e2bc15ac2b02d649488",
+      "revision": 5,
+      "source_head": "784e8738758ac9de1d59c3119304a833b720f213",
       "execution_gate_unchanged": true
     },
     "agent_purpose_routing": {
