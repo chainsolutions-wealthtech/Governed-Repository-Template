@@ -117,23 +117,32 @@ def main() -> None:
     if not target_token:
         fail("TARGET_TOKEN_MISSING")
 
-    repository = api(target_token, "GET", f"/repos/{args.target_repository}")
-    branch = repository.get("default_branch") or "main"
-    ref = api(
-        target_token,
-        "GET",
-        f"/repos/{args.target_repository}/git/ref/heads/{urllib.parse.quote(branch, safe='')}",
-    )
+    try:
+        repository = api(target_token, "GET", f"/repos/{args.target_repository}")
+        branch = repository.get("default_branch") or "main"
+        ref = api(
+            target_token,
+            "GET",
+            f"/repos/{args.target_repository}/git/ref/heads/{urllib.parse.quote(branch, safe='')}",
+        )
+    except RuntimeError:
+        fail("TARGET_GITHUB_CONTEXT_READ_FAILED")
     remote_head = ((ref.get("object") or {}).get("sha"))
     if remote_head != args.expected_head:
         raise SystemExit(f"HEAD_MOVED: expected={args.expected_head} remote={remote_head}")
 
-    issue = api(
-        target_token,
-        "GET",
-        f"/repos/{args.target_repository}/issues/{args.target_issue}",
-    )
-    state = decode_state(issue.get("body"))
+    try:
+        issue = api(
+            target_token,
+            "GET",
+            f"/repos/{args.target_repository}/issues/{args.target_issue}",
+        )
+    except RuntimeError:
+        fail("TARGET_ISSUE_READ_FAILED")
+    try:
+        state = decode_state(issue.get("body"))
+    except (RuntimeError, ValueError, json.JSONDecodeError):
+        fail("TARGET_LOCAL_STATE_DECODE_FAILED")
     if state.get("repository") != args.target_repository:
         raise SystemExit("LOCAL_ENTRY_REPOSITORY_MISMATCH")
     if state.get("expected_head_sha") != args.expected_head:
@@ -141,7 +150,13 @@ def main() -> None:
             f"LOCAL_STATE_HEAD_MOVED: expected={args.expected_head} state={state.get('expected_head_sha')}"
         )
 
-    if not validate_requirements(state):
+    try:
+        credential_required = validate_requirements(state)
+    except RuntimeError:
+        fail("TARGET_CREDENTIAL_GATE_CONTRACT_INVALID")
+
+    if not credential_required:
+        emit_output("failure_code", "NONE")
         print(json.dumps({
             "status": "MCP_CREDENTIAL_PROVISION_NOT_REQUIRED",
             "target_repository": args.target_repository,
