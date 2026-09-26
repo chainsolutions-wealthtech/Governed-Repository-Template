@@ -103,3 +103,13 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Canonical rule: durable structured information is persisted in Git authorities/history and projected to the relational seed/event model in the same governed change when representable.
 - If the schema cannot represent a required record yet, the gap must be explicit as `PENDING_PROJECTION` and handled by an additive migration/task.
 - This enrichment does not change the active CASE 1 execution gate; C1-12-F remains the unique executable task.
+
+
+## 2026-09-26 — Identity / connection / session routing backlog captured
+
+- Owner asked whether arriving agents are automatically identified, bound to a unique session, linked to the entry account and routed chronologically.
+- Live verification showed current behavior is only partial: stable session IDs and resume logic exist, but arrival/account capture and full source-control-plane auto-session are not yet automatic.
+- Added decision `CPD-020`: PRINCIPAL, AGENT, CONNECTION, SESSION, ROLE and AUTHORITY are distinct dimensions.
+- Added planned tasks `IDN-001` through `IDN-013`.
+- Projected the requirement into relational owner-feedback and canonical-memory events.
+- Active CASE 1 execution remains unchanged: `C1-12-F`.
