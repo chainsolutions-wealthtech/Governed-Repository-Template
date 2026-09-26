@@ -122,3 +122,17 @@
 - Decision added: `CPD-022` — Template is the product; pilots are validation fixtures.
 - C1-12-F: DONE.
 - C1-12-G: IN_PROGRESS pending Template CI.
+
+
+## Entry AAL-20260926-V284-002
+
+- Agent identity: ChatGPT
+- Workstream: CASE 1 / C1-12 post-release reconciliation
+- Product repository: `chainsolutions-wealthtech/Governed-Repository-Template`
+- Release subject: `608d29318d1b2df199e4ec304c4e2fe7bfb94263`
+- Result: V2.8.4 merged after full Template Governance CI PASS.
+- C1-12-G template fix: DONE.
+- C1-12-H template CI/release: DONE.
+- Next: validate V2.8.4 on an external CASE 1 pilot only.
+- Product/pilot rule preserved: all generic fixes continue to originate in the Template.
+- Unique next action: `C1_12_I_VALIDATE_V2_8_4_ON_CASE1_PILOT`.
