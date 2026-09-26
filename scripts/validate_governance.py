@@ -157,6 +157,10 @@ SOURCE_ONLY_REQUIRED = {
     ".governance/control-plane-state/handoff.json",
     ".governance/control-plane-state/tasks.json",
     ".governance/control-plane-state/case1-replay.json",
+    ".governance/control-plane-db/001_schema.sql",
+    ".governance/control-plane-db/catalog.json",
+    ".governance/control-plane-db/runtime-seed.json",
+    ".governance/control-plane-db/materialize.py",
 }
 CONTROL_PLANE_REPOSITORY = "chainsolutions-wealthtech/Governed-Repository-Template"
 
@@ -451,6 +455,7 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
         ".github/ISSUE_TEMPLATE/governed-request.yml",
         "docs/control-plane",
         ".governance/control-plane-state",
+        ".governance/control-plane-db",
     }
     if set(policy.get("source_only_paths") or []) != expected_source_only:
         fail("control plane source-only path contract is invalid")
