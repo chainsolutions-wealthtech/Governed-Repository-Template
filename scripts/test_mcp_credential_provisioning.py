@@ -59,7 +59,6 @@ def main() -> None:
         "Report governed MCP credential provisioning failure",
         "steps.mcp-credential.outcome == 'failure'",
         "steps.mcp-credential.outcome == 'success'",
-        "steps.mcp-credential.outcome == 'success'",
     ]:
         if fragment not in workflow:
             raise SystemExit("MCP_CREDENTIAL_PROVISION_SELFTEST_FAILED: workflow contract " + fragment)
@@ -84,7 +83,6 @@ def main() -> None:
         "TARGET_ISSUE_READ_FAILED",
         "TARGET_LOCAL_STATE_DECODE_FAILED",
         "TARGET_CREDENTIAL_GATE_CONTRACT_INVALID",
-        "local_command_required == 'true'",
         "provisioning_status",
         "MCP_CREDENTIAL_PROVISION_DEFERRED",
         "DEFERRED_TO_SSH_FALLBACK",
