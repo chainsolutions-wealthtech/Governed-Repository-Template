@@ -32,7 +32,7 @@ The central control plane:
 
 The source secret value must never appear on a command line, in Git, issue comments, state markers, evidence, or logs.
 
-If the central secret is unavailable, the target GitHub App installation lacks `Secrets: write`, the HEAD differs, or the local credential requirements differ from the supported contract, the flow stops without advancing governed state.
+For `DIRECT_MCP_TOKEN`, if the central secret is unavailable, the flow stops without advancing governed state. For `BOTH`, the direct token remains preferred, but its absence may defer direct credential provisioning and continue only through the governed GitHub OIDC SSH read-only discovery path. Missing target GitHub App permissions, HEAD mismatch, or an unsupported credential contract still fail closed.
 
 This is a one-time control-plane configuration pattern: the control plane holds the MCP credential centrally so future governed repositories do not require manual secret copying.
 
@@ -100,6 +100,13 @@ The common evidence surface covers:
 - `get_write_tools_context` / SSH `write-tools-context`
 
 For `BOTH`, direct MCP evidence and SSH-certificate evidence are preserved separately so disagreements can be reconciled instead of silently collapsed.
+
+If the direct credential is unavailable, `BOTH` may continue initial read-only discovery through the SSH OIDC path. In that case:
+- direct evidence is recorded as `UNAVAILABLE_CREDENTIAL`;
+- SSH evidence must independently provide usable `PASS` or `PARTIAL` discovery evidence;
+- the combined discovery is always `PARTIAL` and marked degraded;
+- no direct MCP success is inferred;
+- no MCP write authority is granted by the fallback.
 
 ## Domain resolution
 

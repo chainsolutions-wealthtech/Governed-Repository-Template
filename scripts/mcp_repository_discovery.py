@@ -26,6 +26,30 @@ SSH_BROKER_BASE_URL = "https://mcp.wealthtechinnovations.com"
 REQUIRED_DISCOVERY_TOOLS = ("ping", "get_project_context")
 
 
+def unavailable_direct_credential_evidence():
+    return {
+        "status": "UNAVAILABLE_CREDENTIAL",
+        "reason": "GOVERNED_MCP_AUTH_TOKEN_MISSING",
+        "fallback": "SSH_OIDC_READONLY",
+    }
+
+
+def summarize_discovery_evidence(evidence):
+    components = [
+        part for part in (evidence.get("direct_mcp"), evidence.get("ssh_certificate"))
+        if isinstance(part, dict)
+    ]
+    if not components:
+        raise RuntimeError("MCP_DISCOVERY_NO_EVIDENCE")
+    successful = [part for part in components if part.get("status") in {"PASS","PARTIAL"}]
+    if not successful:
+        raise RuntimeError("MCP_DISCOVERY_NO_USABLE_EVIDENCE")
+    result = dict(evidence)
+    result["status"] = "PASS" if all(part.get("status")=="PASS" for part in components) else "PARTIAL"
+    result["degraded"] = any(part.get("status")=="UNAVAILABLE_CREDENTIAL" for part in components)
+    return result
+
+
 def parse_mcp_body(raw: str):
     raw = raw.strip()
     if not raw:
@@ -342,8 +366,11 @@ def main():
     if transport in {"DIRECT_MCP_TOKEN", "BOTH"}:
         token = os.environ.get("GOVERNED_MCP_AUTH_TOKEN")
         if not token:
-            raise SystemExit("MCP_DIRECT_CREDENTIAL_MISSING")
-        evidence["direct_mcp"] = discover_direct(endpoint, token)
+            if transport=="DIRECT_MCP_TOKEN":
+                raise SystemExit("MCP_DIRECT_CREDENTIAL_MISSING")
+            evidence["direct_mcp"] = unavailable_direct_credential_evidence()
+        else:
+            evidence["direct_mcp"] = discover_direct(endpoint, token)
 
     if transport in {"SSH", "BOTH"}:
         profile = answers.get("ssh_connection_profile")
@@ -358,14 +385,10 @@ def main():
     if transport not in {"DIRECT_MCP_TOKEN", "SSH", "BOTH"}:
         raise SystemExit("MCP_TRANSPORT_INVALID")
 
-    component_statuses = [
-        part.get("status")
-        for part in (evidence.get("direct_mcp"), evidence.get("ssh_certificate"))
-        if isinstance(part, dict)
-    ]
-    if not component_statuses:
-        raise SystemExit("MCP_DISCOVERY_NO_EVIDENCE")
-    evidence["status"] = "PASS" if all(status == "PASS" for status in component_statuses) else "PARTIAL"
+    try:
+        evidence = summarize_discovery_evidence(evidence)
+    except RuntimeError as exc:
+        raise SystemExit(str(exc)) from exc
 
     state2 = record_mcp_discovery(state, evidence)
     persist(args.issue_number, issue.get("body"), state2)

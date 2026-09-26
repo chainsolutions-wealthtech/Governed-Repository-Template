@@ -79,6 +79,9 @@ def main() -> None:
         "TARGET_ISSUE_READ_FAILED",
         "TARGET_LOCAL_STATE_DECODE_FAILED",
         "TARGET_CREDENTIAL_GATE_CONTRACT_INVALID",
+        "MCP_CREDENTIAL_PROVISION_DEFERRED",
+        "DEFERRED_TO_SSH_FALLBACK",
+        "SSH_OIDC_READONLY",
     ]:
         if fragment not in provisioner:
             raise SystemExit("MCP_CREDENTIAL_PROVISION_SELFTEST_FAILED: provisioner contract " + fragment)

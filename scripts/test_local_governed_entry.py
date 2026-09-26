@@ -63,6 +63,21 @@ def main():
     if any(item.get("name")=="GOVERNED_MCP_SSH_PRIVATE_KEY" for item in (ssh.get("setup_package") or {}).get("mcp",{}).get("credential_requirements",[])):
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: persistent SSH secret forbidden")
 
+    both=first_base()
+    both=answer_expected(both,"baseline_approved",True)
+    both=answer_expected(both,"setup_repository_now",True)
+    both=answer_expected(both,"link_mcp_server",True)
+    both=answer_expected(both,"mcp_transport","BOTH")
+    both=answer_expected(both,"mcp_endpoint","https://mcp.example.test/mcp")
+    both=answer_expected(both,"ssh_connection_profile",{"host":"212.227.212.33","user":"root","port":22})
+    both=answer_expected(both,"mcp_discovery_scope","FULL_GOVERNED_MAPPING")
+    both=answer_expected(both,"domain_strategy","DISCOVER_EXISTING_THEN_PROPOSE")
+    both=answer_expected(both,"runtime_mutation_policy","EXPLICIT_APPROVAL_FOR_SCOPED_WRITE")
+    if both["next_request"]["kind"]!="MCP_DISCOVERY":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: BOTH must allow secretless SSH discovery fallback")
+    if both.get("credentials_verified") is not True:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: BOTH mandatory credential gate should be satisfied by secretless fallback")
+
     n=new_request("LOCAL-2","owner/repo","c"*40,False,"later agent")
     for field,value in [
       ("agent_identity","Claude"),("provider","CLAUDE"),("connection_intent","CODE_CHANGE"),
