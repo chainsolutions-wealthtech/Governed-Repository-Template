@@ -128,7 +128,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.6.3",
+  "template_version": "2.6.4",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -188,7 +188,10 @@
     "central control plane automatic MCP repository-secret provisioning",
     "exact-HEAD credential gate before MCP secret propagation",
     "GitHub App repository Secrets write boundary",
-    "secret metadata attestation without secret value exposure"
+    "secret metadata attestation without secret value exposure",
+    "machine-readable MCP credential provisioning failure codes",
+    "control-plane issue evidence for blocked credential provisioning",
+    "machine dispatch blocked after credential provisioning failure"
   ],
   "automatic_initialization_supported": true
 }

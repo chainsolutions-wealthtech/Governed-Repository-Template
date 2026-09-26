@@ -9,6 +9,11 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main() -> None:
+    control_plane_workflow = ROOT / ".github/workflows/governed-control-plane.yml"
+    if not control_plane_workflow.exists():
+        print("MCP_CREDENTIAL_PROVISION_SELFTEST_SKIP: target client has no central control-plane workflow")
+        return
+
     required = {
         "next_request": {
             "kind": "CREDENTIAL_GATE",
@@ -46,6 +51,10 @@ def main() -> None:
         "control_plane_provision_mcp_credential.py",
         "GOVERNED_MCP_AUTH_TOKEN",
         "local_command_kind == 'execute'",
+        "continue-on-error: true",
+        "Report governed MCP credential provisioning failure",
+        "steps.mcp-credential.outcome == 'failure'",
+        "steps.mcp-credential.outcome == 'success'",
     ]:
         if fragment not in workflow:
             raise SystemExit("MCP_CREDENTIAL_PROVISION_SELFTEST_FAILED: workflow contract " + fragment)
@@ -62,6 +71,10 @@ def main() -> None:
         "secret_value_exposed",
         "HEAD_MOVED",
         "LOCAL_STATE_HEAD_MOVED",
+        "failure_code",
+        "CONTROL_PLANE_MCP_AUTH_TOKEN_MISSING",
+        "TARGET_MCP_SECRET_WRITE_FAILED",
+        "TARGET_MCP_SECRET_ATTESTATION_READ_FAILED",
     ]:
         if fragment not in provisioner:
             raise SystemExit("MCP_CREDENTIAL_PROVISION_SELFTEST_FAILED: provisioner contract " + fragment)

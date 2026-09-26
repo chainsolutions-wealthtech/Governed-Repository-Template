@@ -126,3 +126,15 @@ The MCP credential remains stored only as a GitHub Actions secret. Its value is 
 
 V2.6.3 preserves the V2.6.2 direct-MCP token contract and the V2.6 OIDC ephemeral SSH fallback. It automates distribution of the existing direct MCP credential; it does not grant MCP write authority, bypass project registration, or widen the SSH read-only boundary.
 
+## Governance Automation V2.6.4
+
+### Fixed
+
+- credential provisioning failures now emit stable non-secret failure codes;
+- the central control plane persists the failure code and exact target/HEAD context into the Governed Request issue;
+- machine local commands are not dispatched after a failed credential provisioning attempt.
+
+### Safety
+
+Failure evidence never includes credential values. A failed provisioning attempt leaves the target local-entry state unchanged and provides a deterministic remediation reason before retry.
+
