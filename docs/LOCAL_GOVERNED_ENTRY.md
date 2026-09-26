@@ -106,3 +106,17 @@ A new repository never receives MCP write authority merely because discovery suc
 ## Regulatory / AfricaFunds governed flow
 
 The reusable model is versioned in `.governance/workflow-model.json`: read authorities, observe GitHub, observe runtime when relevant, reconcile, verify exact HEAD, single writer, implement, verify/regression, persist, commit, verify remote, deploy only if authorized, verify production, then continue.
+
+### Central control-plane machine start
+
+The central control plane can start a new local entry on an already initialized repository through:
+
+```text
+/governed-local-start
+{"target_repository":"owner/repo","expected_head":"<40-char-sha>","objective":"<objective>"}
+```
+
+The central GitHub App verifies the target HEAD, dispatches `governed_local_start`, and the target workflow creates **and initializes** the new local-entry issue in the same dispatch.
+
+This path does not weaken the human issue/comment authorization gate. It is a distinct machine path authenticated by the central GitHub App and exact-HEAD bound.
+

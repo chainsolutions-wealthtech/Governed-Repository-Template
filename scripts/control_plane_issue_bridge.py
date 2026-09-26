@@ -79,6 +79,9 @@ def parse_command(body: str) -> tuple[str, dict] | None:
     if stripped.startswith("/governed-local-command"):
         raw = stripped[len("/governed-local-command"):].strip()
         return "local_command", json.loads(raw)
+    if stripped.startswith("/governed-local-start"):
+        raw = stripped[len("/governed-local-start"):].strip()
+        return "local_start", json.loads(raw)
     return None
 
 
@@ -179,6 +182,7 @@ def emit_executor_outputs(
     issue_number: int,
     upgrade_payload: dict | None = None,
     local_command_payload: dict | None = None,
+    local_start_payload: dict | None = None,
 ) -> None:
     output_path = os.environ.get("GITHUB_OUTPUT")
     if not output_path:
@@ -193,6 +197,7 @@ def emit_executor_outputs(
         f"executor_required={'true' if required else 'false'}",
         f"upgrade_required={'true' if upgrade_payload else 'false'}",
         f"local_command_required={'true' if local_command_payload else 'false'}",
+        f"local_start_required={'true' if local_start_payload else 'false'}",
         f"issue_number={issue_number}",
     ]
     if upgrade_payload:
@@ -233,6 +238,26 @@ def emit_executor_outputs(
             f"local_command_target_issue={target_issue}",
             f"local_command_expected_head={expected_head}",
             f"local_command_b64={command_b64}",
+        ])
+    if local_start_payload:
+        expected = {"target_repository", "expected_head", "objective"}
+        if set(local_start_payload) != expected:
+            raise ValueError("local start payload must contain target_repository, expected_head and objective")
+        target_repository = str(local_start_payload.get("target_repository") or "")
+        expected_head = str(local_start_payload.get("expected_head") or "")
+        objective = str(local_start_payload.get("objective") or "").strip()
+        if "/" not in target_repository:
+            raise ValueError("local start target_repository invalid")
+        if not re.fullmatch(r"[0-9a-f]{40}", expected_head):
+            raise ValueError("local start expected_head must be a lowercase 40-char SHA")
+        if not objective:
+            raise ValueError("local start objective is required")
+        objective_b64 = base64.urlsafe_b64encode(objective.encode("utf-8")).decode("ascii").rstrip("=")
+        lines.extend([
+            f"local_start_target_repository={target_repository}",
+            f"local_start_target_owner={target_repository.split('/',1)[0]}",
+            f"local_start_expected_head={expected_head}",
+            f"local_start_objective_b64={objective_b64}",
         ])
     if required:
         lines.extend([
@@ -289,6 +314,10 @@ def handle_comment(event: dict) -> None:
             expected = {"target_repository", "issue_number", "expected_head", "command"}
             if set(payload) != expected:
                 raise ValueError("local command payload must contain target_repository, issue_number, expected_head and command")
+        elif kind == "local_start":
+            expected = {"target_repository", "expected_head", "objective"}
+            if set(payload) != expected:
+                raise ValueError("local start payload must contain target_repository, expected_head and objective")
         else:
             raise ValueError("unsupported governed command")
     except Exception as exc:
@@ -297,18 +326,21 @@ def handle_comment(event: dict) -> None:
         })
         return
 
-    if kind not in {"execute", "upgrade_local_entry", "local_command"}:
+    if kind not in {"execute", "upgrade_local_entry", "local_command", "local_start"}:
         persist_state(issue["number"], issue.get("body"), state)
         api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}/comments", {"body": render_response(state)})
     if kind == "upgrade_local_entry":
         api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}/comments", {"body": "### Governed local-entry upgrade requested\n\nThe control plane will apply the current governed local-entry version under the supplied exact-HEAD guard."})
     if kind == "local_command":
         api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}/comments", {"body": "### Governed machine local command requested\n\nThe control plane will dispatch the command to the target repository under the supplied exact-HEAD guard."})
+    if kind == "local_start":
+        api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}/comments", {"body": "### Governed machine local entry start requested\n\nThe control plane will start a new repository-local governed entry under the supplied exact-HEAD guard."})
     emit_executor_outputs(
         state,
         issue["number"],
         payload if kind == "upgrade_local_entry" else None,
         payload if kind == "local_command" else None,
+        payload if kind == "local_start" else None,
     )
 
 
