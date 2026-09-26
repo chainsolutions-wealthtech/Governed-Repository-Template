@@ -129,6 +129,42 @@
         "Introduce principal, connection, governed-session and authority snapshot registries additively."
       ],
       "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM"
+    },
+    {
+      "activity_id": "AAL-20260926-RTE-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "TWO_STAGE_AUTOMATED_AGENT_PURPOSE_ROUTING",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "bf75a1ff56e0450c87a72ba91124bf55257647c6",
+      "objective": "Persist the owner's required two-stage post-identity purpose router without activating untested runtime behavior.",
+      "evidence_refs": [
+        "CPD-021",
+        "docs/control-plane/TASKS.md",
+        ".governance/control-plane-db/catalog.json",
+        ".governance/control-plane-db/runtime-seed.json",
+        "docs/control-plane/CANONICAL_ARCHITECTURE.md"
+      ],
+      "discovered_tasks": [
+        "RTE-001",
+        "RTE-002",
+        "RTE-003",
+        "RTE-004",
+        "RTE-005",
+        "RTE-006",
+        "RTE-007",
+        "RTE-008",
+        "RTE-009",
+        "RTE-010",
+        "RTE-011",
+        "RTE-012",
+        "RTE-013"
+      ],
+      "remarks": [
+        "The active entry-action router is preserved until the two-stage router has implementation and regression tests.",
+        "Human technical execution is not required; explicit governed approvals remain required where applicable."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM"
     }
   ]
 }
