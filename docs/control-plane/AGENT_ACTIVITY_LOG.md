@@ -88,3 +88,22 @@
   - added identity/session target model to canonical architecture and data model;
   - projected owner feedback and memory events into the relational seed.
 - Unique active execution remains `C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM`.
+
+
+## Entry AAL-20260926-RTE-001
+
+- Agent identity: ChatGPT
+- Workstream: Two-stage automated agent purpose routing
+- Starting source HEAD observed: `bf75a1ff56e0450c87a72ba91124bf55257647c6`
+- Owner requirement: after identity/session resolution, route the agent first between working on the control-plane source or applying one of the four cases.
+- Required Stage 2:
+  - source work → code / existing task / information enrichment;
+  - governance case → choose exactly one of the four structuring cases.
+- Human boundary: answers/choices/explicit approvals only; technical actions automated when authorized.
+- Actions:
+  - added `CPD-021`;
+  - added `RTE-001..RTE-013`;
+  - added planned questionnaire fields to relational catalogue;
+  - projected owner feedback and routing events to relational memory;
+  - preserved active runtime router until tests exist.
+- Unique active execution remains `C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM`.

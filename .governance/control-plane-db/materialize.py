@@ -125,11 +125,11 @@ def validate(conn):
     for table in ["agent_sessions","agent_activity_events","canonical_authorities","canonical_authority_revisions","canonical_memory_events"]:
         conn.execute(f"SELECT 1 FROM {table} LIMIT 1")
     authority = conn.execute("SELECT authority_id,current_revision FROM canonical_authorities WHERE authority_id='CP-ARCH-001'").fetchone()
-    if authority != ("CP-ARCH-001",1):
+    if authority != ("CP-ARCH-001",2):
         raise SystemExit(f"CONTROL_PLANE_DB_FAILED: canonical architecture authority missing or invalid: {authority}")
-    revision = conn.execute("SELECT revision_id FROM canonical_authority_revisions WHERE authority_id='CP-ARCH-001' AND revision_number=1").fetchone()
-    if revision != ("CP-ARCH-001-R1",):
-        raise SystemExit("CONTROL_PLANE_DB_FAILED: canonical architecture revision missing")
+    revisions = conn.execute("SELECT revision_id,revision_number,supersedes_revision_id FROM canonical_authority_revisions WHERE authority_id='CP-ARCH-001' ORDER BY revision_number").fetchall()
+    if revisions != [("CP-ARCH-001-R1",1,None),("CP-ARCH-001-R2",2,"CP-ARCH-001-R1")]:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: canonical architecture revision chain mismatch: {revisions}")
     required_event_types = {row[0] for row in conn.execute("SELECT event_type FROM canonical_memory_events WHERE scope_id='CP-ARCH-001'").fetchall()}
     if not {"ARCHITECTURE_AUTHORITY_CREATED","ARCHITECTURE_REVISION_ACCEPTED"}.issubset(required_event_types):
         raise SystemExit("CONTROL_PLANE_DB_FAILED: canonical architecture event history incomplete")
@@ -148,6 +148,27 @@ def validate(conn):
     idn_feedback = conn.execute("SELECT feedback_id FROM owner_feedback WHERE feedback_id='FB-20260926-IDN-001'").fetchone()
     if idn_feedback != ("FB-20260926-IDN-001",):
         raise SystemExit("CONTROL_PLANE_DB_FAILED: identity/session routing owner feedback missing")
+    rte_decision = conn.execute("SELECT decision_id FROM decisions WHERE decision_id='CPD-021'").fetchone()
+    if rte_decision != ("CPD-021",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: two-stage purpose routing decision missing")
+    rte_feedback = conn.execute("SELECT feedback_id FROM owner_feedback WHERE feedback_id='FB-20260926-RTE-001'").fetchone()
+    if rte_feedback != ("FB-20260926-RTE-001",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: two-stage purpose routing owner feedback missing")
+    entry_purpose = [json.loads(r[0]) for r in conn.execute(
+        "SELECT value_json FROM question_options WHERE question_id='CP-Q-ENTRY-PURPOSE' ORDER BY ordinal"
+    ).fetchall()]
+    if entry_purpose != ["WORK_ON_CONTROL_PLANE","APPLY_GOVERNANCE_CASE"]:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: entry purpose choices mismatch: {entry_purpose}")
+    work_kinds = [json.loads(r[0]) for r in conn.execute(
+        "SELECT value_json FROM question_options WHERE question_id='CP-Q-CONTROL-PLANE-WORK-KIND' ORDER BY ordinal"
+    ).fetchall()]
+    if work_kinds != ["CODE_IMPLEMENTATION","EXECUTE_EXISTING_TASK","ADD_OR_ENRICH_INFORMATION"]:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: control-plane work kinds mismatch: {work_kinds}")
+    structuring_cases = [json.loads(r[0]) for r in conn.execute(
+        "SELECT value_json FROM question_options WHERE question_id='CP-Q-STRUCTURING-CASE' ORDER BY ordinal"
+    ).fetchall()]
+    if structuring_cases != ["CREATE_NEW_REPOSITORY","ADOPT_EXISTING_REPOSITORY","MAP_EXISTING_PROJECT","LAB_EVOLUTION"]:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: structuring case choices mismatch: {structuring_cases}")
     print("CONTROL_PLANE_DB_VALIDATION_PASS")
     print("cases=4")
     print(f"questions={conn.execute('SELECT COUNT(*) FROM questions').fetchone()[0]}")

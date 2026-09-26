@@ -173,6 +173,34 @@
       "status": "ACCEPTED",
       "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "decided_at": "2026-09-26"
+    },
+    {
+      "decision_id": "CPD-021",
+      "scope_type": "AGENT_ENTRY_ROUTING",
+      "scope_id": "CONTROL_PLANE_SOURCE",
+      "decision_key": "TWO_STAGE_PURPOSE_ROUTING",
+      "value": {
+        "top_level": [
+          "WORK_ON_CONTROL_PLANE",
+          "APPLY_GOVERNANCE_CASE"
+        ],
+        "work_kinds": [
+          "CODE_IMPLEMENTATION",
+          "EXECUTE_EXISTING_TASK",
+          "ADD_OR_ENRICH_INFORMATION"
+        ],
+        "governance_cases": [
+          "CREATE_NEW_REPOSITORY",
+          "ADOPT_EXISTING_REPOSITORY",
+          "MAP_EXISTING_PROJECT",
+          "LAB_EVOLUTION"
+        ],
+        "human_manual_technical_operations": false,
+        "explicit_approvals_still_required_when_governance_requires": true
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "decided_at": "2026-09-26"
     }
   ],
   "checkpoints": [
@@ -225,6 +253,18 @@
       "dependent_revalidation": [],
       "source_ref": "CPD-020",
       "created_at": "2026-09-26"
+    },
+    {
+      "feedback_id": "FB-20260926-RTE-001",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-12",
+      "feedback_class": "NEW_REQUIREMENT",
+      "content": "After identity/session resolution, ask whether the agent comes to work on the control-plane repository or to apply one of the four governance cases. If working on the repo, choose code/task/information work. If applying a case, choose one of the four and enter its chronological questionnaire. Human users should not perform technical operations manually.",
+      "effect": "ADD_TWO_STAGE_AUTOMATED_PURPOSE_ROUTING_BACKLOG_WITHOUT_CHANGING_ACTIVE_RUNTIME",
+      "earliest_affected_phase_id": "C1-12",
+      "dependent_revalidation": [],
+      "source_ref": "CPD-021",
+      "created_at": "2026-09-26"
     }
   ],
   "artifacts": [
@@ -246,7 +286,7 @@
       "canonical_path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
       "scope": "CONTROL_PLANE_SOURCE_ONLY",
       "status": "ACCEPTED_TARGET_ARCHITECTURE",
-      "current_revision": 1,
+      "current_revision": 2,
       "source_decision_id": "CPD-014",
       "created_at": "2026-09-26"
     }
@@ -261,6 +301,18 @@
       "supersedes_revision_id": null,
       "reason": "Initial accepted target architecture distilled from V2.8.3 external memory and reconciled with live state.",
       "source_decision_id": "CPD-014",
+      "source_ref": ".governance/control-plane-state/canonical-architecture.json",
+      "created_at": "2026-09-26"
+    },
+    {
+      "revision_id": "CP-ARCH-001-R2",
+      "authority_id": "CP-ARCH-001",
+      "revision_number": 2,
+      "subject_head_sha": "bf75a1ff56e0450c87a72ba91124bf55257647c6",
+      "content_sha": null,
+      "supersedes_revision_id": "CP-ARCH-001-R1",
+      "reason": "Add identity/session separation and two-stage automated purpose routing.",
+      "source_decision_id": "CPD-021",
       "source_ref": ".governance/control-plane-state/canonical-architecture.json",
       "created_at": "2026-09-26"
     }
@@ -332,6 +384,42 @@
       "scope_id": "FRAMEWORK",
       "payload": {
         "decision_id": "CPD-020"
+      },
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "occurred_at": "2026-09-26"
+    },
+    {
+      "event_id": "CME-20260926-RTE-001",
+      "event_type": "OWNER_FEEDBACK_RECEIVED",
+      "scope_type": "AGENT_ENTRY_ROUTING",
+      "scope_id": "CONTROL_PLANE_SOURCE",
+      "payload": {
+        "feedback_id": "FB-20260926-RTE-001"
+      },
+      "source_ref": "CPD-021",
+      "occurred_at": "2026-09-26"
+    },
+    {
+      "event_id": "CME-20260926-RTE-002",
+      "event_type": "DECISION_ACCEPTED",
+      "scope_type": "AGENT_ENTRY_ROUTING",
+      "scope_id": "CONTROL_PLANE_SOURCE",
+      "payload": {
+        "decision_id": "CPD-021",
+        "decision_key": "TWO_STAGE_PURPOSE_ROUTING"
+      },
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "occurred_at": "2026-09-26"
+    },
+    {
+      "event_id": "CME-20260926-ARCH-003",
+      "event_type": "ARCHITECTURE_REVISION_ACCEPTED",
+      "scope_type": "AUTHORITY",
+      "scope_id": "CP-ARCH-001",
+      "payload": {
+        "revision_id": "CP-ARCH-001-R2",
+        "decision_id": "CPD-021",
+        "supersedes": "CP-ARCH-001-R1"
       },
       "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "occurred_at": "2026-09-26"

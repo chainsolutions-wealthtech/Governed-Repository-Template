@@ -4,7 +4,7 @@
 > Authority type: `CANONICAL_TARGET_ARCHITECTURE`  
 > Scope: `CONTROL_PLANE_SOURCE_ONLY`  
 > Status: `ACCEPTED_TARGET_ARCHITECTURE`  
-> Revision: `1`  
+> Revision: `2`  
 > Repository: `chainsolutions-wealthtech/Governed-Repository-Template`  
 > Distribution: `SOURCE_ONLY / DO_NOT_COPY_TO_CLIENTS`
 
@@ -284,6 +284,54 @@ CAPTURE PRINCIPAL / ACTOR
 ```
 
 Identity and role never create authority. Ambiguous session resolution fails closed.
+
+## 12B. Two-stage automated purpose routing
+
+After identity/session/role/authority resolution on the control-plane source, the system asks one top-level purpose question:
+
+```text
+WHY ARE YOU HERE?
+├─ WORK_ON_CONTROL_PLANE
+└─ APPLY_GOVERNANCE_CASE
+```
+
+If `WORK_ON_CONTROL_PLANE`:
+
+```text
+WORK KIND
+├─ CODE_IMPLEMENTATION
+├─ EXECUTE_EXISTING_TASK
+└─ ADD_OR_ENRICH_INFORMATION
+```
+
+The system then loads source authorities, resolves the current program/task graph, claims or creates the correct governed work item when allowed, asks only missing questions, executes authorized technical actions, validates, checkpoints and hands off.
+
+If `APPLY_GOVERNANCE_CASE`:
+
+```text
+CASE
+├─ CREATE_NEW_REPOSITORY
+├─ ADOPT_EXISTING_REPOSITORY
+├─ MAP_EXISTING_PROJECT
+└─ LAB_EVOLUTION
+```
+
+The selected case then owns the chronological questionnaire/action state machine.
+
+`CONTINUE_GOVERNED_WORK` remains a post-case mode and is not shown as a fifth structuring case.
+
+### Human interaction boundary
+
+The human is not expected to perform technical Git/GitHub/CI/file operations manually.
+
+Human participation is limited to:
+- answering required governed questions;
+- making choices;
+- giving explicit approvals when a gate requires human authorization.
+
+The governed system performs the authorized technical execution automatically.
+
+Automation never bypasses explicit authority, approval, exact-HEAD or fail-closed gates.
 
 ## 13. Architecture → program → task lineage
 
