@@ -4,7 +4,7 @@
 > Authority type: `CANONICAL_TARGET_ARCHITECTURE`  
 > Scope: `CONTROL_PLANE_SOURCE_ONLY`  
 > Status: `ACCEPTED_TARGET_ARCHITECTURE`  
-> Revision: `3`  
+> Revision: `4`  
 > Repository: `chainsolutions-wealthtech/Governed-Repository-Template`  
 > Distribution: `SOURCE_ONLY / DO_NOT_COPY_TO_CLIENTS`
 
@@ -503,6 +503,35 @@ OBSERVE HEAD X
 ```
 
 Multi-agent governance must support sessions, claims, collision domains, dependency-safe dispatch, single writer where required and structured handoff.
+
+## 18A. Governed client upgrade contract
+
+A governed client upgrade is a framework operation owned by the Template.
+
+```text
+TEMPLATE CURRENT MANIFEST VERSION
+→ COMPUTE STATIC CLIENT UPGRADE SURFACE
+→ VERIFY EXACT TARGET HEAD
+→ PRESERVE CLIENT MUTABLE STATE
+→ WRITE GOVERNANCE-ONLY UPGRADE COMMIT
+→ MIGRATE OPEN GOVERNED ISSUE HEADS WHEN CHAIN IS SAFE
+→ RUN CLIENT CI
+→ RETURN VALIDATION EVIDENCE TO CONTROL PLANE
+```
+
+The upgrade version must be derived from `.governance/TEMPLATE_MANIFEST.json`; release identifiers must not be hard-coded in the executor.
+
+Synchronizable content is generic/static governance code, policies, schemas, docs, workflows and regression tests required by the current client contract.
+
+Client-specific mutable state is preserved, including:
+- work-items;
+- claims;
+- governed sessions;
+- canonical project-memory pointers;
+- business answers;
+- approved baseline/project state.
+
+Source-only control-plane memory/database remains absent from clients. CI steps that apply only to the source control plane must detect that boundary and skip cleanly on clients.
 
 ## 19. Capability model
 
