@@ -107,5 +107,35 @@
     "EXPOSE_GOVERNANCE_API",
     "OPTIONAL_POSTGRES_RUNTIME",
     "ADMIN_WEB_APPLICATION"
-  ]
+  ],
+  "identity_session_routing": {
+    "status": "PLANNED",
+    "dimensions": [
+      "PRINCIPAL",
+      "AGENT",
+      "CONNECTION",
+      "SESSION",
+      "ROLE",
+      "AUTHORITY"
+    ],
+    "invariants": [
+      "IDENTITY_NE_AUTHORITY",
+      "ROLE_NE_AUTHORITY",
+      "AMBIGUOUS_SESSION_FAILS_CLOSED",
+      "AUTHENTICATED_ACTOR_CAPTURE_WHEN_AVAILABLE",
+      "BACKWARD_COMPATIBLE_WITH_EXISTING_SESSION_IDS"
+    ],
+    "target_sequence": [
+      "CAPTURE_PRINCIPAL_ACTOR",
+      "RESOLVE_AGENT",
+      "CREATE_CONNECTION_EVENT",
+      "CREATE_OR_RESUME_SESSION",
+      "RESOLVE_ROLE",
+      "OBSERVE_AUTHORITY",
+      "RESOLVE_ENTRY_ACTION",
+      "RESOLVE_CONNECTION_INTENT",
+      "ENTER_GOVERNED_FLOW"
+    ],
+    "backlog_prefix": "IDN"
+  }
 }
