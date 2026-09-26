@@ -6,8 +6,8 @@
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_branch": "governance/v2.7.0-self-governed-control-plane",
   "active_work_package": "SG-20260926-001",
-  "current_task": "SG-005_RUN_CI_AND_PROVE_CLIENT_NON_LEAK",
-  "unique_next_action": "RUN_V2_7_0_CI_AND_PROVE_CLIENT_NON_LEAK",
+  "current_task": "SG-006_MERGE_V2_7_0_AND_ATTEST_RELEASE_HEAD",
+  "unique_next_action": "MERGE_V2_7_0_AND_ATTEST_RELEASE_HEAD",
   "read_first": [
     "docs/control-plane/CURRENT_STATE.md",
     "docs/control-plane/PROGRAM.md",
