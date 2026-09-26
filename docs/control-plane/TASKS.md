@@ -95,3 +95,61 @@ This backlog captures the missing automation required so an arriving agent can b
 | IDN-013 | Expose identity/session state to future Governance API/Admin UI | FUTURE | only after workflow semantics validated |
 
 These items are architecture/backlog work only. They do not supersede `C1-12-F` as the unique executable task.
+
+
+## Two-stage agent purpose routing backlog
+
+After identity/session/role/authority resolution, an arriving agent on the control-plane source must enter a two-stage automated purpose router.
+
+### Stage 1 — Why is the agent here?
+
+The system asks exactly one top-level question:
+
+1. `WORK_ON_CONTROL_PLANE` — work on `chainsolutions-wealthtech/Governed-Repository-Template` itself.
+2. `APPLY_GOVERNANCE_CASE` — execute one of the four structuring cases.
+
+### Stage 2A — If WORK_ON_CONTROL_PLANE
+
+The system asks the work type:
+
+- `CODE_IMPLEMENTATION` — implement/fix/evolve code or automation;
+- `EXECUTE_EXISTING_TASK` — continue an already planned task/subtask/NEXT_ACTION;
+- `ADD_OR_ENRICH_INFORMATION` — add/reconcile documentation, decisions, architecture, memory, evidence or structured information.
+
+The system then automatically:
+- loads current architecture/program/tasks/next action;
+- resolves dependencies/collisions;
+- determines applicable role and authority;
+- proposes/claims the correct task;
+- asks only missing questions;
+- performs authorized technical actions itself;
+- validates, checkpoints and hands off.
+
+### Stage 2B — If APPLY_GOVERNANCE_CASE
+
+The system asks the case:
+
+1. `CREATE_NEW_REPOSITORY`
+2. `ADOPT_EXISTING_REPOSITORY`
+3. `MAP_EXISTING_PROJECT`
+4. `LAB_EVOLUTION`
+
+After selection, the selected case's governed questionnaire/action state machine takes over chronologically.
+
+| ID | Task | Status | Dependency / note |
+|---|---|---|---|
+| RTE-001 | Define top-level `entry_purpose`: WORK_ON_CONTROL_PLANE vs APPLY_GOVERNANCE_CASE | PLANNED | after IDN identity/session resolution |
+| RTE-002 | Define control-plane work kinds: CODE_IMPLEMENTATION / EXECUTE_EXISTING_TASK / ADD_OR_ENRICH_INFORMATION | PLANNED | source repository path |
+| RTE-003 | Define structuring-case selection limited to exactly the 4 canonical cases | PLANNED | CONTINUE_GOVERNED_WORK is not a fifth case |
+| RTE-004 | Build automated router from session/role/authority into Stage 1 and Stage 2 | PLANNED | no manual technical steps |
+| RTE-005 | Auto-load PROGRAM/TASKS/NEXT_ACTION for WORK_ON_CONTROL_PLANE | PLANNED | preserve unique executable task |
+| RTE-006 | Auto-resolve existing task vs new intake/information enrichment | PLANNED | no parallel task list |
+| RTE-007 | Dispatch selected governance case to its case-specific questionnaire/state machine | PLANNED | chronology/gates preserved |
+| RTE-008 | Persist entry purpose, work kind/case choice, answers and routing events in relational memory | PLANNED | continuous projection contract |
+| RTE-009 | Automate authorized Git/CI/workflow actions after answers/approvals | PLANNED | human answers/approves; system executes |
+| RTE-010 | Add fail-closed handling for missing/ambiguous purpose, case, task or authority | PLANNED | no inferred mutation authority |
+| RTE-011 | Add CI tests for both top-level branches and every case choice | PLANNED | exhaustive router regression matrix |
+| RTE-012 | Add resume semantics so reconnecting sessions continue at the exact unanswered question/action | PLANNED | no repeated completed questions |
+| RTE-013 | Expose the automated purpose router in future Governance API/Admin UI | FUTURE | frontend after semantics stabilize |
+
+These routing tasks are planned architecture work and do not supersede the current unique executable task `C1-12-F`.
