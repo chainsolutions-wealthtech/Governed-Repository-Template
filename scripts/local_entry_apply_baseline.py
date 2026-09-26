@@ -81,21 +81,25 @@ def main():
     binding=readj(".governance/mcp-binding.json")
     binding["repository"]=repo
     binding["linked"]=a.get("link_mcp_server") is True
+    discovery=state.get("mcp_discovery")
+    discovery_status=(discovery or {}).get("status") if isinstance(discovery,dict) else None
+    if discovery and discovery_status not in {"PASS","PARTIAL"}:
+        raise SystemExit(f"MCP_DISCOVERY_STATUS_INVALID:{discovery_status}")
     if binding["linked"]:
-        binding["status"]="DISCOVERED_READONLY" if state.get("mcp_discovery") else "ACCESS_CONFIGURED"
+        binding["status"]="DISCOVERED_READONLY" if discovery_status=="PASS" else ("DISCOVERY_PARTIAL" if discovery_status=="PARTIAL" else "ACCESS_CONFIGURED")
         binding["transport"]=a.get("mcp_transport")
         binding["endpoint"]=a.get("mcp_endpoint")
         binding["ssh_connection_profile"]=a.get("ssh_connection_profile")
         binding["credential_names"]=[x["name"] for x in setup.get("mcp",{}).get("credential_requirements",[])]
-        binding["discovery_status"]="PASS" if state.get("mcp_discovery") else "NOT_RUN"
-        binding["discovery_observed_at"]=(state.get("mcp_discovery") or {}).get("observed_at")
+        binding["discovery_status"]=discovery_status or "NOT_RUN"
+        binding["discovery_observed_at"]=(discovery or {}).get("observed_at")
         binding["domain_strategy"]=a.get("domain_strategy")
         binding["domain_binding"]=a.get("domain_binding")
         binding["project_registration_status"]="UNVERIFIED"
         binding["write_tools_status"]="DISABLED_UNTIL_REGISTERED_AND_AUTHORIZED"
         infra["server_access"]["preferred"]="DIRECT_MCP" if a.get("mcp_transport") in {"DIRECT_MCP_TOKEN","BOTH"} else "SSH"
         infra["server_access"]["fallback"]="SSH" if a.get("mcp_transport") in {"BOTH","DIRECT_MCP_TOKEN"} else None
-        infra["server_access"]["status"]="DISCOVERED_READONLY" if state.get("mcp_discovery") else "ACCESS_CONFIGURED"
+        infra["server_access"]["status"]="DISCOVERED_READONLY" if discovery_status=="PASS" else ("DISCOVERY_PARTIAL" if discovery_status=="PARTIAL" else "ACCESS_CONFIGURED")
         if a.get("domain_binding"):
             infra["deployment_target"]["domain"]=a["domain_binding"].get("domain")
             infra["deployment_target"]["domain_status"]="OBSERVED_EXISTING" if a["domain_binding"].get("mode")=="EXISTING" else ("PROVISIONING_REQUIRED" if a["domain_binding"].get("mode")=="CREATE_NEW" else "DISCOVERY_REQUIRED")

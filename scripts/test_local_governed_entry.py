@@ -46,6 +46,23 @@ def main():
     if persisted["handoff"]["setup"]["workflow_model"]!="REGULATORY_AFRICAFUNDS_GOVERNED_FLOW":
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: setup persistence")
 
+    ssh=first_base()
+    ssh=answer_expected(ssh,"baseline_approved",True)
+    ssh=answer_expected(ssh,"setup_repository_now",True)
+    ssh=answer_expected(ssh,"link_mcp_server",True)
+    ssh=answer_expected(ssh,"mcp_transport","SSH")
+    ssh=answer_expected(ssh,"mcp_endpoint","https://mcp.example.test/mcp")
+    ssh=answer_expected(ssh,"ssh_connection_profile",{"host":"212.227.212.33","user":"root","port":22})
+    ssh=answer_expected(ssh,"mcp_discovery_scope","FULL_GOVERNED_MAPPING")
+    ssh=answer_expected(ssh,"domain_strategy","DISCOVER_EXISTING_THEN_PROPOSE")
+    ssh=answer_expected(ssh,"runtime_mutation_policy","EXPLICIT_APPROVAL_FOR_SCOPED_WRITE")
+    if ssh["next_request"]["kind"]!="MCP_DISCOVERY":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: SSH-only must not require persistent credentials")
+    if ssh.get("credentials_verified") is not True:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: SSH-only credential state")
+    if any(item.get("name")=="GOVERNED_MCP_SSH_PRIVATE_KEY" for item in (ssh.get("setup_package") or {}).get("mcp",{}).get("credential_requirements",[])):
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: persistent SSH secret forbidden")
+
     n=new_request("LOCAL-2","owner/repo","c"*40,False,"later agent")
     for field,value in [
       ("agent_identity","Claude"),("provider","CLAUDE"),("connection_intent","CODE_CHANGE"),
@@ -54,8 +71,31 @@ def main():
     if n["status"]!="LOCAL_HANDOFF_READY": raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: normal handoff")
 
     wf=(ROOT/".github/workflows/governed-local-entry.yml").read_text(encoding="utf-8")
-    for fragment in ["governed_local_start","GOVERNED_MCP_AUTH_TOKEN","mcp_repository_discovery.py","local_entry_apply_baseline.py"]:
+    discovery=(ROOT/"scripts/mcp_repository_discovery.py").read_text(encoding="utf-8")
+    policy=(ROOT/".governance/mcp-connection-policy.json").read_text(encoding="utf-8")
+    bridge=(ROOT/"scripts/local_entry_issue_bridge.py").read_text(encoding="utf-8")
+    apply=(ROOT/"scripts/local_entry_apply_baseline.py").read_text(encoding="utf-8")
+    for fragment in ["governed_local_start","GOVERNED_MCP_AUTH_TOKEN","id-token: write","mcp_repository_discovery.py","local_entry_apply_baseline.py"]:
         if fragment not in wf: raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: workflow contract "+fragment)
+    if "GOVERNED_MCP_SSH_PRIVATE_KEY" in wf or "GOVERNED_MCP_SSH_PRIVATE_KEY" in policy:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: persistent repository SSH private key must be absent")
+    if 'missing.append("GOVERNED_MCP_URL")' in bridge:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: captured MCP endpoint must not require duplicate Actions variable")
+    for fragment in ["/access/github/repository-ssh/certificate","StrictHostKeyChecking=yes","ssh-keygen","GITHUB_OIDC_EPHEMERAL_SSH_CERTIFICATE",
+                     'SSH_BROKER_BASE_URL = "https://mcp.wealthtechinnovations.com"',"SSH_DISCOVERY_REQUIRED_PROBE_FAILED"]:
+        if fragment not in discovery:
+            raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: ephemeral SSH discovery contract "+fragment)
+    for fragment in [
+        'TRUSTED_ASSOCIATIONS={"OWNER","MEMBER","COLLABORATOR"}',
+        "trusted_actor(event.get(\"comment\") or {})",
+        "/collaborators/{encoded}/permission",
+        'permission in {"admin","maintain","write"}'
+    ]:
+        if fragment not in bridge:
+            raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: local entry actor authorization "+fragment)
+    for fragment in ['"DISCOVERY_PARTIAL"','binding["discovery_status"]=discovery_status or "NOT_RUN"']:
+        if fragment not in apply:
+            raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: discovery status preservation "+fragment)
     print("LOCAL_GOVERNED_ENTRY_SELFTEST_PASS")
 
 if __name__=="__main__": main()

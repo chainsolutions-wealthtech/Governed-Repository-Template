@@ -352,8 +352,20 @@ def validate_project_and_connection_intent(profile: dict, template_mode: bool) -
         fail("MCP connection policy role is invalid")
     if mcp_policy.get("direct_mcp", {}).get("token_secret") != "GOVERNED_MCP_AUTH_TOKEN":
         fail("MCP token secret contract is invalid")
-    if mcp_policy.get("ssh", {}).get("arbitrary_shell") != "FORBIDDEN":
+    ssh_policy = mcp_policy.get("ssh", {})
+    if ssh_policy.get("arbitrary_shell") != "FORBIDDEN":
         fail("MCP SSH fallback must forbid arbitrary shell")
+    if ssh_policy.get("mode") != "GITHUB_OIDC_EPHEMERAL_CERTIFICATE":
+        fail("MCP SSH fallback must use GitHub OIDC ephemeral certificates")
+    if ssh_policy.get("persistent_private_key_secret") != "FORBIDDEN":
+        fail("persistent repository SSH private keys must be forbidden")
+    if ssh_policy.get("strict_host_key_checking") != "REQUIRED":
+        fail("SSH fallback must require strict host key checking")
+    certificate_max_seconds = ssh_policy.get("certificate_max_seconds")
+    if not isinstance(certificate_max_seconds, int) or certificate_max_seconds < 1 or certificate_max_seconds > 600:
+        fail("SSH certificate lifetime must be bounded to <= 600 seconds")
+    if mcp_policy.get("fallback_transport") != "GITHUB_OIDC_EPHEMERAL_SSH_CERTIFICATE":
+        fail("MCP fallback transport must be the ephemeral SSH certificate path")
     if access_plan.get("mcp", {}).get("write_activation") != "REQUIRES_MCP_PROJECT_REGISTRATION_AND_EXPLICIT_AUTHORITY":
         fail("MCP write activation must fail closed")
     if "REGULATORY_AFRICAFUNDS_GOVERNED_FLOW" not in (workflow_model.get("supported_models") or {}):

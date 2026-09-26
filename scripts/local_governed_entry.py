@@ -91,10 +91,9 @@ def credential_requirements(a):
     t=a.get("mcp_transport")
     req=[]
     if t in {"DIRECT_MCP_TOKEN","BOTH"}:
-        req += [{"kind":"variable","name":"GOVERNED_MCP_URL"},{"kind":"secret","name":"GOVERNED_MCP_AUTH_TOKEN"}]
-    if t in {"SSH","BOTH"}:
-        req += [{"kind":"secret","name":"GOVERNED_MCP_SSH_PRIVATE_KEY"},{"kind":"variable","name":"GOVERNED_MCP_SSH_HOST"},
-                {"kind":"variable","name":"GOVERNED_MCP_SSH_USER"},{"kind":"variable","name":"GOVERNED_MCP_SSH_PORT"}]
+        req += [{"kind":"secret","name":"GOVERNED_MCP_AUTH_TOKEN"}]
+    # SSH/BOTH use a GitHub OIDC-issued ephemeral certificate. No persistent
+    # repository SSH private-key secret is permitted.
     return req
 
 def build_setup(s):
@@ -114,6 +113,7 @@ def build_setup(s):
           "transport":a.get("mcp_transport"),"endpoint":a.get("mcp_endpoint"),
           "ssh_connection_profile":a.get("ssh_connection_profile"),
           "credential_requirements":credential_requirements(a),
+          "ssh_authentication":"GITHUB_OIDC_EPHEMERAL_CERTIFICATE" if a.get("mcp_transport") in {"SSH","BOTH"} else None,
           "discovery_scope":a.get("mcp_discovery_scope"),"domain_strategy":a.get("domain_strategy"),
           "domain_binding":a.get("domain_binding"),"runtime_mutation_policy":a.get("runtime_mutation_policy"),
           "discovery_tools":["ping","get_project_context","list_domains_s1","list_domains_s2","get_write_tools_context"],
@@ -159,7 +159,7 @@ def refresh(s):
           q("Q_MCP_TRANSPORT","mcp_transport","Quel transport veux-tu configurer pour le MCP ?",MCP_TRANSPORTS),
         ]:
             if r["field"] not in s["answers"]:s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]=r["id"];s["next_request"]=r;return s
-        if s["answers"]["mcp_transport"] in {"DIRECT_MCP_TOKEN","BOTH"} and "mcp_endpoint" not in s["answers"]:
+        if "mcp_endpoint" not in s["answers"]:
             s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_MCP_ENDPOINT";s["next_request"]=q("Q_MCP_ENDPOINT","mcp_endpoint","Quelle est l'URL publique du endpoint MCP ? Aucun token ne doit être mis ici.");return s
         if s["answers"]["mcp_transport"] in {"SSH","BOTH"} and "ssh_connection_profile" not in s["answers"]:
             s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_SSH_PROFILE";s["next_request"]=q("Q_SSH_PROFILE","ssh_connection_profile","Indique uniquement host/user/port non secrets pour le fallback SSH.",typ="object");return s
@@ -170,11 +170,14 @@ def refresh(s):
         ]:
             if r["field"] not in s["answers"]:s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]=r["id"];s["next_request"]=r;return s
 
-        if not s.get("credentials_verified"):
+        requirements=credential_requirements(s["answers"])
+        if not s.get("credentials_verified") and requirements:
             s["status"]="MCP_CREDENTIAL_REQUIRED";s["phase"]="MCP_CREDENTIAL_GATE"
             s["next_request"]={"kind":"CREDENTIAL_GATE","id":"MCP_CREDENTIAL_GATE",
               "text":"Configure les secrets/variables Actions requis puis exécute /local-execute. Ne colle aucun secret dans l'issue.",
-              "requirements":credential_requirements(s["answers"])};return s
+              "requirements":requirements};return s
+        if not s.get("credentials_verified") and not requirements:
+            s["credentials_verified"]=True
         if s.get("mcp_discovery") is None:
             s["status"]="MCP_DISCOVERY_REQUIRED";s["phase"]="MCP_DISCOVERY"
             s["next_request"]={"kind":"MCP_DISCOVERY","id":"MCP_DISCOVERY","text":"Run read-only MCP discovery.","tools":["ping","get_project_context","list_domains_s1","list_domains_s2","get_write_tools_context"]};return s

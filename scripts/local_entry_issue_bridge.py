@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import json, os, re, subprocess, urllib.error, urllib.request
+import json, os, re, subprocess, urllib.error, urllib.parse, urllib.request
 from pathlib import Path
 from local_governed_entry import answer, decode_state, encode_state, mark_credentials_verified, new_request
 
 ROOT=Path(__file__).resolve().parents[1]
 TITLE_PREFIX="[Governed Local Entry]"
 MARKER_RE=re.compile(r"\n?<!-- GOVERNED_LOCAL_ENTRY_STATE:([A-Za-z0-9_-]+) -->\s*$",re.S)
+TRUSTED_ASSOCIATIONS={"OWNER","MEMBER","COLLABORATOR"}
 
 def api(method,path,payload=None):
     token=os.environ["GITHUB_TOKEN"]
@@ -73,9 +74,26 @@ def emit_outputs(state,number):
         h.write(f"mcp_discovery_required={'true' if discover else 'false'}\n")
         h.write(f"issue_number={number}\nexpected_head={state.get('expected_head_sha','')}\n")
 
+def trusted_actor(record):
+    if not isinstance(record,dict) or record.get("author_association") not in TRUSTED_ASSOCIATIONS:
+        return False
+    login=((record.get("user") or {}).get("login") or "")
+    if not isinstance(login,str) or not re.fullmatch(r"[A-Za-z0-9-]{1,39}",login):
+        return False
+    encoded=urllib.parse.quote(login,safe="")
+    permission=api("GET",f"/repos/{os.environ['GITHUB_REPOSITORY']}/collaborators/{encoded}/permission").get("permission")
+    return permission in {"admin","maintain","write"}
+
+def refuse_untrusted(number):
+    api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{number}/comments",{
+      "body":"### Local entry refused\n\nThis command requires a repository actor with current admin, maintain or write permission. No governed state advanced."
+    })
+
 def opened(event):
     issue=event["issue"]
     if not str(issue.get("title","")).startswith(TITLE_PREFIX):return
+    if not trusted_actor(issue):
+        refuse_untrusted(issue["number"]);return
     if (ROOT/".template-source").exists():return
     n=issue["number"];rid=f"LOCAL-{n:06d}"
     s=new_request(rid,os.environ["GITHUB_REPOSITORY"],head(),first_agent_required(),strip_marker(issue.get("body")))
@@ -84,6 +102,8 @@ def opened(event):
 def commented(event):
     issue=event["issue"]
     if not str(issue.get("title","")).startswith(TITLE_PREFIX):return
+    if not trusted_actor(event.get("comment") or {}):
+        refuse_untrusted(issue["number"]);return
     cmd=parse_command((event.get("comment") or {}).get("body"))
     if cmd is None:return
     s=extract_state(issue.get("body"));kind,payload=cmd
@@ -98,11 +118,7 @@ def commented(event):
                 transport=s.get("answers",{}).get("mcp_transport")
                 missing=[]
                 if transport in {"DIRECT_MCP_TOKEN","BOTH"}:
-                    if not os.environ.get("GOVERNED_MCP_URL"): missing.append("GOVERNED_MCP_URL")
                     if not os.environ.get("GOVERNED_MCP_AUTH_TOKEN"): missing.append("GOVERNED_MCP_AUTH_TOKEN")
-                if transport in {"SSH","BOTH"}:
-                    for name in ["GOVERNED_MCP_SSH_PRIVATE_KEY","GOVERNED_MCP_SSH_HOST","GOVERNED_MCP_SSH_USER","GOVERNED_MCP_SSH_PORT"]:
-                        if not os.environ.get(name): missing.append(name)
                 if missing: raise ValueError("missing GitHub Actions secret/variable: "+", ".join(missing))
                 s=mark_credentials_verified(s)
                 persist(issue["number"],issue.get("body"),s)

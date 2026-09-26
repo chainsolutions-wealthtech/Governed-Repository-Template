@@ -125,7 +125,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.5.0",
+  "template_version": "2.6.0",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -174,7 +174,11 @@
     "read-only MCP server/domain discovery",
     "MCP project registration before write authority",
     "existing-or-new domain binding decision",
-    "Regulatory/AfricaFunds governed work loop"
+    "Regulatory/AfricaFunds governed work loop",
+    "GitHub OIDC ephemeral SSH certificate fallback",
+    "no persistent repository SSH private key",
+    "authenticated pinned SSH host key",
+    "read-only SSH force-command gateway"
   ],
   "automatic_initialization_supported": true
 }
