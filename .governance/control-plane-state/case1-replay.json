@@ -7,7 +7,7 @@
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
   "current_phase": "C1-12",
   "current_status": "IN_PROGRESS",
-  "unique_next_action": "C1_12_J_B_COMPLETE_PORTABLE_INTENT_FIXTURE",
+  "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT",
   "phases": [
     {
       "id": "C1-00",
@@ -99,16 +99,17 @@
           "V2.8.2_CLIENT_POLICY_SYNC",
           "V2.8.3_PORTABLE_BOOTSTRAP_FIXTURE",
           "V2.8.4_PORTABLE_CONNECTION_INTENT_FIX",
-          "V2.8.5_DYNAMIC_CLIENT_UPGRADER"
+          "V2.8.5_DYNAMIC_CLIENT_UPGRADER",
+          "V2.8.6_COMPLETE_PORTABLE_INTENT_FIXTURE"
         ],
-        "current_blocker": "INCOMPLETE_SYNTHETIC_BOOTSTRAP_FIXTURE",
+        "current_blocker": null,
         "ci_run": 36262734626,
         "root_cause": "CONNECTION_INTENT_SELFTEST_INHERITED_INSTANTIATED_CLIENT_WORK_ITEMS",
         "framework_fix_version_candidate": "2.8.5",
         "product_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
         "pilot_repository_role": "EXTERNAL_VALIDATION_ONLY",
-        "framework_fix_release_subject": "556011ea20310a483f77a9a382b66b79bed4b31c",
-        "current_step": "COMPLETE_PORTABLE_INTENT_FIXTURE_IN_TEMPLATE",
+        "framework_fix_release_subject": "02173120acfa3941e84bf69c89dac0e8d74b47ce",
+        "current_step": "REUPGRADE_EXTERNAL_CASE1_PILOT_TO_V2_8_6",
         "discovered_upgrade_defects": [
           "UPGRADER_HARDCODED_2_8_3",
           "PORTABLE_CONNECTION_INTENT_TEST_NOT_DISTRIBUTED",
