@@ -136,3 +136,19 @@
 - Next: validate V2.8.4 on an external CASE 1 pilot only.
 - Product/pilot rule preserved: all generic fixes continue to originate in the Template.
 - Unique next action: `C1_12_I_VALIDATE_V2_8_4_ON_CASE1_PILOT`.
+
+
+## Entry AAL-20260926-V285-001
+
+- Agent identity: ChatGPT
+- Workstream: CASE 1 / C1-12 client-upgrade portability
+- Product repository: `chainsolutions-wealthtech/Governed-Repository-Template`
+- Starting product HEAD: `9782af27a1b8c97cdbbc8e2bc15ac2b02d649488`
+- Objective: validate the released framework on an external pilot without patching the pilot.
+- Discovery before pilot mutation:
+  - upgrader hard-coded to V2.8.3;
+  - V2.8.4 intent self-test/runtime surface not distributed;
+  - source-only DB materialization unguarded in client CI.
+- Action: return to Template and create V2.8.5 dynamic non-destructive client-upgrade fix.
+- Pilot state: untouched during this correction.
+- Unique next action: `C1_12_I_A_FIX_DYNAMIC_CLIENT_UPGRADER`.
