@@ -102,18 +102,11 @@ jobs:
         if: steps.process.outputs.local_start_required == 'true'
         env:
           GOVERNED_TARGET_TOKEN: ${{ steps.local-start-token.outputs.token }}
-          OBJ: ${{ steps.process.outputs.local_start_objective_b64 }}
         run: |
-          objective="$(python3 - <<'PY'
-import base64, os
-v=os.environ["OBJ"]
-print(base64.urlsafe_b64decode(v+"="*((4-len(v)%4)%4)).decode("utf-8"))
-PY
-)"
           python3 scripts/control_plane_local_start.py \
             --target-repository "${{ steps.process.outputs.local_start_target_repository }}" \
             --expected-head "${{ steps.process.outputs.local_start_expected_head }}" \
-            --objective "$objective" \
+            --objective-b64 "${{ steps.process.outputs.local_start_objective_b64 }}" \
             --source-issue "${{ steps.process.outputs.issue_number }}"
 
       - name: Mint target-owner token for machine local command
