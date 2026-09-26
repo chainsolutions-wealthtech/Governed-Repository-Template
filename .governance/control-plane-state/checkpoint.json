@@ -1,23 +1,32 @@
 {
   "schema_version": "1.0.0",
-  "checkpoint_id": "CP-CHECKPOINT-20260926-004",
+  "checkpoint_id": "CP-CHECKPOINT-20260926-005",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-  "subject_head": "4c8d16b5fc71df7923942c5658c21269a0051da3",
+  "subject_head": "892f793a0202cb4f69169001821014f47db45c3f",
   "template_version_before": "2.7.0",
-  "state": "V2_8_0_CANONICAL_MEMORY_RELEASE_ATTESTED",
+  "state": "C1_12_CLIENT_CI_BLOCKED_AFTER_V2_8_3",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
     "case1_pilot_local_entry_state": "LOCAL_HANDOFF_READY",
     "direct_mcp_discovery": "PASS",
-    "ssh_oidc_discovery": "PASS"
+    "ssh_oidc_discovery": "PASS",
+    "v2_8_1_machine_local_start": "PASS",
+    "v2_8_2_client_policy_sync": "PASS",
+    "v2_8_3_portable_bootstrap_fixture": "PASS",
+    "gouvern_validation": "PASS",
+    "gouvern_bootstrap_selftest": "PASS"
   },
-  "next_action": "STEP_4_PROVE_NORMAL_GOVERNED_ENTRY_ON_GOUVERN",
+  "next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM",
   "reconciliation_required_before_write": true,
   "ci_run": 36258871067,
   "ci_result": "PASS",
   "client_source_memory_removal": "PASS",
   "self_governance": "PASS",
   "reconciliation_reason": "STEP_4_AND_STEP_5_WERE_COMPRESSED_IN_SOURCE_SUMMARY",
-  "canonical_memory_database": "PASS"
+  "canonical_memory_database": "PASS",
+  "blocker": {
+    "run": 36262734626,
+    "error": "INTENT_SELFTEST_FAILED: unexpected work item"
+  }
 }

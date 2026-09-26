@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 5,
+  "revision": 6,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -28,7 +28,7 @@
     },
     {
       "id": "P12-S4",
-      "status": "IN_PROGRESS",
+      "status": "ACTIVE_PARENT",
       "depends_on": [
         "P12-S3"
       ],
@@ -49,7 +49,135 @@
         "P12-S5"
       ],
       "next_action": "CLOSE_CREATE_NEW_REPOSITORY_CASE"
+    },
+    {
+      "id": "C1-12-A",
+      "status": "DONE",
+      "depends_on": [
+        "P12-S3"
+      ],
+      "next_action": null
+    },
+    {
+      "id": "C1-12-B",
+      "status": "DONE",
+      "depends_on": [
+        "C1-12-A"
+      ],
+      "next_action": null
+    },
+    {
+      "id": "C1-12-C",
+      "status": "DONE",
+      "depends_on": [
+        "C1-12-B"
+      ],
+      "next_action": null
+    },
+    {
+      "id": "C1-12-D",
+      "status": "DONE",
+      "depends_on": [
+        "C1-12-C"
+      ],
+      "next_action": null
+    },
+    {
+      "id": "C1-12-E",
+      "status": "DONE",
+      "depends_on": [
+        "C1-12-D"
+      ],
+      "next_action": null
+    },
+    {
+      "id": "C1-12-F",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "C1-12-E"
+      ],
+      "next_action": "DIAGNOSE_UNEXPECTED_WORK_ITEM"
+    },
+    {
+      "id": "C1-12-G",
+      "status": "PENDING",
+      "depends_on": [
+        "C1-12-F"
+      ],
+      "next_action": "FIX_GENERIC_INTENT_SELFTEST"
+    },
+    {
+      "id": "C1-12-H",
+      "status": "PENDING",
+      "depends_on": [
+        "C1-12-G"
+      ],
+      "next_action": "TEMPLATE_CI_RELEASE"
+    },
+    {
+      "id": "C1-12-I",
+      "status": "PENDING",
+      "depends_on": [
+        "C1-12-H"
+      ],
+      "next_action": "UPGRADE_GOUVERN"
+    },
+    {
+      "id": "C1-12-J",
+      "status": "PENDING",
+      "depends_on": [
+        "C1-12-I"
+      ],
+      "next_action": "GREEN_GOUVERN_CI"
+    },
+    {
+      "id": "C1-12-K",
+      "status": "PENDING",
+      "depends_on": [
+        "C1-12-J"
+      ],
+      "next_action": "RERUN_GOUVERN_ISSUE_3"
+    },
+    {
+      "id": "C1-12-L",
+      "status": "PENDING",
+      "depends_on": [
+        "C1-12-K"
+      ],
+      "next_action": "VERIFY_NORMAL_ENTRY_MODE"
+    },
+    {
+      "id": "C1-12-M",
+      "status": "PENDING",
+      "depends_on": [
+        "C1-12-L"
+      ],
+      "next_action": "VERIFY_NO_FIRST_AGENT_DUPLICATION"
+    },
+    {
+      "id": "C1-12-N",
+      "status": "PENDING",
+      "depends_on": [
+        "C1-12-M"
+      ],
+      "next_action": "PERSIST_NORMAL_ENTRY_HANDOFF"
+    },
+    {
+      "id": "C1-12-O",
+      "status": "PENDING",
+      "depends_on": [
+        "C1-12-N"
+      ],
+      "next_action": "MARK_C1_12_DONE"
+    },
+    {
+      "id": "C1-12-P",
+      "status": "PENDING",
+      "depends_on": [
+        "C1-12-O"
+      ],
+      "next_action": "RECONCILE_RELATIONAL_MEMORY"
     }
   ],
-  "unique_executable_item": "P12-S4"
+  "unique_executable_item": "C1-12-F"
 }

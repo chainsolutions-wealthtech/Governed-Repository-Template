@@ -7,7 +7,7 @@
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
   "current_phase": "C1-12",
   "current_status": "IN_PROGRESS",
-  "unique_next_action": "STEP_4_PROVE_NORMAL_GOVERNED_ENTRY_ON_GOUVERN",
+  "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM",
   "phases": [
     {
       "id": "C1-00",
@@ -89,7 +89,19 @@
     {
       "id": "C1-12",
       "name": "normal governed entry proof",
-      "status": "IN_PROGRESS"
+      "status": "IN_PROGRESS",
+      "live_state": {
+        "issue": "Patricked-code/Gouvern#3",
+        "pilot_head": "3a1b7689be5aa38b4b6fdb6456526e618f9b0dd5",
+        "template_version": "2.8.3",
+        "completed_fixes": [
+          "V2.8.1_MACHINE_LOCAL_START",
+          "V2.8.2_CLIENT_POLICY_SYNC",
+          "V2.8.3_PORTABLE_BOOTSTRAP_FIXTURE"
+        ],
+        "current_blocker": "INTENT_SELFTEST_FAILED: unexpected work item",
+        "ci_run": 36262734626
+      }
     },
     {
       "id": "C1-13",

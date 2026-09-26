@@ -44,6 +44,8 @@ These tables answer: **What can the framework do and what does it ask?**
 - `decisions`
 - `run_events`
 - `evidence`
+- `agent_sessions`
+- `agent_activity_events`
 
 These tables answer: **What happened for a concrete repository/run?**
 
@@ -125,3 +127,28 @@ Database changes are additive migrations:
 - later `002_*.sql`, `003_*.sql`, etc.
 
 Never silently rewrite historical schema semantics.
+
+
+## Agent activity continuity
+
+Every meaningful agent work session can now be represented independently from Git commits.
+
+`agent_sessions` records:
+- agent identity/provider/actor when known;
+- workstream;
+- source/pilot repository;
+- observed HEADs;
+- objective;
+- status;
+- unique next action;
+- source reference.
+
+`agent_activity_events` records:
+- task/phase;
+- event type;
+- action/result;
+- evidence;
+- remarks/proposals through structured payloads;
+- chronology.
+
+This supports future admin views such as “who did what”, “what was discovered”, “what remains”, and “where to resume”.

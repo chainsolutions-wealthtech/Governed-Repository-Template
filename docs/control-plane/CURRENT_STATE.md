@@ -9,9 +9,9 @@
 - Role: `CENTRAL_GOVERNANCE_CONTROL_PLANE`
 - Canonical branch: `main`
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
-- Template version: `2.8.0`
+- Template version: `2.8.3`
 - V2.7.0 release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`
-- Source-state revision: `6`
+- Source-state revision: `8`
 
 ## Current framework program
 
@@ -47,9 +47,15 @@ From this framework program:
 - no MCP implementation work is performed here;
 - no MCP branch/task/session is created here unless separately authorized by the MCP program.
 
-## Blockers
+## Current blockers
 
-None for the self-governance migration.
+- `Patricked-code/Gouvern` is upgraded to V2.8.3 at `3a1b7689be5aa38b4b6fdb6456526e618f9b0dd5`.
+- Governance validation: PASS.
+- Bootstrap consistency self-test: PASS.
+- Governance CI still fails at `scripts/test_connection_intent.py`.
+- Exact failure: `INTENT_SELFTEST_FAILED: unexpected work item`.
+- C1-12 normal-entry proof issue exists as `Patricked-code/Gouvern#3`, but its first start attempt was refused by the human actor authorization gate and no governed state advanced.
+
 
 ## Unique next action
 
@@ -101,3 +107,16 @@ The future admin web application is intentionally deferred until all structuring
 - CASE 1 step-1 wording reconciled to the adaptive MCP contract: MCP optional; if linked, DIRECT/SSH/BOTH are owner choices.
 - Relational runtime seed and machine current-state HEAD reconciled to the observed main HEAD.
 - Active workflow checkpoint remains `C1-12 / STEP_4_PROVE_NORMAL_GOVERNED_ENTRY_ON_GOUVERN`.
+
+## C1-12 live chronology
+
+- 18:10 UTC — pilot issue `Patricked-code/Gouvern#3` created for subsequent-agent NORMAL_GOVERNED_ENTRY proof.
+- First start attempt refused because the repository actor authorization gate did not recognize current admin/maintain/write permission; no governed state advanced.
+- V2.8.1 / PR #25 added exact-HEAD machine local-entry start via `/governed-local-start`.
+- Gouvern upgraded to `0aaa276c75f5fe46cacaf9c636ddbad65ca66ee1`; client CI exposed policy synchronization regression.
+- V2.8.2 / PR #26 synchronized current control-plane policy into upgraded clients while preserving `GOVERNED_TARGET_CLIENT`.
+- Gouvern upgraded to `11563779839f149a762f883b3690ffa7541d77ac`; client CI exposed bootstrap fixture contamination by instantiated project state.
+- V2.8.3 / PR #27 made bootstrap self-tests portable by resetting only synthetic fixture project-profile/infrastructure values.
+- Gouvern upgraded to `3a1b7689be5aa38b4b6fdb6456526e618f9b0dd5`.
+- Current remaining failure: `INTENT_SELFTEST_FAILED: unexpected work item`.
+- Active CASE 1 phase remains `C1-12`; no transition to C1-13 is allowed until client CI and live normal-entry proof are green.

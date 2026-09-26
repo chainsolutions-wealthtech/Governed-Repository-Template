@@ -66,3 +66,18 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Governance CI database materialization: PASS.
 - Active workflow checkpoint remains CASE 1 `C1-12` / normal-entry proof.
 - No frontend implemented yet; application layer remains intentionally deferred.
+
+## 2026-09-26 — C1-12 live normal-entry proof revealed new generic work
+
+- Created `Patricked-code/Gouvern#3` for a subsequent-agent NORMAL_GOVERNED_ENTRY proof.
+- Initial start was refused by the actor authorization gate; no governed state advanced.
+- V2.8.1 / PR #25 added exact-HEAD machine local-entry start.
+- Gouvern upgrade to V2.8.1 exposed client control-plane policy drift.
+- V2.8.2 / PR #26 synchronized current client policy while preserving target-client role.
+- Gouvern upgrade to V2.8.2 exposed bootstrap self-test contamination by instantiated project choices.
+- V2.8.3 / PR #27 made bootstrap consistency fixtures portable.
+- Gouvern is now at `3a1b7689be5aa38b4b6fdb6456526e618f9b0dd5`.
+- Current client validation passes and bootstrap self-test passes.
+- Remaining blocker: Governance CI run `36262734626` fails at `scripts/test_connection_intent.py` with `INTENT_SELFTEST_FAILED: unexpected work item`.
+- C1-12 remains IN_PROGRESS. C1-13 is still locked.
+

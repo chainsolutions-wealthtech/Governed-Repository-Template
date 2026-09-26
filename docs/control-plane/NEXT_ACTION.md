@@ -1,23 +1,31 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = STEP_4_PROVE_NORMAL_GOVERNED_ENTRY_ON_GOUVERN
-STATE = READY
+NEXT_ACTION = C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM
+STATE = IN_PROGRESS
 ```
 
 ## Objective
 
-Use the already-baselined `Patricked-code/Gouvern` repository to prove a **subsequent** agent enters through `NORMAL_GOVERNED_ENTRY` rather than repeating `FIRST_AGENT_BOOTSTRAP`.
+Diagnose the remaining generic client CI failure exposed after the V2.8.3 upgrade of `Patricked-code/Gouvern`:
 
-## Required evidence
+```text
+scripts/test_connection_intent.py
+INTENT_SELFTEST_FAILED: unexpected work item
+```
 
-1. reobserve exact `Gouvern/main` HEAD;
-2. start a fresh local governed entry after first-agent completion;
-3. verify mode = `NORMAL_GOVERNED_ENTRY`;
-4. verify existing first-agent baseline/session/work state is preserved;
-5. complete the normal-entry questionnaire/handoff without creating a new first-agent baseline;
-6. verify CI remains green;
-7. persist STEP 4 proof in source authorities.
+Fix the generic framework/test assumption in the template first, prove template CI, propagate through exact-HEAD governed upgrade, restore all-green client CI, then resume the live subsequent-agent normal-entry proof.
+
+## Immediate required evidence
+
+1. inspect `scripts/test_connection_intent.py` and the instantiated Gouvern work-item state;
+2. identify why the synthetic connection-intent test sees an unexpected work item;
+3. prove whether the defect is fixture contamination, first-agent assumption, or normal-entry incompatibility;
+4. fix only the generic source/template behavior;
+5. obtain green template CI before any pilot upgrade;
+6. upgrade Gouvern under exact HEAD;
+7. obtain green client CI;
+8. then resume the existing `Gouvern#3` normal-entry proof.
 
 ## After STEP 4
 

@@ -311,3 +311,19 @@ V2.8.1 exposed that an upgraded historical client could receive the new manifest
 
 This changes only the test fixture. It does not reset or mutate the real instantiated repository project profile or infrastructure intent.
 
+## Control-plane continuity — C1-12 live-state reconciliation and agent ledger
+
+### Added
+- durable human and machine agent-activity ledgers;
+- relational `agent_sessions` and `agent_activity_events` tables via migration `002_agent_activity.sql`;
+- explicit C1-12 discovered sub-task chain from live pilot evidence;
+- exact blocker tracking for the remaining Gouvern connection-intent self-test failure.
+
+### Reconciled
+- template live version/head through V2.8.3;
+- Gouvern live pilot head and CI blocker;
+- V2.8.1–V2.8.3 generic fixes and their reasons;
+- unique next action narrowed to `C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM`.
+
+No CASE 1 phase was skipped and C1-13 remains locked.
+
