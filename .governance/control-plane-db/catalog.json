@@ -1,0 +1,330 @@
+{
+  "schema_version": "1.0.0",
+  "cases": [
+    {
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "label": "Créer un nouveau repository Git",
+      "ordinal": 1,
+      "kind": "STRUCTURING_CASE",
+      "status": "IN_PROGRESS",
+      "source_authority": "docs/control-plane/PROGRAM.md"
+    },
+    {
+      "case_id": "ADOPT_EXISTING_REPOSITORY",
+      "label": "Mettre à niveau un repository existant",
+      "ordinal": 2,
+      "kind": "STRUCTURING_CASE",
+      "status": "PLANNED",
+      "source_authority": "docs/EXISTING_REPOSITORY_ADOPTION.md"
+    },
+    {
+      "case_id": "MAP_EXISTING_PROJECT",
+      "label": "Cartographier/concevoir l'architecture d'un projet existant",
+      "ordinal": 3,
+      "kind": "STRUCTURING_CASE",
+      "status": "PLANNED",
+      "source_authority": "docs/PROJECT_MAPPING.md"
+    },
+    {
+      "case_id": "LAB_EVOLUTION",
+      "label": "Créer un laboratoire branche/PR",
+      "ordinal": 4,
+      "kind": "STRUCTURING_CASE",
+      "status": "PLANNED",
+      "source_authority": "docs/LAB_EVOLUTION.md"
+    },
+    {
+      "case_id": "CONTINUE_GOVERNED_WORK",
+      "label": "Poursuivre un travail déjà gouverné",
+      "ordinal": 5,
+      "kind": "POST_CASE_MODE",
+      "status": "PLANNED",
+      "source_authority": "docs/ENTRY_ACTION_ROUTER.md"
+    }
+  ],
+  "modes": [
+    {
+      "mode_id": "FIRST_AGENT_BOOTSTRAP",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "label": "Premier agent",
+      "description": "Initial business/setup baseline path",
+      "is_default": 1
+    },
+    {
+      "mode_id": "NORMAL_GOVERNED_ENTRY",
+      "case_id": "CONTINUE_GOVERNED_WORK",
+      "label": "Entrée gouvernée normale",
+      "description": "Subsequent governed entry after baseline",
+      "is_default": 1
+    }
+  ],
+  "questions": [
+    {
+      "question_id": "CP-Q-ENTRY_ACTION",
+      "case_id": null,
+      "phase_id": null,
+      "field_key": "entry_action",
+      "prompt": "Quel est le scénario principal de cette demande ?",
+      "response_type": "choice",
+      "required": 1,
+      "options": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION",
+        "CONTINUE_GOVERNED_WORK"
+      ],
+      "source_authority": ".governance/entry-action-policy.json"
+    },
+    {
+      "question_id": "C1-Q-CREATE_OWNER",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-00",
+      "field_key": "creation_target_owner",
+      "prompt": "Sur quel compte faut-il créer le repository ?",
+      "response_type": "choice",
+      "required": 1,
+      "options": [
+        "chainsolutions-wealthtech",
+        "Wealthtechinnovations",
+        "Patricked"
+      ],
+      "source_authority": "scripts/governed_request.py"
+    },
+    {
+      "question_id": "C1-Q-REPOSITORY_NAME",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-00",
+      "field_key": "repository_name",
+      "prompt": "Quel est le nom exact du nouveau repository ?",
+      "response_type": "string",
+      "required": 1,
+      "source_authority": "scripts/governed_request.py"
+    },
+    {
+      "question_id": "C1-Q-VISIBILITY",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-00",
+      "field_key": "visibility",
+      "prompt": "Le nouveau repository doit-il être public ou privé ?",
+      "response_type": "choice",
+      "required": 1,
+      "options": [
+        "private",
+        "public"
+      ],
+      "source_authority": "scripts/governed_request.py"
+    },
+    {
+      "question_id": "C1-Q-MISSION",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-02",
+      "field_key": "project_mission",
+      "prompt": "Quelle est la mission exacte de ce projet ?",
+      "response_type": "string",
+      "required": 1,
+      "source_authority": "scripts/local_governed_entry.py"
+    },
+    {
+      "question_id": "C1-Q-SCOPE",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-02",
+      "field_key": "project_scope",
+      "prompt": "Définis le périmètre avec in_scope et out_of_scope.",
+      "response_type": "object",
+      "required": 1,
+      "source_authority": "scripts/local_governed_entry.py"
+    },
+    {
+      "question_id": "C1-Q-PROFILE",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-02",
+      "field_key": "project_profile",
+      "prompt": "Quel profil technique faut-il sélectionner ou différer ?",
+      "response_type": "choice",
+      "required": 1,
+      "options": [
+        "generic",
+        "application",
+        "chainsolutions-fullstack-web",
+        "data-platform",
+        "DEFER"
+      ],
+      "source_authority": "scripts/local_governed_entry.py"
+    },
+    {
+      "question_id": "C1-Q-ARCH",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-02",
+      "field_key": "architecture_status",
+      "prompt": "Quel est l'état architectural initial ?",
+      "response_type": "choice",
+      "required": 1,
+      "options": [
+        "NEW_EMPTY_PROJECT",
+        "EXISTING_CODE_TO_DISCOVER",
+        "KNOWN_ARCHITECTURE"
+      ],
+      "source_authority": "scripts/local_governed_entry.py"
+    },
+    {
+      "question_id": "C1-Q-INFRA",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-02",
+      "field_key": "infrastructure_status",
+      "prompt": "Quel est l'état initial de l'infrastructure ?",
+      "response_type": "choice",
+      "required": 1,
+      "options": [
+        "NO_INFRASTRUCTURE_YET",
+        "UNKNOWN_TO_DISCOVER",
+        "KNOWN_TO_VERIFY"
+      ],
+      "source_authority": "scripts/local_governed_entry.py"
+    },
+    {
+      "question_id": "C1-Q-SETUP-NOW",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-03",
+      "field_key": "setup_repository_now",
+      "prompt": "Veux-tu poursuivre maintenant le setup technique guidé du repository ?",
+      "response_type": "boolean",
+      "required": 1,
+      "source_authority": "scripts/local_governed_entry.py"
+    },
+    {
+      "question_id": "C1-Q-LINK-MCP",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-04",
+      "field_key": "link_mcp_server",
+      "prompt": "Veux-tu lier ce repository GitHub à ton serveur MCP ?",
+      "response_type": "boolean",
+      "required": 1,
+      "source_authority": "scripts/local_governed_entry.py"
+    },
+    {
+      "question_id": "C1-Q-MCP-TRANSPORT",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-05",
+      "field_key": "mcp_transport",
+      "prompt": "Quel transport veux-tu configurer pour le MCP ?",
+      "response_type": "choice",
+      "required": 1,
+      "required_when": {
+        "link_mcp_server": true
+      },
+      "options": [
+        "DIRECT_MCP_TOKEN",
+        "SSH",
+        "BOTH"
+      ],
+      "source_authority": "scripts/local_governed_entry.py"
+    },
+    {
+      "question_id": "C1-Q-DOMAIN-BINDING",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-08",
+      "field_key": "domain_binding",
+      "prompt": "À partir de l'inventaire MCP, veux-tu joindre un domaine existant, demander un nouveau domaine, ou laisser ce point non résolu ?",
+      "response_type": "object",
+      "required": 1,
+      "required_when": {
+        "link_mcp_server": true
+      },
+      "source_authority": "scripts/local_governed_entry.py"
+    },
+    {
+      "question_id": "C1-Q-WORKFLOW",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-09",
+      "field_key": "workflow_model",
+      "prompt": "Quel flux de lecture et de travail veux-tu appliquer ?",
+      "response_type": "choice",
+      "required": 1,
+      "options": [
+        "REGULATORY_AFRICAFUNDS_GOVERNED_FLOW",
+        "STANDARD_GOVERNED_FLOW"
+      ],
+      "source_authority": "scripts/local_governed_entry.py"
+    },
+    {
+      "question_id": "C1-Q-SETUP-APPROVED",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-10",
+      "field_key": "setup_approved",
+      "prompt": "Approuves-tu ce setup technique et cette matrice de droits avant matérialisation ?",
+      "response_type": "boolean",
+      "required": 1,
+      "source_authority": "scripts/local_governed_entry.py"
+    },
+    {
+      "question_id": "C2-Q-TARGET",
+      "case_id": "ADOPT_EXISTING_REPOSITORY",
+      "phase_id": null,
+      "field_key": "target_repository",
+      "prompt": "Quel repository existant doit être adopté ?",
+      "response_type": "repository",
+      "required": 1,
+      "source_authority": "scripts/governed_request.py"
+    },
+    {
+      "question_id": "C2-Q-STRATEGY",
+      "case_id": "ADOPT_EXISTING_REPOSITORY",
+      "phase_id": null,
+      "field_key": "integration_strategy",
+      "prompt": "Où l'adoption additive devra-t-elle être appliquée ?",
+      "response_type": "choice",
+      "required": 1,
+      "options": [
+        "DIRECT_CANONICAL_IF_AUTHORIZED",
+        "EXISTING_BRANCH",
+        "LAB_BRANCH"
+      ],
+      "source_authority": "scripts/governed_request.py"
+    },
+    {
+      "question_id": "C3-Q-TARGET",
+      "case_id": "MAP_EXISTING_PROJECT",
+      "phase_id": null,
+      "field_key": "target_repository",
+      "prompt": "Quel repository existant doit être cartographié ?",
+      "response_type": "repository",
+      "required": 1,
+      "source_authority": "scripts/governed_request.py"
+    },
+    {
+      "question_id": "C3-Q-SCOPE",
+      "case_id": "MAP_EXISTING_PROJECT",
+      "phase_id": null,
+      "field_key": "mapping_scope",
+      "prompt": "Quel niveau de cartographie est demandé ?",
+      "response_type": "choice",
+      "required": 1,
+      "options": [
+        "CURRENT_ONLY",
+        "CURRENT_AND_TARGET"
+      ],
+      "source_authority": "scripts/governed_request.py"
+    },
+    {
+      "question_id": "C4-Q-BRANCH",
+      "case_id": "LAB_EVOLUTION",
+      "phase_id": null,
+      "field_key": "lab_branch_name",
+      "prompt": "Quel nom de branche laboratoire faut-il préparer ?",
+      "response_type": "string",
+      "required": 1,
+      "source_authority": "scripts/governed_request.py"
+    },
+    {
+      "question_id": "C4-Q-PR",
+      "case_id": "LAB_EVOLUTION",
+      "phase_id": null,
+      "field_key": "pr_required",
+      "prompt": "Une pull request est-elle requise ?",
+      "response_type": "boolean",
+      "required": 1,
+      "source_authority": "scripts/governed_request.py"
+    }
+  ]
+}
