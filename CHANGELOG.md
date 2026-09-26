@@ -188,3 +188,15 @@ The SSH fallback remains read-only and cannot grant MCP scoped-write authority. 
 
 `HEAD_MOVED` still stops before any discovery-state mutation. Discovery retry does not widen project or runtime authority, and failed external discovery never advances to domain binding.
 
+## Governance Automation V2.6.9
+
+### Fixed
+
+- `BOTH` now opportunistically provisions the central `GOVERNED_MCP_AUTH_TOKEN` into the target repository whenever a governed local command is dispatched and the central secret is available;
+- sessions that already advanced beyond the historical credential gate can still gain the preferred direct MCP path without restart;
+- missing central direct credential remains non-blocking for `BOTH` and preserves SSH OIDC read-only fallback.
+
+### Safety
+
+The token value is never read back or exposed. Exact-HEAD and target issue guards still apply before secret provisioning. Direct MCP provisioning does not grant scoped-write authority.
+
