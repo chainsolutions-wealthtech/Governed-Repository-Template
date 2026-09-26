@@ -4,17 +4,17 @@
   "authority_type": "CANONICAL_TARGET_ARCHITECTURE",
   "scope": "CONTROL_PLANE_SOURCE_ONLY",
   "status": "ACCEPTED_TARGET_ARCHITECTURE",
-  "current_revision": 3,
+  "current_revision": 4,
   "canonical_path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
   "revision": {
-    "revision_id": "CP-ARCH-001-R3",
-    "revision_number": 3,
-    "subject_head_sha": "9d8c3936576888709830ba03309c3880367f1943",
-    "supersedes_revision_id": "CP-ARCH-001-R2",
+    "revision_id": "CP-ARCH-001-R4",
+    "revision_number": 4,
+    "subject_head_sha": "9782af27a1b8c97cdbbc8e2bc15ac2b02d649488",
+    "supersedes_revision_id": "CP-ARCH-001-R3",
     "source_decision_ids": [
-      "CPD-022"
+      "CPD-023"
     ],
-    "reason": "Clarify that the Template is the framework product and pilot repositories are external validation fixtures only.",
+    "reason": "Add version-dynamic, non-destructive governed client upgrade contract and source/client CI portability.",
     "approval_eligible_from_imported_memory": false
   },
   "source_provenance": {
@@ -176,5 +176,20 @@
       "RELEASE_OR_UPGRADE",
       "VALIDATE_ON_PILOT"
     ]
+  },
+  "client_upgrade_contract": {
+    "version_source": ".governance/TEMPLATE_MANIFEST.json",
+    "exact_head_required": true,
+    "static_governance_surface_sync": true,
+    "preserve_mutable_client_state": [
+      "WORK_ITEMS",
+      "CLAIMS",
+      "SESSIONS",
+      "CANONICAL_PROJECT_MEMORY",
+      "BUSINESS_ANSWERS",
+      "APPROVED_BASELINE"
+    ],
+    "source_only_memory_on_client": false,
+    "source_only_ci_steps": "SKIP_CLEANLY_ON_CLIENT"
   }
 }
