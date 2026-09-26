@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0.0",
+  "revision": 1,
+  "work_package_id": "SG-20260926-001",
+  "objective": "V2.7.0 Self-Governed Control Plane",
+  "items": [
+    {
+      "id": "SG-001",
+      "status": "DONE",
+      "depends_on": [],
+      "next_action": null
+    },
+    {
+      "id": "SG-002",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "SG-001"
+      ],
+      "next_action": "CREATE_SOURCE_AUTHORITIES"
+    },
+    {
+      "id": "SG-003",
+      "status": "PENDING",
+      "depends_on": [
+        "SG-002"
+      ],
+      "next_action": "CREATE_MACHINE_PROJECTIONS"
+    },
+    {
+      "id": "SG-004",
+      "status": "PENDING",
+      "depends_on": [
+        "SG-003"
+      ],
+      "next_action": "ENFORCE_SOURCE_STATE_VALIDATION"
+    },
+    {
+      "id": "SG-005",
+      "status": "PENDING",
+      "depends_on": [
+        "SG-004"
+      ],
+      "next_action": "PROVE_CLIENT_SOURCE_MEMORY_REMOVAL"
+    },
+    {
+      "id": "SG-006",
+      "status": "PENDING",
+      "depends_on": [
+        "SG-005"
+      ],
+      "next_action": "RELEASE_V2_7_0"
+    },
+    {
+      "id": "SG-007",
+      "status": "PENDING",
+      "depends_on": [
+        "SG-006"
+      ],
+      "next_action": "RESUME_PROGRAM_12"
+    }
+  ],
+  "unique_executable_item": "SG-002"
+}
