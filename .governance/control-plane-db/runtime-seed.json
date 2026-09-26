@@ -150,6 +150,29 @@
       "status": "ACCEPTED",
       "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "decided_at": "2026-09-26"
+    },
+    {
+      "decision_id": "CPD-020",
+      "scope_type": "AGENT_ENTRY",
+      "scope_id": "FRAMEWORK",
+      "decision_key": "SEPARATE_PRINCIPAL_AGENT_CONNECTION_SESSION",
+      "value": {
+        "dimensions": [
+          "PRINCIPAL",
+          "AGENT",
+          "CONNECTION",
+          "SESSION",
+          "ROLE",
+          "AUTHORITY"
+        ],
+        "github_actor_auto_capture_when_available": true,
+        "ambiguity_fails_closed": true,
+        "identity_ne_authority": true,
+        "role_ne_authority": true
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "decided_at": "2026-09-26"
     }
   ],
   "checkpoints": [
@@ -189,6 +212,18 @@
       "earliest_affected_phase_id": "C1-12",
       "dependent_revalidation": [],
       "source_ref": "CPD-019",
+      "created_at": "2026-09-26"
+    },
+    {
+      "feedback_id": "FB-20260926-IDN-001",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-12",
+      "feedback_class": "NEW_REQUIREMENT",
+      "content": "On agent arrival, automatically identify the entry account when available, create or resume a unique retrievable governed session, and route the agent through a chronological governed identity/session/role/authority/question-action path.",
+      "effect": "ADD_IDENTITY_CONNECTION_SESSION_ROUTING_BACKLOG_WITHOUT_CHANGING_ACTIVE_C1_12_EXECUTION",
+      "earliest_affected_phase_id": "C1-12",
+      "dependent_revalidation": [],
+      "source_ref": "CPD-020",
       "created_at": "2026-09-26"
     }
   ],
@@ -275,6 +310,28 @@
       "payload": {
         "decision_id": "CPD-019",
         "decision_key": "CONTINUOUS_RELATIONAL_MEMORY_PROJECTION"
+      },
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "occurred_at": "2026-09-26"
+    },
+    {
+      "event_id": "CME-20260926-IDN-001",
+      "event_type": "OWNER_FEEDBACK_RECEIVED",
+      "scope_type": "AGENT_ENTRY",
+      "scope_id": "FRAMEWORK",
+      "payload": {
+        "feedback_id": "FB-20260926-IDN-001"
+      },
+      "source_ref": "CPD-020",
+      "occurred_at": "2026-09-26"
+    },
+    {
+      "event_id": "CME-20260926-IDN-002",
+      "event_type": "DECISION_ACCEPTED",
+      "scope_type": "AGENT_ENTRY",
+      "scope_id": "FRAMEWORK",
+      "payload": {
+        "decision_id": "CPD-020"
       },
       "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "occurred_at": "2026-09-26"

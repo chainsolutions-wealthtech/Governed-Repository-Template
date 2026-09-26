@@ -73,3 +73,18 @@
   - documented the relational projection rule;
   - projected owner feedback and canonical memory events into `runtime-seed.json`.
 - Unique execution next action remains: `C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM`.
+
+
+## Entry AAL-20260926-IDN-001
+
+- Agent identity: ChatGPT
+- Workstream: Identity / connection / session routing
+- Starting source HEAD observed: `c3ed98126686b210e840e024d99685b67a33bf53`
+- Live finding: GitHub login/user-id/permission are observable, and stable governed session IDs already exist, but account capture and session creation are not automatic on simple repository arrival.
+- Owner requirement: persist the missing automatic identity/session/routing work as planned tasks.
+- Actions:
+  - added `CPD-020`;
+  - added IDN-001..IDN-013 to human and machine task queues;
+  - added identity/session target model to canonical architecture and data model;
+  - projected owner feedback and memory events into the relational seed.
+- Unique active execution remains `C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM`.

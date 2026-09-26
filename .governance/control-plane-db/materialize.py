@@ -142,6 +142,12 @@ def validate(conn):
     projection_events = {row[0] for row in conn.execute("SELECT event_type FROM canonical_memory_events WHERE scope_id='CONTROL_PLANE'").fetchall()}
     if not {"OWNER_FEEDBACK_RECEIVED","DECISION_ACCEPTED"}.issubset(projection_events):
         raise SystemExit("CONTROL_PLANE_DB_FAILED: continuous relational projection events incomplete")
+    idn_decision = conn.execute("SELECT decision_id FROM decisions WHERE decision_id='CPD-020'").fetchone()
+    if idn_decision != ("CPD-020",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: identity/session routing decision missing")
+    idn_feedback = conn.execute("SELECT feedback_id FROM owner_feedback WHERE feedback_id='FB-20260926-IDN-001'").fetchone()
+    if idn_feedback != ("FB-20260926-IDN-001",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: identity/session routing owner feedback missing")
     print("CONTROL_PLANE_DB_VALIDATION_PASS")
     print("cases=4")
     print(f"questions={conn.execute('SELECT COUNT(*) FROM questions').fetchone()[0]}")

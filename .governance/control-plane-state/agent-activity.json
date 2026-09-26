@@ -92,6 +92,43 @@
       ],
       "proposals": [],
       "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM"
+    },
+    {
+      "activity_id": "AAL-20260926-IDN-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "IDENTITY_CONNECTION_SESSION_ROUTING",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "c3ed98126686b210e840e024d99685b67a33bf53",
+      "objective": "Persist missing automatic identity/session/routing work as canonical backlog.",
+      "evidence_refs": [
+        "docs/control-plane/TASKS.md",
+        "CPD-020",
+        "docs/control-plane/DATA_MODEL.md",
+        ".governance/control-plane-state/canonical-architecture.json"
+      ],
+      "discovered_tasks": [
+        "IDN-001",
+        "IDN-002",
+        "IDN-003",
+        "IDN-004",
+        "IDN-005",
+        "IDN-006",
+        "IDN-007",
+        "IDN-008",
+        "IDN-009",
+        "IDN-010",
+        "IDN-011",
+        "IDN-012",
+        "IDN-013"
+      ],
+      "remarks": [
+        "GitHub actor/login/user-id/permission can be observed.",
+        "Current stable session-id/resume behavior exists but is not automatically triggered by merely arriving on the repository."
+      ],
+      "proposals": [
+        "Introduce principal, connection, governed-session and authority snapshot registries additively."
+      ],
+      "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM"
     }
   ]
 }

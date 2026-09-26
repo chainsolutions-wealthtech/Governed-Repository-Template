@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 7,
+  "revision": 8,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -237,6 +237,84 @@
       "status": "FUTURE",
       "depends_on": [],
       "next_action": "BUILD_ADMIN_WEB_APPLICATION"
+    },
+    {
+      "id": "IDN-001",
+      "status": "PLANNED",
+      "depends_on": [],
+      "next_action": "DEFINE_IDENTITY_MODEL"
+    },
+    {
+      "id": "IDN-002",
+      "status": "PLANNED",
+      "depends_on": [],
+      "next_action": "AUTO_CAPTURE_GITHUB_ACTOR_PERMISSION"
+    },
+    {
+      "id": "IDN-003",
+      "status": "PLANNED",
+      "depends_on": [],
+      "next_action": "ADD_PRINCIPAL_REGISTRY"
+    },
+    {
+      "id": "IDN-004",
+      "status": "PLANNED",
+      "depends_on": [],
+      "next_action": "ADD_CONNECTION_EVENT_REGISTRY"
+    },
+    {
+      "id": "IDN-005",
+      "status": "PLANNED",
+      "depends_on": [],
+      "next_action": "DEFINE_SESSION_ID_RESUME_RULES"
+    },
+    {
+      "id": "IDN-006",
+      "status": "PLANNED",
+      "depends_on": [],
+      "next_action": "AUTO_CREATE_OR_RESUME_SESSION"
+    },
+    {
+      "id": "IDN-007",
+      "status": "PLANNED",
+      "depends_on": [],
+      "next_action": "BIND_AGENT_ROLE"
+    },
+    {
+      "id": "IDN-008",
+      "status": "PLANNED",
+      "depends_on": [],
+      "next_action": "CAPTURE_AUTHORITY_SNAPSHOT"
+    },
+    {
+      "id": "IDN-009",
+      "status": "PLANNED",
+      "depends_on": [],
+      "next_action": "ROUTE_IDENTITY_SESSION_ROLE_AUTHORITY_ACTION_INTENT"
+    },
+    {
+      "id": "IDN-010",
+      "status": "PLANNED",
+      "depends_on": [],
+      "next_action": "PERSIST_SESSION_CONNECTION_EVENTS"
+    },
+    {
+      "id": "IDN-011",
+      "status": "PLANNED",
+      "depends_on": [],
+      "next_action": "ADD_IDENTITY_SESSION_CI_SELFTESTS"
+    },
+    {
+      "id": "IDN-012",
+      "status": "PLANNED",
+      "depends_on": [],
+      "next_action": "ADD_SOURCE_CONTROL_PLANE_ENTRY_ADAPTER"
+    },
+    {
+      "id": "IDN-013",
+      "status": "FUTURE",
+      "depends_on": [],
+      "next_action": "EXPOSE_IDENTITY_SESSION_TO_API_UI"
     }
   ],
   "unique_executable_item": "C1-12-F"
