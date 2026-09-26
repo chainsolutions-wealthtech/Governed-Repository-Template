@@ -25,7 +25,7 @@ jobs:
         run: python3 scripts/validate_governance.py
 
       - name: Compile governance scripts
-        run: python3 -m py_compile scripts/initialize_governance.py scripts/auto_bootstrap.py scripts/finalize_bootstrap.py scripts/governance_agent.py scripts/validate_governance.py scripts/adopt_existing_repository.py scripts/governed_request.py scripts/control_plane_issue_bridge.py scripts/control_plane_local_command.py scripts/control_plane_create_repository.py scripts/test_bootstrap_consistency.py scripts/test_connection_intent.py scripts/test_entry_action_router.py scripts/test_repository_adoption.py scripts/test_repository_scope.py scripts/test_control_plane_request.py scripts/test_control_plane_issue_contract.py scripts/test_repository_creation_executor.py scripts/local_governed_entry.py scripts/local_entry_issue_bridge.py scripts/local_entry_apply_baseline.py scripts/test_local_governed_entry.py scripts/mcp_repository_discovery.py
+        run: python3 -m py_compile scripts/initialize_governance.py scripts/auto_bootstrap.py scripts/finalize_bootstrap.py scripts/governance_agent.py scripts/validate_governance.py scripts/adopt_existing_repository.py scripts/governed_request.py scripts/control_plane_issue_bridge.py scripts/control_plane_local_command.py scripts/control_plane_provision_mcp_credential.py scripts/control_plane_create_repository.py scripts/test_bootstrap_consistency.py scripts/test_connection_intent.py scripts/test_entry_action_router.py scripts/test_repository_adoption.py scripts/test_repository_scope.py scripts/test_control_plane_request.py scripts/test_control_plane_issue_contract.py scripts/test_repository_creation_executor.py scripts/local_governed_entry.py scripts/local_entry_issue_bridge.py scripts/local_entry_apply_baseline.py scripts/test_local_governed_entry.py scripts/test_mcp_credential_provisioning.py scripts/mcp_repository_discovery.py
 
       - name: Test bootstrap state consistency
         run: python3 scripts/test_bootstrap_consistency.py
@@ -53,6 +53,9 @@ jobs:
 
       - name: Test repository-local governed agent entry
         run: python3 scripts/test_local_governed_entry.py
+
+      - name: Test automatic MCP credential provisioning
+        run: python3 scripts/test_mcp_credential_provisioning.py
 
       - name: Check textual integrity
         run: git diff --check
