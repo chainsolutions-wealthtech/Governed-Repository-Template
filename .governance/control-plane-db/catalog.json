@@ -325,6 +325,60 @@
       "response_type": "boolean",
       "required": 1,
       "source_authority": "scripts/governed_request.py"
+    },
+    {
+      "question_id": "CP-Q-ENTRY-PURPOSE",
+      "case_id": null,
+      "phase_id": null,
+      "field_key": "entry_purpose",
+      "prompt": "Pourquoi cet agent est-il ici ?",
+      "response_type": "choice",
+      "required": 1,
+      "status": "PLANNED",
+      "options": [
+        "WORK_ON_CONTROL_PLANE",
+        "APPLY_GOVERNANCE_CASE"
+      ],
+      "source_authority": "docs/control-plane/CANONICAL_ARCHITECTURE.md"
+    },
+    {
+      "question_id": "CP-Q-CONTROL-PLANE-WORK-KIND",
+      "case_id": null,
+      "phase_id": null,
+      "field_key": "control_plane_work_kind",
+      "prompt": "Quel type de travail doit être effectué sur le control plane ?",
+      "response_type": "choice",
+      "required": 1,
+      "status": "PLANNED",
+      "required_when": {
+        "entry_purpose": "WORK_ON_CONTROL_PLANE"
+      },
+      "options": [
+        "CODE_IMPLEMENTATION",
+        "EXECUTE_EXISTING_TASK",
+        "ADD_OR_ENRICH_INFORMATION"
+      ],
+      "source_authority": "docs/control-plane/CANONICAL_ARCHITECTURE.md"
+    },
+    {
+      "question_id": "CP-Q-STRUCTURING-CASE",
+      "case_id": null,
+      "phase_id": null,
+      "field_key": "selected_structuring_case",
+      "prompt": "Quel cas structurant doit être appliqué ?",
+      "response_type": "choice",
+      "required": 1,
+      "status": "PLANNED",
+      "required_when": {
+        "entry_purpose": "APPLY_GOVERNANCE_CASE"
+      },
+      "options": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "source_authority": "docs/control-plane/CANONICAL_ARCHITECTURE.md"
     }
   ],
   "activities": [
