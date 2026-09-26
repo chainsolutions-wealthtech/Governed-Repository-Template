@@ -34,3 +34,10 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - `docs/control-plane/` removed from initialized client: PASS.
 - `.governance/control-plane-state/` removed from initialized client: PASS.
 - Next: merge V2.7.0 and attest resulting canonical main HEAD.
+
+## 2026-09-26 — V2.7.0 merged and source state attested
+
+- V2.7.0 merge subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`.
+- Self-governed control-plane memory: ACTIVE.
+- Source/client memory separation: ACTIVE.
+- Canonical program #12 released to resume at `STEP_4_SECOND_FRESH_REPOSITORY_E2E`.

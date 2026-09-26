@@ -11,11 +11,11 @@ Objective: V2.7.0 Self-Governed Control Plane.
 | SG-003 Create machine source projections | DONE | SG-002 | current/checkpoint/handoff/tasks JSON |
 | SG-004 Enforce source-state validation | DONE | SG-003 | validator + Governance CI contract |
 | SG-005 Prevent client leakage | DONE | SG-004 | Governance CI run 36258871067 PASS |
-| SG-006 Release V2.7.0 and reconcile source checkpoint | IN_PROGRESS | SG-005 | merged green release |
-| SG-007 Resume framework program #12 | PENDING | SG-006 | second fresh CREATE_NEW_REPOSITORY E2E starts |
+| SG-006 Release V2.7.0 and reconcile source checkpoint | DONE | SG-005 | merged main `d11b72956e68526edf9b17aec472163a4e49a585` |
+| SG-007 Resume framework program #12 | IN_PROGRESS | SG-006 | second fresh CREATE_NEW_REPOSITORY E2E starts |
 
 ## Unique executable task
 
-`SG-006_MERGE_V2_7_0_AND_ATTEST_RELEASE_HEAD`
+`SG-007_RESUME_PROGRAM_12_SECOND_FRESH_REPOSITORY_E2E`
 
 No later task may become executable before its dependency is complete.
