@@ -92,7 +92,9 @@
       ".governance/control-plane-db/001_schema.sql",
       ".governance/control-plane-db/catalog.json",
       ".governance/control-plane-db/runtime-seed.json",
-      ".governance/control-plane-db/materialize.py"
+      ".governance/control-plane-db/materialize.py",
+      ".governance/control-plane-db/002_agent_activity.sql",
+      ".governance/control-plane-db/003_canonical_authorities.sql"
     ],
     "invariants": [
       "DATABASE_BINARY_NOT_CANONICAL_IN_GIT",
@@ -100,8 +102,13 @@
       "ALL_STRUCTURING_CASES_SHARE_THE_SAME_RELATIONAL_MODEL",
       "OWNER_FEEDBACK_AND_DECISIONS_ARE_FIRST_CLASS_RECORDS",
       "CHECKPOINTS_AND_HANDOFFS_ARE_QUERYABLE",
-      "CLIENT_REPOSITORIES_DO_NOT_RECEIVE_CONTROL_PLANE_DATABASE"
-    ]
+      "CLIENT_REPOSITORIES_DO_NOT_RECEIVE_CONTROL_PLANE_DATABASE",
+      "CANONICAL_AUTHORITIES_HAVE_MONOTONE_REVISIONS",
+      "IMPORTED_MEMORY_CANNOT_GRANT_LIVE_APPROVAL",
+      "TARGET_ARCHITECTURE_NE_CURRENT_EXECUTION_STATE",
+      "EVENT_HISTORY_AND_CURRENT_PROJECTION_COEXIST"
+    ],
+    "schema_version": "1.2.0"
   },
   "canonical_architecture": {
     "authority_id": "CP-ARCH-001",
