@@ -107,6 +107,11 @@ def main():
     ]
     updates={p:(ROOT/p).read_text(encoding="utf-8") for p in static_paths}
 
+    control_plane_policy=json.loads((ROOT/".governance/control-plane-policy.json").read_text(encoding="utf-8"))
+    control_plane_policy["current_role"]="GOVERNED_TARGET_CLIENT"
+    control_plane_policy["client_repository"]=target
+    updates[".governance/control-plane-policy.json"]=json.dumps(control_plane_policy,ensure_ascii=False,indent=2)+"\n"
+
     existing_local=target_text(token,target,".governance/local-entry/state.json")
     if existing_local:
         local=json.loads(existing_local)
@@ -147,8 +152,8 @@ def main():
     change=target_text(token,target,"CHANGELOG.md") or "# CHANGELOG\n"
     updates["CHANGELOG.md"]=append_once(
       change,
-      "## Governance Automation V2.8.1",
-      "## Governance Automation V2.8.1\n\n- Adds exact-head governed machine local-entry start through the central GitHub App.\n- Machine-started local entries create and initialize their issue/state in one repository_dispatch.\n- Preserves existing first-agent baseline state and routes subsequent entries to NORMAL_GOVERNED_ENTRY."
+      "## Governance Automation V2.8.2",
+      "## Governance Automation V2.8.2\n\n- Preserves V2.8.1 machine local-entry start.\n- Synchronizes the current control-plane policy into upgraded clients while forcing target role GOVERNED_TARGET_CLIENT.\n- Keeps source-only memory paths absent from clients while matching the validator contract."
     )
 
     entries=[]
@@ -156,14 +161,14 @@ def main():
         blob=gh(token,"POST",f"/repos/{target}/git/blobs",{"content":text,"encoding":"utf-8"})
         entries.append({"path":path,"mode":"100644","type":"blob","sha":blob["sha"]})
     tree=gh(token,"POST",f"/repos/{target}/git/trees",{"base_tree":base_tree,"tree":entries})
-    new_commit=gh(token,"POST",f"/repos/{target}/git/commits",{"message":"governance: upgrade repository-local setup to v2.8.1","tree":tree["sha"],"parents":[head]})
+    new_commit=gh(token,"POST",f"/repos/{target}/git/commits",{"message":"governance: upgrade repository-local setup to v2.8.2","tree":tree["sha"],"parents":[head]})
     gh(token,"PATCH",f"/repos/{target}/git/refs/heads/{branch}",{"sha":new_commit["sha"],"force":False})
     migrated_local_entries=migrate_open_local_entry_heads(token,target,head,new_commit["sha"])
 
     issue=a.issue_number
     central_token=os.environ.get("GITHUB_TOKEN")
     if issue and central_token:
-        gh(central_token,"POST",f"/repos/{CENTRAL}/issues/{issue}/comments",{"body":f"### Local entry upgrade applied\n\nTarget: {target}\nPrevious HEAD: {head}\nUpgrade commit: {new_commit['sha']}\nVersion: 2.8.1\nMigrated open local entries: {len(migrated_local_entries)}"})
-    print(json.dumps({"status":"LOCAL_SETUP_V2_8_1_UPGRADE_APPLIED","target":target,"old_head":head,"new_head":new_commit["sha"],"migrated_local_entries":migrated_local_entries}))
+        gh(central_token,"POST",f"/repos/{CENTRAL}/issues/{issue}/comments",{"body":f"### Local entry upgrade applied\n\nTarget: {target}\nPrevious HEAD: {head}\nUpgrade commit: {new_commit['sha']}\nVersion: 2.8.2\nMigrated open local entries: {len(migrated_local_entries)}"})
+    print(json.dumps({"status":"LOCAL_SETUP_V2_8_2_UPGRADE_APPLIED","target":target,"old_head":head,"new_head":new_commit["sha"],"migrated_local_entries":migrated_local_entries}))
 
 if __name__=="__main__":main()
