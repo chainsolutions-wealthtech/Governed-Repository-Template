@@ -1,63 +1,55 @@
 {
   "schema_version": "1.0.0",
-  "revision": 4,
-  "work_package_id": "SG-20260926-001",
-  "objective": "V2.7.0 Self-Governed Control Plane",
+  "revision": 5,
+  "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
+  "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
     {
-      "id": "SG-001",
+      "id": "P12-S1",
       "status": "DONE",
       "depends_on": [],
       "next_action": null
     },
     {
-      "id": "SG-002",
+      "id": "P12-S2",
       "status": "DONE",
       "depends_on": [
-        "SG-001"
+        "P12-S1"
       ],
-      "next_action": "CREATE_SOURCE_AUTHORITIES"
+      "next_action": null
     },
     {
-      "id": "SG-003",
+      "id": "P12-S3",
       "status": "DONE",
       "depends_on": [
-        "SG-002"
+        "P12-S2"
       ],
-      "next_action": "CREATE_MACHINE_PROJECTIONS"
+      "next_action": null
     },
     {
-      "id": "SG-004",
-      "status": "DONE",
-      "depends_on": [
-        "SG-003"
-      ],
-      "next_action": "ENFORCE_SOURCE_STATE_VALIDATION"
-    },
-    {
-      "id": "SG-005",
-      "status": "DONE",
-      "depends_on": [
-        "SG-004"
-      ],
-      "next_action": "PROVE_CLIENT_SOURCE_MEMORY_REMOVAL"
-    },
-    {
-      "id": "SG-006",
-      "status": "DONE",
-      "depends_on": [
-        "SG-005"
-      ],
-      "next_action": "RELEASE_V2_7_0"
-    },
-    {
-      "id": "SG-007",
+      "id": "P12-S4",
       "status": "IN_PROGRESS",
       "depends_on": [
-        "SG-006"
+        "P12-S3"
       ],
-      "next_action": "RESUME_PROGRAM_12"
+      "next_action": "PROVE_NORMAL_GOVERNED_ENTRY_ON_GOUVERN"
+    },
+    {
+      "id": "P12-S5",
+      "status": "PENDING",
+      "depends_on": [
+        "P12-S4"
+      ],
+      "next_action": "SECOND_FRESH_REPOSITORY_E2E"
+    },
+    {
+      "id": "P12-S6",
+      "status": "PENDING",
+      "depends_on": [
+        "P12-S5"
+      ],
+      "next_action": "CLOSE_CREATE_NEW_REPOSITORY_CASE"
     }
   ],
-  "unique_executable_item": "SG-007"
+  "unique_executable_item": "P12-S4"
 }
