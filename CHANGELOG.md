@@ -138,3 +138,14 @@ V2.6.3 preserves the V2.6.2 direct-MCP token contract and the V2.6 OIDC ephemera
 
 Failure evidence never includes credential values. A failed provisioning attempt leaves the target local-entry state unchanged and provides a deterministic remediation reason before retry.
 
+## Governance Automation V2.6.5
+
+### Fixed
+
+- classifies failures that occur before the MCP source-secret check: target repository/ref lookup, local-entry issue lookup, state decoding and credential-gate contract validation;
+- preserves stable non-secret failure evidence so the central request identifies the exact remediation class instead of a generic Actions failure.
+
+### Compatibility
+
+No authentication contract changes. V2.6.5 is diagnostic and fail-closed over V2.6.4.
+

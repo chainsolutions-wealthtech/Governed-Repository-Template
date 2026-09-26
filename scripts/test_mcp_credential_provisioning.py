@@ -75,6 +75,10 @@ def main() -> None:
         "CONTROL_PLANE_MCP_AUTH_TOKEN_MISSING",
         "TARGET_MCP_SECRET_WRITE_FAILED",
         "TARGET_MCP_SECRET_ATTESTATION_READ_FAILED",
+        "TARGET_GITHUB_CONTEXT_READ_FAILED",
+        "TARGET_ISSUE_READ_FAILED",
+        "TARGET_LOCAL_STATE_DECODE_FAILED",
+        "TARGET_CREDENTIAL_GATE_CONTRACT_INVALID",
     ]:
         if fragment not in provisioner:
             raise SystemExit("MCP_CREDENTIAL_PROVISION_SELFTEST_FAILED: provisioner contract " + fragment)

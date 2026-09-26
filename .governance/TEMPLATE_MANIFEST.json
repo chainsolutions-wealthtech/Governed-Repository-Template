@@ -128,7 +128,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.6.4",
+  "template_version": "2.6.5",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -191,7 +191,10 @@
     "secret metadata attestation without secret value exposure",
     "machine-readable MCP credential provisioning failure codes",
     "control-plane issue evidence for blocked credential provisioning",
-    "machine dispatch blocked after credential provisioning failure"
+    "machine dispatch blocked after credential provisioning failure",
+    "MCP credential target-context preflight failure classification",
+    "MCP credential local-state decode failure classification",
+    "MCP credential gate contract failure classification"
   ],
   "automatic_initialization_supported": true
 }
