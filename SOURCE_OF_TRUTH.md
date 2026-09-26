@@ -72,3 +72,15 @@ After `HANDOFF_READY`, the target repository and its versioned authorities remai
 ## Local entry operational state
 
 A `[Governed Local Entry]` issue is orchestration state, not canonical project truth. Once the approved first-agent baseline is committed, the versioned repository files and machine projections become authoritative according to the normal hierarchy.
+
+## Canonical source-memory roles
+
+For the source control plane, authorities are separated by purpose:
+
+- TARGET: `docs/control-plane/CANONICAL_ARCHITECTURE.md` and accepted invariants;
+- CURRENT: `docs/control-plane/CURRENT_STATE.md`, current/checkpoint projections;
+- EXECUTION: `PROGRAM.md`, `TASKS.md`, `NEXT_ACTION.md`;
+- CONTINUITY: handoff, replay ledgers and agent activity;
+- HISTORY: decisions, suivi, events, evidence and owner feedback.
+
+Target architecture never overrides newer live Git evidence. Imported memory or historical snapshots cannot satisfy live approval or mutation authority.
