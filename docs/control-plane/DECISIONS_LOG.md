@@ -15,3 +15,5 @@ Append-only durable decisions for the source/control-plane repository.
 | CPD-009 | 2026-09-26 | Canonical control-plane memory gets a reusable relational projection shared by all structuring cases; Git-versioned SQL/JSON remain auditable authority while mutable DB binaries are not canonical. | ACCEPTED |
 | CPD-010 | 2026-09-26 | Future admin web UI will consume the relational model only after all structuring cases/parcours are validated; no premature front-end will define workflow semantics. | ACCEPTED |
 | CPD-011 | 2026-09-26 | Owner feedback, decisions, checkpoints, handoffs, evidence and intakes are first-class relational records so workflows can return/revalidate without erasing history. | ACCEPTED |
+| CPD-012 | 2026-09-26 | Every meaningful agent work session must persist observed HEADs, claimed task, actions, evidence/results, defects discovered, remarks/proposals and next action; Git commits alone are insufficient as the agent-work ledger. | ACCEPTED |
+| CPD-013 | 2026-09-26 | Newly discovered tasks/subtasks must enter the canonical task queue before later workflow progression, preserving dependencies and a single executable next action. | ACCEPTED |
