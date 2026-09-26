@@ -137,7 +137,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.1",
+  "template_version": "2.8.2",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -233,7 +233,9 @@
     "future admin frontend consumes validated relational workflow model",
     "central GitHub App machine local-entry start",
     "single-dispatch local issue creation and state initialization",
-    "exact-head guarded subsequent-agent start"
+    "exact-head guarded subsequent-agent start",
+    "client control-plane policy synchronized during governed upgrade",
+    "upgraded clients preserve GOVENED_TARGET_CLIENT role with current source-only contract"
   ],
   "automatic_initialization_supported": true
 }
