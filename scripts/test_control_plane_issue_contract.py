@@ -128,6 +128,14 @@ def main() -> None:
     if 'control_plane.get("source_only_paths", [])' not in initializer:
         raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: client source-only removal missing")
 
+    governance_ci = (ROOT / ".github" / "workflows" / "governance-ci.yml").read_text(encoding="utf-8")
+    for fragment in [
+        "if [ -f .governance/control-plane-db/materialize.py ]; then",
+        "CONTROL_PLANE_DB_SOURCE_ONLY_SKIP",
+    ]:
+        if fragment not in governance_ci:
+            raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: client-safe source-only DB guard missing: " + fragment)
+
     print("GOVERNED_CONTROL_PLANE_ISSUE_SELFTEST_PASS")
 
 
