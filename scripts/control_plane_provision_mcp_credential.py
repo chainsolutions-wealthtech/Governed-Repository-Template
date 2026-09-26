@@ -17,6 +17,19 @@ REPOSITORY_RE = re.compile(r"^[A-Za-z0-9](?:[A-Za-z0-9-]{0,38}[A-Za-z0-9])?/[A-Z
 SECRET_NAME = "GOVERNED_MCP_AUTH_TOKEN"
 
 
+def emit_output(name: str, value: str) -> None:
+    output_path = os.environ.get("GITHUB_OUTPUT")
+    if not output_path:
+        return
+    with open(output_path, "a", encoding="utf-8") as handle:
+        handle.write(f"{name}={value}\n")
+
+
+def fail(code: str) -> None:
+    emit_output("failure_code", code)
+    raise SystemExit(code)
+
+
 def api(token: str, method: str, path: str) -> dict:
     request = urllib.request.Request(
         "https://api.github.com" + path,
@@ -102,7 +115,7 @@ def main() -> None:
 
     target_token = os.environ.get("GOVERNED_TARGET_TOKEN")
     if not target_token:
-        raise SystemExit("GOVERNED_TARGET_TOKEN_MISSING")
+        fail("TARGET_TOKEN_MISSING")
 
     repository = api(target_token, "GET", f"/repos/{args.target_repository}")
     branch = repository.get("default_branch") or "main"
@@ -139,18 +152,25 @@ def main() -> None:
 
     source_secret = os.environ.get(SECRET_NAME)
     if not source_secret:
-        raise SystemExit("CONTROL_PLANE_MCP_AUTH_TOKEN_MISSING")
+        fail("CONTROL_PLANE_MCP_AUTH_TOKEN_MISSING")
 
-    set_repository_secret(target_token, args.target_repository, source_secret)
+    try:
+        set_repository_secret(target_token, args.target_repository, source_secret)
+    except RuntimeError:
+        fail("TARGET_MCP_SECRET_WRITE_FAILED")
 
-    metadata = api(
-        target_token,
-        "GET",
-        f"/repos/{args.target_repository}/actions/secrets/{SECRET_NAME}",
-    )
+    try:
+        metadata = api(
+            target_token,
+            "GET",
+            f"/repos/{args.target_repository}/actions/secrets/{SECRET_NAME}",
+        )
+    except RuntimeError:
+        fail("TARGET_MCP_SECRET_ATTESTATION_READ_FAILED")
     if metadata.get("name") != SECRET_NAME:
-        raise SystemExit("MCP_CREDENTIAL_PROVISION_ATTESTATION_FAILED")
+        fail("MCP_CREDENTIAL_PROVISION_ATTESTATION_FAILED")
 
+    emit_output("failure_code", "NONE")
     print(json.dumps({
         "status": "MCP_CREDENTIAL_PROVISIONED",
         "target_repository": args.target_repository,
