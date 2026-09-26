@@ -58,7 +58,8 @@
       "docs/control-plane/DECISIONS_LOG.md",
       "docs/control-plane/TASKS.md",
       "docs/control-plane/PROGRAM.md",
-      "docs/control-plane/CASE1_REPLAY_LEDGER.md"
+      "docs/control-plane/CASE1_REPLAY_LEDGER.md",
+      "docs/control-plane/DATA_MODEL.md"
     ],
     "machine_authorities": [
       ".governance/control-plane-state/current.json",
