@@ -139,9 +139,27 @@ def commented(event):
 
 def dispatch_start(event):
     p=event.get("client_payload") or {};objective=p.get("objective")
-    if not isinstance(objective,str) or not objective.strip():raise SystemExit("LOCAL_DISPATCH_FAILED: objective required")
+    sender=event.get("sender") or {}
+    if sender.get("type")!="Bot":
+        raise SystemExit("LOCAL_DISPATCH_FAILED: sender must be a GitHub App bot")
+    if p.get("source_repository")!=MACHINE_SOURCE_REPOSITORY:
+        raise SystemExit("LOCAL_DISPATCH_FAILED: invalid source repository")
+    expected=p.get("expected_head")
+    observed=head()
+    if not isinstance(expected,str) or not re.fullmatch(r"[0-9a-f]{40}",expected):
+        raise SystemExit("LOCAL_DISPATCH_FAILED: expected_head")
+    if observed!=expected:
+        raise SystemExit(f"HEAD_MOVED: expected={expected} observed={observed}")
+    if not isinstance(objective,str) or not objective.strip():
+        raise SystemExit("LOCAL_DISPATCH_FAILED: objective required")
     created=api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues",{"title":f"{TITLE_PREFIX} {str(p.get('title') or objective.splitlines()[0])[:80]}","body":f"### Initial objective\n\n{objective.strip()}\n"})
-    print(json.dumps({"status":"LOCAL_ENTRY_ISSUE_CREATED","issue_number":created.get("number"),"issue_url":created.get("html_url")}))
+    number=int(created["number"]); rid=f"LOCAL-{number:06d}"
+    issue=api("GET",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{number}")
+    s=new_request(rid,os.environ["GITHUB_REPOSITORY"],observed,first_agent_required(),strip_marker(issue.get("body")))
+    persist(number,issue.get("body"),s)
+    api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{number}/comments",{"body":render(s)})
+    emit_outputs(s,number)
+    print(json.dumps({"status":"LOCAL_ENTRY_ISSUE_CREATED_AND_INITIALIZED","issue_number":number,"issue_url":created.get("html_url"),"mode":s.get("mode")}))
 
 def dispatch_machine_command(event):
     p=event.get("client_payload") or {}
