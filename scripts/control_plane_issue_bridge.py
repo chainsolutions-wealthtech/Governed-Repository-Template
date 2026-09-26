@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import base64
 import json
 import os
 import re
@@ -75,6 +76,9 @@ def parse_command(body: str) -> tuple[str, dict] | None:
     if stripped.startswith("/governed-upgrade-local-entry"):
         raw = stripped[len("/governed-upgrade-local-entry"):].strip()
         return "upgrade_local_entry", json.loads(raw)
+    if stripped.startswith("/governed-local-command"):
+        raw = stripped[len("/governed-local-command"):].strip()
+        return "local_command", json.loads(raw)
     return None
 
 
@@ -170,7 +174,12 @@ def render_response(state: dict) -> str:
     return "\n".join(lines)
 
 
-def emit_executor_outputs(state: dict, issue_number: int, upgrade_payload: dict | None = None) -> None:
+def emit_executor_outputs(
+    state: dict,
+    issue_number: int,
+    upgrade_payload: dict | None = None,
+    local_command_payload: dict | None = None,
+) -> None:
     output_path = os.environ.get("GITHUB_OUTPUT")
     if not output_path:
         return
@@ -183,6 +192,7 @@ def emit_executor_outputs(state: dict, issue_number: int, upgrade_payload: dict 
     lines = [
         f"executor_required={'true' if required else 'false'}",
         f"upgrade_required={'true' if upgrade_payload else 'false'}",
+        f"local_command_required={'true' if local_command_payload else 'false'}",
         f"issue_number={issue_number}",
     ]
     if upgrade_payload:
@@ -194,6 +204,34 @@ def emit_executor_outputs(state: dict, issue_number: int, upgrade_payload: dict 
             f"upgrade_target_repository={target_repository}",
             f"upgrade_target_owner={target_repository.split('/',1)[0]}",
             f"upgrade_expected_head={expected_head}",
+        ])
+    if local_command_payload:
+        expected = {"target_repository", "issue_number", "expected_head", "command"}
+        if set(local_command_payload) != expected:
+            raise ValueError("local command payload must contain target_repository, issue_number, expected_head and command")
+        target_repository = str(local_command_payload.get("target_repository") or "")
+        target_issue = local_command_payload.get("issue_number")
+        expected_head = str(local_command_payload.get("expected_head") or "")
+        command = local_command_payload.get("command")
+        if "/" not in target_repository or not isinstance(target_issue, int) or target_issue < 1:
+            raise ValueError("local command target_repository/issue_number invalid")
+        if not re.fullmatch(r"[0-9a-f]{40}", expected_head):
+            raise ValueError("local command expected_head must be a lowercase 40-char SHA")
+        if not isinstance(command, dict) or command.get("kind") not in {"execute", "answer"}:
+            raise ValueError("local command kind must be execute or answer")
+        if command.get("kind") == "answer" and set(command) != {"kind", "field", "value"}:
+            raise ValueError("local answer command requires kind, field and value")
+        if command.get("kind") == "execute" and set(command) != {"kind"}:
+            raise ValueError("local execute command requires only kind")
+        command_b64 = base64.urlsafe_b64encode(
+            json.dumps(command, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+        ).decode("ascii").rstrip("=")
+        lines.extend([
+            f"local_command_target_repository={target_repository}",
+            f"local_command_target_owner={target_repository.split('/',1)[0]}",
+            f"local_command_target_issue={target_issue}",
+            f"local_command_expected_head={expected_head}",
+            f"local_command_b64={command_b64}",
         ])
     if required:
         lines.extend([
@@ -246,6 +284,10 @@ def handle_comment(event: dict) -> None:
         elif kind == "upgrade_local_entry":
             if set(payload) != {"target_repository", "expected_head"}:
                 raise ValueError("upgrade payload must contain target_repository and expected_head")
+        elif kind == "local_command":
+            expected = {"target_repository", "issue_number", "expected_head", "command"}
+            if set(payload) != expected:
+                raise ValueError("local command payload must contain target_repository, issue_number, expected_head and command")
         else:
             raise ValueError("unsupported governed command")
     except Exception as exc:
@@ -254,12 +296,19 @@ def handle_comment(event: dict) -> None:
         })
         return
 
-    if kind not in {"execute", "upgrade_local_entry"}:
+    if kind not in {"execute", "upgrade_local_entry", "local_command"}:
         persist_state(issue["number"], issue.get("body"), state)
         api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}/comments", {"body": render_response(state)})
     if kind == "upgrade_local_entry":
-        api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}/comments", {"body": "### Governed local-entry upgrade requested\n\nThe control plane will apply V2.4 under the supplied exact-HEAD guard."})
-    emit_executor_outputs(state, issue["number"], payload if kind == "upgrade_local_entry" else None)
+        api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}/comments", {"body": "### Governed local-entry upgrade requested\n\nThe control plane will apply the current governed local-entry version under the supplied exact-HEAD guard."})
+    if kind == "local_command":
+        api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}/comments", {"body": "### Governed machine local command requested\n\nThe control plane will dispatch the command to the target repository under the supplied exact-HEAD guard."})
+    emit_executor_outputs(
+        state,
+        issue["number"],
+        payload if kind == "upgrade_local_entry" else None,
+        payload if kind == "local_command" else None,
+    )
 
 
 def handle_repository_dispatch(event: dict) -> None:

@@ -75,7 +75,7 @@ def main():
     policy=(ROOT/".governance/mcp-connection-policy.json").read_text(encoding="utf-8")
     bridge=(ROOT/"scripts/local_entry_issue_bridge.py").read_text(encoding="utf-8")
     apply=(ROOT/"scripts/local_entry_apply_baseline.py").read_text(encoding="utf-8")
-    for fragment in ["governed_local_start","GOVERNED_MCP_AUTH_TOKEN","id-token: write","mcp_repository_discovery.py","local_entry_apply_baseline.py"]:
+    for fragment in ["governed_local_start","governed_local_command","GOVERNED_MCP_AUTH_TOKEN","id-token: write","mcp_repository_discovery.py","local_entry_apply_baseline.py"]:
         if fragment not in wf: raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: workflow contract "+fragment)
     if "GOVERNED_MCP_SSH_PRIVATE_KEY" in wf or "GOVERNED_MCP_SSH_PRIVATE_KEY" in policy:
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: persistent repository SSH private key must be absent")
@@ -89,7 +89,11 @@ def main():
         'TRUSTED_ASSOCIATIONS={"OWNER","MEMBER","COLLABORATOR"}',
         "trusted_actor(event.get(\"comment\") or {})",
         "/collaborators/{encoded}/permission",
-        'permission in {"admin","maintain","write"}'
+        'permission in {"admin","maintain","write"}',
+        'MACHINE_SOURCE_REPOSITORY="chainsolutions-wealthtech/Governed-Repository-Template"',
+        'sender.get("type")!="Bot"',
+        '"LOCAL_STATE_HEAD_MOVED',
+        'dispatch_machine_command(e)'
     ]:
         if fragment not in bridge:
             raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: local entry actor authorization "+fragment)

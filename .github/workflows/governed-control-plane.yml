@@ -40,7 +40,7 @@ jobs:
           python-version: '3.12'
 
       - name: Compile control plane
-        run: python3 -m py_compile scripts/governed_request.py scripts/control_plane_issue_bridge.py scripts/control_plane_create_repository.py scripts/control_plane_upgrade_local_entry.py
+        run: python3 -m py_compile scripts/governed_request.py scripts/control_plane_issue_bridge.py scripts/control_plane_create_repository.py scripts/control_plane_upgrade_local_entry.py scripts/control_plane_local_command.py
 
       - name: Process governed request
         id: process
@@ -77,10 +77,28 @@ jobs:
           permission-contents: write
           permission-workflows: write
 
-      - name: Apply local-entry V2.4 upgrade to target
+      - name: Apply current local-entry upgrade to target
         if: steps.process.outputs.upgrade_required == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GOVERNED_TARGET_TOKEN: ${{ steps.upgrade-token.outputs.token }}
         run: |
           python3 scripts/control_plane_upgrade_local_entry.py             --target-repository "${{ steps.process.outputs.upgrade_target_repository }}"             --expected-head "${{ steps.process.outputs.upgrade_expected_head }}"             --issue-number "${{ steps.process.outputs.issue_number }}"
+
+
+      - name: Mint target-owner token for machine local command
+        if: steps.process.outputs.local_command_required == 'true'
+        id: local-command-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ steps.process.outputs.local_command_target_owner }}
+          permission-contents: write
+
+      - name: Dispatch governed machine local command
+        if: steps.process.outputs.local_command_required == 'true'
+        env:
+          GOVERNED_TARGET_TOKEN: ${{ steps.local-command-token.outputs.token }}
+        run: |
+          python3 scripts/control_plane_local_command.py             --target-repository "${{ steps.process.outputs.local_command_target_repository }}"             --target-issue "${{ steps.process.outputs.local_command_target_issue }}"             --expected-head "${{ steps.process.outputs.local_command_expected_head }}"             --command-b64 "${{ steps.process.outputs.local_command_b64 }}"             --source-issue "${{ steps.process.outputs.issue_number }}"

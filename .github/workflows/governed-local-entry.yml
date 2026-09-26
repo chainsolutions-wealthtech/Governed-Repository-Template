@@ -6,7 +6,7 @@ on:
   issue_comment:
     types: [created]
   repository_dispatch:
-    types: [governed_local_start]
+    types: [governed_local_start, governed_local_command]
 
 permissions:
   contents: write
