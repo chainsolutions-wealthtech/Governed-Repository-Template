@@ -90,6 +90,33 @@ CONTROL PLANE != TARGET REPOSITORY
 
 The control plane owns framework orchestration and framework memory. The target repository owns its local project governance and project state.
 
+## 4A. Framework product vs pilot repositories
+
+The framework product is:
+
+`chainsolutions-wealthtech/Governed-Repository-Template`
+
+All generic governance behavior, schemas, automation, tests, canonical architecture, control-plane memory and reusable database model evolve here first.
+
+Pilot/validation repositories such as `Patricked-code/Gouvern` are external case-execution fixtures. They may reveal defects or provide evidence, but they are not the product and do not own framework architecture or roadmap.
+
+Canonical rule:
+
+```text
+PILOT REVEALS GENERIC DEFECT
+→ FIX TEMPLATE
+→ TEMPLATE CI
+→ RELEASE/UPGRADE
+→ VALIDATE ON PILOT
+```
+
+Never:
+
+```text
+PILOT PROJECT STATE
+→ BECOMES FRAMEWORK SOURCE OF TRUTH
+```
+
 ## 5. Source/control-plane memory vs client memory
 
 Source-only control-plane memory lives under:
