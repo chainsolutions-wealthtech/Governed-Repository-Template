@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0.0",
+  "handoff_id": "CP-HANDOFF-20260926-001",
+  "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+  "canonical_branch": "main",
+  "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
+  "active_branch": "governance/v2.7.0-self-governed-control-plane",
+  "active_work_package": "SG-20260926-001",
+  "current_task": "SG-002_CREATE_SOURCE_AUTHORITIES",
+  "unique_next_action": "COMPLETE_V2_7_0_SELF_GOVERNED_CONTROL_PLANE",
+  "read_first": [
+    "docs/control-plane/CURRENT_STATE.md",
+    "docs/control-plane/PROGRAM.md",
+    "docs/control-plane/TASKS.md",
+    "docs/control-plane/NEXT_ACTION.md",
+    "docs/control-plane/DECISIONS_LOG.md",
+    "docs/control-plane/SUIVI.md"
+  ],
+  "rules": [
+    "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",
+    "DO_NOT_REPURPOSE_DISTRIBUTED_ROOT_PROJECT_STATE_AS_SOURCE_MEMORY",
+    "SOURCE_ONLY_MEMORY_MUST_NOT_SURVIVE_CLIENT_INITIALIZATION",
+    "MCP_READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM"
+  ]
+}
