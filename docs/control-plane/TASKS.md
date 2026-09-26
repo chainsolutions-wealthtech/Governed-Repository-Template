@@ -53,3 +53,22 @@ No later task may become executable before its dependency is complete.
 | C1-12-P | Reconcile canonical relational memory with completed C1-12 evidence | PENDING | depends on C1-12-O |
 
 Current unique executable sub-task: `C1-12-F_DIAGNOSE_UNEXPECTED_WORK_ITEM`.
+
+## Canonical architecture hardening backlog
+
+These tasks preserve target objectives without changing the active CASE 1 execution gate.
+
+| ID | Task | Status | Dependency / note |
+|---|---|---|---|
+| ARCH-001 | Establish `CP-ARCH-001` canonical target architecture authority | DONE | source-only, revisioned authority |
+| ARCH-002 | Add canonical authority/revision registry | DONE | migration `003_canonical_authorities.sql` |
+| ARCH-003 | Complete deterministic materializer loaders for already-defined history tables | DONE | additive loader coverage |
+| ARCH-004 | Add cross-projection/event-history reducer and reconstruction validation | PLANNED | after active C1-12 blocker |
+| ARCH-005 | Formalize role/capability authorization model for INTAKER/SUPERVISOR/CODE_AGENT/REVIEWER | PLANNED | validate through cases |
+| ARCH-006 | Strengthen CI cross-checks: manifest ↔ architecture ↔ cases ↔ current/tasks/next/handoff | PLANNED | no parallel truth |
+| ARCH-007 | Generate derived PDF from canonical Markdown rather than maintain it manually | PLANNED | derived artifact only |
+| ARCH-008 | Expose Governance API over validated semantics | FUTURE | after four case paths stabilize |
+| ARCH-009 | Add PostgreSQL runtime projection if justified | FUTURE | Git remains foundational |
+| ARCH-010 | Build Admin Web Application as control surface | FUTURE | workflow semantics first |
+
+None of these items supersede the unique executable C1-12 sub-task.
