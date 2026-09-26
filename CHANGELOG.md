@@ -200,3 +200,16 @@ The SSH fallback remains read-only and cannot grant MCP scoped-write authority. 
 
 The token value is never read back or exposed. Exact-HEAD and target issue guards still apply before secret provisioning. Direct MCP provisioning does not grant scoped-write authority.
 
+## Governance Automation V2.6.10
+
+### Fixed
+
+- degraded `BOTH` discovery is automatically refreshed before setup approval when the preferred direct MCP credential becomes available later;
+- answers already supplied after the initial discovery are preserved across the refresh;
+- prior discovery evidence is retained in a bounded history instead of being silently overwritten;
+- the rebuilt setup package uses the refreshed evidence.
+
+### Safety
+
+The refresh is read-only, exact-HEAD governed, and does not widen MCP write authority. Fresh non-degraded evidence does not trigger repeated refresh loops.
+
