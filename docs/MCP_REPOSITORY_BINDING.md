@@ -108,6 +108,20 @@ If the direct credential is unavailable, `BOTH` may continue initial read-only d
 - no direct MCP success is inferred;
 - no MCP write authority is granted by the fallback.
 
+## Discovery failure and retry
+
+A discovery failure on an exact current HEAD is persisted into the local governed issue instead of existing only in Actions logs.
+
+The persisted evidence includes a stable non-secret failure code, transport, observed time and any already-observed component evidence. The local state remains retryable at `MCP_DISCOVERY`.
+
+Examples include:
+- `SSH_CERTIFICATE_BROKER_FORBIDDEN`;
+- `SSH_CERTIFICATE_BROKER_UNREACHABLE`;
+- `MCP_DIRECT_CREDENTIAL_MISSING`;
+- required probe failures.
+
+A later `/local-execute` may retry read-only discovery on the same exact governed state. Retry does not widen authority. A `HEAD_MOVED` condition remains fail-closed and is not persisted as if it were an external discovery failure.
+
 ## Domain resolution
 
 After discovery, the owner chooses:
