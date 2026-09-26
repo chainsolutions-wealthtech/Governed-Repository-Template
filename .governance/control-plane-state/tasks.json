@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 13,
+  "revision": 14,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -124,11 +124,11 @@
     },
     {
       "id": "C1-12-J",
-      "status": "PENDING",
+      "status": "ACTIVE_PARENT",
       "depends_on": [
         "C1-12-I-B"
       ],
-      "next_action": "GREEN_GOUVERN_CI"
+      "next_action": "OBTAIN_ALL_GREEN_EXTERNAL_PILOT_CI"
     },
     {
       "id": "C1-12-K",
@@ -430,12 +430,36 @@
     },
     {
       "id": "C1-12-I-B",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-12-I-A"
       ],
-      "next_action": "APPLY_CURRENT_TEMPLATE_TO_CASE1_PILOT"
+      "next_action": null
+    },
+    {
+      "id": "C1-12-J-A",
+      "status": "DONE",
+      "depends_on": [
+        "C1-12-I-B"
+      ],
+      "next_action": null
+    },
+    {
+      "id": "C1-12-J-B",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "C1-12-J-A"
+      ],
+      "next_action": "COMPLETE_PORTABLE_INTENT_FIXTURE"
+    },
+    {
+      "id": "C1-12-J-C",
+      "status": "PENDING",
+      "depends_on": [
+        "C1-12-J-B"
+      ],
+      "next_action": "RELEASE_AND_REUPGRADE_CASE1_PILOT"
     }
   ],
-  "unique_executable_item": "C1-12-I-B"
+  "unique_executable_item": "C1-12-J-B"
 }
