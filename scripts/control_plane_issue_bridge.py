@@ -227,6 +227,7 @@ def emit_executor_outputs(
             json.dumps(command, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
         ).decode("ascii").rstrip("=")
         lines.extend([
+            f"local_command_kind={command.get('kind','')}",
             f"local_command_target_repository={target_repository}",
             f"local_command_target_owner={target_repository.split('/',1)[0]}",
             f"local_command_target_issue={target_issue}",
