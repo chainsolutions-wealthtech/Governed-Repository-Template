@@ -327,3 +327,22 @@ This changes only the test fixture. It does not reset or mutate the real instant
 
 No CASE 1 phase was skipped and C1-13 remains locked.
 
+
+
+## Control-plane memory — Canonical target architecture authority — CP-ARCH-001
+
+### Added
+- source-only `CANONICAL_ARCHITECTURE.md` target authority;
+- machine projection with source provenance and imported-memory approval prohibition;
+- canonical authority revision registry and append-oriented canonical memory events;
+- complete runtime-seed materialization support for answers/events/evidence/handoffs/owner-feedback/artifacts;
+- architecture hardening backlog and durable roadmap toward API/PostgreSQL/Admin UI.
+
+### Preserved
+- four structuring cases + `CONTINUE_GOVERNED_WORK` as post-case mode;
+- source/client memory boundary;
+- Git-versioned authorities as foundational source of truth;
+- active CASE 1 phase and exact unique next action;
+- MCP external governance boundary.
+
+No CASE 1 execution gate is advanced by this memory enrichment.
