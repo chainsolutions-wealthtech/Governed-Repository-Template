@@ -165,6 +165,20 @@ def main() -> None:
 
     source_secret = os.environ.get(SECRET_NAME)
     if not source_secret:
+        transport=(state.get("answers") or {}).get("mcp_transport")
+        if transport=="BOTH":
+            emit_output("failure_code", "NONE")
+            emit_output("provisioning_status", "DEFERRED_TO_SSH_FALLBACK")
+            print(json.dumps({
+                "status": "MCP_CREDENTIAL_PROVISION_DEFERRED",
+                "reason": "CONTROL_PLANE_MCP_AUTH_TOKEN_MISSING",
+                "fallback": "SSH_OIDC_READONLY",
+                "target_repository": args.target_repository,
+                "target_issue": args.target_issue,
+                "expected_head": args.expected_head,
+                "secret_value_exposed": False,
+            }))
+            return
         fail("CONTROL_PLANE_MCP_AUTH_TOKEN_MISSING")
 
     try:
@@ -184,6 +198,7 @@ def main() -> None:
         fail("MCP_CREDENTIAL_PROVISION_ATTESTATION_FAILED")
 
     emit_output("failure_code", "NONE")
+    emit_output("provisioning_status", "PROVISIONED")
     print(json.dumps({
         "status": "MCP_CREDENTIAL_PROVISIONED",
         "target_repository": args.target_repository,
