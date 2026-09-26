@@ -149,3 +149,16 @@ Failure evidence never includes credential values. A failed provisioning attempt
 
 No authentication contract changes. V2.6.5 is diagnostic and fail-closed over V2.6.4.
 
+## Governance Automation V2.6.6
+
+### Fixed
+
+- governed target upgrades now preserve the existing `.governance/local-entry/state.json` projection instead of resetting first-agent completion fields;
+- open `[Governed Local Entry]` issues can migrate their `expected_head_sha` to the newly created upgrade commit when the prior expected HEAD reaches the pre-upgrade HEAD through a verified chain containing only governed local-setup upgrade commits;
+- issue state revision advances monotonically and an audit comment records the HEAD migration without modifying business answers or baseline content;
+- upgrade GitHub App tokens request target Issues write permission only because migration writes the governed issue state and audit comment.
+
+### Safety
+
+An open local-entry issue is not migrated across unrelated project commits. If the comparison chain contains any non-governance mutation, its expected HEAD remains unchanged and later mutable commands continue to fail closed.
+
