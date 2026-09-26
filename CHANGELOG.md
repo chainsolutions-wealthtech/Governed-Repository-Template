@@ -346,3 +346,19 @@ No CASE 1 phase was skipped and C1-13 remains locked.
 - MCP external governance boundary.
 
 No CASE 1 execution gate is advanced by this memory enrichment.
+
+
+## Control-plane routing — Two-stage automated agent purpose routing
+
+### Added
+- Stage 1 target choice: `WORK_ON_CONTROL_PLANE` vs `APPLY_GOVERNANCE_CASE`.
+- Stage 2A work kinds: `CODE_IMPLEMENTATION`, `EXECUTE_EXISTING_TASK`, `ADD_OR_ENRICH_INFORMATION`.
+- Stage 2B case choices limited to the four canonical structuring cases.
+- RTE-001..RTE-013 backlog, machine queue projection and relational questionnaire fields.
+- CPD-021 and owner-feedback/event projections.
+- Canonical architecture revision `CP-ARCH-001-R2`.
+
+### Automation boundary
+Humans answer governed questions and give explicit approvals where required. Authorized Git/GitHub/CI/file operations are performed by the governed system; automation never bypasses authority or fail-closed gates.
+
+The current runtime router is intentionally unchanged until implementation and regression tests complete. CASE 1 C1-12-F remains the unique executable task.
