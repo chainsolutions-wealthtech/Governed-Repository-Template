@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "handoff_id": "CP-HANDOFF-20260926-001",
+  "handoff_id": "CP-HANDOFF-20260926-002",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "canonical_branch": "main",
-  "baseline_subject_head": "d11b72956e68526edf9b17aec472163a4e49a585",
+  "baseline_subject_head": "f3b35e67587811e12a56e9b0cb5a20c06311d091",
   "active_branch": "main",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "current_task": "STEP_4_SECOND_FRESH_REPOSITORY_E2E",
-  "unique_next_action": "RESUME_PROGRAM_12_SECOND_FRESH_REPOSITORY_E2E",
+  "current_task": "P12-S4_PROVE_NORMAL_GOVERNED_ENTRY_ON_GOUVERN",
+  "unique_next_action": "STEP_4_PROVE_NORMAL_GOVERNED_ENTRY_ON_GOUVERN",
   "read_first": [
     "docs/control-plane/CURRENT_STATE.md",
     "docs/control-plane/PROGRAM.md",
