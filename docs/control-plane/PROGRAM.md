@@ -130,3 +130,12 @@ Conversation memory is supplemental context only.
 - `.governance/control-plane-state/*.json`: deterministic machine projections.
 - Git commits/CI: execution evidence.
 - GitHub issues: orchestration and external interaction evidence.
+
+
+## Canonical architecture authority
+
+The program evolves against:
+
+`docs/control-plane/CANONICAL_ARCHITECTURE.md` — authority `CP-ARCH-001`.
+
+This target authority defines the durable platform shape and roadmap. It does not replace chronological case gates or the current unique next action. New defects/intakes/owner changes must be inserted into the existing program with dependency analysis rather than starting a parallel program.
