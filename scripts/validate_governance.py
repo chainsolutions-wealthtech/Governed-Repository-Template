@@ -153,14 +153,17 @@ SOURCE_ONLY_REQUIRED = {
     "docs/control-plane/PROGRAM.md",
     "docs/control-plane/CASE1_REPLAY_LEDGER.md",
     "docs/control-plane/AGENT_ACTIVITY_LOG.md",
+    "docs/control-plane/CANONICAL_ARCHITECTURE.md",
     ".governance/control-plane-state/current.json",
     ".governance/control-plane-state/checkpoint.json",
     ".governance/control-plane-state/handoff.json",
     ".governance/control-plane-state/tasks.json",
     ".governance/control-plane-state/case1-replay.json",
     ".governance/control-plane-state/agent-activity.json",
+    ".governance/control-plane-state/canonical-architecture.json",
     ".governance/control-plane-db/001_schema.sql",
     ".governance/control-plane-db/002_agent_activity.sql",
+    ".governance/control-plane-db/003_canonical_authorities.sql",
     ".governance/control-plane-db/catalog.json",
     ".governance/control-plane-db/runtime-seed.json",
     ".governance/control-plane-db/materialize.py",
@@ -490,6 +493,8 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
         source_handoff = load(".governance/control-plane-state/handoff.json")
         source_tasks = load(".governance/control-plane-state/tasks.json")
         case1_replay = load(".governance/control-plane-state/case1-replay.json")
+        canonical_arch = load(".governance/control-plane-state/canonical-architecture.json")
+        catalog = load(".governance/control-plane-db/catalog.json")
         if source_current.get("repository") != CONTROL_PLANE_REPOSITORY:
             fail("control-plane source current repository mismatch")
         if source_current.get("role") != "CENTRAL_GOVERNANCE_CONTROL_PLANE":
@@ -503,6 +508,22 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
             fail("control-plane source tasks must have exactly one IN_PROGRESS item")
         if source_tasks.get("unique_executable_item") != executable[0].get("id"):
             fail("control-plane source unique executable task mismatch")
+        if canonical_arch.get("authority_id") != "CP-ARCH-001":
+            fail("canonical architecture authority id mismatch")
+        if canonical_arch.get("authority_type") != "CANONICAL_TARGET_ARCHITECTURE":
+            fail("canonical architecture authority type mismatch")
+        if canonical_arch.get("scope") != "CONTROL_PLANE_SOURCE_ONLY":
+            fail("canonical architecture scope mismatch")
+        if canonical_arch.get("status") != "ACCEPTED_TARGET_ARCHITECTURE":
+            fail("canonical architecture status mismatch")
+        if canonical_arch.get("revision", {}).get("approval_eligible_from_imported_memory") is not False:
+            fail("imported architecture memory must never satisfy live approval")
+        cases = [x.get("case_id") for x in catalog.get("cases", []) if x.get("kind") == "STRUCTURING_CASE"]
+        if cases != ["CREATE_NEW_REPOSITORY","ADOPT_EXISTING_REPOSITORY","MAP_EXISTING_PROJECT","LAB_EVOLUTION"]:
+            fail("canonical structuring case order mismatch")
+        post_modes = [x.get("case_id") for x in catalog.get("cases", []) if x.get("kind") == "POST_CASE_MODE"]
+        if post_modes != ["CONTINUE_GOVERNED_WORK"]:
+            fail("canonical post-case mode mismatch")
         if case1_replay.get("case_id") != "CREATE_NEW_REPOSITORY":
             fail("CASE 1 replay ledger case id mismatch")
         if case1_replay.get("unique_next_action") != source_current.get("unique_next_action"):
@@ -520,6 +541,9 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
             "docs/control-plane/TASKS.md",
             "docs/control-plane/PROGRAM.md",
             "docs/control-plane/CASE1_REPLAY_LEDGER.md",
+            "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "docs/control-plane/DATA_MODEL.md",
+            "docs/control-plane/AGENT_ACTIVITY_LOG.md",
         ]
         for relative in source_docs:
             text = (ROOT / relative).read_text(encoding="utf-8")
