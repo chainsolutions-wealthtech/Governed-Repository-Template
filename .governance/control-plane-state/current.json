@@ -7,16 +7,16 @@
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
   "program_issue": 12,
-  "current_checkpoint": "C1-12_CONNECTION_INTENT_SELFTEST_BLOCKED",
+  "current_checkpoint": "C1-12_GENERIC_INTENT_SELFTEST_FIX_IN_PROGRESS",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM",
+  "unique_next_action": "C1_12_G_FIX_GENERIC_INTENT_SELFTEST",
   "blockers": [
     {
-      "repository": "Patricked-code/Gouvern",
-      "head": "3a1b7689be5aa38b4b6fdb6456526e618f9b0dd5",
-      "ci_run": 36262734626,
-      "step": "scripts/test_connection_intent.py",
-      "error": "INTENT_SELFTEST_FAILED: unexpected work item"
+      "type": "GENERIC_FRAMEWORK_TEST_DEFECT",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "script": "scripts/test_connection_intent.py",
+      "root_cause": "SELFTEST_INHERITS_INSTANTIATED_CLIENT_WORK_STATE",
+      "fix_candidate": "2.8.4"
     }
   ],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
