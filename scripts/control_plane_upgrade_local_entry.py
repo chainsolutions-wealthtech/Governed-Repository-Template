@@ -103,7 +103,7 @@ def main():
       ".github/workflows/governance-auto-bootstrap.yml",".governance/TEMPLATE_MANIFEST.json",
       ".governance/repository-creation-executor.json",
       ".governance/mcp-connection-policy.json","schemas/mcp-binding.schema.json","docs/MCP_REPOSITORY_BINDING.md",
-      "scripts/mcp_repository_discovery.py","scripts/control_plane_local_command.py","scripts/control_plane_provision_mcp_credential.py","scripts/test_mcp_credential_provisioning.py"
+      "scripts/mcp_repository_discovery.py","scripts/control_plane_local_command.py","scripts/control_plane_provision_mcp_credential.py","scripts/test_mcp_credential_provisioning.py","scripts/control_plane_upgrade_local_entry.py","scripts/test_upgrade_session_head_migration.py"
     ]
     updates={p:(ROOT/p).read_text(encoding="utf-8") for p in static_paths}
 
