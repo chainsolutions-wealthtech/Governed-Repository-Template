@@ -237,3 +237,48 @@ Categories covered include:
 If a structured record cannot yet be represented by the current schema, it must be explicitly recorded as `PENDING_PROJECTION` and become a schema/migration task. Silent omission is forbidden.
 
 This preserves the future Admin UI objective without allowing the UI/database to outrank Git authorities.
+
+
+## Planned identity / connection / session registry
+
+The current `agent_sessions` model is not yet sufficient for automatic arrival identity.
+
+Target separation:
+
+```text
+PRINCIPAL  = authenticated external identity/account
+AGENT      = acting agent/provider identity
+CONNECTION = one observed arrival/event
+SESSION    = governed continuity/resume unit
+ROLE       = responsibility model
+AUTHORITY  = separately observed permission/mutation envelope
+```
+
+Planned relational entities:
+
+- `principals`
+- `agents`
+- `connections`
+- `governed_sessions`
+- `session_identity_bindings`
+- `session_authority_snapshots`
+- `session_events`
+
+The existing session-id behavior must remain backward-compatible while this model is introduced.
+
+Target entry sequence:
+
+```text
+CAPTURE AUTHENTICATED ACTOR
+→ RESOLVE PRINCIPAL
+→ RESOLVE AGENT
+→ CREATE CONNECTION EVENT
+→ CREATE/RESUME SESSION
+→ RESOLVE ROLE
+→ OBSERVE AUTHORITY
+→ RESOLVE ENTRY ACTION
+→ RESOLVE CONNECTION INTENT
+→ ENTER GOVERNED QUESTION/ACTION FLOW
+```
+
+Opening/viewing a repository alone is not currently sufficient to trigger this full flow; this backlog exists to make the governed arrival explicit and eventually automatable.
