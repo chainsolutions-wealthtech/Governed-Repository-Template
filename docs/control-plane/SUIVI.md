@@ -113,3 +113,16 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Added planned tasks `IDN-001` through `IDN-013`.
 - Projected the requirement into relational owner-feedback and canonical-memory events.
 - Active CASE 1 execution remains unchanged: `C1-12-F`.
+
+
+## 2026-09-26 — Two-stage automated agent purpose routing captured
+
+- Owner clarified the desired post-identity behavior on the control-plane source.
+- Stage 1 target: choose `WORK_ON_CONTROL_PLANE` or `APPLY_GOVERNANCE_CASE`.
+- Stage 2A target: if working on the repo, choose `CODE_IMPLEMENTATION`, `EXECUTE_EXISTING_TASK`, or `ADD_OR_ENRICH_INFORMATION`.
+- Stage 2B target: if applying a governance case, choose exactly one of the four structuring cases.
+- After case selection, the selected case's chronological question/action flow takes over.
+- Human users are not expected to perform Git/GitHub/CI/file operations manually; they answer governed questions and provide explicit approvals where required.
+- Added decision `CPD-021` and planned tasks `RTE-001` through `RTE-013`.
+- The active runtime router is intentionally unchanged until implementation + regression tests are complete.
+- Active CASE 1 execution remains `C1-12-F`.
