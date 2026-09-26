@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.2.0",
+  "schema_version": "1.3.0",
   "role": "REPOSITORY_TO_MCP_BINDING",
   "preferred_transport": "DIRECT_MCP_TOKEN",
   "fallback_transport": "GITHUB_OIDC_EPHEMERAL_SSH_CERTIFICATE",
@@ -23,7 +23,13 @@
       "source_value_exposure": "FORBIDDEN",
       "trigger": "LOCAL_MACHINE_EXECUTE_AT_CREDENTIAL_GATE",
       "attestation": "TARGET_SECRET_METADATA_ONLY",
-      "fallback": "FAIL_CLOSED"
+      "fallback": "BOTH_MAY_DEGRADE_TO_GITHUB_OIDC_EPHEMERAL_SSH_READONLY",
+      "mandatory_for": [
+        "DIRECT_MCP_TOKEN"
+      ],
+      "optional_for": [
+        "BOTH"
+      ]
     }
   },
   "ssh": {
@@ -48,7 +54,13 @@
       "docker-status-s2",
       "write-tools-context"
     ],
-    "write_authority": "MCP_SCOPED_WRITE_ONLY"
+    "write_authority": "MCP_SCOPED_WRITE_ONLY",
+    "both_semantics": {
+      "preferred": "DIRECT_MCP_PLUS_SSH_EVIDENCE",
+      "degraded_without_direct_credential": "SSH_OIDC_READONLY_DISCOVERY",
+      "degraded_status": "PARTIAL",
+      "write_authority": "UNCHANGED_MCP_SCOPED_WRITE_ONLY"
+    }
   },
   "invariants": [
     "NO_SECRET_IN_GIT",
@@ -58,6 +70,8 @@
     "DOMAIN_CREATION_REQUIRES_EXPLICIT_APPROVAL",
     "MCP_STATE_NE_GITHUB_STATE",
     "CONTROL_PLANE_MCP_SECRET_PROVISIONING_NEVER_EXPOSES_SECRET_VALUE",
-    "TARGET_MCP_SECRET_IS_PROVISIONED_ONLY_AT_EXACT_HEAD_CREDENTIAL_GATE"
+    "TARGET_MCP_SECRET_IS_PROVISIONED_ONLY_AT_EXACT_HEAD_CREDENTIAL_GATE",
+    "BOTH_DIRECT_CREDENTIAL_ABSENCE_MUST_NOT_BLOCK_READ_ONLY_SSH_DISCOVERY",
+    "BOTH_SSH_ONLY_EVIDENCE_MUST_BE_RECORDED_AS_PARTIAL_DEGRADED"
   ]
 }
