@@ -126,6 +126,7 @@ Conversation memory is supplemental context only.
 - `docs/control-plane/NEXT_ACTION.md`: unique resumable action.
 - `docs/control-plane/DECISIONS_LOG.md`: durable decisions.
 - `docs/control-plane/SUIVI.md`: chronological history.
+- `docs/control-plane/CASE1_REPLAY_LEDGER.md`: detailed phase-by-phase replay authority for CASE 1, including owner feedback/return points.
 - `.governance/control-plane-state/*.json`: deterministic machine projections.
 - Git commits/CI: execution evidence.
 - GitHub issues: orchestration and external interaction evidence.
