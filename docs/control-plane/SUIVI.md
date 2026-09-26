@@ -81,3 +81,16 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Remaining blocker: Governance CI run `36262734626` fails at `scripts/test_connection_intent.py` with `INTENT_SELFTEST_FAILED: unexpected work item`.
 - C1-12 remains IN_PROGRESS. C1-13 is still locked.
 
+
+
+## 2026-09-26 — Canonical target architecture authority integrated
+
+- User-supplied V2.8.3 architecture snapshot and integration analysis were read end-to-end.
+- Snapshot live-state values were treated as historical context and reconciled against current Git state.
+- Added source-only target authority `CP-ARCH-001` at `docs/control-plane/CANONICAL_ARCHITECTURE.md`.
+- Added machine projection `.governance/control-plane-state/canonical-architecture.json`.
+- Added imported-memory provenance/verification record; imported memory cannot grant live approval.
+- Added decisions CPD-014 through CPD-018 for target architecture, revisioning/event history, Git authority hierarchy, task lineage and frontend sequencing.
+- Added migration `003_canonical_authorities.sql` for authority revisions and canonical memory events.
+- Completed deterministic materializer support for history tables already defined in the schema.
+- Preserved current execution gate: CASE 1 / C1-12 / `C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM`.
