@@ -1,41 +1,42 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_12_I_A_FIX_DYNAMIC_CLIENT_UPGRADER
+NEXT_ACTION = C1_12_I_B_APPLY_CURRENT_TEMPLATE_TO_CASE1_PILOT
 STATE = IN_PROGRESS
 ```
 
 ## Objective
 
-Fix the **framework product** so the governed client upgrade mechanism can actually distribute the current Template release safely before any external pilot mutation.
+Validate the current framework product through the governed upgrade path on the external CASE 1 pilot.
 
-Product repository:
+Product/framework:
 
 `chainsolutions-wealthtech/Governed-Repository-Template`
 
-## Newly discovered generic defects
+Released product version:
 
-1. `scripts/control_plane_upgrade_local_entry.py` is hard-coded to V2.8.3.
-2. Its distribution surface does not include `scripts/test_connection_intent.py`, so the V2.8.4 fix cannot reach a client.
-3. The copied client Governance CI contains a source-only control-plane database materialization step even though clients correctly do not contain `.governance/control-plane-db`.
+`2.8.5`
 
-## Required product fix
+External validation pilot:
 
-1. derive upgrade version from `.governance/TEMPLATE_MANIFEST.json`;
-2. remove version-specific status/comment/commit hard-coding;
-3. distribute the generic connection-intent runtime/test surface required by client CI;
-4. keep project work-items, sessions, answers and business state untouched;
-5. make the source-only database materialization CI step skip cleanly on clients;
-6. add regression assertions covering the upgrade contract;
-7. obtain full Template Governance CI before external validation.
+`Patricked-code/Gouvern`
 
-## Product / pilot rule
+## Required sequence
 
-No pilot mutation is allowed until this Template task is complete.
+1. reobserve exact pilot `main` HEAD;
+2. invoke the central governed client-upgrade command under that exact HEAD;
+3. verify the upgrade reports the current Template manifest version;
+4. verify pilot project work-items/sessions/claims/business state are preserved;
+5. verify pilot Governance CI is fully green;
+6. if a new generic defect appears, return to the Template and insert a new framework task before any further pilot mutation.
+
+## Boundary
 
 ```text
-DISCOVER GENERIC DISTRIBUTION GAP
-→ FIX TEMPLATE
-→ TEMPLATE CI / RELEASE
-→ ONLY THEN VALIDATE PILOT
+TEMPLATE RELEASE
+→ GOVERNED PILOT UPGRADE
+→ PILOT CI / EVIDENCE
+→ EVIDENCE BACK TO TEMPLATE
 ```
+
+Never patch pilot business state to satisfy framework validation.
