@@ -10,7 +10,7 @@
 - Canonical branch: `main`
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
 - Template version entering this migration: `2.6.10`
-- Source-state revision: `2`
+- Source-state revision: `3`
 
 ## Current framework program
 
@@ -24,7 +24,7 @@
 
 ## Current control-plane hardening
 
-State: `READY_FOR_PROOF`
+State: `READY_TO_RELEASE`
 
 Objective: make the template source obey the same persistent-memory principles that it imposes on generated repositories, without leaking source-project history into clients.
 
@@ -52,4 +52,11 @@ None for the self-governance migration.
 
 ## Unique next action
 
-`RUN_V2_7_0_CI_AND_PROVE_CLIENT_NON_LEAK`
+`MERGE_V2_7_0_AND_ATTEST_RELEASE_HEAD`
+
+## Latest proof
+
+- Governance CI run `36258871067`: `PASS`.
+- Source-state validation: `PASS`.
+- Instantiated-client bootstrap test: `PASS`.
+- Source-only directories absent after client initialization: `PASS`.
