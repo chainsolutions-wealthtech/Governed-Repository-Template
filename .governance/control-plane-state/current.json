@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+  "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
+  "source_state_revision": 1,
+  "template_version": "2.7.0",
+  "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
+  "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
+  "program_issue": 12,
+  "current_checkpoint": "STEP_4_SECOND_FRESH_REPOSITORY_E2E",
+  "active_work_package": "SG-20260926-001",
+  "unique_next_action": "COMPLETE_V2_7_0_SELF_GOVERNED_CONTROL_PLANE",
+  "blockers": [],
+  "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
+  "freshness": "SOURCE_STATE_IN_PROGRESS"
+}
