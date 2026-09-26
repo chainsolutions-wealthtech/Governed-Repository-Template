@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import base64
 import json
 import os
 import re
@@ -36,14 +37,19 @@ def main() -> None:
     p=argparse.ArgumentParser()
     p.add_argument("--target-repository",required=True)
     p.add_argument("--expected-head",required=True)
-    p.add_argument("--objective",required=True)
+    p.add_argument("--objective-b64",required=True)
     p.add_argument("--source-issue",required=True,type=int)
     args=p.parse_args()
     if "/" not in args.target_repository:
         raise SystemExit("LOCAL_START_TARGET_INVALID")
     if not SHA_RE.fullmatch(args.expected_head):
         raise SystemExit("LOCAL_START_EXPECTED_HEAD_INVALID")
-    if not args.objective.strip():
+    try:
+        padded=args.objective_b64+"="*((4-len(args.objective_b64)%4)%4)
+        objective=base64.urlsafe_b64decode(padded.encode("ascii")).decode("utf-8").strip()
+    except Exception as exc:
+        raise SystemExit("LOCAL_START_OBJECTIVE_B64_INVALID") from exc
+    if not objective:
         raise SystemExit("LOCAL_START_OBJECTIVE_REQUIRED")
     info=gh("GET",f"/repos/{args.target_repository}")
     branch=info.get("default_branch") or "main"
@@ -57,7 +63,7 @@ def main() -> None:
         "source_repository":CENTRAL,
         "source_issue":args.source_issue,
         "expected_head":args.expected_head,
-        "objective":args.objective.strip()
+        "objective":objective
       }
     })
     print(json.dumps({
