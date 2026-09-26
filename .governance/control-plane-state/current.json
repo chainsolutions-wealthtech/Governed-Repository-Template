@@ -2,32 +2,21 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 12,
+  "source_state_revision": 13,
   "template_version": "2.8.5",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
   "program_issue": 12,
-  "current_checkpoint": "C1-12_DYNAMIC_CLIENT_UPGRADER_FIX_IN_PROGRESS",
+  "current_checkpoint": "C1-12_V2_8_5_RELEASED_PENDING_GOVERNED_PILOT_UPGRADE",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "unique_next_action": "C1_12_I_A_FIX_DYNAMIC_CLIENT_UPGRADER",
-  "blockers": [
-    {
-      "type": "GENERIC_FRAMEWORK_UPGRADE_DISTRIBUTION_DEFECT",
-      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-      "defects": [
-        "UPGRADER_HARDCODED_2_8_3",
-        "PORTABLE_CONNECTION_INTENT_TEST_NOT_DISTRIBUTED",
-        "CLIENT_CI_UNCONDITIONAL_SOURCE_ONLY_DB_MATERIALIZATION"
-      ],
-      "fix_candidate": "2.8.5"
-    }
-  ],
+  "unique_next_action": "C1_12_I_B_APPLY_CURRENT_TEMPLATE_TO_CASE1_PILOT",
+  "blockers": [],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
-  "freshness": "SOURCE_STATE_ATTESTS_V2_8_4_RELEASE_SUBJECT",
-  "last_ci_run": 36274141697,
+  "freshness": "SOURCE_STATE_ATTESTS_V2_8_5_RELEASE_SUBJECT",
+  "last_ci_run": 36274765257,
   "last_ci_result": "PASS",
-  "release_subject_head": "608d29318d1b2df199e4ec304c4e2fe7bfb94263",
-  "last_verified_main_head": "608d29318d1b2df199e4ec304c4e2fe7bfb94263",
+  "release_subject_head": "556011ea20310a483f77a9a382b66b79bed4b31c",
+  "last_verified_main_head": "556011ea20310a483f77a9a382b66b79bed4b31c",
   "canonical_memory_database": {
     "schema_version": "1.0.0",
     "status": "ACTIVE",

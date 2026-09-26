@@ -229,6 +229,24 @@
       ],
       "proposals": [],
       "unique_next_action": "C1_12_I_A_FIX_DYNAMIC_CLIENT_UPGRADER"
+    },
+    {
+      "activity_id": "AAL-20260926-V285-002",
+      "agent_identity": "ChatGPT",
+      "workstream": "CREATE_NEW_REPOSITORY/C1-12",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "556011ea20310a483f77a9a382b66b79bed4b31c",
+      "objective": "Attest V2.8.5 framework release and move to governed external pilot upgrade.",
+      "evidence_refs": [
+        "Template PR #35",
+        "Governance CI run 36274765257"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "Pilot remained untouched during framework correction."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_I_B_APPLY_CURRENT_TEMPLATE_TO_CASE1_PILOT"
     }
   ]
 }
