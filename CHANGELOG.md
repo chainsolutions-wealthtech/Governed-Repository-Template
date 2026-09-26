@@ -382,3 +382,21 @@ The current runtime router is intentionally unchanged until implementation and r
 ### Safety
 
 The correction changes only the copied temporary self-test fixture. It never rewrites or resets the real project work-items, sessions, claims or business state of an instantiated client.
+
+
+## Governance Automation V2.8.5 — Dynamic Non-Destructive Client Upgrade
+
+### Fixed
+
+- governed client upgrade version is derived from `.governance/TEMPLATE_MANIFEST.json` instead of being hard-coded to V2.8.3;
+- the client upgrade surface now includes the generic connection-intent runtime/test/policy files required to validate V2.8.4+ behavior;
+- client Governance CI skips canonical control-plane DB materialization when the source-only database directory is intentionally absent;
+- regression tests assert the dynamic version contract, required static distribution surface and preservation of mutable client state.
+
+### Preserved
+
+Client work-items, claims, sessions, canonical project-memory pointers, business answers and approved project baseline state are not overwritten by the static governance upgrade.
+
+### Product boundary
+
+The fix is implemented and validated in `chainsolutions-wealthtech/Governed-Repository-Template` before any external CASE 1 pilot upgrade is attempted.
