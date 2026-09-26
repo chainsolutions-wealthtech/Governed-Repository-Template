@@ -140,7 +140,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.4",
+  "template_version": "2.8.5",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -250,7 +250,10 @@
     "imported memory never grants live approval",
     "portable connection-intent self-test resets synthetic work items claims sessions and canonical memory",
     "client project work state cannot contaminate connection-intent routing self-test",
-    "framework product separated from external pilot validation repositories"
+    "framework product separated from external pilot validation repositories",
+    "version-dynamic governed client upgrade derived from template manifest",
+    "client upgrade synchronizes generic static runtime and test surface without overwriting mutable project state",
+    "source-only relational materialization CI skips cleanly on clients"
   ],
   "automatic_initialization_supported": true
 }
