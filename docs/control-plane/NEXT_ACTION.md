@@ -1,13 +1,13 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = RUN_V2_7_0_CI_AND_PROVE_CLIENT_NON_LEAK
-STATE = READY_FOR_PROOF
+NEXT_ACTION = MERGE_V2_7_0_AND_ATTEST_RELEASE_HEAD
+STATE = READY_TO_RELEASE
 ```
 
 ## Objective
 
-Run the V2.7.0 source CI and prove that source-only control-plane memory is removed from an instantiated client before release.
+Merge the green V2.7.0 release, then create a source-state attestation checkpoint against the resulting canonical main HEAD before resuming framework program #12.
 
 ## Required completion evidence
 
