@@ -152,3 +152,14 @@
 - Action: return to Template and create V2.8.5 dynamic non-destructive client-upgrade fix.
 - Pilot state: untouched during this correction.
 - Unique next action: `C1_12_I_A_FIX_DYNAMIC_CLIENT_UPGRADER`.
+
+
+## Entry AAL-20260926-V285-002
+
+- Agent identity: ChatGPT
+- Workstream: CASE 1 / C1-12 client-upgrade release
+- Product release subject: `556011ea20310a483f77a9a382b66b79bed4b31c`
+- Template PR #35 / CI `36274765257`: PASS.
+- C1-12-I-A: DONE.
+- Pilot remained untouched during framework correction.
+- Next action: `C1_12_I_B_APPLY_CURRENT_TEMPLATE_TO_CASE1_PILOT`.
