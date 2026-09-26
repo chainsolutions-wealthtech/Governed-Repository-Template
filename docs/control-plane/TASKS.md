@@ -21,7 +21,7 @@ Objective: V2.7.0 Self-Governed Control Plane.
 | P12-S1 MCP connectivity-choice contract completion | DONE | — | optional MCP linkage + DIRECT/SSH/BOTH choice contract tests + pilot evidence |
 | P12-S2 Gouvern MCP discovery | DONE | P12-S1 | PASS/non-degraded discovery |
 | P12-S3 Setup approval + APPLY_BASELINE | DONE | P12-S2 | baseline commit + first-agent handoff |
-| P12-S4 Prove subsequent NORMAL_GOVERNED_ENTRY on Gouvern | IN_PROGRESS | P12-S3 | live normal-entry handoff, no baseline reset |
+| P12-S4 Prove subsequent NORMAL_GOVERNED_ENTRY on external CASE 1 pilot (current pilot: Gouvern) | IN_PROGRESS | P12-S3 | live normal-entry handoff, no baseline reset |
 | P12-S5 Second fresh repository E2E | PENDING | P12-S4 | clean uninterrupted lifecycle |
 | P12-S6 Close CASE 1 and release next macro case | PENDING | P12-S5 | reconciled final evidence |
 
@@ -41,9 +41,9 @@ No later task may become executable before its dependency is complete.
 | C1-12-D | Synchronize client control-plane policy on governed upgrade | DONE | V2.8.2 / PR #26 |
 | C1-12-E | Make bootstrap consistency self-test portable on instantiated clients | DONE | V2.8.3 / PR #27 |
 | C1-12-F | Diagnose `INTENT_SELFTEST_FAILED: unexpected work item` | DONE | root cause: self-test inherited real instantiated client work-items |
-| C1-12-G | Fix generic connection-intent self-test portability in template | IN_PROGRESS | V2.8.4 candidate isolates synthetic work/session/claim/memory fixture |
-| C1-12-H | Run template CI and release next compatible version if needed | PENDING | depends on C1-12-G |
-| C1-12-I | Governed-upgrade Gouvern from exact HEAD `3a1b7689...` | PENDING | depends on C1-12-H |
+| C1-12-G | Fix generic connection-intent self-test portability in template | DONE | V2.8.4 merged via PR #33; Template CI PASS |
+| C1-12-H | Run template CI and release next compatible version if needed | DONE | V2.8.4 merge `608d29318d1b2df199e4ec304c4e2fe7bfb94263` |
+| C1-12-I | Validate V2.8.4 on external CASE 1 pilot (current pilot: Gouvern) | IN_PROGRESS | governed upgrade from exact pilot HEAD `3a1b7689...` |
 | C1-12-J | Obtain all-green Gouvern Governance CI | PENDING | depends on C1-12-I |
 | C1-12-K | Re-run Gouvern#3 through machine local-entry start | PENDING | depends on C1-12-J |
 | C1-12-L | Verify mode = `NORMAL_GOVERNED_ENTRY` | PENDING | depends on C1-12-K |
@@ -52,7 +52,7 @@ No later task may become executable before its dependency is complete.
 | C1-12-O | Mark C1-12 / STEP 4 DONE and unlock C1-13 | PENDING | depends on C1-12-N |
 | C1-12-P | Reconcile canonical relational memory with completed C1-12 evidence | PENDING | depends on C1-12-O |
 
-Current unique executable sub-task: `C1-12-G_FIX_GENERIC_INTENT_SELFTEST`.
+Current unique executable sub-task: `C1-12-I_VALIDATE_V2_8_4_ON_CASE1_PILOT`.
 
 ## Canonical architecture hardening backlog
 
