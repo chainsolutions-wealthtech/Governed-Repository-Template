@@ -326,5 +326,127 @@
       "required": 1,
       "source_authority": "scripts/governed_request.py"
     }
+  ],
+  "activities": [
+    {
+      "activity_id": "C1-A-CREATE",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-00",
+      "kind": "MUTATION",
+      "label": "Create repository from governed template",
+      "mutation_class": "REPOSITORY_CREATE",
+      "required_authority": "EXPLICIT_CREATE_AUTHORITY",
+      "required_evidence": [
+        "target_absent",
+        "creator_authorized"
+      ]
+    },
+    {
+      "activity_id": "C1-A-BOOTSTRAP",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-01",
+      "kind": "MUTATION",
+      "label": "Initialize generated repository governance",
+      "mutation_class": "TARGET_BOOTSTRAP",
+      "required_authority": "TEMPLATE_INITIALIZATION",
+      "required_evidence": [
+        "bootstrap_receipt",
+        "governance_validation_pass"
+      ]
+    },
+    {
+      "activity_id": "C1-A-DISCOVER",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-07",
+      "kind": "OBSERVATION",
+      "label": "Run selected MCP read-only discovery path",
+      "mutation_class": "READ_ONLY",
+      "required_authority": "SELECTED_MCP_PATH",
+      "required_evidence": [
+        "discovery_evidence"
+      ]
+    },
+    {
+      "activity_id": "C1-A-APPLY",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-11",
+      "kind": "MUTATION",
+      "label": "Apply approved baseline and setup",
+      "mutation_class": "VERSIONED_BASELINE_WRITE",
+      "required_authority": "OWNER_SETUP_APPROVAL",
+      "required_evidence": [
+        "exact_head",
+        "validation_pass",
+        "baseline_commit"
+      ]
+    },
+    {
+      "activity_id": "C1-A-NORMAL",
+      "case_id": "CREATE_NEW_REPOSITORY",
+      "phase_id": "C1-12",
+      "kind": "OBSERVATION",
+      "label": "Prove subsequent normal governed entry",
+      "mutation_class": "READ_OR_HANDOFF_ONLY",
+      "required_authority": "EXISTING_GOVERNANCE",
+      "required_evidence": [
+        "normal_entry_mode",
+        "no_baseline_reset"
+      ]
+    },
+    {
+      "activity_id": "C2-A-OBSERVE",
+      "case_id": "ADOPT_EXISTING_REPOSITORY",
+      "phase_id": null,
+      "kind": "OBSERVATION",
+      "label": "Inspect existing repository before adoption",
+      "mutation_class": "READ_ONLY",
+      "required_authority": "NONE_BEYOND_READ",
+      "required_evidence": [
+        "exact_head",
+        "existing_files",
+        "workflows",
+        "governance_collisions"
+      ]
+    },
+    {
+      "activity_id": "C2-A-APPLY",
+      "case_id": "ADOPT_EXISTING_REPOSITORY",
+      "phase_id": null,
+      "kind": "MUTATION",
+      "label": "Apply additive governance adoption",
+      "mutation_class": "ADDITIVE_WRITE",
+      "required_authority": "ADOPTION_PLAN_ACCEPTED",
+      "required_evidence": [
+        "no_overwrite",
+        "validation_pass"
+      ]
+    },
+    {
+      "activity_id": "C3-A-MAP",
+      "case_id": "MAP_EXISTING_PROJECT",
+      "phase_id": null,
+      "kind": "OBSERVATION",
+      "label": "Reconstruct current architecture",
+      "mutation_class": "READ_ONLY",
+      "required_authority": "READ",
+      "required_evidence": [
+        "current_architecture",
+        "unknowns"
+      ]
+    },
+    {
+      "activity_id": "C4-A-LAB",
+      "case_id": "LAB_EVOLUTION",
+      "phase_id": null,
+      "kind": "MUTATION",
+      "label": "Create isolated lab branch or PR",
+      "mutation_class": "ISOLATED_BRANCH_WRITE",
+      "required_authority": "EXPLICIT_BRANCH_OR_PR_AUTHORITY",
+      "required_evidence": [
+        "baseline_head",
+        "lab_validation",
+        "non_regression"
+      ]
+    }
   ]
 }
