@@ -126,7 +126,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.6.1",
+  "template_version": "2.6.2",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
