@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, base64, json, os, urllib.error, urllib.request
+import argparse, base64, json, os, re, urllib.error, urllib.parse, urllib.request
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 CENTRAL="chainsolutions-wealthtech/Governed-Repository-Template"
+LOCAL_STATE_RE=re.compile(r"<!-- GOVERNED_LOCAL_ENTRY_STATE:([A-Za-z0-9_-]+) -->")
+SHA_RE=re.compile(r"^[0-9a-f]{40}$")
+UPGRADE_PREFIX="governance: upgrade repository-local setup to v2."
 
 def gh(token,method,path,payload=None,allow_404=False):
     req=urllib.request.Request("https://api.github.com"+path,method=method,
@@ -27,6 +30,61 @@ def append_once(text,marker,addition):
     if marker in text:return text
     return text.rstrip()+"\n\n"+addition.strip()+"\n"
 
+def decode_local_issue_state(body):
+    match=LOCAL_STATE_RE.search(body or "")
+    if not match:return None
+    value=match.group(1);value += "="*((4-len(value)%4)%4)
+    try:
+        state=json.loads(base64.urlsafe_b64decode(value.encode("ascii")).decode("utf-8"))
+    except Exception:
+        return None
+    return state if isinstance(state,dict) else None
+
+def encode_local_issue_state(state):
+    raw=json.dumps(state,separators=(",",":"),ensure_ascii=False).encode("utf-8")
+    return base64.urlsafe_b64encode(raw).decode("ascii").rstrip("=")
+
+def is_governed_upgrade_chain(token,target,from_sha,to_sha):
+    if from_sha==to_sha:return True
+    if not SHA_RE.fullmatch(str(from_sha or "")) or not SHA_RE.fullmatch(str(to_sha or "")):return False
+    comparison=gh(token,"GET",f"/repos/{target}/compare/{from_sha}...{to_sha}")
+    if ((comparison.get("merge_base_commit") or {}).get("sha"))!=from_sha:return False
+    if comparison.get("status") not in {"ahead","identical"}:return False
+    commits=comparison.get("commits") or []
+    if not commits:return False
+    for item in commits:
+        message=(((item.get("commit") or {}).get("message")) or "").splitlines()[0]
+        if not message.startswith(UPGRADE_PREFIX):return False
+    return True
+
+def migrate_open_local_entry_heads(token,target,current_head,new_head):
+    migrated=[]
+    page=1
+    while True:
+        issues=gh(token,"GET",f"/repos/{target}/issues?state=open&per_page=100&page={page}")
+        if not isinstance(issues,list):raise RuntimeError("TARGET_OPEN_ISSUES_INVALID")
+        for issue in issues:
+            if issue.get("pull_request"):continue
+            if not str(issue.get("title") or "").startswith("[Governed Local Entry]"):continue
+            state=decode_local_issue_state(issue.get("body"))
+            if not state or state.get("repository")!=target:continue
+            state_head=state.get("expected_head_sha")
+            if state_head==new_head:continue
+            if state_head!=current_head and not is_governed_upgrade_chain(token,target,state_head,current_head):
+                continue
+            old_revision=int(state.get("revision") or 0)
+            state["expected_head_sha"]=new_head
+            state["revision"]=old_revision+1
+            replacement=f"<!-- GOVERNED_LOCAL_ENTRY_STATE:{encode_local_issue_state(state)} -->"
+            body=LOCAL_STATE_RE.sub(replacement,issue.get("body") or "",count=1)
+            number=int(issue["number"])
+            gh(token,"PATCH",f"/repos/{target}/issues/{number}",{"body":body})
+            gh(token,"POST",f"/repos/{target}/issues/{number}/comments",{"body":f"### Governed upgrade HEAD migration\n\nLocal entry expected HEAD advanced from \`{state_head}\` to \`{new_head}\` after a verified governance-only upgrade chain.\n\nBusiness answers and approved baseline content were preserved. State revision: \`{old_revision}\` → \`{old_revision+1}\`."})
+            migrated.append({"issue_number":number,"from_head":state_head,"to_head":new_head,"revision":old_revision+1})
+        if len(issues)<100:break
+        page+=1
+    return migrated
+
 def main():
     p=argparse.ArgumentParser();p.add_argument("--target-repository",required=True);p.add_argument("--expected-head",required=True);p.add_argument("--issue-number",type=int)
     a=p.parse_args();target=a.target_repository;owner,name=target.split("/",1)
@@ -45,13 +103,16 @@ def main():
       ".github/workflows/governance-auto-bootstrap.yml",".governance/TEMPLATE_MANIFEST.json",
       ".governance/repository-creation-executor.json",
       ".governance/mcp-connection-policy.json","schemas/mcp-binding.schema.json","docs/MCP_REPOSITORY_BINDING.md",
-      "scripts/mcp_repository_discovery.py","scripts/control_plane_local_command.py","scripts/control_plane_provision_mcp_credential.py","scripts/test_mcp_credential_provisioning.py"
+      "scripts/mcp_repository_discovery.py","scripts/control_plane_local_command.py","scripts/control_plane_provision_mcp_credential.py","scripts/test_mcp_credential_provisioning.py","scripts/control_plane_upgrade_local_entry.py","scripts/test_upgrade_session_head_migration.py"
     ]
     updates={p:(ROOT/p).read_text(encoding="utf-8") for p in static_paths}
 
-    local=json.loads((ROOT/".governance/local-entry/state.json").read_text(encoding="utf-8"))
-    local.update({"repository":target,"status":"WAITING_FOR_FIRST_AGENT","first_agent_completed":False,
-      "first_agent_session_id":None,"baseline_subject_head":None,"baseline_completed_at":None,"last_local_entry_issue":None})
+    existing_local=target_text(token,target,".governance/local-entry/state.json")
+    if existing_local:
+        local=json.loads(existing_local)
+    else:
+        local=json.loads((ROOT/".governance/local-entry/state.json").read_text(encoding="utf-8"))
+    local["repository"]=target
     updates[".governance/local-entry/state.json"]=json.dumps(local,ensure_ascii=False,indent=2)+"\n"
 
     profile=json.loads(target_text(token,target,".governance/profile.json"))
@@ -86,8 +147,8 @@ def main():
     change=target_text(token,target,"CHANGELOG.md") or "# CHANGELOG\n"
     updates["CHANGELOG.md"]=append_once(
       change,
-      "## Governance Automation V2.6.5",
-      "## Governance Automation V2.6.5\n\n- Preserves automatic direct MCP credential provisioning and V2.6.4 fail-closed reporting.\n- Classifies target GitHub context, issue read, local-state decode and credential-gate contract failures before secret provisioning.\n- Keeps failure evidence non-secret and blocks machine dispatch until the credential path is valid."
+      "## Governance Automation V2.6.6",
+      "## Governance Automation V2.6.6\n\n- Preserves automatic direct MCP credential provisioning and V2.6.4 fail-closed reporting.\n- Classifies target GitHub context, issue read, local-state decode and credential-gate contract failures before secret provisioning.\n- Keeps failure evidence non-secret and blocks machine dispatch until the credential path is valid."
     )
 
     entries=[]
@@ -95,13 +156,14 @@ def main():
         blob=gh(token,"POST",f"/repos/{target}/git/blobs",{"content":text,"encoding":"utf-8"})
         entries.append({"path":path,"mode":"100644","type":"blob","sha":blob["sha"]})
     tree=gh(token,"POST",f"/repos/{target}/git/trees",{"base_tree":base_tree,"tree":entries})
-    new_commit=gh(token,"POST",f"/repos/{target}/git/commits",{"message":"governance: upgrade repository-local setup to v2.6.5","tree":tree["sha"],"parents":[head]})
+    new_commit=gh(token,"POST",f"/repos/{target}/git/commits",{"message":"governance: upgrade repository-local setup to v2.6.6","tree":tree["sha"],"parents":[head]})
     gh(token,"PATCH",f"/repos/{target}/git/refs/heads/{branch}",{"sha":new_commit["sha"],"force":False})
+    migrated_local_entries=migrate_open_local_entry_heads(token,target,head,new_commit["sha"])
 
     issue=a.issue_number
     central_token=os.environ.get("GITHUB_TOKEN")
     if issue and central_token:
-        gh(central_token,"POST",f"/repos/{CENTRAL}/issues/{issue}/comments",{"body":f"### Local entry upgrade applied\n\nTarget: {target}\nPrevious HEAD: {head}\nUpgrade commit: {new_commit['sha']}\nVersion: 2.6.5"})
-    print(json.dumps({"status":"LOCAL_SETUP_V2_6_5_UPGRADE_APPLIED","target":target,"old_head":head,"new_head":new_commit["sha"]}))
+        gh(central_token,"POST",f"/repos/{CENTRAL}/issues/{issue}/comments",{"body":f"### Local entry upgrade applied\n\nTarget: {target}\nPrevious HEAD: {head}\nUpgrade commit: {new_commit['sha']}\nVersion: 2.6.6\nMigrated open local entries: {len(migrated_local_entries)}"})
+    print(json.dumps({"status":"LOCAL_SETUP_V2_6_6_UPGRADE_APPLIED","target":target,"old_head":head,"new_head":new_commit["sha"],"migrated_local_entries":migrated_local_entries}))
 
 if __name__=="__main__":main()

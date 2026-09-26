@@ -76,6 +76,7 @@ jobs:
           owner: ${{ steps.process.outputs.upgrade_target_owner }}
           permission-contents: write
           permission-workflows: write
+          permission-issues: write
 
       - name: Apply current local-entry upgrade to target
         if: steps.process.outputs.upgrade_required == 'true'
