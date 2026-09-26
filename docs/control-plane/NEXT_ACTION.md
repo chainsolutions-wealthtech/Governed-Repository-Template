@@ -1,28 +1,31 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = RESUME_PROGRAM_12_SECOND_FRESH_REPOSITORY_E2E
+NEXT_ACTION = STEP_4_PROVE_NORMAL_GOVERNED_ENTRY_ON_GOUVERN
 STATE = READY
 ```
 
 ## Objective
 
-Resume canonical framework program #12 at `STEP_4_SECOND_FRESH_REPOSITORY_E2E`: create and prove a second clean repository from V2.7.0 without relying on the historical migrations of `Patricked-code/Gouvern`.
+Use the already-baselined `Patricked-code/Gouvern` repository to prove a **subsequent** agent enters through `NORMAL_GOVERNED_ENTRY` rather than repeating `FIRST_AGENT_BOOTSTRAP`.
 
-## Required completion evidence
+## Required evidence
 
-1. source-only human authorities exist;
-2. source-only machine checkpoint/handoff/task projections exist;
-3. governance validation requires them in template-source mode;
-4. initialization removes source-only directories from generated clients;
-5. bootstrap self-test proves those directories do not survive client initialization;
-6. source CI is green;
-7. V2.7.0 is merged;
-8. source state is reconciled to the merged release;
-9. resume canonical program #12 at `STEP_4_SECOND_FRESH_REPOSITORY_E2E`.
+1. reobserve exact `Gouvern/main` HEAD;
+2. start a fresh local governed entry after first-agent completion;
+3. verify mode = `NORMAL_GOVERNED_ENTRY`;
+4. verify existing first-agent baseline/session/work state is preserved;
+5. complete the normal-entry questionnaire/handoff without creating a new first-agent baseline;
+6. verify CI remains green;
+7. persist STEP 4 proof in source authorities.
+
+## After STEP 4
+
+Only then start STEP 5: the second fresh `CREATE_NEW_REPOSITORY` E2E proof.
 
 ## Do not
 
-- start the second fresh repository before this migration is green;
+- skip directly to the fresh repository test;
+- reset/replay the first-agent baseline on `Gouvern`;
 - modify `Patricked-code/MCP`;
-- overwrite distributed root project-state templates with source-project history.
+- infer write authority from MCP/SSH connectivity.

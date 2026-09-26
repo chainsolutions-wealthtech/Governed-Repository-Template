@@ -41,3 +41,10 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Self-governed control-plane memory: ACTIVE.
 - Source/client memory separation: ACTIVE.
 - Canonical program #12 released to resume at `STEP_4_SECOND_FRESH_REPOSITORY_E2E`.
+
+## 2026-09-26 — Program #12 chronology reconciled
+
+- Detected mismatch: source checkpoint summarized STEP 4 as the second fresh repository test.
+- Canonical issue chronology retained a distinct STEP 4 for live `NORMAL_GOVERNED_ENTRY` proof on `Gouvern`.
+- Reconciliation decision: preserve both gates; STEP 4 normal-entry proof must complete before STEP 5 fresh-repository E2E.
+- No test or mutable target action was started while the contradiction was unresolved.

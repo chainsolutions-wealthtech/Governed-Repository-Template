@@ -17,7 +17,7 @@
 
 - Active macro case: `CREATE_NEW_REPOSITORY`
 - Canonical program issue: `#12`
-- Current case checkpoint: `STEP_4_SECOND_FRESH_REPOSITORY_E2E`
+- Current case checkpoint: `STEP_4_PROVE_NORMAL_GOVERNED_ENTRY`
 - CASE 1 pilot `Patricked-code/Gouvern`: baseline/handoff proven
 - Pilot baseline commit: `23975e0435e63fb45d7436d1f23ce8ce0a450a5f`
 - Pilot local-entry state: `LOCAL_HANDOFF_READY`
@@ -53,7 +53,7 @@ None for the self-governance migration.
 
 ## Unique next action
 
-`RESUME_PROGRAM_12_SECOND_FRESH_REPOSITORY_E2E`
+`STEP_4_PROVE_NORMAL_GOVERNED_ENTRY_ON_GOUVERN`
 
 ## Latest proof
 
@@ -69,3 +69,7 @@ None for the self-governance migration.
 - Client source-memory non-leak proof: PASS.
 - Durable source checkpoint/handoff: ACTIVE.
 - Canonical framework program #12 may resume.
+
+## Reconciliation note
+
+A post-V2.7.0 continuity review detected that the source checkpoint had compressed canonical program STEP 4 and STEP 5. The durable source state is corrected to preserve the original chronological gates: STEP 4 proves subsequent normal entry on `Gouvern`; STEP 5 is the second fresh repository E2E.

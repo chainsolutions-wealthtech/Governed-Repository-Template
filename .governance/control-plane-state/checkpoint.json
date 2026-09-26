@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "checkpoint_id": "CP-CHECKPOINT-20260926-002",
+  "checkpoint_id": "CP-CHECKPOINT-20260926-003",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-  "subject_head": "d11b72956e68526edf9b17aec472163a4e49a585",
+  "subject_head": "f3b35e67587811e12a56e9b0cb5a20c06311d091",
   "template_version_before": "2.7.0",
-  "state": "SELF_GOVERNANCE_RELEASE_ATTESTED",
+  "state": "PROGRAM_12_STEP_ORDER_RECONCILED",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
@@ -12,10 +12,11 @@
     "direct_mcp_discovery": "PASS",
     "ssh_oidc_discovery": "PASS"
   },
-  "next_action": "RESUME_PROGRAM_12_SECOND_FRESH_REPOSITORY_E2E",
+  "next_action": "STEP_4_PROVE_NORMAL_GOVERNED_ENTRY_ON_GOUVERN",
   "reconciliation_required_before_write": true,
   "ci_run": 36258871067,
   "ci_result": "PASS",
   "client_source_memory_removal": "PASS",
-  "self_governance": "PASS"
+  "self_governance": "PASS",
+  "reconciliation_reason": "STEP_4_AND_STEP_5_WERE_COMPRESSED_IN_SOURCE_SUMMARY"
 }
