@@ -45,8 +45,11 @@ No later task may become executable before its dependency is complete.
 | C1-12-H | Run template CI and release next compatible version if needed | DONE | V2.8.4 merge `608d29318d1b2df199e4ec304c4e2fe7bfb94263` |
 | C1-12-I | Validate current framework release on external CASE 1 pilot (current pilot: Gouvern) | ACTIVE_PARENT | validation blocked until Template upgrader can distribute current client surface |
 | C1-12-I-A | Make client upgrader version-dynamic and client-CI-safe in Template | DONE | V2.8.5 merged; Template CI PASS |
-| C1-12-I-B | Apply current governed Template upgrade to external CASE 1 pilot | IN_PROGRESS | exact pilot HEAD required; use governed upgrade path only |
-| C1-12-J | Obtain all-green external pilot Governance CI | PENDING | depends on C1-12-I-B |
+| C1-12-I-B | Apply current governed Template upgrade to external CASE 1 pilot | DONE | V2.8.5 applied by control plane to `17f852c19ac8c5d26f40d3508338ce9c221697c8` |
+| C1-12-J | Obtain all-green external pilot Governance CI | ACTIVE_PARENT | V2.8.5 pilot CI exposed second generic fixture-isolation defect |
+| C1-12-J-A | Diagnose V2.8.5 pilot CI failure inside connection-intent synthetic bootstrap | DONE | auto_bootstrap failed because synthetic test still inherited project-profile/infrastructure/local-entry/MCP/access/workflow state |
+| C1-12-J-B | Complete portable connection-intent fixture in Template | IN_PROGRESS | V2.8.6 candidate reuses bootstrap-consistency generic fixture semantics and adds subprocess diagnostics |
+| C1-12-J-C | Release Template fix and re-upgrade external CASE 1 pilot | PENDING | depends on C1-12-J-B; exact pilot HEAD required |
 | C1-12-K | Re-run Gouvern#3 through machine local-entry start | PENDING | depends on C1-12-J |
 | C1-12-L | Verify mode = `NORMAL_GOVERNED_ENTRY` | PENDING | depends on C1-12-K |
 | C1-12-M | Verify no first-agent baseline/session/work duplication | PENDING | depends on C1-12-L |
@@ -54,7 +57,7 @@ No later task may become executable before its dependency is complete.
 | C1-12-O | Mark C1-12 / STEP 4 DONE and unlock C1-13 | PENDING | depends on C1-12-N |
 | C1-12-P | Reconcile canonical relational memory with completed C1-12 evidence | PENDING | depends on C1-12-O |
 
-Current unique executable sub-task: `C1-12-I-B_APPLY_CURRENT_TEMPLATE_TO_CASE1_PILOT`.
+Current unique executable sub-task: `C1-12-J-B_COMPLETE_PORTABLE_INTENT_FIXTURE`.
 
 ## Canonical architecture hardening backlog
 
