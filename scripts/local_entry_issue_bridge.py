@@ -2,7 +2,7 @@
 from __future__ import annotations
 import json, os, re, subprocess, urllib.error, urllib.parse, urllib.request
 from pathlib import Path
-from local_governed_entry import answer, credential_requirements, decode_state, encode_state, mark_credentials_verified, new_request
+from local_governed_entry import answer, both_discovery_needs_refresh, credential_requirements, decode_state, encode_state, mark_credentials_verified, new_request, require_mcp_discovery_refresh
 
 ROOT=Path(__file__).resolve().parents[1]
 TITLE_PREFIX="[Governed Local Entry]"
@@ -112,6 +112,9 @@ def commented(event):
         if kind=="answer":
             if set(payload)!={"field","value"}:raise ValueError("answer requires field/value")
             s=answer(s,payload["field"],payload["value"])
+            if both_discovery_needs_refresh(s,bool(os.environ.get("GOVERNED_MCP_AUTH_TOKEN"))):
+                s=require_mcp_discovery_refresh(s,"DIRECT_CREDENTIAL_BECAME_AVAILABLE")
+                api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{issue['number']}/comments",{"body":"### BOTH discovery refresh required\n\nThe preferred direct MCP credential is now available. Existing answers were preserved, but read-only MCP evidence must be refreshed before setup approval."})
             persist(issue["number"],issue.get("body"),s)
             api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{issue['number']}/comments",{"body":render(s)})
         elif kind=="execute":
@@ -167,6 +170,9 @@ def dispatch_machine_command(event):
         if command["kind"]=="answer":
             if set(command)!={"kind","field","value"}:raise ValueError("answer requires kind/field/value")
             s=answer(s,command["field"],command["value"])
+            if both_discovery_needs_refresh(s,bool(os.environ.get("GOVERNED_MCP_AUTH_TOKEN"))):
+                s=require_mcp_discovery_refresh(s,"DIRECT_CREDENTIAL_BECAME_AVAILABLE")
+                api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{number}/comments",{"body":"### Governed BOTH discovery refresh required\n\nThe preferred direct MCP credential is now available. Existing answers were preserved; fresh read-only BOTH evidence is required before setup approval."})
         else:
             if set(command)!={"kind"}:raise ValueError("execute requires only kind")
             gate=(s.get("next_request") or {}).get("kind")

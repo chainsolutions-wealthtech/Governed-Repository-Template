@@ -110,6 +110,20 @@ If the direct credential is unavailable, `BOTH` may continue initial read-only d
 - no direct MCP success is inferred;
 - no MCP write authority is granted by the fallback.
 
+## BOTH discovery reconciliation
+
+If a `BOTH` session previously completed discovery through SSH-only degraded evidence and the preferred direct credential becomes available later, that stale degraded evidence is not materialized into the approved setup.
+
+On the next governed local answer:
+1. the answer is preserved;
+2. the prior discovery evidence is archived in a bounded history;
+3. the active discovery evidence is cleared;
+4. the state returns to exact-HEAD `MCP_DISCOVERY`;
+5. direct MCP and SSH evidence are collected again;
+6. the setup package is rebuilt from the refreshed evidence before approval.
+
+This reconciliation is read-only and does not grant or widen MCP write authority.
+
 ## Discovery failure and retry
 
 A discovery failure on an exact current HEAD is persisted into the local governed issue instead of existing only in Actions logs.
