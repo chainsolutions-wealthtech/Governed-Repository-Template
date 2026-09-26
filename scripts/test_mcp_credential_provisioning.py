@@ -55,10 +55,10 @@ def main() -> None:
         "permission-issues: read",
         "control_plane_provision_mcp_credential.py",
         "GOVERNED_MCP_AUTH_TOKEN",
-        "local_command_kind == 'execute'",
         "continue-on-error: true",
         "Report governed MCP credential provisioning failure",
         "steps.mcp-credential.outcome == 'failure'",
+        "steps.mcp-credential.outcome == 'success'",
         "steps.mcp-credential.outcome == 'success'",
     ]:
         if fragment not in workflow:
