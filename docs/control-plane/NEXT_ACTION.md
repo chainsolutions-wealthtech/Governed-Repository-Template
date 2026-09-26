@@ -1,13 +1,13 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = COMPLETE_V2_7_0_SELF_GOVERNED_CONTROL_PLANE
-STATE = IN_PROGRESS
+NEXT_ACTION = RUN_V2_7_0_CI_AND_PROVE_CLIENT_NON_LEAK
+STATE = READY_FOR_PROOF
 ```
 
 ## Objective
 
-Complete the source-only persistent-memory layer for the control-plane repository.
+Run the V2.7.0 source CI and prove that source-only control-plane memory is removed from an instantiated client before release.
 
 ## Required completion evidence
 
