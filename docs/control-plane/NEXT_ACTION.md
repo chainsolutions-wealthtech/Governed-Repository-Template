@@ -1,47 +1,41 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_12_I_VALIDATE_V2_8_4_ON_CASE1_PILOT
+NEXT_ACTION = C1_12_I_A_FIX_DYNAMIC_CLIENT_UPGRADER
 STATE = IN_PROGRESS
 ```
 
 ## Objective
 
-Validate the **released framework product V2.8.4** on an external CASE 1 pilot without treating the pilot as the implementation target.
+Fix the **framework product** so the governed client upgrade mechanism can actually distribute the current Template release safely before any external pilot mutation.
 
-Product/framework:
+Product repository:
 
 `chainsolutions-wealthtech/Governed-Repository-Template`
 
-Current external pilot:
+## Newly discovered generic defects
 
-`Patricked-code/Gouvern`
+1. `scripts/control_plane_upgrade_local_entry.py` is hard-coded to V2.8.3.
+2. Its distribution surface does not include `scripts/test_connection_intent.py`, so the V2.8.4 fix cannot reach a client.
+3. The copied client Governance CI contains a source-only control-plane database materialization step even though clients correctly do not contain `.governance/control-plane-db`.
 
-## Required sequence
+## Required product fix
 
-1. reobserve exact pilot HEAD;
-2. apply the governed Template V2.8.4 upgrade to the pilot;
-3. verify pilot Governance CI is fully green, including `scripts/test_connection_intent.py`;
-4. do not modify pilot business work-items to satisfy framework tests;
-5. if CI is green, resume the existing subsequent-agent proof;
-6. verify `NORMAL_GOVERNED_ENTRY` with no first-agent baseline/session/work duplication;
-7. persist evidence back into the Template control-plane memory.
+1. derive upgrade version from `.governance/TEMPLATE_MANIFEST.json`;
+2. remove version-specific status/comment/commit hard-coding;
+3. distribute the generic connection-intent runtime/test surface required by client CI;
+4. keep project work-items, sessions, answers and business state untouched;
+5. make the source-only database materialization CI step skip cleanly on clients;
+6. add regression assertions covering the upgrade contract;
+7. obtain full Template Governance CI before external validation.
 
-## Product / pilot boundary
+## Product / pilot rule
 
-The Template is the product. The pilot is evidence only.
+No pilot mutation is allowed until this Template task is complete.
 
 ```text
-FRAMEWORK FIX
-→ TEMPLATE CI
-→ RELEASE
-→ PILOT VALIDATION
-→ EVIDENCE BACK TO TEMPLATE
+DISCOVER GENERIC DISTRIBUTION GAP
+→ FIX TEMPLATE
+→ TEMPLATE CI / RELEASE
+→ ONLY THEN VALIDATE PILOT
 ```
-
-## Do not
-
-- implement generic framework changes directly in the pilot;
-- promote pilot project state into framework truth;
-- modify `Patricked-code/MCP`;
-- advance C1-13 before the normal-entry proof is complete.
