@@ -103,7 +103,7 @@ def main():
       ".github/workflows/governance-auto-bootstrap.yml",".governance/TEMPLATE_MANIFEST.json",
       ".governance/repository-creation-executor.json",
       ".governance/mcp-connection-policy.json","schemas/mcp-binding.schema.json","docs/MCP_REPOSITORY_BINDING.md",
-      "scripts/mcp_repository_discovery.py","scripts/control_plane_local_command.py","scripts/control_plane_provision_mcp_credential.py","scripts/test_mcp_credential_provisioning.py","scripts/test_mcp_both_ssh_fallback.py","scripts/control_plane_upgrade_local_entry.py","scripts/test_upgrade_session_head_migration.py"
+      "scripts/mcp_repository_discovery.py","scripts/control_plane_local_command.py","scripts/control_plane_local_start.py","scripts/control_plane_provision_mcp_credential.py","scripts/test_mcp_credential_provisioning.py","scripts/test_mcp_both_ssh_fallback.py","scripts/control_plane_upgrade_local_entry.py","scripts/test_upgrade_session_head_migration.py"
     ]
     updates={p:(ROOT/p).read_text(encoding="utf-8") for p in static_paths}
 
@@ -147,8 +147,8 @@ def main():
     change=target_text(token,target,"CHANGELOG.md") or "# CHANGELOG\n"
     updates["CHANGELOG.md"]=append_once(
       change,
-      "## Governance Automation V2.6.10",
-      "## Governance Automation V2.6.10\n\n- Preserves V2.6.9 opportunistic BOTH credential provisioning.\n- Refreshes degraded BOTH discovery before setup approval when the preferred direct credential becomes available.\n- Preserves prior discovery evidence and existing setup answers during reconciliation."
+      "## Governance Automation V2.8.1",
+      "## Governance Automation V2.8.1\n\n- Adds exact-head governed machine local-entry start through the central GitHub App.\n- Machine-started local entries create and initialize their issue/state in one repository_dispatch.\n- Preserves existing first-agent baseline state and routes subsequent entries to NORMAL_GOVERNED_ENTRY."
     )
 
     entries=[]
@@ -156,14 +156,14 @@ def main():
         blob=gh(token,"POST",f"/repos/{target}/git/blobs",{"content":text,"encoding":"utf-8"})
         entries.append({"path":path,"mode":"100644","type":"blob","sha":blob["sha"]})
     tree=gh(token,"POST",f"/repos/{target}/git/trees",{"base_tree":base_tree,"tree":entries})
-    new_commit=gh(token,"POST",f"/repos/{target}/git/commits",{"message":"governance: upgrade repository-local setup to v2.6.10","tree":tree["sha"],"parents":[head]})
+    new_commit=gh(token,"POST",f"/repos/{target}/git/commits",{"message":"governance: upgrade repository-local setup to v2.8.1","tree":tree["sha"],"parents":[head]})
     gh(token,"PATCH",f"/repos/{target}/git/refs/heads/{branch}",{"sha":new_commit["sha"],"force":False})
     migrated_local_entries=migrate_open_local_entry_heads(token,target,head,new_commit["sha"])
 
     issue=a.issue_number
     central_token=os.environ.get("GITHUB_TOKEN")
     if issue and central_token:
-        gh(central_token,"POST",f"/repos/{CENTRAL}/issues/{issue}/comments",{"body":f"### Local entry upgrade applied\n\nTarget: {target}\nPrevious HEAD: {head}\nUpgrade commit: {new_commit['sha']}\nVersion: 2.6.10\nMigrated open local entries: {len(migrated_local_entries)}"})
-    print(json.dumps({"status":"LOCAL_SETUP_V2_6_10_UPGRADE_APPLIED","target":target,"old_head":head,"new_head":new_commit["sha"],"migrated_local_entries":migrated_local_entries}))
+        gh(central_token,"POST",f"/repos/{CENTRAL}/issues/{issue}/comments",{"body":f"### Local entry upgrade applied\n\nTarget: {target}\nPrevious HEAD: {head}\nUpgrade commit: {new_commit['sha']}\nVersion: 2.8.1\nMigrated open local entries: {len(migrated_local_entries)}"})
+    print(json.dumps({"status":"LOCAL_SETUP_V2_8_1_UPGRADE_APPLIED","target":target,"old_head":head,"new_head":new_commit["sha"],"migrated_local_entries":migrated_local_entries}))
 
 if __name__=="__main__":main()
