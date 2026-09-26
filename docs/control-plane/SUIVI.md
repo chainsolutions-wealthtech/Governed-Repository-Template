@@ -59,3 +59,10 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - The committed authority remains versioned SQL/JSON; no mutable binary database is committed.
 - Future target: PostgreSQL-backed admin web application after all case/parcours semantics are validated.
 
+## 2026-09-26 — V2.8.0 canonical relational memory merged
+
+- Release HEAD: `4c8d16b5fc71df7923942c5658c21269a0051da3`.
+- Relational schema + catalog + runtime seed merged.
+- Governance CI database materialization: PASS.
+- Active workflow checkpoint remains CASE 1 `C1-12` / normal-entry proof.
+- No frontend implemented yet; application layer remains intentionally deferred.

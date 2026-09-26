@@ -9,9 +9,9 @@
 - Role: `CENTRAL_GOVERNANCE_CONTROL_PLANE`
 - Canonical branch: `main`
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
-- Template version: `2.7.0`
+- Template version: `2.8.0`
 - V2.7.0 release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`
-- Source-state revision: `4`
+- Source-state revision: `6`
 
 ## Current framework program
 
@@ -85,3 +85,12 @@ The current workflow checkpoint does **not** change: CASE 1 remains at `C1-12 / 
 
 The future admin web application is intentionally deferred until all structuring cases and parcours have been tested and their relational catalogues validated.
 
+
+## V2.8.0 release attestation
+
+- Release subject HEAD: `4c8d16b5fc71df7923942c5658c21269a0051da3`.
+- Canonical relational memory schema: ACTIVE.
+- Ephemeral SQLite materialization in Governance CI: PASS.
+- Structuring cases registered: 4.
+- CASE 1 replay data: ACTIVE.
+- Future admin frontend: DEFERRED until all case/parcours validation is complete.
