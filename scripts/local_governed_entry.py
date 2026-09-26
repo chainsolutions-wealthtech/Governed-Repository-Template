@@ -216,6 +216,34 @@ def mark_credentials_verified(s):
     s["credentials_verified"]=True;s["revision"]+=1
     return refresh(s)
 
+def both_discovery_needs_refresh(s,direct_credential_available):
+    if not direct_credential_available:
+        return False
+    if (s.get("answers") or {}).get("mcp_transport")!="BOTH":
+        return False
+    evidence=s.get("mcp_discovery")
+    if not isinstance(evidence,dict):
+        return False
+    direct=evidence.get("direct_mcp")
+    return isinstance(direct,dict) and direct.get("status")=="UNAVAILABLE_CREDENTIAL"
+
+def require_mcp_discovery_refresh(s,reason):
+    s=copy.deepcopy(s)
+    current=s.get("mcp_discovery")
+    if not isinstance(current,dict):
+        raise ValueError("no MCP discovery evidence to refresh")
+    history=list(s.get("mcp_discovery_history") or [])[-4:]
+    history.append({"reason":reason,"evidence":copy.deepcopy(current)})
+    s["mcp_discovery_history"]=history
+    s["mcp_discovery"]=None
+    s["hold_reason"]=None
+    s["revision"]+=1
+    s=refresh(s)
+    if (s.get("next_request") or {}).get("kind")!="MCP_DISCOVERY":
+        raise ValueError("MCP discovery refresh did not reach discovery gate")
+    s["next_request"]["refresh_reason"]=reason
+    return s
+
 def record_mcp_discovery(s,evidence):
     s=copy.deepcopy(s)
     if (s.get("next_request") or {}).get("kind")!="MCP_DISCOVERY":raise ValueError("not awaiting MCP discovery")
@@ -254,5 +282,5 @@ def encode_state(s):
     return base64.urlsafe_b64encode(json.dumps(s,separators=(",",":"),ensure_ascii=False).encode()).decode().rstrip("=")
 def decode_state(v):
     s=json.loads(base64.urlsafe_b64decode((v+"="*((4-len(v)%4)%4)).encode()).decode())
-    s.setdefault("setup_package",None);s.setdefault("mcp_discovery",None);s.setdefault("credentials_verified",False)
+    s.setdefault("setup_package",None);s.setdefault("mcp_discovery",None);s.setdefault("mcp_discovery_history",[]);s.setdefault("credentials_verified",False)
     return s
