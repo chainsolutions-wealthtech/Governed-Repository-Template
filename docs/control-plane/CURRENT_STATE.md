@@ -9,7 +9,7 @@
 - Role: `CENTRAL_GOVERNANCE_CONTROL_PLANE`
 - Canonical branch: `main`
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
-- Template version: `2.8.5`
+- Template version: `2.8.6`
 - V2.7.0 release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`
 - Source-state revision: `8`
 
@@ -59,7 +59,7 @@ From this framework program:
 
 ## Unique next action
 
-`C1_12_I_A_FIX_DYNAMIC_CLIENT_UPGRADER`
+`C1_12_J_B_COMPLETE_PORTABLE_INTENT_FIXTURE`
 
 ## Latest proof
 
@@ -174,3 +174,14 @@ The future admin web application is intentionally deferred until all structuring
 - V2.8.5 candidate derives the upgrade version from the Template manifest, synchronizes the required static governance/runtime/test surface, preserves mutable client state, and makes source-only DB materialization skip cleanly on clients.
 - Active task: `C1-12-I-A_FIX_DYNAMIC_CLIENT_UPGRADER`.
 - External pilot mutation remains blocked until Template CI/release passes.
+
+
+## V2.8.6 candidate — complete portable intent fixture
+
+- V2.8.5 governed external pilot upgrade succeeded at pilot HEAD `17f852c19ac8c5d26f40d3508338ce9c221697c8`.
+- External pilot Governance CI run `36275001208` failed only in `scripts/test_connection_intent.py`.
+- Root cause: synthetic intent test still inherited bootstrap-influencing client baseline state outside work/session stores.
+- V2.8.6 resets project-profile, infrastructure-intent, local-entry, MCP binding, access-plan and workflow-model inside the temporary test copy in addition to profile/work/claims/sessions/canonical-memory.
+- Real pilot/client state remains untouched.
+- Subprocess failures now expose captured stdout/stderr.
+- Active task: `C1-12-J-B_COMPLETE_PORTABLE_INTENT_FIXTURE`.
