@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 from pathlib import Path
-from local_governed_entry import answer, complete_baseline, decode_state, encode_state, mark_credentials_verified, new_request, record_mcp_discovery, record_mcp_discovery_failure
+from local_governed_entry import answer, both_discovery_needs_refresh, complete_baseline, decode_state, encode_state, mark_credentials_verified, new_request, record_mcp_discovery, record_mcp_discovery_failure, require_mcp_discovery_refresh
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -95,6 +95,33 @@ def main():
     })
     if recovered["next_request"]["field"]!="domain_binding":
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: discovery retry did not resume setup")
+    recovered=answer_expected(recovered,"domain_binding",{"mode":"UNRESOLVED"})
+    recovered=answer_expected(recovered,"workflow_model","STANDARD_GOVERNED_FLOW")
+    if recovered["next_request"]["field"]!="setup_approved":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: expected setup approval before refresh simulation")
+    if not both_discovery_needs_refresh(recovered,True):
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: degraded BOTH evidence must refresh when direct credential appears")
+    refreshed=require_mcp_discovery_refresh(recovered,"DIRECT_CREDENTIAL_BECAME_AVAILABLE")
+    if refreshed["next_request"]["kind"]!="MCP_DISCOVERY":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: BOTH refresh discovery gate")
+    if refreshed["answers"]["domain_binding"]!={"mode":"UNRESOLVED"} or refreshed["answers"]["workflow_model"]!="STANDARD_GOVERNED_FLOW":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: refresh lost approved answers")
+    if len(refreshed.get("mcp_discovery_history") or [])!=1:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: prior discovery evidence not archived")
+    if refreshed["mcp_discovery_history"][0]["evidence"]["direct_mcp"]["status"]!="UNAVAILABLE_CREDENTIAL":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: archived direct evidence mismatch")
+    reconciled=record_mcp_discovery(refreshed,{
+      "status":"PASS",
+      "degraded":False,
+      "direct_mcp":{"status":"PASS"},
+      "ssh_certificate":{"status":"PASS"}
+    })
+    if reconciled["next_request"]["field"]!="setup_approved":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: refreshed discovery did not return to setup approval")
+    if reconciled["setup_package"]["mcp"]["discovery_evidence"]["status"]!="PASS":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: setup package retained stale discovery")
+    if both_discovery_needs_refresh(reconciled,True):
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: fresh BOTH evidence must not refresh again")
 
     n=new_request("LOCAL-2","owner/repo","c"*40,False,"later agent")
     for field,value in [
@@ -129,7 +156,10 @@ def main():
         '"LOCAL_STATE_HEAD_MOVED',
         'dispatch_machine_command(e)',
         'elif gate=="MCP_DISCOVERY"',
-        'MCP discovery retry requested'
+        'MCP discovery retry requested',
+        'both_discovery_needs_refresh',
+        'DIRECT_CREDENTIAL_BECAME_AVAILABLE',
+        'BOTH discovery refresh required'
     ]:
         if fragment not in bridge:
             raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: local entry actor authorization "+fragment)
