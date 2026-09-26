@@ -95,6 +95,8 @@ def validate(conn):
         raise SystemExit("CONTROL_PLANE_DB_FAILED: question catalog unexpectedly small")
     if conn.execute("SELECT COUNT(*) FROM activities").fetchone()[0] < 8:
         raise SystemExit("CONTROL_PLANE_DB_FAILED: activity catalog unexpectedly small")
+    for table in ["agent_sessions","agent_activity_events"]:
+        conn.execute(f"SELECT 1 FROM {table} LIMIT 1")
     print("CONTROL_PLANE_DB_VALIDATION_PASS")
     print("cases=4")
     print(f"questions={conn.execute('SELECT COUNT(*) FROM questions').fetchone()[0]}")
@@ -107,8 +109,9 @@ def build(path: Path):
     replay = json.loads((ROOT/".governance"/"control-plane-state"/"case1-replay.json").read_text(encoding="utf-8"))
     conn = sqlite3.connect(path)
     try:
-        conn.executescript((DB_ROOT/"001_schema.sql").read_text(encoding="utf-8"))
-        conn.execute("INSERT INTO schema_meta(key,value) VALUES('schema_version','1.0.0')")
+        for migration in sorted(DB_ROOT.glob("[0-9][0-9][0-9]_*.sql")):
+            conn.executescript(migration.read_text(encoding="utf-8"))
+        conn.execute("INSERT INTO schema_meta(key,value) VALUES('schema_version','1.1.0')")
         insert_case_data(conn,catalog)
         insert_replay(conn,replay)
         insert_questions_activities(conn,catalog)
