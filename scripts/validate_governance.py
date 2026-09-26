@@ -154,6 +154,7 @@ SOURCE_ONLY_REQUIRED = {
     "docs/control-plane/CASE1_REPLAY_LEDGER.md",
     "docs/control-plane/AGENT_ACTIVITY_LOG.md",
     "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+    "docs/control-plane/IMPORTED_MEMORY_VERIFICATION.md",
     ".governance/control-plane-state/current.json",
     ".governance/control-plane-state/checkpoint.json",
     ".governance/control-plane-state/handoff.json",
@@ -542,6 +543,7 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
             "docs/control-plane/PROGRAM.md",
             "docs/control-plane/CASE1_REPLAY_LEDGER.md",
             "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "docs/control-plane/IMPORTED_MEMORY_VERIFICATION.md",
             "docs/control-plane/DATA_MODEL.md",
             "docs/control-plane/AGENT_ACTIVITY_LOG.md",
         ]
