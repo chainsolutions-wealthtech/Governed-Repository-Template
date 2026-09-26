@@ -1,12 +1,12 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.2.0",
   "repositories": [
     {
       "repository_id": "repo-control-plane",
       "full_name": "chainsolutions-wealthtech/Governed-Repository-Template",
       "role": "CONTROL_PLANE_SOURCE",
       "canonical_branch": "main",
-      "current_head_sha": "2ad88338fc3f02efbbf2c5e0572dd0a1754701fd",
+      "current_head_sha": "3ee944eccd3e2578aaf590a2006fa452fe9ae21b",
       "source_ref": "docs/control-plane/CURRENT_STATE.md"
     },
     {
@@ -14,7 +14,7 @@
       "full_name": "Patricked-code/Gouvern",
       "role": "CASE1_PILOT",
       "canonical_branch": "main",
-      "current_head_sha": null,
+      "current_head_sha": "3a1b7689be5aa38b4b6fdb6456526e618f9b0dd5",
       "source_ref": "docs/control-plane/CASE1_REPLAY_LEDGER.md"
     }
   ],
@@ -75,6 +75,67 @@
       "value": "STANDARD_GOVERNED_FLOW",
       "status": "HISTORICAL",
       "source_ref": "docs/control-plane/CASE1_REPLAY_LEDGER.md"
+    },
+    {
+      "decision_id": "CPD-014",
+      "scope_type": "ARCHITECTURE",
+      "scope_id": "CP-ARCH-001",
+      "decision_key": "CANONICAL_TARGET_ARCHITECTURE_AUTHORITY",
+      "value": {
+        "path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+        "structuring_cases": 4,
+        "post_case_mode": "CONTINUE_GOVERNED_WORK"
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md"
+    },
+    {
+      "decision_id": "CPD-015",
+      "scope_type": "CANONICAL_MEMORY",
+      "scope_id": "CONTROL_PLANE",
+      "decision_key": "APPEND_SUPERSEDE_REVALIDATE",
+      "value": {
+        "append_history": true,
+        "supersede": true,
+        "revalidate_dependents": true
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md"
+    },
+    {
+      "decision_id": "CPD-016",
+      "scope_type": "CANONICAL_MEMORY",
+      "scope_id": "CONTROL_PLANE",
+      "decision_key": "GIT_FOUNDATIONAL_AUTHORITY",
+      "value": {
+        "git_versioned_authorities": true,
+        "database_projection": true,
+        "frontend_authority": false
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md"
+    },
+    {
+      "decision_id": "CPD-017",
+      "scope_type": "PROGRAM",
+      "scope_id": "FRAMEWORK",
+      "decision_key": "ARCHITECTURE_PROGRAM_TASK_LINEAGE",
+      "value": "ARCHITECTURE→PROGRAM→CASE/WORKSTREAM→PHASE→INTEGRATION_SLOT→TASK→SUBTASK",
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md"
+    },
+    {
+      "decision_id": "CPD-018",
+      "scope_type": "ROADMAP",
+      "scope_id": "FRAMEWORK",
+      "decision_key": "WORKFLOW_SEMANTICS_FIRST_FRONTEND_SECOND",
+      "value": {
+        "api_after_case_validation": true,
+        "postgres_after_model_validation": true,
+        "frontend_after_workflow_stabilization": true
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md"
     }
   ],
   "checkpoints": [
@@ -97,6 +158,75 @@
       "status": "OPEN_EXTERNAL",
       "summary": "Repository-SSH OIDC certificate broker returned 403 during pilot; intake only, no MCP implementation from this workstream.",
       "source_ref": "Patricked-code/MCP#192"
+    }
+  ],
+  "run_answers": [],
+  "run_events": [],
+  "evidence": [],
+  "handoffs": [],
+  "owner_feedback": [],
+  "artifacts": [
+    {
+      "artifact_id": "CP-ARCH-001",
+      "run_id": null,
+      "phase_id": null,
+      "artifact_type": "CANONICAL_TARGET_ARCHITECTURE",
+      "path_or_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+      "sha": null,
+      "source_ref": "CPD-014",
+      "created_at": "2026-09-26"
+    }
+  ],
+  "canonical_authorities": [
+    {
+      "authority_id": "CP-ARCH-001",
+      "authority_type": "CANONICAL_TARGET_ARCHITECTURE",
+      "canonical_path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+      "scope": "CONTROL_PLANE_SOURCE_ONLY",
+      "status": "ACCEPTED_TARGET_ARCHITECTURE",
+      "current_revision": 1,
+      "source_decision_id": "CPD-014",
+      "created_at": "2026-09-26"
+    }
+  ],
+  "canonical_authority_revisions": [
+    {
+      "revision_id": "CP-ARCH-001-R1",
+      "authority_id": "CP-ARCH-001",
+      "revision_number": 1,
+      "subject_head_sha": "3ee944eccd3e2578aaf590a2006fa452fe9ae21b",
+      "content_sha": null,
+      "supersedes_revision_id": null,
+      "reason": "Initial accepted target architecture distilled from V2.8.3 external memory and reconciled with live state.",
+      "source_decision_id": "CPD-014",
+      "source_ref": ".governance/control-plane-state/canonical-architecture.json",
+      "created_at": "2026-09-26"
+    }
+  ],
+  "canonical_memory_events": [
+    {
+      "event_id": "CME-20260926-ARCH-001",
+      "event_type": "ARCHITECTURE_AUTHORITY_CREATED",
+      "scope_type": "AUTHORITY",
+      "scope_id": "CP-ARCH-001",
+      "payload": {
+        "revision": 1,
+        "source_snapshot_head": "892f793a0202cb4f69169001821014f47db45c3f"
+      },
+      "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+      "occurred_at": "2026-09-26"
+    },
+    {
+      "event_id": "CME-20260926-ARCH-002",
+      "event_type": "ARCHITECTURE_REVISION_ACCEPTED",
+      "scope_type": "AUTHORITY",
+      "scope_id": "CP-ARCH-001",
+      "payload": {
+        "revision_id": "CP-ARCH-001-R1",
+        "decision_id": "CPD-014"
+      },
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "occurred_at": "2026-09-26"
     }
   ]
 }

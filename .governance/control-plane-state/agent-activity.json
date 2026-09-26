@@ -38,6 +38,40 @@
         "Persist agent/session activity as first-class relational records for future admin UI."
       ],
       "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM"
+    },
+    {
+      "activity_id": "AAL-20260926-ARCH-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "CANONICAL_ARCHITECTURE_MEMORY_ENRICHMENT",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "3ee944eccd3e2578aaf590a2006fa452fe9ae21b",
+      "objective": "Integrate user-supplied architecture memory additively without changing live CASE 1 execution.",
+      "evidence_refs": [
+        "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+        ".governance/control-plane-state/canonical-architecture.json",
+        "docs/control-plane/IMPORTED_MEMORY_VERIFICATION.md",
+        ".governance/control-plane-db/003_canonical_authorities.sql"
+      ],
+      "discovered_tasks": [
+        "ARCH-004",
+        "ARCH-005",
+        "ARCH-006",
+        "ARCH-007",
+        "ARCH-008",
+        "ARCH-009",
+        "ARCH-010"
+      ],
+      "remarks": [
+        "Snapshot state is historical; live Git state remains authoritative.",
+        "Imported memory cannot satisfy live approval."
+      ],
+      "proposals": [
+        "Add reducer/reconstruction validation.",
+        "Formalize role/capability authorization.",
+        "Strengthen cross-projection CI.",
+        "Defer API/PostgreSQL/UI until workflow semantics stabilize."
+      ],
+      "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM"
     }
   ]
 }

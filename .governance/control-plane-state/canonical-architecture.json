@@ -1,0 +1,111 @@
+{
+  "schema_version": "1.0.0",
+  "authority_id": "CP-ARCH-001",
+  "authority_type": "CANONICAL_TARGET_ARCHITECTURE",
+  "scope": "CONTROL_PLANE_SOURCE_ONLY",
+  "status": "ACCEPTED_TARGET_ARCHITECTURE",
+  "current_revision": 1,
+  "canonical_path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+  "revision": {
+    "revision_id": "CP-ARCH-001-R1",
+    "revision_number": 1,
+    "subject_head_sha": "3ee944eccd3e2578aaf590a2006fa452fe9ae21b",
+    "source_snapshot_head_sha": "892f793a0202cb4f69169001821014f47db45c3f",
+    "source_snapshot_template_version": "2.8.3",
+    "source_decision_ids": [
+      "CPD-014",
+      "CPD-015",
+      "CPD-016",
+      "CPD-017",
+      "CPD-018"
+    ],
+    "reason": "Integrate user-supplied target architecture additively without replacing live state.",
+    "approval_eligible_from_imported_memory": false
+  },
+  "source_provenance": {
+    "txt": {
+      "sha256": "48f42b55b285a18d9a137b63b5e2c6d9d67e4e46934239ee6a77c2a0db1c0b37",
+      "role": "INTEGRATION_ANALYSIS"
+    },
+    "markdown": {
+      "sha256": "53453ce9e7c5edeae0d18ca0539c56bfd84230c829979255164409e3db5799db",
+      "role": "PRIMARY_ARCHITECTURE_SNAPSHOT"
+    },
+    "pdf": {
+      "sha256": "3cc21586cb7562e23005b8d51737a08c2fe62a0df4344af646ea41a4ee7f3368",
+      "role": "DERIVED_PRESENTATION_ARTIFACT"
+    }
+  },
+  "invariants": [
+    "FOUR_STRUCTURING_CASES_PLUS_POST_CASE_MODE",
+    "TARGET_NE_CURRENT_STATE",
+    "SOURCE_MEMORY_NE_CLIENT_MEMORY",
+    "PRESERVE_REUSE_CONNECT_EXTEND_MIGRATE_COMPATIBLY",
+    "APPEND_SUPERSEDE_REVALIDATE",
+    "EXACT_HEAD_BEFORE_MUTATION",
+    "GIT_VERSIONED_AUTHORITIES_REMAIN_FOUNDATIONAL",
+    "WORKFLOW_SEMANTICS_FIRST_FRONTEND_SECOND",
+    "IMPORTED_MEMORY_NE_LIVE_APPROVAL"
+  ],
+  "live_execution_reference": {
+    "current_state": "docs/control-plane/CURRENT_STATE.md",
+    "tasks": "docs/control-plane/TASKS.md",
+    "next_action": "docs/control-plane/NEXT_ACTION.md"
+  },
+  "structuring_cases": [
+    "CREATE_NEW_REPOSITORY",
+    "ADOPT_EXISTING_REPOSITORY",
+    "MAP_EXISTING_PROJECT",
+    "LAB_EVOLUTION"
+  ],
+  "post_case_modes": [
+    "CONTINUE_GOVERNED_WORK"
+  ],
+  "target_agent_roles": [
+    "INTAKER",
+    "SUPERVISOR",
+    "CODE_AGENT",
+    "REVIEWER"
+  ],
+  "task_lineage": [
+    "GLOBAL_ARCHITECTURE",
+    "PROGRAM",
+    "CASE_OR_WORKSTREAM",
+    "PHASE",
+    "INTEGRATION_SLOT",
+    "TASK",
+    "SUBTASK"
+  ],
+  "target_capabilities": [
+    "CAPABILITY_AGENT_ENTRY",
+    "CAPABILITY_CANONICAL_MEMORY",
+    "CAPABILITY_SESSION",
+    "CAPABILITY_PROGRAM",
+    "CAPABILITY_TASK_QUEUE",
+    "CAPABILITY_CLAIMS",
+    "CAPABILITY_CHECKPOINT",
+    "CAPABILITY_HANDOFF",
+    "CAPABILITY_INTAKE",
+    "CAPABILITY_VALIDATION",
+    "CAPABILITY_AUTO_BOOTSTRAP",
+    "CAPABILITY_RECONCILIATION",
+    "CAPABILITY_EXISTING_REPO_ADOPTION",
+    "CAPABILITY_PROJECT_MAPPING",
+    "CAPABILITY_LAB_EVOLUTION"
+  ],
+  "roadmap": [
+    "STABILIZE_CASE_1",
+    "PROVE_NORMAL_GOVERNED_ENTRY",
+    "PROVE_SECOND_FRESH_REPOSITORY_E2E",
+    "CLOSE_CASE_1",
+    "TEST_CASE_2",
+    "TEST_CASE_3",
+    "TEST_CASE_4",
+    "RECONCILE_COMMON_PATTERNS",
+    "STABILIZE_RELATIONAL_MODEL",
+    "STRENGTHEN_RECONCILIATION_UPGRADE_REPAIR",
+    "EXPOSE_GOVERNANCE_API",
+    "OPTIONAL_POSTGRES_RUNTIME",
+    "ADMIN_WEB_APPLICATION"
+  ]
+}

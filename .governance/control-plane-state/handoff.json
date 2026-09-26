@@ -10,6 +10,9 @@
   "unique_next_action": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM",
   "read_first": [
     "docs/control-plane/CURRENT_STATE.md",
+    ".governance/control-plane-state/canonical-architecture.json",
+    "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+    "docs/control-plane/IMPORTED_MEMORY_VERIFICATION.md",
     "docs/control-plane/PROGRAM.md",
     "docs/control-plane/TASKS.md",
     "docs/control-plane/NEXT_ACTION.md",

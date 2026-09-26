@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 8,
+  "source_state_revision": 9,
   "template_version": "2.8.3",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
@@ -20,15 +20,26 @@
     }
   ],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
-  "freshness": "SOURCE_STATE_RECONCILED_THROUGH_V2_8_3",
+  "freshness": "SOURCE_STATE_ENRICHED_AGAINST_3EE944",
   "last_ci_run": 36258871067,
   "last_ci_result": "PASS",
   "release_subject_head": "4c8d16b5fc71df7923942c5658c21269a0051da3",
-  "last_verified_main_head": "892f793a0202cb4f69169001821014f47db45c3f",
+  "last_verified_main_head": "3ee944eccd3e2578aaf590a2006fa452fe9ae21b",
   "canonical_memory_database": {
     "schema_version": "1.0.0",
     "status": "ACTIVE",
     "materialization": "CI_VALIDATED",
     "future_frontend": "DEFERRED"
+  },
+  "canonical_architecture": {
+    "authority_id": "CP-ARCH-001",
+    "revision": 1,
+    "path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+    "status": "ACCEPTED_TARGET_ARCHITECTURE",
+    "target_ne_current": true
+  },
+  "imported_memory_verification": {
+    "path": "docs/control-plane/IMPORTED_MEMORY_VERIFICATION.md",
+    "imported_memory_grants_live_approval": false
   }
 }

@@ -37,7 +37,11 @@
     "CANONICAL_MEMORY_HAS_QUERYABLE_RELATIONAL_PROJECTION",
     "DATABASE_EVOLVES_BY_VERSIONED_MIGRATIONS",
     "AGENT_ACTIVITY_MUST_BE_DURABLY_RECORDED",
-    "DISCOVERED_TASKS_MUST_ENTER_CANONICAL_QUEUE_BEFORE_CONTINUATION"
+    "DISCOVERED_TASKS_MUST_ENTER_CANONICAL_QUEUE_BEFORE_CONTINUATION",
+    "TARGET_ARCHITECTURE_NE_LIVE_CURRENT_STATE",
+    "CANONICAL_AUTHORITIES_REVISIONED_MONOTONICALLY",
+    "APPEND_HISTORY_PLUS_CURRENT_PROJECTION",
+    "WORKFLOW_SEMANTICS_BEFORE_FRONTEND"
   ],
   "source_only_paths": [
     ".github/workflows/governed-control-plane.yml",
@@ -62,7 +66,9 @@
       "docs/control-plane/PROGRAM.md",
       "docs/control-plane/CASE1_REPLAY_LEDGER.md",
       "docs/control-plane/DATA_MODEL.md",
-      "docs/control-plane/AGENT_ACTIVITY_LOG.md"
+      "docs/control-plane/AGENT_ACTIVITY_LOG.md",
+      "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+      "docs/control-plane/IMPORTED_MEMORY_VERIFICATION.md"
     ],
     "machine_authorities": [
       ".governance/control-plane-state/current.json",
@@ -70,7 +76,8 @@
       ".governance/control-plane-state/handoff.json",
       ".governance/control-plane-state/tasks.json",
       ".governance/control-plane-state/case1-replay.json",
-      ".governance/control-plane-state/agent-activity.json"
+      ".governance/control-plane-state/agent-activity.json",
+      ".governance/control-plane-state/canonical-architecture.json"
     ],
     "issue_role": "ORCHESTRATION_AND_EVIDENCE_NOT_CANONICAL_SOURCE",
     "conversation_role": "SUPPLEMENTAL_CONTEXT_ONLY"
@@ -86,7 +93,9 @@
       ".governance/control-plane-db/001_schema.sql",
       ".governance/control-plane-db/catalog.json",
       ".governance/control-plane-db/runtime-seed.json",
-      ".governance/control-plane-db/materialize.py"
+      ".governance/control-plane-db/materialize.py",
+      ".governance/control-plane-db/002_agent_activity.sql",
+      ".governance/control-plane-db/003_canonical_authorities.sql"
     ],
     "invariants": [
       "DATABASE_BINARY_NOT_CANONICAL_IN_GIT",
@@ -94,7 +103,19 @@
       "ALL_STRUCTURING_CASES_SHARE_THE_SAME_RELATIONAL_MODEL",
       "OWNER_FEEDBACK_AND_DECISIONS_ARE_FIRST_CLASS_RECORDS",
       "CHECKPOINTS_AND_HANDOFFS_ARE_QUERYABLE",
-      "CLIENT_REPOSITORIES_DO_NOT_RECEIVE_CONTROL_PLANE_DATABASE"
-    ]
+      "CLIENT_REPOSITORIES_DO_NOT_RECEIVE_CONTROL_PLANE_DATABASE",
+      "CANONICAL_AUTHORITIES_HAVE_MONOTONE_REVISIONS",
+      "IMPORTED_MEMORY_CANNOT_GRANT_LIVE_APPROVAL",
+      "TARGET_ARCHITECTURE_NE_CURRENT_EXECUTION_STATE",
+      "EVENT_HISTORY_AND_CURRENT_PROJECTION_COEXIST"
+    ],
+    "schema_version": "1.2.0"
+  },
+  "canonical_architecture": {
+    "authority_id": "CP-ARCH-001",
+    "path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+    "machine_projection": ".governance/control-plane-state/canonical-architecture.json",
+    "scope": "CONTROL_PLANE_SOURCE_ONLY",
+    "status": "ACCEPTED_TARGET_ARCHITECTURE"
   }
 }

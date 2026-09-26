@@ -29,3 +29,32 @@
 - Proposal: add first-class per-agent/session records to the relational canonical memory so future admin UI can display who did what, why, evidence, remarks and handoff.
 - Unique next action: `C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM`.
 - C1-13 remains locked.
+
+
+## Entry AAL-20260926-ARCH-001
+
+- Agent identity: ChatGPT
+- Workstream: Canonical architecture / memory enrichment
+- Starting source HEAD observed: `3ee944eccd3e2578aaf590a2006fa452fe9ae21b`
+- External memory snapshot HEAD: `892f793a0202cb4f69169001821014f47db45c3f`
+- Objective: read user-supplied architecture memory end-to-end, preserve its durable objectives, and integrate compatible elements without regressing live C1-12 work.
+- Sources reviewed:
+  - integration analysis TXT;
+  - canonical architecture Markdown;
+  - derived PDF representation.
+- Key classifications:
+  - target architecture/invariants → integrate;
+  - old snapshot live values → historical only;
+  - PDF → derived artifact, not primary authority;
+  - API/PostgreSQL/Admin UI → future roadmap after case validation;
+  - imported memory → never live approval.
+- Actions:
+  - created `CP-ARCH-001`;
+  - added machine architecture projection and source hashes;
+  - added decisions CPD-014..CPD-018;
+  - added canonical authority revision/event migration;
+  - completed materializer loaders for existing history tables;
+  - added architecture hardening backlog;
+  - preserved C1-12-F as unique active execution task.
+- Proposal retained for later: reducer/reconstruction validation, role/capability enforcement, stronger cross-projection CI, derived PDF generation, Governance API, PostgreSQL projection, Admin Web UI.
+- Unique execution next action remains: `C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM`.

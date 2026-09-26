@@ -120,3 +120,13 @@ The future admin web application is intentionally deferred until all structuring
 - Gouvern upgraded to `3a1b7689be5aa38b4b6fdb6456526e618f9b0dd5`.
 - Current remaining failure: `INTENT_SELFTEST_FAILED: unexpected work item`.
 - Active CASE 1 phase remains `C1-12`; no transition to C1-13 is allowed until client CI and live normal-entry proof are green.
+
+## Canonical target architecture
+
+- Authority: `docs/control-plane/CANONICAL_ARCHITECTURE.md`
+- Authority ID: `CP-ARCH-001`
+- Status: `ACCEPTED_TARGET_ARCHITECTURE`
+- Structuring cases: `CREATE_NEW_REPOSITORY`, `ADOPT_EXISTING_REPOSITORY`, `MAP_EXISTING_PROJECT`, `LAB_EVOLUTION`
+- Post-case mode: `CONTINUE_GOVERNED_WORK`
+- Target architecture is distinct from live current state.
+- Current execution remains CASE 1 / C1-12 with unique next action `C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM`.

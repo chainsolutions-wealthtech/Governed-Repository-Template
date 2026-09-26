@@ -152,3 +152,53 @@ Every meaningful agent work session can now be represented independently from Gi
 - chronology.
 
 This supports future admin views such as “who did what”, “what was discovered”, “what remains”, and “where to resume”.
+
+
+## Canonical authority revisioning
+
+Migration `003_canonical_authorities.sql` adds:
+
+- `canonical_authorities`
+- `canonical_authority_revisions`
+- `canonical_memory_events`
+
+`canonical_authorities` stores the stable identity and current revision pointer of durable authorities such as `CP-ARCH-001`.
+
+`canonical_authority_revisions` preserves monotone revisions with subject HEAD, content hash, predecessor, reason and source decision.
+
+`canonical_memory_events` provides append-oriented history for authority creation/revision and future memory events.
+
+The initial authority is:
+
+```text
+CP-ARCH-001
+→ CANONICAL_TARGET_ARCHITECTURE
+→ docs/control-plane/CANONICAL_ARCHITECTURE.md
+→ revision 1
+```
+
+## Complete runtime projection loaders
+
+The deterministic materializer now supports the history tables already defined by the schema:
+
+- `run_answers`
+- `run_events`
+- `evidence`
+- `handoffs`
+- `owner_feedback`
+- `artifacts`
+- canonical authority/revision/event records
+
+This closes the gap where tables existed in SQL but could not be populated from the versioned seed.
+
+## Target/current/history separation
+
+```text
+TARGET      → canonical architecture / accepted invariants
+CURRENT     → current state / checkpoint projection
+EXECUTION   → program / tasks / next action
+CONTINUITY  → handoff / replay / agent activity
+HISTORY     → decisions / events / evidence / owner feedback
+```
+
+A current projection may be regenerated; history must remain explainable and revisioned.

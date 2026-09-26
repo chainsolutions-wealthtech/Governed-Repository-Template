@@ -28,5 +28,13 @@
   "blocker": {
     "run": 36262734626,
     "error": "INTENT_SELFTEST_FAILED: unexpected work item"
+  },
+  "knowledge_enrichment": {
+    "canonical_architecture": {
+      "authority_id": "CP-ARCH-001",
+      "revision": 1,
+      "source_head": "3ee944eccd3e2578aaf590a2006fa452fe9ae21b",
+      "execution_gate_unchanged": true
+    }
   }
 }
