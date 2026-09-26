@@ -40,7 +40,7 @@ jobs:
           python-version: '3.12'
 
       - name: Compile control plane
-        run: python3 -m py_compile scripts/governed_request.py scripts/control_plane_issue_bridge.py scripts/control_plane_create_repository.py scripts/control_plane_upgrade_local_entry.py scripts/control_plane_local_command.py scripts/control_plane_provision_mcp_credential.py
+        run: python3 -m py_compile scripts/governed_request.py scripts/control_plane_issue_bridge.py scripts/control_plane_create_repository.py scripts/control_plane_upgrade_local_entry.py scripts/control_plane_local_command.py scripts/control_plane_local_start.py scripts/control_plane_provision_mcp_credential.py
 
       - name: Process governed request
         id: process
@@ -86,6 +86,35 @@ jobs:
         run: |
           python3 scripts/control_plane_upgrade_local_entry.py             --target-repository "${{ steps.process.outputs.upgrade_target_repository }}"             --expected-head "${{ steps.process.outputs.upgrade_expected_head }}"             --issue-number "${{ steps.process.outputs.issue_number }}"
 
+
+      - name: Mint target-owner token for machine local start
+        if: steps.process.outputs.local_start_required == 'true'
+        id: local-start-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ steps.process.outputs.local_start_target_owner }}
+          permission-contents: read
+          permission-issues: write
+
+      - name: Dispatch governed machine local start
+        if: steps.process.outputs.local_start_required == 'true'
+        env:
+          GOVERNED_TARGET_TOKEN: ${{ steps.local-start-token.outputs.token }}
+        run: |
+          python3 scripts/control_plane_local_start.py \
+            --target-repository "${{ steps.process.outputs.local_start_target_repository }}" \
+            --expected-head "${{ steps.process.outputs.local_start_expected_head }}" \
+            --objective "$(python3 - <<'PY'
+import base64,os
+v=os.environ['OBJ']; print(base64.urlsafe_b64decode(v+'='*((4-len(v)%4)%4)).decode())
+PY
+)" \
+            --source-issue "${{ steps.process.outputs.issue_number }}"
+        env:
+          GOVERNED_TARGET_TOKEN: ${{ steps.local-start-token.outputs.token }}
+          OBJ: ${{ steps.process.outputs.local_start_objective_b64 }}
 
       - name: Mint target-owner token for machine local command
         if: steps.process.outputs.local_command_required == 'true'
