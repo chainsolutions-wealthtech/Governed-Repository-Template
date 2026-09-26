@@ -35,7 +35,9 @@
     "CASE_REPLAY_LEDGER_REQUIRED_FOR_ACTIVE_MACRO_CASE",
     "OWNER_FEEDBACK_MUST_BE_RECONCILED_BEFORE_CONTINUATION",
     "CANONICAL_MEMORY_HAS_QUERYABLE_RELATIONAL_PROJECTION",
-    "DATABASE_EVOLVES_BY_VERSIONED_MIGRATIONS"
+    "DATABASE_EVOLVES_BY_VERSIONED_MIGRATIONS",
+    "AGENT_ACTIVITY_MUST_BE_DURABLY_RECORDED",
+    "DISCOVERED_TASKS_MUST_ENTER_CANONICAL_QUEUE_BEFORE_CONTINUATION"
   ],
   "source_only_paths": [
     ".github/workflows/governed-control-plane.yml",
@@ -59,14 +61,16 @@
       "docs/control-plane/TASKS.md",
       "docs/control-plane/PROGRAM.md",
       "docs/control-plane/CASE1_REPLAY_LEDGER.md",
-      "docs/control-plane/DATA_MODEL.md"
+      "docs/control-plane/DATA_MODEL.md",
+      "docs/control-plane/AGENT_ACTIVITY_LOG.md"
     ],
     "machine_authorities": [
       ".governance/control-plane-state/current.json",
       ".governance/control-plane-state/checkpoint.json",
       ".governance/control-plane-state/handoff.json",
       ".governance/control-plane-state/tasks.json",
-      ".governance/control-plane-state/case1-replay.json"
+      ".governance/control-plane-state/case1-replay.json",
+      ".governance/control-plane-state/agent-activity.json"
     ],
     "issue_role": "ORCHESTRATION_AND_EVIDENCE_NOT_CANONICAL_SOURCE",
     "conversation_role": "SUPPLEMENTAL_CONTEXT_ONLY"
