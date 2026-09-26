@@ -258,6 +258,33 @@ The target role model includes at least:
 
 Roles influence responsibilities and permitted actions but never bypass authority gates.
 
+## 12A. Identity / connection / session separation
+
+Governed arrival must progressively separate:
+
+- `PRINCIPAL` — authenticated external account/identity;
+- `AGENT` — acting agent/provider;
+- `CONNECTION` — one observed arrival event;
+- `SESSION` — governed continuity/resume unit;
+- `ROLE` — responsibility model;
+- `AUTHORITY` — separately observed permission/mutation envelope.
+
+Target sequence:
+
+```text
+CAPTURE PRINCIPAL / ACTOR
+→ RESOLVE AGENT
+→ CREATE CONNECTION EVENT
+→ CREATE OR RESUME SESSION
+→ RESOLVE ROLE
+→ OBSERVE AUTHORITY
+→ RESOLVE ENTRY ACTION
+→ RESOLVE CONNECTION INTENT
+→ ENTER CHRONOLOGICAL GOVERNED QUESTION/ACTION FLOW
+```
+
+Identity and role never create authority. Ambiguous session resolution fails closed.
+
 ## 13. Architecture → program → task lineage
 
 Tasks are not isolated TODOs.
