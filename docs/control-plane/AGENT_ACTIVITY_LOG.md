@@ -176,3 +176,14 @@
 - Product action: V2.8.6 complete synthetic fixture reset + explicit subprocess diagnostics.
 - Pilot direct patching: none.
 - Unique next action: `C1_12_J_B_COMPLETE_PORTABLE_INTENT_FIXTURE`.
+
+
+## Entry AAL-20260926-V286-002
+
+- Agent identity: ChatGPT
+- Workstream: CASE 1 / C1-12 V2.8.6 release
+- Product release subject: `02173120acfa3941e84bf69c89dac0e8d74b47ce`
+- Template PR #37 / CI `36275324940`: PASS.
+- C1-12-J-B: DONE.
+- Next: governed exact-HEAD external pilot re-upgrade under C1-12-J-C.
+- Direct pilot patching: none.

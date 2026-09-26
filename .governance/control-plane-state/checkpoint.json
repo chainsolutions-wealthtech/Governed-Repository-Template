@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "checkpoint_id": "CP-CHECKPOINT-20260926-010",
+  "checkpoint_id": "CP-CHECKPOINT-20260926-011",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-  "subject_head": "784e8738758ac9de1d59c3119304a833b720f213",
+  "subject_head": "02173120acfa3941e84bf69c89dac0e8d74b47ce",
   "template_version_before": "2.7.0",
-  "state": "C1_12_COMPLETE_PORTABLE_INTENT_FIXTURE_IN_PROGRESS",
+  "state": "C1_12_V2_8_6_RELEASED_PENDING_PILOT_REVALIDATION",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
@@ -23,21 +23,19 @@
     "c1_12_i_a_dynamic_client_upgrader": "PASS",
     "v2_8_5_release_subject": "556011ea20310a483f77a9a382b66b79bed4b31c",
     "c1_12_i_b_governed_pilot_upgrade": "PASS",
-    "c1_12_j_a_root_cause": "PASS"
+    "c1_12_j_a_root_cause": "PASS",
+    "c1_12_j_b_complete_portable_fixture": "PASS",
+    "v2_8_6_release_subject": "02173120acfa3941e84bf69c89dac0e8d74b47ce"
   },
-  "next_action": "C1_12_J_B_COMPLETE_PORTABLE_INTENT_FIXTURE",
+  "next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT",
   "reconciliation_required_before_write": true,
-  "ci_run": 36274765257,
+  "ci_run": 36275324940,
   "ci_result": "PASS",
   "client_source_memory_removal": "PASS",
   "self_governance": "PASS",
   "reconciliation_reason": "STEP_4_AND_STEP_5_WERE_COMPRESSED_IN_SOURCE_SUMMARY",
   "canonical_memory_database": "PASS",
-  "blocker": {
-    "product_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-    "external_evidence_run": 36275001208,
-    "root_cause": "INCOMPLETE_SYNTHETIC_BOOTSTRAP_FIXTURE"
-  },
+  "blocker": null,
   "knowledge_enrichment": {
     "canonical_architecture": {
       "authority_id": "CP-ARCH-001",

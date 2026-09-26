@@ -188,3 +188,13 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - V2.8.6 candidate aligns the intent test fixture with the already-proven bootstrap-consistency fixture domains.
 - Subprocess diagnostics now include stdout/stderr.
 - Pilot remains an external evidence surface; implementation remains in the Template.
+
+
+## 2026-09-26 — V2.8.6 framework release merged
+
+- Product repository: `chainsolutions-wealthtech/Governed-Repository-Template`.
+- PR #37 merged.
+- Release subject HEAD: `02173120acfa3941e84bf69c89dac0e8d74b47ce`.
+- Governance CI run `36275324940`: PASS.
+- C1-12-J-B: DONE.
+- C1-12-J-C: IN_PROGRESS — governed exact-HEAD re-upgrade of external CASE 1 pilot.

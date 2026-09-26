@@ -6,7 +6,7 @@
       "full_name": "chainsolutions-wealthtech/Governed-Repository-Template",
       "role": "CONTROL_PLANE_SOURCE",
       "canonical_branch": "main",
-      "current_head_sha": "556011ea20310a483f77a9a382b66b79bed4b31c",
+      "current_head_sha": "02173120acfa3941e84bf69c89dac0e8d74b47ce",
       "source_ref": "docs/control-plane/CURRENT_STATE.md"
     },
     {
@@ -377,6 +377,21 @@
       },
       "source_ref": "Patricked-code/Gouvern Actions run 36275001208",
       "observed_at": "2026-09-26"
+    },
+    {
+      "evidence_id": "EVID-C1-12-V286-TEMPLATE-CI",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-12",
+      "evidence_type": "FRAMEWORK_TEMPLATE_CI",
+      "status": "PASS",
+      "payload": {
+        "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+        "version": "2.8.6",
+        "run_id": 36275324940,
+        "release_subject_head": "02173120acfa3941e84bf69c89dac0e8d74b47ce"
+      },
+      "source_ref": "Template PR #37",
+      "observed_at": "2026-09-26"
     }
   ],
   "handoffs": [],
@@ -459,6 +474,16 @@
       "path_or_ref": "chainsolutions-wealthtech/Governed-Repository-Template@556011ea20310a483f77a9a382b66b79bed4b31c",
       "sha": "556011ea20310a483f77a9a382b66b79bed4b31c",
       "source_ref": "Template PR #35",
+      "created_at": "2026-09-26"
+    },
+    {
+      "artifact_id": "FRAMEWORK-RELEASE-2.8.6",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-12",
+      "artifact_type": "FRAMEWORK_RELEASE",
+      "path_or_ref": "chainsolutions-wealthtech/Governed-Repository-Template@02173120acfa3941e84bf69c89dac0e8d74b47ce",
+      "sha": "02173120acfa3941e84bf69c89dac0e8d74b47ce",
+      "source_ref": "Template PR #37",
       "created_at": "2026-09-26"
     }
   ],
@@ -773,6 +798,19 @@
         "root_cause": "INCOMPLETE_SYNTHETIC_BOOTSTRAP_FIXTURE"
       },
       "source_ref": "Pilot CI run 36275001208",
+      "occurred_at": "2026-09-26"
+    },
+    {
+      "event_id": "CME-20260926-C112-JB-DONE",
+      "event_type": "TASK_COMPLETED",
+      "scope_type": "TASK",
+      "scope_id": "C1-12-J-B",
+      "payload": {
+        "version": "2.8.6",
+        "result": "PASS",
+        "ci_run": 36275324940
+      },
+      "source_ref": "Template PR #37",
       "occurred_at": "2026-09-26"
     }
   ]

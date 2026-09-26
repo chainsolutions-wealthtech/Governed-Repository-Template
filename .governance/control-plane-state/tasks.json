@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 14,
+  "revision": 15,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -446,20 +446,20 @@
     },
     {
       "id": "C1-12-J-B",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-12-J-A"
       ],
-      "next_action": "COMPLETE_PORTABLE_INTENT_FIXTURE"
+      "next_action": null
     },
     {
       "id": "C1-12-J-C",
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "depends_on": [
         "C1-12-J-B"
       ],
       "next_action": "RELEASE_AND_REUPGRADE_CASE1_PILOT"
     }
   ],
-  "unique_executable_item": "C1-12-J-B"
+  "unique_executable_item": "C1-12-J-C"
 }

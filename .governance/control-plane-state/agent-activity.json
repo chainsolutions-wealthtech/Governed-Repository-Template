@@ -273,6 +273,24 @@
       ],
       "proposals": [],
       "unique_next_action": "C1_12_J_B_COMPLETE_PORTABLE_INTENT_FIXTURE"
+    },
+    {
+      "activity_id": "AAL-20260926-V286-002",
+      "agent_identity": "ChatGPT",
+      "workstream": "CREATE_NEW_REPOSITORY/C1-12",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "02173120acfa3941e84bf69c89dac0e8d74b47ce",
+      "objective": "Attest V2.8.6 release and move to governed external pilot revalidation.",
+      "evidence_refs": [
+        "Template PR #37",
+        "Governance CI run 36275324940"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "No direct pilot patching; next step uses governed exact-head upgrade."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT"
     }
   ]
 }
