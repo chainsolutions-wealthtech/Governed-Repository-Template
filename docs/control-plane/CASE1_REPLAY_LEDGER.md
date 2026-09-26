@@ -404,6 +404,31 @@ The owner may choose local action:
 
 For this CASE 1 proof, choose an action that demonstrates normal entry without beginning a different macro-case completion program prematurely.
 
+### Live discoveries during C1-12
+
+1. `Gouvern#3` created for the subsequent-agent proof.
+2. Human issue-start path failed closed on actor authorization and advanced no governed state.
+3. V2.8.1 introduced exact-HEAD machine local-entry start.
+4. Upgraded historical clients required current control-plane-policy synchronization → V2.8.2.
+5. Portable bootstrap tests had to isolate synthetic fixtures from real instantiated project choices → V2.8.3.
+6. Remaining discovered defect: connection-intent self-test still assumes a work-item shape incompatible with the instantiated/normal-entry client state.
+7. Current blocker is `INTENT_SELFTEST_FAILED: unexpected work item` on Gouvern CI run `36262734626`.
+8. Required next pattern remains: fix generic template first → CI → governed upgrade → client CI → resume `Gouvern#3`.
+
+### Agent-work requirement
+
+Every agent intervention during this phase must record:
+- agent/session identity when known;
+- observed HEAD;
+- task/sub-task claimed;
+- actions taken;
+- files/PRs/issues touched;
+- evidence/result;
+- defects discovered;
+- remarks/proposals;
+- next action;
+- whether later evidence needs revalidation.
+
 ### Checkpoint
 `NORMAL_GOVERNED_ENTRY_PROVEN`.
 
