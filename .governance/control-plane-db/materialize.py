@@ -133,6 +133,15 @@ def validate(conn):
     required_event_types = {row[0] for row in conn.execute("SELECT event_type FROM canonical_memory_events WHERE scope_id='CP-ARCH-001'").fetchall()}
     if not {"ARCHITECTURE_AUTHORITY_CREATED","ARCHITECTURE_REVISION_ACCEPTED"}.issubset(required_event_types):
         raise SystemExit("CONTROL_PLANE_DB_FAILED: canonical architecture event history incomplete")
+    decision = conn.execute("SELECT decision_id FROM decisions WHERE decision_id='CPD-019'").fetchone()
+    if decision != ("CPD-019",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: continuous relational projection decision missing")
+    feedback = conn.execute("SELECT feedback_id FROM owner_feedback WHERE feedback_id='FB-20260926-DB-001'").fetchone()
+    if feedback != ("FB-20260926-DB-001",):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: owner continuous-database requirement missing")
+    projection_events = {row[0] for row in conn.execute("SELECT event_type FROM canonical_memory_events WHERE scope_id='CONTROL_PLANE'").fetchall()}
+    if not {"OWNER_FEEDBACK_RECEIVED","DECISION_ACCEPTED"}.issubset(projection_events):
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: continuous relational projection events incomplete")
     print("CONTROL_PLANE_DB_VALIDATION_PASS")
     print("cases=4")
     print(f"questions={conn.execute('SELECT COUNT(*) FROM questions').fetchone()[0]}")
