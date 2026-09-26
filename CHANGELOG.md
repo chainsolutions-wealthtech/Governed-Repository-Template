@@ -287,3 +287,15 @@ The logical model is designed for later PostgreSQL-backed use by an admin web ap
 
 Human issue/comment authorization remains unchanged. Machine start requires a GitHub App bot sender, the canonical central source repository, and an exact target HEAD.
 
+## Governance Automation V2.8.2 — Client Policy Upgrade Synchronization
+
+### Fixed
+
+- governed local-entry upgrades now project the current control-plane policy into target clients;
+- the projected policy is forced to `GOVERNED_TARGET_CLIENT` and bound to the target repository;
+- current source-only path contracts stay aligned with `validate_governance.py` without copying source-only memory into clients.
+
+### Why
+
+V2.8.1 exposed that an upgraded historical client could receive the new manifest/validator while retaining an older control-plane policy. This created a validation contradiction even though the source-only directories were correctly absent.
+
