@@ -125,11 +125,17 @@ def validate(conn):
     for table in ["agent_sessions","agent_activity_events","canonical_authorities","canonical_authority_revisions","canonical_memory_events"]:
         conn.execute(f"SELECT 1 FROM {table} LIMIT 1")
     authority = conn.execute("SELECT authority_id,current_revision FROM canonical_authorities WHERE authority_id='CP-ARCH-001'").fetchone()
-    if authority != ("CP-ARCH-001",5):
+    if authority != ("CP-ARCH-001",6):
         raise SystemExit(f"CONTROL_PLANE_DB_FAILED: canonical architecture authority missing or invalid: {authority}")
     revisions = conn.execute("SELECT revision_id,revision_number,supersedes_revision_id FROM canonical_authority_revisions WHERE authority_id='CP-ARCH-001' ORDER BY revision_number").fetchall()
-    if revisions != [("CP-ARCH-001-R1",1,None),("CP-ARCH-001-R2",2,"CP-ARCH-001-R1"),("CP-ARCH-001-R3",3,"CP-ARCH-001-R2"),("CP-ARCH-001-R4",4,"CP-ARCH-001-R3"),("CP-ARCH-001-R5",5,"CP-ARCH-001-R4")]:
+    if revisions != [("CP-ARCH-001-R1",1,None),("CP-ARCH-001-R2",2,"CP-ARCH-001-R1"),("CP-ARCH-001-R3",3,"CP-ARCH-001-R2"),("CP-ARCH-001-R4",4,"CP-ARCH-001-R3"),("CP-ARCH-001-R5",5,"CP-ARCH-001-R4"),("CP-ARCH-001-R6",6,"CP-ARCH-001-R5")]:
         raise SystemExit(f"CONTROL_PLANE_DB_FAILED: canonical architecture revision chain mismatch: {revisions}")
+    govmodel = conn.execute("SELECT authority_id,current_revision,status FROM canonical_authorities WHERE authority_id='CP-GOVMODEL-001'").fetchone()
+    if govmodel != ("CP-GOVMODEL-001",1,"ACCEPTED_TARGET_MODEL_CATALOGUE_PLAN"):
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: governance model catalogue authority missing or invalid: {govmodel}")
+    govmodel_rev = conn.execute("SELECT revision_id,revision_number,supersedes_revision_id FROM canonical_authority_revisions WHERE authority_id='CP-GOVMODEL-001'").fetchall()
+    if govmodel_rev != [("CP-GOVMODEL-001-R1",1,None)]:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: governance model catalogue revision chain mismatch: {govmodel_rev}")
     required_event_types = {row[0] for row in conn.execute("SELECT event_type FROM canonical_memory_events WHERE scope_id='CP-ARCH-001'").fetchall()}
     if not {"ARCHITECTURE_AUTHORITY_CREATED","ARCHITECTURE_REVISION_ACCEPTED"}.issubset(required_event_types):
         raise SystemExit("CONTROL_PLANE_DB_FAILED: canonical architecture event history incomplete")
