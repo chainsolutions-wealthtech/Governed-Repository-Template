@@ -2,21 +2,24 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 17,
+  "source_state_revision": 18,
   "template_version": "2.8.6",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
   "program_issue": 12,
-  "current_checkpoint": "C1-12_V2_8_6_RELEASED_PENDING_PILOT_REVALIDATION",
+  "current_checkpoint": "C1-12_PR42_GMC_INTEGRITY_RECONCILIATION",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT",
-  "blockers": [],
+  "unique_next_action": "C1_12_J_C_A_RECONCILE_GMC_POST_MERGE_INTEGRITY",
+  "blockers": [
+    "PR42_P1_GMC_ARTIFACT_CONSUMER_DEPENDENCY_DIVERGENCE",
+    "PR42_P2_GOVMODEL_AUTHORITY_REVISION_NOT_ADVANCED"
+  ],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
-  "freshness": "SOURCE_STATE_ATTESTS_GOVMODEL_CATALOGUE_MERGE_SUBJECT",
+  "freshness": "SOURCE_STATE_REOBSERVED_AT_PR42_MERGE_PENDING_INTEGRITY_FIX",
   "last_ci_run": 36275324940,
   "last_ci_result": "PASS",
   "release_subject_head": "02173120acfa3941e84bf69c89dac0e8d74b47ce",
-  "last_verified_main_head": "6fb12122d5a0812f6ceca063b1d7af13511003bc",
+  "last_verified_main_head": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
   "canonical_memory_database": {
     "schema_version": "1.0.0",
     "status": "ACTIVE",
@@ -43,7 +46,7 @@
     },
     "governance_model_catalogue": {
       "authority_id": "CP-GOVMODEL-001",
-      "status": "MERGED_CANONICAL_BACKLOG",
+      "status": "POST_MERGE_INTEGRITY_FIX_IN_PROGRESS",
       "observed_main_head_before_enrichment": "76fae0dc132ef7e91e659c4dad44cd3522d2c8c4",
       "programme": "GMC-01..GMC-19",
       "dependency": "P12-S6",
@@ -52,7 +55,14 @@
       "merge_pr": 39,
       "merge_subject_head": "6fb12122d5a0812f6ceca063b1d7af13511003bc",
       "ci_run": 36284616415,
-      "ci_result": "PASS"
+      "ci_result": "PASS",
+      "authority_revision": 2,
+      "review_findings": [
+        "PR42_P1_GMC_ARTIFACT_CONSUMER_DEPENDENCY_DIVERGENCE",
+        "PR42_P2_GOVMODEL_AUTHORITY_REVISION_NOT_ADVANCED"
+      ],
+      "active_fix_task": "C1-12-J-C-A",
+      "pilot_mutation_blocked_until_fix_validated": true
     }
   },
   "framework_product_boundary": {
