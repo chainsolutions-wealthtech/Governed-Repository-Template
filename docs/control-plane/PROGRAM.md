@@ -139,3 +139,31 @@ The program evolves against:
 `docs/control-plane/CANONICAL_ARCHITECTURE.md` — authority `CP-ARCH-001`.
 
 This target authority defines the durable platform shape and roadmap. It does not replace chronological case gates or the current unique next action. New defects/intakes/owner changes must be inserted into the existing program with dependency analysis rather than starting a parallel program.
+
+## Queued programme — Governance Model Catalogue and Cross-Case Industrialization
+
+Authority: `CP-GOVMODEL-001` — `docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md`.
+
+State: `QUEUED_DEPENDENCY_BOUND`.
+
+Dependency: `P12-S6 CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+
+This programme formalizes the central governance model before the remaining cases are industrialized. It does not change the current unique executable task.
+
+Chronology:
+
+```text
+P12-S4 NORMAL ENTRY
+→ P12-S5 SECOND FRESH E2E
+→ P12-S6 CLOSE CASE 1
+→ GMC-A MODEL BOUNDARY
+→ GMC-B INVENTORY/NORMALIZATION
+→ GMC-C STATES/CONTROLS/EVIDENCE
+→ GMC-D IMPLEMENTATION/DEPENDENCY/RELATIONAL CATALOGUE
+→ GMC-E APPLICABILITY + SEMANTIC COMPARISON
+→ GMC-F CONTROL-PLANE + FOUR-CASE REBIND
+→ GMC-G CROSS-CASE VALIDATION / GOVERNANCE MODEL 1.0.0
+→ POSTGRES / API / ADMIN UI
+```
+
+The existing `ARCH-*`, `IDN-*` and `RTE-*` workstreams are absorbed as dependencies/sub-workstreams where applicable, not duplicated.
