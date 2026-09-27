@@ -430,6 +430,33 @@
       ],
       "proposals": [],
       "unique_next_action": "C1_12_K_RERUN_GOUVERN_ISSUE_3"
+    },
+    {
+      "activity_id": "AAL-20260927-C112-KA-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "CREATE_NEW_REPOSITORY/C1-12",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "758ee550481309eb8fec6e5b6ab4a5337aedced4",
+      "pilot_repository": "Patricked-code/Gouvern",
+      "observed_pilot_head": "671774dfc8e8be8eac2b50d5fb8f0928591694b3",
+      "objective": "Preflight C1-12-K and fix the two unresolved PR #25 P1 source-only defects before dispatching machine local entry.",
+      "evidence_refs": [
+        "Template PR #25",
+        "PRRT_kwDOUqP9V86mS6tl",
+        "PRRT_kwDOUqP9V86mS6tn",
+        ".github/workflows/governed-control-plane.yml",
+        "scripts/control_plane_issue_bridge.py"
+      ],
+      "discovered_tasks": [
+        "C1-12-K-A"
+      ],
+      "remarks": [
+        "The V2.8.1 design intentionally creates a new machine-initialized local-entry issue to replay the proof represented historically by Gouvern#3.",
+        "The source local-start token still requested contents:read although repository_dispatch requires contents:write.",
+        "The source issue bridge still accepted cross-repository machine commands without observing source write authority or binding the target to HANDOFF_READY."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_K_A_FIX_MACHINE_LOCAL_START_SECURITY"
     }
   ]
 }

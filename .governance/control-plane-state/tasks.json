@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 22,
+  "revision": 23,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -134,12 +134,30 @@
       ]
     },
     {
-      "id": "C1-12-K",
+      "id": "C1-12-K-A",
       "status": "IN_PROGRESS",
       "depends_on": [
         "C1-12-J"
       ],
-      "next_action": "RERUN_GOUVERN_ISSUE_3"
+      "blocks": [
+        "C1-12-K"
+      ],
+      "next_action": "FIX_MACHINE_LOCAL_START_SECURITY",
+      "source_only": true,
+      "pilot_upgrade_required": false,
+      "evidence": [
+        "Template PR #25 unresolved P1 thread PRRT_kwDOUqP9V86mS6tl",
+        "Template PR #25 unresolved P1 thread PRRT_kwDOUqP9V86mS6tn",
+        "Template main 758ee550481309eb8fec6e5b6ab4a5337aedced4"
+      ]
+    },
+    {
+      "id": "C1-12-K",
+      "status": "BLOCKED_BY_FRAMEWORK_CORRECTION",
+      "depends_on": [
+        "C1-12-J"
+      ],
+      "next_action": "RESUME_AFTER_C1-12-K-A"
     },
     {
       "id": "C1-12-L",
@@ -641,7 +659,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-12-K",
+  "unique_executable_item": "C1-12-K-A",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",

@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "handoff_id": "CP-HANDOFF-20260927-014",
+  "handoff_id": "CP-HANDOFF-20260927-015",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "canonical_branch": "main",
-  "baseline_subject_head": "dc2c1d5244aa11eaa9d4486edb5d3a1cc166ed6f",
+  "baseline_subject_head": "758ee550481309eb8fec6e5b6ab4a5337aedced4",
   "active_branch": "main",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "current_task": "C1-12-K_RERUN_GOUVERN_ISSUE_3",
-  "unique_next_action": "C1_12_K_RERUN_GOUVERN_ISSUE_3",
+  "current_task": "C1-12-K-A_FIX_MACHINE_LOCAL_START_SECURITY",
+  "unique_next_action": "C1_12_K_A_FIX_MACHINE_LOCAL_START_SECURITY",
   "read_first": [
     "docs/control-plane/CURRENT_STATE.md",
     ".governance/control-plane-state/canonical-architecture.json",
@@ -39,6 +39,10 @@
     "CANONICAL_AUTHORITY_REVISIONS_ARE_APPEND_ONLY",
     "DO_NOT_REPLAY_V2_8_6_PILOT_UPGRADE_ALREADY_PROVEN",
     "REOBSERVE_GOUVERN_HEAD_BEFORE_MACHINE_LOCAL_START",
-    "RESUME_EXISTING_GOUVERN_ISSUE_3_NORMAL_ENTRY_PROOF"
+    "RESUME_EXISTING_GOUVERN_ISSUE_3_NORMAL_ENTRY_PROOF",
+    "DO_NOT_DISPATCH_LOCAL_START_WITH_READ_ONLY_CONTENTS_TOKEN",
+    "SOURCE_ACTOR_WRITE_PERMISSION_REQUIRED_FOR_MACHINE_MUTATION",
+    "MACHINE_MUTATION_TARGET_MUST_MATCH_HANDOFF_READY_TARGET",
+    "SOURCE_ONLY_FIX_NO_PILOT_UPGRADE"
   ]
 }
