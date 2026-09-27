@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "handoff_id": "CP-HANDOFF-20260927-015",
+  "handoff_id": "CP-HANDOFF-20260927-016",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "canonical_branch": "main",
-  "baseline_subject_head": "4e7b6354f301ea1f3cb7261def738d9c1dca64b3",
-  "active_branch": "main",
+  "baseline_subject_head": "13d98a2fa35e3dec4aec1fb4ae27f58c177f2297",
+  "active_branch": "governance/fix-mcp-discovery-endpoint-recovery",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "current_task": "P12-S5_SECOND_FRESH_REPOSITORY_E2E",
-  "unique_next_action": "P12_S5_SECOND_FRESH_REPOSITORY_E2E",
+  "current_task": "C1-13-A_MCP_ENDPOINT_RECOVERY",
+  "unique_next_action": "C1_13_A_MERGE_PR50_UPGRADE_EKYC_RESUME_DISCOVERY",
   "read_first": [
     "docs/control-plane/CURRENT_STATE.md",
     ".governance/control-plane-state/canonical-architecture.json",
@@ -42,7 +42,11 @@
     "RESUME_EXISTING_GOUVERN_ISSUE_3_NORMAL_ENTRY_PROOF",
     "DO_NOT_REPLAY_COMPLETED_GOUVERN_NORMAL_ENTRY_PROOF",
     "SECOND_FRESH_REPOSITORY_MUST_BE_NEW_AND_INDEPENDENT",
-    "P12_S5_MUST_START_FROM_ZERO_WITH_NO_PILOT_STATE_REUSE"
+    "P12_S5_MUST_START_FROM_ZERO_WITH_NO_PILOT_STATE_REUSE",
+    "FREEZE_EKYC_UNTIL_GENERIC_TEMPLATE_FIX_MERGED",
+    "DO_NOT_PATCH_EKYC_TO_BYPASS_MCP_ENDPOINT_RECOVERY",
+    "AFTER_PR50_MERGE_UPDATE_EKYC_THROUGH_GOVERNED_TEMPLATE_PATH",
+    "RESUME_EKYC_AT_MCP_ENDPOINT_RECOVERY_ONLY"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",
@@ -53,5 +57,16 @@
     "status": "LOCAL_HANDOFF_READY",
     "first_agent_session_preserved": "LOCAL-000002-S1",
     "work_item_preserved": "WORK-PROJECT-001"
+  },
+  "second_fresh_repository": {
+    "repository": "Patricked-code/Ekyc",
+    "head": "b6be4b96306a765efd6bbd20727f02d5ef17553d",
+    "source_request": 49,
+    "local_entry_issue": 1,
+    "frozen": true,
+    "defect": "MCP_DISCOVERY_ENDPOINT_RECOVERY_DEAD_END",
+    "corrective_pr": 50,
+    "red_ci_run": 36295172971,
+    "green_ci_run": 36295231828
   }
 }
