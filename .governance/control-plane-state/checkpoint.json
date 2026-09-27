@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "checkpoint_id": "CP-CHECKPOINT-20260927-013",
+  "checkpoint_id": "CP-CHECKPOINT-20260927-014",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-  "subject_head": "6fb12122d5a0812f6ceca063b1d7af13511003bc",
+  "subject_head": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
   "template_version_before": "2.7.0",
-  "state": "GOVMODEL_CATALOGUE_MERGED_CASE1_PRIORITY_PRESERVED",
+  "state": "PR42_POST_MERGE_GMC_INTEGRITY_FIX_IN_PROGRESS",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
@@ -27,15 +27,15 @@
     "c1_12_j_b_complete_portable_fixture": "PASS",
     "v2_8_6_release_subject": "02173120acfa3941e84bf69c89dac0e8d74b47ce"
   },
-  "next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT",
+  "next_action": "C1_12_J_C_A_RECONCILE_GMC_POST_MERGE_INTEGRITY",
   "reconciliation_required_before_write": true,
   "ci_run": 36284616415,
   "ci_result": "PASS",
   "client_source_memory_removal": "PASS",
   "self_governance": "PASS",
-  "reconciliation_reason": "STEP_4_AND_STEP_5_WERE_COMPRESSED_IN_SOURCE_SUMMARY",
+  "reconciliation_reason": "PR42_POST_MERGE_REVIEW_FOUND_GENERIC_GMC_PROJECTION_AND_AUTHORITY_REVISION_DEFECTS",
   "canonical_memory_database": "PASS",
-  "blocker": null,
+  "blocker": "PR42 post-merge P1/P2 review findings require Template correction before external pilot mutation.",
   "knowledge_enrichment": {
     "canonical_architecture": {
       "authority_id": "CP-ARCH-001",
@@ -50,14 +50,17 @@
     },
     "governance_model_catalogue": {
       "authority_id": "CP-GOVMODEL-001",
-      "revision": 1,
+      "revision": 2,
       "programme": "GMC-01..GMC-19",
       "dependency": "P12-S6",
       "status": "MERGED_CANONICAL_BACKLOG",
       "relational_projection": "PENDING_SCHEMA_EXTENSION",
       "execution_gate_unchanged": true,
       "merge_pr": 39,
-      "merge_subject_head": "6fb12122d5a0812f6ceca063b1d7af13511003bc"
+      "merge_subject_head": "6fb12122d5a0812f6ceca063b1d7af13511003bc",
+      "integrity_fix_task": "C1-12-J-C-A",
+      "post_merge_review_reconciled": true,
+      "candidate_validation": "PENDING_PR_CI"
     }
   }
 }

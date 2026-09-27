@@ -1,45 +1,36 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT
+NEXT_ACTION = C1_12_J_C_A_RECONCILE_GMC_POST_MERGE_INTEGRITY
 STATE = IN_PROGRESS
 ```
 
 ## Objective
 
-Revalidate the released V2.8.6 framework on the external CASE 1 pilot through the governed exact-HEAD upgrade path.
+Repair the generic Governance Model integrity defects discovered by the still-open post-merge review threads on Template PR #42 before any further mutation of the external CASE 1 pilot.
 
-Product/framework:
+Observed canonical Template HEAD:
 
-`chainsolutions-wealthtech/Governed-Repository-Template@02173120acfa3941e84bf69c89dac0e8d74b47ce`
+`2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59`
 
-Current pilot validation repository:
+Parent CASE 1 objective:
 
-`Patricked-code/Gouvern`
+`C1-12-J-C_RELEASE_AND_REUPGRADE_CASE1_PILOT`
 
-Current observed pilot HEAD before this step:
+## Required correction
 
-`17f852c19ac8c5d26f40d3508338ce9c221697c8`
+1. make `groups[*].dependency_contract.artifact_dependencies` the canonical source for GMC artifact-consumer relationships;
+2. reconcile both `produced_artifacts[*].consumed_by` and `knowledge_artifacts[*].consumed_by` to that source while preserving non-GMC future consumers;
+3. verify exact reciprocity with global `ARTIFACT_DEPENDENCY` edges;
+4. add a CI regression test that fails closed on future divergence;
+5. advance `CP-GOVMODEL-001` from R1 to append/supersede revision R2 for CPD-028/CPD-029 semantics;
+6. reconcile source current/checkpoint/handoff/task and relational-memory projections;
+7. run Governance CI and require PASS;
+8. merge and post-merge attest the correction;
+9. only then restore `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT` as the unique next action.
 
-## Required sequence
+## Safety boundary
 
-1. reobserve exact pilot HEAD immediately before the command;
-2. invoke central `/governed-upgrade-local-entry`;
-3. require reported version `2.8.6`;
-4. verify pilot Governance CI;
-5. if green, mark C1-12-J complete and resume the existing `Gouvern#3` NORMAL_GOVERNED_ENTRY proof;
-6. if a new generic defect appears, insert it into the Template task chain before further pilot mutation.
+No direct patching or mutation of `Patricked-code/Gouvern` is permitted while this framework correction is open.
 
-No direct pilot patching.
-
-## Governance Model Catalogue queued work
-
-The owner-approved `CP-GOVMODEL-001` programme is now durable canonical backlog.
-
-It does **not** change this file's unique next action.
-
-Execution ordering remains:
-
-`C1-12-J-C → remaining C1-12 → P12-S5 → P12-S6 → GMC-01...`.
-
-This prevents knowledge-enrichment work from bypassing the active chronological CASE 1 gate.
+The GMC programme remains `PLANNING_ONLY`; this correction does not authorize GMC registry/schema/comparator/runtime implementation.

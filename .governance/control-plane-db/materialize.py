@@ -130,12 +130,40 @@ def validate(conn):
     revisions = conn.execute("SELECT revision_id,revision_number,supersedes_revision_id FROM canonical_authority_revisions WHERE authority_id='CP-ARCH-001' ORDER BY revision_number").fetchall()
     if revisions != [("CP-ARCH-001-R1",1,None),("CP-ARCH-001-R2",2,"CP-ARCH-001-R1"),("CP-ARCH-001-R3",3,"CP-ARCH-001-R2"),("CP-ARCH-001-R4",4,"CP-ARCH-001-R3"),("CP-ARCH-001-R5",5,"CP-ARCH-001-R4"),("CP-ARCH-001-R6",6,"CP-ARCH-001-R5")]:
         raise SystemExit(f"CONTROL_PLANE_DB_FAILED: canonical architecture revision chain mismatch: {revisions}")
-    govmodel = conn.execute("SELECT authority_id,current_revision,status FROM canonical_authorities WHERE authority_id='CP-GOVMODEL-001'").fetchone()
-    if govmodel != ("CP-GOVMODEL-001",1,"ACCEPTED_TARGET_MODEL_CATALOGUE_PLAN"):
-        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: governance model catalogue authority missing or invalid: {govmodel}")
-    govmodel_rev = conn.execute("SELECT revision_id,revision_number,supersedes_revision_id FROM canonical_authority_revisions WHERE authority_id='CP-GOVMODEL-001'").fetchall()
-    if govmodel_rev != [("CP-GOVMODEL-001-R1",1,None)]:
-        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: governance model catalogue revision chain mismatch: {govmodel_rev}")
+    govmodel_catalogue = json.loads(
+        (ROOT / ".governance/control-plane-state/governance-model-catalogue.json").read_text(encoding="utf-8")
+    )
+    expected_govmodel_revision = int(govmodel_catalogue["current_revision"])
+    expected_govmodel_status = govmodel_catalogue["status"]
+    govmodel = conn.execute(
+        "SELECT authority_id,current_revision,status FROM canonical_authorities WHERE authority_id='CP-GOVMODEL-001'"
+    ).fetchone()
+    if govmodel != ("CP-GOVMODEL-001", expected_govmodel_revision, expected_govmodel_status):
+        raise SystemExit(
+            "CONTROL_PLANE_DB_FAILED: governance model catalogue authority missing or invalid: "
+            f"{govmodel}; expected revision={expected_govmodel_revision} status={expected_govmodel_status}"
+        )
+    govmodel_revisions = conn.execute(
+        "SELECT revision_id,revision_number,supersedes_revision_id "
+        "FROM canonical_authority_revisions WHERE authority_id='CP-GOVMODEL-001' ORDER BY revision_number"
+    ).fetchall()
+    if len(govmodel_revisions) != expected_govmodel_revision:
+        raise SystemExit(
+            "CONTROL_PLANE_DB_FAILED: governance model catalogue revision count mismatch: "
+            f"{govmodel_revisions}"
+        )
+    for index, (revision_id, revision_number, supersedes_revision_id) in enumerate(govmodel_revisions, start=1):
+        expected_revision_id = f"CP-GOVMODEL-001-R{index}"
+        expected_supersedes = None if index == 1 else f"CP-GOVMODEL-001-R{index - 1}"
+        if (revision_id, revision_number, supersedes_revision_id) != (
+            expected_revision_id,
+            index,
+            expected_supersedes,
+        ):
+            raise SystemExit(
+                "CONTROL_PLANE_DB_FAILED: governance model catalogue revision chain mismatch: "
+                f"{govmodel_revisions}"
+            )
     required_event_types = {row[0] for row in conn.execute("SELECT event_type FROM canonical_memory_events WHERE scope_id='CP-ARCH-001'").fetchall()}
     if not {"ARCHITECTURE_AUTHORITY_CREATED","ARCHITECTURE_REVISION_ACCEPTED"}.issubset(required_event_types):
         raise SystemExit("CONTROL_PLANE_DB_FAILED: canonical architecture event history incomplete")

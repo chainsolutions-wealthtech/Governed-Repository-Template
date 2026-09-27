@@ -358,6 +358,31 @@
       ],
       "proposals": [],
       "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT"
+    },
+    {
+      "activity_id": "AAL-20260927-GMC-003",
+      "agent_identity": "ChatGPT",
+      "workstream": "C1-12/PR42_POST_MERGE_GMC_INTEGRITY_RECONCILIATION",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
+      "objective": "Resolve the two still-open PR #42 post-merge review defects before any CASE 1 pilot mutation, and reconcile the same relational continuity surface.",
+      "evidence_refs": [
+        "Template PR #42",
+        "PRRT_kwDOUqP9V86mWsAw",
+        "PRRT_kwDOUqP9V86mWsAx",
+        ".governance/control-plane-state/governance-model-execution-blueprint.json",
+        ".governance/control-plane-state/governance-model-catalogue.json"
+      ],
+      "discovered_tasks": [
+        "C1-12-J-C-A"
+      ],
+      "remarks": [
+        "68 of 85 knowledge artifacts had GMC consumed_by metadata divergent from the already reciprocal group dependency contracts and global artifact dependency edges.",
+        "CPD-029 changed the normative catalogue contract while CP-GOVMODEL-001 remained at revision R1.",
+        "runtime-seed repository HEAD and current checkpoint/handoff projection were stale relative to canonical source memory."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_J_C_A_RECONCILE_GMC_POST_MERGE_INTEGRITY"
     }
   ]
 }

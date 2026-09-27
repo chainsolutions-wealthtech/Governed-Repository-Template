@@ -4,7 +4,7 @@
 > Authority type: `CANONICAL_GOVERNANCE_MODEL_CATALOGUE_PLAN`  
 > Scope: `CONTROL_PLANE_SOURCE_ONLY`  
 > Status: `ACCEPTED_TARGET_MODEL_CATALOGUE_PLAN`  
-> Revision: `1`  
+> Revision: `2`  
 > Repository: `chainsolutions-wealthtech/Governed-Repository-Template`  
 > Distribution: `SOURCE_ONLY / DO_NOT_COPY_TO_CLIENTS`
 
@@ -406,3 +406,24 @@ The detailed authority is `docs/control-plane/GOVERNANCE_MODEL_EXECUTION_BLUEPRI
 The final GMC-G19 assembly must include the complete Domain / Capability / Component / Object / Field / Relationship / State / Transition / Workflow / Control / Gate / Authority / Evidence Type / Failure / Recovery / Implementation / Test / Dependency registries plus Applicability / Comparison / Integration / Release contracts.
 
 Governance Model `1.0.0` is forbidden until the final assembly separately proves completeness, consistency, reference integrity, implementation traceability, test coverage, evidence coverage, dependency integrity, reusability and compatibility with CREATE / ADOPT / MAP / LAB.
+
+
+## 14. Projection integrity and revision R2
+
+Revision `CP-GOVMODEL-001-R2` supersedes `CP-GOVMODEL-001-R1` and is bound to the post-PR-42 reconciliation subject HEAD `2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59`.
+
+For GMC work-package dependencies, the canonical machine source is:
+
+`groups[*].dependency_contract.artifact_dependencies`
+
+The following are deterministic projections of that source and must remain reciprocal:
+
+- GMC work-package entries in `groups[*].produced_artifacts[*].consumed_by`;
+- GMC work-package entries in `knowledge_artifacts[*].consumed_by`;
+- `dependency_edges` with `edge_type = ARTIFACT_DEPENDENCY`.
+
+Non-GMC consumers such as future PostgreSQL/API/Admin UI surfaces remain consumer metadata and are preserved independently.
+
+CI must fail closed if the three GMC dependency representations diverge. The regression gate is `scripts/test_governance_model_integrity.py`.
+
+This reconciliation does not authorize GMC implementation and does not bypass CASE 1. It repairs the planning authority before the blocked external pilot mutation can resume.
