@@ -447,7 +447,7 @@ Every agent intervention during this phase must record:
 ## PHASE C1-13 — Second fresh repository E2E
 
 ### Status
-`PENDING_C1_12`.
+`IN_PROGRESS`.
 
 ### Objective
 Create a new disposable repository from the current template and replay CASE 1 from zero without relying on migration history from `Gouvern`.
@@ -464,6 +464,22 @@ The owner may choose different answers from the historical pilot. The framework 
 - all generic defects, if found, fixed in template first;
 - all checks green;
 - normal entry proven.
+
+### Live E2E state — Patricked-code/Ekyc
+
+- Central request: Template `#49`.
+- Fresh repository: `Patricked-code/Ekyc`.
+- Pre-correction target HEAD: `b6be4b96306a765efd6bbd20727f02d5ef17553d`.
+- Local first-agent entry: `Ekyc#1`.
+- Lifecycle reached MCP discovery after owner-approved baseline/setup configuration.
+- Discovery run `36294979599`: FAIL, `HTTP 404: Not Found`.
+- Generic defect: `MCP_DISCOVERY_ENDPOINT_RECOVERY_DEAD_END`.
+- Reason: retryable discovery failure did not expose a governed route to edit the captured endpoint, so retry would repeat the same failure.
+- Protocol class: `E — Generic framework defect`.
+- Target mutation: paused.
+- Corrective task: `C1-13-A`.
+- Template PR #50: RED `36295172971` → GREEN `36295231828`.
+- Resume rule: merge Template fix → governed client update → preserve issue state/history → correct endpoint → rerun read-only discovery → continue remaining C1-13 gates.
 
 ### Checkpoint
 `SECOND_FRESH_E2E_PASS`.

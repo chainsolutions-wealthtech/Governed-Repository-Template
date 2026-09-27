@@ -1,46 +1,45 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = P12_S5_SECOND_FRESH_REPOSITORY_E2E
+NEXT_ACTION = C1_13_A_MERGE_PR50_UPGRADE_EKYC_RESUME_DISCOVERY
 STATE = IN_PROGRESS
+PARENT = P12_S5_SECOND_FRESH_REPOSITORY_E2E
 ```
 
 ## Objective
 
-Execute STEP 5 / C1-13: create and validate a **second clean disposable repository** from the current governed Template and prove the full CREATE_NEW_REPOSITORY lifecycle from zero without relying on the historical `Patricked-code/Gouvern` migration path.
+Complete the generic recovery correction discovered during the second fresh repository E2E, then resume `Patricked-code/Ekyc` at the exact affected MCP discovery checkpoint without replaying the already accepted baseline/setup answers.
 
-## Completed prerequisite
+## Live evidence
 
-STEP 4 / C1-12 is complete:
-
-- pilot: `Patricked-code/Gouvern`;
-- exact pilot HEAD: `671774dfc8e8be8eac2b50d5fb8f0928591694b3`;
-- machine local entry: `Gouvern#4`;
-- request: `LOCAL-000004`;
-- mode: `NORMAL_GOVERNED_ENTRY`;
-- final status: `LOCAL_HANDOFF_READY`, revision 6;
-- first-agent session `LOCAL-000002-S1` preserved;
-- `WORK-PROJECT-001` preserved;
-- no duplicate baseline/session/work;
-- no target Git mutation during normal-entry proof.
+- Template canonical main before correction: `13d98a2fa35e3dec4aec1fb4ae27f58c177f2297`.
+- Fresh target: `Patricked-code/Ekyc`.
+- Target local-entry: `Ekyc#1`.
+- Target HEAD: `b6be4b96306a765efd6bbd20727f02d5ef17553d`.
+- Failed target run: `36294979599`.
+- Failure: `HTTP 404: Not Found` during MCP discovery.
+- Generic defect: retryable failure did not permit correcting `mcp_endpoint`.
+- PR #50 regression RED: `36295172971`.
+- PR #50 correction GREEN: `36295231828`.
 
 ## Required sequence
 
-1. reobserve Template `main` and current canonical programme before any creation;
-2. choose/create a second **fresh disposable repository**, distinct from `Patricked-code/Gouvern`;
-3. start from current Template state, not from migrated pilot history;
-4. execute the full governed lifecycle:
-   `CREATE → BOOTSTRAP → FIRST_AGENT → PROJECT BASELINE → OPTIONAL MCP LINK → transport/discovery only if selected → DOMAIN when applicable → SETUP → APPLY_BASELINE → HANDOFF → NORMAL ENTRY`;
-5. preserve owner choices exactly; MCP linkage may be declined and must not be invented;
-6. require uninterrupted governed execution with no target-specific repair;
-7. require all CI/attestations green;
-8. persist complete evidence before advancing to `P12-S6`.
+1. reobserve Template `main` before merge;
+2. require PR #50 head/CI to remain current and all-green;
+3. merge PR #50 without force/history rewrite;
+4. reobserve merged Template `main`;
+5. update `Patricked-code/Ekyc` only through the governed Template/client update path;
+6. preserve every accepted `Ekyc#1` answer and the failed discovery evidence;
+7. reopen endpoint recovery and use the verified direct MCP route rather than repeating the known-404 root;
+8. rerun read-only MCP discovery on the exact upgraded target HEAD;
+9. continue C1-13 chronologically only if discovery and subsequent gates pass;
+10. keep `P12-S6` blocked until the entire second fresh E2E, including NORMAL_GOVERNED_ENTRY, is proven.
 
 ## Safety boundary
 
-- Do not reuse `Gouvern` as the second fresh repository.
-- Do not replay the completed Gouvern normal-entry proof.
-- Do not patch the fresh target directly to hide a framework defect.
-- If a generic framework defect appears, stop target mutation and fix the Template first.
-- Do not close CASE 1 until STEP 5 passes and evidence is reconciled.
-- GMC implementation remains dependency-bound behind `P12-S6`.
+- Do not patch `Ekyc` directly to bypass the generic defect.
+- Do not restart the fresh repository or recreate its baseline.
+- Do not discard the failed discovery evidence.
+- Do not infer write authority from `EXPLICIT_APPROVAL_FOR_SCOPED_WRITE`; every scoped runtime write still requires explicit authorization.
+- Do not implement MCP-server changes from this workstream.
+- GMC remains dependency-bound behind `P12-S6`.

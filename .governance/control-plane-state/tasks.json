@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 26,
+  "revision": 27,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -39,11 +39,34 @@
     },
     {
       "id": "P12-S5",
+      "status": "ACTIVE_PARENT",
+      "depends_on": [
+        "P12-S4"
+      ],
+      "next_action": "C1-13-A",
+      "evidence": [
+        "C1-13-A inserted for generic MCP endpoint recovery defect discovered on Ekyc"
+      ]
+    },
+    {
+      "id": "C1-13-A",
       "status": "IN_PROGRESS",
       "depends_on": [
         "P12-S4"
       ],
-      "next_action": "SECOND_FRESH_REPOSITORY_E2E"
+      "blocks": [
+        "P12-S5"
+      ],
+      "next_action": "MERGE_PR50_UPGRADE_EKYC_RESUME_MCP_ENDPOINT_RECOVERY",
+      "defect_code": "MCP_DISCOVERY_ENDPOINT_RECOVERY_DEAD_END",
+      "evidence": [
+        "Patricked-code/Ekyc#1 reached MCP_DISCOVERY_FAILED_RETRYABLE after run 36294979599",
+        "Failure: HTTP Error 404: Not Found on configured root URL",
+        "State exposed retry only and could not correct mcp_endpoint",
+        "PR #50 RED Governance CI 36295172971 failed only on new endpoint recovery regression test",
+        "PR #50 GREEN Governance CI 36295231828 PASS after minimal state-machine recovery fix",
+        "Ekyc remains frozen until generic Template fix is merged and distributed"
+      ]
     },
     {
       "id": "P12-S6",
@@ -711,7 +734,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "P12-S5",
+  "unique_executable_item": "C1-13-A",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",

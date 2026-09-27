@@ -90,6 +90,19 @@ Exit gate:
 - no target-specific repair;
 - all CI/attestations green.
 
+#### Inserted corrective gate — C1-13-A
+
+During the live second-fresh E2E on `Patricked-code/Ekyc`, read-only MCP discovery returned HTTP 404 after the owner supplied the MCP root URL. The generic state machine then offered only retry and could no longer correct the captured endpoint.
+
+By anti-deviation rules 4 and 5:
+- the fresh target is frozen;
+- the defect is fixed in the Template first;
+- PR #50 carries a RED→GREEN regression proof;
+- after merge, the fix must be distributed through the governed client-update path;
+- the E2E resumes from the affected MCP endpoint/discovery checkpoint with all previous answers preserved.
+
+`P12-S5` remains IN_PROGRESS. STEP 6 remains blocked.
+
 ### STEP 6 — Close CREATE_NEW_REPOSITORY and release next macro case
 State: `PENDING_STEP_5`
 

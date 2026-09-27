@@ -11,7 +11,7 @@
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
 - Template version: `2.8.6`
 - V2.7.0 release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`
-- Source-state revision: `21`
+- Source-state revision: `22`
 
 ## Current framework program
 
@@ -56,7 +56,7 @@ From this framework program:
 
 ## Unique next action
 
-`P12_S5_SECOND_FRESH_REPOSITORY_E2E`
+`C1_13_A_MERGE_PR50_UPGRADE_EKYC_RESUME_DISCOVERY`
 
 ## Latest proof
 
@@ -279,3 +279,21 @@ The future admin web application is intentionally deferred until all structuring
 - `P12-S4`: DONE.
 - Unique next action: `P12_S5_SECOND_FRESH_REPOSITORY_E2E`.
 - STEP 5 must use a second clean repository and must not reuse Gouvern's migration/history as proof.
+
+
+## C1-13 / STEP 5 live corrective gate
+
+- Second fresh repository: `Patricked-code/Ekyc`.
+- Central governed request: `chainsolutions-wealthtech/Governed-Repository-Template#49`.
+- Fresh target local-entry: `Patricked-code/Ekyc#1`.
+- Target HEAD before any corrective propagation: `b6be4b96306a765efd6bbd20727f02d5ef17553d`.
+- Business baseline and technical choices progressed normally through runtime policy.
+- MCP discovery run `36294979599` failed with `HTTP 404: Not Found`.
+- Diagnosis: after a retryable HTTP 404 the generic local-entry state exposed only `/local-execute` and could not reopen `mcp_endpoint`; retrying would reproduce the same invalid endpoint.
+- Generic corrective task: `C1-13-A`.
+- Pilot/target status: `FROZEN_GENERIC_FRAMEWORK_DEFECT`; no target-specific patch permitted.
+- PR #50 RED CI: `36295172971` — only the new recovery expectation failed.
+- PR #50 GREEN CI: `36295231828` — full Governance CI PASS after minimal recovery-state fix.
+- Template main reobserved before correction: `13d98a2fa35e3dec4aec1fb4ae27f58c177f2297`.
+- Current blocker: PR #50 must merge before `Ekyc` resumes.
+- Parent `P12-S5` remains IN_PROGRESS; `P12-S6` and GMC execution remain blocked.

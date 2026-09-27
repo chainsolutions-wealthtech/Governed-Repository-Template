@@ -330,3 +330,20 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Fix: require exactly one active CASE 1 phase and require it to equal the pilot run's `current_phase_id`.
 - GREEN Governance CI: `36293287750` PASS.
 - No second database or alternate phase authority introduced.
+
+
+## 2026-09-27 — P12-S5 Ekyc MCP endpoint recovery defect
+
+- Central request #49 created the second fresh public repository `Patricked-code/Ekyc` from Template 2.8.6.
+- Zero-touch bootstrap and initial Governance CI passed.
+- First-agent local entry `Ekyc#1` captured the approved eKYC mission, scope, technical profile and setup choices.
+- MCP linkage was enabled with transport `BOTH`, full governed mapping, domain strategy `DISCOVER_EXISTING_THEN_PROPOSE`, and runtime policy `EXPLICIT_APPROVAL_FOR_SCOPED_WRITE`.
+- MCP discovery target run `36294979599` failed with `HTTP 404: Not Found`.
+- The accepted endpoint answer was the MCP host root; prior governed evidence on the same service proves the direct MCP route is under `/mcp`.
+- Generic framework diagnosis: after retryable discovery failure, the state machine exposed retry only and provided no governed path to correct `mcp_endpoint`.
+- `Ekyc` was frozen; no target-specific repair was made.
+- Created Template branch `governance/fix-mcp-discovery-endpoint-recovery` and PR #50.
+- TDD RED commit `1e3aef857b57290de1b98eb4682d2339f1211343`; CI `36295172971` failed only with `HTTP 404 must reopen MCP endpoint correction`.
+- Minimal fix commit `ec52fb0e0786eaf18fa8886950546c21c96a176c`: HTTP 404 now reopens endpoint correction; a corrected endpoint archives the failed evidence, clears the hold and returns to MCP discovery.
+- GREEN Governance CI `36295231828`: PASS across the complete suite, including MCP fallback, relational materialization, Governance Model integrity and textual integrity.
+- Canonical corrective task: `C1-13-A` IN_PROGRESS until PR #50 is merged, propagated to `Ekyc`, and the affected discovery checkpoint is resumed.

@@ -22,14 +22,14 @@ Objective: V2.7.0 Self-Governed Control Plane.
 | P12-S2 Gouvern MCP discovery | DONE | P12-S1 | PASS/non-degraded discovery |
 | P12-S3 Setup approval + APPLY_BASELINE | DONE | P12-S2 | baseline commit + first-agent handoff |
 | P12-S4 Prove subsequent NORMAL_GOVERNED_ENTRY on external CASE 1 pilot (current pilot: Gouvern) | DONE | P12-S3 | `Gouvern#4` NORMAL_GOVERNED_ENTRY + LOCAL_HANDOFF_READY; no baseline reset |
-| P12-S5 Second fresh repository E2E | IN_PROGRESS | P12-S4 | clean uninterrupted lifecycle |
+| P12-S5 Second fresh repository E2E | ACTIVE_PARENT | P12-S4 | clean uninterrupted lifecycle; current child C1-13-A |
 | P12-S6 Close CASE 1 and release next macro case | PENDING | P12-S5 | reconciled final evidence |
 
 ## Unique executable task
 
-`P12-S5_SECOND_FRESH_REPOSITORY_E2E`
+`C1-13-A_MERGE_PR50_UPGRADE_EKYC_RESUME_MCP_ENDPOINT_RECOVERY`
 
-No later task may become executable before its dependency is complete.
+`P12-S5` remains the active parent. No later task may become executable before this inserted corrective gate completes.
 
 ### C1-12 discovered sub-tasks
 
@@ -367,3 +367,21 @@ C1-12-K must resume the existing `Patricked-code/Gouvern#3` proof via exact-HEAD
 - The durable invariant is now: exactly one active CASE 1 phase, and it must equal `runs.current_phase_id`.
 - Governance CI `36293287750`: PASS, including relational materialization and textual integrity.
 - `C1-12-P-A`: DONE.
+
+
+### C1-13-A MCP endpoint recovery correction
+
+- Parent: `P12-S5 / C1-13`.
+- Status: `IN_PROGRESS`.
+- Second fresh repository: `Patricked-code/Ekyc`.
+- Source governed request: `#49`.
+- Target local-entry issue: `Patricked-code/Ekyc#1`.
+- Target HEAD: `b6be4b96306a765efd6bbd20727f02d5ef17553d`.
+- Failure run: `36294979599`.
+- Failure: direct MCP discovery used the accepted root URL and returned `HTTP 404`; the state machine exposed retry only and no longer allowed correcting `mcp_endpoint`.
+- Generic defect code: `MCP_DISCOVERY_ENDPOINT_RECOVERY_DEAD_END`.
+- Target-specific repair: forbidden; `Ekyc` is frozen.
+- TDD RED: PR #50 / Governance CI `36295172971`, failure only on the new endpoint-recovery regression.
+- Minimal fix: HTTP 404 reopens `Q_MCP_ENDPOINT_RECOVERY`; correcting the endpoint archives failed evidence, clears the hold, and returns to a clean `MCP_DISCOVERY` gate.
+- TDD GREEN: Governance CI `36295231828` PASS across the full governance suite.
+- Next: merge PR #50, update the fresh target through the governed Template path, correct the endpoint to the verified MCP route, and resume from MCP discovery without replaying prior answers.
