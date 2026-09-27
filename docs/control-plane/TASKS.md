@@ -56,6 +56,7 @@ No later task may become executable before its dependency is complete.
 | C1-12-M | Verify no first-agent baseline/session/work duplication | DONE | baseline/session/work blob identities unchanged; claims empty |
 | C1-12-N | Persist normal-entry handoff + evidence | DONE | `LOCAL_HANDOFF_READY`, revision 6 |
 | C1-12-O | Mark C1-12 / STEP 4 DONE and unlock C1-13 | DONE | STEP 4 exit satisfied |
+| C1-12-P-A | Remove hard-coded `C1-12` relational active-phase validation | DONE | RED `36293227831`; GREEN `36293287750` |
 | C1-12-P | Reconcile canonical relational memory with completed C1-12 evidence | DONE | human/machine/relational projections reconciled |
 
 Current unique executable task: `P12-S5_SECOND_FRESH_REPOSITORY_E2E`.
@@ -358,3 +359,11 @@ C1-12-K must resume the existing `Patricked-code/Gouvern#3` proof via exact-HEAD
 - First-agent baseline, session `LOCAL-000002-S1`, `WORK-PROJECT-001`, and empty claims were unchanged.
 - `P12-S4` is DONE.
 - `P12-S5` is now the unique executable task.
+
+### C1-12-P-A relational progression correction
+
+- PR #48 first candidate correctly advanced replay/runtime state to `C1-13`.
+- Governance CI `36293227831` failed only because `.governance/control-plane-db/materialize.py` still asserted that the active CASE 1 phase must literally equal `C1-12`.
+- The durable invariant is now: exactly one active CASE 1 phase, and it must equal `runs.current_phase_id`.
+- Governance CI `36293287750`: PASS, including relational materialization and textual integrity.
+- `C1-12-P-A`: DONE.
