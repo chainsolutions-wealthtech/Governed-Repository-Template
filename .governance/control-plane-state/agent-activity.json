@@ -383,6 +383,29 @@
       ],
       "proposals": [],
       "unique_next_action": "C1_12_J_C_A_RECONCILE_GMC_POST_MERGE_INTEGRITY"
+    },
+    {
+      "activity_id": "AAL-20260927-GMC-004",
+      "agent_identity": "ChatGPT",
+      "workstream": "C1-12/PR43_GMC_INTEGRITY_POST_MERGE_ATTESTATION",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "113c50aa765ae886cd7a085637b8d5dbb5c2766b",
+      "objective": "Attest the merged PR #43 Governance Model integrity correction and resume the previously blocked CASE 1 pilot re-upgrade.",
+      "evidence_refs": [
+        "Template PR #43",
+        "Governance CI run 36289874574",
+        "Template main 113c50aa765ae886cd7a085637b8d5dbb5c2766b",
+        "PR #42 review threads PRRT_kwDOUqP9V86mWsAw and PRRT_kwDOUqP9V86mWsAx resolved"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "GMC projection integrity test passes with 19 groups, 174 atomic tasks, 85 planned knowledge artifacts and 100 artifact dependency edges.",
+        "CP-GOVMODEL-001 is revision R2 with append/supersede history.",
+        "Canonical relational database materialization passes.",
+        "C1-12-J-C-A is complete; pilot mutation gate is reopened only through C1-12-J-C."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT"
     }
   ]
 }

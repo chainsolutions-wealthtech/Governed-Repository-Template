@@ -11,7 +11,7 @@
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
 - Template version: `2.8.6`
 - V2.7.0 release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`
-- Source-state revision: `18`
+- Source-state revision: `19`
 
 ## Current framework program
 
@@ -56,7 +56,7 @@ From this framework program:
 
 ## Unique next action
 
-`C1_12_J_C_A_RECONCILE_GMC_POST_MERGE_INTEGRITY`
+`C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`
 
 ## Latest proof
 
@@ -225,3 +225,16 @@ The future admin web application is intentionally deferred until all structuring
 - Framework correction task inserted: `C1-12-J-C-A`.
 - External CASE 1 pilot mutation is blocked until this Template correction passes Governance CI and is merged/attested.
 - `C1-12-J-C` remains the parent pilot objective and will resume after this correction.
+
+
+## PR #43 integrity correction merged and attested
+
+- PR #43 merged to canonical `main`.
+- Merge subject HEAD: `113c50aa765ae886cd7a085637b8d5dbb5c2766b`.
+- Governance CI run `36289874574`: PASS.
+- GMC projection integrity gate: PASS — 19 work packages, 174 atomic tasks, 85 planned knowledge artifacts, 100 artifact dependency edges, Governance Model revision R2.
+- Canonical relational materialization: PASS.
+- PR #42 P1/P2 review threads: resolved after the fix merged.
+- `C1-12-J-C-A`: DONE.
+- External pilot mutation gate is reopened only through the original chronological task `C1-12-J-C`.
+- Unique next action restored: `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`.

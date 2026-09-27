@@ -267,3 +267,16 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Added fail-closed CI regression test for dependency/consumer/revision integrity.
 - Reconciled relational repository HEAD plus current checkpoint/handoff records.
 - Parent CASE 1 action `C1-12-J-C` remains blocked until candidate CI/merge/post-merge attestation pass.
+
+
+## 2026-09-27 — PR #43 GMC integrity correction merged
+
+- PR #43 merged to `main` at `113c50aa765ae886cd7a085637b8d5dbb5c2766b`.
+- Final candidate Governance CI run `36289874574`: PASS.
+- New GMC integrity test: PASS with 19 work packages, 174 atomic tasks, 85 planned knowledge artifacts and 100 artifact dependency edges.
+- Relational control-plane database materialization: PASS.
+- `CP-GOVMODEL-001`: revision R2, append/supersede chain preserved.
+- PR #42 P1/P2 review threads resolved.
+- Inserted correction `C1-12-J-C-A` completed.
+- Original CASE 1 chronological action restored: `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`.
+- No direct mutation of the external pilot occurred during the framework correction.

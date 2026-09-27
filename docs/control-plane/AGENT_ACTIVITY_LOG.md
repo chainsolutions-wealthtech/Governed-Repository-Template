@@ -235,3 +235,18 @@
 - Inserted task: `C1-12-J-C-A`.
 - External pilot mutation remains blocked until Template CI + merge + post-merge attestation.
 - Parent task after correction: `C1-12-J-C`.
+
+
+## Entry AAL-20260927-GMC-004
+
+- Agent identity: ChatGPT
+- Workstream: C1-12 / PR #43 GMC integrity post-merge attestation
+- Canonical main observed: `113c50aa765ae886cd7a085637b8d5dbb5c2766b`
+- PR #43: MERGED.
+- Governance CI run `36289874574`: PASS.
+- Governance Model integrity: PASS.
+- Canonical relational materialization: PASS.
+- PR #42 P1/P2 review threads: RESOLVED.
+- `C1-12-J-C-A`: DONE.
+- Pilot mutation gate reopened only through the pre-existing governed task `C1-12-J-C`.
+- Unique next action: `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`.

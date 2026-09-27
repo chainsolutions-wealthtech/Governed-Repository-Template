@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 20,
+  "revision": 21,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -454,26 +454,30 @@
     },
     {
       "id": "C1-12-J-C",
-      "status": "BLOCKED_BY_FRAMEWORK_CORRECTION",
+      "status": "IN_PROGRESS",
       "depends_on": [
         "C1-12-J-B"
       ],
-      "next_action": "RESUME_AFTER_C1-12-J-C-A"
+      "next_action": "RELEASE_AND_REUPGRADE_CASE1_PILOT"
     },
     {
       "id": "C1-12-J-C-A",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-12-J-B"
       ],
       "blocks": [
         "C1-12-J-C"
       ],
-      "next_action": "RECONCILE_GMC_POST_MERGE_INTEGRITY",
+      "next_action": null,
       "evidence": [
         "Template PR #42 unresolved review thread PRRT_kwDOUqP9V86mWsAw",
         "Template PR #42 unresolved review thread PRRT_kwDOUqP9V86mWsAx",
-        "Template main 2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59"
+        "Template main 2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
+        "Template PR #43 merged",
+        "Template main 113c50aa765ae886cd7a085637b8d5dbb5c2766b",
+        "Governance CI run 36289874574 PASS",
+        "PR #42 review threads resolved"
       ]
     },
     {
@@ -629,7 +633,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-12-J-C-A",
+  "unique_executable_item": "C1-12-J-C",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",

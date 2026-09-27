@@ -2,24 +2,21 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 18,
+  "source_state_revision": 19,
   "template_version": "2.8.6",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
   "program_issue": 12,
-  "current_checkpoint": "C1-12_PR42_GMC_INTEGRITY_RECONCILIATION",
+  "current_checkpoint": "C1-12_PR43_GMC_INTEGRITY_RECONCILED",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "unique_next_action": "C1_12_J_C_A_RECONCILE_GMC_POST_MERGE_INTEGRITY",
-  "blockers": [
-    "PR42_P1_GMC_ARTIFACT_CONSUMER_DEPENDENCY_DIVERGENCE",
-    "PR42_P2_GOVMODEL_AUTHORITY_REVISION_NOT_ADVANCED"
-  ],
+  "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT",
+  "blockers": [],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
-  "freshness": "SOURCE_STATE_REOBSERVED_AT_PR42_MERGE_PENDING_INTEGRITY_FIX",
-  "last_ci_run": 36275324940,
+  "freshness": "SOURCE_STATE_ATTESTS_PR43_GMC_INTEGRITY_MERGE",
+  "last_ci_run": 36289874574,
   "last_ci_result": "PASS",
   "release_subject_head": "02173120acfa3941e84bf69c89dac0e8d74b47ce",
-  "last_verified_main_head": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
+  "last_verified_main_head": "113c50aa765ae886cd7a085637b8d5dbb5c2766b",
   "canonical_memory_database": {
     "schema_version": "1.0.0",
     "status": "ACTIVE",
@@ -46,7 +43,7 @@
     },
     "governance_model_catalogue": {
       "authority_id": "CP-GOVMODEL-001",
-      "status": "POST_MERGE_INTEGRITY_FIX_IN_PROGRESS",
+      "status": "POST_MERGE_INTEGRITY_RECONCILED",
       "observed_main_head_before_enrichment": "76fae0dc132ef7e91e659c4dad44cd3522d2c8c4",
       "programme": "GMC-01..GMC-19",
       "dependency": "P12-S6",
@@ -61,8 +58,13 @@
         "PR42_P1_GMC_ARTIFACT_CONSUMER_DEPENDENCY_DIVERGENCE",
         "PR42_P2_GOVMODEL_AUTHORITY_REVISION_NOT_ADVANCED"
       ],
-      "active_fix_task": "C1-12-J-C-A",
-      "pilot_mutation_blocked_until_fix_validated": true
+      "active_fix_task": null,
+      "pilot_mutation_blocked_until_fix_validated": false,
+      "integrity_fix_pr": 43,
+      "integrity_fix_merge_subject_head": "113c50aa765ae886cd7a085637b8d5dbb5c2766b",
+      "integrity_fix_ci_run": 36289874574,
+      "integrity_fix_ci_result": "PASS",
+      "review_findings_resolved": true
     }
   },
   "framework_product_boundary": {

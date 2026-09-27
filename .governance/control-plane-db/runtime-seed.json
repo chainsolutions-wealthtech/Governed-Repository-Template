@@ -6,7 +6,7 @@
       "full_name": "chainsolutions-wealthtech/Governed-Repository-Template",
       "role": "CONTROL_PLANE_SOURCE",
       "canonical_branch": "main",
-      "current_head_sha": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
+      "current_head_sha": "113c50aa765ae886cd7a085637b8d5dbb5c2766b",
       "source_ref": "docs/control-plane/CURRENT_STATE.md"
     },
     {
@@ -359,6 +359,22 @@
         "source_state_revision": 18,
         "reason": "PR42 post-merge generic framework correction gate"
       }
+    },
+    {
+      "checkpoint_id": "CP-CHECKPOINT-20260927-015",
+      "run_id": null,
+      "phase_id": "C1-12",
+      "subject_head_sha": "113c50aa765ae886cd7a085637b8d5dbb5c2766b",
+      "state": "PR43_GMC_INTEGRITY_MERGED_CASE1_RESUMED",
+      "next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT",
+      "source_ref": ".governance/control-plane-state/checkpoint.json",
+      "created_at": "2026-09-27",
+      "payload": {
+        "source_state_revision": 19,
+        "pr": 43,
+        "ci_run": 36289874574,
+        "ci_result": "PASS"
+      }
     }
   ],
   "intakes": [
@@ -514,7 +530,7 @@
       "run_id": null,
       "phase_id": "C1-12",
       "evidence_type": "PULL_REQUEST_POST_MERGE_REVIEW",
-      "status": "REQUIRES_CORRECTION",
+      "status": "RESOLVED_BY_PR43",
       "payload": {
         "pr": 42,
         "subject_head": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
@@ -522,9 +538,33 @@
           "PRRT_kwDOUqP9V86mWsAw",
           "PRRT_kwDOUqP9V86mWsAx"
         ],
-        "consumer_projection_mismatch_count": 68
+        "consumer_projection_mismatch_count": 68,
+        "resolution_pr": 43,
+        "resolution_merge_subject": "113c50aa765ae886cd7a085637b8d5dbb5c2766b",
+        "resolution_ci_run": 36289874574,
+        "resolved_threads": [
+          "PRRT_kwDOUqP9V86mWsAw",
+          "PRRT_kwDOUqP9V86mWsAx"
+        ]
       },
       "source_ref": "Template PR #42",
+      "observed_at": "2026-09-27"
+    },
+    {
+      "evidence_id": "EVID-GMC-PR43-INTEGRITY-CI",
+      "run_id": null,
+      "phase_id": "C1-12",
+      "evidence_type": "CONTROL_PLANE_GOVERNANCE_CI",
+      "status": "PASS",
+      "payload": {
+        "pr": 43,
+        "run_id": 36289874574,
+        "merge_subject_head": "113c50aa765ae886cd7a085637b8d5dbb5c2766b",
+        "governance_model_integrity_pass": true,
+        "relational_materialization_pass": true,
+        "textual_integrity_pass": true
+      },
+      "source_ref": "Template PR #43",
       "observed_at": "2026-09-27"
     }
   ],
@@ -540,6 +580,21 @@
         "phase_id": "C1-12",
         "parent_task": "C1-12-J-C",
         "pilot_mutation_blocked": true
+      },
+      "source_ref": ".governance/control-plane-state/handoff.json",
+      "created_at": "2026-09-27"
+    },
+    {
+      "handoff_id": "CP-HANDOFF-20260927-013",
+      "run_id": null,
+      "checkpoint_id": "CP-CHECKPOINT-20260927-015",
+      "status": "CASE1_PILOT_REUPGRADE_READY",
+      "next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT",
+      "payload": {
+        "subject_head_sha": "113c50aa765ae886cd7a085637b8d5dbb5c2766b",
+        "phase_id": "C1-12",
+        "parent_task": "C1-12-J-C",
+        "pilot_mutation_blocked": false
       },
       "source_ref": ".governance/control-plane-state/handoff.json",
       "created_at": "2026-09-27"
@@ -1228,6 +1283,23 @@
         "pilot_mutation_blocked_until_validation": true
       },
       "source_ref": "Template PR #42",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-GMC-012",
+      "event_type": "POST_MERGE_INTEGRITY_RECONCILIATION_COMPLETED",
+      "scope_type": "AUTHORITY",
+      "scope_id": "CP-GOVMODEL-001",
+      "payload": {
+        "pr": 43,
+        "merge_subject_head": "113c50aa765ae886cd7a085637b8d5dbb5c2766b",
+        "ci_run": 36289874574,
+        "ci_result": "PASS",
+        "authority_revision": 2,
+        "pr42_review_threads_resolved": true,
+        "resumed_task": "C1-12-J-C"
+      },
+      "source_ref": "Template PR #43",
       "occurred_at": "2026-09-27"
     }
   ]
