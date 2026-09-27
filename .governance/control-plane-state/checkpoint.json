@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "checkpoint_id": "CP-CHECKPOINT-20260927-017",
+  "checkpoint_id": "CP-CHECKPOINT-20260927-018",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-  "subject_head": "4e7b6354f301ea1f3cb7261def738d9c1dca64b3",
+  "subject_head": "13d98a2fa35e3dec4aec1fb4ae27f58c177f2297",
   "template_version_before": "2.7.0",
-  "state": "NORMAL_GOVERNED_ENTRY_PROVEN_SECOND_FRESH_E2E_READY",
+  "state": "P12_S5_EKYC_MCP_ENDPOINT_RECOVERY_FIX_GREEN_PENDING_MERGE",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
@@ -41,17 +41,24 @@
     "c1_12_n_local_handoff": "PASS",
     "c1_12_normal_entry_request_id": "LOCAL-000004",
     "c1_12_normal_entry_final_revision": 6,
-    "c1_12_normal_entry_final_status": "LOCAL_HANDOFF_READY"
+    "c1_12_normal_entry_final_status": "LOCAL_HANDOFF_READY",
+    "p12_s5_second_fresh_repository": "Patricked-code/Ekyc",
+    "p12_s5_local_entry_issue": "Patricked-code/Ekyc#1",
+    "p12_s5_discovery_failure_run": 36294979599,
+    "p12_s5_discovery_failure": "HTTP 404: endpoint correction dead-end",
+    "c1_13_a_red_ci_run": 36295172971,
+    "c1_13_a_green_ci_run": 36295231828,
+    "c1_13_a_fix": "REOPEN_Q_MCP_ENDPOINT_RECOVERY_ARCHIVE_FAILURE_RETURN_TO_DISCOVERY"
   },
-  "next_action": "P12_S5_SECOND_FRESH_REPOSITORY_E2E",
+  "next_action": "C1_13_A_MERGE_PR50_UPGRADE_EKYC_RESUME_DISCOVERY",
   "reconciliation_required_before_write": true,
-  "ci_run": 36292518748,
+  "ci_run": 36295231828,
   "ci_result": "PASS",
   "client_source_memory_removal": "PASS",
   "self_governance": "PASS",
-  "reconciliation_reason": "C1-12_NORMAL_GOVERNED_ENTRY_PROOF_COMPLETE_WITH_NO_FIRST_AGENT_DUPLICATION",
+  "reconciliation_reason": "P12_S5_GENERIC_MCP_ENDPOINT_RECOVERY_DEAD_END_FIXED_IN_TEMPLATE_CANDIDATE",
   "canonical_memory_database": "PASS",
-  "blocker": null,
+  "blocker": "PR50_PENDING_MERGE",
   "knowledge_enrichment": {
     "canonical_architecture": {
       "authority_id": "CP-ARCH-001",
