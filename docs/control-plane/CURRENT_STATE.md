@@ -11,7 +11,7 @@
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
 - Template version: `2.8.6`
 - V2.7.0 release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`
-- Source-state revision: `16`
+- Source-state revision: `17`
 
 ## Current framework program
 
