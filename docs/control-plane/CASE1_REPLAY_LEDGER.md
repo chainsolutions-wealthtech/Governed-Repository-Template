@@ -411,15 +411,19 @@ For this CASE 1 proof, choose an action that demonstrates normal entry without b
 3. V2.8.1 introduced exact-HEAD machine local-entry start.
 4. Upgraded historical clients required current control-plane-policy synchronization → V2.8.2.
 5. Portable bootstrap tests had to isolate synthetic fixtures from real instantiated project choices → V2.8.3.
-6. Remaining discovered defect: connection-intent self-test still assumes a work-item shape incompatible with the instantiated/normal-entry client state.
-7. Current blocker is `INTENT_SELFTEST_FAILED: unexpected work item` on Gouvern CI run `36262734626`.
+6. Historical discovered defect: connection-intent self-test assumed a work-item shape incompatible with instantiated/normal-entry client state; it was fixed generically in the Template.
+7. Historical failing evidence was `INTENT_SELFTEST_FAILED: unexpected work item` on Gouvern CI run `36262734626`; this is superseded by the later V2.8.6 green pilot evidence.
 8. Required next pattern remains: fix generic template first → CI → governed upgrade → client CI → resume `Gouvern#3`.
 9. PR #42 post-merge review introduced a new generic framework correction gate before pilot mutation: artifact consumer/dependency reciprocity must be repaired and regression-tested.
 10. CP-GOVMODEL-001 must advance from R1 to an append/supersede R2 for the CPD-028/CPD-029 normative enrichment.
 11. Inserted correction action `C1_12_J_C_A_RECONCILE_GMC_POST_MERGE_INTEGRITY` paused pilot mutation while the Template defect was repaired.
 12. PR #43 merged the generic integrity correction at `113c50aa765ae886cd7a085637b8d5dbb5c2766b`; Governance CI run `36289874574` passed, including GMC projection integrity and relational materialization.
 13. PR #42 P1/P2 review threads were resolved after the fix merged.
-14. `C1-12-J-C-A` is complete; current action returns to `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT` and the governed external pilot re-upgrade may resume from a freshly observed pilot HEAD.
+14. `C1-12-J-C-A` is complete and the pilot gate reopened through the original CASE 1 chain.
+15. Live reconciliation verified the V2.8.6 pilot upgrade had already completed at `671774dfc8e8be8eac2b50d5fb8f0928591694b3`; the upgrade must not be replayed.
+16. Pilot Governance CI run `36275524530` is `SUCCESS` on that exact HEAD, including connection-intent routing and governed-upgrade continuity.
+17. `C1-12-J-C` and parent `C1-12-J` are DONE.
+18. Current unique action is `C1_12_K_RERUN_GOUVERN_ISSUE_3`: resume existing `Gouvern#3` through machine local-entry start and prove `NORMAL_GOVERNED_ENTRY`.
 
 ### Agent-work requirement
 
