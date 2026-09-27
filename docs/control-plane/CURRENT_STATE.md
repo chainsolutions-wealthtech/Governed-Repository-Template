@@ -11,7 +11,7 @@
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
 - Template version: `2.8.6`
 - V2.7.0 release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`
-- Source-state revision: `8`
+- Source-state revision: `16`
 
 ## Current framework program
 
@@ -49,13 +49,10 @@ From this framework program:
 
 ## Current blockers
 
-- `Patricked-code/Gouvern` is upgraded to V2.8.3 at `3a1b7689be5aa38b4b6fdb6456526e618f9b0dd5`.
-- Governance validation: PASS.
-- Bootstrap consistency self-test: PASS.
-- Governance CI still fails at `scripts/test_connection_intent.py`.
-- Exact failure: `INTENT_SELFTEST_FAILED: unexpected work item`.
-- C1-12 normal-entry proof issue exists as `Patricked-code/Gouvern#3`, but its first start attempt was refused by the human actor authorization gate and no governed state advanced.
-
+- Framework product V2.8.6 is released; Template Governance CI run `36275324940`: PASS.
+- Canonical `main` observed before the Governance Model catalogue enrichment: `76fae0dc132ef7e91e659c4dad44cd3522d2c8c4`.
+- The current chronological CASE 1 action is still the governed exact-HEAD V2.8.6 re-upgrade/revalidation of the external pilot.
+- The Governance Model Catalogue programme is accepted canonical backlog but dependency-bound behind CASE 1 closure; it is not an executable bypass.
 
 ## Unique next action
 
@@ -63,10 +60,11 @@ From this framework program:
 
 ## Latest proof
 
-- Governance CI run `36258871067`: `PASS`.
-- Source-state validation: `PASS`.
-- Instantiated-client bootstrap test: `PASS`.
-- Source-only directories absent after client initialization: `PASS`.
+- Template Governance CI run `36275324940`: PASS.
+- V2.8.6 release subject: `02173120acfa3941e84bf69c89dac0e8d74b47ce`.
+- Post-release canonical main observed: `76fae0dc132ef7e91e659c4dad44cd3522d2c8c4`.
+- Complete portable connection-intent fixture: PASS.
+- New canonical knowledge enrichment: `CP-GOVMODEL-001` accepted, execution gate unchanged.
 
 ## V2.7.0 release attestation
 
