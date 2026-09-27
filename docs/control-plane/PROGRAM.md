@@ -103,6 +103,19 @@ By anti-deviation rules 4 and 5:
 
 `P12-S5` remains IN_PROGRESS. STEP 6 remains blocked.
 
+#### Inserted corrective gate — C1-13-B
+
+After PR #50 merged and its governed client upgrade was applied to `Patricked-code/Ekyc`, client Governance CI exposed a second generic defect: the distributed local-entry self-test referenced source-only `.github/workflows/governed-control-plane.yml`.
+
+By the same pilot-defect rule:
+- the client stays frozen;
+- the source-only workflow remains source-only and must not be added to clients;
+- PR #51 adds a RED→GREEN portability regression test;
+- the self-test now guards source-only assertions behind the `.template-source` marker;
+- after merge the current Template surface must be redistributed through the official governed upgrader before C1-13 resumes.
+
+`C1-13-A` is DONE. `C1-13-B` is IN_PROGRESS. `P12-S5` remains the active parent and STEP 6 remains blocked.
+
 ### STEP 6 — Close CREATE_NEW_REPOSITORY and release next macro case
 State: `PENDING_STEP_5`
 

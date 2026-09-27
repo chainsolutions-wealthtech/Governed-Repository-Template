@@ -11,7 +11,7 @@
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
 - Template version: `2.8.6`
 - V2.7.0 release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`
-- Source-state revision: `22`
+- Source-state revision: `23`
 
 ## Current framework program
 
@@ -56,7 +56,7 @@ From this framework program:
 
 ## Unique next action
 
-`C1_13_A_MERGE_PR50_UPGRADE_EKYC_RESUME_DISCOVERY`
+`C1_13_B_MERGE_PR51_REUPGRADE_EKYC_RESUME_DISCOVERY`
 
 ## Latest proof
 
@@ -295,5 +295,21 @@ The future admin web application is intentionally deferred until all structuring
 - PR #50 RED CI: `36295172971` — only the new recovery expectation failed.
 - PR #50 GREEN CI: `36295231828` — full Governance CI PASS after minimal recovery-state fix.
 - Template main reobserved before correction: `13d98a2fa35e3dec4aec1fb4ae27f58c177f2297`.
-- Current blocker: PR #50 must merge before `Ekyc` resumes.
+- PR #50 merged and was distributed to `Ekyc`; the governed upgrade then exposed a second generic client-CI portability defect.
 - Parent `P12-S5` remains IN_PROGRESS; `P12-S6` and GMC execution remain blocked.
+
+
+## C1-13-B client CI portability gate
+
+- PR #50 merged on Template main at `dbe0014784362393c8cfbb02ce7810d483cf2bb7`.
+- Post-merge source Governance CI `36295619581`: PASS.
+- Governed local-entry upgrade on `Patricked-code/Ekyc`: `2ece8cff98258f7c40cf7b7383ceb5c026db9639`.
+- Open local-entry `Ekyc#1` was migrated to the new exact HEAD with business/setup answers preserved.
+- Ekyc Governance CI `36295714554`: FAIL only at the local-entry self-test.
+- Exact failure: client test attempted to open source-only `.github/workflows/governed-control-plane.yml`.
+- Generic corrective task: `C1-13-B`.
+- PR #51 RED: `36295815960`.
+- PR #51 functional GREEN: `36295850914`.
+- Correction: guard source-only control-plane assertions behind the `.template-source` marker; do not distribute the source-only workflow to clients.
+- Ekyc remains frozen; no client-specific patch is permitted.
+- Unique next action: `C1_13_B_MERGE_PR51_REUPGRADE_EKYC_RESUME_DISCOVERY`.

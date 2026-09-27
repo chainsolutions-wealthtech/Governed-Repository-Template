@@ -151,10 +151,11 @@ def main():
     if n["status"]!="LOCAL_HANDOFF_READY": raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: normal handoff")
 
     wf=(ROOT/".github/workflows/governed-local-entry.yml").read_text(encoding="utf-8")
-    control_plane_wf=(ROOT/".github/workflows/governed-control-plane.yml").read_text(encoding="utf-8")
-    local_start_token_block=control_plane_wf.split("- name: Mint target-owner token for machine local start",1)[1].split("- name: Dispatch governed machine local start",1)[0]
-    if "permission-contents: write" not in local_start_token_block:
-        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: machine local start token must have Contents write for repository_dispatch")
+    if (ROOT/".template-source").exists():
+        control_plane_wf=(ROOT/".github/workflows/governed-control-plane.yml").read_text(encoding="utf-8")
+        local_start_token_block=control_plane_wf.split("- name: Mint target-owner token for machine local start",1)[1].split("- name: Dispatch governed machine local start",1)[0]
+        if "permission-contents: write" not in local_start_token_block:
+            raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: machine local start token must have Contents write for repository_dispatch")
     discovery=(ROOT/"scripts/mcp_repository_discovery.py").read_text(encoding="utf-8")
     policy=(ROOT/".governance/mcp-connection-policy.json").read_text(encoding="utf-8")
     bridge=(ROOT/"scripts/local_entry_issue_bridge.py").read_text(encoding="utf-8")

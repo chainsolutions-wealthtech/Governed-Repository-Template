@@ -428,6 +428,25 @@
         "red_ci_run": 36295172971,
         "green_ci_run": 36295231828
       }
+    },
+    {
+      "checkpoint_id": "CP-CHECKPOINT-20260927-019",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-13",
+      "subject_head_sha": "dbe0014784362393c8cfbb02ce7810d483cf2bb7",
+      "state": "P12_S5_EKYC_CLIENT_TEST_PORTABILITY_FIX_GREEN_PENDING_MERGE",
+      "next_action": "C1_13_B_MERGE_PR51_REUPGRADE_EKYC_RESUME_DISCOVERY",
+      "source_ref": ".governance/control-plane-state/checkpoint.json",
+      "created_at": "2026-09-27",
+      "payload": {
+        "source_state_revision": 23,
+        "target_repository": "Patricked-code/Ekyc",
+        "target_head": "2ece8cff98258f7c40cf7b7383ceb5c026db9639",
+        "failed_target_ci": 36295714554,
+        "corrective_pr": 51,
+        "red_ci_run": 36295815960,
+        "green_ci_run": 36295850914
+      }
     }
   ],
   "intakes": [
@@ -802,6 +821,40 @@
         "repair": "REOPEN_ENDPOINT_CORRECTION_AFTER_HTTP_404"
       },
       "source_ref": "Template PR #50",
+      "observed_at": "2026-09-27"
+    },
+    {
+      "evidence_id": "EVID-C1-13-A-ENDPOINT-RECOVERY-DISTRIBUTED",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-13",
+      "evidence_type": "GOVERNED_EXTERNAL_PILOT_UPGRADE",
+      "status": "PASS",
+      "payload": {
+        "target": "Patricked-code/Ekyc",
+        "pr50_merge": "dbe0014784362393c8cfbb02ce7810d483cf2bb7",
+        "source_post_merge_ci": 36295619581,
+        "upgrade_commit": "2ece8cff98258f7c40cf7b7383ceb5c026db9639",
+        "migrated_open_entries": 1
+      },
+      "source_ref": "Template #49 governed local-entry upgrade",
+      "observed_at": "2026-09-27"
+    },
+    {
+      "evidence_id": "EVID-C1-13-B-CLIENT-TEST-PORTABILITY",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-13",
+      "evidence_type": "PORTABLE_CONNECTION_INTENT_SELFTEST",
+      "status": "PASS",
+      "payload": {
+        "defect_code": "CLIENT_LOCAL_ENTRY_SELFTEST_REQUIRES_SOURCE_ONLY_CONTROL_PLANE_WORKFLOW",
+        "target_ci_run": 36295714554,
+        "target_failure": "FileNotFoundError .github/workflows/governed-control-plane.yml",
+        "corrective_pr": 51,
+        "red_ci_run": 36295815960,
+        "green_ci_run": 36295850914,
+        "repair": "SOURCE_ONLY_ASSERTION_GUARDED_BY_TEMPLATE_SOURCE"
+      },
+      "source_ref": "Template PR #51",
       "observed_at": "2026-09-27"
     }
   ],
@@ -1776,6 +1829,35 @@
         "next_action": "MERGE_PR50_UPGRADE_EKYC_RESUME_MCP_ENDPOINT_RECOVERY"
       },
       "source_ref": "Template PR #50",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-C113A-DONE",
+      "event_type": "TASK_COMPLETED",
+      "scope_type": "TASK",
+      "scope_id": "C1-13-A",
+      "payload": {
+        "pr": 50,
+        "merge_sha": "dbe0014784362393c8cfbb02ce7810d483cf2bb7",
+        "target_upgrade_commit": "2ece8cff98258f7c40cf7b7383ceb5c026db9639",
+        "result": "PASS"
+      },
+      "source_ref": "Template PR #50 and #49",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-C113B-ACTIVE",
+      "event_type": "TASK_ACTIVATED",
+      "scope_type": "TASK",
+      "scope_id": "C1-13-B",
+      "payload": {
+        "defect_code": "CLIENT_LOCAL_ENTRY_SELFTEST_REQUIRES_SOURCE_ONLY_CONTROL_PLANE_WORKFLOW",
+        "corrective_pr": 51,
+        "red_ci_run": 36295815960,
+        "green_ci_run": 36295850914,
+        "next_action": "MERGE_PR51_REUPGRADE_EKYC_RESUME_MCP_DISCOVERY"
+      },
+      "source_ref": "Template PR #51",
       "occurred_at": "2026-09-27"
     }
   ]
