@@ -46,7 +46,7 @@ Exit proof:
 - `LOCAL_HANDOFF_READY` persisted for first-agent bootstrap.
 
 ### STEP 4 — Prove subsequent NORMAL_GOVERNED_ENTRY on Gouvern
-State: `IN_PROGRESS`
+State: `DONE`
 
 Goal:
 - connect a subsequent agent after first-agent completion;
@@ -60,8 +60,20 @@ Exit gate:
 - no baseline reset;
 - CI remains green.
 
+
+
+### STEP 4 completion evidence
+
+- exact pilot HEAD: `671774dfc8e8be8eac2b50d5fb8f0928591694b3`;
+- machine-created local entry: `Patricked-code/Gouvern#4`;
+- request: `LOCAL-000004`;
+- mode: `NORMAL_GOVERNED_ENTRY`;
+- final status: `LOCAL_HANDOFF_READY`;
+- no baseline/session/work duplication;
+- no pilot Git mutation during proof.
+
 ### STEP 5 — Fresh repository E2E proof from zero
-State: `PENDING_STEP_4`
+State: `IN_PROGRESS`
 
 Goal:
 - create a second clean disposable repository from the current template;

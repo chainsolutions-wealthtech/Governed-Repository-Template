@@ -21,13 +21,13 @@ Objective: V2.7.0 Self-Governed Control Plane.
 | P12-S1 MCP connectivity-choice contract completion | DONE | — | optional MCP linkage + DIRECT/SSH/BOTH choice contract tests + pilot evidence |
 | P12-S2 Gouvern MCP discovery | DONE | P12-S1 | PASS/non-degraded discovery |
 | P12-S3 Setup approval + APPLY_BASELINE | DONE | P12-S2 | baseline commit + first-agent handoff |
-| P12-S4 Prove subsequent NORMAL_GOVERNED_ENTRY on external CASE 1 pilot (current pilot: Gouvern) | IN_PROGRESS | P12-S3 | live normal-entry handoff, no baseline reset |
-| P12-S5 Second fresh repository E2E | PENDING | P12-S4 | clean uninterrupted lifecycle |
+| P12-S4 Prove subsequent NORMAL_GOVERNED_ENTRY on external CASE 1 pilot (current pilot: Gouvern) | DONE | P12-S3 | `Gouvern#4` NORMAL_GOVERNED_ENTRY + LOCAL_HANDOFF_READY; no baseline reset |
+| P12-S5 Second fresh repository E2E | IN_PROGRESS | P12-S4 | clean uninterrupted lifecycle |
 | P12-S6 Close CASE 1 and release next macro case | PENDING | P12-S5 | reconciled final evidence |
 
 ## Unique executable task
 
-`P12-S4_PROVE_NORMAL_GOVERNED_ENTRY_ON_GOUVERN`
+`P12-S5_SECOND_FRESH_REPOSITORY_E2E`
 
 No later task may become executable before its dependency is complete.
 
@@ -43,22 +43,23 @@ No later task may become executable before its dependency is complete.
 | C1-12-F | Diagnose `INTENT_SELFTEST_FAILED: unexpected work item` | DONE | root cause: self-test inherited real instantiated client work-items |
 | C1-12-G | Fix generic connection-intent self-test portability in template | DONE | V2.8.4 merged via PR #33; Template CI PASS |
 | C1-12-H | Run template CI and release next compatible version if needed | DONE | V2.8.4 merge `608d29318d1b2df199e4ec304c4e2fe7bfb94263` |
-| C1-12-I | Validate current framework release on external CASE 1 pilot (current pilot: Gouvern) | ACTIVE_PARENT | validation blocked until Template upgrader can distribute current client surface |
+| C1-12-I | Validate current framework release on external CASE 1 pilot (current pilot: Gouvern) | DONE | V2.8.6 pilot revalidation + normal-entry proof PASS |
 | C1-12-I-A | Make client upgrader version-dynamic and client-CI-safe in Template | DONE | V2.8.5 merged; Template CI PASS |
 | C1-12-I-B | Apply current governed Template upgrade to external CASE 1 pilot | DONE | V2.8.5 applied by control plane to `17f852c19ac8c5d26f40d3508338ce9c221697c8` |
-| C1-12-J | Obtain all-green external pilot Governance CI | ACTIVE_PARENT | V2.8.5 pilot CI exposed second generic fixture-isolation defect |
+| C1-12-J | Obtain all-green external pilot Governance CI | DONE | V2.8.6 pilot CI `36275524530` PASS |
 | C1-12-J-A | Diagnose V2.8.5 pilot CI failure inside connection-intent synthetic bootstrap | DONE | auto_bootstrap failed because synthetic test still inherited project-profile/infrastructure/local-entry/MCP/access/workflow state |
 | C1-12-J-B | Complete portable connection-intent fixture in Template | DONE | V2.8.6 merged; Template CI PASS |
-| C1-12-J-C | Release Template fix and re-upgrade external CASE 1 pilot | IN_PROGRESS | apply V2.8.6 through governed exact-HEAD upgrade path |
+| C1-12-J-C | Release Template fix and re-upgrade external CASE 1 pilot | DONE | pilot `671774df...`; CI `36275524530` PASS |
 | C1-12-K-A | Correct machine local-start repository_dispatch token permission (`Contents: write`) | DONE | blocks C1-12-K after live dispatch refusal |
-| C1-12-K | Re-run Gouvern#3 through machine local-entry start | IN_PROGRESS | depends on C1-12-J and K-A |
-| C1-12-L | Verify mode = `NORMAL_GOVERNED_ENTRY` | PENDING | depends on C1-12-K |
-| C1-12-M | Verify no first-agent baseline/session/work duplication | PENDING | depends on C1-12-L |
-| C1-12-N | Persist normal-entry handoff + evidence | PENDING | depends on C1-12-M |
-| C1-12-O | Mark C1-12 / STEP 4 DONE and unlock C1-13 | PENDING | depends on C1-12-N |
-| C1-12-P | Reconcile canonical relational memory with completed C1-12 evidence | PENDING | depends on C1-12-O |
+| C1-12-K | Re-run Gouvern#3 objective through machine local-entry start | DONE | `Gouvern#4` / run `36292612321` |
+| C1-12-L | Verify mode = `NORMAL_GOVERNED_ENTRY` | DONE | `LOCAL-000004` mode confirmed |
+| C1-12-M | Verify no first-agent baseline/session/work duplication | DONE | baseline/session/work blob identities unchanged; claims empty |
+| C1-12-N | Persist normal-entry handoff + evidence | DONE | `LOCAL_HANDOFF_READY`, revision 6 |
+| C1-12-O | Mark C1-12 / STEP 4 DONE and unlock C1-13 | DONE | STEP 4 exit satisfied |
+| C1-12-P-A | Remove hard-coded `C1-12` relational active-phase validation | DONE | RED `36293227831`; GREEN `36293287750` |
+| C1-12-P | Reconcile canonical relational memory with completed C1-12 evidence | DONE | human/machine/relational projections reconciled |
 
-Current unique executable sub-task: `C1-12-K_RERUN_GOUVERN_ISSUE_3`.
+Current unique executable task: `P12-S5_SECOND_FRESH_REPOSITORY_E2E`.
 
 ## Canonical architecture hardening backlog
 
@@ -348,3 +349,21 @@ C1-12-K must resume the existing `Patricked-code/Gouvern#3` proof via exact-HEAD
 - Pilot remained unchanged while the generic framework defect was corrected.
 - `C1-12-K-A`: `DONE`.
 - `C1-12-K`: remains the unique executable task and must now be retried on the exact pilot HEAD.
+
+### C1-12 K→P completion
+
+- `Gouvern#4` was created by exact-HEAD machine local-start at pilot HEAD `671774dfc8e8be8eac2b50d5fb8f0928591694b3`.
+- Request `LOCAL-000004` reached `NORMAL_GOVERNED_ENTRY` then `LOCAL_HANDOFF_READY` revision 6.
+- Target start run: `36292612321` PASS.
+- Answer runs: `36292715800`, `36292741820`, `36292775187`, `36292816422`, `36292850873` PASS.
+- First-agent baseline, session `LOCAL-000002-S1`, `WORK-PROJECT-001`, and empty claims were unchanged.
+- `P12-S4` is DONE.
+- `P12-S5` is now the unique executable task.
+
+### C1-12-P-A relational progression correction
+
+- PR #48 first candidate correctly advanced replay/runtime state to `C1-13`.
+- Governance CI `36293227831` failed only because `.governance/control-plane-db/materialize.py` still asserted that the active CASE 1 phase must literally equal `C1-12`.
+- The durable invariant is now: exactly one active CASE 1 phase, and it must equal `runs.current_phase_id`.
+- Governance CI `36293287750`: PASS, including relational materialization and textual integrity.
+- `C1-12-P-A`: DONE.

@@ -536,3 +536,20 @@ PILOT REVEALS DEFECT
 ```
 
 Current example: the `unexpected work item` failure was traced to `scripts/test_connection_intent.py` in the Template. V2.8.4 fixes the synthetic test fixture in the Template; no pilot business work-item is rewritten to satisfy the test.
+
+### C1-12 live completion — NORMAL_GOVERNED_ENTRY
+
+- Pilot repository: `Patricked-code/Gouvern`.
+- Exact HEAD: `671774dfc8e8be8eac2b50d5fb8f0928591694b3`.
+- Source transport: Template governed request `#4`.
+- Target local-entry issue: `Gouvern#4`.
+- Request id: `LOCAL-000004`.
+- Mode: `NORMAL_GOVERNED_ENTRY`.
+- Final state: `LOCAL_HANDOFF_READY`, revision 6.
+- First-agent session preserved: `LOCAL-000002-S1`.
+- First project work preserved: `WORK-PROJECT-001` remains READY.
+- Claims remained empty.
+- No first-agent baseline/session/work duplication.
+- No pilot Git mutation during the normal-entry proof.
+- C1-12 / STEP 4 exit: PASS.
+- Next phase: `C1-13 / P12-S5 SECOND_FRESH_REPOSITORY_E2E`.

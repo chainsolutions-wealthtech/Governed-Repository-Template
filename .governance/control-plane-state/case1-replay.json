@@ -5,9 +5,9 @@
   "issue_mirror": 12,
   "historical_pilot": "Patricked-code/Gouvern",
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
-  "current_phase": "C1-12",
+  "current_phase": "C1-13",
   "current_status": "IN_PROGRESS",
-  "unique_next_action": "C1_12_K_RERUN_GOUVERN_ISSUE_3",
+  "unique_next_action": "P12_S5_SECOND_FRESH_REPOSITORY_E2E",
   "phases": [
     {
       "id": "C1-00",
@@ -89,7 +89,7 @@
     {
       "id": "C1-12",
       "name": "normal governed entry proof",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "live_state": {
         "issue": "Patricked-code/Gouvern#3",
         "pilot_head": "671774dfc8e8be8eac2b50d5fb8f0928591694b3",
@@ -102,7 +102,8 @@
           "V2.8.5_DYNAMIC_CLIENT_UPGRADER",
           "V2.8.6_COMPLETE_PORTABLE_INTENT_FIXTURE",
           "PR43_GMC_INTEGRITY_RECONCILIATION",
-          "V2_8_6_EXTERNAL_PILOT_REVALIDATION_PASS"
+          "V2_8_6_EXTERNAL_PILOT_REVALIDATION_PASS",
+          "PR47_MACHINE_LOCAL_START_DISPATCH_PERMISSION"
         ],
         "current_blocker": null,
         "ci_run": 36262734626,
@@ -111,7 +112,7 @@
         "product_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
         "pilot_repository_role": "EXTERNAL_VALIDATION_ONLY",
         "framework_fix_release_subject": "02173120acfa3941e84bf69c89dac0e8d74b47ce",
-        "current_step": "RERUN_EXISTING_GOUVERN_ISSUE_3_VIA_MACHINE_LOCAL_ENTRY_START",
+        "current_step": "COMPLETE",
         "discovered_upgrade_defects": [
           "UPGRADER_HARDCODED_2_8_3",
           "PORTABLE_CONNECTION_INTENT_TEST_NOT_DISTRIBUTED",
@@ -130,16 +131,34 @@
           "governance_ci_run": 36275524530,
           "governance_ci_result": "PASS",
           "upgrade_replay_required": false
-        }
+        },
+        "normal_entry_target_issue": "Patricked-code/Gouvern#4",
+        "normal_entry_request_id": "LOCAL-000004",
+        "normal_entry_mode": "NORMAL_GOVERNED_ENTRY",
+        "normal_entry_status": "LOCAL_HANDOFF_READY",
+        "normal_entry_final_revision": 6,
+        "normal_entry_target_run": 36292612321,
+        "normal_entry_command_runs": [
+          36292715800,
+          36292741820,
+          36292775187,
+          36292816422,
+          36292850873
+        ],
+        "no_first_agent_duplication": true,
+        "first_agent_session_preserved": "LOCAL-000002-S1",
+        "work_item_preserved": "WORK-PROJECT-001",
+        "pilot_git_mutation": false
       }
     },
     {
       "id": "C1-13",
       "name": "second fresh repository E2E",
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "depends_on": [
         "C1-12"
-      ]
+      ],
+      "next_action": "SECOND_FRESH_REPOSITORY_E2E"
     },
     {
       "id": "C1-14",

@@ -24,7 +24,7 @@
       "case_id": "CREATE_NEW_REPOSITORY",
       "repository_id": "repo-gouvern",
       "status": "IN_PROGRESS",
-      "current_phase_id": "C1-12",
+      "current_phase_id": "C1-13",
       "source_issue": "Patricked-code/Gouvern#2",
       "started_at": "2026-09-26"
     }
@@ -392,6 +392,23 @@
         "pilot_ci_result": "PASS",
         "upgrade_replay_required": false
       }
+    },
+    {
+      "checkpoint_id": "CP-CHECKPOINT-20260927-017",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-13",
+      "subject_head_sha": "4e7b6354f301ea1f3cb7261def738d9c1dca64b3",
+      "state": "NORMAL_GOVERNED_ENTRY_PROVEN_SECOND_FRESH_E2E_READY",
+      "next_action": "P12_S5_SECOND_FRESH_REPOSITORY_E2E",
+      "source_ref": ".governance/control-plane-state/checkpoint.json",
+      "created_at": "2026-09-27",
+      "payload": {
+        "source_state_revision": 21,
+        "pilot_head": "671774dfc8e8be8eac2b50d5fb8f0928591694b3",
+        "normal_entry_issue": "Patricked-code/Gouvern#4",
+        "normal_entry_request_id": "LOCAL-000004",
+        "step4_result": "PASS"
+      }
     }
   ],
   "intakes": [
@@ -654,6 +671,100 @@
       },
       "source_ref": "Template PR #47",
       "observed_at": "2026-09-27"
+    },
+    {
+      "evidence_id": "EVID-C1-12-K-NORMAL-ENTRY-START",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-12",
+      "evidence_type": "GOVERNED_MACHINE_LOCAL_START",
+      "status": "PASS",
+      "payload": {
+        "pilot_head": "671774dfc8e8be8eac2b50d5fb8f0928591694b3",
+        "target_issue": "Patricked-code/Gouvern#4",
+        "request_id": "LOCAL-000004",
+        "target_run": 36292612321,
+        "mode": "NORMAL_GOVERNED_ENTRY"
+      },
+      "source_ref": "Patricked-code/Gouvern#4",
+      "observed_at": "2026-09-27"
+    },
+    {
+      "evidence_id": "EVID-C1-12-L-NORMAL-ENTRY-MODE",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-12",
+      "evidence_type": "LOCAL_ENTRY_MODE_ATTESTATION",
+      "status": "PASS",
+      "payload": {
+        "request_id": "LOCAL-000004",
+        "mode": "NORMAL_GOVERNED_ENTRY",
+        "first_agent_bootstrap_replayed": false
+      },
+      "source_ref": "Patricked-code/Gouvern#4 revision 1",
+      "observed_at": "2026-09-27"
+    },
+    {
+      "evidence_id": "EVID-C1-12-M-NO-DUPLICATION",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-12",
+      "evidence_type": "PILOT_STATE_IDENTITY_ATTESTATION",
+      "status": "PASS",
+      "payload": {
+        "pilot_head": "671774dfc8e8be8eac2b50d5fb8f0928591694b3",
+        "baseline_subject_head": "3806a2c4f3a40aca28d34a00a77b2ad1be3e80f0",
+        "first_agent_session_id": "LOCAL-000002-S1",
+        "work_item_id": "WORK-PROJECT-001",
+        "local_entry_state_blob": "e60588735b30569defc8511365462519790118be",
+        "sessions_blob": "1369b27d9bd2dd51a59f7c84edf94f9f83039110",
+        "work_items_blob": "3647cc498b8404de32096b9c9a6783d3d6e65d60",
+        "claims_blob": "728be6d3c18809ce9202a4acd2635a2fcc6936c0",
+        "claims_count": 0,
+        "duplicate_baseline": false,
+        "duplicate_first_agent_session": false,
+        "pilot_git_mutation": false
+      },
+      "source_ref": "Patricked-code/Gouvern governance state at 671774dfc8e8be8eac2b50d5fb8f0928591694b3",
+      "observed_at": "2026-09-27"
+    },
+    {
+      "evidence_id": "EVID-C1-12-N-NORMAL-ENTRY-HANDOFF",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-12",
+      "evidence_type": "LOCAL_ENTRY_HANDOFF",
+      "status": "PASS",
+      "payload": {
+        "target_issue": "Patricked-code/Gouvern#4",
+        "request_id": "LOCAL-000004",
+        "final_revision": 6,
+        "final_status": "LOCAL_HANDOFF_READY",
+        "mode": "NORMAL_GOVERNED_ENTRY",
+        "command_runs": [
+          36292715800,
+          36292741820,
+          36292775187,
+          36292816422,
+          36292850873
+        ],
+        "local_entry_action": "CONTINUE_GOVERNED_WORK",
+        "connection_intent": "WORK_REQUEST"
+      },
+      "source_ref": "Patricked-code/Gouvern#4 revision 6",
+      "observed_at": "2026-09-27"
+    },
+    {
+      "evidence_id": "EVID-C1-12-P-A-DYNAMIC-PHASE-VALIDATION",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-12",
+      "evidence_type": "CONTROL_PLANE_RELATIONAL_VALIDATION_DEFECT",
+      "status": "PASS",
+      "payload": {
+        "defect_code": "CONTROL_PLANE_DB_CASE1_PHASE_VALIDATION_HARDCODED_C1_12",
+        "red_ci_run": 36293227831,
+        "red_failure": "CASE1 active phase mismatch: [('C1-13',)]",
+        "fix": "EXACTLY_ONE_ACTIVE_CASE1_PHASE_EQUALS_RUN_CURRENT_PHASE",
+        "green_ci_run": 36293287750
+      },
+      "source_ref": "Template PR #48",
+      "observed_at": "2026-09-27"
     }
   ],
   "handoffs": [
@@ -698,6 +809,22 @@
         "pilot_head": "671774dfc8e8be8eac2b50d5fb8f0928591694b3",
         "target_issue": "Patricked-code/Gouvern#3",
         "exact_head_required": true
+      },
+      "source_ref": ".governance/control-plane-state/handoff.json",
+      "created_at": "2026-09-27"
+    },
+    {
+      "handoff_id": "CP-HANDOFF-20260927-015",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "checkpoint_id": "CP-CHECKPOINT-20260927-017",
+      "status": "SECOND_FRESH_REPOSITORY_E2E_READY",
+      "next_action": "P12_S5_SECOND_FRESH_REPOSITORY_E2E",
+      "payload": {
+        "source_subject_head": "4e7b6354f301ea1f3cb7261def738d9c1dca64b3",
+        "phase_id": "C1-13",
+        "step4_complete": true,
+        "pilot_head": "671774dfc8e8be8eac2b50d5fb8f0928591694b3",
+        "do_not_reuse_repository": "Patricked-code/Gouvern"
       },
       "source_ref": ".governance/control-plane-state/handoff.json",
       "created_at": "2026-09-27"
@@ -846,6 +973,16 @@
       "path_or_ref": ".governance/control-plane-state/governance-model-execution-blueprint.json",
       "sha": null,
       "source_ref": "CPD-029",
+      "created_at": "2026-09-27"
+    },
+    {
+      "artifact_id": "C1-12-NORMAL-ENTRY-HANDOFF",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-12",
+      "artifact_type": "NORMAL_GOVERNED_ENTRY_HANDOFF",
+      "path_or_ref": "Patricked-code/Gouvern#4",
+      "sha": "671774dfc8e8be8eac2b50d5fb8f0928591694b3",
+      "source_ref": "LOCAL-000004 revision 6",
       "created_at": "2026-09-27"
     }
   ],
@@ -1461,6 +1598,119 @@
         "resumed_task": "C1-12-K"
       },
       "source_ref": "Template PR #47",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-C112-K-DONE",
+      "event_type": "TASK_COMPLETED",
+      "scope_type": "TASK",
+      "scope_id": "C1-12-K",
+      "payload": {
+        "target_issue": "Patricked-code/Gouvern#4",
+        "request_id": "LOCAL-000004",
+        "target_run": 36292612321,
+        "result": "PASS"
+      },
+      "source_ref": "docs/control-plane/CASE1_REPLAY_LEDGER.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-C112-L-DONE",
+      "event_type": "TASK_COMPLETED",
+      "scope_type": "TASK",
+      "scope_id": "C1-12-L",
+      "payload": {
+        "mode": "NORMAL_GOVERNED_ENTRY",
+        "result": "PASS"
+      },
+      "source_ref": "docs/control-plane/CASE1_REPLAY_LEDGER.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-C112-M-DONE",
+      "event_type": "TASK_COMPLETED",
+      "scope_type": "TASK",
+      "scope_id": "C1-12-M",
+      "payload": {
+        "no_first_agent_duplication": true,
+        "pilot_git_mutation": false,
+        "result": "PASS"
+      },
+      "source_ref": "docs/control-plane/CASE1_REPLAY_LEDGER.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-C112-N-DONE",
+      "event_type": "TASK_COMPLETED",
+      "scope_type": "TASK",
+      "scope_id": "C1-12-N",
+      "payload": {
+        "handoff_status": "LOCAL_HANDOFF_READY",
+        "final_revision": 6,
+        "result": "PASS"
+      },
+      "source_ref": "docs/control-plane/CASE1_REPLAY_LEDGER.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-C112-O-DONE",
+      "event_type": "TASK_COMPLETED",
+      "scope_type": "TASK",
+      "scope_id": "C1-12-O",
+      "payload": {
+        "step4_status": "DONE",
+        "result": "PASS"
+      },
+      "source_ref": "docs/control-plane/CASE1_REPLAY_LEDGER.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-C112-P-DONE",
+      "event_type": "TASK_COMPLETED",
+      "scope_type": "TASK",
+      "scope_id": "C1-12-P",
+      "payload": {
+        "relational_reconciliation": "PASS",
+        "result": "PASS"
+      },
+      "source_ref": "docs/control-plane/CASE1_REPLAY_LEDGER.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-P12-S4-DONE",
+      "event_type": "TASK_COMPLETED",
+      "scope_type": "TASK",
+      "scope_id": "P12-S4",
+      "payload": {
+        "normal_entry_proof": "PASS",
+        "next_task": "P12-S5"
+      },
+      "source_ref": "docs/control-plane/CASE1_REPLAY_LEDGER.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-P12-S5-ACTIVE",
+      "event_type": "TASK_ACTIVATED",
+      "scope_type": "TASK",
+      "scope_id": "P12-S5",
+      "payload": {
+        "next_action": "P12_S5_SECOND_FRESH_REPOSITORY_E2E"
+      },
+      "source_ref": "docs/control-plane/CASE1_REPLAY_LEDGER.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-C112-PA-DONE",
+      "event_type": "TASK_COMPLETED",
+      "scope_type": "TASK",
+      "scope_id": "C1-12-P-A",
+      "payload": {
+        "red_ci_run": 36293227831,
+        "green_ci_run": 36293287750,
+        "result": "PASS",
+        "resumed_task": "P12-S5"
+      },
+      "source_ref": "Template PR #48",
       "occurred_at": "2026-09-27"
     }
   ]

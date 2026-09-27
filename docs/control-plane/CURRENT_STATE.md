@@ -11,13 +11,13 @@
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
 - Template version: `2.8.6`
 - V2.7.0 release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`
-- Source-state revision: `20`
+- Source-state revision: `21`
 
 ## Current framework program
 
 - Active macro case: `CREATE_NEW_REPOSITORY`
 - Canonical program issue: `#12`
-- Current case checkpoint: `STEP_4_PROVE_NORMAL_GOVERNED_ENTRY`
+- Current case checkpoint: `STEP_5_SECOND_FRESH_REPOSITORY_E2E`
 - CASE 1 pilot `Patricked-code/Gouvern`: baseline/handoff proven
 - Pilot baseline commit: `23975e0435e63fb45d7436d1f23ce8ce0a450a5f`
 - Pilot local-entry state: `LOCAL_HANDOFF_READY`
@@ -51,12 +51,12 @@ From this framework program:
 
 - Framework product V2.8.6 is released; Template Governance CI run `36275324940`: PASS.
 - Canonical `main` observed before the Governance Model catalogue enrichment: `76fae0dc132ef7e91e659c4dad44cd3522d2c8c4`.
-- The governed V2.8.6 external pilot re-upgrade/revalidation is complete and verified; the current chronological CASE 1 action is the existing `Gouvern#3` NORMAL_GOVERNED_ENTRY rerun.
+- STEP 4 subsequent-agent proof is complete: `Patricked-code/Gouvern#4` reached `NORMAL_GOVERNED_ENTRY` / `LOCAL_HANDOFF_READY` on exact pilot HEAD `671774dfc8e8be8eac2b50d5fb8f0928591694b3` with no baseline/session/work duplication.
 - The Governance Model Catalogue programme is accepted canonical backlog but dependency-bound behind CASE 1 closure; it is not an executable bypass.
 
 ## Unique next action
 
-`C1_12_K_RERUN_GOUVERN_ISSUE_3`
+`P12_S5_SECOND_FRESH_REPOSITORY_E2E`
 
 ## Latest proof
 
@@ -263,3 +263,19 @@ The future admin web application is intentionally deferred until all structuring
 - GREEN proof: Governance CI `36292388479` passed after the minimal permission correction.
 - Pilot mutation remains prohibited until this Template correction is merged.
 - After merge, `C1-12-K` remains the unique executable task and must retry the machine local-start on the reobserved exact pilot HEAD.
+
+## C1-12 / STEP 4 completion attestation
+
+- Source main observed before reconciliation: `4e7b6354f301ea1f3cb7261def738d9c1dca64b3`.
+- Pilot remained at `Patricked-code/Gouvern@671774dfc8e8be8eac2b50d5fb8f0928591694b3`.
+- Governed machine start produced `Patricked-code/Gouvern#4`, request `LOCAL-000004`.
+- Entry mode: `NORMAL_GOVERNED_ENTRY`.
+- Final local-entry status: `LOCAL_HANDOFF_READY`, revision `6`.
+- First-agent baseline remained `3806a2c4f3a40aca28d34a00a77b2ad1be3e80f0`.
+- Sole first-agent session remained `LOCAL-000002-S1`.
+- `WORK-PROJECT-001` remained `READY`; claims remained empty.
+- Pilot Git HEAD did not move during the proof.
+- `C1-12-K/L/M/N/O/P`: DONE.
+- `P12-S4`: DONE.
+- Unique next action: `P12_S5_SECOND_FRESH_REPOSITORY_E2E`.
+- STEP 5 must use a second clean repository and must not reuse Gouvern's migration/history as proof.
