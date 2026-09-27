@@ -198,3 +198,14 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Governance CI run `36275324940`: PASS.
 - C1-12-J-B: DONE.
 - C1-12-J-C: IN_PROGRESS — governed exact-HEAD re-upgrade of external CASE 1 pilot.
+
+## 2026-09-27 — Central Governance Model catalogue requirement accepted
+
+- Owner clarified that the central Governance Model is the reference object; CREATE/ADOPT/MAP/LAB are application strategies.
+- Added source-only authority `CP-GOVMODEL-001`.
+- Recorded decisions `CPD-025` to `CPD-027`.
+- Registered the 19-point completion programme `GMC-01..GMC-19` in seven phases.
+- Preserved CASE 1 as the active chronological priority; no later task became executable.
+- Reuse rule: extend the existing SQL/JSON/materializer canonical memory, never create a parallel database.
+- Planned comparison becomes semantic down to capability/component/object/field/control/test, with exact/equivalent/partial/absent/conflict/obsolete/unknown/not-applicable classification.
+- The detailed model registries remain `PENDING_PROJECTION` until the additive relational schema extension is implemented through the governed task chain.
