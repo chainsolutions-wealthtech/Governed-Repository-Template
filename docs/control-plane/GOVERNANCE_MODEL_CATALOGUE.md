@@ -4,7 +4,7 @@
 > Authority type: `CANONICAL_GOVERNANCE_MODEL_CATALOGUE_PLAN`  
 > Scope: `CONTROL_PLANE_SOURCE_ONLY`  
 > Status: `ACCEPTED_TARGET_MODEL_CATALOGUE_PLAN`  
-> Revision: `2`  
+> Revision: `1`  
 > Repository: `chainsolutions-wealthtech/Governed-Repository-Template`  
 > Distribution: `SOURCE_ONLY / DO_NOT_COPY_TO_CLIENTS`
 
