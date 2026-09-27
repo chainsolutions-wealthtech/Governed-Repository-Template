@@ -203,3 +203,13 @@ The future admin web application is intentionally deferred until all structuring
 - Relational status: `PENDING_SCHEMA_EXTENSION`; the existing control-plane database/materializer will be extended, not replaced.
 - Priority: dependency-bound behind `P12-S6`; current unique action remains `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`.
 - Observed canonical main before this enrichment: `76fae0dc132ef7e91e659c4dad44cd3522d2c8c4`.
+
+## Governance Model Catalogue merge attestation
+
+- PR #39: MERGED.
+- Merge subject HEAD: `6fb12122d5a0812f6ceca063b1d7af13511003bc`.
+- Governance CI run `36284616415`: PASS.
+- `CP-GOVMODEL-001`: ACTIVE canonical source knowledge.
+- `GMC-01..GMC-19`: canonical dependency-bound backlog.
+- Detailed governance-model registry schema/materialization: still `PENDING_PROJECTION` by design.
+- Unique executable action remains `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`.
