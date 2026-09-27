@@ -347,3 +347,19 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Minimal fix commit `ec52fb0e0786eaf18fa8886950546c21c96a176c`: HTTP 404 now reopens endpoint correction; a corrected endpoint archives the failed evidence, clears the hold and returns to MCP discovery.
 - GREEN Governance CI `36295231828`: PASS across the complete suite, including MCP fallback, relational materialization, Governance Model integrity and textual integrity.
 - Canonical corrective task: `C1-13-A` IN_PROGRESS until PR #50 is merged, propagated to `Ekyc`, and the affected discovery checkpoint is resumed.
+
+
+## 2026-09-27 — C1-13-B client local-entry test portability
+
+- PR #50 merged to Template main at `dbe0014784362393c8cfbb02ce7810d483cf2bb7`.
+- Source post-merge Governance CI `36295619581`: PASS.
+- The official `/governed-upgrade-local-entry` path upgraded `Patricked-code/Ekyc` from `b6be4b96306a765efd6bbd20727f02d5ef17553d` to `2ece8cff98258f7c40cf7b7383ceb5c026db9639`.
+- Open local-entry `Ekyc#1` was migrated automatically from revision 23 to 24; accepted business/setup answers and the 404 discovery evidence were preserved.
+- Ekyc Governance CI run `36295714554` failed only in `Test repository-local governed agent entry`.
+- Exact root cause: the newly distributed self-test attempted to read `.github/workflows/governed-control-plane.yml`, a source-only workflow intentionally absent from client repositories.
+- No target patch was applied; Ekyc was frozen again.
+- Created Template PR #51 / `C1-13-B`.
+- RED commit `c2d70bbd07cd77d0b44a0e8c17b5366b2e2e76fb`; CI `36295815960` failed exactly with the new portability assertion.
+- Minimal fix commit `0e000473c8a58d62918f28fefa482679bce47fe0`: source-only permission assertions execute only when `.template-source` exists.
+- Functional GREEN Governance CI `36295850914`: PASS across the full suite.
+- Unique next action: merge PR #51 after final reconciled CI, governed-reupgrade Ekyc, require target CI green, then resume the preserved MCP discovery checkpoint.
