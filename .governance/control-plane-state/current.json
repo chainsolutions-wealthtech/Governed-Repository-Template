@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 15,
+  "source_state_revision": 16,
   "template_version": "2.8.6",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
@@ -25,7 +25,7 @@
   },
   "canonical_architecture": {
     "authority_id": "CP-ARCH-001",
-    "revision": 5,
+    "revision": 6,
     "path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
     "status": "ACCEPTED_TARGET_ARCHITECTURE",
     "target_ne_current": true
@@ -40,6 +40,15 @@
       "decision_id": "CPD-021",
       "backlog_prefix": "RTE",
       "execution_gate_unchanged": true
+    },
+    "governance_model_catalogue": {
+      "authority_id": "CP-GOVMODEL-001",
+      "status": "ACCEPTED_TARGET_MODEL_CATALOGUE_PLAN",
+      "observed_main_head_before_enrichment": "76fae0dc132ef7e91e659c4dad44cd3522d2c8c4",
+      "programme": "GMC-01..GMC-19",
+      "dependency": "P12-S6",
+      "relational_projection": "PENDING_SCHEMA_EXTENSION",
+      "unique_next_action_unchanged": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT"
     }
   },
   "framework_product_boundary": {
