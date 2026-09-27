@@ -348,12 +348,17 @@
     },
     {
       "checkpoint_id": "CP-CHECKPOINT-20260927-014",
-      "run_id": "CONTROL-PLANE-SOURCE",
+      "run_id": null,
       "phase_id": "C1-12",
       "subject_head_sha": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
       "state": "PR42_POST_MERGE_GMC_INTEGRITY_FIX_IN_PROGRESS",
       "next_action": "C1_12_J_C_A_RECONCILE_GMC_POST_MERGE_INTEGRITY",
-      "source_ref": ".governance/control-plane-state/checkpoint.json"
+      "source_ref": ".governance/control-plane-state/checkpoint.json",
+      "created_at": "2026-09-27",
+      "payload": {
+        "source_state_revision": 18,
+        "reason": "PR42 post-merge generic framework correction gate"
+      }
     }
   ],
   "intakes": [
@@ -526,12 +531,18 @@
   "handoffs": [
     {
       "handoff_id": "CP-HANDOFF-20260927-012",
-      "run_id": "CONTROL-PLANE-SOURCE",
-      "phase_id": "C1-12",
-      "subject_head_sha": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
-      "state": "FRAMEWORK_CORRECTION_IN_PROGRESS",
+      "run_id": null,
+      "checkpoint_id": "CP-CHECKPOINT-20260927-014",
+      "status": "FRAMEWORK_CORRECTION_IN_PROGRESS",
       "next_action": "C1_12_J_C_A_RECONCILE_GMC_POST_MERGE_INTEGRITY",
-      "source_ref": ".governance/control-plane-state/handoff.json"
+      "payload": {
+        "subject_head_sha": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
+        "phase_id": "C1-12",
+        "parent_task": "C1-12-J-C",
+        "pilot_mutation_blocked": true
+      },
+      "source_ref": ".governance/control-plane-state/handoff.json",
+      "created_at": "2026-09-27"
     }
   ],
   "owner_feedback": [
