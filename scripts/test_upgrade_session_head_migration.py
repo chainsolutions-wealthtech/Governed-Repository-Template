@@ -111,6 +111,12 @@ def main() -> None:
     assert 'LOCAL_SETUP_V2_8_3_UPGRADE_APPLIED' not in source
     assert '"message":"governance: upgrade repository-local setup to v2.8.3"' not in source
 
+    # The distributed local-entry self-test must not require source-only
+    # control-plane files that are intentionally absent from client repositories.
+    local_entry_test=(upgrade.ROOT / "scripts" / "test_local_governed_entry.py").read_text(encoding="utf-8")
+    if 'if (ROOT/".template-source").exists():' not in local_entry_test:
+        raise SystemExit("UPGRADE_SELFTEST_FAILED: client local-entry test must guard source-only control-plane assertions")
+
     # Portable client CI requires the generic intent runtime/test surface.
     for required in [
         '"scripts/governance_agent.py"',
