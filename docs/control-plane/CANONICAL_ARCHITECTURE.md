@@ -4,7 +4,7 @@
 > Authority type: `CANONICAL_TARGET_ARCHITECTURE`  
 > Scope: `CONTROL_PLANE_SOURCE_ONLY`  
 > Status: `ACCEPTED_TARGET_ARCHITECTURE`  
-> Revision: `5`  
+> Revision: `6`  
 > Repository: `chainsolutions-wealthtech/Governed-Repository-Template`  
 > Distribution: `SOURCE_ONLY / DO_NOT_COPY_TO_CLIENTS`
 
@@ -734,3 +734,27 @@ Primary architecture source was Markdown. The PDF is a derived presentation repr
 This architecture authority enriches canonical knowledge only.
 
 It does not change the current CASE 1 execution gate. The live `CURRENT_STATE.md`, `TASKS.md` and `NEXT_ACTION.md` remain authoritative for the exact active task.
+
+## 29. Central Governance Model as first-class authority
+
+Authority `CP-GOVMODEL-001` defines the accepted target catalogue for the reusable central Governance Model.
+
+Canonical direction:
+
+```text
+GOVERNANCE MODEL
+→ applicability
+→ application strategy
+   ├─ CREATE
+   ├─ ADOPT
+   ├─ MAP
+   └─ LAB
+```
+
+The cases consume common governance semantics; they do not own or silently redefine them.
+
+The reusable model must become explicitly enumerable through domains, capabilities, components, objects/fields/relationships, states/transitions/workflows, controls/gates/authorities, evidence/failure/recovery, implementation mappings, tests and dependencies.
+
+The existing relational control-plane memory is extended additively. No parallel canonical database is introduced.
+
+This target enrichment is dependency-bound and does not change the current CASE 1 unique executable action.
