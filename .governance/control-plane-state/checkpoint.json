@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "checkpoint_id": "CP-CHECKPOINT-20260927-015",
+  "checkpoint_id": "CP-CHECKPOINT-20260927-016",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-  "subject_head": "113c50aa765ae886cd7a085637b8d5dbb5c2766b",
+  "subject_head": "dc2c1d5244aa11eaa9d4486edb5d3a1cc166ed6f",
   "template_version_before": "2.7.0",
-  "state": "PR43_GMC_INTEGRITY_MERGED_CASE1_RESUMED",
+  "state": "V2_8_6_PILOT_REVALIDATED_PENDING_NORMAL_ENTRY_RERUN",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
@@ -28,15 +28,19 @@
     "v2_8_6_release_subject": "02173120acfa3941e84bf69c89dac0e8d74b47ce",
     "pr43_gmc_integrity_fix": "PASS",
     "pr43_merge_subject": "113c50aa765ae886cd7a085637b8d5dbb5c2766b",
-    "pr43_ci_run": 36289874574
+    "pr43_ci_run": 36289874574,
+    "c1_12_j_c_v286_pilot_upgrade": "PASS",
+    "c1_12_j_c_v286_pilot_head": "671774dfc8e8be8eac2b50d5fb8f0928591694b3",
+    "c1_12_j_c_v286_pilot_ci_run": 36275524530,
+    "c1_12_j_c_v286_pilot_ci_result": "PASS"
   },
-  "next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT",
+  "next_action": "C1_12_K_RERUN_GOUVERN_ISSUE_3",
   "reconciliation_required_before_write": true,
   "ci_run": 36289874574,
   "ci_result": "PASS",
   "client_source_memory_removal": "PASS",
   "self_governance": "PASS",
-  "reconciliation_reason": "PR43_MERGED_GMC_INTEGRITY_RECONCILED_RESUME_CASE1_PILOT",
+  "reconciliation_reason": "LIVE_PILOT_ALREADY_UPGRADED_TO_V2_8_6_AND_CI_GREEN_DO_NOT_REPLAY_UPGRADE",
   "canonical_memory_database": "PASS",
   "blocker": null,
   "knowledge_enrichment": {

@@ -406,6 +406,30 @@
       ],
       "proposals": [],
       "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT"
+    },
+    {
+      "activity_id": "AAL-20260927-C112-JC-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "CREATE_NEW_REPOSITORY/C1-12",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "dc2c1d5244aa11eaa9d4486edb5d3a1cc166ed6f",
+      "pilot_repository": "Patricked-code/Gouvern",
+      "observed_pilot_head": "671774dfc8e8be8eac2b50d5fb8f0928591694b3",
+      "objective": "Reconcile live evidence that the V2.8.6 governed pilot re-upgrade and Governance CI already completed successfully, without replaying the mutation.",
+      "evidence_refs": [
+        "Patricked-code/Gouvern@671774dfc8e8be8eac2b50d5fb8f0928591694b3",
+        "Pilot Governance CI run 36275524530",
+        "Template issue #12 supervision continuity note",
+        ".governance/TEMPLATE_MANIFEST.json@Patricked-code/Gouvern"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "Pilot V2.8.6 upgrade was already applied by patricked-mcp-publisher[bot] from prior HEAD 17f852c19ac8c5d26f40d3508338ce9c221697c8.",
+        "Pilot Governance CI run 36275524530 is SUCCESS on the exact current pilot HEAD.",
+        "Replaying the upgrade would be unnecessary and would violate evidence-driven chronological continuation."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_K_RERUN_GOUVERN_ISSUE_3"
     }
   ]
 }
