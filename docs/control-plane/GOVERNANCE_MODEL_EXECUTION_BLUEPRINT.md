@@ -5767,3 +5767,18 @@ GMC-G19 does not pass because G01..G18 are merely marked DONE. It must assemble 
 ## 7. Non-goals
 
 This blueprint still does **not** implement the future registries, schemas, SQL migration, comparator, applicability engine, model loader or CREATE/ADOPT/MAP/LAB rebinding.
+
+
+## 8. Projection reciprocity invariant
+
+Artifact dependencies have one canonical machine source:
+
+`groups[*].dependency_contract.artifact_dependencies`.
+
+For every artifact, the GMC work-package consumers recorded in both produced-artifact metadata and the global knowledge-artifact registry are derived from that source. Global `ARTIFACT_DEPENDENCY` edges must represent exactly the same `artifact → consumer work package` relationships with the same producer.
+
+External/future consumers are metadata, not current work-package dependency edges.
+
+The governance CI regression test `scripts/test_governance_model_integrity.py` verifies dependency-contract ↔ dependency-edge reciprocity, artifact producer identity, both consumer projections, uniqueness, and catalogue revision consistency.
+
+Any divergence fails closed before downstream work may be unlocked.

@@ -409,9 +409,7 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G02",
-            "GMC-G03",
-            "GMC-G12",
-            "GMC-G18"
+            "GMC-G03"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -430,10 +428,7 @@
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
           "consumed_by": [
-            "GMC-G02",
-            "GMC-G03",
-            "GMC-G12",
-            "GMC-G18"
+            "GMC-G02"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -451,12 +446,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G02",
-            "GMC-G03",
-            "GMC-G12",
-            "GMC-G18"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         }
       ],
@@ -867,15 +857,7 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G03",
-            "GMC-G04",
-            "GMC-G05",
-            "GMC-G06",
-            "GMC-G07",
-            "GMC-G08",
-            "GMC-G09",
-            "GMC-G10",
-            "GMC-G11",
-            "GMC-G16"
+            "GMC-G04"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -894,16 +876,7 @@
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
           "consumed_by": [
-            "GMC-G03",
-            "GMC-G04",
-            "GMC-G05",
-            "GMC-G06",
-            "GMC-G07",
-            "GMC-G08",
-            "GMC-G09",
-            "GMC-G10",
-            "GMC-G11",
-            "GMC-G16"
+            "GMC-G03"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -922,16 +895,7 @@
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
           "consumed_by": [
-            "GMC-G03",
-            "GMC-G04",
-            "GMC-G05",
-            "GMC-G06",
-            "GMC-G07",
-            "GMC-G08",
-            "GMC-G09",
-            "GMC-G10",
-            "GMC-G11",
-            "GMC-G16"
+            "GMC-G06"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -949,18 +913,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G03",
-            "GMC-G04",
-            "GMC-G05",
-            "GMC-G06",
-            "GMC-G07",
-            "GMC-G08",
-            "GMC-G09",
-            "GMC-G10",
-            "GMC-G11",
-            "GMC-G16"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         }
       ],
@@ -1415,8 +1368,8 @@
           "consumed_by": [
             "GMC-G04",
             "GMC-G12",
-            "GMC-G13",
-            "GMC-G14"
+            "GMC-G14",
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -1434,12 +1387,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G04",
-            "GMC-G12",
-            "GMC-G13",
-            "GMC-G14"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
         {
@@ -1456,12 +1404,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G04",
-            "GMC-G12",
-            "GMC-G13",
-            "GMC-G14"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         }
       ],
@@ -1903,9 +1846,9 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G05",
-            "GMC-G13",
+            "GMC-G12",
             "GMC-G14",
-            "GMC-G18"
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -1923,12 +1866,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G05",
-            "GMC-G13",
-            "GMC-G14",
-            "GMC-G18"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
         {
@@ -1946,10 +1884,7 @@
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
           "consumed_by": [
-            "GMC-G05",
-            "GMC-G13",
-            "GMC-G14",
-            "GMC-G18"
+            "GMC-G05"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         }
@@ -2360,10 +2295,9 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G06",
-            "GMC-G09",
             "GMC-G12",
-            "GMC-G13",
-            "GMC-G14"
+            "GMC-G14",
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -2381,13 +2315,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G06",
-            "GMC-G09",
-            "GMC-G12",
-            "GMC-G13",
-            "GMC-G14"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
         {
@@ -2404,13 +2332,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G06",
-            "GMC-G09",
-            "GMC-G12",
-            "GMC-G13",
-            "GMC-G14"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         }
       ],
@@ -2850,9 +2772,9 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G07",
-            "GMC-G08",
-            "GMC-G13",
-            "GMC-G15"
+            "GMC-G12",
+            "GMC-G15",
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -2872,9 +2794,9 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G07",
-            "GMC-G08",
-            "GMC-G13",
-            "GMC-G15"
+            "GMC-G12",
+            "GMC-G15",
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -2894,9 +2816,9 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G07",
-            "GMC-G08",
-            "GMC-G13",
-            "GMC-G15"
+            "GMC-G12",
+            "GMC-G15",
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -2914,12 +2836,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G07",
-            "GMC-G08",
-            "GMC-G13",
-            "GMC-G15"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         }
       ],
@@ -3340,9 +3257,8 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G08",
-            "GMC-G10",
-            "GMC-G11",
-            "GMC-G15"
+            "GMC-G12",
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -3361,10 +3277,7 @@
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
           "consumed_by": [
-            "GMC-G08",
-            "GMC-G10",
-            "GMC-G11",
-            "GMC-G15"
+            "GMC-G08"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -3382,12 +3295,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G08",
-            "GMC-G10",
-            "GMC-G11",
-            "GMC-G15"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         }
       ],
@@ -3892,10 +3800,8 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G09",
-            "GMC-G10",
-            "GMC-G11",
-            "GMC-G13",
-            "GMC-G15"
+            "GMC-G12",
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -3914,11 +3820,7 @@
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
           "consumed_by": [
-            "GMC-G09",
-            "GMC-G10",
-            "GMC-G11",
-            "GMC-G13",
-            "GMC-G15"
+            "GMC-G09"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -3936,13 +3838,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G09",
-            "GMC-G10",
-            "GMC-G11",
-            "GMC-G13",
-            "GMC-G15"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
         {
@@ -3961,10 +3857,8 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G09",
-            "GMC-G10",
-            "GMC-G11",
-            "GMC-G13",
-            "GMC-G15"
+            "GMC-G12",
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -3984,10 +3878,8 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G09",
-            "GMC-G10",
-            "GMC-G11",
-            "GMC-G13",
-            "GMC-G15"
+            "GMC-G12",
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -4007,10 +3899,8 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G09",
-            "GMC-G10",
-            "GMC-G11",
-            "GMC-G13",
-            "GMC-G15"
+            "GMC-G12",
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         }
@@ -4480,11 +4370,10 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G10",
-            "GMC-G11",
             "GMC-G12",
-            "GMC-G13",
             "GMC-G14",
-            "GMC-G15"
+            "GMC-G15",
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -4503,12 +4392,7 @@
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
           "consumed_by": [
-            "GMC-G10",
-            "GMC-G11",
-            "GMC-G12",
-            "GMC-G13",
-            "GMC-G14",
-            "GMC-G15"
+            "GMC-G10"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -4526,14 +4410,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G10",
-            "GMC-G11",
-            "GMC-G12",
-            "GMC-G13",
-            "GMC-G14",
-            "GMC-G15"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         }
       ],
@@ -4975,10 +4852,9 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G11",
-            "GMC-G13",
+            "GMC-G12",
             "GMC-G14",
-            "GMC-G17",
-            "GMC-G18"
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -4997,11 +4873,7 @@
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
           "consumed_by": [
-            "GMC-G11",
-            "GMC-G13",
-            "GMC-G14",
-            "GMC-G17",
-            "GMC-G18"
+            "GMC-G11"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -5019,13 +4891,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G11",
-            "GMC-G13",
-            "GMC-G14",
-            "GMC-G17",
-            "GMC-G18"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
         {
@@ -5044,10 +4910,8 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G11",
-            "GMC-G13",
-            "GMC-G14",
-            "GMC-G17",
-            "GMC-G18"
+            "GMC-G12",
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         }
@@ -5496,11 +5360,7 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G12",
-            "GMC-G14",
-            "GMC-G15",
-            "GMC-G17",
-            "GMC-G18",
-            "GMC-G19"
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -5518,14 +5378,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G12",
-            "GMC-G14",
-            "GMC-G15",
-            "GMC-G17",
-            "GMC-G18",
-            "GMC-G19"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
         {
@@ -5542,14 +5395,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G12",
-            "GMC-G14",
-            "GMC-G15",
-            "GMC-G17",
-            "GMC-G18",
-            "GMC-G19"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         }
       ],
@@ -6126,10 +5972,7 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G13",
-            "GMC-G14",
-            "GMC-G15",
-            "GMC-G16",
-            "GMC-G19"
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -6148,11 +5991,7 @@
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
           "consumed_by": [
-            "GMC-G13",
-            "GMC-G14",
-            "GMC-G15",
-            "GMC-G16",
-            "GMC-G19"
+            "GMC-G13"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -6170,13 +6009,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G13",
-            "GMC-G14",
-            "GMC-G15",
-            "GMC-G16",
-            "GMC-G19"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
         {
@@ -6193,13 +6026,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G13",
-            "GMC-G14",
-            "GMC-G15",
-            "GMC-G16",
-            "GMC-G19"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
         {
@@ -6218,10 +6045,8 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G13",
-            "GMC-G14",
             "GMC-G15",
-            "GMC-G16",
-            "GMC-G19"
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         }
@@ -6671,9 +6496,7 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G14",
-            "GMC-G16",
-            "GMC-G17",
-            "GMC-G18"
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -6693,8 +6516,6 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G14",
-            "GMC-G16",
-            "GMC-G17",
             "GMC-G18"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -6713,12 +6534,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G14",
-            "GMC-G16",
-            "GMC-G17",
-            "GMC-G18"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
         {
@@ -6735,12 +6551,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G14",
-            "GMC-G16",
-            "GMC-G17",
-            "GMC-G18"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
         {
@@ -6757,12 +6568,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G14",
-            "GMC-G16",
-            "GMC-G17",
-            "GMC-G18"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
         {
@@ -6779,12 +6585,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G14",
-            "GMC-G16",
-            "GMC-G17",
-            "GMC-G18"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         }
       ],
@@ -7312,11 +7113,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G15",
-            "GMC-G16",
-            "GMC-G18"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
         {
@@ -7334,9 +7131,7 @@
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
           "consumed_by": [
-            "GMC-G15",
-            "GMC-G16",
-            "GMC-G18"
+            "GMC-G15"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -7354,11 +7149,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G15",
-            "GMC-G16",
-            "GMC-G18"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
         {
@@ -7865,9 +7656,7 @@
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
           "consumed_by": [
-            "GMC-G16",
-            "GMC-G18",
-            "GMC-G19"
+            "GMC-G16"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
@@ -7885,11 +7674,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G16",
-            "GMC-G18",
-            "GMC-G19"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
         {
@@ -7906,11 +7691,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G16",
-            "GMC-G18",
-            "GMC-G19"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         },
         {
@@ -7927,11 +7708,7 @@
           },
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
-          "consumed_by": [
-            "GMC-G16",
-            "GMC-G18",
-            "GMC-G19"
-          ],
+          "consumed_by": [],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
         }
       ],
@@ -8556,7 +8333,6 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G17",
-            "GMC-G18",
             "future implementation"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -8577,7 +8353,6 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G17",
-            "GMC-G18",
             "future implementation"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -8598,7 +8373,6 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G17",
-            "GMC-G18",
             "future implementation"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -8619,7 +8393,6 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G17",
-            "GMC-G18",
             "future implementation"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -8640,7 +8413,6 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G17",
-            "GMC-G18",
             "future implementation"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -8661,7 +8433,6 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G17",
-            "GMC-G18",
             "future implementation"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -9135,7 +8906,6 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G18",
-            "GMC-G19",
             "future implementation"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -9156,7 +8926,6 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G18",
-            "GMC-G19",
             "future implementation"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -9176,8 +8945,6 @@
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
           "consumed_by": [
-            "GMC-G18",
-            "GMC-G19",
             "future implementation"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -9198,7 +8965,6 @@
           "required_provenance": true,
           "consumed_by": [
             "GMC-G18",
-            "GMC-G19",
             "future implementation"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -9218,8 +8984,6 @@
           "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
           "required_provenance": true,
           "consumed_by": [
-            "GMC-G18",
-            "GMC-G19",
             "future implementation"
           ],
           "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -10614,9 +10378,7 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G02",
-        "GMC-G03",
-        "GMC-G12",
-        "GMC-G18"
+        "GMC-G03"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -10635,10 +10397,7 @@
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
       "consumed_by": [
-        "GMC-G02",
-        "GMC-G03",
-        "GMC-G12",
-        "GMC-G18"
+        "GMC-G02"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -10656,12 +10415,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G02",
-        "GMC-G03",
-        "GMC-G12",
-        "GMC-G18"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -10680,15 +10434,7 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G03",
-        "GMC-G04",
-        "GMC-G05",
-        "GMC-G06",
-        "GMC-G07",
-        "GMC-G08",
-        "GMC-G09",
-        "GMC-G10",
-        "GMC-G11",
-        "GMC-G16"
+        "GMC-G04"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -10707,16 +10453,7 @@
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
       "consumed_by": [
-        "GMC-G03",
-        "GMC-G04",
-        "GMC-G05",
-        "GMC-G06",
-        "GMC-G07",
-        "GMC-G08",
-        "GMC-G09",
-        "GMC-G10",
-        "GMC-G11",
-        "GMC-G16"
+        "GMC-G03"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -10735,16 +10472,7 @@
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
       "consumed_by": [
-        "GMC-G03",
-        "GMC-G04",
-        "GMC-G05",
-        "GMC-G06",
-        "GMC-G07",
-        "GMC-G08",
-        "GMC-G09",
-        "GMC-G10",
-        "GMC-G11",
-        "GMC-G16"
+        "GMC-G06"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -10762,18 +10490,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G03",
-        "GMC-G04",
-        "GMC-G05",
-        "GMC-G06",
-        "GMC-G07",
-        "GMC-G08",
-        "GMC-G09",
-        "GMC-G10",
-        "GMC-G11",
-        "GMC-G16"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -10793,8 +10510,8 @@
       "consumed_by": [
         "GMC-G04",
         "GMC-G12",
-        "GMC-G13",
-        "GMC-G14"
+        "GMC-G14",
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -10812,12 +10529,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G04",
-        "GMC-G12",
-        "GMC-G13",
-        "GMC-G14"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -10834,12 +10546,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G04",
-        "GMC-G12",
-        "GMC-G13",
-        "GMC-G14"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -10858,9 +10565,9 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G05",
-        "GMC-G13",
+        "GMC-G12",
         "GMC-G14",
-        "GMC-G18"
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -10878,12 +10585,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G05",
-        "GMC-G13",
-        "GMC-G14",
-        "GMC-G18"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -10901,10 +10603,7 @@
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
       "consumed_by": [
-        "GMC-G05",
-        "GMC-G13",
-        "GMC-G14",
-        "GMC-G18"
+        "GMC-G05"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -10924,10 +10623,9 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G06",
-        "GMC-G09",
         "GMC-G12",
-        "GMC-G13",
-        "GMC-G14"
+        "GMC-G14",
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -10945,13 +10643,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G06",
-        "GMC-G09",
-        "GMC-G12",
-        "GMC-G13",
-        "GMC-G14"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -10968,13 +10660,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G06",
-        "GMC-G09",
-        "GMC-G12",
-        "GMC-G13",
-        "GMC-G14"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -10993,9 +10679,9 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G07",
-        "GMC-G08",
-        "GMC-G13",
-        "GMC-G15"
+        "GMC-G12",
+        "GMC-G15",
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11015,9 +10701,9 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G07",
-        "GMC-G08",
-        "GMC-G13",
-        "GMC-G15"
+        "GMC-G12",
+        "GMC-G15",
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11037,9 +10723,9 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G07",
-        "GMC-G08",
-        "GMC-G13",
-        "GMC-G15"
+        "GMC-G12",
+        "GMC-G15",
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11057,12 +10743,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G07",
-        "GMC-G08",
-        "GMC-G13",
-        "GMC-G15"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11081,9 +10762,8 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G08",
-        "GMC-G10",
-        "GMC-G11",
-        "GMC-G15"
+        "GMC-G12",
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11102,10 +10782,7 @@
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
       "consumed_by": [
-        "GMC-G08",
-        "GMC-G10",
-        "GMC-G11",
-        "GMC-G15"
+        "GMC-G08"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11123,12 +10800,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G08",
-        "GMC-G10",
-        "GMC-G11",
-        "GMC-G15"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11147,10 +10819,8 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G09",
-        "GMC-G10",
-        "GMC-G11",
-        "GMC-G13",
-        "GMC-G15"
+        "GMC-G12",
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11169,11 +10839,7 @@
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
       "consumed_by": [
-        "GMC-G09",
-        "GMC-G10",
-        "GMC-G11",
-        "GMC-G13",
-        "GMC-G15"
+        "GMC-G09"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11191,13 +10857,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G09",
-        "GMC-G10",
-        "GMC-G11",
-        "GMC-G13",
-        "GMC-G15"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11216,10 +10876,8 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G09",
-        "GMC-G10",
-        "GMC-G11",
-        "GMC-G13",
-        "GMC-G15"
+        "GMC-G12",
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11239,10 +10897,8 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G09",
-        "GMC-G10",
-        "GMC-G11",
-        "GMC-G13",
-        "GMC-G15"
+        "GMC-G12",
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11262,10 +10918,8 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G09",
-        "GMC-G10",
-        "GMC-G11",
-        "GMC-G13",
-        "GMC-G15"
+        "GMC-G12",
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11285,11 +10939,10 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G10",
-        "GMC-G11",
         "GMC-G12",
-        "GMC-G13",
         "GMC-G14",
-        "GMC-G15"
+        "GMC-G15",
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11308,12 +10961,7 @@
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
       "consumed_by": [
-        "GMC-G10",
-        "GMC-G11",
-        "GMC-G12",
-        "GMC-G13",
-        "GMC-G14",
-        "GMC-G15"
+        "GMC-G10"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11331,14 +10979,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G10",
-        "GMC-G11",
-        "GMC-G12",
-        "GMC-G13",
-        "GMC-G14",
-        "GMC-G15"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11357,10 +10998,9 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G11",
-        "GMC-G13",
+        "GMC-G12",
         "GMC-G14",
-        "GMC-G17",
-        "GMC-G18"
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11379,11 +11019,7 @@
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
       "consumed_by": [
-        "GMC-G11",
-        "GMC-G13",
-        "GMC-G14",
-        "GMC-G17",
-        "GMC-G18"
+        "GMC-G11"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11401,13 +11037,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G11",
-        "GMC-G13",
-        "GMC-G14",
-        "GMC-G17",
-        "GMC-G18"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11426,10 +11056,8 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G11",
-        "GMC-G13",
-        "GMC-G14",
-        "GMC-G17",
-        "GMC-G18"
+        "GMC-G12",
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11449,11 +11077,7 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G12",
-        "GMC-G14",
-        "GMC-G15",
-        "GMC-G17",
-        "GMC-G18",
-        "GMC-G19"
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11471,14 +11095,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G12",
-        "GMC-G14",
-        "GMC-G15",
-        "GMC-G17",
-        "GMC-G18",
-        "GMC-G19"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11495,14 +11112,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G12",
-        "GMC-G14",
-        "GMC-G15",
-        "GMC-G17",
-        "GMC-G18",
-        "GMC-G19"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11521,10 +11131,7 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G13",
-        "GMC-G14",
-        "GMC-G15",
-        "GMC-G16",
-        "GMC-G19"
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11543,11 +11150,7 @@
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
       "consumed_by": [
-        "GMC-G13",
-        "GMC-G14",
-        "GMC-G15",
-        "GMC-G16",
-        "GMC-G19"
+        "GMC-G13"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11565,13 +11168,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G13",
-        "GMC-G14",
-        "GMC-G15",
-        "GMC-G16",
-        "GMC-G19"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11588,13 +11185,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G13",
-        "GMC-G14",
-        "GMC-G15",
-        "GMC-G16",
-        "GMC-G19"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11613,10 +11204,8 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G13",
-        "GMC-G14",
         "GMC-G15",
-        "GMC-G16",
-        "GMC-G19"
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11636,9 +11225,7 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G14",
-        "GMC-G16",
-        "GMC-G17",
-        "GMC-G18"
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11658,8 +11245,6 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G14",
-        "GMC-G16",
-        "GMC-G17",
         "GMC-G18"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -11678,12 +11263,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G14",
-        "GMC-G16",
-        "GMC-G17",
-        "GMC-G18"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11700,12 +11280,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G14",
-        "GMC-G16",
-        "GMC-G17",
-        "GMC-G18"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11722,12 +11297,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G14",
-        "GMC-G16",
-        "GMC-G17",
-        "GMC-G18"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11744,12 +11314,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G14",
-        "GMC-G16",
-        "GMC-G17",
-        "GMC-G18"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11787,11 +11352,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G15",
-        "GMC-G16",
-        "GMC-G18"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11809,9 +11370,7 @@
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
       "consumed_by": [
-        "GMC-G15",
-        "GMC-G16",
-        "GMC-G18"
+        "GMC-G15"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11829,11 +11388,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G15",
-        "GMC-G16",
-        "GMC-G18"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11872,9 +11427,7 @@
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
       "consumed_by": [
-        "GMC-G16",
-        "GMC-G18",
-        "GMC-G19"
+        "GMC-G16"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
@@ -11892,11 +11445,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G16",
-        "GMC-G18",
-        "GMC-G19"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11913,11 +11462,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G16",
-        "GMC-G18",
-        "GMC-G19"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11934,11 +11479,7 @@
       },
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
-      "consumed_by": [
-        "GMC-G16",
-        "GMC-G18",
-        "GMC-G19"
-      ],
+      "consumed_by": [],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
     },
     {
@@ -11957,7 +11498,6 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G17",
-        "GMC-G18",
         "future implementation"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -11978,7 +11518,6 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G17",
-        "GMC-G18",
         "future implementation"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -11999,7 +11538,6 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G17",
-        "GMC-G18",
         "future implementation"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -12020,7 +11558,6 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G17",
-        "GMC-G18",
         "future implementation"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -12041,7 +11578,6 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G17",
-        "GMC-G18",
         "future implementation"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -12062,7 +11598,6 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G17",
-        "GMC-G18",
         "future implementation"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -12083,7 +11618,6 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G18",
-        "GMC-G19",
         "future implementation"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -12104,7 +11638,6 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G18",
-        "GMC-G19",
         "future implementation"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -12124,8 +11657,6 @@
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
       "consumed_by": [
-        "GMC-G18",
-        "GMC-G19",
         "future implementation"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -12146,7 +11677,6 @@
       "required_provenance": true,
       "consumed_by": [
         "GMC-G18",
-        "GMC-G19",
         "future implementation"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -12166,8 +11696,6 @@
       "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
       "required_provenance": true,
       "consumed_by": [
-        "GMC-G18",
-        "GMC-G19",
         "future implementation"
       ],
       "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
@@ -13602,5 +13130,21 @@
     "INTERMEDIATE_RESULT",
     "DONE_WHEN",
     "HOLD_IF"
-  ]
+  ],
+  "projection_integrity_contract": {
+    "canonical_artifact_dependency_source": "groups[*].dependency_contract.artifact_dependencies",
+    "derived_projections": [
+      "groups[*].produced_artifacts[*].consumed_by for GMC-Gxx consumers",
+      "knowledge_artifacts[*].consumed_by for GMC-Gxx consumers",
+      "dependency_edges where edge_type=ARTIFACT_DEPENDENCY"
+    ],
+    "non_gmc_consumers_preserved_as_metadata": true,
+    "reciprocity_validation": "scripts/test_governance_model_integrity.py",
+    "fail_closed_on_divergence": true,
+    "decision_basis": [
+      "CPD-028",
+      "CPD-029"
+    ],
+    "reconciliation_subject_head": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59"
+  }
 }
