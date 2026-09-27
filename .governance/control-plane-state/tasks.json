@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 15,
+  "revision": 16,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -459,6 +459,158 @@
         "C1-12-J-B"
       ],
       "next_action": "RELEASE_AND_REUPGRADE_CASE1_PILOT"
+    },
+    {
+      "id": "GMC-01",
+      "status": "PLANNED",
+      "depends_on": [
+        "P12-S6"
+      ],
+      "next_action": "SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES"
+    },
+    {
+      "id": "GMC-02",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-01"
+      ],
+      "next_action": "DEFINE_CANONICAL_MODEL_ANATOMY_AND_IDS"
+    },
+    {
+      "id": "GMC-03",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-02"
+      ],
+      "next_action": "INVENTORY_NORMALIZE_GOVERNANCE_DOMAINS"
+    },
+    {
+      "id": "GMC-04",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-03"
+      ],
+      "next_action": "INVENTORY_DOMAIN_CAPABILITIES"
+    },
+    {
+      "id": "GMC-05",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-04"
+      ],
+      "next_action": "DECOMPOSE_CAPABILITIES_INTO_COMPONENTS"
+    },
+    {
+      "id": "GMC-06",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-05"
+      ],
+      "next_action": "INVENTORY_OBJECTS_FIELDS_RELATIONSHIPS"
+    },
+    {
+      "id": "GMC-07",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-06"
+      ],
+      "next_action": "INVENTORY_STATE_MACHINES"
+    },
+    {
+      "id": "GMC-08",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-07"
+      ],
+      "next_action": "INVENTORY_TRANSITIONS_AND_RECOVERY"
+    },
+    {
+      "id": "GMC-09",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-08"
+      ],
+      "next_action": "BUILD_CONTROL_REGISTRY"
+    },
+    {
+      "id": "GMC-10",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-09"
+      ],
+      "next_action": "BUILD_GATE_REGISTRY"
+    },
+    {
+      "id": "GMC-11",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-10"
+      ],
+      "next_action": "BUILD_EVIDENCE_TYPE_REGISTRY"
+    },
+    {
+      "id": "GMC-12",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-11"
+      ],
+      "next_action": "MAP_MODEL_TO_IMPLEMENTATION_AND_TESTS"
+    },
+    {
+      "id": "GMC-13",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-12"
+      ],
+      "next_action": "BUILD_GLOBAL_DEPENDENCY_GRAPH"
+    },
+    {
+      "id": "GMC-16",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-13"
+      ],
+      "next_action": "MATERIALIZE_MODEL_IN_EXISTING_RELATIONAL_MEMORY"
+    },
+    {
+      "id": "GMC-14",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-16"
+      ],
+      "next_action": "BUILD_APPLICABILITY_AND_SEMANTIC_COMPARATOR"
+    },
+    {
+      "id": "GMC-15",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-14"
+      ],
+      "next_action": "ADD_FIELD_CONTROL_TEST_LEVEL_COMPARISON"
+    },
+    {
+      "id": "GMC-17",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-15"
+      ],
+      "next_action": "INTEGRATE_MODEL_LOADING_VALIDATION_IN_CONTROL_PLANE"
+    },
+    {
+      "id": "GMC-18",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-17"
+      ],
+      "next_action": "REBIND_CREATE_ADOPT_MAP_LAB_TO_SHARED_MODEL"
+    },
+    {
+      "id": "GMC-19",
+      "status": "PLANNED",
+      "depends_on": [
+        "GMC-18"
+      ],
+      "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
   "unique_executable_item": "C1-12-J-C"
