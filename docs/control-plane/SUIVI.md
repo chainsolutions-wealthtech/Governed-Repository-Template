@@ -307,3 +307,17 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Minimal workflow correction changed only the machine local-start token to `permission-contents: write`; CI `36292388479` PASS.
 - `C1-12-K-A` records the generic framework correction as DONE.
 - `C1-12-K` remains IN_PROGRESS and is retried only after Template merge/reobservation.
+
+## 2026-09-27 — C1-12 normal governed entry proof completed
+
+- Template transport correction PR #47 merged to source main `4e7b6354f301ea1f3cb7261def738d9c1dca64b3`.
+- Reobserved pilot HEAD `671774dfc8e8be8eac2b50d5fb8f0928591694b3`.
+- Exact-HEAD machine local-start created `Patricked-code/Gouvern#4` / `LOCAL-000004`.
+- Mode immediately proved: `NORMAL_GOVERNED_ENTRY`.
+- Sequential machine answers completed through `LOCAL_HANDOFF_READY`, revision 6.
+- Target start run `36292612321` PASS; answer runs `36292715800`, `36292741820`, `36292775187`, `36292816422`, `36292850873` PASS.
+- Pilot HEAD remained unchanged.
+- Baseline state blob, sole first-agent session `LOCAL-000002-S1`, work-items including `WORK-PROJECT-001`, and empty claims remained unchanged.
+- `C1-12-K/L/M/N/O/P`: DONE.
+- `P12-S4`: DONE.
+- Current unique task: `P12-S5_SECOND_FRESH_REPOSITORY_E2E`.
