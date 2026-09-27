@@ -108,11 +108,13 @@ def validate(conn):
     if cases != 4:
         raise SystemExit(f"CONTROL_PLANE_DB_FAILED: expected 4 structuring cases, got {cases}")
     active = conn.execute("SELECT phase_id FROM case_phases WHERE case_id='CREATE_NEW_REPOSITORY' AND status='IN_PROGRESS'").fetchall()
-    if active != [("C1-12",)]:
-        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: CASE1 active phase mismatch: {active}")
+    if len(active) != 1:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: expected exactly one active CASE1 phase, got {active}")
     next_phase = conn.execute("SELECT current_phase_id FROM runs WHERE run_id='CASE1-PILOT-GOUVERN'").fetchone()
-    if next_phase != ("C1-12",):
-        raise SystemExit("CONTROL_PLANE_DB_FAILED: pilot run current phase mismatch")
+    if next_phase is None:
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: pilot run current phase missing")
+    if active[0] != next_phase:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: CASE1 active phase/run mismatch: active={active[0]} run={next_phase}")
     mcp_choices = [json.loads(r[0]) for r in conn.execute(
         "SELECT value_json FROM question_options WHERE question_id='C1-Q-MCP-TRANSPORT' ORDER BY ordinal"
     ).fetchall()]
