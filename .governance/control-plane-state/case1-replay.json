@@ -7,7 +7,7 @@
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
   "current_phase": "C1-13",
   "current_status": "IN_PROGRESS",
-  "unique_next_action": "C1_13_B_MERGE_PR51_REUPGRADE_EKYC_RESUME_DISCOVERY",
+  "unique_next_action": "C1_13_C_MERGE_PR52_REUPGRADE_EKYC_RESUME_DISCOVERY",
   "phases": [
     {
       "id": "C1-00",
@@ -158,20 +158,23 @@
       "depends_on": [
         "C1-12"
       ],
-      "next_action": "MERGE_PR51_REUPGRADE_EKYC_RESUME_MCP_DISCOVERY",
+      "next_action": "MERGE_PR52_REUPGRADE_EKYC_RESUME_MCP_DISCOVERY",
       "live_state": {
         "repository": "Patricked-code/Ekyc",
         "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
         "local_entry_issue": "Patricked-code/Ekyc#1",
-        "expected_head": "2ece8cff98258f7c40cf7b7383ceb5c026db9639",
-        "status": "FROZEN_GENERIC_FRAMEWORK_DEFECT_CLIENT_CI",
-        "completed_corrective_task": "C1-13-A",
-        "pr50_merge": "dbe0014784362393c8cfbb02ce7810d483cf2bb7",
-        "failed_target_ci": 36295714554,
-        "active_corrective_task": "C1-13-B",
-        "active_corrective_pr": 51,
-        "red_ci_run": 36295815960,
-        "green_ci_run": 36295850914,
+        "expected_head": "dd5a2664c4422ab14fc7131a77e5c2df0e0356a0",
+        "status": "FROZEN_GENERIC_FRAMEWORK_DEFECT_GOVERNANCE_MODEL_CLIENT_TEST",
+        "completed_corrective_tasks": [
+          "C1-13-A",
+          "C1-13-B"
+        ],
+        "pr51_merge": "0a4a9961565d53a872d6eb62ad3f4afadbb11d6e",
+        "failed_target_ci": 36296169271,
+        "active_corrective_task": "C1-13-C",
+        "active_corrective_pr": 52,
+        "red_ci_run": 36296258279,
+        "green_ci_run": 36296295586,
         "target_specific_repair": false
       }
     },
