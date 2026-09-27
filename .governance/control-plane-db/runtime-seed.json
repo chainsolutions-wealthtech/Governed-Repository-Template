@@ -309,6 +309,31 @@
       "status": "ACCEPTED",
       "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "decided_at": "2026-09-27"
+    },
+    {
+      "decision_id": "CPD-029",
+      "scope_type": "PROGRAM",
+      "scope_id": "GOVERNANCE_MODEL_CATALOGUE_COMPLETION",
+      "decision_key": "OUTPUT_DRIVEN_GMC_TASK_ARTIFACT_EVIDENCE_DEPENDENCIES",
+      "value": {
+        "dependency_dimensions": [
+          "TASK_DEPENDENCY",
+          "ARTIFACT_DEPENDENCY",
+          "EVIDENCE_DEPENDENCY"
+        ],
+        "status_only_unlock_forbidden": true,
+        "persistent_versioned_knowledge_artifacts": true,
+        "work_packages": 19,
+        "atomic_tasks": 174,
+        "planned_knowledge_artifacts": 85,
+        "final_assembly_work_package": "GMC-G19",
+        "model_1_0_0_requires_all_final_demonstrations_pass": true,
+        "planning_only": true,
+        "implementation_authorized": false
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "decided_at": "2026-09-27"
     }
   ],
   "checkpoints": [
@@ -614,7 +639,7 @@
       "artifact_type": "GOVERNANCE_MODEL_EXECUTION_BLUEPRINT_PROJECTION",
       "path_or_ref": ".governance/control-plane-state/governance-model-execution-blueprint.json",
       "sha": null,
-      "source_ref": "CPD-028",
+      "source_ref": "CPD-029",
       "created_at": "2026-09-27"
     }
   ],
@@ -635,7 +660,7 @@
       "canonical_path": "docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md",
       "scope": "CONTROL_PLANE_SOURCE_ONLY",
       "status": "ACCEPTED_TARGET_MODEL_CATALOGUE_PLAN",
-      "current_revision": 1,
+      "current_revision": 2,
       "source_decision_id": "CPD-025",
       "created_at": "2026-09-27"
     }
@@ -722,6 +747,18 @@
       "supersedes_revision_id": null,
       "reason": "Establish central Governance Model catalogue authority, storage contract and GMC-01..GMC-19 hierarchical completion programme.",
       "source_decision_id": "CPD-025",
+      "source_ref": ".governance/control-plane-state/governance-model-catalogue.json",
+      "created_at": "2026-09-27"
+    },
+    {
+      "revision_id": "CP-GOVMODEL-001-R2",
+      "authority_id": "CP-GOVMODEL-001",
+      "revision_number": 2,
+      "subject_head_sha": "38c61cd436a180dbcbacf5ca4b2d83abeaed29cc",
+      "content_sha": null,
+      "supersedes_revision_id": "CP-GOVMODEL-001-R1",
+      "reason": "Add typed task/artifact/evidence dependencies, persistent planned knowledge artifacts, exit controls, complete registry coverage and final Governance Model assembly/release gates.",
+      "source_decision_id": "CPD-029",
       "source_ref": ".governance/control-plane-state/governance-model-catalogue.json",
       "created_at": "2026-09-27"
     }
@@ -1108,6 +1145,36 @@
         "active_item_unchanged": "C1-12-J-C"
       },
       "source_ref": "docs/control-plane/GOVERNANCE_MODEL_EXECUTION_BLUEPRINT.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-GMC-010",
+      "event_type": "DECISION_ACCEPTED",
+      "scope_type": "PROGRAM",
+      "scope_id": "GOVERNANCE_MODEL_CATALOGUE_COMPLETION",
+      "payload": {
+        "decision_id": "CPD-029",
+        "dependency_dimensions": [
+          "TASK_DEPENDENCY",
+          "ARTIFACT_DEPENDENCY",
+          "EVIDENCE_DEPENDENCY"
+        ],
+        "planned_knowledge_artifacts": 85
+      },
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-GMC-011",
+      "event_type": "CANONICAL_AUTHORITY_REVISION_ACCEPTED",
+      "scope_type": "AUTHORITY",
+      "scope_id": "CP-GOVMODEL-001",
+      "payload": {
+        "revision_id": "CP-GOVMODEL-001-R2",
+        "supersedes": "CP-GOVMODEL-001-R1",
+        "decision_id": "CPD-029"
+      },
+      "source_ref": "docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md",
       "occurred_at": "2026-09-27"
     }
   ]
