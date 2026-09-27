@@ -2,9 +2,10 @@
 
 > Repository: `chainsolutions-wealthtech/Governed-Repository-Template`  
 > Date: `2026-09-27`  
-> Status: `DRAFT_REVIEW_REQUIRED`  
+> Status: `APPROVED_DESIGN`  
 > Scope: architecture/design only  
 > Implementation authorized by this document: **NO**  
+> Owner review: `APPROVED 2026-09-27`  
 > Current live execution gate remains: `C1-12-K_RERUN_GOUVERN_ISSUE_3`
 
 ## 1. Purpose
