@@ -4,18 +4,19 @@
   "authority_type": "CANONICAL_GOVERNANCE_MODEL_CATALOGUE_PLAN",
   "scope": "CONTROL_PLANE_SOURCE_ONLY",
   "status": "ACCEPTED_TARGET_MODEL_CATALOGUE_PLAN",
-  "current_revision": 2,
+  "current_revision": 1,
   "canonical_path": "docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md",
   "revision": {
-    "revision_id": "CP-GOVMODEL-001-R2",
-    "revision_number": 2,
-    "subject_head_sha": "38c61cd436a180dbcbacf5ca4b2d83abeaed29cc",
-    "supersedes_revision_id": "CP-GOVMODEL-001-R1",
+    "revision_id": "CP-GOVMODEL-001-R1",
+    "revision_number": 1,
+    "subject_head_sha": "76fae0dc132ef7e91e659c4dad44cd3522d2c8c4",
+    "supersedes_revision_id": null,
     "source_decision_ids": [
-      "CPD-028",
-      "CPD-029"
+      "CPD-025",
+      "CPD-026",
+      "CPD-027"
     ],
-    "reason": "Refine the Governance Model programme into output-driven work packages with typed task/artifact/evidence dependencies, persistent knowledge artifacts, exit controls and final assembly requirements."
+    "reason": "Establish the central governance model as the reusable reference object, preserve the existing relational memory, and register the hierarchical completion programme."
   },
   "invariants": [
     "GOVERNANCE_MODEL_PRECEDES_APPLICATION_STRATEGIES",
@@ -166,7 +167,8 @@
       "EVIDENCE_DEPENDENCY"
     ],
     "output_driven_progression": true,
-    "final_assembly_contract": true
+    "final_assembly_contract": true,
+    "last_enrichment_decision_id": "CPD-029"
   },
   "final_model_release_gate": {
     "work_package": "GMC-G19",
