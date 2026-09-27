@@ -321,3 +321,12 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - `C1-12-K/L/M/N/O/P`: DONE.
 - `P12-S4`: DONE.
 - Current unique task: `P12-S5_SECOND_FRESH_REPOSITORY_E2E`.
+
+## 2026-09-27 — C1-12-P-A dynamic relational phase validation
+
+- Advancing CASE 1 from C1-12 to C1-13 exposed a source-only materializer validation hard-coded to `C1-12`.
+- RED Governance CI: `36293227831`, all prior checks PASS, failure only at canonical DB materialization.
+- Failure: `CASE1 active phase mismatch: [('C1-13',)]`.
+- Fix: require exactly one active CASE 1 phase and require it to equal the pilot run's `current_phase_id`.
+- GREEN Governance CI: `36293287750` PASS.
+- No second database or alternate phase authority introduced.
