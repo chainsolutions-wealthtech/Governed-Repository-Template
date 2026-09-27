@@ -22,7 +22,7 @@ Objective: V2.7.0 Self-Governed Control Plane.
 | P12-S2 Gouvern MCP discovery | DONE | P12-S1 | PASS/non-degraded discovery |
 | P12-S3 Setup approval + APPLY_BASELINE | DONE | P12-S2 | baseline commit + first-agent handoff |
 | P12-S4 Prove subsequent NORMAL_GOVERNED_ENTRY on external CASE 1 pilot (current pilot: Gouvern) | DONE | P12-S3 | `Gouvern#4` NORMAL_GOVERNED_ENTRY + LOCAL_HANDOFF_READY; no baseline reset |
-| P12-S5 Second fresh repository E2E | IN_PROGRESS | P12-S4 | clean uninterrupted lifecycle |
+| P12-S5 Second fresh repository E2E | ACTIVE_PARENT | P12-S4 | clean uninterrupted lifecycle; current child C1-13-A |
 | P12-S6 Close CASE 1 and release next macro case | PENDING | P12-S5 | reconciled final evidence |
 
 ## Unique executable task
