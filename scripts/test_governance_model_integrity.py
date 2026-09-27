@@ -7,7 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 BLUEPRINT = ROOT / ".governance/control-plane-state/governance-model-execution-blueprint.json"
 CATALOGUE = ROOT / ".governance/control-plane-state/governance-model-catalogue.json"
-GROUP_ID = re.compile(r"^GMC-G\\d{2}$")
+GROUP_ID = re.compile(r"^GMC-G\d{2}$")
 
 def load(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
