@@ -481,6 +481,18 @@ The owner may choose different answers from the historical pilot. The framework 
 - Template PR #50: RED `36295172971` → GREEN `36295231828`.
 - Resume rule: merge Template fix → governed client update → preserve issue state/history → correct endpoint → rerun read-only discovery → continue remaining C1-13 gates.
 
+### C1-13-B live corrective state
+
+- `C1-13-A` completed through PR #50 merge `dbe0014784362393c8cfbb02ce7810d483cf2bb7`; source post-merge CI `36295619581` passed.
+- The governed client update produced `Patricked-code/Ekyc@2ece8cff98258f7c40cf7b7383ceb5c026db9639`.
+- `Ekyc#1` migrated to that exact HEAD while preserving accepted answers and prior MCP discovery evidence.
+- Target Governance CI `36295714554` failed only because the distributed self-test referenced source-only `.github/workflows/governed-control-plane.yml`.
+- Classification: generic framework defect.
+- Corrective task: `C1-13-B`.
+- Template PR #51 has RED evidence `36295815960` and functional GREEN evidence `36295850914`.
+- Expected client behavior: source-only control-plane workflow assertions are skipped when `.template-source` is absent; source validation remains active when that marker exists.
+- Continuation after correction: governed client re-upgrade, target CI validation, then resumption of the preserved MCP discovery checkpoint.
+
 ### Checkpoint
 `SECOND_FRESH_E2E_PASS`.
 
