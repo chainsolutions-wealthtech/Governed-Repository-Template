@@ -217,3 +217,12 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Governance CI run `36284616415`: PASS.
 - Canonical authority `CP-GOVMODEL-001`, architecture revision `CP-ARCH-001-R6`, decisions `CPD-025..CPD-027` and `GMC-01..GMC-19` backlog are now part of canonical source memory.
 - The current execution gate remains CASE 1 / `C1-12-J-C`; no GMC task is executable before its dependencies.
+
+## 2026-09-27 — GMC execution-blueprint preparation requirement
+
+- Owner clarified that the 19 GMC items are not 19 tasks but 19 chronological work packages/groups.
+- Each group must be prepared before coding as a mission package containing exact research locations, search methods, atomic tasks, expected results, storage destinations, evidence, exit criteria and downstream reuse.
+- Results from earlier groups become validated versioned inputs to later groups.
+- This is planning-only work: no Governance Model registry implementation, SQL migration, comparator, applicability engine or runtime change is authorized by this clarification.
+- Recorded as decision `CPD-028`.
+- Active CASE 1 execution priority remains unchanged.
