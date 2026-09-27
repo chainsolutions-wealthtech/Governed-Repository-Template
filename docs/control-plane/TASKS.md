@@ -163,7 +163,7 @@ These routing tasks are planned architecture work and do not supersede the curre
 
 ### C1-12-J-C-A — PR #42 post-merge GMC integrity reconciliation
 
-Status: `IN_PROGRESS`
+Status: `DONE`
 
 Parent: `C1-12-J-C`
 
@@ -179,7 +179,14 @@ Exit gate:
 - relational source state/checkpoint/handoff current;
 - PR merged and post-merge state attested.
 
-Until this gate passes, `C1-12-J-C` is blocked and no external pilot mutation is allowed.
+Exit evidence:
+- Template PR #43 merged at `113c50aa765ae886cd7a085637b8d5dbb5c2766b`;
+- Governance CI run `36289874574`: PASS;
+- GMC integrity regression gate: PASS;
+- relational materialization: PASS;
+- PR #42 P1/P2 review threads: RESOLVED.
+
+The gate is satisfied. `C1-12-J-C` resumes as the unique executable task.
 
 ## Queued work package — GOVERNANCE_MODEL_CATALOGUE_COMPLETION
 
