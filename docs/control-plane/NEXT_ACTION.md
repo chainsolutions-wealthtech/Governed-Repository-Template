@@ -1,49 +1,42 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT
+NEXT_ACTION = C1_12_K_RERUN_GOUVERN_ISSUE_3
 STATE = IN_PROGRESS
 ```
 
 ## Objective
 
-Revalidate the released V2.8.6 framework on the external CASE 1 pilot through the governed exact-HEAD upgrade path.
+Resume the existing `Patricked-code/Gouvern#3` subsequent-agent proof through the machine local-entry path and prove `NORMAL_GOVERNED_ENTRY` without replaying `FIRST_AGENT_BOOTSTRAP`.
 
-Framework integrity prerequisite is now satisfied:
-- Template PR #43: MERGED;
-- merge subject: `113c50aa765ae886cd7a085637b8d5dbb5c2766b`;
-- Governance CI run `36289874574`: PASS;
-- PR #42 P1/P2 review threads: RESOLVED;
-- `CP-GOVMODEL-001-R2`: ACTIVE;
-- GMC projection reciprocity regression gate: GREEN.
+## Reconciled prerequisite evidence
 
-Product/framework:
+The prior V2.8.6 pilot revalidation is already complete and must not be replayed:
 
-`chainsolutions-wealthtech/Governed-Repository-Template@02173120acfa3941e84bf69c89dac0e8d74b47ce`
-
-Current pilot validation repository:
-
-`Patricked-code/Gouvern`
-
-Last recorded pilot HEAD before reobservation:
-
-`17f852c19ac8c5d26f40d3508338ce9c221697c8`
+- pilot repository: `Patricked-code/Gouvern`;
+- exact pilot HEAD: `671774dfc8e8be8eac2b50d5fb8f0928591694b3`;
+- Template version: `2.8.6`;
+- upgrade commit: `governance: upgrade repository-local setup to v2.8.6`;
+- Pilot Governance CI run: `36275524530`;
+- CI conclusion: `SUCCESS`;
+- `C1-12-J-C`: DONE;
+- parent `C1-12-J`: DONE.
 
 ## Required sequence
 
-1. reobserve exact pilot HEAD immediately before the command;
-2. invoke central `/governed-upgrade-local-entry`;
-3. require reported version `2.8.6`;
-4. verify pilot Governance CI;
-5. if green, mark C1-12-J complete and resume the existing `Gouvern#3` NORMAL_GOVERNED_ENTRY proof;
-6. if a new generic defect appears, insert it into the Template task chain before further pilot mutation.
+1. reobserve `Patricked-code/Gouvern` main immediately before starting;
+2. require the exact HEAD to remain `671774dfc8e8be8eac2b50d5fb8f0928591694b3` or reconcile any newer change before continuing;
+3. resume the existing `Gouvern#3` objective through the governed machine local-entry start path;
+4. require resulting mode `NORMAL_GOVERNED_ENTRY`;
+5. verify the existing first-agent baseline/session/work authorities are preserved;
+6. verify no duplicate first-agent baseline or first-agent session is created;
+7. capture the resulting normal-entry handoff/evidence;
+8. continue chronologically to `C1-12-L` only after K passes.
 
-No direct pilot patching.
+## Safety boundary
 
-## Governance Model Catalogue queued work
-
-The owner-approved `CP-GOVMODEL-001` programme remains durable canonical backlog and remains `PLANNING_ONLY`.
-
-Execution ordering remains:
-
-`C1-12-J-C → remaining C1-12 → P12-S5 → P12-S6 → GMC-G01...GMC-G19`.
+- Do not replay the V2.8.6 upgrade.
+- Do not patch the pilot directly.
+- Do not start STEP 5 / `P12-S5`.
+- If a generic framework defect appears, stop pilot mutation and return the defect to the Template first.
+- The GMC programme remains `PLANNING_ONLY` and dependency-bound behind CASE 1 closure.
