@@ -217,3 +217,24 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Governance CI run `36284616415`: PASS.
 - Canonical authority `CP-GOVMODEL-001`, architecture revision `CP-ARCH-001-R6`, decisions `CPD-025..CPD-027` and `GMC-01..GMC-19` backlog are now part of canonical source memory.
 - The current execution gate remains CASE 1 / `C1-12-J-C`; no GMC task is executable before its dependencies.
+
+## 2026-09-27 — GMC execution-blueprint preparation requirement
+
+- Owner clarified that the 19 GMC items are not 19 tasks but 19 chronological work packages/groups.
+- Each group must be prepared before coding as a mission package containing exact research locations, search methods, atomic tasks, expected results, storage destinations, evidence, exit criteria and downstream reuse.
+- Results from earlier groups become validated versioned inputs to later groups.
+- This is planning-only work: no Governance Model registry implementation, SQL migration, comparator, applicability engine or runtime change is authorized by this clarification.
+- Recorded as decision `CPD-028`.
+- Active CASE 1 execution priority remains unchanged.
+
+## 2026-09-27 — 19 GMC work packages fully decomposed
+
+- Added `docs/control-plane/GOVERNANCE_MODEL_EXECUTION_BLUEPRINT.md`.
+- Added machine projection `.governance/control-plane-state/governance-model-execution-blueprint.json`.
+- The 19 GMC items are now represented as chronological work packages `GMC-G01..GMC-G19`.
+- The blueprint contains 168 atomic tasks `GMC-Gxx-Tyy`.
+- Every group now records objective, sources to inspect, search patterns, atomic tasks, expected outputs, exit criteria, HOLD conditions and downstream consumers.
+- Chronology corrected to the 1:1 chain `G01 → ... → G19`.
+- Downstream work requires validated outputs + evidence, not a status flag alone.
+- This remains planning-only; no Governance Model registry/schema/SQL/comparator/runtime implementation was started.
+- Active CASE 1 execution remains unchanged.

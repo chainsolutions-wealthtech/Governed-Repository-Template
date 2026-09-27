@@ -351,3 +351,29 @@ The catalogue is complete only when the system can answer from versioned authori
 - what may safely be added without destroying existing behaviour;
 - in what order integration must occur;
 - what evidence proves successful integration.
+
+## 12. Execution blueprint
+
+The 19 catalogue items are work packages, not atomic tasks.
+
+Detailed mission decomposition is maintained in:
+
+`docs/control-plane/GOVERNANCE_MODEL_EXECUTION_BLUEPRINT.md`
+
+with machine projection:
+
+`.governance/control-plane-state/governance-model-execution-blueprint.json`
+
+The blueprint defines, for every group:
+
+- mission/objective;
+- research questions;
+- exact source surfaces and search patterns;
+- atomic tasks;
+- expected results;
+- storage targets;
+- evidence;
+- DONE/HOLD criteria;
+- downstream consumers.
+
+It is `PLANNING_ONLY`: it prepares implementation but does not authorize registry/schema/SQL/comparator/runtime creation.

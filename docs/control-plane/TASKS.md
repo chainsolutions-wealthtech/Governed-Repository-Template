@@ -195,3 +195,75 @@ The active unique executable item remains `C1-12-J-C`.
 - Model inventory is extractive first: observe existing authorities/code/schemas/workflows/tests before declaring gaps.
 - Existing `ARCH-*`, `IDN-*`, `RTE-*` tasks remain canonical and are linked into GMC rather than copied.
 - PostgreSQL runtime, Governance API and Admin UI remain downstream of GMC-19 and cross-case stabilization.
+
+### GMC work-package execution blueprint requirement
+
+The identifiers `GMC-01` through `GMC-19` are **chronological work packages/groups**, not atomic tasks.
+
+Before implementation of any GMC group, planning must first decompose that group into an execution blueprint.
+
+Each group blueprint must contain:
+
+- `MISSION` — why the group exists;
+- `OBJECTIVE` — the concrete result it must obtain;
+- `QUESTIONS_TO_RESOLVE`;
+- `INPUTS` and `PREREQUISITES`;
+- `WHERE_TO_LOOK` — exact repository paths, authorities, JSON policies, schemas, Python scripts/functions, workflows, tests, SQL/catalogue data, decisions, Git/PR history or external evidence to inspect;
+- `SEARCH_ORDER` and `SEARCH_METHOD` — keywords, symbols, enums, states, control phrases or semantic patterns to find;
+- atomic tasks/subtasks `GMC-Gxx-Tyy`;
+- for each atomic task: purpose, inputs, where to look, method, action, classification rules, expected findings, output, output destination, evidence, validation, DONE criteria and BLOCK/HOLD conditions;
+- `EXPECTED_RESULTS`;
+- `ARTIFACTS` and canonical storage destinations;
+- `EXIT_GATE`;
+- `OUTPUTS`;
+- `CONSUMED_BY` — later groups that reuse those outputs.
+
+Canonical flow:
+
+```text
+GMC GROUP
+  → mission
+  → searches / observations
+  → atomic tasks
+  → intermediate results
+  → controls / validation
+  → stored versioned deliverable
+  → evidence
+  → exit gate
+  → output reused by downstream groups
+```
+
+A downstream group is unlocked by validated outputs/evidence, not merely because the preceding group number is marked DONE.
+
+The planning target is therefore an **Execution Blueprint** for all 19 groups, likely containing many atomic tasks, before any Governance Model catalogue code, SQL migration, comparator, applicability engine or runtime integration is implemented.
+
+This planning requirement does not change the current unique executable CASE 1 task.
+
+### GMC 19-work-package execution blueprint
+
+The detailed planning authority is:
+
+- `docs/control-plane/GOVERNANCE_MODEL_EXECUTION_BLUEPRINT.md`
+- machine projection: `.governance/control-plane-state/governance-model-execution-blueprint.json`
+
+It contains **19 chronological work packages and 168 atomic planning tasks**.
+
+Canonical interpretation:
+
+```text
+GMC-Gxx = work package / mission group
+GMC-Gxx-Tyy = atomic planning/execution task
+```
+
+The chronological chain is:
+
+```text
+GMC-G01 → GMC-G02 → GMC-G03 → GMC-G04 → GMC-G05 → GMC-G06
+→ GMC-G07 → GMC-G08 → GMC-G09 → GMC-G10 → GMC-G11
+→ GMC-G12 → GMC-G13 → GMC-G14 → GMC-G15
+→ GMC-G16 → GMC-G17 → GMC-G18 → GMC-G19
+```
+
+A downstream group requires validated upstream outputs/evidence. A mere status `DONE` without the expected deliverables does not unlock it.
+
+No task in this blueprint authorizes implementation before the current CASE 1 dependency chain and future write gates permit it.
