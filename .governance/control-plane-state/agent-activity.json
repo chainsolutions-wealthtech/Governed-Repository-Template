@@ -291,6 +291,52 @@
       ],
       "proposals": [],
       "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT"
+    },
+    {
+      "activity_id": "AAL-20260927-GMC-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "CENTRAL_GOVERNANCE_MODEL_CATALOGUE",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "76fae0dc132ef7e91e659c4dad44cd3522d2c8c4",
+      "objective": "Persist the central Governance Model, storage/reuse contract and hierarchical completion programme in canonical memory without bypassing CASE 1.",
+      "evidence_refs": [
+        "CP-GOVMODEL-001",
+        "CPD-025",
+        "CPD-026",
+        "CPD-027",
+        "docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md",
+        ".governance/control-plane-state/governance-model-catalogue.json",
+        "docs/control-plane/TASKS.md",
+        ".governance/control-plane-db/runtime-seed.json"
+      ],
+      "discovered_tasks": [
+        "GMC-01",
+        "GMC-02",
+        "GMC-03",
+        "GMC-04",
+        "GMC-05",
+        "GMC-06",
+        "GMC-07",
+        "GMC-08",
+        "GMC-09",
+        "GMC-10",
+        "GMC-11",
+        "GMC-12",
+        "GMC-13",
+        "GMC-14",
+        "GMC-15",
+        "GMC-16",
+        "GMC-17",
+        "GMC-18",
+        "GMC-19"
+      ],
+      "remarks": [
+        "Governance Model is the reference object; CREATE/ADOPT/MAP/LAB are application strategies.",
+        "Existing relational memory/materializer is extended; no parallel canonical database.",
+        "Detailed registry schema is PENDING_PROJECTION until its governed migration task executes."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT"
     }
   ]
 }
