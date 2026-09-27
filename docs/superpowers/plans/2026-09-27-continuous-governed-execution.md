@@ -40,10 +40,12 @@
 - `scripts/governed_task_resolver.py` — pure eligibility, dependency indexes, deterministic next-task selection.
 - `scripts/governed_task_completion.py` — validate structured task results; apply DONE/BLOCKED transitions; release claims; insert discovered work.
 - `scripts/governed_reconciliation.py` — HEAD ancestry/diff reconciliation and stale-claim decisions.
+- `scripts/governed_task_source.py` — normalize either distributed project work or source-control-plane task authority without creating a second truth.
 - `scripts/continuous_governed_execution.py` — orchestration: next envelope, completion, checkpoint/recompute.
 - `scripts/test_governed_task_resolver.py`
 - `scripts/test_governed_task_completion.py`
 - `scripts/test_governed_reconciliation.py`
+- `scripts/test_governed_task_source.py`
 - `scripts/test_continuous_governed_execution.py`
 
 ### New policy/schemas/docs
@@ -52,6 +54,7 @@
 - `schemas/continuous-execution.schema.json`
 - `schemas/execution-envelope.schema.json`
 - `schemas/task-result.schema.json`
+- Modify: `schemas/session-checkpoint.schema.json` — explicit optional operational event fields.
 - `docs/CONTINUOUS_GOVERNED_EXECUTION.md`
 
 ### Modified existing surfaces
@@ -119,6 +122,7 @@ No code commit is made in this task.
 - Modify: `schemas/session.schema.json`
 - Modify: `schemas/work-item.schema.json`
 - Modify: `schemas/work-claim.schema.json`
+- Modify: `schemas/session-checkpoint.schema.json`
 - Test: `scripts/test_continuous_governed_execution.py`
 
 **Interfaces:**
@@ -133,7 +137,8 @@ No code commit is made in this task.
     `approval_required`, `allowed_mutation_paths[]`, `completion`;
   - work-claim optional fields:
     `claim_id`, `last_heartbeat_at`, `release_reason`, `supersedes_claim_id`;
-  - claim statuses extended with `COMPLETED`, `STALE_RECONCILIATION_REQUIRED`, `SUPERSEDED`.
+  - claim statuses extended with `COMPLETED`, `STALE_RECONCILIATION_REQUIRED`, `SUPERSEDED`;
+  - checkpoint optional fields `event_type` and `event_payload` for structured operational evidence without a parallel event store.
 
 - [ ] **Step 1: Write contract tests**
 
@@ -163,7 +168,7 @@ Policy exact defaults:
 - `stale_claim_policy = "CLOSED_OR_MISSING_SESSION_REQUIRES_RECONCILIATION"`;
 - stop conditions copied from the approved spec.
 
-Keep all new fields optional in legacy schemas unless the new envelope/result schema specifically requires them.
+Keep all new fields optional in legacy schemas unless the new envelope/result schema specifically requires them. The policy also enumerates the approved event types from the spec: `CONTINUOUS_LOOP_STARTED`, `TASK_RESOLVED`, `TASK_CLAIMED`, `TASK_EXECUTION_RESULT_RECEIVED`, `TASK_VALIDATED`, `TASK_HELD`, `CLAIM_RELEASED`, `HEAD_RECONCILIATION_STARTED`, `HEAD_RECONCILIATION_RESULT`, `WORK_DISCOVERED`, `QUEUE_RECOMPUTED`, `NO_EXECUTABLE_WORK`, `CONTINUOUS_LOOP_STOPPED`.
 
 - [ ] **Step 4: Run the contract test**
 
@@ -175,7 +180,7 @@ Expected: PASS for contract section.
 - [ ] **Step 5: Commit**
 
 ```bash
-git add .governance/continuous-execution-policy.json schemas/continuous-execution.schema.json schemas/execution-envelope.schema.json schemas/task-result.schema.json schemas/session.schema.json schemas/work-item.schema.json schemas/work-claim.schema.json scripts/test_continuous_governed_execution.py
+git add .governance/continuous-execution-policy.json schemas/continuous-execution.schema.json schemas/execution-envelope.schema.json schemas/task-result.schema.json schemas/session.schema.json schemas/work-item.schema.json schemas/work-claim.schema.json schemas/session-checkpoint.schema.json scripts/test_continuous_governed_execution.py
 git commit -m "feat: define continuous governed execution contracts"
 ```
 
@@ -193,6 +198,7 @@ git commit -m "feat: define continuous governed execution contracts"
   - `build_artifact_index(items: list[dict]) -> dict[str, dict]`
   - `build_evidence_index(items: list[dict]) -> dict[str, dict]`
   - `validate_dependency_graph(items: list[dict]) -> tuple[bool, list[str]]`
+  - `recompute_ready_states(work_doc: dict) -> dict`
   - `resolve_next_task(work_doc: dict, claims_doc: dict, session_id: str, current_head: str) -> dict`
 
 `resolve_next_task` returns one of:
@@ -206,7 +212,7 @@ Selection ordering remains: priority DESC, sequence ASC, work_item_id ASC.
 - [ ] **Step 1: Write resolver RED tests**
 
 In `scripts/test_governed_task_resolver.py`, cover:
-- three sequential tasks: only first READY/executable;
+- three sequential tasks: only first task is initially executable; after predecessor completion, `recompute_ready_states` promotes the next dependency-satisfied PENDING task to READY;
 - task dependency blocks downstream;
 - artifact dependency blocks until a DONE item completion exposes matching validated artifact;
 - evidence dependency blocks until matching evidence exists;
@@ -231,6 +237,7 @@ Implement the exact signatures above. Build artifact/evidence indexes only from 
 - [ ] **Step 4: Implement eligibility and deterministic selection**
 
 Rules:
+- `recompute_ready_states` may promote `PENDING → READY` only when task, artifact and evidence dependencies are satisfied; it never promotes BLOCKED/CANCELLED/SUPERSEDED;
 - executable statuses: `READY` only for new assignment;
 - a session's existing ACTIVE claim may resume even if task status is `IN_PROGRESS`;
 - task/artifact/evidence dependencies must all pass;
@@ -451,6 +458,7 @@ git commit -m "feat: validate and persist governed task completion"
   - `build_execution_envelope(session: dict, item: dict, claim: dict, head: str) -> dict`
   - `next_execution(root: Path, session_id: str, expected_head: str | None = None) -> dict`
   - `complete_execution(root: Path, session_id: str, result: dict, expected_head: str | None = None) -> dict`
+  - `persist_execution_event(root: Path, session: dict, event_type: str, payload: dict, head: str) -> str`
 
 `next_execution` returns:
 - `{"status":"EXECUTE","envelope":...}`;
@@ -458,8 +466,9 @@ git commit -m "feat: validate and persist governed task completion"
 - `{"status":"HOLD","reason":...}`.
 
 `complete_execution` returns:
-- `{"status":"CONTINUE","next_action":"RESOLVE_NEXT_TASK",...}`;
-- or an explicit STOP/HOLD reason.
+- `{"status":"EXECUTE_NEXT","envelope":...}` when continuous mode immediately unlocks another safe task;
+- `{"status":"STOP",...}` for SINGLE_TASK completion or a clean/required stop;
+- or an explicit HOLD reason.
 
 - [ ] **Step 1: Write controller RED tests**
 
@@ -470,7 +479,7 @@ Cover:
 - `approval_required` returns STOP/APPROVAL_REQUIRED;
 - no work returns STOP/NO_EXECUTABLE_WORK;
 - missing/blocked authority state passed from adapter returns STOP rather than executing;
-- own claim resumes;
+- own claim resumes and refreshes `last_heartbeat_at`;
 - two sessions with non-overlapping tasks get different envelopes;
 - overlapping collision blocks second session;
 - completion checkpoint data contains current head, item, result, artifacts/evidence and next action.
@@ -503,9 +512,10 @@ Sequence:
 4. apply task result;
 5. persist work/claims;
 6. create existing-style checkpoint;
-7. if continuous mode and no stop condition, return CONTINUE; otherwise STOP/HOLD.
+7. persist `TASK_EXECUTION_RESULT_RECEIVED`, `TASK_VALIDATED`/`TASK_HELD`, `CLAIM_RELEASED`, and `QUEUE_RECOMPUTED` checkpoint events;
+8. if continuous mode and another task is safe, resolve/claim it immediately and return `EXECUTE_NEXT` with its envelope; otherwise return STOP/HOLD.
 
-Do not create an immortal process loop.
+Do not create an immortal process loop. Persist the spec event types through the existing checkpoint surface; do not create a parallel event database.
 
 - [ ] **Step 5: Run GREEN**
 
@@ -532,6 +542,7 @@ git commit -m "feat: add continuous governed execution controller"
 
 **Interfaces:**
 - Existing commands unchanged.
+- Extract/reuse `evaluate_dispatch_gate(session: dict, current_branch: str) -> dict` so both existing `dispatch` and continuous commands pass through one intent/entry-action/branch gate.
 - New CLI:
   - `session-start --execution-mode SINGLE_TASK|CONTINUOUS_GOVERNED`
   - `continuous-next --session-id <id> [--expected-head <sha>]`
@@ -557,7 +568,7 @@ Expected: FAIL for missing CLI flags/commands.
 
 - [ ] **Step 3: Add thin CLI adapters**
 
-`governance_agent.py` delegates to the new controller; do not duplicate resolver/completion/reconciliation logic.
+`governance_agent.py` delegates to the new controller; do not duplicate resolver/completion/reconciliation logic. Refactor existing intent/entry-action/LAB branch checks into `evaluate_dispatch_gate` and make the old `command_dispatch` use the same helper before any claim selection.
 
 Treat sessions that predate `execution_mode` as SINGLE_TASK.
 
@@ -577,7 +588,73 @@ git commit -m "feat: expose continuous execution through governance cli"
 
 ---
 
-### Task 9: Preserve session/claim continuity across governed upgrades
+### Task 9: Add source-control-plane task-source adapter
+
+**Files:**
+- Create: `scripts/governed_task_source.py`
+- Create: `scripts/test_governed_task_source.py`
+- Modify: `scripts/continuous_governed_execution.py`
+
+**Interfaces:**
+- Produces:
+  - `detect_task_source(root: Path) -> str` returning `PROJECT_WORK` or `SOURCE_CONTROL_PLANE`;
+  - `load_normalized_work(root: Path) -> dict`;
+  - `validate_source_task_transition(root: Path, completed_item_id: str) -> dict`.
+
+For `PROJECT_WORK`, `load_normalized_work` reads `.governance/work/work-items.json`.
+
+For `SOURCE_CONTROL_PLANE`, it reads `.governance/control-plane-state/tasks.json` and normalizes only the canonical `unique_executable_item` as READY/IN_PROGRESS-compatible work. It must never use the distributed template placeholder work item as source truth.
+
+**Important:** source-control-plane task completion does **not** let the controller rewrite source programme truth automatically. The agent's governed task work must update the canonical source authorities. `validate_source_task_transition` then verifies that current/tasks/NEXT_ACTION/checkpoint/handoff are mutually reconciled before the claim is released and continuation proceeds.
+
+- [ ] **Step 1: Write RED source-adapter tests**
+
+Cover:
+- repository with `.template-source`/control-plane-state selects `SOURCE_CONTROL_PLANE`;
+- normal client selects `PROJECT_WORK`;
+- source adapter ignores `.governance/work/work-items.json` placeholder;
+- source unique executable item is the only normalized executable task;
+- after simulated canonical transition, `validate_source_task_transition` requires tasks/current/NEXT_ACTION/checkpoint/handoff to agree;
+- contradictory source projections return HOLD, never fallback to project work.
+
+- [ ] **Step 2: Run RED**
+
+Run:
+`python3 scripts/test_governed_task_source.py`
+
+Expected: FAIL with missing module/functions.
+
+- [ ] **Step 3: Implement source detection and normalized view**
+
+Use the source/client authority rules from `SOURCE_OF_TRUTH.md`. Do not modify source task status in this adapter.
+
+- [ ] **Step 4: Integrate controller loading/completion path**
+
+`next_execution` obtains its normalized work through `load_normalized_work`.
+
+On source-control-plane completion:
+- validate the structured task result;
+- require the canonical source transition already persisted by the governed work;
+- call `validate_source_task_transition`;
+- only then release the claim/checkpoint and resolve the new unique task.
+
+- [ ] **Step 5: Run GREEN**
+
+Run:
+`python3 scripts/test_governed_task_source.py && python3 scripts/test_continuous_governed_execution.py`
+
+Expected: PASS.
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add scripts/governed_task_source.py scripts/test_governed_task_source.py scripts/continuous_governed_execution.py scripts/test_continuous_governed_execution.py
+git commit -m "feat: adapt continuous execution to source control plane tasks"
+```
+
+---
+
+### Task 10: Preserve session/claim continuity across governed upgrades
 
 **Files:**
 - Modify: `scripts/control_plane_upgrade_local_entry.py` static client surface near the existing list around lines 106–117.
@@ -607,7 +684,7 @@ Expected: FAIL because new static surface is not distributed.
 - [ ] **Step 3: Extend the static client upgrade list**
 
 Add:
-- new runtime modules;
+- new distributed runtime modules (`governed_task_source.py` is included and must select PROJECT_WORK on clients);
 - new self-tests required on clients;
 - continuous policy;
 - new schemas;
@@ -631,7 +708,7 @@ git commit -m "feat: distribute continuous governed execution runtime"
 
 ---
 
-### Task 10: Add distributed documentation and manifest/source-client classification
+### Task 11: Add distributed documentation and manifest/source-client classification
 
 **Files:**
 - Create: `docs/CONTINUOUS_GOVERNED_EXECUTION.md`
@@ -692,7 +769,7 @@ git commit -m "docs: register continuous governed execution runtime"
 
 ---
 
-### Task 11: Wire the new self-tests into Governance CI
+### Task 12: Wire the new self-tests into Governance CI
 
 **Files:**
 - Modify: `.github/workflows/governance-ci.yml`
@@ -704,8 +781,8 @@ git commit -m "docs: register continuous governed execution runtime"
 - [ ] **Step 1: Make CI contract test fail locally through textual assertion**
 
 Extend the continuous self-test to assert `.github/workflows/governance-ci.yml` contains:
-- all four new runtime modules in the compile step;
-- all four new test scripts in the compile step;
+- all five new runtime modules in the compile step;
+- all five new test scripts in the compile step;
 - dedicated run steps for resolver, reconciliation, completion and controller self-tests.
 
 - [ ] **Step 2: Run RED**
@@ -721,6 +798,7 @@ Add new modules/tests to `py_compile`, then dedicated test steps:
 - `python3 scripts/test_governed_task_resolver.py`
 - `python3 scripts/test_governed_reconciliation.py`
 - `python3 scripts/test_governed_task_completion.py`
+- `python3 scripts/test_governed_task_source.py`
 - `python3 scripts/test_continuous_governed_execution.py`
 
 Keep every existing CI step.
@@ -741,7 +819,7 @@ git commit -m "ci: validate continuous governed execution"
 
 ---
 
-### Task 12: Prove work-package exit and discovered-blocker progression end-to-end
+### Task 13: Prove work-package exit and discovered-blocker progression end-to-end
 
 **Files:**
 - Modify: `scripts/test_continuous_governed_execution.py`
@@ -801,7 +879,7 @@ git commit -m "test: prove output-driven continuous progression"
 
 ---
 
-### Task 13: Full regression, source/client boundary proof, and candidate versioning
+### Task 14: Full regression, source/client boundary proof, and candidate versioning
 
 **Files:**
 - Potentially modify: `.governance/TEMPLATE_MANIFEST.json`
@@ -833,6 +911,7 @@ python3 scripts/test_governance_model_integrity.py
 python3 scripts/test_governed_task_resolver.py
 python3 scripts/test_governed_reconciliation.py
 python3 scripts/test_governed_task_completion.py
+python3 scripts/test_governed_task_source.py
 python3 scripts/test_continuous_governed_execution.py
 ```
 
