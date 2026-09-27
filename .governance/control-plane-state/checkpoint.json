@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "checkpoint_id": "CP-CHECKPOINT-20260926-011",
+  "checkpoint_id": "CP-CHECKPOINT-20260927-012",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-  "subject_head": "02173120acfa3941e84bf69c89dac0e8d74b47ce",
+  "subject_head": "76fae0dc132ef7e91e659c4dad44cd3522d2c8c4",
   "template_version_before": "2.7.0",
-  "state": "C1_12_V2_8_6_RELEASED_PENDING_PILOT_REVALIDATION",
+  "state": "C1_12_ACTIVE_GOVERNANCE_MODEL_CATALOGUE_ACCEPTED",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
@@ -39,14 +39,23 @@
   "knowledge_enrichment": {
     "canonical_architecture": {
       "authority_id": "CP-ARCH-001",
-      "revision": 5,
-      "source_head": "784e8738758ac9de1d59c3119304a833b720f213",
+      "revision": 6,
+      "source_head": "76fae0dc132ef7e91e659c4dad44cd3522d2c8c4",
       "execution_gate_unchanged": true
     },
     "agent_purpose_routing": {
       "status": "PLANNED_NOT_ACTIVE",
       "decision_id": "CPD-021",
       "active_task_unchanged": "C1_12_F_DIAGNOSE_UNEXPECTED_WORK_ITEM"
+    },
+    "governance_model_catalogue": {
+      "authority_id": "CP-GOVMODEL-001",
+      "revision": 1,
+      "programme": "GMC-01..GMC-19",
+      "dependency": "P12-S6",
+      "status": "QUEUED_DEPENDENCY_BOUND",
+      "relational_projection": "PENDING_SCHEMA_EXTENSION",
+      "execution_gate_unchanged": true
     }
   }
 }
