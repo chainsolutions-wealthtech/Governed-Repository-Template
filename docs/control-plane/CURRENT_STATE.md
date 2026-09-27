@@ -252,3 +252,14 @@ The future admin web application is intentionally deferred until all structuring
 - The V2.8.6 upgrade must not be replayed.
 - `C1-12-K` is now IN_PROGRESS.
 - Unique next action: `C1_12_K_RERUN_GOUVERN_ISSUE_3`.
+
+## C1-12-K machine-start transport correction
+
+- A live machine local-start request for `Patricked-code/Gouvern` was accepted by the source Control Plane from historical governed request `#4` under exact pilot HEAD `671774dfc8e8be8eac2b50d5fb8f0928591694b3`.
+- No target local-entry issue was created, so pilot state did not advance.
+- Generic root cause: the source `governed-control-plane.yml` minted `local-start-token` with `permission-contents: read`, while GitHub repository dispatch requires `Contents: write`.
+- Corrective sub-task: `C1-12-K-A`.
+- RED proof: Governance CI `36292333079` failed exactly on the new local-start permission regression test.
+- GREEN proof: Governance CI `36292388479` passed after the minimal permission correction.
+- Pilot mutation remains prohibited until this Template correction is merged.
+- After merge, `C1-12-K` remains the unique executable task and must retry the machine local-start on the reobserved exact pilot HEAD.

@@ -50,14 +50,15 @@ No later task may become executable before its dependency is complete.
 | C1-12-J-A | Diagnose V2.8.5 pilot CI failure inside connection-intent synthetic bootstrap | DONE | auto_bootstrap failed because synthetic test still inherited project-profile/infrastructure/local-entry/MCP/access/workflow state |
 | C1-12-J-B | Complete portable connection-intent fixture in Template | DONE | V2.8.6 merged; Template CI PASS |
 | C1-12-J-C | Release Template fix and re-upgrade external CASE 1 pilot | IN_PROGRESS | apply V2.8.6 through governed exact-HEAD upgrade path |
-| C1-12-K | Re-run Gouvern#3 through machine local-entry start | PENDING | depends on C1-12-J |
+| C1-12-K-A | Correct machine local-start repository_dispatch token permission (`Contents: write`) | DONE | blocks C1-12-K after live dispatch refusal |
+| C1-12-K | Re-run Gouvern#3 through machine local-entry start | IN_PROGRESS | depends on C1-12-J and K-A |
 | C1-12-L | Verify mode = `NORMAL_GOVERNED_ENTRY` | PENDING | depends on C1-12-K |
 | C1-12-M | Verify no first-agent baseline/session/work duplication | PENDING | depends on C1-12-L |
 | C1-12-N | Persist normal-entry handoff + evidence | PENDING | depends on C1-12-M |
 | C1-12-O | Mark C1-12 / STEP 4 DONE and unlock C1-13 | PENDING | depends on C1-12-N |
 | C1-12-P | Reconcile canonical relational memory with completed C1-12 evidence | PENDING | depends on C1-12-O |
 
-Current unique executable sub-task: `C1-12-J-C_RELEASE_AND_REUPGRADE_CASE1_PILOT`.
+Current unique executable sub-task: `C1-12-K_RERUN_GOUVERN_ISSUE_3`.
 
 ## Canonical architecture hardening backlog
 
@@ -336,3 +337,14 @@ The artifacts are planning objects only until their producing work packages are 
 - Unique action: `C1_12_K_RERUN_GOUVERN_ISSUE_3`
 
 C1-12-K must resume the existing `Patricked-code/Gouvern#3` proof via exact-HEAD machine local-entry start and may not advance to C1-12-L until the resulting entry is proven to be `NORMAL_GOVERNED_ENTRY`.
+
+### C1-12-K-A machine local-start dispatch correction
+
+- Live `/governed-local-start` was accepted by the source control plane from historical request `#4` under pilot HEAD `671774dfc8e8be8eac2b50d5fb8f0928591694b3`.
+- No new pilot local-entry issue was created.
+- Root cause: `POST /repos/{owner}/{repo}/dispatches` requires fine-grained `Contents: write`; the source workflow minted the `local-start-token` with `permission-contents: read`.
+- Regression proof: PR #47 Governance CI run `36292333079` failed only at `Test repository-local governed agent entry` with the expected permission assertion.
+- Fix proof: run `36292388479` passed after changing only the local-start token to `permission-contents: write`.
+- Pilot remained unchanged while the generic framework defect was corrected.
+- `C1-12-K-A`: `DONE`.
+- `C1-12-K`: remains the unique executable task and must now be retried on the exact pilot HEAD.

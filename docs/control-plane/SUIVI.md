@@ -295,3 +295,15 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - `C1-12-J`: DONE.
 - `C1-12-K`: IN_PROGRESS.
 - Unique next action: `C1_12_K_RERUN_GOUVERN_ISSUE_3`.
+
+## 2026-09-27 — C1-12-K machine local-start transport defect
+
+- Reobserved pilot `Patricked-code/Gouvern@671774dfc8e8be8eac2b50d5fb8f0928591694b3`.
+- Existing baseline/session/work were preserved: `LOCAL-000002-S1`, `WORK-PROJECT-001`, no active claims.
+- Sent the governed machine local-start through the historical source request `#4`.
+- Source Control Plane acknowledged the request but no new target local-entry issue appeared.
+- Framework diagnosis: repository dispatch requires `Contents: write`; the `local-start-token` requested only `Contents: read`.
+- Added RED regression test in PR #47; CI `36292333079` failed only at the expected local-entry permission assertion.
+- Minimal workflow correction changed only the machine local-start token to `permission-contents: write`; CI `36292388479` PASS.
+- `C1-12-K-A` records the generic framework correction as DONE.
+- `C1-12-K` remains IN_PROGRESS and is retried only after Template merge/reobservation.

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 22,
+  "revision": 23,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -132,6 +132,26 @@
       "evidence": [
         "C1-12-J-C completed at pilot 671774dfc8e8be8eac2b50d5fb8f0928591694b3"
       ]
+    },
+    {
+      "id": "C1-12-K-A",
+      "status": "DONE",
+      "depends_on": [
+        "C1-12-J"
+      ],
+      "blocks": [
+        "C1-12-K"
+      ],
+      "next_action": null,
+      "evidence": [
+        "Template PR #47",
+        "RED Governance CI run 36292333079 failed exactly at repository-local governed agent entry permission regression",
+        "GREEN Governance CI run 36292388479 PASS after local-start token Contents write correction",
+        "GitHub Create repository dispatch event requires fine-grained Contents write permission",
+        "Control plane issue #4 comment 5852371953 requested governed machine local start",
+        "Pilot remained unchanged at 671774dfc8e8be8eac2b50d5fb8f0928591694b3 while framework defect was corrected"
+      ],
+      "defect_code": "LOCAL_START_REPOSITORY_DISPATCH_CONTENTS_WRITE_REQUIRED"
     },
     {
       "id": "C1-12-K",
