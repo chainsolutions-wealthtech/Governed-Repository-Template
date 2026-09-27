@@ -204,9 +204,21 @@ def refresh(s):
 
 def answer(s,field,value):
     s=copy.deepcopy(s)
-    if (s.get("next_request") or {}).get("field")!=field:raise ValueError(f"unexpected field {field}")
+    request=s.get("next_request") or {}
+    if request.get("field")!=field:raise ValueError(f"unexpected field {field}")
     err=validate(field,value)
     if err:raise ValueError(err)
+    if request.get("id")=="Q_MCP_ENDPOINT_RECOVERY":
+        current=s.get("mcp_discovery")
+        history=list(s.get("mcp_discovery_history") or [])[-4:]
+        if isinstance(current,dict):
+            history.append({
+              "reason":"MCP_ENDPOINT_CORRECTION_AFTER_DISCOVERY_FAILURE",
+              "evidence":copy.deepcopy(current)
+            })
+        s["mcp_discovery_history"]=history
+        s["mcp_discovery"]=None
+        s["hold_reason"]=None
     s["answers"][field]=value;s["revision"]+=1
     return refresh(s)
 
@@ -255,10 +267,20 @@ def record_mcp_discovery_failure(s,evidence):
     if (s.get("next_request") or {}).get("kind")!="MCP_DISCOVERY":raise ValueError("not awaiting MCP discovery")
     code=str((evidence or {}).get("failure_code") or "MCP_DISCOVERY_FAILED")
     s["mcp_discovery"]=copy.deepcopy(evidence)
-    s["status"]="MCP_DISCOVERY_FAILED_RETRYABLE"
-    s["phase"]="MCP_DISCOVERY"
     s["hold_reason"]=code
     s["revision"]+=1
+    if code.startswith("HTTP Error 404"):
+        s["status"]="WAITING_FOR_SETUP_ANSWER"
+        s["phase"]="Q_MCP_ENDPOINT_RECOVERY"
+        s["next_request"]=q(
+          "Q_MCP_ENDPOINT_RECOVERY",
+          "mcp_endpoint",
+          "La découverte MCP a reçu HTTP 404. Corrige ou confirme l'URL exacte du endpoint MCP avant de relancer la découverte.",
+          extra={"last_failure":copy.deepcopy(evidence)}
+        )
+        return s
+    s["status"]="MCP_DISCOVERY_FAILED_RETRYABLE"
+    s["phase"]="MCP_DISCOVERY"
     s["next_request"]={
       "kind":"MCP_DISCOVERY",
       "id":"MCP_DISCOVERY",
