@@ -39,11 +39,14 @@
     },
     {
       "id": "P12-S5",
-      "status": "IN_PROGRESS",
+      "status": "ACTIVE_PARENT",
       "depends_on": [
         "P12-S4"
       ],
-      "next_action": "SECOND_FRESH_REPOSITORY_E2E"
+      "next_action": "C1-13-A",
+      "evidence": [
+        "C1-13-A inserted for generic MCP endpoint recovery defect discovered on Ekyc"
+      ]
     },
     {
       "id": "C1-13-A",
