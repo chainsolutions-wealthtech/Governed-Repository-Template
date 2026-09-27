@@ -31,3 +31,15 @@ Current observed pilot HEAD before this step:
 6. if a new generic defect appears, insert it into the Template task chain before further pilot mutation.
 
 No direct pilot patching.
+
+## Governance Model Catalogue queued work
+
+The owner-approved `CP-GOVMODEL-001` programme is now durable canonical backlog.
+
+It does **not** change this file's unique next action.
+
+Execution ordering remains:
+
+`C1-12-J-C → remaining C1-12 → P12-S5 → P12-S6 → GMC-01...`.
+
+This prevents knowledge-enrichment work from bypassing the active chronological CASE 1 gate.
