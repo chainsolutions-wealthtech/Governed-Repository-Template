@@ -4,7 +4,7 @@
 > Authority type: `CANONICAL_GOVERNANCE_MODEL_CATALOGUE_PLAN`  
 > Scope: `CONTROL_PLANE_SOURCE_ONLY`  
 > Status: `ACCEPTED_TARGET_MODEL_CATALOGUE_PLAN`  
-> Revision: `1`  
+> Revision: `2`  
 > Repository: `chainsolutions-wealthtech/Governed-Repository-Template`  
 > Distribution: `SOURCE_ONLY / DO_NOT_COPY_TO_CLIENTS`
 
@@ -377,3 +377,32 @@ The blueprint defines, for every group:
 - downstream consumers.
 
 It is `PLANNING_ONLY`: it prepares implementation but does not authorize registry/schema/SQL/comparator/runtime creation.
+
+## 13. Output-driven work-package contract
+
+The catalogue execution programme is a knowledge-production pipeline, not a list of status flags.
+
+For every work package:
+
+```text
+validated task dependency
++ validated artifact dependency
++ satisfied evidence dependency
++ exit controls PASS
+= downstream unlock
+```
+
+Results are modeled as persistent versioned knowledge artifacts with:
+- stable artifact ID;
+- producer work package;
+- validation state;
+- provenance requirement;
+- planned initial version;
+- downstream consumers;
+- append/supersede/revalidate history.
+
+The detailed authority is `docs/control-plane/GOVERNANCE_MODEL_EXECUTION_BLUEPRINT.md` and its machine projection.
+
+The final GMC-G19 assembly must include the complete Domain / Capability / Component / Object / Field / Relationship / State / Transition / Workflow / Control / Gate / Authority / Evidence Type / Failure / Recovery / Implementation / Test / Dependency registries plus Applicability / Comparison / Integration / Release contracts.
+
+Governance Model `1.0.0` is forbidden until the final assembly separately proves completeness, consistency, reference integrity, implementation traceability, test coverage, evidence coverage, dependency integrity, reusability and compatibility with CREATE / ADOPT / MAP / LAB.
