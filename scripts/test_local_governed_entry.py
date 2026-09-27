@@ -77,6 +77,26 @@ def main():
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: BOTH must allow secretless SSH discovery fallback")
     if both.get("credentials_verified") is not True:
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: BOTH mandatory credential gate should be satisfied by secretless fallback")
+    endpoint_failed=record_mcp_discovery_failure(both,{
+      "status":"ERROR",
+      "failure_code":"HTTP Error 404: Not Found",
+      "transport":"BOTH",
+      "endpoint":"https://mcp.example.test/",
+      "retryable":True
+    })
+    if endpoint_failed["status"]!="WAITING_FOR_SETUP_ANSWER" or endpoint_failed["next_request"].get("field")!="mcp_endpoint":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: HTTP 404 must reopen MCP endpoint correction")
+    endpoint_failed=answer_expected(endpoint_failed,"mcp_endpoint","https://mcp.example.test/mcp")
+    if endpoint_failed["next_request"]["kind"]!="MCP_DISCOVERY" or endpoint_failed.get("mcp_discovery") is not None:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: corrected MCP endpoint must return to clean discovery gate")
+    if endpoint_failed.get("hold_reason") is not None:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: corrected MCP endpoint must clear hold")
+    endpoint_history=endpoint_failed.get("mcp_discovery_history") or []
+    if len(endpoint_history)!=1 or endpoint_history[0]["evidence"].get("failure_code")!="HTTP Error 404: Not Found":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: endpoint correction must archive failed discovery evidence")
+    if endpoint_failed["answers"]["mcp_endpoint"]!="https://mcp.example.test/mcp":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: corrected MCP endpoint not persisted")
+
     failed=record_mcp_discovery_failure(both,{
       "status":"ERROR",
       "failure_code":"SSH_CERTIFICATE_BROKER_FORBIDDEN",
