@@ -95,7 +95,7 @@ jobs:
           client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
           private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
           owner: ${{ steps.process.outputs.local_start_target_owner }}
-          permission-contents: read
+          permission-contents: write
           permission-issues: write
 
       - name: Dispatch governed machine local start
