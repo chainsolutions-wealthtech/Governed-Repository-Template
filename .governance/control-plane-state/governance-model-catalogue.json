@@ -104,7 +104,29 @@
       "GMC-18",
       "GMC-19"
     ],
-    "unique_executable_item_unchanged": "C1-12-J-C"
+    "unique_executable_item_unchanged": "C1-12-J-C",
+    "items_are_work_packages": true,
+    "work_package_ids": [
+      "GMC-G01",
+      "GMC-G02",
+      "GMC-G03",
+      "GMC-G04",
+      "GMC-G05",
+      "GMC-G06",
+      "GMC-G07",
+      "GMC-G08",
+      "GMC-G09",
+      "GMC-G10",
+      "GMC-G11",
+      "GMC-G12",
+      "GMC-G13",
+      "GMC-G14",
+      "GMC-G15",
+      "GMC-G16",
+      "GMC-G17",
+      "GMC-G18",
+      "GMC-G19"
+    ]
   },
   "relational_projection": {
     "status": "PENDING_SCHEMA_EXTENSION",
@@ -124,5 +146,15 @@
     "governance_ci_result": "PASS",
     "canonical_backlog_persisted": true,
     "active_case1_gate_unchanged": true
+  },
+  "execution_blueprint": {
+    "status": "PLANNING_ONLY",
+    "human_path": "docs/control-plane/GOVERNANCE_MODEL_EXECUTION_BLUEPRINT.md",
+    "machine_path": ".governance/control-plane-state/governance-model-execution-blueprint.json",
+    "decision_id": "CPD-028",
+    "work_package_count": 19,
+    "atomic_task_count": 168,
+    "dependency_rule": "VALIDATED_OUTPUTS_AND_EVIDENCE_REQUIRED",
+    "implementation_authorized": false
   }
 }
