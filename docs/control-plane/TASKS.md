@@ -27,7 +27,7 @@ Objective: V2.7.0 Self-Governed Control Plane.
 
 ## Unique executable task
 
-`C1-13-A_MERGE_PR50_UPGRADE_EKYC_RESUME_MCP_ENDPOINT_RECOVERY`
+`C1-13-B_MERGE_PR51_REUPGRADE_EKYC_RESUME_DISCOVERY`
 
 `P12-S5` remains the active parent. No later task may become executable before this inserted corrective gate completes.
 
@@ -372,7 +372,7 @@ C1-12-K must resume the existing `Patricked-code/Gouvern#3` proof via exact-HEAD
 ### C1-13-A MCP endpoint recovery correction
 
 - Parent: `P12-S5 / C1-13`.
-- Status: `IN_PROGRESS`.
+- Status: `DONE`.
 - Second fresh repository: `Patricked-code/Ekyc`.
 - Source governed request: `#49`.
 - Target local-entry issue: `Patricked-code/Ekyc#1`.
@@ -385,3 +385,19 @@ C1-12-K must resume the existing `Patricked-code/Gouvern#3` proof via exact-HEAD
 - Minimal fix: HTTP 404 reopens `Q_MCP_ENDPOINT_RECOVERY`; correcting the endpoint archives failed evidence, clears the hold, and returns to a clean `MCP_DISCOVERY` gate.
 - TDD GREEN: Governance CI `36295231828` PASS across the full governance suite.
 - Next: merge PR #50, update the fresh target through the governed Template path, correct the endpoint to the verified MCP route, and resume from MCP discovery without replaying prior answers.
+
+
+### C1-13-B client local-entry self-test portability
+
+- Parent: `P12-S5 / C1-13`.
+- Depends on: `C1-13-A`.
+- Status: `IN_PROGRESS`.
+- PR #50 merged at `dbe0014784362393c8cfbb02ce7810d483cf2bb7`; post-merge Governance CI `36295619581` PASS.
+- Governed client upgrade produced `Patricked-code/Ekyc@2ece8cff98258f7c40cf7b7383ceb5c026db9639` and migrated the open local-entry state without losing answers.
+- Ekyc Governance CI `36295714554` failed only because the distributed local-entry self-test tried to read source-only `.github/workflows/governed-control-plane.yml`.
+- Generic defect code: `CLIENT_LOCAL_ENTRY_SELFTEST_REQUIRES_SOURCE_ONLY_CONTROL_PLANE_WORKFLOW`.
+- The source-only control-plane workflow must remain absent from client repositories.
+- PR #51 TDD RED: `36295815960`.
+- PR #51 functional GREEN: `36295850914`.
+- Fix: source-only token-permission assertions run only when `.template-source` exists.
+- Ekyc remains frozen until PR #51 merges and the correction is redistributed through the governed upgrader.
