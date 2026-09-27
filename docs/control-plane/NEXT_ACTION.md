@@ -40,3 +40,15 @@ The prior V2.8.6 pilot revalidation is already complete and must not be replayed
 - Do not start STEP 5 / `P12-S5`.
 - If a generic framework defect appears, stop pilot mutation and return the defect to the Template first.
 - The GMC programme remains `PLANNING_ONLY` and dependency-bound behind CASE 1 closure.
+
+## Framework correction discovered during C1-12-K
+
+The first live machine-local-start attempt did not advance the pilot because the source Control Plane token lacked the GitHub permission required to create a repository dispatch event.
+
+Correction evidence:
+- corrective sub-task: `C1-12-K-A`;
+- RED CI: `36292333079`;
+- GREEN CI: `36292388479`;
+- correction: local-start GitHub App token uses `Contents: write`.
+
+After the correction is merged, the required action remains exactly `C1_12_K_RERUN_GOUVERN_ISSUE_3`. Reobserve the pilot HEAD before retrying. Do not replay V2.8.6.
