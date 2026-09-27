@@ -633,6 +633,27 @@
       },
       "source_ref": "Patricked-code/Gouvern Actions run 36275524530",
       "observed_at": "2026-09-27"
+    },
+    {
+      "evidence_id": "EVID-C1-12-K-LOCAL-START-DISPATCH-DEFECT",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-12",
+      "evidence_type": "FRAMEWORK_TRANSPORT_DEFECT",
+      "status": "CORRECTED_IN_PR47",
+      "payload": {
+        "target_repository": "Patricked-code/Gouvern",
+        "target_head": "671774dfc8e8be8eac2b50d5fb8f0928591694b3",
+        "source_request_issue": 4,
+        "source_comment_id": 5852371953,
+        "defect_code": "LOCAL_START_REPOSITORY_DISPATCH_CONTENTS_WRITE_REQUIRED",
+        "required_permission": "Contents: write",
+        "prior_permission": "Contents: read",
+        "red_ci_run": 36292333079,
+        "green_ci_run": 36292388479,
+        "pilot_state_advanced": false
+      },
+      "source_ref": "Template PR #47",
+      "observed_at": "2026-09-27"
     }
   ],
   "handoffs": [
@@ -1412,6 +1433,34 @@
         "next_task": "C1-12-K"
       },
       "source_ref": "Patricked-code/Gouvern Actions run 36275524530",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-C112-K-DEFECT",
+      "event_type": "FRAMEWORK_DEFECT_DISCOVERED",
+      "scope_type": "TASK",
+      "scope_id": "C1-12-K",
+      "payload": {
+        "corrective_task": "C1-12-K-A",
+        "defect_code": "LOCAL_START_REPOSITORY_DISPATCH_CONTENTS_WRITE_REQUIRED",
+        "pilot_head": "671774dfc8e8be8eac2b50d5fb8f0928591694b3",
+        "pilot_mutation_stopped": true
+      },
+      "source_ref": "Template PR #47",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-C112-KA-DONE",
+      "event_type": "TASK_COMPLETED",
+      "scope_type": "TASK",
+      "scope_id": "C1-12-K-A",
+      "payload": {
+        "red_ci_run": 36292333079,
+        "green_ci_run": 36292388479,
+        "result": "PASS",
+        "resumed_task": "C1-12-K"
+      },
+      "source_ref": "Template PR #47",
       "occurred_at": "2026-09-27"
     }
   ]
