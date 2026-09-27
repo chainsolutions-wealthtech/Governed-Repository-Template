@@ -596,6 +596,26 @@
       "sha": null,
       "source_ref": "CPD-025",
       "created_at": "2026-09-27"
+    },
+    {
+      "artifact_id": "GMC-EXECUTION-BLUEPRINT-HUMAN",
+      "run_id": null,
+      "phase_id": null,
+      "artifact_type": "GOVERNANCE_MODEL_EXECUTION_BLUEPRINT",
+      "path_or_ref": "docs/control-plane/GOVERNANCE_MODEL_EXECUTION_BLUEPRINT.md",
+      "sha": null,
+      "source_ref": "CPD-028",
+      "created_at": "2026-09-27"
+    },
+    {
+      "artifact_id": "GMC-EXECUTION-BLUEPRINT-MACHINE",
+      "run_id": null,
+      "phase_id": null,
+      "artifact_type": "GOVERNANCE_MODEL_EXECUTION_BLUEPRINT_PROJECTION",
+      "path_or_ref": ".governance/control-plane-state/governance-model-execution-blueprint.json",
+      "sha": null,
+      "source_ref": "CPD-028",
+      "created_at": "2026-09-27"
     }
   ],
   "canonical_authorities": [
@@ -1071,6 +1091,23 @@
         "execution_blueprint_required": true
       },
       "source_ref": "docs/control-plane/TASKS.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-GMC-009",
+      "event_type": "EXECUTION_BLUEPRINT_COMPLETED",
+      "scope_type": "PROGRAM",
+      "scope_id": "GOVERNANCE_MODEL_CATALOGUE_COMPLETION",
+      "payload": {
+        "decision_id": "CPD-028",
+        "work_packages": 19,
+        "atomic_tasks": 168,
+        "planning_only": true,
+        "implementation_authorized": false,
+        "chronology": "GMC-G01..GMC-G19",
+        "active_item_unchanged": "C1-12-J-C"
+      },
+      "source_ref": "docs/control-plane/GOVERNANCE_MODEL_EXECUTION_BLUEPRINT.md",
       "occurred_at": "2026-09-27"
     }
   ]
