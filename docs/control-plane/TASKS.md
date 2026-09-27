@@ -158,3 +158,40 @@ After selection, the selected case's governed questionnaire/action state machine
 | RTE-013 | Expose the automated purpose router in future Governance API/Admin UI | FUTURE | frontend after semantics stabilize |
 
 These routing tasks are planned architecture work and do not supersede the current unique executable task `C1-12-F`.
+
+## Queued work package — GOVERNANCE_MODEL_CATALOGUE_COMPLETION
+
+Authority: `CP-GOVMODEL-001`.
+
+Parent dependency: `P12-S6`.
+
+The active unique executable item remains `C1-12-J-C`.
+
+| Phase | Task | Description | Status | Depends on |
+|---|---|---|---|---|
+| GMC-A | GMC-01 | Separate central Governance Model from application strategies | PLANNED | P12-S6 |
+| GMC-A | GMC-02 | Define canonical anatomy/metamodel and stable IDs | PLANNED | GMC-01 |
+| GMC-B | GMC-03 | Inventory and normalize all governance domains | PLANNED | GMC-02 |
+| GMC-B | GMC-04 | Inventory capabilities per domain | PLANNED | GMC-03 |
+| GMC-B | GMC-05 | Decompose capabilities into reusable components | PLANNED | GMC-04 |
+| GMC-B | GMC-06 | Inventory objects, fields and relationships | PLANNED | GMC-05 |
+| GMC-C | GMC-07 | Inventory all state machines | PLANNED | GMC-06 |
+| GMC-C | GMC-08 | Inventory transitions, forbidden transitions and recovery semantics | PLANNED | GMC-07 |
+| GMC-C | GMC-09 | Build exhaustive Control Registry | PLANNED | GMC-08 |
+| GMC-C | GMC-10 | Build Gate Registry | PLANNED | GMC-09 |
+| GMC-C | GMC-11 | Build Evidence Type/Freshness Registry | PLANNED | GMC-10 |
+| GMC-D | GMC-12 | Map abstract model to current implementation artifacts/tests | PLANNED | GMC-11 |
+| GMC-D | GMC-13 | Build global dependency graph and installation order | PLANNED | GMC-12 |
+| GMC-D | GMC-16 | Extend existing relational memory with canonical model registries using additive migration/materializer | PLANNED | GMC-13 |
+| GMC-E | GMC-14 | Build applicability + semantic model-to-repository comparator | PLANNED | GMC-16 |
+| GMC-E | GMC-15 | Extend semantic comparison to object/field/control/test level | PLANNED | GMC-14 |
+| GMC-F | GMC-17 | Make Control Plane load/version/validate the shared Governance Model | PLANNED | GMC-15 |
+| GMC-F | GMC-18 | Rebind CREATE/ADOPT/MAP/LAB to model + applicability + comparison | PLANNED | GMC-17 |
+| GMC-G | GMC-19 | Cross-case E2E validation, reconcile common patterns, freeze Governance Model 1.0.0 | PLANNED | GMC-18 |
+
+### GMC integration rules
+
+- Knowledge capture may happen before P12-S6; mutable implementation progression may not bypass the current CASE 1 chain.
+- Model inventory is extractive first: observe existing authorities/code/schemas/workflows/tests before declaring gaps.
+- Existing `ARCH-*`, `IDN-*`, `RTE-*` tasks remain canonical and are linked into GMC rather than copied.
+- PostgreSQL runtime, Governance API and Admin UI remain downstream of GMC-19 and cross-case stabilization.

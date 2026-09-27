@@ -246,6 +246,53 @@
       "status": "ACCEPTED",
       "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "decided_at": "2026-09-26"
+    },
+    {
+      "decision_id": "CPD-025",
+      "scope_type": "CANONICAL_GOVERNANCE_MODEL",
+      "scope_id": "CP-GOVMODEL-001",
+      "decision_key": "CENTRAL_GOVERNANCE_MODEL_FIRST_CLASS",
+      "value": {
+        "model_is_reference": true,
+        "application_strategies": [
+          "CREATE_NEW_REPOSITORY",
+          "ADOPT_EXISTING_REPOSITORY",
+          "MAP_EXISTING_PROJECT",
+          "LAB_EVOLUTION"
+        ],
+        "cases_consume_model": true
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "decided_at": "2026-09-27"
+    },
+    {
+      "decision_id": "CPD-026",
+      "scope_type": "CANONICAL_MEMORY",
+      "scope_id": "CONTROL_PLANE",
+      "decision_key": "EXTEND_EXISTING_RELATIONAL_MEMORY_FOR_GOVERNANCE_MODEL",
+      "value": {
+        "parallel_database_forbidden": true,
+        "use_existing_materializer": true,
+        "target_authority": "CP-GOVMODEL-001"
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "decided_at": "2026-09-27"
+    },
+    {
+      "decision_id": "CPD-027",
+      "scope_type": "PROGRAM",
+      "scope_id": "CONTROL_PLANE",
+      "decision_key": "GOVERNANCE_MODEL_CATALOGUE_PRIORITY_CHAIN",
+      "value": {
+        "programme": "GMC-01..GMC-19",
+        "dependency": "P12-S6",
+        "unique_executable_item_unchanged": "C1-12-J-C"
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "decided_at": "2026-09-27"
     }
   ],
   "checkpoints": [
@@ -443,6 +490,18 @@
       "dependent_revalidation": [],
       "source_ref": "CPD-022",
       "created_at": "2026-09-26"
+    },
+    {
+      "feedback_id": "FB-20260927-GMC-001",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-12",
+      "feedback_class": "NEW_REQUIREMENT",
+      "content": "Treat the central Governance Model as the reusable reference object, persist its complete anatomy and remaining work in canonical memory, and organize the work hierarchically without bypassing current priorities.",
+      "effect": "ADD_CANONICAL_GOVERNANCE_MODEL_AUTHORITY_AND_DEPENDENCY_BOUND_GMC_BACKLOG_WITHOUT_CHANGING_ACTIVE_CASE1_GATE",
+      "earliest_affected_phase_id": "C1-12",
+      "dependent_revalidation": [],
+      "source_ref": "CPD-025",
+      "created_at": "2026-09-27"
     }
   ],
   "artifacts": [
@@ -485,6 +544,16 @@
       "sha": "02173120acfa3941e84bf69c89dac0e8d74b47ce",
       "source_ref": "Template PR #37",
       "created_at": "2026-09-26"
+    },
+    {
+      "artifact_id": "CP-GOVMODEL-001",
+      "run_id": null,
+      "phase_id": null,
+      "artifact_type": "CANONICAL_GOVERNANCE_MODEL_CATALOGUE_PLAN",
+      "path_or_ref": "docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md",
+      "sha": null,
+      "source_ref": "CPD-025",
+      "created_at": "2026-09-27"
     }
   ],
   "canonical_authorities": [
@@ -494,9 +563,19 @@
       "canonical_path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
       "scope": "CONTROL_PLANE_SOURCE_ONLY",
       "status": "ACCEPTED_TARGET_ARCHITECTURE",
-      "current_revision": 5,
+      "current_revision": 6,
       "source_decision_id": "CPD-014",
       "created_at": "2026-09-26"
+    },
+    {
+      "authority_id": "CP-GOVMODEL-001",
+      "authority_type": "CANONICAL_GOVERNANCE_MODEL_CATALOGUE_PLAN",
+      "canonical_path": "docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md",
+      "scope": "CONTROL_PLANE_SOURCE_ONLY",
+      "status": "ACCEPTED_TARGET_MODEL_CATALOGUE_PLAN",
+      "current_revision": 1,
+      "source_decision_id": "CPD-025",
+      "created_at": "2026-09-27"
     }
   ],
   "canonical_authority_revisions": [
@@ -559,6 +638,30 @@
       "source_decision_id": "CPD-024",
       "source_ref": ".governance/control-plane-state/canonical-architecture.json",
       "created_at": "2026-09-26"
+    },
+    {
+      "revision_id": "CP-ARCH-001-R6",
+      "authority_id": "CP-ARCH-001",
+      "revision_number": 6,
+      "subject_head_sha": "76fae0dc132ef7e91e659c4dad44cd3522d2c8c4",
+      "content_sha": null,
+      "supersedes_revision_id": "CP-ARCH-001-R5",
+      "reason": "Make the central Governance Model a first-class reusable authority and bind its catalogue to the existing relational memory.",
+      "source_decision_id": "CPD-025",
+      "source_ref": ".governance/control-plane-state/canonical-architecture.json",
+      "created_at": "2026-09-27"
+    },
+    {
+      "revision_id": "CP-GOVMODEL-001-R1",
+      "authority_id": "CP-GOVMODEL-001",
+      "revision_number": 1,
+      "subject_head_sha": "76fae0dc132ef7e91e659c4dad44cd3522d2c8c4",
+      "content_sha": null,
+      "supersedes_revision_id": null,
+      "reason": "Establish central Governance Model catalogue authority, storage contract and GMC-01..GMC-19 hierarchical completion programme.",
+      "source_decision_id": "CPD-025",
+      "source_ref": ".governance/control-plane-state/governance-model-catalogue.json",
+      "created_at": "2026-09-27"
     }
   ],
   "canonical_memory_events": [
@@ -812,6 +915,81 @@
       },
       "source_ref": "Template PR #37",
       "occurred_at": "2026-09-26"
+    },
+    {
+      "event_id": "CME-20260927-GMC-001",
+      "event_type": "OWNER_FEEDBACK_RECEIVED",
+      "scope_type": "CANONICAL_GOVERNANCE_MODEL",
+      "scope_id": "CP-GOVMODEL-001",
+      "payload": {
+        "feedback_id": "FB-20260927-GMC-001"
+      },
+      "source_ref": "CPD-025",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-GMC-002",
+      "event_type": "DECISION_ACCEPTED",
+      "scope_type": "CANONICAL_GOVERNANCE_MODEL",
+      "scope_id": "CP-GOVMODEL-001",
+      "payload": {
+        "decision_id": "CPD-025",
+        "decision_key": "CENTRAL_GOVERNANCE_MODEL_FIRST_CLASS"
+      },
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-GMC-003",
+      "event_type": "CANONICAL_AUTHORITY_CREATED",
+      "scope_type": "AUTHORITY",
+      "scope_id": "CP-GOVMODEL-001",
+      "payload": {
+        "revision_id": "CP-GOVMODEL-001-R1",
+        "status": "ACCEPTED_TARGET_MODEL_CATALOGUE_PLAN"
+      },
+      "source_ref": "docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-ARCH-007",
+      "event_type": "ARCHITECTURE_REVISION_ACCEPTED",
+      "scope_type": "AUTHORITY",
+      "scope_id": "CP-ARCH-001",
+      "payload": {
+        "revision_id": "CP-ARCH-001-R6",
+        "decision_id": "CPD-025",
+        "supersedes": "CP-ARCH-001-R5"
+      },
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-GMC-004",
+      "event_type": "DECISION_ACCEPTED",
+      "scope_type": "CANONICAL_MEMORY",
+      "scope_id": "CONTROL_PLANE",
+      "payload": {
+        "decision_id": "CPD-026",
+        "decision_key": "EXTEND_EXISTING_RELATIONAL_MEMORY_FOR_GOVERNANCE_MODEL",
+        "projection_status": "PENDING_SCHEMA_EXTENSION"
+      },
+      "source_ref": "docs/control-plane/DATA_MODEL.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-GMC-005",
+      "event_type": "BACKLOG_ENRICHED",
+      "scope_type": "PROGRAM",
+      "scope_id": "CONTROL_PLANE",
+      "payload": {
+        "decision_id": "CPD-027",
+        "tasks": "GMC-01..GMC-19",
+        "dependency": "P12-S6",
+        "active_item_unchanged": "C1-12-J-C"
+      },
+      "source_ref": "docs/control-plane/TASKS.md",
+      "occurred_at": "2026-09-27"
     }
   ]
 }

@@ -4,17 +4,19 @@
   "authority_type": "CANONICAL_TARGET_ARCHITECTURE",
   "scope": "CONTROL_PLANE_SOURCE_ONLY",
   "status": "ACCEPTED_TARGET_ARCHITECTURE",
-  "current_revision": 5,
+  "current_revision": 6,
   "canonical_path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
   "revision": {
-    "revision_id": "CP-ARCH-001-R5",
-    "revision_number": 5,
-    "subject_head_sha": "784e8738758ac9de1d59c3119304a833b720f213",
-    "supersedes_revision_id": "CP-ARCH-001-R4",
+    "revision_id": "CP-ARCH-001-R6",
+    "revision_number": 6,
+    "subject_head_sha": "76fae0dc132ef7e91e659c4dad44cd3522d2c8c4",
+    "supersedes_revision_id": "CP-ARCH-001-R5",
     "source_decision_ids": [
-      "CPD-024"
+      "CPD-025",
+      "CPD-026",
+      "CPD-027"
     ],
-    "reason": "Add complete portable self-test isolation contract for fresh-template simulations executed from instantiated clients.",
+    "reason": "Make the central Governance Model a first-class reusable authority before application strategies and bind its catalogue to the existing relational control-plane memory.",
     "approval_eligible_from_imported_memory": false
   },
   "source_provenance": {
@@ -40,7 +42,11 @@
     "EXACT_HEAD_BEFORE_MUTATION",
     "GIT_VERSIONED_AUTHORITIES_REMAIN_FOUNDATIONAL",
     "WORKFLOW_SEMANTICS_FIRST_FRONTEND_SECOND",
-    "IMPORTED_MEMORY_NE_LIVE_APPROVAL"
+    "IMPORTED_MEMORY_NE_LIVE_APPROVAL",
+    "GOVERNANCE_MODEL_PRECEDES_APPLICATION_STRATEGIES",
+    "CASES_CONSUME_SHARED_MODEL",
+    "NO_PARALLEL_CANONICAL_DATABASE",
+    "SEMANTIC_COMPARISON_NE_FILENAME_COMPARISON"
   ],
   "live_execution_reference": {
     "current_state": "docs/control-plane/CURRENT_STATE.md",
@@ -86,17 +92,24 @@
     "CAPABILITY_RECONCILIATION",
     "CAPABILITY_EXISTING_REPO_ADOPTION",
     "CAPABILITY_PROJECT_MAPPING",
-    "CAPABILITY_LAB_EVOLUTION"
+    "CAPABILITY_LAB_EVOLUTION",
+    "CAPABILITY_GOVERNANCE_MODEL_CATALOGUE",
+    "CAPABILITY_APPLICABILITY_ENGINE",
+    "CAPABILITY_SEMANTIC_COMPARISON_ENGINE"
   ],
   "roadmap": [
     "STABILIZE_CASE_1",
     "PROVE_NORMAL_GOVERNED_ENTRY",
     "PROVE_SECOND_FRESH_REPOSITORY_E2E",
     "CLOSE_CASE_1",
+    "ESTABLISH_GOVERNANCE_MODEL_CATALOGUE",
+    "BUILD_APPLICABILITY_ENGINE",
+    "BUILD_SEMANTIC_COMPARISON_ENGINE",
     "TEST_CASE_2",
     "TEST_CASE_3",
     "TEST_CASE_4",
     "RECONCILE_COMMON_PATTERNS",
+    "FREEZE_GOVERNANCE_MODEL_1_0_0",
     "STABILIZE_RELATIONAL_MODEL",
     "STRENGTHEN_RECONCILIATION_UPGRADE_REPAIR",
     "EXPOSE_GOVERNANCE_API",

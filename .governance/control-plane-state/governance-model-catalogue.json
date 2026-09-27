@@ -1,0 +1,120 @@
+{
+  "schema_version": "1.0.0",
+  "authority_id": "CP-GOVMODEL-001",
+  "authority_type": "CANONICAL_GOVERNANCE_MODEL_CATALOGUE_PLAN",
+  "scope": "CONTROL_PLANE_SOURCE_ONLY",
+  "status": "ACCEPTED_TARGET_MODEL_CATALOGUE_PLAN",
+  "current_revision": 1,
+  "canonical_path": "docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md",
+  "revision": {
+    "revision_id": "CP-GOVMODEL-001-R1",
+    "revision_number": 1,
+    "subject_head_sha": "76fae0dc132ef7e91e659c4dad44cd3522d2c8c4",
+    "supersedes_revision_id": null,
+    "source_decision_ids": [
+      "CPD-025",
+      "CPD-026",
+      "CPD-027"
+    ],
+    "reason": "Establish the central governance model as the reusable reference object, preserve the existing relational memory, and register the hierarchical completion programme."
+  },
+  "invariants": [
+    "GOVERNANCE_MODEL_PRECEDES_APPLICATION_STRATEGIES",
+    "CASES_CONSUME_MODEL_DO_NOT_REDEFINE_IT",
+    "NO_PARALLEL_CANONICAL_DATABASE",
+    "CONCEPT_NE_IMPLEMENTATION_ARTIFACT",
+    "SEMANTIC_COMPARISON_NE_FILENAME_COMPARISON",
+    "MODEL_CHANGE_IS_VERSIONED_AND_ATTESTED",
+    "ACTIVE_CASE1_GATE_UNCHANGED"
+  ],
+  "existing_foundation": {
+    "relational_schema": ".governance/control-plane-db/001_schema.sql",
+    "agent_activity": ".governance/control-plane-db/002_agent_activity.sql",
+    "canonical_authorities": ".governance/control-plane-db/003_canonical_authorities.sql",
+    "catalogue": ".governance/control-plane-db/catalog.json",
+    "runtime_seed": ".governance/control-plane-db/runtime-seed.json",
+    "materializer": ".governance/control-plane-db/materialize.py"
+  },
+  "planned_registries": [
+    "DOMAIN",
+    "CAPABILITY",
+    "COMPONENT",
+    "OBJECT",
+    "FIELD",
+    "RELATIONSHIP",
+    "STATE",
+    "TRANSITION",
+    "WORKFLOW",
+    "CONTROL",
+    "GATE",
+    "AUTHORITY",
+    "EVIDENCE_TYPE",
+    "FAILURE",
+    "RECOVERY",
+    "IMPLEMENTATION",
+    "TEST",
+    "DEPENDENCY"
+  ],
+  "semantic_comparison_statuses": [
+    "PRESENT_EXACT",
+    "PRESENT_EQUIVALENT",
+    "PRESENT_PARTIAL",
+    "ABSENT",
+    "CONFLICT",
+    "OBSOLETE",
+    "UNKNOWN",
+    "NOT_APPLICABLE"
+  ],
+  "applicability": [
+    "MANDATORY",
+    "OPTIONAL",
+    "CONDITIONAL",
+    "NOT_APPLICABLE"
+  ],
+  "programme": {
+    "status": "QUEUED_DEPENDENCY_BOUND",
+    "dependency": "P12-S6",
+    "phases": [
+      "GMC-A",
+      "GMC-B",
+      "GMC-C",
+      "GMC-D",
+      "GMC-E",
+      "GMC-F",
+      "GMC-G"
+    ],
+    "tasks": [
+      "GMC-01",
+      "GMC-02",
+      "GMC-03",
+      "GMC-04",
+      "GMC-05",
+      "GMC-06",
+      "GMC-07",
+      "GMC-08",
+      "GMC-09",
+      "GMC-10",
+      "GMC-11",
+      "GMC-12",
+      "GMC-13",
+      "GMC-14",
+      "GMC-15",
+      "GMC-16",
+      "GMC-17",
+      "GMC-18",
+      "GMC-19"
+    ],
+    "unique_executable_item_unchanged": "C1-12-J-C"
+  },
+  "relational_projection": {
+    "status": "PENDING_SCHEMA_EXTENSION",
+    "target_migration": "004_governance_model_catalog.sql",
+    "use_existing_materializer": true,
+    "duplicate_database_forbidden": true
+  },
+  "model_versioning": {
+    "current": "UNRELEASED",
+    "target_first_complete_release": "1.0.0",
+    "template_version_is_independent": true
+  }
+}
