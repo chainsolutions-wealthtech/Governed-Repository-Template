@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "handoff_id": "CP-HANDOFF-20260927-012",
+  "handoff_id": "CP-HANDOFF-20260927-013",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "canonical_branch": "main",
-  "baseline_subject_head": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
+  "baseline_subject_head": "113c50aa765ae886cd7a085637b8d5dbb5c2766b",
   "active_branch": "main",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "current_task": "C1-12-J-C-A_RECONCILE_GMC_POST_MERGE_INTEGRITY",
-  "unique_next_action": "C1_12_J_C_A_RECONCILE_GMC_POST_MERGE_INTEGRITY",
+  "current_task": "C1-12-J-C_RELEASE_AND_REUPGRADE_CASE1_PILOT",
+  "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT",
   "read_first": [
     "docs/control-plane/CURRENT_STATE.md",
     ".governance/control-plane-state/canonical-architecture.json",
