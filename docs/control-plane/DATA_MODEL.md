@@ -306,3 +306,26 @@ These choices are stored as governed answers/events and must be resumable. A rec
 The existing active `entry_action` router is preserved until the two-stage router is implemented and regression-tested. The new fields are currently target/planned semantics, not a silent runtime behavior change.
 
 Human users provide decisions/approvals only; the system performs authorized technical actions.
+
+## Governance Model Catalogue extension
+
+Decision authorities: `CPD-025`, `CPD-026`, `CPD-027`.
+
+Canonical model authority: `CP-GOVMODEL-001`.
+
+The existing relational memory will be extended additively after the current CASE 1 dependency chain permits execution. The target extension covers one shared governance-model catalogue for domains, capabilities, components, objects, fields, relationships, states, transitions, workflows, controls, gates, evidence types, failures/recoveries, implementation mappings, tests and dependencies.
+
+Planned implementation rule:
+
+```text
+versioned governance-model authority/catalogue
++ next additive SQL migration
+        ↓
+existing materialize.py
+        ↓
+SQLite validation projection
+        ↓
+future PostgreSQL projection
+```
+
+A second canonical database or second materializer is forbidden. Until the schema extension exists, the detailed catalogue is explicitly `PENDING_PROJECTION` and its accepted target is stored in `CP-GOVMODEL-001`.
