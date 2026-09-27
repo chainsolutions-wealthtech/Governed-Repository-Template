@@ -186,7 +186,7 @@ Exit evidence:
 - relational materialization: PASS;
 - PR #42 P1/P2 review threads: RESOLVED.
 
-The gate is satisfied. `C1-12-J-C` resumes as the unique executable task.
+The gate is satisfied. `C1-12-J-C` subsequently completed on pilot HEAD `671774dfc8e8be8eac2b50d5fb8f0928591694b3` with Governance CI `36275524530` PASS. Parent `C1-12-J` is DONE and `C1-12-K` is now the unique executable task.
 
 ## Queued work package — GOVERNANCE_MODEL_CATALOGUE_COMPLETION
 
@@ -194,7 +194,7 @@ Authority: `CP-GOVMODEL-001`.
 
 Parent dependency: `P12-S6`.
 
-The active unique executable item remains `C1-12-J-C`.
+The active unique executable item is now `C1-12-K`.
 
 | Phase | Task | Description | Status | Depends on |
 |---|---|---|---|---|
@@ -320,3 +320,19 @@ The machine blueprint currently defines:
 - a final `GMC-G19` assembly/release contract.
 
 The artifacts are planning objects only until their producing work packages are executed and validated.
+
+
+## Current CASE 1 execution — V2.8.6 pilot revalidation complete
+
+### C1-12-J-C / J completion and C1-12-K activation
+
+- `C1-12-J-C`: `DONE`
+- `C1-12-J`: `DONE`
+- Pilot HEAD: `671774dfc8e8be8eac2b50d5fb8f0928591694b3`
+- Pilot Template version: `2.8.6`
+- Pilot Governance CI: `36275524530` / `PASS`
+- Upgrade replay required: `false`
+- `C1-12-K`: `IN_PROGRESS`
+- Unique action: `C1_12_K_RERUN_GOUVERN_ISSUE_3`
+
+C1-12-K must resume the existing `Patricked-code/Gouvern#3` proof via exact-HEAD machine local-entry start and may not advance to C1-12-L until the resulting entry is proven to be `NORMAL_GOVERNED_ENTRY`.

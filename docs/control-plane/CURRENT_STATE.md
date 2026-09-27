@@ -11,7 +11,7 @@
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
 - Template version: `2.8.6`
 - V2.7.0 release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`
-- Source-state revision: `19`
+- Source-state revision: `20`
 
 ## Current framework program
 
@@ -51,12 +51,12 @@ From this framework program:
 
 - Framework product V2.8.6 is released; Template Governance CI run `36275324940`: PASS.
 - Canonical `main` observed before the Governance Model catalogue enrichment: `76fae0dc132ef7e91e659c4dad44cd3522d2c8c4`.
-- The current chronological CASE 1 action is still the governed exact-HEAD V2.8.6 re-upgrade/revalidation of the external pilot.
+- The governed V2.8.6 external pilot re-upgrade/revalidation is complete and verified; the current chronological CASE 1 action is the existing `Gouvern#3` NORMAL_GOVERNED_ENTRY rerun.
 - The Governance Model Catalogue programme is accepted canonical backlog but dependency-bound behind CASE 1 closure; it is not an executable bypass.
 
 ## Unique next action
 
-`C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`
+`C1_12_K_RERUN_GOUVERN_ISSUE_3`
 
 ## Latest proof
 
@@ -238,3 +238,17 @@ The future admin web application is intentionally deferred until all structuring
 - `C1-12-J-C-A`: DONE.
 - External pilot mutation gate is reopened only through the original chronological task `C1-12-J-C`.
 - Unique next action restored: `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`.
+
+
+## V2.8.6 pilot revalidation reconciled
+
+- Source canonical main reobserved before reconciliation: `dc2c1d5244aa11eaa9d4486edb5d3a1cc166ed6f`.
+- Pilot `Patricked-code/Gouvern` current main: `671774dfc8e8be8eac2b50d5fb8f0928591694b3`.
+- Pilot upgrade commit message: `governance: upgrade repository-local setup to v2.8.6`.
+- Pilot manifest confirms Template version `2.8.6`.
+- Pilot Governance CI run `36275524530`: SUCCESS on the exact current pilot HEAD.
+- All Governance CI steps passed, including connection-intent routing and governed-upgrade HEAD continuity.
+- Therefore `C1-12-J-C` and parent `C1-12-J` are DONE.
+- The V2.8.6 upgrade must not be replayed.
+- `C1-12-K` is now IN_PROGRESS.
+- Unique next action: `C1_12_K_RERUN_GOUVERN_ISSUE_3`.

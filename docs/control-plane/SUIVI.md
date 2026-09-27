@@ -280,3 +280,18 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Inserted correction `C1-12-J-C-A` completed.
 - Original CASE 1 chronological action restored: `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`.
 - No direct mutation of the external pilot occurred during the framework correction.
+
+
+## 2026-09-27 — V2.8.6 pilot revalidation reconciled
+
+- Reobserved Template main at `dc2c1d5244aa11eaa9d4486edb5d3a1cc166ed6f`.
+- Reobserved `Patricked-code/Gouvern` main at `671774dfc8e8be8eac2b50d5fb8f0928591694b3`.
+- Verified the pilot head is the governed V2.8.6 upgrade commit, parented by the prior V2.8.5 pilot head.
+- Verified `.governance/TEMPLATE_MANIFEST.json` reports `2.8.6`.
+- Verified Pilot Governance CI run `36275524530` completed `SUCCESS` on the exact current pilot HEAD.
+- Every pilot Governance CI step passed, including connection intent routing and governed upgrade session HEAD continuity.
+- Historical source state lag was reconciled instead of replaying the already completed upgrade.
+- `C1-12-J-C`: DONE.
+- `C1-12-J`: DONE.
+- `C1-12-K`: IN_PROGRESS.
+- Unique next action: `C1_12_K_RERUN_GOUVERN_ISSUE_3`.

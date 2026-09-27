@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 21,
+  "revision": 22,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -124,15 +124,18 @@
     },
     {
       "id": "C1-12-J",
-      "status": "ACTIVE_PARENT",
+      "status": "DONE",
       "depends_on": [
         "C1-12-I-B"
       ],
-      "next_action": "OBTAIN_ALL_GREEN_EXTERNAL_PILOT_CI"
+      "next_action": null,
+      "evidence": [
+        "C1-12-J-C completed at pilot 671774dfc8e8be8eac2b50d5fb8f0928591694b3"
+      ]
     },
     {
       "id": "C1-12-K",
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "depends_on": [
         "C1-12-J"
       ],
@@ -454,11 +457,16 @@
     },
     {
       "id": "C1-12-J-C",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-12-J-B"
       ],
-      "next_action": "RELEASE_AND_REUPGRADE_CASE1_PILOT"
+      "next_action": null,
+      "evidence": [
+        "Patricked-code/Gouvern@671774dfc8e8be8eac2b50d5fb8f0928591694b3",
+        "Pilot Governance CI 36275524530 PASS",
+        "Template version 2.8.6 confirmed from .governance/TEMPLATE_MANIFEST.json"
+      ]
     },
     {
       "id": "C1-12-J-C-A",
@@ -633,7 +641,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-12-J-C",
+  "unique_executable_item": "C1-12-K",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",

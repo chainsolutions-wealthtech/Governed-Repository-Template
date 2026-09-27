@@ -250,3 +250,20 @@
 - `C1-12-J-C-A`: DONE.
 - Pilot mutation gate reopened only through the pre-existing governed task `C1-12-J-C`.
 - Unique next action: `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`.
+
+
+## Entry AAL-20260927-C112-JC-001
+
+- Agent identity: ChatGPT
+- Workstream: CASE 1 / C1-12 V2.8.6 pilot revalidation reconciliation
+- Template source main observed: `dc2c1d5244aa11eaa9d4486edb5d3a1cc166ed6f`
+- Pilot repository: `Patricked-code/Gouvern`
+- Pilot main observed: `671774dfc8e8be8eac2b50d5fb8f0928591694b3`
+- Pilot Template version: `2.8.6`
+- Pilot Governance CI run: `36275524530`
+- Pilot Governance CI result: `PASS`
+- Finding: the governed V2.8.6 pilot upgrade had already completed, so replaying it would be incorrect.
+- Action: reconcile source machine/human/relational authorities to the live evidence.
+- `C1-12-J-C` and parent `C1-12-J`: DONE.
+- `C1-12-K`: IN_PROGRESS.
+- Unique next action: `C1_12_K_RERUN_GOUVERN_ISSUE_3`.
