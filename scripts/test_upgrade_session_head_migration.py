@@ -117,6 +117,12 @@ def main() -> None:
     if 'if (ROOT/".template-source").exists():' not in local_entry_test:
         raise SystemExit("UPGRADE_SELFTEST_FAILED: client local-entry test must guard source-only control-plane assertions")
 
+    # Governance Model state is source-only. The distributed integrity test
+    # must explicitly skip client repositories that do not have .template-source.
+    governance_model_test=(upgrade.ROOT / "scripts" / "test_governance_model_integrity.py").read_text(encoding="utf-8")
+    if 'if not (ROOT/".template-source").exists():' not in governance_model_test:
+        raise SystemExit("UPGRADE_SELFTEST_FAILED: client governance-model integrity test must skip source-only model state")
+
     # Portable client CI requires the generic intent runtime/test surface.
     for required in [
         '"scripts/governance_agent.py"',
