@@ -116,5 +116,13 @@
     "current": "UNRELEASED",
     "target_first_complete_release": "1.0.0",
     "template_version_is_independent": true
+  },
+  "merge_attestation": {
+    "pr": 39,
+    "merge_subject_head": "6fb12122d5a0812f6ceca063b1d7af13511003bc",
+    "governance_ci_run": 36284616415,
+    "governance_ci_result": "PASS",
+    "canonical_backlog_persisted": true,
+    "active_case1_gate_unchanged": true
   }
 }
