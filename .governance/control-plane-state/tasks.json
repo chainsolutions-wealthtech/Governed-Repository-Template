@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 16,
+  "revision": 17,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
