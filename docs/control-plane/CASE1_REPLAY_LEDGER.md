@@ -416,7 +416,10 @@ For this CASE 1 proof, choose an action that demonstrates normal entry without b
 8. Required next pattern remains: fix generic template first → CI → governed upgrade → client CI → resume `Gouvern#3`.
 9. PR #42 post-merge review introduced a new generic framework correction gate before pilot mutation: artifact consumer/dependency reciprocity must be repaired and regression-tested.
 10. CP-GOVMODEL-001 must advance from R1 to an append/supersede R2 for the CPD-028/CPD-029 normative enrichment.
-11. Current inserted next action: `C1_12_J_C_A_RECONCILE_GMC_POST_MERGE_INTEGRITY`; pilot re-upgrade remains blocked until Template CI/merge/post-merge attestation pass.
+11. Inserted correction action `C1_12_J_C_A_RECONCILE_GMC_POST_MERGE_INTEGRITY` paused pilot mutation while the Template defect was repaired.
+12. PR #43 merged the generic integrity correction at `113c50aa765ae886cd7a085637b8d5dbb5c2766b`; Governance CI run `36289874574` passed, including GMC projection integrity and relational materialization.
+13. PR #42 P1/P2 review threads were resolved after the fix merged.
+14. `C1-12-J-C-A` is complete; current action returns to `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT` and the governed external pilot re-upgrade may resume from a freshly observed pilot HEAD.
 
 ### Agent-work requirement
 
