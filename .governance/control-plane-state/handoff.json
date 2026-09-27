@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0.0",
-  "handoff_id": "CP-HANDOFF-20260927-010",
+  "handoff_id": "CP-HANDOFF-20260927-011",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "canonical_branch": "main",
-  "baseline_subject_head": "76fae0dc132ef7e91e659c4dad44cd3522d2c8c4",
+  "baseline_subject_head": "6fb12122d5a0812f6ceca063b1d7af13511003bc",
   "active_branch": "main",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
   "current_task": "C1-12-J-C_RELEASE_AND_REUPGRADE_CASE1_PILOT",
