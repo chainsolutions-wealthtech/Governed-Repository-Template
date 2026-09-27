@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0.0",
-  "handoff_id": "CP-HANDOFF-20260926-009",
+  "handoff_id": "CP-HANDOFF-20260927-010",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "canonical_branch": "main",
-  "baseline_subject_head": "02173120acfa3941e84bf69c89dac0e8d74b47ce",
+  "baseline_subject_head": "76fae0dc132ef7e91e659c4dad44cd3522d2c8c4",
   "active_branch": "main",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
   "current_task": "C1-12-J-C_RELEASE_AND_REUPGRADE_CASE1_PILOT",
@@ -12,6 +12,8 @@
     "docs/control-plane/CURRENT_STATE.md",
     ".governance/control-plane-state/canonical-architecture.json",
     "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+    "docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md",
+    ".governance/control-plane-state/governance-model-catalogue.json",
     "docs/control-plane/IMPORTED_MEMORY_VERIFICATION.md",
     "docs/control-plane/PROGRAM.md",
     "docs/control-plane/TASKS.md",
@@ -29,6 +31,8 @@
     "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",
     "DO_NOT_REPURPOSE_DISTRIBUTED_ROOT_PROJECT_STATE_AS_SOURCE_MEMORY",
     "SOURCE_ONLY_MEMORY_MUST_NOT_SURVIVE_CLIENT_INITIALIZATION",
-    "MCP_READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM"
+    "MCP_READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
+    "GOVERNANCE_MODEL_PRECEDES_APPLICATION_STRATEGIES",
+    "NO_PARALLEL_CANONICAL_DATABASE"
   ]
 }
