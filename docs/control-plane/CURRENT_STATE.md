@@ -195,3 +195,13 @@ The future admin web application is intentionally deferred until all structuring
 - Complete portable connection-intent fixture: PASS.
 - Real client/pilot state mutation by self-test: NONE.
 - Current next action: governed exact-HEAD re-upgrade of the external CASE 1 pilot.
+
+## Governance Model Catalogue programme accepted
+
+- New source-only authority: `CP-GOVMODEL-001` at `docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md`.
+- Purpose: make the central Governance Model independently enumerable, versioned, comparable and reusable before CREATE/ADOPT/MAP/LAB consume it.
+- Decisions: `CPD-025` through `CPD-027`.
+- Programme: `GMC-01..GMC-19`, grouped into phases `GMC-A..GMC-G`.
+- Relational status: `PENDING_SCHEMA_EXTENSION`; the existing control-plane database/materializer will be extended, not replaced.
+- Priority: dependency-bound behind `P12-S6`; current unique action remains `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`.
+- Observed canonical main before this enrichment: `76fae0dc132ef7e91e659c4dad44cd3522d2c8c4`.
