@@ -18,6 +18,7 @@
 - `AUTO_CONTINUE_MUST_PRESERVE_ALL_EXISTING_GATES`.
 - `NO_FORCE_PUSH`, `NO_HISTORY_REWRITE`, `EXACT_HEAD_BEFORE_MUTATION`, `SINGLE_WRITER_PER_COLLISION_DOMAIN`, `UNKNOWN_FAILS_CLOSED`.
 - Existing `observe`, `entry-actions`, `session-start`, `dispatch`, `checkpoint`, `handoff`, and intake behavior must remain backward compatible.
+- Eligibility must preserve the three explicit dependency classes from the approved model: `TASK_DEPENDENCY`, `ARTIFACT_DEPENDENCY`, and `EVIDENCE_DEPENDENCY`; status-only unlock is forbidden.
 - No parallel session store, claim store, task store, or database may be introduced.
 - Continuous mode is opt-in initially. Default behavior remains single-task/manual governed dispatch.
 - Source-only control-plane history must not leak into initialized/upgraded client repositories.
@@ -832,7 +833,7 @@ git commit -m "ci: validate continuous governed execution"
 - [ ] **Step 1: Add RED end-to-end fixture**
 
 Construct:
-- Work package G1 with T01, T02 and EXIT item;
+- Work package G1 with T01, T02 and an EXIT item whose `kind = "WORK_PACKAGE_EXIT"`;
 - EXIT depends on T01/T02 plus required artifact `ART-G1`, evidence `EV-G1`, and required control `CTL-G1`;
 - Work package G2-T01 depends on G1 EXIT.
 
