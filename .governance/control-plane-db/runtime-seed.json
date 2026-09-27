@@ -293,6 +293,22 @@
       "status": "ACCEPTED",
       "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "decided_at": "2026-09-27"
+    },
+    {
+      "decision_id": "CPD-028",
+      "scope_type": "PROGRAM",
+      "scope_id": "GOVERNANCE_MODEL_CATALOGUE_COMPLETION",
+      "decision_key": "GMC_WORK_PACKAGES_REQUIRE_EXECUTION_BLUEPRINTS",
+      "value": {
+        "gmc_items_are_work_packages": true,
+        "planning_only": true,
+        "implementation_authorized": false,
+        "blueprint_required": true,
+        "outputs_feed_downstream_groups": true
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "decided_at": "2026-09-27"
     }
   ],
   "checkpoints": [
@@ -515,6 +531,18 @@
       "earliest_affected_phase_id": "C1-12",
       "dependent_revalidation": [],
       "source_ref": "CPD-025",
+      "created_at": "2026-09-27"
+    },
+    {
+      "feedback_id": "FB-20260927-GMC-002",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-12",
+      "feedback_class": "CLARIFICATION",
+      "content": "The 19 GMC items are chronological work packages, each requiring a detailed mission/execution blueprint with exact search locations, atomic tasks, results, storage, evidence and downstream reuse before any implementation.",
+      "effect": "REQUIRE_GMC_EXECUTION_BLUEPRINT_PLANNING_BEFORE_IMPLEMENTATION_WITHOUT_CHANGING_ACTIVE_CASE1_GATE",
+      "earliest_affected_phase_id": "C1-12",
+      "dependent_revalidation": [],
+      "source_ref": "CPD-028",
       "created_at": "2026-09-27"
     }
   ],
@@ -1029,6 +1057,20 @@
         "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT"
       },
       "source_ref": ".governance/control-plane-state/checkpoint.json",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-GMC-008",
+      "event_type": "DECISION_ACCEPTED",
+      "scope_type": "PROGRAM",
+      "scope_id": "GOVERNANCE_MODEL_CATALOGUE_COMPLETION",
+      "payload": {
+        "decision_id": "CPD-028",
+        "interpretation": "GMC-01..GMC-19_ARE_WORK_PACKAGES_NOT_ATOMIC_TASKS",
+        "planning_only": true,
+        "execution_blueprint_required": true
+      },
+      "source_ref": "docs/control-plane/TASKS.md",
       "occurred_at": "2026-09-27"
     }
   ]
