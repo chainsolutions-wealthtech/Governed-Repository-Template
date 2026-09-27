@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 23,
+  "revision": 24,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -28,15 +28,18 @@
     },
     {
       "id": "P12-S4",
-      "status": "ACTIVE_PARENT",
+      "status": "DONE",
       "depends_on": [
         "P12-S3"
       ],
-      "next_action": "PROVE_NORMAL_GOVERNED_ENTRY_ON_GOUVERN"
+      "next_action": null,
+      "evidence": [
+        "C1-12 normal governed entry proof completed on Gouvern#4"
+      ]
     },
     {
       "id": "P12-S5",
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "depends_on": [
         "P12-S4"
       ],
@@ -155,51 +158,77 @@
     },
     {
       "id": "C1-12-K",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-12-J"
       ],
-      "next_action": "RERUN_GOUVERN_ISSUE_3"
+      "next_action": null,
+      "evidence": [
+        "Patricked-code/Gouvern#4 created by governed_local_start at 671774dfc8e8be8eac2b50d5fb8f0928591694b3",
+        "Target repository_dispatch run 36292612321 PASS",
+        "Mode NORMAL_GOVERNED_ENTRY observed on LOCAL-000004"
+      ]
     },
     {
       "id": "C1-12-L",
-      "status": "PENDING",
+      "status": "DONE",
       "depends_on": [
         "C1-12-K"
       ],
-      "next_action": "VERIFY_NORMAL_ENTRY_MODE"
+      "next_action": null,
+      "evidence": [
+        "Patricked-code/Gouvern#4 state mode NORMAL_GOVERNED_ENTRY",
+        "LOCAL-000004 revision 6 reached LOCAL_HANDOFF_READY"
+      ]
     },
     {
       "id": "C1-12-M",
-      "status": "PENDING",
+      "status": "DONE",
       "depends_on": [
         "C1-12-L"
       ],
-      "next_action": "VERIFY_NO_FIRST_AGENT_DUPLICATION"
+      "next_action": null,
+      "evidence": [
+        "Pilot HEAD unchanged at 671774dfc8e8be8eac2b50d5fb8f0928591694b3",
+        "local-entry state blob e60588735b30569defc8511365462519790118be unchanged",
+        "sessions blob 1369b27d9bd2dd51a59f7c84edf94f9f83039110 unchanged; sole first-agent session LOCAL-000002-S1",
+        "work-items blob 3647cc498b8404de32096b9c9a6783d3d6e65d60 unchanged; WORK-PROJECT-001 remains READY",
+        "claims blob 728be6d3c18809ce9202a4acd2635a2fcc6936c0 unchanged and empty"
+      ]
     },
     {
       "id": "C1-12-N",
-      "status": "PENDING",
+      "status": "DONE",
       "depends_on": [
         "C1-12-M"
       ],
-      "next_action": "PERSIST_NORMAL_ENTRY_HANDOFF"
+      "next_action": null,
+      "evidence": [
+        "Patricked-code/Gouvern#4 LOCAL-000004 revision 6 LOCAL_HANDOFF_READY",
+        "Machine command runs 36292715800, 36292741820, 36292775187, 36292816422, 36292850873 PASS"
+      ]
     },
     {
       "id": "C1-12-O",
-      "status": "PENDING",
+      "status": "DONE",
       "depends_on": [
         "C1-12-N"
       ],
-      "next_action": "MARK_C1_12_DONE"
+      "next_action": null,
+      "evidence": [
+        "C1-12 K/L/M/N proof complete; STEP 4 exit satisfied"
+      ]
     },
     {
       "id": "C1-12-P",
-      "status": "PENDING",
+      "status": "DONE",
       "depends_on": [
         "C1-12-O"
       ],
-      "next_action": "RECONCILE_RELATIONAL_MEMORY"
+      "next_action": null,
+      "evidence": [
+        "Canonical human, machine and relational projections reconciled in this change"
+      ]
     },
     {
       "id": "ARCH-001",
@@ -661,7 +690,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-12-K",
+  "unique_executable_item": "P12-S5",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",
