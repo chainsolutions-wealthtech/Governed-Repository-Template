@@ -238,3 +238,32 @@ A downstream group is unlocked by validated outputs/evidence, not merely because
 The planning target is therefore an **Execution Blueprint** for all 19 groups, likely containing many atomic tasks, before any Governance Model catalogue code, SQL migration, comparator, applicability engine or runtime integration is implemented.
 
 This planning requirement does not change the current unique executable CASE 1 task.
+
+### GMC 19-work-package execution blueprint
+
+The detailed planning authority is:
+
+- `docs/control-plane/GOVERNANCE_MODEL_EXECUTION_BLUEPRINT.md`
+- machine projection: `.governance/control-plane-state/governance-model-execution-blueprint.json`
+
+It contains **19 chronological work packages and 168 atomic planning tasks**.
+
+Canonical interpretation:
+
+```text
+GMC-Gxx = work package / mission group
+GMC-Gxx-Tyy = atomic planning/execution task
+```
+
+The chronological chain is:
+
+```text
+GMC-G01 → GMC-G02 → GMC-G03 → GMC-G04 → GMC-G05 → GMC-G06
+→ GMC-G07 → GMC-G08 → GMC-G09 → GMC-G10 → GMC-G11
+→ GMC-G12 → GMC-G13 → GMC-G14 → GMC-G15
+→ GMC-G16 → GMC-G17 → GMC-G18 → GMC-G19
+```
+
+A downstream group requires validated upstream outputs/evidence. A mere status `DONE` without the expected deliverables does not unlock it.
+
+No task in this blueprint authorizes implementation before the current CASE 1 dependency chain and future write gates permit it.
