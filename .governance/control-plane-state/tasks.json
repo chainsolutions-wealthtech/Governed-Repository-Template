@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 17,
+  "revision": 18,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -568,7 +568,7 @@
       "id": "GMC-16",
       "status": "PLANNED",
       "depends_on": [
-        "GMC-13"
+        "GMC-15"
       ],
       "next_action": "MATERIALIZE_MODEL_IN_EXISTING_RELATIONAL_MEMORY"
     },
@@ -576,7 +576,7 @@
       "id": "GMC-14",
       "status": "PLANNED",
       "depends_on": [
-        "GMC-16"
+        "GMC-13"
       ],
       "next_action": "BUILD_APPLICABILITY_AND_SEMANTIC_COMPARATOR"
     },
@@ -592,7 +592,7 @@
       "id": "GMC-17",
       "status": "PLANNED",
       "depends_on": [
-        "GMC-15"
+        "GMC-16"
       ],
       "next_action": "INTEGRATE_MODEL_LOADING_VALIDATION_IN_CONTROL_PLANE"
     },
@@ -616,7 +616,7 @@
   "unique_executable_item": "C1-12-J-C",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
-    "interpretation": "GMC-01..GMC-19_ARE_WORK_PACKAGES_NOT_ATOMIC_TASKS",
+    "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",
     "planning_only": true,
     "implementation_authorized": false,
     "blueprint_required_before_group_execution": true,
@@ -644,7 +644,32 @@
       "CONSUMED_BY"
     ],
     "atomic_task_id_pattern": "GMC-Gxx-Tyy",
-    "dependency_rule": "VALIDATED_OUTPUT_AND_EVIDENCE_UNLOCK_DOWNSTREAM_GROUP",
-    "active_unique_executable_item_unchanged": "C1-12-J-C"
+    "dependency_rule": "VALIDATED_OUTPUTS_AND_EVIDENCE_REQUIRED",
+    "active_unique_executable_item_unchanged": "C1-12-J-C",
+    "human_blueprint": "docs/control-plane/GOVERNANCE_MODEL_EXECUTION_BLUEPRINT.md",
+    "machine_blueprint": ".governance/control-plane-state/governance-model-execution-blueprint.json",
+    "work_package_count": 19,
+    "atomic_task_count": 168,
+    "chronological_order": [
+      "GMC-G01",
+      "GMC-G02",
+      "GMC-G03",
+      "GMC-G04",
+      "GMC-G05",
+      "GMC-G06",
+      "GMC-G07",
+      "GMC-G08",
+      "GMC-G09",
+      "GMC-G10",
+      "GMC-G11",
+      "GMC-G12",
+      "GMC-G13",
+      "GMC-G14",
+      "GMC-G15",
+      "GMC-G16",
+      "GMC-G17",
+      "GMC-G18",
+      "GMC-G19"
+    ]
   }
 }
