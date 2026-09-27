@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "handoff_id": "CP-HANDOFF-20260927-017",
+  "handoff_id": "CP-HANDOFF-20260927-018",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "canonical_branch": "main",
-  "baseline_subject_head": "dbe0014784362393c8cfbb02ce7810d483cf2bb7",
-  "active_branch": "governance/fix-client-local-entry-test-portability",
+  "baseline_subject_head": "0a4a9961565d53a872d6eb62ad3f4afadbb11d6e",
+  "active_branch": "governance/fix-client-governance-model-test-portability",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "current_task": "C1-13-B_CLIENT_LOCAL_ENTRY_TEST_PORTABILITY",
-  "unique_next_action": "C1_13_B_MERGE_PR51_REUPGRADE_EKYC_RESUME_DISCOVERY",
+  "current_task": "C1-13-C_GOVERNANCE_MODEL_CLIENT_TEST_PORTABILITY",
+  "unique_next_action": "C1_13_C_MERGE_PR52_REUPGRADE_EKYC_RESUME_DISCOVERY",
   "read_first": [
     "docs/control-plane/CURRENT_STATE.md",
     ".governance/control-plane-state/canonical-architecture.json",
@@ -51,7 +51,11 @@
     "FREEZE_EKYC_UNTIL_PR51_CLIENT_PORTABILITY_FIX_MERGED",
     "DO_NOT_ADD_SOURCE_ONLY_CONTROL_PLANE_WORKFLOW_TO_CLIENT",
     "REUPGRADE_EKYC_ONLY_THROUGH_GOVERNED_TEMPLATE_PATH",
-    "PRESERVE_EKYC_LOCAL_ENTRY_REVISION_AND_DISCOVERY_FAILURE_HISTORY"
+    "PRESERVE_EKYC_LOCAL_ENTRY_REVISION_AND_DISCOVERY_FAILURE_HISTORY",
+    "C1_13_B_COMPLETED_BY_PR51_AND_GOVERNED_EKYC_REUPGRADE",
+    "FREEZE_EKYC_UNTIL_PR52_MODEL_TEST_PORTABILITY_FIX_MERGED",
+    "DO_NOT_DISTRIBUTE_SOURCE_CONTROL_PLANE_STATE_TO_CLIENT",
+    "PRESERVE_EKYC_LOCAL_ENTRY_STATE_AND_DISCOVERY_EVIDENCE"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",
@@ -65,16 +69,19 @@
   },
   "second_fresh_repository": {
     "repository": "Patricked-code/Ekyc",
-    "head": "2ece8cff98258f7c40cf7b7383ceb5c026db9639",
+    "head": "dd5a2664c4422ab14fc7131a77e5c2df0e0356a0",
     "source_request": 49,
     "local_entry_issue": 1,
     "frozen": true,
-    "completed_corrective_task": "C1-13-A",
-    "active_defect": "CLIENT_LOCAL_ENTRY_SELFTEST_REQUIRES_SOURCE_ONLY_CONTROL_PLANE_WORKFLOW",
-    "active_corrective_task": "C1-13-B",
-    "corrective_pr": 51,
-    "red_ci_run": 36295815960,
-    "green_ci_run": 36295850914,
-    "failed_target_ci": 36295714554
+    "completed_corrective_tasks": [
+      "C1-13-A",
+      "C1-13-B"
+    ],
+    "active_defect": "CLIENT_GOVERNANCE_MODEL_TEST_REQUIRES_SOURCE_ONLY_STATE",
+    "active_corrective_task": "C1-13-C",
+    "corrective_pr": 52,
+    "red_ci_run": 36296258279,
+    "green_ci_run": 36296295586,
+    "failed_target_ci": 36296169271
   }
 }
