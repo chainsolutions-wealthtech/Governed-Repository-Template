@@ -22,6 +22,37 @@ from governed_request import (
 CONTROL_PLANE_REPOSITORY = "chainsolutions-wealthtech/Governed-Repository-Template"
 MARKER_RE = re.compile(r"\n?<!-- GOVERNED_REQUEST_STATE:([A-Za-z0-9_-]+) -->\s*$", re.S)
 
+MACHINE_MUTATION_KINDS = {"upgrade_local_entry", "local_command", "local_start"}
+WRITE_PERMISSIONS = {"admin", "maintain", "write"}
+
+
+def require_machine_mutation_authority(event: dict, state: dict, kind: str, payload: dict) -> str | None:
+    if kind not in MACHINE_MUTATION_KINDS:
+        return None
+
+    if state.get("status") != "HANDOFF_READY":
+        raise PermissionError("machine mutation requires a HANDOFF_READY governed request")
+
+    handoff = state.get("handoff") or {}
+    target_repository = str(payload.get("target_repository") or "")
+    if not target_repository or handoff.get("target_repository") != target_repository:
+        raise PermissionError("machine mutation target must match the governed handoff target")
+
+    actor = str(((event.get("sender") or {}).get("login")) or "").strip()
+    if not actor:
+        raise PermissionError("machine mutation requires an authenticated source actor")
+
+    permission_result = api(
+        "GET",
+        f"/repos/{CONTROL_PLANE_REPOSITORY}/collaborators/{actor}/permission",
+    )
+    permission = str(permission_result.get("permission") or "").lower()
+    if permission not in WRITE_PERMISSIONS:
+        raise PermissionError(
+            f"machine mutation requires source repository write authority; actor={actor} permission={permission or 'unknown'}"
+        )
+    return permission
+
 
 def api(method: str, path: str, payload: dict | None = None) -> dict:
     token = os.environ["GITHUB_TOKEN"]
@@ -320,6 +351,7 @@ def handle_comment(event: dict) -> None:
                 raise ValueError("local start payload must contain target_repository, expected_head and objective")
         else:
             raise ValueError("unsupported governed command")
+        require_machine_mutation_authority(event, state, kind, payload)
     except Exception as exc:
         api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}/comments", {
             "body": f"### Governed Control Plane — réponse refusée\n\n`{type(exc).__name__}: {exc}`\n\nAucun état gouverné n'a été avancé."
