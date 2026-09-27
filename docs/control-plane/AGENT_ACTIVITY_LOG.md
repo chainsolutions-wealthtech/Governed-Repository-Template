@@ -187,3 +187,24 @@
 - C1-12-J-B: DONE.
 - Next: governed exact-HEAD external pilot re-upgrade under C1-12-J-C.
 - Direct pilot patching: none.
+
+## Entry AAL-20260927-GMC-001
+
+- Agent identity: ChatGPT
+- Workstream: Central Governance Model catalogue / canonical memory enrichment
+- Repository observed: `chainsolutions-wealthtech/Governed-Repository-Template`
+- Starting canonical main HEAD observed: `76fae0dc132ef7e91e659c4dad44cd3522d2c8c4`
+- Owner requirement: persist the complete central Governance Model concept, missing work, storage/reuse rules and chronological hierarchical tasks in canonical memory, integrated into existing structures and priorities.
+- Classification: durable architecture/program enrichment; no permission to bypass the active CASE 1 chronological gate.
+- Actions:
+  - created canonical authority `CP-GOVMODEL-001`;
+  - created machine projection `.governance/control-plane-state/governance-model-catalogue.json`;
+  - accepted decisions `CPD-025..CPD-027`;
+  - added `GMC-01..GMC-19` / phases A..G to human and machine task queues;
+  - revised `CP-ARCH-001` to revision 6;
+  - projected decisions, owner feedback, authority revisions and canonical-memory events into `runtime-seed.json`;
+  - preserved the existing SQL/JSON/materializer storage architecture and marked the detailed registry schema extension `PENDING_PROJECTION`;
+  - preserved unique executable action `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`.
+- Discovered/accepted programme: central model inventory → normalization → states/controls/evidence → implementation/dependency map → relational catalogue → applicability/semantic comparator → Control Plane integration → four-case rebinding → cross-case validation → Governance Model 1.0.0.
+- Existing `ARCH-*`, `IDN-*`, and `RTE-*` tasks are absorbed as dependencies/sub-workstreams, not duplicated.
+- Unique next action remains: `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`.
