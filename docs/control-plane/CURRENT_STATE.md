@@ -11,7 +11,7 @@
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
 - Template version: `2.8.6`
 - V2.7.0 release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`
-- Source-state revision: `17`
+- Source-state revision: `18`
 
 ## Current framework program
 
@@ -56,7 +56,7 @@ From this framework program:
 
 ## Unique next action
 
-`C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`
+`C1_12_J_C_A_RECONCILE_GMC_POST_MERGE_INTEGRITY`
 
 ## Latest proof
 
@@ -213,3 +213,15 @@ The future admin web application is intentionally deferred until all structuring
 - `GMC-01..GMC-19`: canonical dependency-bound backlog.
 - Detailed governance-model registry schema/materialization: still `PENDING_PROJECTION` by design.
 - Unique executable action remains `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`.
+
+
+## PR #42 post-merge integrity reconciliation
+
+- Canonical main reobserved: `2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59`.
+- PR #42 is merged, but two review threads remain unresolved.
+- P1: GMC artifact `consumed_by` metadata diverged from the already reciprocal group artifact-dependency contracts and global dependency edges; 68/85 artifacts were affected.
+- P2: CPD-029 enriched the normative Governance Model contract while `CP-GOVMODEL-001` remained at revision R1.
+- Additional same-surface continuity drift: relational repository HEAD and source checkpoint/handoff projection were stale.
+- Framework correction task inserted: `C1-12-J-C-A`.
+- External CASE 1 pilot mutation is blocked until this Template correction passes Governance CI and is merged/attested.
+- `C1-12-J-C` remains the parent pilot objective and will resume after this correction.

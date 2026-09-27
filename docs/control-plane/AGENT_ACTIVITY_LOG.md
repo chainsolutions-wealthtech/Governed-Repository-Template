@@ -221,3 +221,17 @@
 - `GMC-01..GMC-19`: durable machine/human backlog present.
 - CASE 1 execution priority preserved.
 - Unique next action remains `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`.
+
+
+## Entry AAL-20260927-GMC-003
+
+- Agent identity: ChatGPT
+- Workstream: C1-12 / PR #42 post-merge GMC integrity reconciliation
+- Canonical main observed: `2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59`
+- PR #42 review state: two unresolved, non-outdated findings.
+- P1: artifact consumer projection divergence; 68/85 artifacts affected.
+- P2: Governance Model authority revision not advanced for CPD-029.
+- Additional reconciliation: relational repository HEAD/checkpoint/handoff lagged current source state.
+- Inserted task: `C1-12-J-C-A`.
+- External pilot mutation remains blocked until Template CI + merge + post-merge attestation.
+- Parent task after correction: `C1-12-J-C`.

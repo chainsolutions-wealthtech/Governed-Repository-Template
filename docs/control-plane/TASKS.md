@@ -159,6 +159,28 @@ After selection, the selected case's governed questionnaire/action state machine
 
 These routing tasks are planned architecture work and do not supersede the current unique executable task `C1-12-F`.
 
+## Active inserted framework correction
+
+### C1-12-J-C-A — PR #42 post-merge GMC integrity reconciliation
+
+Status: `IN_PROGRESS`
+
+Parent: `C1-12-J-C`
+
+Reason:
+- unresolved PR #42 P1 review found artifact-consumer metadata inconsistent with dependency contracts/edges;
+- unresolved PR #42 P2 review found CPD-029 normative enrichment not represented by a new Governance Model authority revision;
+- relational continuity projections on the same surface require reconciliation.
+
+Exit gate:
+- all GMC artifact dependency representations reciprocal;
+- `CP-GOVMODEL-001-R2` append/supersede revision present;
+- CI regression test present and GREEN;
+- relational source state/checkpoint/handoff current;
+- PR merged and post-merge state attested.
+
+Until this gate passes, `C1-12-J-C` is blocked and no external pilot mutation is allowed.
+
 ## Queued work package — GOVERNANCE_MODEL_CATALOGUE_COMPLETION
 
 Authority: `CP-GOVMODEL-001`.

@@ -6,7 +6,7 @@
       "full_name": "chainsolutions-wealthtech/Governed-Repository-Template",
       "role": "CONTROL_PLANE_SOURCE",
       "canonical_branch": "main",
-      "current_head_sha": "02173120acfa3941e84bf69c89dac0e8d74b47ce",
+      "current_head_sha": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
       "source_ref": "docs/control-plane/CURRENT_STATE.md"
     },
     {
@@ -345,6 +345,15 @@
       "state": "LOCAL_HANDOFF_READY",
       "next_action": "PROVE_NORMAL_GOVERNED_ENTRY",
       "source_ref": "docs/control-plane/CASE1_REPLAY_LEDGER.md"
+    },
+    {
+      "checkpoint_id": "CP-CHECKPOINT-20260927-014",
+      "run_id": "CONTROL-PLANE-SOURCE",
+      "phase_id": "C1-12",
+      "subject_head_sha": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
+      "state": "PR42_POST_MERGE_GMC_INTEGRITY_FIX_IN_PROGRESS",
+      "next_action": "C1_12_J_C_A_RECONCILE_GMC_POST_MERGE_INTEGRITY",
+      "source_ref": ".governance/control-plane-state/checkpoint.json"
     }
   ],
   "intakes": [
@@ -494,9 +503,37 @@
       },
       "source_ref": "Template PR #39",
       "observed_at": "2026-09-27"
+    },
+    {
+      "evidence_id": "EVID-GMC-PR42-POSTMERGE-REVIEW",
+      "run_id": null,
+      "phase_id": "C1-12",
+      "evidence_type": "PULL_REQUEST_POST_MERGE_REVIEW",
+      "status": "REQUIRES_CORRECTION",
+      "payload": {
+        "pr": 42,
+        "subject_head": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
+        "unresolved_threads": [
+          "PRRT_kwDOUqP9V86mWsAw",
+          "PRRT_kwDOUqP9V86mWsAx"
+        ],
+        "consumer_projection_mismatch_count": 68
+      },
+      "source_ref": "Template PR #42",
+      "observed_at": "2026-09-27"
     }
   ],
-  "handoffs": [],
+  "handoffs": [
+    {
+      "handoff_id": "CP-HANDOFF-20260927-012",
+      "run_id": "CONTROL-PLANE-SOURCE",
+      "phase_id": "C1-12",
+      "subject_head_sha": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
+      "state": "FRAMEWORK_CORRECTION_IN_PROGRESS",
+      "next_action": "C1_12_J_C_A_RECONCILE_GMC_POST_MERGE_INTEGRITY",
+      "source_ref": ".governance/control-plane-state/handoff.json"
+    }
+  ],
   "owner_feedback": [
     {
       "feedback_id": "FB-20260926-DB-001",
@@ -660,8 +697,8 @@
       "canonical_path": "docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md",
       "scope": "CONTROL_PLANE_SOURCE_ONLY",
       "status": "ACCEPTED_TARGET_MODEL_CATALOGUE_PLAN",
-      "current_revision": 1,
-      "source_decision_id": "CPD-025",
+      "current_revision": 2,
+      "source_decision_id": "CPD-029",
       "created_at": "2026-09-27"
     }
   ],
@@ -747,6 +784,18 @@
       "supersedes_revision_id": null,
       "reason": "Establish central Governance Model catalogue authority, storage contract and GMC-01..GMC-19 hierarchical completion programme.",
       "source_decision_id": "CPD-025",
+      "source_ref": ".governance/control-plane-state/governance-model-catalogue.json",
+      "created_at": "2026-09-27"
+    },
+    {
+      "revision_id": "CP-GOVMODEL-001-R2",
+      "authority_id": "CP-GOVMODEL-001",
+      "revision_number": 2,
+      "subject_head_sha": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
+      "content_sha": null,
+      "supersedes_revision_id": "CP-GOVMODEL-001-R1",
+      "reason": "Add CPD-028/CPD-029 execution-blueprint dependency semantics and reconcile artifact consumer projections after PR #42 review.",
+      "source_decision_id": "CPD-029",
       "source_ref": ".governance/control-plane-state/governance-model-catalogue.json",
       "created_at": "2026-09-27"
     }
@@ -1150,6 +1199,24 @@
         "planned_knowledge_artifacts": 85
       },
       "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-GMC-011",
+      "event_type": "POST_MERGE_INTEGRITY_RECONCILIATION_STARTED",
+      "scope_type": "AUTHORITY",
+      "scope_id": "CP-GOVMODEL-001",
+      "payload": {
+        "subject_head": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59",
+        "authority_revision": 2,
+        "task_id": "C1-12-J-C-A",
+        "artifact_consumer_mismatches_reconciled": 68,
+        "artifact_dependency_edges_verified": 100,
+        "atomic_tasks": 174,
+        "planned_knowledge_artifacts": 85,
+        "pilot_mutation_blocked_until_validation": true
+      },
+      "source_ref": "Template PR #42",
       "occurred_at": "2026-09-27"
     }
   ]

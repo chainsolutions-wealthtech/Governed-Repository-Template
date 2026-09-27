@@ -253,3 +253,17 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - GMC-G19 now has an explicit final assembly contract covering all model registries/contracts and separate PASS demonstrations for completeness, consistency, traceability, coverage, reusability and the four structuring cases.
 - Still `PLANNING_ONLY`; no registry/schema/SQL/comparator/runtime implementation was performed.
 - CASE 1 unique executable task remains unchanged.
+
+
+## 2026-09-27 — PR #42 post-merge GMC integrity reconciliation
+
+- Reobserved canonical Template main at `2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59`.
+- Two PR #42 review threads remain unresolved after merge.
+- P1 diagnosis: 68/85 planned knowledge artifacts had GMC `consumed_by` metadata inconsistent with their dependency contracts; the contracts and 100 global artifact dependency edges were already reciprocal.
+- P2 diagnosis: CPD-029 changed normative Governance Model semantics without advancing `CP-GOVMODEL-001` beyond R1.
+- Inserted `C1-12-J-C-A` before external pilot mutation.
+- Reconciled GMC consumer projections from a single canonical dependency source.
+- Prepared append/supersede authority revision `CP-GOVMODEL-001-R2`.
+- Added fail-closed CI regression test for dependency/consumer/revision integrity.
+- Reconciled relational repository HEAD plus current checkpoint/handoff records.
+- Parent CASE 1 action `C1-12-J-C` remains blocked until candidate CI/merge/post-merge attestation pass.
