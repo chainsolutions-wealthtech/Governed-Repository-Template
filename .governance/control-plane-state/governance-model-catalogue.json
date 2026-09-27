@@ -153,8 +153,40 @@
     "machine_path": ".governance/control-plane-state/governance-model-execution-blueprint.json",
     "decision_id": "CPD-028",
     "work_package_count": 19,
-    "atomic_task_count": 168,
+    "atomic_task_count": 174,
     "dependency_rule": "VALIDATED_OUTPUTS_AND_EVIDENCE_REQUIRED",
-    "implementation_authorized": false
+    "implementation_authorized": false,
+    "decision_ids": [
+      "CPD-028",
+      "CPD-029"
+    ],
+    "planned_knowledge_artifact_count": 85,
+    "dependency_dimensions": [
+      "TASK_DEPENDENCY",
+      "ARTIFACT_DEPENDENCY",
+      "EVIDENCE_DEPENDENCY"
+    ],
+    "output_driven_progression": true,
+    "final_assembly_contract": true,
+    "last_enrichment_decision_id": "CPD-029"
+  },
+  "final_model_release_gate": {
+    "work_package": "GMC-G19",
+    "target_model_version": "1.0.0",
+    "required_demonstrations": [
+      "MODEL_COMPLETENESS",
+      "MODEL_CONSISTENCY",
+      "REFERENCE_INTEGRITY",
+      "IMPLEMENTATION_TRACEABILITY",
+      "TEST_COVERAGE",
+      "EVIDENCE_COVERAGE",
+      "DEPENDENCY_INTEGRITY",
+      "REUSABILITY",
+      "CREATE_COMPATIBILITY",
+      "ADOPT_COMPATIBILITY",
+      "MAP_COMPATIBILITY",
+      "LAB_COMPATIBILITY"
+    ],
+    "all_must_pass": true
   }
 }

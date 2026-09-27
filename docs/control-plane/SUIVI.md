@@ -238,3 +238,18 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Downstream work requires validated outputs + evidence, not a status flag alone.
 - This remains planning-only; no Governance Model registry/schema/SQL/comparator/runtime implementation was started.
 - Active CASE 1 execution remains unchanged.
+
+## 2026-09-27 — GMC artifact/evidence dependency model completed
+
+- Added decision `CPD-029`.
+- Enriched the Governance Model Execution Blueprint from simple chronological dependencies to three explicit dependency dimensions:
+  - `TASK_DEPENDENCY`;
+  - `ARTIFACT_DEPENDENCY`;
+  - `EVIDENCE_DEPENDENCY`.
+- Work-package completion no longer means only a status flag; downstream unlock requires validated upstream exit, validated sufficiently-complete artifacts, required evidence and passing exit controls.
+- Group results are now modeled as persistent/versioned planned knowledge artifacts with stable IDs, producer, validation state, provenance requirement, consumers and append/supersede/revalidate semantics.
+- Blueprint now contains 19 work packages, 174 atomic tasks and 85 planned knowledge artifacts.
+- Filled previously implicit model-registry coverage for workflows, failures, recoveries, authorities and tests, plus applicability/integration/release contracts.
+- GMC-G19 now has an explicit final assembly contract covering all model registries/contracts and separate PASS demonstrations for completeness, consistency, traceability, coverage, reusability and the four structuring cases.
+- Still `PLANNING_ONLY`; no registry/schema/SQL/comparator/runtime implementation was performed.
+- CASE 1 unique executable task remains unchanged.

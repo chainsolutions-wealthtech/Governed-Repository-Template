@@ -246,7 +246,7 @@ The detailed planning authority is:
 - `docs/control-plane/GOVERNANCE_MODEL_EXECUTION_BLUEPRINT.md`
 - machine projection: `.governance/control-plane-state/governance-model-execution-blueprint.json`
 
-It contains **19 chronological work packages and 168 atomic planning tasks**.
+It contains **19 chronological work packages and 174 atomic planning tasks**.
 
 Canonical interpretation:
 
@@ -267,3 +267,27 @@ GMC-G01 → GMC-G02 → GMC-G03 → GMC-G04 → GMC-G05 → GMC-G06
 A downstream group requires validated upstream outputs/evidence. A mere status `DONE` without the expected deliverables does not unlock it.
 
 No task in this blueprint authorizes implementation before the current CASE 1 dependency chain and future write gates permit it.
+
+### GMC dependency dimensions
+
+Every `GMC-Gxx` work package now has three independent dependency dimensions:
+
+```text
+TASK_DEPENDENCY
++ ARTIFACT_DEPENDENCY
++ EVIDENCE_DEPENDENCY
+→ EXIT CONTROLS PASS
+→ DOWNSTREAM UNLOCK
+```
+
+A `DONE` status alone is insufficient.
+
+The machine blueprint currently defines:
+- 19 work packages;
+- 174 atomic tasks;
+- 85 persistent/versioned planned knowledge artifacts;
+- typed dependency edges;
+- explicit exit controls for every group;
+- a final `GMC-G19` assembly/release contract.
+
+The artifacts are planning objects only until their producing work packages are executed and validated.

@@ -309,6 +309,31 @@
       "status": "ACCEPTED",
       "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "decided_at": "2026-09-27"
+    },
+    {
+      "decision_id": "CPD-029",
+      "scope_type": "PROGRAM",
+      "scope_id": "GOVERNANCE_MODEL_CATALOGUE_COMPLETION",
+      "decision_key": "OUTPUT_DRIVEN_GMC_TASK_ARTIFACT_EVIDENCE_DEPENDENCIES",
+      "value": {
+        "dependency_dimensions": [
+          "TASK_DEPENDENCY",
+          "ARTIFACT_DEPENDENCY",
+          "EVIDENCE_DEPENDENCY"
+        ],
+        "status_only_unlock_forbidden": true,
+        "persistent_versioned_knowledge_artifacts": true,
+        "work_packages": 19,
+        "atomic_tasks": 174,
+        "planned_knowledge_artifacts": 85,
+        "final_assembly_work_package": "GMC-G19",
+        "model_1_0_0_requires_all_final_demonstrations_pass": true,
+        "planning_only": true,
+        "implementation_authorized": false
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "decided_at": "2026-09-27"
     }
   ],
   "checkpoints": [
@@ -614,7 +639,7 @@
       "artifact_type": "GOVERNANCE_MODEL_EXECUTION_BLUEPRINT_PROJECTION",
       "path_or_ref": ".governance/control-plane-state/governance-model-execution-blueprint.json",
       "sha": null,
-      "source_ref": "CPD-028",
+      "source_ref": "CPD-029",
       "created_at": "2026-09-27"
     }
   ],
@@ -1108,6 +1133,23 @@
         "active_item_unchanged": "C1-12-J-C"
       },
       "source_ref": "docs/control-plane/GOVERNANCE_MODEL_EXECUTION_BLUEPRINT.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-GMC-010",
+      "event_type": "DECISION_ACCEPTED",
+      "scope_type": "PROGRAM",
+      "scope_id": "GOVERNANCE_MODEL_CATALOGUE_COMPLETION",
+      "payload": {
+        "decision_id": "CPD-029",
+        "dependency_dimensions": [
+          "TASK_DEPENDENCY",
+          "ARTIFACT_DEPENDENCY",
+          "EVIDENCE_DEPENDENCY"
+        ],
+        "planned_knowledge_artifacts": 85
+      },
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "occurred_at": "2026-09-27"
     }
   ]
