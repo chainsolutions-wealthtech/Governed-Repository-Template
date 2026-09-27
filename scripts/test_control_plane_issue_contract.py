@@ -65,6 +65,14 @@ def main() -> None:
         for fragment in required:
             if fragment not in workflow:
                 raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: workflow boundary missing: " + fragment)
+        local_start_token_block = workflow.split(
+            "- name: Mint target-owner token for machine local start", 1
+        )[1].split("- name: Dispatch governed machine local start", 1)[0]
+        if "permission-contents: write" not in local_start_token_block:
+            raise SystemExit(
+                "CONTROL_PLANE_ISSUE_SELFTEST_FAILED: machine local start token requires contents write"
+            )
+
         issue_form = issue_form_path.read_text(encoding="utf-8")
         if 'title: "[Governed Request] "' not in issue_form:
             raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: governed issue title missing")
@@ -85,6 +93,72 @@ def main() -> None:
             raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: machine local starter missing: " + fragment)
     if "def handle_repository_dispatch" not in bridge:
         raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: repository dispatch handler missing")
+
+    original_api = bridge_module.api
+    authority_calls = []
+    try:
+        def authority_api(method: str, path: str, payload: dict | None = None) -> dict:
+            authority_calls.append((method, path, payload))
+            if method == "GET" and path.endswith("/collaborators/trusted-writer/permission"):
+                return {"permission": "write"}
+            if method == "GET" and path.endswith("/collaborators/read-only/permission"):
+                return {"permission": "read"}
+            raise AssertionError(f"unexpected authority API call: {method} {path}")
+
+        bridge_module.api = authority_api
+        handoff_state = {
+            "status": "HANDOFF_READY",
+            "handoff": {"target_repository": "owner/repo"},
+        }
+        granted = bridge_module.require_machine_mutation_authority(
+            {"sender": {"login": "trusted-writer"}},
+            handoff_state,
+            "local_start",
+            {"target_repository": "owner/repo"},
+        )
+        if granted != "write":
+            raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: write actor not authorized")
+
+        try:
+            bridge_module.require_machine_mutation_authority(
+                {"sender": {"login": "read-only"}},
+                handoff_state,
+                "local_start",
+                {"target_repository": "owner/repo"},
+            )
+        except PermissionError:
+            pass
+        else:
+            raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: read-only actor authorized")
+
+        try:
+            bridge_module.require_machine_mutation_authority(
+                {"sender": {"login": "trusted-writer"}},
+                handoff_state,
+                "local_start",
+                {"target_repository": "other/repo"},
+            )
+        except PermissionError:
+            pass
+        else:
+            raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: cross-target mutation authorized")
+
+        try:
+            bridge_module.require_machine_mutation_authority(
+                {"sender": {"login": "trusted-writer"}},
+                {"status": "EXECUTING_PREPARATION", "handoff": {"target_repository": "owner/repo"}},
+                "local_start",
+                {"target_repository": "owner/repo"},
+            )
+        except PermissionError:
+            pass
+        else:
+            raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: pre-handoff mutation authorized")
+    finally:
+        bridge_module.api = original_api
+
+    if not any(path.endswith("/collaborators/trusted-writer/permission") for _, path, _ in authority_calls):
+        raise SystemExit("CONTROL_PLANE_ISSUE_SELFTEST_FAILED: source write authority was not observed")
 
     calls = []
     original_api = bridge_module.api
