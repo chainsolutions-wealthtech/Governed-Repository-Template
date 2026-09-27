@@ -613,5 +613,38 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-12-J-C"
+  "unique_executable_item": "C1-12-J-C",
+  "gmc_work_package_contract": {
+    "decision_id": "CPD-028",
+    "interpretation": "GMC-01..GMC-19_ARE_WORK_PACKAGES_NOT_ATOMIC_TASKS",
+    "planning_only": true,
+    "implementation_authorized": false,
+    "blueprint_required_before_group_execution": true,
+    "blueprint_fields": [
+      "MISSION",
+      "OBJECTIVE",
+      "QUESTIONS_TO_RESOLVE",
+      "INPUTS",
+      "PREREQUISITES",
+      "WHERE_TO_LOOK",
+      "SEARCH_ORDER",
+      "SEARCH_METHOD",
+      "ATOMIC_TASKS",
+      "CLASSIFICATION_RULES",
+      "EXPECTED_FINDINGS",
+      "EXPECTED_RESULTS",
+      "ARTIFACTS",
+      "OUTPUT_DESTINATION",
+      "EVIDENCE_REQUIRED",
+      "VALIDATION",
+      "DONE_WHEN",
+      "BLOCK_OR_HOLD_IF",
+      "EXIT_GATE",
+      "OUTPUTS",
+      "CONSUMED_BY"
+    ],
+    "atomic_task_id_pattern": "GMC-Gxx-Tyy",
+    "dependency_rule": "VALIDATED_OUTPUT_AND_EVIDENCE_UNLOCK_DOWNSTREAM_GROUP",
+    "active_unique_executable_item_unchanged": "C1-12-J-C"
+  }
 }
