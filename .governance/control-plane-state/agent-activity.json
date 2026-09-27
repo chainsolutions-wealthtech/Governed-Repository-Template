@@ -337,6 +337,27 @@
       ],
       "proposals": [],
       "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT"
+    },
+    {
+      "activity_id": "AAL-20260927-GMC-002",
+      "agent_identity": "ChatGPT",
+      "workstream": "CENTRAL_GOVERNANCE_MODEL_CATALOGUE_POST_MERGE",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "6fb12122d5a0812f6ceca063b1d7af13511003bc",
+      "objective": "Attest PR #39 merge and reconcile canonical source projections without changing CASE 1 priority.",
+      "evidence_refs": [
+        "Template PR #39",
+        "Governance CI run 36284616415",
+        "CP-GOVMODEL-001",
+        "CP-ARCH-001-R6"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "PR #39 merged with Governance CI PASS.",
+        "GMC-01..GMC-19 are now canonical backlog but remain dependency-bound behind P12-S6."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT"
     }
   ]
 }

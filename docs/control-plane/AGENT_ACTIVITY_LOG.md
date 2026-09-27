@@ -208,3 +208,16 @@
 - Discovered/accepted programme: central model inventory → normalization → states/controls/evidence → implementation/dependency map → relational catalogue → applicability/semantic comparator → Control Plane integration → four-case rebinding → cross-case validation → Governance Model 1.0.0.
 - Existing `ARCH-*`, `IDN-*`, and `RTE-*` tasks are absorbed as dependencies/sub-workstreams, not duplicated.
 - Unique next action remains: `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`.
+
+## Entry AAL-20260927-GMC-002
+
+- Agent identity: ChatGPT
+- Workstream: Central Governance Model catalogue post-merge attestation
+- Canonical main observed: `6fb12122d5a0812f6ceca063b1d7af13511003bc`
+- PR #39: MERGED.
+- Governance CI run `36284616415`: PASS.
+- `CP-GOVMODEL-001`: canonical source-only authority present.
+- `CP-ARCH-001-R6`: canonical architecture revision present.
+- `GMC-01..GMC-19`: durable machine/human backlog present.
+- CASE 1 execution priority preserved.
+- Unique next action remains `C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT`.

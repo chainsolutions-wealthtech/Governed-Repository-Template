@@ -209,3 +209,11 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Reuse rule: extend the existing SQL/JSON/materializer canonical memory, never create a parallel database.
 - Planned comparison becomes semantic down to capability/component/object/field/control/test, with exact/equivalent/partial/absent/conflict/obsolete/unknown/not-applicable classification.
 - The detailed model registries remain `PENDING_PROJECTION` until the additive relational schema extension is implemented through the governed task chain.
+
+## 2026-09-27 — Governance Model catalogue merged and attested
+
+- PR #39 merged to canonical `main`.
+- Merge subject HEAD: `6fb12122d5a0812f6ceca063b1d7af13511003bc`.
+- Governance CI run `36284616415`: PASS.
+- Canonical authority `CP-GOVMODEL-001`, architecture revision `CP-ARCH-001-R6`, decisions `CPD-025..CPD-027` and `GMC-01..GMC-19` backlog are now part of canonical source memory.
+- The current execution gate remains CASE 1 / `C1-12-J-C`; no GMC task is executable before its dependencies.

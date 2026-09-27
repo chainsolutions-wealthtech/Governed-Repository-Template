@@ -439,6 +439,20 @@
       },
       "source_ref": "Template PR #37",
       "observed_at": "2026-09-26"
+    },
+    {
+      "evidence_id": "EVID-GMC-PR39-CI",
+      "run_id": null,
+      "phase_id": null,
+      "evidence_type": "CONTROL_PLANE_GOVERNANCE_CI",
+      "status": "PASS",
+      "payload": {
+        "pr": 39,
+        "run_id": 36284616415,
+        "merge_subject_head": "6fb12122d5a0812f6ceca063b1d7af13511003bc"
+      },
+      "source_ref": "Template PR #39",
+      "observed_at": "2026-09-27"
     }
   ],
   "handoffs": [],
@@ -989,6 +1003,32 @@
         "active_item_unchanged": "C1-12-J-C"
       },
       "source_ref": "docs/control-plane/TASKS.md",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-GMC-006",
+      "event_type": "CANONICAL_AUTHORITY_MERGED",
+      "scope_type": "AUTHORITY",
+      "scope_id": "CP-GOVMODEL-001",
+      "payload": {
+        "pr": 39,
+        "merge_subject_head": "6fb12122d5a0812f6ceca063b1d7af13511003bc",
+        "ci_run": 36284616415,
+        "ci_result": "PASS"
+      },
+      "source_ref": "Template PR #39",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-GMC-007",
+      "event_type": "CHECKPOINT_CREATED",
+      "scope_type": "CONTROL_PLANE",
+      "scope_id": "CONTROL_PLANE",
+      "payload": {
+        "checkpoint_id": "CP-CHECKPOINT-20260927-013",
+        "unique_next_action": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT"
+      },
+      "source_ref": ".governance/control-plane-state/checkpoint.json",
       "occurred_at": "2026-09-27"
     }
   ]
