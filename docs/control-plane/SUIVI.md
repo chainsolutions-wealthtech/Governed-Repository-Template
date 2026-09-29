@@ -438,3 +438,11 @@ The prior MCP TLS blocker is no longer active. MCP Governed Deploy `36625479517`
 The already-approved Ekyc retry `36642689845` then failed with HTTP 404, which is a different and more advanced failure: HTTPS/TLS succeeded, but the stored endpoint targeted the host root. The canonical MCP architecture already identifies `/mcp` as the MCP endpoint.
 
 The control plane corrected the factual endpoint through its existing machine command path. No direct Ekyc patch and no new MCP intake were used. Ekyc#1 is revision 33 and correctly requires explicit reapproval because the plan endpoint materially changed.
+
+## 2026-09-30 — /mcp direct discovery passed; signed SSH profile recovery required
+
+The corrected `/mcp` plan was explicitly reapproved. Ekyc run `36644247227` reached MCP successfully and all five direct read-only probes passed. The run then stopped at `SSH_PROFILE_MISMATCH`: the broker signs repository SSH access for S1 `212.227.212.33:22/root`, not for the MCP public hostname previously stored in the Ekyc answer.
+
+Baseline application was skipped. Ekyc#1 persisted revision 35.
+
+The new generic task `C1-13-G` adds a recovery path from signed broker evidence. The owner additionally required a persistent MCP capability image in the central Template; that additive work is queued as `C1-13-H` and will feed the existing Loop Engineering rather than replace it.
