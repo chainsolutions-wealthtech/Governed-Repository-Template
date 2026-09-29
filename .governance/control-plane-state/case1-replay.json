@@ -7,7 +7,7 @@
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
   "current_phase": "C1-13",
   "current_status": "IN_PROGRESS",
-  "unique_next_action": "C1_13_E_B_REQUEST_EXPLICIT_EKYC_MCP_DISCOVERY_APPROVAL",
+  "unique_next_action": "C1_13_E_WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_APPROVED_EKYC_DISCOVERY",
   "phases": [
     {
       "id": "C1-00",
@@ -158,13 +158,13 @@
       "depends_on": [
         "C1-12"
       ],
-      "next_action": "REQUEST_EXPLICIT_EKYC_MCP_DISCOVERY_APPROVAL",
+      "next_action": "WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_APPROVED_EKYC_DISCOVERY",
       "live_state": {
         "repository": "Patricked-code/Ekyc",
         "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
         "local_entry_issue": "Patricked-code/Ekyc#1",
         "expected_head": "a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6",
-        "status": "WAITING_FOR_EXPLICIT_MCP_DISCOVERY_APPROVAL",
+        "status": "BLOCKED_EXTERNAL_MCP_TLS_CERTIFICATE_AFTER_EXPLICIT_APPROVAL",
         "completed_corrective_tasks": [
           "C1-13-A",
           "C1-13-B",
@@ -177,7 +177,7 @@
         "external_dependency": "MCP_TLS_CERTIFICATE_EXPIRED",
         "external_intake": "Patricked-code/MCP#201",
         "target_specific_repair": false,
-        "active_corrective_task": "C1-13-E-B",
+        "active_corrective_task": null,
         "active_defect": null,
         "preserved_external_dependency": {
           "code": "MCP_TLS_CERTIFICATE_EXPIRED",
@@ -186,12 +186,14 @@
         },
         "v287_template_merge": "8b3a1ac4abf250820558ba873110581f8607a2b3",
         "discovery_gate": {
-          "status": "WAITING_FOR_DISCOVERY_APPROVAL",
-          "phase": "MCP_DISCOVERY_APPROVAL",
-          "revision": 29,
-          "current_evidence": null,
-          "prior_tls_evidence_archived": true
-        }
+          "status": "MCP_DISCOVERY_FAILED_RETRYABLE",
+          "phase": "MCP_DISCOVERY",
+          "revision": 31,
+          "explicit_approval": true,
+          "retry_authority": "SAME_APPROVED_PLAN_AFTER_EXTERNAL_REMEDIATION"
+        },
+        "authorized_discovery_run": 36638780542,
+        "authorized_discovery_result": "SSL_CERTIFICATE_VERIFY_FAILED_CERTIFICATE_EXPIRED"
       },
       "owner_feedback": {
         "clarification": "MCP configuration answers prepare target state and do not authorize immediate network discovery",
