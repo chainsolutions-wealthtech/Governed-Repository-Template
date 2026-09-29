@@ -392,3 +392,15 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Minimal fix commit `5aa1601ee5c91a8523454197e76b47bed59459ba`: add `scripts/test_governance_model_integrity.py` to upgrader `static_paths`.
 - Functional GREEN Governance CI `36620877757`: PASS.
 - Next: final reconciled PR #53 CI, exact-head merge, governed Ekyc re-upgrade, fully green client CI, then resume MCP endpoint recovery/discovery.
+
+
+## 2026-09-29 — C1-13-E MCP TLS external blocker
+
+- PR #53 merged at `7b8cf2193514efd8f3fe8ce635b0d21abfe53639`; source post-merge Governance CI `36621351173`: PASS.
+- Official governed upgrade advanced `Patricked-code/Ekyc` to `87c28f4fd4e36aa3d65cfc384309a054c1640e4c`.
+- Ekyc Governance CI `36621490571`: SUCCESS across the full client suite; the four Template/client portability defects C1-13-A/B/C/D are therefore closed.
+- The preserved MCP read-only discovery checkpoint was retried via governed command; target run `36621624763` failed with `SSL: CERTIFICATE_VERIFY_FAILED ... certificate has expired`.
+- Live code review confirms transport `BOTH` cannot use SSH as a workaround because the repository-SSH certificate broker is also HTTPS on `mcp.wealthtechinnovations.com`.
+- No TLS bypass, HTTP downgrade, direct target patch or MCP runtime/code mutation was attempted.
+- External intake-only issue opened: `Patricked-code/MCP#201`.
+- P12-S5 remains active but externally blocked. Resume only after MCP-side TLS remediation is attested, then retry the preserved discovery flow.
