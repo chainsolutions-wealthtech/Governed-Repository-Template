@@ -520,3 +520,18 @@ Therefore `C1-13-E-B` is DONE and `C1-13-E` is again the active dependency task,
 - Mutation authority: not granted by the snapshot.
 - MCP intake: not required.
 - Relational projection: `PENDING_PROJECTION_GMC_INTEGRATION` until the scheduled Governance Model relational extension.
+
+### C1-13-H implementation state
+
+- Status: `IN_PROGRESS`.
+- Authority: `CP-MCP-CAP-001`.
+- Human authority implemented: `docs/control-plane/MCP_CAPABILITY_MODEL.md`.
+- Machine projection implemented: `.governance/control-plane-state/mcp-capability-snapshot.json`.
+- Source-only refresh script implemented.
+- Source-only self-test implemented.
+- Event/need-based refresh workflow implemented.
+- Persistence path: unique refresh branch → pull request → normal Governance CI → merge; never direct main.
+- Security refinement: persistent public snapshot does not store server host/port/username coordinates; those are refreshed live before server operations.
+- Current seed is intentionally `PARTIAL_LIVE_EVIDENCE`; a first central live refresh after merge must populate the full runtime catalogue/resources and case/tool map.
+- Relational projection: `PENDING_PROJECTION_GMC_INTEGRATION`.
+- DONE requires: Template CI green, merge, live refresh workflow green, generated snapshot PR green, snapshot merge, and source-state checkpoint reconciliation.
