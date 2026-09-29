@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.2.0",
+  "schema_version": "1.3.0",
   "control_plane_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "source_role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
   "client_role_after_instantiation": "GOVERNED_TARGET_CLIENT",
@@ -52,14 +52,22 @@
     "CLIENT_CI_SOURCE_ONLY_STEPS_SKIP_CLEANLY",
     "PORTABLE_SELFTESTS_RESET_ALL_BOOTSTRAP_INFLUENCING_SYNTHETIC_STATE",
     "SELFTEST_MUTATES_TEMPORARY_COPY_ONLY",
-    "SELFTEST_SUBPROCESS_FAILURES_EXPOSE_DIAGNOSTICS"
+    "SELFTEST_SUBPROCESS_FAILURES_EXPOSE_DIAGNOSTICS",
+    "MCP_CAPABILITY_SNAPSHOT_SOURCE_ONLY",
+    "MCP_CAPABILITY_REFRESH_READ_ONLY_NE_MUTATION_AUTHORITY",
+    "MCP_TOOL_AVAILABILITY_NE_WRITE_AUTHORITY",
+    "SERVER_CONNECTION_COORDINATES_NOT_PERSISTED_IN_PUBLIC_SNAPSHOT",
+    "MCP_CAPABILITY_SNAPSHOT_FEEDS_EXISTING_LOOP_ENGINEERING"
   ],
   "source_only_paths": [
     ".github/workflows/governed-control-plane.yml",
     ".github/ISSUE_TEMPLATE/governed-request.yml",
     "docs/control-plane",
     ".governance/control-plane-state",
-    ".governance/control-plane-db"
+    ".governance/control-plane-db",
+    ".github/workflows/mcp-capability-refresh.yml",
+    "scripts/control_plane_mcp_capability_snapshot.py",
+    "scripts/test_control_plane_mcp_capability_snapshot.py"
   ],
   "current_role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
   "executor": {
@@ -79,7 +87,8 @@
       "docs/control-plane/DATA_MODEL.md",
       "docs/control-plane/AGENT_ACTIVITY_LOG.md",
       "docs/control-plane/CANONICAL_ARCHITECTURE.md",
-      "docs/control-plane/IMPORTED_MEMORY_VERIFICATION.md"
+      "docs/control-plane/IMPORTED_MEMORY_VERIFICATION.md",
+      "docs/control-plane/MCP_CAPABILITY_MODEL.md"
     ],
     "machine_authorities": [
       ".governance/control-plane-state/current.json",
@@ -88,7 +97,8 @@
       ".governance/control-plane-state/tasks.json",
       ".governance/control-plane-state/case1-replay.json",
       ".governance/control-plane-state/agent-activity.json",
-      ".governance/control-plane-state/canonical-architecture.json"
+      ".governance/control-plane-state/canonical-architecture.json",
+      ".governance/control-plane-state/mcp-capability-snapshot.json"
     ],
     "issue_role": "ORCHESTRATION_AND_EVIDENCE_NOT_CANONICAL_SOURCE",
     "conversation_role": "SUPPLEMENTAL_CONTEXT_ONLY"
@@ -198,5 +208,19 @@
     ],
     "real_client_state_mutated": false,
     "subprocess_diagnostics": true
+  },
+  "mcp_capability_snapshot": {
+    "authority_id": "CP-MCP-CAP-001",
+    "human_authority": "docs/control-plane/MCP_CAPABILITY_MODEL.md",
+    "machine_projection": ".governance/control-plane-state/mcp-capability-snapshot.json",
+    "refresh_workflow": ".github/workflows/mcp-capability-refresh.yml",
+    "refresh_mode": "EVENT_AND_NEED_BASED",
+    "standing_readonly_refresh_authority": true,
+    "automatic_periodic_polling": false,
+    "mutation_authority_granted": false,
+    "server_connection_coordinates_persisted": false,
+    "persist_via": "DEDICATED_BRANCH_AND_PULL_REQUEST",
+    "loop_engineering": "EXISTING_LOOP_ENGINEERING",
+    "relational_projection": "PENDING_PROJECTION_GMC_INTEGRATION"
   }
 }
