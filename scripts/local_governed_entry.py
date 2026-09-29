@@ -70,7 +70,7 @@ def validate(field,v):
     if field=="project_scope":
         if not isinstance(v,dict) or not isinstance(v.get("in_scope"),list) or not isinstance(v.get("out_of_scope"),list):return "project_scope requires in_scope/out_of_scope arrays"
     if field in {"external_systems","constraints"} and not isinstance(v,list):return "array required"
-    if field in {"baseline_approved","setup_repository_now","link_mcp_server","setup_approved"} and not isinstance(v,bool):return "boolean required"
+    if field in {"baseline_approved","setup_repository_now","link_mcp_server","mcp_discovery_approved","setup_approved"} and not isinstance(v,bool):return "boolean required"
     if field=="ssh_connection_profile":
         if not isinstance(v,dict) or not isinstance(v.get("host"),str) or not isinstance(v.get("user"),str):return "ssh_connection_profile requires host/user and optional port"
     if field=="domain_binding":
@@ -86,6 +86,23 @@ def build_baseline(s):
       "architecture_status":a["architecture_status"],"architecture_notes":a["architecture_notes"],
       "infrastructure_status":a["infrastructure_status"],"external_systems":a["external_systems"],
       "constraints":a["constraints"],"first_work_objective":a["first_work_objective"]}
+
+def build_mcp_discovery_plan(s):
+    a=s["answers"]
+    return {
+      "operation":"READ_ONLY_MCP_DISCOVERY",
+      "repository":s["repository"],
+      "transport":a.get("mcp_transport"),
+      "endpoint":a.get("mcp_endpoint"),
+      "ssh_connection_profile":copy.deepcopy(a.get("ssh_connection_profile")),
+      "scope":a.get("mcp_discovery_scope"),
+      "domain_strategy":a.get("domain_strategy"),
+      "runtime_mutation_policy":a.get("runtime_mutation_policy"),
+      "tools":["ping","get_project_context","list_domains_s1","list_domains_s2","get_write_tools_context"],
+      "mutation_authority":False,
+      "secret_value_exposure":False,
+      "purpose":"OBSERVE_EXISTING_PROJECT_SERVER_DOMAIN_AND_CAPABILITY_STATE_BEFORE_GAP_ANALYSIS"
+    }
 
 def credential_requirements(a):
     t=a.get("mcp_transport")
@@ -172,6 +189,14 @@ def refresh(s):
         ]:
             if r["field"] not in s["answers"]:s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]=r["id"];s["next_request"]=r;return s
 
+        if "mcp_discovery_approved" not in s["answers"]:
+            s["status"]="WAITING_FOR_DISCOVERY_APPROVAL";s["phase"]="MCP_DISCOVERY_APPROVAL"
+            s["next_request"]={"kind":"PLAN_APPROVAL","id":"Q_MCP_DISCOVERY_APPROVAL","field":"mcp_discovery_approved",
+              "text":"Le plan de découverte MCP en lecture seule est prêt. L'approuves-tu pour exécution maintenant ? La configuration exprimée jusque-là ne constitue pas une autorisation d'exécution.",
+              "required":True,"response_type":"boolean","plan":build_mcp_discovery_plan(s)};return s
+        if s["answers"]["mcp_discovery_approved"] is False:
+            s["status"]="HOLD_FOR_REVIEW";s["phase"]="MCP_DISCOVERY_APPROVAL";s["hold_reason"]="MCP discovery not approved";return s
+
         requirements=credential_requirements(s["answers"])
         if not s.get("credentials_verified") and requirements:
             s["status"]="MCP_CREDENTIAL_REQUIRED";s["phase"]="MCP_CREDENTIAL_GATE"
@@ -219,7 +244,32 @@ def answer(s,field,value):
         s["mcp_discovery_history"]=history
         s["mcp_discovery"]=None
         s["hold_reason"]=None
+        s["answers"].pop("mcp_discovery_approved",None)
     s["answers"][field]=value;s["revision"]+=1
+    return refresh(s)
+
+def reconcile_legacy_discovery_authority(s):
+    s=copy.deepcopy(s)
+    if s.get("mode")!="FIRST_AGENT_BOOTSTRAP":
+        return s
+    a=s.get("answers") or {}
+    if a.get("link_mcp_server") is not True or "mcp_discovery_approved" in a:
+        return s
+    request=s.get("next_request") or {}
+    evidence=s.get("mcp_discovery")
+    legacy=(s.get("phase")=="MCP_DISCOVERY" or request.get("kind")=="MCP_DISCOVERY" or isinstance(evidence,dict))
+    if not legacy:
+        return s
+    if isinstance(evidence,dict):
+        history=list(s.get("mcp_discovery_history") or [])[-4:]
+        history.append({
+          "reason":"DISCOVERY_EXECUTED_BEFORE_EXPLICIT_APPROVAL_GATE",
+          "evidence":copy.deepcopy(evidence)
+        })
+        s["mcp_discovery_history"]=history
+    s["mcp_discovery"]=None
+    s["hold_reason"]=None
+    s["revision"]=int(s.get("revision") or 0)+1
     return refresh(s)
 
 def mark_credentials_verified(s):

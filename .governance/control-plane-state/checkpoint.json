@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "checkpoint_id": "CP-CHECKPOINT-20260929-022",
+  "checkpoint_id": "CP-CHECKPOINT-20260929-023",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-  "subject_head": "7b8cf2193514efd8f3fe8ce635b0d21abfe53639",
+  "subject_head": "e7a62eb6547bf68a28dd477903bf30631f0f9b13",
   "template_version_before": "2.7.0",
-  "state": "P12_S5_EKYC_CLIENT_GREEN_MCP_TLS_EXTERNAL_BLOCKER",
+  "state": "P12_S5_EKYC_DISCOVERY_AUTHORITY_RECONCILIATION",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
@@ -80,17 +80,19 @@
     "c1_13_d_ekyc_ci_result": "PASS",
     "c1_13_e_mcp_retry_run": 36621624763,
     "c1_13_e_failure": "SSL certificate verify failed: certificate has expired",
-    "c1_13_e_mcp_intake": "Patricked-code/MCP#201"
+    "c1_13_e_mcp_intake": "Patricked-code/MCP#201",
+    "c1_13_e_tls_evidence_preserved": true,
+    "c1_13_e_owner_feedback": "CONFIGURATION_INTENT_NE_EXECUTION_AUTHORITY"
   },
-  "next_action": "C1_13_E_WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_EKYC_DISCOVERY",
+  "next_action": "C1_13_E_A_IMPLEMENT_EXPLICIT_MCP_DISCOVERY_APPROVAL_GATE",
   "reconciliation_required_before_write": true,
   "ci_run": 36621490571,
   "ci_result": "PASS",
   "client_source_memory_removal": "PASS",
   "self_governance": "PASS",
-  "reconciliation_reason": "P12_S5_CLIENT_PORTABILITY_COMPLETE_MCP_DISCOVERY_BLOCKED_BY_EXPIRED_PUBLIC_TLS_CERTIFICATE",
+  "reconciliation_reason": "OWNER_FEEDBACK_CONFIGURATION_INTENT_NE_DISCOVERY_EXECUTION_AUTHORITY",
   "canonical_memory_database": "PASS",
-  "blocker": "MCP_INTAKE_201_TLS_CERTIFICATE_EXPIRED",
+  "blocker": "GENERIC_TEMPLATE_DISCOVERY_APPROVAL_GATE_MISSING",
   "knowledge_enrichment": {
     "canonical_architecture": {
       "authority_id": "CP-ARCH-001",
@@ -120,6 +122,14 @@
       "integrity_fix_pr": 43,
       "integrity_fix_merge_subject_head": "113c50aa765ae886cd7a085637b8d5dbb5c2766b",
       "review_threads_resolved": true
+    },
+    "adaptive_questionnaire": {
+      "decision_ids": [
+        "CPD-030",
+        "CPD-031"
+      ],
+      "status": "IN_PROGRESS",
+      "reuse_existing_loop_engineering": true
     }
   }
 }

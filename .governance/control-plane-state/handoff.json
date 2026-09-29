@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "handoff_id": "CP-HANDOFF-20260929-020",
+  "handoff_id": "CP-HANDOFF-20260929-021",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "canonical_branch": "main",
-  "baseline_subject_head": "7b8cf2193514efd8f3fe8ce635b0d21abfe53639",
-  "active_branch": "governance/reconcile-c1-13-mcp-tls-blocker",
+  "baseline_subject_head": "e7a62eb6547bf68a28dd477903bf30631f0f9b13",
+  "active_branch": "governance/c1-13-discovery-approval-gate",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "current_task": "C1-13-E_MCP_TLS_EXTERNAL_DEPENDENCY",
-  "unique_next_action": "C1_13_E_WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_EKYC_DISCOVERY",
+  "current_task": "C1-13-E-A_EXPLICIT_MCP_DISCOVERY_APPROVAL_GATE",
+  "unique_next_action": "C1_13_E_A_IMPLEMENT_EXPLICIT_MCP_DISCOVERY_APPROVAL_GATE",
   "read_first": [
     "docs/control-plane/CURRENT_STATE.md",
     ".governance/control-plane-state/canonical-architecture.json",
@@ -63,7 +63,11 @@
     "EYKYC_CLIENT_CI_GREEN_DO_NOT_PATCH_TARGET",
     "MCP_TLS_DEPENDENCY_IS_EXTERNAL_INTAKE_ONLY",
     "DO_NOT_MUTATE_PATRICKED_CODE_MCP_FROM_TEMPLATE_WORKSTREAM",
-    "RETRY_EKYC_DISCOVERY_ONLY_AFTER_MCP_TLS_REMEDIATION_IS_ATTESTED"
+    "RETRY_EKYC_DISCOVERY_ONLY_AFTER_MCP_TLS_REMEDIATION_IS_ATTESTED",
+    "CONFIGURATION_INTENT_NE_EXECUTION_AUTHORITY",
+    "MCP_DISCOVERY_REQUIRES_EXPLICIT_PLAN_APPROVAL",
+    "PRESERVE_EKYC_ANSWERS_AND_ARCHIVE_PREAPPROVAL_DISCOVERY_EVIDENCE",
+    "ADAPTIVE_QUESTIONNAIRE_FEEDS_EXISTING_LOOP_ENGINEERING_NO_PARALLEL_ENGINE"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",
@@ -89,8 +93,14 @@
       "C1-13-C",
       "C1-13-D"
     ],
-    "active_dependency": "MCP_TLS_CERTIFICATE_EXPIRED",
+    "active_dependency": "GENERIC_TEMPLATE_DISCOVERY_APPROVAL_GATE_MISSING",
     "external_intake": "Patricked-code/MCP#201",
-    "failed_discovery_run": 36621624763
+    "failed_discovery_run": 36621624763,
+    "active_corrective_task": "C1-13-E-A",
+    "preserved_external_dependency": {
+      "code": "MCP_TLS_CERTIFICATE_EXPIRED",
+      "intake": "Patricked-code/MCP#201",
+      "failed_discovery_run": 36621624763
+    }
   }
 }

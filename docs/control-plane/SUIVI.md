@@ -404,3 +404,11 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - No TLS bypass, HTTP downgrade, direct target patch or MCP runtime/code mutation was attempted.
 - External intake-only issue opened: `Patricked-code/MCP#201`.
 - P12-S5 remains active but externally blocked. Resume only after MCP-side TLS remediation is attested, then retry the preserved discovery flow.
+
+## 2026-09-29 — Ekyc owner-feedback authority reconciliation
+
+The Ekyc CASE 1 replay revealed a generic semantic defect: the state machine treated completed MCP configuration answers as sufficient to advance into executable discovery.
+
+Owner intent is now canonical: configuration prepares; it does not execute. The immediate task is `C1-13-E-A`, implemented in the Template first. Ekyc remains frozen and its existing answers are preserved.
+
+The correction is intentionally complementary: the existing governance files, work-items, dependencies, sessions, claims, checkpoints, handoffs and Loop Engineering remain authoritative. The adaptive questionnaire must feed those existing structures with richer project/resource facts and prepared tasks.

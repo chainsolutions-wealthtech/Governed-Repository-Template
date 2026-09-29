@@ -56,7 +56,7 @@ From this framework program:
 
 ## Unique next action
 
-`C1_13_E_WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_EKYC_DISCOVERY`
+`C1_13_E_A_IMPLEMENT_EXPLICIT_MCP_DISCOVERY_APPROVAL_GATE`
 
 ## Latest proof
 
@@ -351,3 +351,28 @@ The future admin web application is intentionally deferred until all structuring
 - Transport `BOTH` is also blocked because the GitHub-OIDC SSH certificate broker is served through the same HTTPS host.
 - External intake created: `Patricked-code/MCP#201`, intake only.
 - P12-S5 remains active but externally blocked; P12-S6/GMC stay blocked.
+
+## Owner-feedback reconciliation — discovery configuration is not execution authority
+
+Owner feedback reclassified the apparent TLS blocker as downstream evidence, not the correct immediate next action.
+
+Ekyc#1 already preserves the business/setup answers through `runtime_mutation_policy=EXPLICIT_APPROVAL_FOR_SCOPED_WRITE`. Those answers describe the intended configuration. They do not authorize an immediate MCP network call.
+
+New generic corrective task: `C1-13-E-A`.
+
+Required additive invariant:
+
+```text
+ANSWER / CONFIGURATION
+!=
+EXECUTION AUTHORITY
+
+CONFIGURE DISCOVERY
+→ PRESENT READ-ONLY DISCOVERY PLAN
+→ EXPLICIT APPROVAL
+→ ONLY THEN CREDENTIAL PROVISIONING / NETWORK DISCOVERY
+```
+
+The previously observed MCP TLS failure and `Patricked-code/MCP#201` remain preserved evidence. Ekyc remains frozen until the generic Template correction is merged and distributed.
+
+The adaptive questionnaire is additive to the existing governance and Loop Engineering: answers and fresh observations enrich the project/resource model and prepare existing work-items/dependencies; no parallel governance or task engine is introduced.

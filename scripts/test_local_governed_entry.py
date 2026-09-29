@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 from __future__ import annotations
+import copy
 from pathlib import Path
-from local_governed_entry import answer, both_discovery_needs_refresh, complete_baseline, decode_state, encode_state, mark_credentials_verified, new_request, record_mcp_discovery, record_mcp_discovery_failure, require_mcp_discovery_refresh
+from local_governed_entry import answer, both_discovery_needs_refresh, complete_baseline, decode_state, encode_state, mark_credentials_verified, new_request, reconcile_legacy_discovery_authority, record_mcp_discovery, record_mcp_discovery_failure, require_mcp_discovery_refresh
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -31,6 +32,11 @@ def main():
     s=answer_expected(s,"mcp_discovery_scope","FULL_GOVERNED_MAPPING")
     s=answer_expected(s,"domain_strategy","DISCOVER_EXISTING_THEN_PROPOSE")
     s=answer_expected(s,"runtime_mutation_policy","EXPLICIT_APPROVAL_FOR_SCOPED_WRITE")
+    if s["next_request"]["kind"]!="PLAN_APPROVAL" or s["next_request"].get("field")!="mcp_discovery_approved":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: discovery approval gate")
+    if s.get("credentials_verified") is not False:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: configuration must not verify credentials or execute discovery")
+    s=answer_expected(s,"mcp_discovery_approved",True)
     if s["next_request"]["kind"]!="CREDENTIAL_GATE": raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: credential gate")
     s=mark_credentials_verified(s)
     if s["next_request"]["kind"]!="MCP_DISCOVERY": raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: discovery gate")
@@ -56,8 +62,11 @@ def main():
     ssh=answer_expected(ssh,"mcp_discovery_scope","FULL_GOVERNED_MAPPING")
     ssh=answer_expected(ssh,"domain_strategy","DISCOVER_EXISTING_THEN_PROPOSE")
     ssh=answer_expected(ssh,"runtime_mutation_policy","EXPLICIT_APPROVAL_FOR_SCOPED_WRITE")
+    if ssh["next_request"]["kind"]!="PLAN_APPROVAL" or ssh["next_request"].get("field")!="mcp_discovery_approved":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: SSH configuration must stop at discovery approval")
+    ssh=answer_expected(ssh,"mcp_discovery_approved",True)
     if ssh["next_request"]["kind"]!="MCP_DISCOVERY":
-        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: SSH-only must not require persistent credentials")
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: approved SSH-only discovery must not require persistent credentials")
     if ssh.get("credentials_verified") is not True:
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: SSH-only credential state")
     if any(item.get("name")=="GOVERNED_MCP_SSH_PRIVATE_KEY" for item in (ssh.get("setup_package") or {}).get("mcp",{}).get("credential_requirements",[])):
@@ -73,8 +82,24 @@ def main():
     both=answer_expected(both,"mcp_discovery_scope","FULL_GOVERNED_MAPPING")
     both=answer_expected(both,"domain_strategy","DISCOVER_EXISTING_THEN_PROPOSE")
     both=answer_expected(both,"runtime_mutation_policy","EXPLICIT_APPROVAL_FOR_SCOPED_WRITE")
+    if both["next_request"]["kind"]!="PLAN_APPROVAL" or both["next_request"].get("field")!="mcp_discovery_approved":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: BOTH configuration must stop at discovery approval")
+    discovery_plan=both["next_request"].get("plan") or {}
+    if discovery_plan.get("mutation_authority") is not False or discovery_plan.get("transport")!="BOTH":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: discovery plan must be read-only and preserve transport")
+    legacy=copy.deepcopy(both)
+    legacy["status"]="MCP_DISCOVERY_FAILED_RETRYABLE"
+    legacy["phase"]="MCP_DISCOVERY"
+    legacy["next_request"]={"kind":"MCP_DISCOVERY","id":"MCP_DISCOVERY","text":"legacy"}
+    legacy["mcp_discovery"]={"status":"ERROR","failure_code":"LEGACY_PREAPPROVAL_NETWORK_ATTEMPT"}
+    legacy=reconcile_legacy_discovery_authority(legacy)
+    if legacy["next_request"]["kind"]!="PLAN_APPROVAL" or legacy["next_request"].get("field")!="mcp_discovery_approved":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: legacy discovery state must migrate back to explicit approval")
+    if legacy.get("mcp_discovery") is not None or not legacy.get("mcp_discovery_history"):
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: legacy discovery evidence must be archived, not treated as current authority")
+    both=answer_expected(both,"mcp_discovery_approved",True)
     if both["next_request"]["kind"]!="MCP_DISCOVERY":
-        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: BOTH must allow secretless SSH discovery fallback")
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: approved BOTH must allow secretless SSH discovery fallback")
     if both.get("credentials_verified") is not True:
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: BOTH mandatory credential gate should be satisfied by secretless fallback")
     endpoint_failed=record_mcp_discovery_failure(both,{
@@ -87,10 +112,13 @@ def main():
     if endpoint_failed["status"]!="WAITING_FOR_SETUP_ANSWER" or endpoint_failed["next_request"].get("field")!="mcp_endpoint":
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: HTTP 404 must reopen MCP endpoint correction")
     endpoint_failed=answer_expected(endpoint_failed,"mcp_endpoint","https://mcp.example.test/mcp")
-    if endpoint_failed["next_request"]["kind"]!="MCP_DISCOVERY" or endpoint_failed.get("mcp_discovery") is not None:
-        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: corrected MCP endpoint must return to clean discovery gate")
+    if endpoint_failed["next_request"]["kind"]!="PLAN_APPROVAL" or endpoint_failed["next_request"].get("field")!="mcp_discovery_approved" or endpoint_failed.get("mcp_discovery") is not None:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: corrected MCP endpoint must require renewed discovery approval")
     if endpoint_failed.get("hold_reason") is not None:
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: corrected MCP endpoint must clear hold")
+    endpoint_failed=answer_expected(endpoint_failed,"mcp_discovery_approved",True)
+    if endpoint_failed["next_request"]["kind"]!="MCP_DISCOVERY":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: reapproved corrected endpoint must return to discovery")
     endpoint_history=endpoint_failed.get("mcp_discovery_history") or []
     if len(endpoint_history)!=1 or endpoint_history[0]["evidence"].get("failure_code")!="HTTP Error 404: Not Found":
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: endpoint correction must archive failed discovery evidence")

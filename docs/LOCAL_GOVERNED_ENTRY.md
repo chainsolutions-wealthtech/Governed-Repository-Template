@@ -33,11 +33,14 @@ The local control plane asks one question at a time:
 13. choose whether to continue repository technical setup;
 14. choose whether to bind the repository to MCP;
 15. choose MCP transport and non-secret connection profile;
-16. verify required GitHub Actions secrets/variables;
-17. run read-only MCP discovery for servers/domains/write context;
-18. choose existing/new/unresolved domain binding;
-19. choose the governed work model;
-20. approve the technical setup and access matrix.
+16. define MCP discovery scope, domain strategy and initial runtime-mutation policy as configuration intent;
+17. build and present the read-only MCP discovery plan;
+18. explicitly approve that discovery execution; configuration answers alone never authorize network execution;
+19. verify/provision only the credentials required for the approved discovery path;
+20. run read-only MCP discovery for project/server/domain/write-context facts;
+21. choose existing/new/unresolved domain binding from observed evidence;
+22. choose the governed work model;
+23. approve the technical setup and access matrix.
 
 After the two approvals, the local workflow:
 
@@ -120,3 +123,17 @@ The central GitHub App verifies the target HEAD, dispatches `governed_local_star
 
 This path does not weaken the human issue/comment authorization gate. It is a distinct machine path authenticated by the central GitHub App and exact-HEAD bound.
 
+## Adaptive preparation contract
+
+The local questionnaire is an adaptive preparation engine, not a fixed form and not an execution grant.
+
+```text
+ANSWER / OBSERVED FACT
+→ enrich PROJECT MODEL
+→ derive RESOURCE REQUIREMENTS
+→ classify EXISTING / UNKNOWN / PLANNED / TO_CREATE / TO_CONFIGURE / TO_VERIFY
+→ derive prepared work-items + dependencies + authority requirements
+→ existing LOOP_ENGINEERING executes only when the item becomes READY and its authority gates pass
+```
+
+For an existing repository, already observed fresh facts are reused and only missing owner decisions or unresolved facts are asked. For a new repository, more questions are required because fewer resources exist. No parallel task engine or governance model is introduced.

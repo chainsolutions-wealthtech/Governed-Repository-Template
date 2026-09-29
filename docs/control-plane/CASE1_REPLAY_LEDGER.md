@@ -615,3 +615,17 @@ Current example: the `unexpected work item` failure was traced to `scripts/test_
 - No pilot Git mutation during the normal-entry proof.
 - C1-12 / STEP 4 exit: PASS.
 - Next phase: `C1-13 / P12-S5 SECOND_FRESH_REPOSITORY_E2E`.
+
+## Owner feedback return point — MCP discovery approval
+
+During the Ekyc second-fresh replay, owner feedback clarified that MCP configuration answers were intended to prepare the target state only. The first network discovery was therefore premature.
+
+Return point:
+
+```text
+C1-06 MCP discovery configuration
+→ explicit discovery-plan approval gate
+→ C1-07 credential/discovery
+```
+
+No prior Ekyc business/setup answer is invalidated. The TLS failure evidence remains historical and external; it is not the immediate execution gate until discovery is explicitly approved.

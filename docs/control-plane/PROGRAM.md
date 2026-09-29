@@ -242,3 +242,11 @@ P12-S4 NORMAL ENTRY
 ```
 
 The existing `ARCH-*`, `IDN-*` and `RTE-*` workstreams are absorbed as dependencies/sub-workstreams where applicable, not duplicated.
+
+### P12-S5 owner-feedback corrective gate — C1-13-E-A
+
+The second fresh E2E remains inside STEP 5. Owner feedback established that MCP configuration answers prepare the project model but do not authorize network execution.
+
+Before resuming the previously observed TLS-dependent discovery, the Template must add and validate an explicit read-only discovery-plan approval gate, then distribute that generic correction to Ekyc through the governed upgrader.
+
+This is an additive correction to the existing programme. STEP 6 and the dependency-bound GMC programme remain unchanged and blocked behind completion of STEP 5.
