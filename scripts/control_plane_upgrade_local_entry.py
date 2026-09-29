@@ -2,6 +2,7 @@
 from __future__ import annotations
 import argparse, base64, json, os, re, urllib.error, urllib.parse, urllib.request
 from pathlib import Path
+from local_governed_entry import reconcile_legacy_discovery_authority
 
 ROOT=Path(__file__).resolve().parents[1]
 CENTRAL="chainsolutions-wealthtech/Governed-Repository-Template"
@@ -81,6 +82,7 @@ def migrate_open_local_entry_heads(token,target,current_head,new_head):
             if state_head!=current_head and not is_governed_upgrade_chain(token,target,state_head,current_head):
                 continue
             old_revision=int(state.get("revision") or 0)
+            state=reconcile_legacy_discovery_authority(state)
             state["expected_head_sha"]=new_head
             state["revision"]=old_revision+1
             replacement=f"<!-- GOVERNED_LOCAL_ENTRY_STATE:{encode_local_issue_state(state)} -->"
