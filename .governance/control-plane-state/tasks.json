@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 36,
+  "revision": 37,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -43,7 +43,7 @@
       "depends_on": [
         "P12-S4"
       ],
-      "next_action": "C1-13-G",
+      "next_action": "C1-13-H",
       "evidence": [
         "C1-13-A inserted for generic MCP endpoint recovery defect discovered on Ekyc"
       ]
@@ -248,35 +248,50 @@
     },
     {
       "id": "C1-13-G",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-13-F"
       ],
       "blocks": [
         "P12-S5"
       ],
-      "next_action": "IMPLEMENT_SIGNED_SSH_PROFILE_RECOVERY",
+      "next_action": null,
       "defect_code": "SSH_PROFILE_MISMATCH_RECOVERY_DEAD_END",
       "evidence": [
         "Direct MCP discovery PASS on https://mcp.wealthtechinnovations.com/mcp",
         "Signed MCP SSH broker profile observed as 212.227.212.33:22/root",
         "Configured Ekyc SSH profile was mcp.wealthtechinnovations.com:22/root",
         "Current generic state only exposes blind /local-execute retry after SSH_PROFILE_MISMATCH",
-        "Generic fix must reopen ssh_connection_profile and invalidate prior approval"
+        "Generic fix must reopen ssh_connection_profile and invalidate prior approval",
+        "Template PR #59 merged at 7bb1199f5b7683003fa62c373a211d0736b67908",
+        "Template post-merge Governance CI 36645221136 PASS",
+        "Governed Ekyc v2.8.8 upgrade 4d552458afab32df12aaafd6c7290fab6246d96b",
+        "Ekyc Governance CI 36645315558 PASS",
+        "Ekyc discovery 36645372827 reopened Q_SSH_PROFILE_RECOVERY revision 37 with signed broker profile evidence",
+        "Factual SSH profile correction through central comment 5901027821 advanced Ekyc#1 to revised plan approval gate revision 38"
       ]
     },
     {
       "id": "C1-13-H",
-      "status": "PLANNED",
+      "status": "IN_PROGRESS",
       "depends_on": [
         "C1-13-G"
       ],
       "blocks": [],
-      "next_action": "ADD_PERSISTENT_CONTROL_PLANE_MCP_CAPABILITY_SNAPSHOT",
+      "next_action": "VALIDATE_PERSISTENT_MCP_CAPABILITY_SNAPSHOT",
       "objective": "Persist a refreshable source-only MCP capability image and case-to-tool-to-operation planning map that feeds existing Loop Engineering",
       "execution_model": "EXISTING_LOOP_ENGINEERING",
       "external_mcp_intake_required": false,
-      "relational_projection": "PENDING_PROJECTION_GMC_INTEGRATION"
+      "relational_projection": "PENDING_PROJECTION_GMC_INTEGRATION",
+      "evidence": [
+        "CPD-033 defines source-only persistent MCP capability image",
+        "docs/control-plane/MCP_CAPABILITY_MODEL.md implemented",
+        ".governance/control-plane-state/mcp-capability-snapshot.json seeded from authorized live evidence",
+        "source-only refresh script and regression test implemented",
+        "source-only refresh workflow uses event/need based direct MCP read-only discovery and governed PR persistence",
+        "server connection coordinates intentionally excluded from persisted public snapshot",
+        "relational projection remains PENDING_PROJECTION_GMC_INTEGRATION"
+      ]
     },
     {
       "id": "P12-S6",
@@ -944,7 +959,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-13-G",
+  "unique_executable_item": "C1-13-H",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",

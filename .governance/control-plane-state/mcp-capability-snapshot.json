@@ -1,0 +1,190 @@
+{
+  "schema_version": "1.0.0",
+  "authority_id": "CP-MCP-CAP-001",
+  "authority_type": "MCP_CAPABILITY_SNAPSHOT",
+  "scope": "CONTROL_PLANE_SOURCE_ONLY",
+  "status": "PARTIAL_LIVE_EVIDENCE",
+  "observed_at": "2026-09-29T23:28:25+00:00",
+  "refresh_sequence": 0,
+  "endpoint": "https://mcp.wealthtechinnovations.com/mcp",
+  "standing_readonly_refresh_authority": true,
+  "mutation_authority_granted": false,
+  "secrets_persisted": false,
+  "server_connection_coordinates_persisted": false,
+  "refresh_policy": {
+    "mode": "EVENT_AND_NEED_BASED",
+    "automatic_periodic_polling": false,
+    "refresh_triggers": [
+      "MISSING_SNAPSHOT",
+      "CAPABILITY_REQUIRED_NOT_PRESENT",
+      "CATALOGUE_DIGEST_CONTRADICTION",
+      "SOURCE_HEAD_OR_RUNTIME_REVISION_CONTRADICTION",
+      "PRE_MUTATION_CAPABILITY_ATTESTATION",
+      "OWNER_OR_AGENT_REQUESTED_REFRESH"
+    ],
+    "pre_mutation_live_refresh_required": true,
+    "material_capability_change_requires_replanning": true
+  },
+  "provenance": {
+    "method": "EKYC_AUTHORIZED_READ_ONLY_DIRECT_MCP_DISCOVERY",
+    "source_repository": "Patricked-code/Ekyc",
+    "source_head": "4d552458afab32df12aaafd6c7290fab6246d96b",
+    "discovery_run": 36645372827,
+    "mcp_repository": "Patricked-code/MCP",
+    "mcp_github_head": null,
+    "mcp_runtime_revision": null,
+    "inventory_digest": null,
+    "catalogue_digest": null
+  },
+  "mcp_server": {
+    "name": "wealthtech_ssh_bridge",
+    "version": "0.1.0",
+    "protocol_version": "2025-06-18"
+  },
+  "servers": {
+    "s1": {
+      "id": "s1",
+      "label": "S1 - serveur principal / destination",
+      "connection_coordinates_persisted": false,
+      "live_connection_refresh_required_before_server_operation": true
+    },
+    "s2": {
+      "id": "s2",
+      "label": "S2 - serveur source / migration / nettoyage sélectif",
+      "connection_coordinates_persisted": false,
+      "live_connection_refresh_required_before_server_operation": true
+    }
+  },
+  "catalogue": {
+    "status": "REFRESH_REQUIRED_FOR_FULL_LIVE_CATALOGUE",
+    "counts": {
+      "tools": 5,
+      "resources": 0,
+      "read": 5,
+      "operational_write": 0,
+      "scoped_write": 0,
+      "unknown_surface": 0
+    },
+    "catalogue_version": null,
+    "catalogue_digest": null,
+    "tools": [
+      {
+        "name": "ping",
+        "title": null,
+        "description": "Observed read-only probe",
+        "surface": "read",
+        "authority_required": "READ_ONLY_DISCOVERY_AUTHORITY",
+        "read_only_hint": true,
+        "destructive_hint": false,
+        "contract_digest": null,
+        "input_schema": {},
+        "tags": [
+          "DISCOVERY",
+          "OBSERVABILITY"
+        ]
+      },
+      {
+        "name": "get_project_context",
+        "title": null,
+        "description": "Observed read-only project/server context probe",
+        "surface": "read",
+        "authority_required": "READ_ONLY_DISCOVERY_AUTHORITY",
+        "read_only_hint": true,
+        "destructive_hint": false,
+        "contract_digest": null,
+        "input_schema": {},
+        "tags": [
+          "DISCOVERY",
+          "SERVER_RUNTIME"
+        ]
+      },
+      {
+        "name": "list_domains_s1",
+        "title": null,
+        "description": "Observed read-only S1 domain inventory probe",
+        "surface": "read",
+        "authority_required": "READ_ONLY_DISCOVERY_AUTHORITY",
+        "read_only_hint": true,
+        "destructive_hint": false,
+        "contract_digest": null,
+        "input_schema": {},
+        "tags": [
+          "DISCOVERY",
+          "DOMAIN_NETWORK",
+          "SERVER_RUNTIME"
+        ]
+      },
+      {
+        "name": "list_domains_s2",
+        "title": null,
+        "description": "Observed read-only S2 domain inventory probe",
+        "surface": "read",
+        "authority_required": "READ_ONLY_DISCOVERY_AUTHORITY",
+        "read_only_hint": true,
+        "destructive_hint": false,
+        "contract_digest": null,
+        "input_schema": {},
+        "tags": [
+          "DISCOVERY",
+          "DOMAIN_NETWORK",
+          "SERVER_RUNTIME"
+        ]
+      },
+      {
+        "name": "get_write_tools_context",
+        "title": null,
+        "description": "Observed read-only capability context for scoped writes",
+        "surface": "read",
+        "authority_required": "READ_ONLY_DISCOVERY_AUTHORITY",
+        "read_only_hint": true,
+        "destructive_hint": false,
+        "contract_digest": null,
+        "input_schema": {},
+        "tags": [
+          "DISCOVERY",
+          "GOVERNANCE",
+          "SECURITY_IDENTITY"
+        ]
+      }
+    ],
+    "resources": []
+  },
+  "write_context_summary": {
+    "mode": "scoped-write-tools",
+    "free_shell": false,
+    "run_command_s1": false,
+    "run_command_s2": false,
+    "sql": "SELECT uniquement",
+    "project_mapping_detail": "REFRESH_REQUIRED_FOR_FULL_LIVE_CATALOGUE"
+  },
+  "case_operation_map": {
+    "status": "REFRESH_REQUIRED_FOR_FULL_LIVE_CATALOGUE",
+    "mode": "PLANNING_CANDIDATES_NOT_EXECUTION_AUTHORITY"
+  },
+  "operation_planning_contract": {
+    "pipeline": [
+      "CASE_OR_WORK_ITEM",
+      "REQUIRED_CAPABILITY",
+      "SNAPSHOT_MATCH",
+      "REFRESH_IF_REQUIRED",
+      "CANDIDATE_TOOL_SELECTION",
+      "AUTHORITY_CHECK",
+      "PREPARED_OPERATION",
+      "EXISTING_LOOP_ENGINEERING",
+      "LIVE_PREFLIGHT",
+      "EXECUTE_IF_AUTHORIZED",
+      "EVIDENCE"
+    ],
+    "snapshot_is_execution_authority": false,
+    "write_tool_presence_implies_write_authority": false,
+    "tool_selection_must_recheck_live_authority_before_mutation": true,
+    "parallel_engine": false
+  },
+  "relational_projection": {
+    "status": "PENDING_PROJECTION_GMC_INTEGRATION",
+    "decision_id": "CPD-033"
+  },
+  "contradictions": [
+    "FULL_LIVE_TOOL_RESOURCE_CATALOGUE_NOT_YET_REFRESHED_BY_CONTROL_PLANE"
+  ]
+}

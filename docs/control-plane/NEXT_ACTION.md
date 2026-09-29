@@ -1,45 +1,50 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_13_G_IMPLEMENT_SIGNED_SSH_PROFILE_RECOVERY
-STATE = FRAMEWORK_CORRECTION_REQUIRED
+NEXT_ACTION = C1_13_H_VALIDATE_PERSISTENT_MCP_CAPABILITY_SNAPSHOT
+STATE = FRAMEWORK_VALIDATION_REQUIRED
 PARENT = P12_S5_SECOND_FRESH_REPOSITORY_E2E
 ```
 
-## Verified evidence
+## Ekyc return point
 
-- Template main reobserved before correction: `f5ba27597f4fb8214233a69b30577fcddeae6193`.
-- Ekyc HEAD: `a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6`.
-- Owner reapproved the corrected `/mcp` read-only discovery plan.
-- Governed Ekyc run: `36644247227`.
-- Direct MCP: PASS.
-- Endpoint: `https://mcp.wealthtechinnovations.com/mcp`.
-- MCP protocol: `2025-06-18`.
-- MCP server: `wealthtech_ssh_bridge 0.1.0`.
-- Read-only probes PASS: `ping`, `get_project_context`, `list_domains_s1`, `list_domains_s2`, `get_write_tools_context`.
-- SSH path: `SSH_PROFILE_MISMATCH`.
-- Configured SSH profile: `mcp.wealthtechinnovations.com:22/root`.
-- Signed broker profile: `212.227.212.33:22/root`.
-- First-agent baseline: SKIPPED.
-- Ekyc#1 revision after failure: `35`.
+The generic signed-SSH recovery is proven end-to-end:
 
-## Generic correction
+- Template v2.8.8 merge: `7bb1199f5b7683003fa62c373a211d0736b67908`.
+- Template post-merge Governance CI: `36645221136` PASS.
+- Ekyc governed upgrade: `4d552458afab32df12aaafd6c7290fab6246d96b`.
+- Ekyc Governance CI: `36645315558` PASS.
+- Ekyc discovery retry: `36645372827`.
+- Recovery state: `Q_SSH_PROFILE_RECOVERY`, revision 37.
+- Signed broker evidence was used to correct the factual SSH profile through central command `5901027821`.
+- Ekyc#1 is now revision 38 at `WAITING_FOR_DISCOVERY_APPROVAL / MCP_DISCOVERY_APPROVAL`.
+- Because the SSH target materially changed, prior discovery approval is invalidated.
+- First-agent baseline remains unapplied.
 
-1. Preserve the signed broker host/port/user as non-secret discovery evidence.
-2. Reopen `Q_SSH_PROFILE_RECOVERY` instead of blind `/local-execute` retry.
-3. Preserve direct MCP PASS evidence in failure history.
-4. Correcting the SSH profile invalidates prior discovery approval because the plan materially changes.
-5. After Template CI/merge, distribute V2.8.8 through the governed Ekyc upgrader.
-6. Resume Ekyc only at SSH-profile recovery, then rebuild the read-only plan for explicit approval.
+## Active Template work — C1-13-H
 
-## Complementary follow-up already queued
+Validate the new persistent source-only MCP capability memory:
 
-`C1-13-H` will add a source-only persistent MCP capability snapshot to the Template: refreshable read-only inventory, tool/resource catalogue, case-to-capability mapping and prepared-operation model feeding the existing Loop Engineering. It does not create a parallel engine or MCP intake.
+1. validate `CP-MCP-CAP-001` human and machine authorities;
+2. validate source-only removal from generated/adopted clients;
+3. validate the read-only refresh script and no-secret/no-server-coordinate persistence;
+4. validate case → tool → required-authority planning;
+5. validate that the model feeds the existing Loop Engineering rather than a parallel engine;
+6. merge only after full Governance CI;
+7. trigger one live source-only refresh from the Template;
+8. verify the refresh opens a governed PR with the current MCP catalogue/resource image;
+9. merge the refreshed snapshot only after its Governance CI.
+
+## Separate Ekyc gate
+
+The corrected BOTH plan is ready but requires explicit owner approval because its SSH target changed materially. Capability-snapshot validation does not grant or infer that approval.
 
 ## Safety boundary
 
-- Do not patch Ekyc directly.
-- Do not mutate Patricked-code/MCP.
-- Do not infer SSH profile correction as mutation authority.
-- Do not execute a materially changed discovery plan without renewed approval.
-- P12-S6 and GMC remain blocked behind P12-S5.
+- No MCP mutation.
+- No new MCP intake.
+- No direct Ekyc patch.
+- No persisted server connection coordinates in the public Template snapshot.
+- No secret value persistence.
+- Snapshot/tool availability does not imply write authority.
+- P12-S6 and GMC remain downstream of P12-S5.

@@ -56,7 +56,7 @@ From this framework program:
 
 ## Unique next action
 
-`C1_13_G_IMPLEMENT_SIGNED_SSH_PROFILE_RECOVERY`
+`C1_13_H_VALIDATE_PERSISTENT_MCP_CAPABILITY_SNAPSHOT`
 
 ## Latest proof
 
@@ -436,3 +436,23 @@ The combined BOTH result failed only because the stored SSH profile `mcp.wealtht
 This is a generic recovery gap: the state machine currently exposes blind retry instead of reopening the SSH profile. `C1-13-G` fixes that in the Template first.
 
 Owner feedback also adds `C1-13-H`: the source Control Plane must maintain a persistent, refreshable MCP capability image and derive case/tool/operation planning from it for the existing Loop Engineering. This is complementary source memory, not a second governance engine.
+
+## Persistent MCP capability image — C1-13-H candidate
+
+The signed-SSH recovery is now proven on Ekyc. V2.8.8 was merged and propagated; the refreshed local state reopened `Q_SSH_PROFILE_RECOVERY`, consumed authenticated broker evidence, and returned to a renewed discovery-plan approval gate at revision 38 without applying the baseline.
+
+The active framework work is now `C1-13-H`.
+
+New source-only authority:
+
+- human: `docs/control-plane/MCP_CAPABILITY_MODEL.md`;
+- machine: `.governance/control-plane-state/mcp-capability-snapshot.json`;
+- refresher: `scripts/control_plane_mcp_capability_snapshot.py`;
+- refresh workflow: `.github/workflows/mcp-capability-refresh.yml`;
+- authority ID: `CP-MCP-CAP-001`.
+
+The capability snapshot is a persistent last-known image, not a credential or execution grant. It records MCP identity/protocol, catalogue/resource metadata, server logical IDs, capability surfaces, provenance/digests, case/tool planning candidates and required authority classes. Public persistent state intentionally excludes server connection coordinates and secret values.
+
+Refresh is event/need based. The Template has standing authority for these read-only refreshes, but any server/MCP mutation still requires its normal scoped authority. A pre-mutation live refresh is mandatory.
+
+The relational projection remains `PENDING_PROJECTION_GMC_INTEGRATION` by design; no second database or parallel Loop Engineering engine is introduced.

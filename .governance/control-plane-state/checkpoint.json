@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "checkpoint_id": "CP-CHECKPOINT-20260930-003",
+  "checkpoint_id": "CP-CHECKPOINT-20260930-004",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-  "subject_head": "f5ba27597f4fb8214233a69b30577fcddeae6193",
+  "subject_head": "7bb1199f5b7683003fa62c373a211d0736b67908",
   "template_version_before": "2.7.0",
-  "state": "P12_S5_EKYC_DIRECT_MCP_PASS_SSH_PROFILE_RECOVERY_REQUIRED",
+  "state": "P12_S5_MCP_CAPABILITY_SNAPSHOT_IMPLEMENTATION",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
@@ -115,17 +115,27 @@
     "c1_13_f_baseline_write": "SKIPPED",
     "c1_13_g_signed_profile_host": "212.227.212.33",
     "c1_13_g_signed_profile_port": 22,
-    "c1_13_g_signed_profile_user": "root"
+    "c1_13_g_signed_profile_user": "root",
+    "c1_13_g_template_merge": "7bb1199f5b7683003fa62c373a211d0736b67908",
+    "c1_13_g_template_ci": 36645221136,
+    "c1_13_g_ekyc_upgrade": "4d552458afab32df12aaafd6c7290fab6246d96b",
+    "c1_13_g_ekyc_ci": 36645315558,
+    "c1_13_g_recovery_run": 36645372827,
+    "c1_13_g_recovery_phase": "Q_SSH_PROFILE_RECOVERY",
+    "c1_13_g_recovery_revision": 37,
+    "c1_13_g_profile_correction_comment": 5901027821,
+    "c1_13_g_approval_gate_revision": 38,
+    "c1_13_h_authority_id": "CP-MCP-CAP-001"
   },
-  "next_action": "C1_13_G_IMPLEMENT_SIGNED_SSH_PROFILE_RECOVERY",
+  "next_action": "C1_13_H_VALIDATE_PERSISTENT_MCP_CAPABILITY_SNAPSHOT",
   "reconciliation_required_before_write": true,
   "ci_run": 36637371154,
   "ci_result": "PASS",
   "client_source_memory_removal": "PASS",
   "self_governance": "PASS",
-  "reconciliation_reason": "REAPPROVED_MCP_ENDPOINT_SUCCEEDED_DIRECTLY_BUT_SIGNED_BROKER_SSH_PROFILE_DIFFERS_FROM_CONFIGURED_PROFILE",
+  "reconciliation_reason": "V288_SSH_PROFILE_RECOVERY_PROVEN_ON_EKYC_AND_SOURCE_ONLY_MCP_CAPABILITY_MEMORY_NOW_IMPLEMENTED_FOR_VALIDATION",
   "canonical_memory_database": "PASS",
-  "blocker": "GENERIC_TEMPLATE_SSH_PROFILE_RECOVERY_MISSING",
+  "blocker": "MCP_CAPABILITY_SNAPSHOT_VALIDATION_PENDING",
   "knowledge_enrichment": {
     "canonical_architecture": {
       "authority_id": "CP-ARCH-001",
@@ -166,8 +176,9 @@
     },
     "mcp_capability_snapshot": {
       "task": "C1-13-H",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED_PENDING_CI_AND_LIVE_REFRESH",
       "decision_id": "CPD-033",
+      "scope": "CONTROL_PLANE_SOURCE_ONLY",
       "relational_projection": "PENDING_PROJECTION_GMC_INTEGRATION"
     }
   }
