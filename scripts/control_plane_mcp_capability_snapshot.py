@@ -211,12 +211,35 @@ def classify_tool(tool: dict):
     return sorted(set(tags or ["OTHER"]))
 
 
+def summarize_input_schema(schema):
+    if not isinstance(schema, dict):
+        return []
+    properties = schema.get("properties") if isinstance(schema.get("properties"), dict) else {}
+    required = set(schema.get("required") or [])
+    fields = []
+    for name in sorted(properties)[:100]:
+        prop = properties.get(name)
+        if not isinstance(prop, dict):
+            prop = {}
+        item = {
+            "name": name,
+            "type": prop.get("type"),
+            "required": name in required,
+        }
+        enum = prop.get("enum")
+        if isinstance(enum, list) and len(enum) <= 20 and all(isinstance(v, (str, int, float, bool)) or v is None for v in enum):
+            item["enum"] = enum
+        fields.append(item)
+    return fields
+
+
 def normalize_tool(tool: dict, inventory_tool: dict | None = None):
     inventory_tool = inventory_tool or {}
     annotations = tool.get("annotations") if isinstance(tool.get("annotations"), dict) else {}
     surface = normalize_surface(inventory_tool.get("surface") or tool.get("surface"))
     read_only_hint = annotations.get("readOnlyHint")
     destructive_hint = annotations.get("destructiveHint")
+    schema = tool.get("inputSchema") if isinstance(tool.get("inputSchema"), dict) else inventory_tool.get("inputSchema")
     normalized = {
         "name": tool.get("name") or inventory_tool.get("name"),
         "title": tool.get("title") or inventory_tool.get("title"),
@@ -226,7 +249,7 @@ def normalize_tool(tool: dict, inventory_tool: dict | None = None):
         "read_only_hint": read_only_hint if isinstance(read_only_hint, bool) else inventory_tool.get("readOnlyHint"),
         "destructive_hint": destructive_hint if isinstance(destructive_hint, bool) else inventory_tool.get("destructiveHint"),
         "contract_digest": inventory_tool.get("contractDigest"),
-        "input_schema": tool.get("inputSchema") if isinstance(tool.get("inputSchema"), dict) else inventory_tool.get("inputSchema"),
+        "input_fields": summarize_input_schema(schema),
     }
     normalized["tags"] = classify_tool(normalized)
     return normalized
@@ -246,25 +269,30 @@ def normalize_resource(resource: dict):
 def derive_case_operation_map(tools: list[dict]):
     mapping = {}
     for case_id, desired_tags in CASE_TAGS.items():
-        candidates = []
-        for tool in tools:
-            tags = set(tool.get("tags") or [])
-            if not tags.intersection(desired_tags):
-                continue
-            candidates.append({
-                "tool": tool.get("name"),
-                "surface": tool.get("surface"),
-                "tags": sorted(tags.intersection(desired_tags)),
-                "authority_required": tool.get("authority_required"),
-                "planning_only": True,
-            })
-        candidates.sort(key=lambda item: (
-            0 if item["surface"] == "read" else 1,
-            item.get("tool") or "",
-        ))
+        selected = [
+            tool for tool in tools
+            if set(tool.get("tags") or []).intersection(desired_tags)
+        ]
+        names = sorted({tool.get("name") for tool in selected if tool.get("name")})
+        read_names = sorted({
+            tool.get("name") for tool in selected
+            if tool.get("name") and tool.get("surface") == "read"
+        })
+        mutation_names = sorted({
+            tool.get("name") for tool in selected
+            if tool.get("name") and tool.get("surface") in {"operational-write", "scoped-write"}
+        })
+        unknown_names = sorted({
+            tool.get("name") for tool in selected
+            if tool.get("name") and tool.get("surface") == "unknown"
+        })
         mapping[case_id] = {
             "mode": "PLANNING_CANDIDATES_NOT_EXECUTION_AUTHORITY",
-            "candidate_tools": candidates,
+            "candidate_tools": names,
+            "read_only_candidates": read_names,
+            "mutation_candidates": mutation_names,
+            "unclassified_surface_candidates": unknown_names,
+            "tool_metadata_source": "catalogue.tools",
             "pre_mutation_live_refresh_required": True,
         }
     return mapping
