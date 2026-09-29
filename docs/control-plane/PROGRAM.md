@@ -127,7 +127,19 @@ The correct generic behavior is:
 - Template source continues to run the full integrity validation;
 - the fresh E2E remains frozen until PR #52 is merged and redistributed through the governed upgrader.
 
-`C1-13-C` is IN_PROGRESS. `P12-S5` remains the active parent and STEP 6 remains blocked.
+`C1-13-A`, `C1-13-B` and `C1-13-C` are DONE. `P12-S5` remains the active parent and STEP 6 remains blocked.
+
+#### Inserted corrective gate — C1-13-D
+
+After PR #52 merged and was redistributed to `Patricked-code/Ekyc`, the target retained the stale Governance Model integrity test because the client upgrader did not include that script in its portable static surface.
+
+The generic correction is:
+- keep Governance Model source state source-only;
+- distribute the portable integrity test itself;
+- add the corrected test to upgrader `static_paths`;
+- require a fresh governed client upgrade and fully green target CI before MCP discovery resumes.
+
+`C1-13-D` is IN_PROGRESS. `P12-S5` remains the active parent and STEP 6 remains blocked.
 
 ### STEP 6 — Close CREATE_NEW_REPOSITORY and release next macro case
 State: `PENDING_STEP_5`
