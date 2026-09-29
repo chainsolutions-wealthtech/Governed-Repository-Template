@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 35,
+  "revision": 36,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -43,7 +43,7 @@
       "depends_on": [
         "P12-S4"
       ],
-      "next_action": "C1-13-F",
+      "next_action": "C1-13-G",
       "evidence": [
         "C1-13-A inserted for generic MCP endpoint recovery defect discovered on Ekyc"
       ]
@@ -224,22 +224,59 @@
     },
     {
       "id": "C1-13-F",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-13-E"
       ],
       "blocks": [
         "P12-S5"
       ],
-      "next_action": "APPROVE_CORRECTED_MCP_DISCOVERY_PLAN",
+      "next_action": null,
       "gate_code": "OWNER_APPROVAL_REQUIRED_FOR_CORRECTED_MCP_DISCOVERY_PLAN",
       "evidence": [
         "Ekyc retry 36642689845 returned HTTP 404 at root endpoint after TLS restoration",
         "Canonical MCP architecture exposes endpoint /mcp",
         "Governed endpoint correction persisted https://mcp.wealthtechinnovations.com/mcp via central command comment 5900695747",
         "Ekyc run 36642777140 advanced Ekyc#1 to WAITING_FOR_DISCOVERY_APPROVAL revision 33",
-        "Prior approval was invalidated automatically because endpoint changed materially"
+        "Prior approval was invalidated automatically because endpoint changed materially",
+        "Owner reapproved corrected /mcp discovery plan",
+        "Central approval comment 5900882256",
+        "Ekyc run 36644247227 direct MCP path PASS",
+        "Ekyc run 36644247227 failed only on SSH_PROFILE_MISMATCH",
+        "Baseline application skipped; Ekyc#1 revision 35"
       ]
+    },
+    {
+      "id": "C1-13-G",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "C1-13-F"
+      ],
+      "blocks": [
+        "P12-S5"
+      ],
+      "next_action": "IMPLEMENT_SIGNED_SSH_PROFILE_RECOVERY",
+      "defect_code": "SSH_PROFILE_MISMATCH_RECOVERY_DEAD_END",
+      "evidence": [
+        "Direct MCP discovery PASS on https://mcp.wealthtechinnovations.com/mcp",
+        "Signed MCP SSH broker profile observed as 212.227.212.33:22/root",
+        "Configured Ekyc SSH profile was mcp.wealthtechinnovations.com:22/root",
+        "Current generic state only exposes blind /local-execute retry after SSH_PROFILE_MISMATCH",
+        "Generic fix must reopen ssh_connection_profile and invalidate prior approval"
+      ]
+    },
+    {
+      "id": "C1-13-H",
+      "status": "PLANNED",
+      "depends_on": [
+        "C1-13-G"
+      ],
+      "blocks": [],
+      "next_action": "ADD_PERSISTENT_CONTROL_PLANE_MCP_CAPABILITY_SNAPSHOT",
+      "objective": "Persist a refreshable source-only MCP capability image and case-to-tool-to-operation planning map that feeds existing Loop Engineering",
+      "execution_model": "EXISTING_LOOP_ENGINEERING",
+      "external_mcp_intake_required": false,
+      "relational_projection": "PENDING_PROJECTION_GMC_INTEGRATION"
     },
     {
       "id": "P12-S6",
@@ -907,7 +944,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-13-F",
+  "unique_executable_item": "C1-13-G",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",
