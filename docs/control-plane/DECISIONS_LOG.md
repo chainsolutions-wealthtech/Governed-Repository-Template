@@ -36,3 +36,23 @@ Append-only durable decisions for the source/control-plane repository.
 | CPD-028 | 2026-09-27 | The 19 GMC identifiers are chronological work packages/groups, not atomic tasks. Before any GMC implementation, each group must receive an execution blueprint defining mission, objective, questions to resolve, prerequisites, exact sources/paths/symbols/tests/decisions to inspect, search order/method, atomic tasks/subtasks, classification rules, expected findings, outputs, canonical storage destination, required evidence, validation, DONE/HOLD criteria, and downstream consumers. Results produced by one group become versioned inputs for later groups. This preparation is planning only and must not start implementation. | ACCEPTED |
 
 | CPD-029 | 2026-09-27 | Governance Model work-package progression is output-driven, not status-driven. Every GMC group must model three dependency dimensions — TASK_DEPENDENCY, ARTIFACT_DEPENDENCY and EVIDENCE_DEPENDENCY. Group results become persistent, versioned knowledge artifacts with stable IDs, provenance, validation state, producer, downstream consumers and append/supersede/revalidate history. Each group has explicit exit controls. GMC-G19 must assemble the complete Governance Model and separately demonstrate model completeness, consistency, reference integrity, implementation traceability, test/evidence/dependency coverage, reusability and CREATE/ADOPT/MAP/LAB compatibility before Governance Model 1.0.0 may be released. This remains planning-only until separately authorized. | ACCEPTED |
+
+### CPD-030 — Configuration intent never authorizes discovery execution
+
+- Date: 2026-09-29.
+- Decision: owner answers describing MCP linkage, transport, endpoint, discovery scope, domain strategy or runtime mutation policy enrich configuration only.
+- They do not authorize credential provisioning or a network discovery call.
+- A concrete read-only discovery plan must be presented and explicitly approved before execution.
+- Material changes to that plan, including endpoint recovery, invalidate prior discovery approval.
+- Legacy pre-approval discovery evidence is preserved in history and the state re-enters the approval gate.
+- This is additive to the existing local-entry, authority, exact-HEAD and Loop Engineering model.
+
+### CPD-031 — Adaptive questionnaire feeds the existing Loop Engineering
+
+- Date: 2026-09-29.
+- Decision: no new questionnaire engine, task engine or parallel governance source is introduced.
+- CREATE/ADOPT/MAP/LAB reuse the common Governance Model and existing project memory.
+- Fresh observed facts and prior owner answers are reused instead of being re-asked.
+- Only unknown facts or owner decisions are requested one at a time.
+- Answers/observations enrich the project/resource model, classify resources as existing/unknown/planned/to-create/to-configure/to-verify, and derive prepared work-items, dependencies and authority requirements.
+- Those prepared work-items are executed later by the existing Loop Engineering when their dependencies and authority gates make them READY.
