@@ -412,3 +412,11 @@ The Ekyc CASE 1 replay revealed a generic semantic defect: the state machine tre
 Owner intent is now canonical: configuration prepares; it does not execute. The immediate task is `C1-13-E-A`, implemented in the Template first. Ekyc remains frozen and its existing answers are preserved.
 
 The correction is intentionally complementary: the existing governance files, work-items, dependencies, sessions, claims, checkpoints, handoffs and Loop Engineering remain authoritative. The adaptive questionnaire must feed those existing structures with richer project/resource facts and prepared tasks.
+
+## 2026-09-29 — V2.8.7 propagated to Ekyc
+
+Template PR #55 merged at `8b3a1ac4abf250820558ba873110581f8607a2b3`; post-merge Governance CI `36637371154` passed.
+
+The governed upgrade path advanced Ekyc to `a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6`; Ekyc Governance CI `36637639375` passed. Ekyc#1 preserved every prior answer and moved to `WAITING_FOR_DISCOVERY_APPROVAL` revision 29. The premature TLS failure is retained only in history.
+
+CASE 1 is now correctly stopped at an owner authority gate: approve or change the concrete read-only discovery plan. No MCP execution is implied by earlier configuration choices.

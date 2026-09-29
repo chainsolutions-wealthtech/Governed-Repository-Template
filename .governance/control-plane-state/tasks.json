@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 32,
+  "revision": 33,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -43,7 +43,7 @@
       "depends_on": [
         "P12-S4"
       ],
-      "next_action": "C1-13-E-A",
+      "next_action": "C1-13-E-B",
       "evidence": [
         "C1-13-A inserted for generic MCP endpoint recovery defect discovered on Ekyc"
       ]
@@ -145,7 +145,7 @@
     },
     {
       "id": "C1-13-E-A",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-13-D"
       ],
@@ -153,26 +153,51 @@
         "C1-13-E",
         "P12-S5"
       ],
-      "next_action": "IMPLEMENT_EXPLICIT_MCP_DISCOVERY_APPROVAL_GATE",
+      "next_action": null,
       "defect_code": "MCP_DISCOVERY_CONFIGURATION_IMPLICITLY_AUTHORIZES_EXECUTION",
       "evidence": [
         "Ekyc#1 preserves all setup answers through runtime_mutation_policy=EXPLICIT_APPROVAL_FOR_SCOPED_WRITE",
         "No domain_binding, workflow_model or final setup approval exists yet",
         "Owner clarified configuration answers were intended to prepare, not execute, MCP discovery",
         "Prior TLS failure run 36621624763 remains preserved historical evidence",
-        "Generic correction must be implemented in Template then distributed through governed upgrade"
+        "Generic correction must be implemented in Template then distributed through governed upgrade",
+        "Template PR #55 merged at 8b3a1ac4abf250820558ba873110581f8607a2b3",
+        "Post-merge Governance CI 36637371154 PASS",
+        "Governed Ekyc v2.8.7 upgrade a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6",
+        "Ekyc Governance CI 36637639375 PASS",
+        "Ekyc#1 migrated to WAITING_FOR_DISCOVERY_APPROVAL revision 29 with prior TLS evidence archived"
+      ]
+    },
+    {
+      "id": "C1-13-E-B",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "C1-13-E-A"
+      ],
+      "blocks": [
+        "C1-13-E",
+        "P12-S5"
+      ],
+      "next_action": "REQUEST_EXPLICIT_EKYC_MCP_DISCOVERY_APPROVAL",
+      "gate_code": "OWNER_APPROVAL_REQUIRED_FOR_READ_ONLY_MCP_DISCOVERY",
+      "evidence": [
+        "Ekyc#1 status WAITING_FOR_DISCOVERY_APPROVAL",
+        "Ekyc#1 phase MCP_DISCOVERY_APPROVAL",
+        "Ekyc#1 revision 29",
+        "Current discovery evidence is null",
+        "Prior TLS failure is archived in mcp_discovery_history"
       ]
     },
     {
       "id": "C1-13-E",
       "status": "PENDING",
       "depends_on": [
-        "C1-13-E-A"
+        "C1-13-E-B"
       ],
       "blocks": [
         "P12-S5"
       ],
-      "next_action": "WAIT_FOR_EXPLICIT_DISCOVERY_APPROVAL_THEN_REEVALUATE_TLS_DEPENDENCY",
+      "next_action": "REEVALUATE_TLS_ONLY_AFTER_EXPLICIT_DISCOVERY_APPROVAL",
       "defect_code": "MCP_TLS_CERTIFICATE_EXPIRED_EXTERNAL_DEPENDENCY",
       "evidence": [
         "Ekyc exact HEAD 87c28f4fd4e36aa3d65cfc384309a054c1640e4c has fully green Governance CI 36621490571",
@@ -849,7 +874,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-13-E-A",
+  "unique_executable_item": "C1-13-E-B",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",

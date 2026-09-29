@@ -56,7 +56,7 @@ From this framework program:
 
 ## Unique next action
 
-`C1_13_E_A_IMPLEMENT_EXPLICIT_MCP_DISCOVERY_APPROVAL_GATE`
+`C1_13_E_B_REQUEST_EXPLICIT_EKYC_MCP_DISCOVERY_APPROVAL`
 
 ## Latest proof
 
@@ -376,3 +376,15 @@ CONFIGURE DISCOVERY
 The previously observed MCP TLS failure and `Patricked-code/MCP#201` remain preserved evidence. Ekyc remains frozen until the generic Template correction is merged and distributed.
 
 The adaptive questionnaire is additive to the existing governance and Loop Engineering: answers and fresh observations enrich the project/resource model and prepare existing work-items/dependencies; no parallel governance or task engine is introduced.
+
+## V2.8.7 Ekyc approval-gate attestation
+
+- Template PR #55: MERGED.
+- Merge subject: `8b3a1ac4abf250820558ba873110581f8607a2b3`.
+- Post-merge Governance CI `36637371154`: PASS.
+- Governed Ekyc upgrade: `a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6`.
+- Ekyc Governance CI `36637639375`: PASS.
+- Ekyc#1 migrated without answer loss to `WAITING_FOR_DISCOVERY_APPROVAL / MCP_DISCOVERY_APPROVAL`, revision 29.
+- Prior TLS evidence is archived; current discovery evidence is null.
+- `C1-13-E-A`: DONE.
+- Unique next action: obtain explicit owner approval for the concrete read-only Ekyc discovery plan. No MCP call is authorized before that approval.

@@ -457,3 +457,14 @@ C1-12-K must resume the existing `Patricked-code/Gouvern#3` proof via exact-HEAD
 - Compatibility: preserve all Ekyc answers, archive any pre-approval discovery evidence, migrate the open issue back to the approval gate through the governed client upgrader, and do not patch Ekyc directly.
 - Broader additive contract: questionnaire answers and fresh observations enrich the existing project/resource model and derive future work-items/dependencies/authorities for the existing Loop Engineering; no parallel governance or task engine.
 - The TLS failure run `36621624763` and intake `Patricked-code/MCP#201` remain historical/external evidence and become relevant again only after discovery is explicitly approved.
+
+### C1-13-E-B explicit Ekyc discovery approval
+
+- Parent: `P12-S5 / C1-13`.
+- Depends on: `C1-13-E-A`.
+- Status: `IN_PROGRESS`.
+- Gate: `OWNER_APPROVAL_REQUIRED_FOR_READ_ONLY_MCP_DISCOVERY`.
+- The exact plan is persisted in `NEXT_ACTION.md`.
+- No credential provisioning, MCP call, SSH certificate request or network discovery may occur before explicit approval.
+- On approval, dispatch only the approved read-only discovery. Then use its observations to continue the adaptive questionnaire and gap/task preparation.
+- On denial or change, preserve all prior answers and re-enter the earliest affected preparation question.

@@ -7,7 +7,7 @@
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
   "current_phase": "C1-13",
   "current_status": "IN_PROGRESS",
-  "unique_next_action": "C1_13_E_A_IMPLEMENT_EXPLICIT_MCP_DISCOVERY_APPROVAL_GATE",
+  "unique_next_action": "C1_13_E_B_REQUEST_EXPLICIT_EKYC_MCP_DISCOVERY_APPROVAL",
   "phases": [
     {
       "id": "C1-00",
@@ -158,31 +158,39 @@
       "depends_on": [
         "C1-12"
       ],
-      "next_action": "IMPLEMENT_EXPLICIT_MCP_DISCOVERY_APPROVAL_GATE",
+      "next_action": "REQUEST_EXPLICIT_EKYC_MCP_DISCOVERY_APPROVAL",
       "live_state": {
         "repository": "Patricked-code/Ekyc",
         "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
         "local_entry_issue": "Patricked-code/Ekyc#1",
-        "expected_head": "87c28f4fd4e36aa3d65cfc384309a054c1640e4c",
-        "status": "FROZEN_GENERIC_FRAMEWORK_DISCOVERY_AUTHORITY_DEFECT",
+        "expected_head": "a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6",
+        "status": "WAITING_FOR_EXPLICIT_MCP_DISCOVERY_APPROVAL",
         "completed_corrective_tasks": [
           "C1-13-A",
           "C1-13-B",
           "C1-13-C",
           "C1-13-D"
         ],
-        "target_ci": 36621490571,
+        "target_ci": 36637639375,
         "target_ci_result": "PASS",
         "mcp_retry_run": 36621624763,
         "external_dependency": "MCP_TLS_CERTIFICATE_EXPIRED",
         "external_intake": "Patricked-code/MCP#201",
         "target_specific_repair": false,
-        "active_corrective_task": "C1-13-E-A",
-        "active_defect": "MCP_DISCOVERY_CONFIGURATION_IMPLICITLY_AUTHORIZES_EXECUTION",
+        "active_corrective_task": "C1-13-E-B",
+        "active_defect": null,
         "preserved_external_dependency": {
           "code": "MCP_TLS_CERTIFICATE_EXPIRED",
           "intake": "Patricked-code/MCP#201",
           "run": 36621624763
+        },
+        "v287_template_merge": "8b3a1ac4abf250820558ba873110581f8607a2b3",
+        "discovery_gate": {
+          "status": "WAITING_FOR_DISCOVERY_APPROVAL",
+          "phase": "MCP_DISCOVERY_APPROVAL",
+          "revision": 29,
+          "current_evidence": null,
+          "prior_tls_evidence_archived": true
         }
       },
       "owner_feedback": {
