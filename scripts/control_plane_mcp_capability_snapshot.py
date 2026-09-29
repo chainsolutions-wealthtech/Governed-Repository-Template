@@ -156,10 +156,9 @@ def compact_server_context(value):
         result[str(key)] = {
             "id": server.get("id") or key,
             "label": server.get("label"),
-            "host": server.get("host"),
-            "port": server.get("port"),
-            "username": server.get("username"),
             "protected_domains": list(domains)[:200] if isinstance(domains, list) else [],
+            "connection_coordinates_persisted": False,
+            "live_connection_refresh_required_before_server_operation": True,
         }
     return result
 
