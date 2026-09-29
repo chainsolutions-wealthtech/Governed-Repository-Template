@@ -458,3 +458,21 @@ Refresh is read-only and event/need based. It uses the existing central MCP cred
 During implementation, a security boundary was tightened: persistent public capability memory excludes server connection coordinates. Logical server IDs and capability metadata remain persisted; actual connection coordinates are refreshed live when an operation needs them.
 
 Ekyc is separately waiting at revision 38 for explicit approval of the materially changed BOTH plan. No approval is inferred from this capability-memory work.
+
+## 2026-09-30 — First central MCP capability refresh
+
+The first source-only refresh was triggered through the governed `/refresh-mcp-capabilities` command.
+
+Run `36646869819` proved the core design:
+
+- direct read-only MCP refresh: PASS;
+- generated snapshot validation: PASS;
+- 135 tools observed;
+- 2 resources observed;
+- catalogue digest: `8447f9dcc5078fdc9287068c9a791ab5366cc8f10ead5770f6830ed4aca34f1b`;
+- no MCP/server mutation;
+- no secret values persisted.
+
+The run failed only during Git persistence. Root cause: `actions/checkout` persisted the workflow `GITHUB_TOKEN` extraheader, which took precedence over the separately minted GitHub App token and produced a 403 push refusal.
+
+The corrective branch disables checkout credential persistence so the explicit GitHub App token owns branch/PR persistence. The snapshot representation is also compacted: global tool metadata is stored once, case maps reference tool names, and only safe input-field metadata is retained.
