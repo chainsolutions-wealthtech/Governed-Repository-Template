@@ -407,7 +407,7 @@ C1-12-K must resume the existing `Patricked-code/Gouvern#3` proof via exact-HEAD
 
 - Parent: `P12-S5 / C1-13`.
 - Depends on: `C1-13-B`.
-- Status: `IN_PROGRESS`.
+- Status: `DONE`.
 - PR #51 merged at `0a4a9961565d53a872d6eb62ad3f4afadbb11d6e`; post-merge CI `36296114629` PASS.
 - Governed Ekyc re-upgrade produced `dd5a2664c4422ab14fc7131a77e5c2df0e0356a0`; `Ekyc#1` migrated to revision 25 with history preserved.
 - Ekyc CI `36296169271` passed client/local-entry tests and failed only when the Governance Model integrity test attempted source-only control-plane state.
@@ -416,3 +416,17 @@ C1-12-K must resume the existing `Patricked-code/Gouvern#3` proof via exact-HEAD
 - PR #52 GREEN: `36296295586`.
 - Fix: Governance Model integrity test skips on clients without `.template-source`; source validation remains mandatory.
 - Ekyc stays frozen until PR #52 merges and is redistributed through the governed upgrader.
+
+
+### C1-13-D upgrader distribution of portable Governance Model test
+
+- Parent: `P12-S5 / C1-13`.
+- Depends on: `C1-13-C`.
+- Status: `IN_PROGRESS`.
+- PR #52 merged at `ca8ce60e31a1d5f07fc1293cac54ca29906b7501`; post-merge CI `36620454972` PASS.
+- Governed Ekyc upgrade produced `bbe20f4406eb794df4d2452161462f945e2d3fc6`.
+- Ekyc CI `36620623398` failed because the client retained the stale Governance Model integrity test: the upgrader did not distribute the corrected script.
+- Generic defect: `UPGRADER_DOES_NOT_DISTRIBUTE_PORTABLE_GOVERNANCE_MODEL_TEST`.
+- PR #53 RED `36620804501` → GREEN `36620877757`.
+- Fix: add `scripts/test_governance_model_integrity.py` to client upgrader `static_paths`; source-only model state remains excluded.
+- Ekyc stays frozen until PR #53 merges and is redistributed.
