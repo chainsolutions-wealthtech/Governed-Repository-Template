@@ -1,0 +1,78 @@
+name: MCP Capability Snapshot Refresh
+
+on:
+  workflow_dispatch:
+  repository_dispatch:
+    types:
+      - mcp_capability_refresh
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    if: github.repository == 'chainsolutions-wealthtech/Governed-Repository-Template'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Mint source-repository GitHub App token
+        id: source-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          owner: chainsolutions-wealthtech
+          repositories: Governed-Repository-Template
+          permission-contents: write
+          permission-pull-requests: write
+
+      - name: Refresh read-only MCP capability snapshot
+        env:
+          GOVERNED_MCP_AUTH_TOKEN: ${{ secrets.GOVERNED_MCP_AUTH_TOKEN }}
+          GOVERNED_MCP_URL: https://mcp.wealthtechinnovations.com/mcp
+        run: |
+          python3 scripts/control_plane_mcp_capability_snapshot.py
+
+      - name: Validate refreshed snapshot
+        run: |
+          python3 scripts/test_control_plane_mcp_capability_snapshot.py
+          python3 scripts/validate_governance.py
+          git diff --check
+
+      - name: Detect snapshot change
+        id: diff
+        run: |
+          if git diff --quiet -- .governance/control-plane-state/mcp-capability-snapshot.json; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Persist refreshed snapshot through governed PR
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ steps.source-token.outputs.token }}
+        run: |
+          set -euo pipefail
+          branch="governance/mcp-capability-snapshot-${GITHUB_RUN_ID}"
+          git config user.name "chainsolutions-governance[bot]"
+          git config user.email "governance@users.noreply.github.com"
+          git checkout -b "$branch"
+          git add .governance/control-plane-state/mcp-capability-snapshot.json
+          git commit -m "governance: refresh MCP capability snapshot"
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git push origin "$branch"
+          gh pr create \
+            --repo "$GITHUB_REPOSITORY" \
+            --base main \
+            --head "$branch" \
+            --title "governance: refresh MCP capability snapshot" \
+            --body "Automated read-only refresh of CP-MCP-CAP-001. No MCP/server mutation, no persisted server connection coordinates and no secret values. Merge remains subject to normal Governance CI."
