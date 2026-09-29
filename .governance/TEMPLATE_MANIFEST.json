@@ -145,7 +145,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.10",
+  "template_version": "2.8.11",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -275,7 +275,10 @@
     "server connection coordinates excluded from persistent capability snapshot",
     "MCP capability refresh persisted through governed branch and PR",
     "authorized issue-comment MCP capability refresh command",
-    "MCP capability refresh restricted to owner member collaborator"
+    "MCP capability refresh restricted to owner member collaborator",
+    "GitHub App snapshot push disables checkout persisted credentials",
+    "compact MCP input-field metadata instead of full schemas",
+    "case capability map references global tool catalogue without duplication"
   ],
   "automatic_initialization_supported": true
 }
