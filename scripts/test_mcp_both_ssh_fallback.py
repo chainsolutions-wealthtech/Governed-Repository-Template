@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-from mcp_repository_discovery import summarize_discovery_evidence, unavailable_direct_credential_evidence
+from mcp_repository_discovery import SshProfileMismatch, summarize_discovery_evidence, unavailable_direct_credential_evidence, validate_ssh_certificate
 
 
 def main() -> None:
@@ -24,6 +24,26 @@ def main() -> None:
     })
     if complete["status"] != "PASS" or complete["degraded"] is not False:
         raise SystemExit("BOTH_SSH_FALLBACK_SELFTEST_FAILED: complete BOTH evidence")
+
+    certificate={
+        "repository":"owner/repo",
+        "principal":"root",
+        "certificate":"ssh-ed25519-cert-v01@openssh.com TEST",
+        "knownHosts":"212.227.212.33 ssh-ed25519 AAAATEST",
+        "mutationAllowed":False,
+        "validForSeconds":600,
+        "fingerprint":"SHA256:TEST",
+        "host":"212.227.212.33",
+        "port":22,
+        "username":"root"
+    }
+    try:
+        validate_ssh_certificate(certificate,"owner/repo",{"host":"mcp.example.test","port":22,"user":"root"})
+    except SshProfileMismatch as exc:
+        if exc.observed_profile!={"host":"212.227.212.33","port":22,"user":"root","source":"SIGNED_MCP_SSH_BROKER_RESPONSE"}:
+            raise SystemExit("BOTH_SSH_FALLBACK_SELFTEST_FAILED: signed broker profile evidence mismatch")
+    else:
+        raise SystemExit("BOTH_SSH_FALLBACK_SELFTEST_FAILED: SSH profile mismatch not classified")
 
     try:
         summarize_discovery_evidence({
