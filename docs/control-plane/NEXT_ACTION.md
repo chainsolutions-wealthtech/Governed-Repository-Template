@@ -1,47 +1,41 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_13_B_MERGE_PR51_REUPGRADE_EKYC_RESUME_DISCOVERY
+NEXT_ACTION = C1_13_C_MERGE_PR52_REUPGRADE_EKYC_RESUME_DISCOVERY
 STATE = IN_PROGRESS
 PARENT = P12_S5_SECOND_FRESH_REPOSITORY_E2E
 ```
 
 ## Objective
 
-Complete the generic client-CI portability correction exposed by the governed Ekyc upgrade, redistribute the corrected local-entry surface through the official upgrader, then resume the already-preserved MCP discovery checkpoint.
+Merge the generic Governance Model client-portability correction, redistribute it through the official upgrader, require Ekyc client CI to pass completely, then resume the preserved MCP discovery checkpoint.
 
-## Live evidence
+## Evidence
 
-- Template PR #50 merge: `dbe0014784362393c8cfbb02ce7810d483cf2bb7`.
-- Source post-merge Governance CI: `36295619581` PASS.
-- Ekyc governed upgrade commit: `2ece8cff98258f7c40cf7b7383ceb5c026db9639`.
-- Ekyc local-entry state migrated with answers preserved.
-- Ekyc Governance CI: `36295714554` FAIL only at repository-local governed agent entry self-test.
-- Failure: `FileNotFoundError: .github/workflows/governed-control-plane.yml`.
-- Root cause: the client-distributed self-test referenced a source-only workflow that is intentionally excluded from clients.
-- PR #51 TDD RED: `36295815960`.
-- PR #51 functional GREEN: `36295850914`.
+- Template main before PR #52: `0a4a9961565d53a872d6eb62ad3f4afadbb11d6e`.
+- Ekyc current HEAD: `dd5a2664c4422ab14fc7131a77e5c2df0e0356a0`.
+- Ekyc CI `36296169271`: client/local-entry tests PASS; source-only Governance Model test FAIL.
+- PR #52 RED: `36296258279`.
+- PR #52 GREEN: `36296295586`.
 
 ## Required sequence
 
-1. finish canonical human/machine/relational reconciliation on PR #51;
-2. require the final PR #51 HEAD Governance CI to be all-green;
-3. reobserve Template `main` and PR #51 exact head;
-4. merge PR #51 under exact-head guard;
-5. require post-merge source Governance CI green;
-6. reobserve `Patricked-code/Ekyc@2ece8cff98258f7c40cf7b7383ceb5c026db9639`;
-7. redistribute the current Template local-entry surface using `/governed-upgrade-local-entry`;
-8. require Ekyc Governance CI green on the new upgrade HEAD;
-9. preserve `Ekyc#1` answers, revision history and the HTTP 404 evidence;
-10. execute the existing MCP discovery gate once so the new 404 recovery logic reopens endpoint correction;
-11. correct the endpoint to the previously verified direct MCP route `https://mcp.wealthtechinnovations.com/mcp`;
-12. rerun read-only discovery and continue C1-13 only after PASS/non-degraded evidence.
+1. require final PR #52 HEAD CI green;
+2. reobserve Template main and PR #52 exact HEAD;
+3. merge PR #52 with exact-head guard;
+4. require source post-merge CI green;
+5. reobserve Ekyc exact HEAD;
+6. redistribute via `/governed-upgrade-local-entry`;
+7. require Ekyc Governance CI fully green;
+8. preserve `Ekyc#1` answers and prior 404 evidence;
+9. execute the preserved MCP discovery gate;
+10. on the expected 404 recovery question, correct the endpoint to the previously proven route `https://mcp.wealthtechinnovations.com/mcp`;
+11. rerun read-only discovery and continue C1-13 chronologically.
 
 ## Safety boundary
 
-- Do not add `governed-control-plane.yml` to a client repository.
-- Do not patch Ekyc directly.
-- Do not recreate Ekyc or its baseline.
-- Do not discard prior discovery failure evidence.
-- No scoped runtime mutation is authorized merely by the stored policy; each write still requires explicit approval.
-- P12-S6 and GMC implementation remain blocked until P12-S5 completes.
+- No direct Ekyc patch.
+- Do not distribute source-only control-plane state to clients.
+- Do not recreate the baseline or discard failure evidence.
+- Runtime writes remain separately approval-gated.
+- P12-S6 and GMC execution remain blocked behind P12-S5.
