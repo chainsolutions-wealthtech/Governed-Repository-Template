@@ -724,3 +724,20 @@ explicit reapproval
 The next generic return point is `C1-13-G`: the Template must use the signed broker profile as factual recovery evidence, reopen the SSH-profile field and invalidate prior discovery approval after the material correction. No client-specific patch is permitted.
 
 The observed direct MCP success also becomes input to the separately queued `C1-13-H` source-only persistent capability snapshot.
+
+## V2.8.8 SSH recovery proof and MCP capability-memory follow-up
+
+```text
+Template v2.8.8
+→ Ekyc upgrade 4d552458...
+→ exact-head discovery retry 36645372827
+→ direct MCP PASS
+→ SSH_PROFILE_MISMATCH captured with signed broker evidence
+→ Q_SSH_PROFILE_RECOVERY revision 37
+→ factual profile correction through central Control Plane
+→ renewed discovery-plan approval gate revision 38
+```
+
+This proves C1-13-G.
+
+C1-13-H then materializes the owner's complementary requirement: a persistent, refreshable, source-only MCP capability image for the central Template. Its case/tool mappings are planning evidence only and cannot authorize writes.
