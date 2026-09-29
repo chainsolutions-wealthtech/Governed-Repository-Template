@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.7.0",
+  "schema_version": "1.8.0",
   "role": "REPOSITORY_TO_MCP_BINDING",
   "preferred_transport": "DIRECT_MCP_TOKEN",
   "fallback_transport": "GITHUB_OIDC_EPHEMERAL_SSH_CERTIFICATE",
@@ -43,7 +43,7 @@
     "key_algorithm": "ed25519",
     "key_lifetime": "RUNNER_EPHEMERAL_ONLY",
     "certificate_max_seconds": 600,
-    "host_profile_source": "OWNER_ANSWER_CROSS_CHECKED_WITH_SIGNED_BROKER_RESPONSE",
+    "host_profile_source": "OWNER_OR_OBSERVED_FACT_CROSS_CHECKED_WITH_SIGNED_BROKER_RESPONSE",
     "known_hosts_source": "AUTHENTICATED_BROKER_RESPONSE",
     "strict_host_key_checking": "REQUIRED",
     "arbitrary_shell": "FORBIDDEN",
@@ -83,14 +83,23 @@
     "DISCOVERY_REFRESH_PRESERVES_EXISTING_SETUP_ANSWERS",
     "MCP_CONFIGURATION_INTENT_NE_DISCOVERY_EXECUTION_AUTHORITY",
     "MCP_DISCOVERY_PLAN_MUST_BE_PRESENTED_BEFORE_EXECUTION",
-    "MCP_DISCOVERY_EXECUTION_REQUIRES_EXPLICIT_APPROVAL"
+    "MCP_DISCOVERY_EXECUTION_REQUIRES_EXPLICIT_APPROVAL",
+    "SIGNED_BROKER_SSH_PROFILE_IS_FACTUAL_DISCOVERY_EVIDENCE",
+    "SSH_PROFILE_MISMATCH_REOPENS_PROFILE_RECOVERY",
+    "SSH_PROFILE_CHANGE_INVALIDATES_PRIOR_DISCOVERY_APPROVAL"
   ],
   "discovery_failure_policy": {
     "persist_exact_head_failures": true,
     "retry_command": "/local-execute",
     "retry_state": "MCP_DISCOVERY",
     "head_moved_mutates_state": false,
-    "failure_evidence_secrecy": "NON_SECRET_CODES_ONLY"
+    "failure_evidence_secrecy": "NON_SECRET_CODES_ONLY",
+    "ssh_profile_mismatch": {
+      "recovery_phase": "Q_SSH_PROFILE_RECOVERY",
+      "observed_profile_source": "SIGNED_MCP_SSH_BROKER_RESPONSE",
+      "preserve_direct_mcp_evidence_in_failure": true,
+      "retry_without_profile_correction": false
+    }
   },
   "discovery_reconciliation_policy": {
     "both_refresh_when_direct_credential_becomes_available": true,
@@ -107,6 +116,7 @@
     "approval_field": "mcp_discovery_approved",
     "approval_precedes_credential_provisioning_and_network_discovery": true,
     "endpoint_change_invalidates_prior_discovery_approval": true,
-    "legacy_preapproval_discovery_evidence": "ARCHIVE_AND_REENTER_APPROVAL_GATE"
+    "legacy_preapproval_discovery_evidence": "ARCHIVE_AND_REENTER_APPROVAL_GATE",
+    "ssh_profile_change_invalidates_prior_discovery_approval": true
   }
 }
