@@ -1,39 +1,49 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_13_E_WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_APPROVED_EKYC_DISCOVERY
-STATE = BLOCKED_EXTERNAL_DEPENDENCY
+NEXT_ACTION = C1_13_F_APPROVE_CORRECTED_MCP_DISCOVERY_PLAN
+STATE = WAITING_FOR_OWNER_APPROVAL
 PARENT = P12_S5_SECOND_FRESH_REPOSITORY_E2E
 ```
 
-## Verified authorized attempt
+## Verified transition
 
-- Template main: `5abb69efdd7c2776cae2fa97fb3f4169a278fe72`.
+- Template main: `b35db53981cac9cad80ae051e460e08d1fdc3d0d`.
 - Ekyc HEAD: `a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6`.
-- Ekyc Governance CI: `36637639375` PASS.
-- Owner explicitly approved the exact read-only discovery plan.
-- Approval command: central issue #49 comment `5900168996`.
-- Authorized target discovery run: `36638780542`.
-- Ekyc#1 revision: `31`.
-- `mcp_discovery_approved = true`.
-- Discovery result: `SSL_CERTIFICATE_VERIFY_FAILED` because the public certificate is expired.
-- Baseline application: SKIPPED.
-- No MCP write, domain creation, server mutation, deployment or TLS bypass occurred.
+- TLS remediation is effective: MCP Governed Deploy `36625479517` PASS.
+- GitHub OIDC → MCP HTTPS read-only evidence `36642167257`: PASS.
+- Authorized Ekyc retry `36642689845` no longer failed on TLS; it reached the service and returned `HTTP 404 Not Found`.
+- Root cause: stored MCP endpoint was the host root rather than the MCP path.
+- Canonical MCP endpoint is `https://mcp.wealthtechinnovations.com/mcp`.
+- Endpoint correction was applied through the governed central command, not by direct target patch.
+- Ekyc run `36642777140` advanced Ekyc#1 to revision `33`, status `WAITING_FOR_DISCOVERY_APPROVAL`.
+- The previous approval was invalidated automatically because the endpoint changed materially.
 
-## External dependency
+## Corrected plan awaiting approval
 
-`Patricked-code/MCP#201` remains open. The MCP programme independently confirmed the same public TLS blocker in its Governed Deploy #87 and records remediation as not complete.
-
-## Resume rule
-
-Once MCP#201 provides fresh evidence that the public TLS certificate and required broker route are restored, retry the **same already-approved read-only discovery plan** on the exact current Ekyc HEAD.
-
-Do not infer any wider authority. If the discovery plan itself changes materially, return to the appropriate approval gate.
+```text
+operation = READ_ONLY_MCP_DISCOVERY
+repository = Patricked-code/Ekyc
+transport = BOTH
+endpoint = https://mcp.wealthtechinnovations.com/mcp
+SSH profile = mcp.wealthtechinnovations.com:22 / root
+scope = FULL_GOVERNED_MAPPING
+domain strategy = DISCOVER_EXISTING_THEN_PROPOSE
+runtime mutation policy = EXPLICIT_APPROVAL_FOR_SCOPED_WRITE
+tools =
+  ping
+  get_project_context
+  list_domains_s1
+  list_domains_s2
+  get_write_tools_context
+mutation authority = false
+secret value exposure = false
+```
 
 ## Safety boundary
 
-- No direct Ekyc patch.
-- No MCP runtime mutation from this workstream.
-- No TLS verification bypass.
-- No baseline write before discovery completes and subsequent setup questions/approval are reached.
+- No new MCP intake or MCP programme mutation is needed for this transition.
+- Do not infer approval from the prior root-endpoint plan.
+- Do not run discovery before explicit approval of this corrected plan.
+- Do not apply the first-agent baseline before discovery completes and the remaining setup gates are reached.
 - P12-S6 and GMC remain blocked behind P12-S5.
