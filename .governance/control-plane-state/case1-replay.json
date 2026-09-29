@@ -7,7 +7,7 @@
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
   "current_phase": "C1-13",
   "current_status": "IN_PROGRESS",
-  "unique_next_action": "C1_13_D_MERGE_PR53_REUPGRADE_EKYC_RESUME_DISCOVERY",
+  "unique_next_action": "C1_13_E_WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_EKYC_DISCOVERY",
   "phases": [
     {
       "id": "C1-00",
@@ -158,24 +158,24 @@
       "depends_on": [
         "C1-12"
       ],
-      "next_action": "MERGE_PR53_REUPGRADE_EKYC_RESUME_MCP_DISCOVERY",
+      "next_action": "WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_EKYC_DISCOVERY",
       "live_state": {
         "repository": "Patricked-code/Ekyc",
         "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
         "local_entry_issue": "Patricked-code/Ekyc#1",
-        "expected_head": "bbe20f4406eb794df4d2452161462f945e2d3fc6",
-        "status": "FROZEN_GENERIC_FRAMEWORK_DEFECT_UPGRADER_GOVMODEL_TEST_DISTRIBUTION",
+        "expected_head": "87c28f4fd4e36aa3d65cfc384309a054c1640e4c",
+        "status": "BLOCKED_EXTERNAL_MCP_TLS_CERTIFICATE",
         "completed_corrective_tasks": [
           "C1-13-A",
           "C1-13-B",
-          "C1-13-C"
+          "C1-13-C",
+          "C1-13-D"
         ],
-        "pr52_merge": "ca8ce60e31a1d5f07fc1293cac54ca29906b7501",
-        "failed_target_ci": 36620623398,
-        "active_corrective_task": "C1-13-D",
-        "active_corrective_pr": 53,
-        "red_ci_run": 36620804501,
-        "green_ci_run": 36620877757,
+        "target_ci": 36621490571,
+        "target_ci_result": "PASS",
+        "mcp_retry_run": 36621624763,
+        "external_dependency": "MCP_TLS_CERTIFICATE_EXPIRED",
+        "external_intake": "Patricked-code/MCP#201",
         "target_specific_repair": false
       }
     },
