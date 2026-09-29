@@ -168,6 +168,11 @@ SOURCE_ONLY_REQUIRED = {
     ".governance/control-plane-db/catalog.json",
     ".governance/control-plane-db/runtime-seed.json",
     ".governance/control-plane-db/materialize.py",
+    ".github/workflows/mcp-capability-refresh.yml",
+    "scripts/control_plane_mcp_capability_snapshot.py",
+    "scripts/test_control_plane_mcp_capability_snapshot.py",
+    "docs/control-plane/MCP_CAPABILITY_MODEL.md",
+    ".governance/control-plane-state/mcp-capability-snapshot.json",
 }
 CONTROL_PLANE_REPOSITORY = "chainsolutions-wealthtech/Governed-Repository-Template"
 
@@ -463,6 +468,9 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
         "docs/control-plane",
         ".governance/control-plane-state",
         ".governance/control-plane-db",
+        ".github/workflows/mcp-capability-refresh.yml",
+        "scripts/control_plane_mcp_capability_snapshot.py",
+        "scripts/test_control_plane_mcp_capability_snapshot.py",
     }
     if set(policy.get("source_only_paths") or []) != expected_source_only:
         fail("control plane source-only path contract is invalid")
@@ -495,6 +503,7 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
         source_tasks = load(".governance/control-plane-state/tasks.json")
         case1_replay = load(".governance/control-plane-state/case1-replay.json")
         canonical_arch = load(".governance/control-plane-state/canonical-architecture.json")
+        mcp_capability = load(".governance/control-plane-state/mcp-capability-snapshot.json")
         catalog = load(".governance/control-plane-db/catalog.json")
         if source_current.get("repository") != CONTROL_PLANE_REPOSITORY:
             fail("control-plane source current repository mismatch")
@@ -519,6 +528,27 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
             fail("canonical architecture status mismatch")
         if canonical_arch.get("revision", {}).get("approval_eligible_from_imported_memory") is not False:
             fail("imported architecture memory must never satisfy live approval")
+        if mcp_capability.get("authority_id") != "CP-MCP-CAP-001":
+            fail("MCP capability snapshot authority id mismatch")
+        if mcp_capability.get("authority_type") != "MCP_CAPABILITY_SNAPSHOT":
+            fail("MCP capability snapshot authority type mismatch")
+        if mcp_capability.get("scope") != "CONTROL_PLANE_SOURCE_ONLY":
+            fail("MCP capability snapshot scope mismatch")
+        if mcp_capability.get("standing_readonly_refresh_authority") is not True:
+            fail("MCP capability snapshot must allow standing read-only refresh")
+        if mcp_capability.get("mutation_authority_granted") is not False:
+            fail("MCP capability snapshot must never grant mutation authority")
+        if mcp_capability.get("secrets_persisted") is not False:
+            fail("MCP capability snapshot must not persist secret values")
+        if mcp_capability.get("server_connection_coordinates_persisted", False) is not False:
+            fail("MCP capability snapshot must not persist server connection coordinates")
+        refresh_policy = mcp_capability.get("refresh_policy") or {}
+        if refresh_policy.get("mode") != "EVENT_AND_NEED_BASED":
+            fail("MCP capability snapshot refresh mode mismatch")
+        if refresh_policy.get("pre_mutation_live_refresh_required") is not True:
+            fail("MCP capability snapshot must require live preflight before mutation")
+        if (mcp_capability.get("relational_projection") or {}).get("status") != "PENDING_PROJECTION_GMC_INTEGRATION":
+            fail("MCP capability snapshot relational projection status mismatch")
         cases = [x.get("case_id") for x in catalog.get("cases", []) if x.get("kind") == "STRUCTURING_CASE"]
         if cases != ["CREATE_NEW_REPOSITORY","ADOPT_EXISTING_REPOSITORY","MAP_EXISTING_PROJECT","LAB_EVOLUTION"]:
             fail("canonical structuring case order mismatch")
@@ -546,11 +576,24 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
             "docs/control-plane/IMPORTED_MEMORY_VERIFICATION.md",
             "docs/control-plane/DATA_MODEL.md",
             "docs/control-plane/AGENT_ACTIVITY_LOG.md",
+            "docs/control-plane/MCP_CAPABILITY_MODEL.md",
         ]
         for relative in source_docs:
             text = (ROOT / relative).read_text(encoding="utf-8")
             if PLACEHOLDER.search(text):
                 fail(f"control-plane source authority contains unresolved template placeholder: {relative}")
+
+        capability_workflow = (ROOT / ".github/workflows/mcp-capability-refresh.yml").read_text(encoding="utf-8")
+        for fragment in [
+            "mcp_capability_refresh",
+            "GOVERNED_MCP_AUTH_TOKEN",
+            "control_plane_mcp_capability_snapshot.py",
+            "permission-contents: write",
+            "permission-pull-requests: write",
+            "gh pr create",
+        ]:
+            if fragment not in capability_workflow:
+                fail(f"MCP capability refresh workflow boundary missing: {fragment}")
 
         workflow = (ROOT / ".github/workflows/governed-control-plane.yml").read_text(encoding="utf-8")
         workflow_requirements = [
