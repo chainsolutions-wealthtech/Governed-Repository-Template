@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 34,
+  "revision": 35,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -43,7 +43,7 @@
       "depends_on": [
         "P12-S4"
       ],
-      "next_action": "C1-13-E",
+      "next_action": "C1-13-F",
       "evidence": [
         "C1-13-A inserted for generic MCP endpoint recovery defect discovered on Ekyc"
       ]
@@ -195,14 +195,14 @@
     },
     {
       "id": "C1-13-E",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-13-E-B"
       ],
       "blocks": [
         "P12-S5"
       ],
-      "next_action": "WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_APPROVED_EKYC_DISCOVERY",
+      "next_action": null,
       "defect_code": "MCP_TLS_CERTIFICATE_EXPIRED_EXTERNAL_DEPENDENCY",
       "evidence": [
         "Ekyc exact HEAD 87c28f4fd4e36aa3d65cfc384309a054c1640e4c has fully green Governance CI 36621490571",
@@ -215,7 +215,30 @@
         "Ekyc#1 revision 31 remains MCP_DISCOVERY_FAILED_RETRYABLE with mcp_discovery_approved=true",
         "Apply approved first-agent baseline was skipped",
         "Patricked-code/MCP#201 remains open; remediation not complete",
-        "MCP#201 comment records Governed Deploy #87 failed on curl (60) certificate has expired"
+        "MCP#201 comment records Governed Deploy #87 failed on curl (60) certificate has expired",
+        "MCP Governed Deploy 36625479517 PASS after TLS restoration",
+        "MCP read-only OIDC evidence run 36642167257 PASS over HTTPS",
+        "Ekyc retry run 36642689845 reached server and returned HTTP 404 instead of TLS failure",
+        "TLS is no longer the active CASE1 blocker"
+      ]
+    },
+    {
+      "id": "C1-13-F",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "C1-13-E"
+      ],
+      "blocks": [
+        "P12-S5"
+      ],
+      "next_action": "APPROVE_CORRECTED_MCP_DISCOVERY_PLAN",
+      "gate_code": "OWNER_APPROVAL_REQUIRED_FOR_CORRECTED_MCP_DISCOVERY_PLAN",
+      "evidence": [
+        "Ekyc retry 36642689845 returned HTTP 404 at root endpoint after TLS restoration",
+        "Canonical MCP architecture exposes endpoint /mcp",
+        "Governed endpoint correction persisted https://mcp.wealthtechinnovations.com/mcp via central command comment 5900695747",
+        "Ekyc run 36642777140 advanced Ekyc#1 to WAITING_FOR_DISCOVERY_APPROVAL revision 33",
+        "Prior approval was invalidated automatically because endpoint changed materially"
       ]
     },
     {
@@ -884,7 +907,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-13-E",
+  "unique_executable_item": "C1-13-F",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",

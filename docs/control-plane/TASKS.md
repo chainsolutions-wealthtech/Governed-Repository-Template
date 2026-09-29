@@ -479,3 +479,18 @@ C1-12-K must resume the existing `Patricked-code/Gouvern#3` proof via exact-HEAD
 - Result: the approved read-only discovery failed on the expired public TLS certificate.
 
 Therefore `C1-13-E-B` is DONE and `C1-13-E` is again the active dependency task, now based on a correctly authorized attempt rather than an inferred one.
+
+### C1-13-F corrected MCP endpoint discovery approval
+
+- Parent: `P12-S5 / C1-13`.
+- Depends on: `C1-13-E`.
+- Status: `IN_PROGRESS`.
+- Gate: `OWNER_APPROVAL_REQUIRED_FOR_CORRECTED_MCP_DISCOVERY_PLAN`.
+- TLS remediation is confirmed by MCP Governed Deploy `36625479517` PASS and GitHub OIDC read-only evidence `36642167257` PASS.
+- Ekyc retry `36642689845` returned HTTP 404 instead of a TLS failure.
+- Canonical endpoint correction: `https://mcp.wealthtechinnovations.com/mcp`.
+- Governed correction command: central issue #49 comment `5900695747`.
+- Ekyc correction run: `36642777140`.
+- Ekyc#1: revision 33, `WAITING_FOR_DISCOVERY_APPROVAL`.
+- Prior approval was invalidated by the endpoint material change exactly as required by policy.
+- No new MCP intake is required.

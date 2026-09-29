@@ -430,3 +430,11 @@ Ekyc run `36638780542` attempted discovery and failed only on the expired public
 MCP#201 remains open. Its latest recorded programme evidence confirms remediation is not complete and that its own Governed Deploy #87 failed with the same certificate-expired condition.
 
 The Template workstream is therefore correctly blocked on the external MCP TLS dependency. The same approved read-only plan may be retried after remediation, provided the plan has not materially changed.
+
+## 2026-09-30 — TLS cleared; endpoint recovery reached approval gate
+
+The prior MCP TLS blocker is no longer active. MCP Governed Deploy `36625479517` completed successfully and subsequent GitHub OIDC read-only evidence reached the MCP HTTPS endpoint successfully.
+
+The already-approved Ekyc retry `36642689845` then failed with HTTP 404, which is a different and more advanced failure: HTTPS/TLS succeeded, but the stored endpoint targeted the host root. The canonical MCP architecture already identifies `/mcp` as the MCP endpoint.
+
+The control plane corrected the factual endpoint through its existing machine command path. No direct Ekyc patch and no new MCP intake were used. Ekyc#1 is revision 33 and correctly requires explicit reapproval because the plan endpoint materially changed.
