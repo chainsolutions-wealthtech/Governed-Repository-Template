@@ -363,3 +363,18 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Minimal fix commit `0e000473c8a58d62918f28fefa482679bce47fe0`: source-only permission assertions execute only when `.template-source` exists.
 - Functional GREEN Governance CI `36295850914`: PASS across the full suite.
 - Unique next action: merge PR #51 after final reconciled CI, governed-reupgrade Ekyc, require target CI green, then resume the preserved MCP discovery checkpoint.
+
+
+## 2026-09-27 — C1-13-C Governance Model client portability
+
+- PR #51 merged to Template main at `0a4a9961565d53a872d6eb62ad3f4afadbb11d6e`.
+- Source post-merge Governance CI `36296114629`: PASS.
+- Official governed re-upgrade advanced `Patricked-code/Ekyc` to `dd5a2664c4422ab14fc7131a77e5c2df0e0356a0`; `Ekyc#1` migrated to revision 25 without losing approved answers or the MCP 404 evidence.
+- Ekyc Governance CI `36296169271` passed all portable client/local-entry tests through governed-upgrade continuity.
+- The sole failure was `Test Governance Model projection integrity`, which attempted to read source-only Governance Model files absent by design from a client repository.
+- Ekyc was frozen; no target-specific patch was applied.
+- Created Template PR #52 / corrective task `C1-13-C`.
+- RED commit `dfd786caf325fbe1b971d7545d3b0f895f561911`; CI `36296258279` failed exactly on the new missing-client-skip regression assertion.
+- Minimal fix commit `d0d4c3faabe561f60e80f9e2fd23c7956580e553`: `test_governance_model_integrity.py` exits successfully when `.template-source` is absent; full source validation is unchanged.
+- Functional GREEN Governance CI `36296295586`: PASS.
+- Next: finish source reconciliation, require final PR #52 CI green, merge exact-head, governed-reupgrade Ekyc, require client CI fully green, then resume the preserved MCP discovery checkpoint.
