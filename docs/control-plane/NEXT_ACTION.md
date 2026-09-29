@@ -1,37 +1,45 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_13_E_WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_EKYC_DISCOVERY
-STATE = BLOCKED_EXTERNAL_DEPENDENCY
+NEXT_ACTION = C1_13_E_A_IMPLEMENT_EXPLICIT_MCP_DISCOVERY_APPROVAL_GATE
+STATE = FRAMEWORK_CORRECTION_REQUIRED
 PARENT = P12_S5_SECOND_FRESH_REPOSITORY_E2E
 ```
 
-## Current verified state
+## Why this supersedes the TLS wait as the immediate action
 
-- Template main: `7b8cf2193514efd8f3fe8ce635b0d21abfe53639`.
-- Ekyc HEAD: `87c28f4fd4e36aa3d65cfc384309a054c1640e4c`.
-- Ekyc Governance CI: `36621490571` PASS.
-- Ekyc local-entry baseline/setup answers remain preserved.
-- MCP retry run: `36621624763`.
-- Blocker: public TLS certificate for `mcp.wealthtechinnovations.com` is expired.
-- External intake: `Patricked-code/MCP#201`.
+Owner feedback established that Ekyc's MCP setup answers were configuration/preparation choices, not authorization to execute network discovery.
 
-## Resume condition
+The prior TLS failure `36621624763` and intake `Patricked-code/MCP#201` remain preserved evidence, but they are downstream of an earlier missing authority gate.
 
-Resume only after the MCP programme provides fresh evidence that the public TLS certificate is valid and both the public MCP endpoint and repository-SSH certificate broker are reachable over trusted TLS.
+## Required correction
 
-Then:
+1. keep all current Ekyc#1 answers;
+2. add `MCP_DISCOVERY_PLAN` presentation;
+3. require explicit `mcp_discovery_approved=true` before credential provisioning or network discovery;
+4. make endpoint correction invalidate prior discovery approval;
+5. migrate legacy/pre-approval discovery state back to the approval gate while archiving evidence;
+6. validate the Template;
+7. only after merge, re-upgrade Ekyc through the governed Template path;
+8. resume Ekyc at the explicit discovery approval gate, not at TLS retry.
 
-1. reobserve Template main and Ekyc exact HEAD;
-2. re-read `Ekyc#1`;
-3. retry the preserved read-only MCP discovery checkpoint;
-4. if endpoint correction is requested, use the previously proven direct route `https://mcp.wealthtechinnovations.com/mcp`;
-5. continue C1-13 chronologically only after discovery evidence is usable.
+## Additive architecture rule
+
+```text
+ANSWER / OBSERVED FACT
+→ PROJECT MODEL
+→ RESOURCE REQUIREMENTS
+→ GAP CLASSIFICATION
+→ PREPARED WORK-ITEMS / DEPENDENCIES / AUTHORITIES
+→ EXISTING LOOP_ENGINEERING
+```
+
+No parallel governance, task engine, or replacement workflow is authorized.
 
 ## Safety boundary
 
-- Do not patch Ekyc.
-- Do not mutate `Patricked-code/MCP` from this workstream; #201 is intake only.
-- Do not bypass TLS verification.
-- Do not weaken HTTPS, OIDC, SSH certificate, or exact-HEAD protections.
-- Do not advance P12-S6 or GMC while P12-S5 is blocked.
+- Do not patch Ekyc directly.
+- Do not mutate `Patricked-code/MCP` from this workstream.
+- Do not bypass TLS.
+- Do not discard the prior TLS evidence.
+- Do not advance P12-S6 or GMC while P12-S5 is open.
