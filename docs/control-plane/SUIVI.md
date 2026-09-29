@@ -420,3 +420,13 @@ Template PR #55 merged at `8b3a1ac4abf250820558ba873110581f8607a2b3`; post-merge
 The governed upgrade path advanced Ekyc to `a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6`; Ekyc Governance CI `36637639375` passed. Ekyc#1 preserved every prior answer and moved to `WAITING_FOR_DISCOVERY_APPROVAL` revision 29. The premature TLS failure is retained only in history.
 
 CASE 1 is now correctly stopped at an owner authority gate: approve or change the concrete read-only discovery plan. No MCP execution is implied by earlier configuration choices.
+
+## 2026-09-30 — Explicit discovery executed; TLS blocker confirmed
+
+The owner approved the exact read-only MCP discovery plan. The central control plane accepted the answer, provisioned the governed credential path, and dispatched the machine command under Ekyc HEAD `a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6`.
+
+Ekyc run `36638780542` attempted discovery and failed only on the expired public TLS certificate. The baseline write was skipped. Ekyc#1 advanced from revision 29 approval-waiting to revision 31 retryable discovery failure while preserving `mcp_discovery_approved=true`.
+
+MCP#201 remains open. Its latest recorded programme evidence confirms remediation is not complete and that its own Governed Deploy #87 failed with the same certificate-expired condition.
+
+The Template workstream is therefore correctly blocked on the external MCP TLS dependency. The same approved read-only plan may be retried after remediation, provided the plan has not materially changed.

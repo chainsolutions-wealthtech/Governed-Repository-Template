@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "checkpoint_id": "CP-CHECKPOINT-20260929-024",
+  "checkpoint_id": "CP-CHECKPOINT-20260930-001",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-  "subject_head": "8b3a1ac4abf250820558ba873110581f8607a2b3",
+  "subject_head": "5abb69efdd7c2776cae2fa97fb3f4169a278fe72",
   "template_version_before": "2.7.0",
-  "state": "P12_S5_EKYC_WAITING_FOR_EXPLICIT_DISCOVERY_APPROVAL",
+  "state": "P12_S5_EKYC_AUTHORIZED_DISCOVERY_TLS_EXTERNAL_BLOCKER",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
@@ -90,17 +90,24 @@
     "c1_13_e_a_ekyc_ci": 36637639375,
     "c1_13_e_a_local_state": "WAITING_FOR_DISCOVERY_APPROVAL",
     "c1_13_e_a_local_revision": 29,
-    "c1_13_e_a_tls_evidence_archived": true
+    "c1_13_e_a_tls_evidence_archived": true,
+    "c1_13_e_b_owner_approval": true,
+    "c1_13_e_b_approval_comment": 5900168996,
+    "c1_13_e_b_target_run": 36638780542,
+    "c1_13_e_b_target_revision": 31,
+    "c1_13_e_b_failure": "SSL_CERTIFICATE_VERIFY_FAILED_CERTIFICATE_EXPIRED",
+    "c1_13_e_b_baseline_write": "SKIPPED",
+    "c1_13_e_b_mcp_intake_201_state": "OPEN_REMEDIATION_NOT_COMPLETE"
   },
-  "next_action": "C1_13_E_B_REQUEST_EXPLICIT_EKYC_MCP_DISCOVERY_APPROVAL",
+  "next_action": "C1_13_E_WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_APPROVED_EKYC_DISCOVERY",
   "reconciliation_required_before_write": true,
   "ci_run": 36637371154,
   "ci_result": "PASS",
   "client_source_memory_removal": "PASS",
   "self_governance": "PASS",
-  "reconciliation_reason": "V287_MERGED_AND_EKYC_GOVERNED_UPGRADE_MIGRATED_TO_EXPLICIT_DISCOVERY_APPROVAL_GATE",
+  "reconciliation_reason": "EXPLICITLY_APPROVED_READ_ONLY_DISCOVERY_FAILED_ON_CONFIRMED_EXPIRED_PUBLIC_TLS_CERTIFICATE",
   "canonical_memory_database": "PASS",
-  "blocker": "OWNER_APPROVAL_REQUIRED_FOR_READ_ONLY_MCP_DISCOVERY",
+  "blocker": "MCP_INTAKE_201_TLS_CERTIFICATE_EXPIRED",
   "knowledge_enrichment": {
     "canonical_architecture": {
       "authority_id": "CP-ARCH-001",

@@ -56,7 +56,7 @@ From this framework program:
 
 ## Unique next action
 
-`C1_13_E_B_REQUEST_EXPLICIT_EKYC_MCP_DISCOVERY_APPROVAL`
+`C1_13_E_WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_APPROVED_EKYC_DISCOVERY`
 
 ## Latest proof
 
@@ -388,3 +388,18 @@ The adaptive questionnaire is additive to the existing governance and Loop Engin
 - Prior TLS evidence is archived; current discovery evidence is null.
 - `C1-13-E-A`: DONE.
 - Unique next action: obtain explicit owner approval for the concrete read-only Ekyc discovery plan. No MCP call is authorized before that approval.
+
+## Authorized Ekyc discovery confirms external TLS blocker
+
+The owner explicitly approved the concrete read-only MCP discovery plan. The governed command was dispatched under exact HEAD `a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6`.
+
+Target run `36638780542` reached the discovery step and failed with:
+
+```text
+SSL: CERTIFICATE_VERIFY_FAILED
+certificate has expired
+```
+
+Ekyc#1 is now revision 31 with `mcp_discovery_approved=true`, status `MCP_DISCOVERY_FAILED_RETRYABLE`, phase `MCP_DISCOVERY`. The baseline-write step was skipped.
+
+This means the earlier authority defect is closed and the TLS condition is now a genuine external dependency. MCP intake `Patricked-code/MCP#201` remains open and independently confirms remediation is not complete.

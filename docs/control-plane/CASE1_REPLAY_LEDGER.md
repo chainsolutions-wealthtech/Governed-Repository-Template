@@ -648,3 +648,29 @@ prior TLS evidence = archived
 ```
 
 This proves the owner-feedback return protocol without replaying the business questionnaire or patching the client.
+
+## Authorized discovery proof — TLS blocker
+
+Owner approval was explicitly captured before execution.
+
+```text
+approval
+→ central governed local command
+→ exact-head target dispatch
+→ MCP discovery attempted
+→ TLS certificate expired
+→ baseline write skipped
+→ retryable discovery state persisted
+```
+
+Evidence:
+
+- approval comment: `5900168996`;
+- target run: `36638780542`;
+- target HEAD: `a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6`;
+- local-entry revision: 31;
+- `mcp_discovery_approved=true`;
+- failure: `SSL_CERTIFICATE_VERIFY_FAILED_CERTIFICATE_EXPIRED`;
+- external intake: `Patricked-code/MCP#201`.
+
+This closes the owner-feedback authority correction and proves that the remaining blocker belongs to the external MCP programme.

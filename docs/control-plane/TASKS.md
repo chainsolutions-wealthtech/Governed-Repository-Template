@@ -468,3 +468,14 @@ C1-12-K must resume the existing `Patricked-code/Gouvern#3` proof via exact-HEAD
 - No credential provisioning, MCP call, SSH certificate request or network discovery may occur before explicit approval.
 - On approval, dispatch only the approved read-only discovery. Then use its observations to continue the adaptive questionnaire and gap/task preparation.
 - On denial or change, preserve all prior answers and re-enter the earliest affected preparation question.
+
+### C1-13-E-B completion evidence
+
+- Explicit owner approval: DONE.
+- Central approval command: issue #49 comment `5900168996`.
+- Target run: `36638780542`.
+- Ekyc#1: revision 31, `mcp_discovery_approved=true`.
+- Baseline write: SKIPPED.
+- Result: the approved read-only discovery failed on the expired public TLS certificate.
+
+Therefore `C1-13-E-B` is DONE and `C1-13-E` is again the active dependency task, now based on a correctly authorized attempt rather than an inferred one.

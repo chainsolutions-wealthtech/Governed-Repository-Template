@@ -1,50 +1,39 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_13_E_B_REQUEST_EXPLICIT_EKYC_MCP_DISCOVERY_APPROVAL
-STATE = WAITING_FOR_OWNER_APPROVAL
+NEXT_ACTION = C1_13_E_WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_APPROVED_EKYC_DISCOVERY
+STATE = BLOCKED_EXTERNAL_DEPENDENCY
 PARENT = P12_S5_SECOND_FRESH_REPOSITORY_E2E
 ```
 
-## Verified state
+## Verified authorized attempt
 
-- Template v2.8.7 merge: `8b3a1ac4abf250820558ba873110581f8607a2b3`.
-- Template post-merge Governance CI: `36637371154` PASS.
-- Ekyc governed upgrade: `a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6`.
+- Template main: `5abb69efdd7c2776cae2fa97fb3f4169a278fe72`.
+- Ekyc HEAD: `a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6`.
 - Ekyc Governance CI: `36637639375` PASS.
-- Ekyc#1: `WAITING_FOR_DISCOVERY_APPROVAL / MCP_DISCOVERY_APPROVAL`, revision `29`.
-- Existing owner answers are preserved.
-- Current MCP discovery evidence is null.
-- The prior TLS failure is archived in discovery history and is not the active gate.
+- Owner explicitly approved the exact read-only discovery plan.
+- Approval command: central issue #49 comment `5900168996`.
+- Authorized target discovery run: `36638780542`.
+- Ekyc#1 revision: `31`.
+- `mcp_discovery_approved = true`.
+- Discovery result: `SSL_CERTIFICATE_VERIFY_FAILED` because the public certificate is expired.
+- Baseline application: SKIPPED.
+- No MCP write, domain creation, server mutation, deployment or TLS bypass occurred.
 
-## Exact discovery plan awaiting approval
+## External dependency
 
-```text
-operation = READ_ONLY_MCP_DISCOVERY
-repository = Patricked-code/Ekyc
-transport = BOTH
-endpoint = https://mcp.wealthtechinnovations.com/
-SSH profile = mcp.wealthtechinnovations.com:22 / root
-scope = FULL_GOVERNED_MAPPING
-domain strategy = DISCOVER_EXISTING_THEN_PROPOSE
-runtime mutation policy = EXPLICIT_APPROVAL_FOR_SCOPED_WRITE
-tools =
-  ping
-  get_project_context
-  list_domains_s1
-  list_domains_s2
-  get_write_tools_context
-mutation authority = false
-secret value exposure = false
-```
+`Patricked-code/MCP#201` remains open. The MCP programme independently confirmed the same public TLS blocker in its Governed Deploy #87 and records remediation as not complete.
 
-Only an explicit owner approval may advance this plan to credential preparation/network discovery.
+## Resume rule
+
+Once MCP#201 provides fresh evidence that the public TLS certificate and required broker route are restored, retry the **same already-approved read-only discovery plan** on the exact current Ekyc HEAD.
+
+Do not infer any wider authority. If the discovery plan itself changes materially, return to the appropriate approval gate.
 
 ## Safety boundary
 
-- Do not infer approval from prior configuration answers.
-- Do not contact MCP before explicit approval.
-- Do not patch Ekyc directly.
-- Do not mutate Patricked-code/MCP from this workstream.
-- Preserve the archived TLS evidence.
+- No direct Ekyc patch.
+- No MCP runtime mutation from this workstream.
+- No TLS verification bypass.
+- No baseline write before discovery completes and subsequent setup questions/approval are reached.
 - P12-S6 and GMC remain blocked behind P12-S5.

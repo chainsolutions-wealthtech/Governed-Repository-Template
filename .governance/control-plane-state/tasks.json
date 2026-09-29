@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 33,
+  "revision": 34,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -43,7 +43,7 @@
       "depends_on": [
         "P12-S4"
       ],
-      "next_action": "C1-13-E-B",
+      "next_action": "C1-13-E",
       "evidence": [
         "C1-13-A inserted for generic MCP endpoint recovery defect discovered on Ekyc"
       ]
@@ -170,7 +170,7 @@
     },
     {
       "id": "C1-13-E-B",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-13-E-A"
       ],
@@ -178,26 +178,31 @@
         "C1-13-E",
         "P12-S5"
       ],
-      "next_action": "REQUEST_EXPLICIT_EKYC_MCP_DISCOVERY_APPROVAL",
+      "next_action": null,
       "gate_code": "OWNER_APPROVAL_REQUIRED_FOR_READ_ONLY_MCP_DISCOVERY",
       "evidence": [
         "Ekyc#1 status WAITING_FOR_DISCOVERY_APPROVAL",
         "Ekyc#1 phase MCP_DISCOVERY_APPROVAL",
         "Ekyc#1 revision 29",
         "Current discovery evidence is null",
-        "Prior TLS failure is archived in mcp_discovery_history"
+        "Prior TLS failure is archived in mcp_discovery_history",
+        "Owner explicitly approved the persisted read-only MCP discovery plan",
+        "Central approval command comment 5900168996",
+        "Authorized target run 36638780542 reached MCP discovery",
+        "Baseline application was skipped",
+        "Ekyc#1 revision 31 persisted mcp_discovery_approved=true"
       ]
     },
     {
       "id": "C1-13-E",
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "depends_on": [
         "C1-13-E-B"
       ],
       "blocks": [
         "P12-S5"
       ],
-      "next_action": "REEVALUATE_TLS_ONLY_AFTER_EXPLICIT_DISCOVERY_APPROVAL",
+      "next_action": "WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_APPROVED_EKYC_DISCOVERY",
       "defect_code": "MCP_TLS_CERTIFICATE_EXPIRED_EXTERNAL_DEPENDENCY",
       "evidence": [
         "Ekyc exact HEAD 87c28f4fd4e36aa3d65cfc384309a054c1640e4c has fully green Governance CI 36621490571",
@@ -205,7 +210,12 @@
         "Transport BOTH cannot reach direct MCP and cannot acquire the HTTPS SSH certificate broker while the same public TLS certificate is expired",
         "External MCP intake opened as Patricked-code/MCP#201",
         "No MCP code/runtime mutation authorized from Template workstream",
-        "Owner feedback reclassified TLS as downstream evidence because discovery execution had not been explicitly approved"
+        "Owner feedback reclassified TLS as downstream evidence because discovery execution had not been explicitly approved",
+        "Explicitly approved read-only discovery run 36638780542 failed with SSL CERTIFICATE_VERIFY_FAILED certificate has expired",
+        "Ekyc#1 revision 31 remains MCP_DISCOVERY_FAILED_RETRYABLE with mcp_discovery_approved=true",
+        "Apply approved first-agent baseline was skipped",
+        "Patricked-code/MCP#201 remains open; remediation not complete",
+        "MCP#201 comment records Governed Deploy #87 failed on curl (60) certificate has expired"
       ]
     },
     {
@@ -874,7 +884,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-13-E-B",
+  "unique_executable_item": "C1-13-E",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",
