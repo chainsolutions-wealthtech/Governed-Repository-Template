@@ -586,6 +586,9 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
         capability_workflow = (ROOT / ".github/workflows/mcp-capability-refresh.yml").read_text(encoding="utf-8")
         for fragment in [
             "mcp_capability_refresh",
+            "issue_comment:",
+            "/refresh-mcp-capabilities",
+            "author_association",
             "GOVERNED_MCP_AUTH_TOKEN",
             "control_plane_mcp_capability_snapshot.py",
             "permission-contents: write",
