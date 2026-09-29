@@ -11,7 +11,7 @@
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
 - Template version: `2.8.6`
 - V2.7.0 release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`
-- Source-state revision: `25`
+- Source-state revision: `26`
 
 ## Current framework program
 
@@ -56,7 +56,7 @@ From this framework program:
 
 ## Unique next action
 
-`C1_13_D_MERGE_PR53_REUPGRADE_EKYC_RESUME_DISCOVERY`
+`C1_13_E_WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_EKYC_DISCOVERY`
 
 ## Latest proof
 
@@ -339,3 +339,15 @@ The future admin web application is intentionally deferred until all structuring
 - Correction distributes the portable test only; source control-plane state remains excluded.
 - Target remains frozen; no target-specific patch.
 - Unique next action: `C1_13_D_MERGE_PR53_REUPGRADE_EKYC_RESUME_DISCOVERY`.
+
+
+## C1-13-E external MCP TLS blocker
+
+- PR #53 merged at `7b8cf2193514efd8f3fe8ce635b0d21abfe53639`; source post-merge CI `36621351173`: PASS.
+- Governed Ekyc upgrade produced `87c28f4fd4e36aa3d65cfc384309a054c1640e4c`.
+- Ekyc Governance CI `36621490571`: PASS across the complete client suite.
+- Preserved MCP discovery retry `36621624763` failed with `SSL: CERTIFICATE_VERIFY_FAILED ... certificate has expired`.
+- This is an external MCP dependency, not a Template/client portability defect.
+- Transport `BOTH` is also blocked because the GitHub-OIDC SSH certificate broker is served through the same HTTPS host.
+- External intake created: `Patricked-code/MCP#201`, intake only.
+- P12-S5 remains active but externally blocked; P12-S6/GMC stay blocked.
