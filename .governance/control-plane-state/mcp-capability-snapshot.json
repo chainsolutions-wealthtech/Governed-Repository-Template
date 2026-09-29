@@ -77,11 +77,11 @@
         "read_only_hint": true,
         "destructive_hint": false,
         "contract_digest": null,
-        "input_schema": {},
         "tags": [
           "DISCOVERY",
           "OBSERVABILITY"
-        ]
+        ],
+        "input_fields": []
       },
       {
         "name": "get_project_context",
@@ -92,11 +92,11 @@
         "read_only_hint": true,
         "destructive_hint": false,
         "contract_digest": null,
-        "input_schema": {},
         "tags": [
           "DISCOVERY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "input_fields": []
       },
       {
         "name": "list_domains_s1",
@@ -107,12 +107,12 @@
         "read_only_hint": true,
         "destructive_hint": false,
         "contract_digest": null,
-        "input_schema": {},
         "tags": [
           "DISCOVERY",
           "DOMAIN_NETWORK",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "input_fields": []
       },
       {
         "name": "list_domains_s2",
@@ -123,12 +123,12 @@
         "read_only_hint": true,
         "destructive_hint": false,
         "contract_digest": null,
-        "input_schema": {},
         "tags": [
           "DISCOVERY",
           "DOMAIN_NETWORK",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "input_fields": []
       },
       {
         "name": "get_write_tools_context",
@@ -139,12 +139,12 @@
         "read_only_hint": true,
         "destructive_hint": false,
         "contract_digest": null,
-        "input_schema": {},
         "tags": [
           "DISCOVERY",
           "GOVERNANCE",
           "SECURITY_IDENTITY"
-        ]
+        ],
+        "input_fields": []
       }
     ],
     "resources": []
