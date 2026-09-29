@@ -125,6 +125,34 @@ def main():
     if endpoint_failed["answers"]["mcp_endpoint"]!="https://mcp.example.test/mcp":
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: corrected MCP endpoint not persisted")
 
+    ssh_profile_failed=record_mcp_discovery_failure(both,{
+      "status":"ERROR",
+      "failure_code":"SSH_PROFILE_MISMATCH",
+      "transport":"BOTH",
+      "endpoint":"https://mcp.example.test/mcp",
+      "observed_ssh_profile":{"host":"212.227.212.33","port":22,"user":"root","source":"SIGNED_MCP_SSH_BROKER_RESPONSE"},
+      "direct_mcp":{"status":"PASS"},
+      "retryable":True
+    })
+    if ssh_profile_failed["status"]!="WAITING_FOR_SETUP_ANSWER" or ssh_profile_failed["phase"]!="Q_SSH_PROFILE_RECOVERY":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: SSH profile mismatch must reopen profile recovery")
+    request=ssh_profile_failed["next_request"]
+    if request.get("field")!="ssh_connection_profile" or request.get("observed_ssh_profile",{}).get("host")!="212.227.212.33":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: signed broker SSH profile evidence must be exposed for recovery")
+    ssh_profile_failed=answer_expected(ssh_profile_failed,"ssh_connection_profile",{"host":"212.227.212.33","port":22,"user":"root"})
+    if ssh_profile_failed["next_request"]["kind"]!="PLAN_APPROVAL" or ssh_profile_failed["next_request"].get("field")!="mcp_discovery_approved":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: corrected SSH profile must require renewed discovery approval")
+    if ssh_profile_failed.get("mcp_discovery") is not None or ssh_profile_failed.get("hold_reason") is not None:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: SSH profile correction must clear current failed discovery")
+    profile_history=ssh_profile_failed.get("mcp_discovery_history") or []
+    if len(profile_history)!=1 or profile_history[0].get("reason")!="SSH_PROFILE_CORRECTION_AFTER_SIGNED_BROKER_MISMATCH":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: SSH profile correction must archive mismatch evidence")
+    if ssh_profile_failed["answers"].get("mcp_discovery_approved") is not None:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: material SSH profile correction must invalidate prior discovery approval")
+    corrected_plan=ssh_profile_failed["next_request"].get("plan") or {}
+    if corrected_plan.get("ssh_connection_profile")!={"host":"212.227.212.33","port":22,"user":"root"}:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: corrected SSH profile must flow into renewed discovery plan")
+
     failed=record_mcp_discovery_failure(both,{
       "status":"ERROR",
       "failure_code":"SSH_CERTIFICATE_BROKER_FORBIDDEN",
