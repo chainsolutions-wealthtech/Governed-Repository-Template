@@ -140,7 +140,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.7",
+  "template_version": "2.8.8",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -260,7 +260,10 @@
     "configuration intent is distinct from execution authority",
     "explicit read-only MCP discovery plan approval gate",
     "legacy preapproval MCP discovery state reconciles without losing evidence",
-    "adaptive questionnaire enriches existing project model and loop engineering rather than creating a parallel engine"
+    "adaptive questionnaire enriches existing project model and loop engineering rather than creating a parallel engine",
+    "signed MCP SSH broker profile recovery",
+    "SSH profile material change invalidates discovery approval",
+    "direct MCP evidence preserved across SSH profile mismatch"
   ],
   "automatic_initialization_supported": true
 }
