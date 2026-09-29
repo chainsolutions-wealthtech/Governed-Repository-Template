@@ -145,7 +145,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.9",
+  "template_version": "2.8.10",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -273,7 +273,9 @@
     "event-and-need based read-only MCP capability refresh",
     "case-to-tool planning candidates without execution authority",
     "server connection coordinates excluded from persistent capability snapshot",
-    "MCP capability refresh persisted through governed branch and PR"
+    "MCP capability refresh persisted through governed branch and PR",
+    "authorized issue-comment MCP capability refresh command",
+    "MCP capability refresh restricted to owner member collaborator"
   ],
   "automatic_initialization_supported": true
 }

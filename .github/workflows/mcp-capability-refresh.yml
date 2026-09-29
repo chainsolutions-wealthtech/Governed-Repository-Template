@@ -5,13 +5,29 @@ on:
   repository_dispatch:
     types:
       - mcp_capability_refresh
+  issue_comment:
+    types:
+      - created
 
 permissions:
   contents: read
 
 jobs:
   refresh:
-    if: github.repository == 'chainsolutions-wealthtech/Governed-Repository-Template'
+    if: >-
+      github.repository == 'chainsolutions-wealthtech/Governed-Repository-Template' &&
+      (
+        github.event_name != 'issue_comment' ||
+        (
+          github.event.issue.number == 12 &&
+          github.event.comment.body == '/refresh-mcp-capabilities' &&
+          (
+            github.event.comment.author_association == 'OWNER' ||
+            github.event.comment.author_association == 'MEMBER' ||
+            github.event.comment.author_association == 'COLLABORATOR'
+          )
+        )
+      )
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

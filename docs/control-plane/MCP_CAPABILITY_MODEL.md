@@ -97,3 +97,15 @@ The snapshot is implemented now because CASE 1 needs it operationally. Its relat
 `PENDING_PROJECTION_GMC_INTEGRATION`
 
 until the already scheduled Governance Model relational extension. No second database is introduced.
+
+## Governed refresh command
+
+The canonical on-demand source command is:
+
+```text
+/refresh-mcp-capabilities
+```
+
+It is accepted only on the canonical Control Plane programme issue `#12` and only when the comment author association is `OWNER`, `MEMBER` or `COLLABORATOR`.
+
+The command authorizes only the already-standing read-only capability refresh. It does not authorize any MCP/server mutation. A changed snapshot is persisted through a unique branch and pull request, then normal Governance CI must pass before merge.
