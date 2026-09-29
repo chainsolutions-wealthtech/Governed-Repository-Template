@@ -66,6 +66,15 @@ jobs:
       - name: Test Governance Model projection integrity
         run: python3 scripts/test_governance_model_integrity.py
 
+      - name: Test source-only MCP capability snapshot model
+        run: |
+          if [ -f .template-source ]; then
+            python3 -m py_compile scripts/control_plane_mcp_capability_snapshot.py scripts/test_control_plane_mcp_capability_snapshot.py
+            python3 scripts/test_control_plane_mcp_capability_snapshot.py
+          else
+            echo "MCP_CAPABILITY_SNAPSHOT_SOURCE_ONLY_SKIP: client repository"
+          fi
+
       - name: Materialize canonical control-plane database
         run: |
           if [ -f .governance/control-plane-db/materialize.py ]; then
