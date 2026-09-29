@@ -908,6 +908,22 @@
       },
       "source_ref": "Template PR #52",
       "observed_at": "2026-09-27"
+    },
+    {
+      "evidence_id": "EVID-C1-13-B-CLIENT-PORTABILITY-DISTRIBUTED",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-13",
+      "evidence_type": "GOVERNED_EXTERNAL_PILOT_UPGRADE",
+      "status": "PASS",
+      "payload": {
+        "target": "Patricked-code/Ekyc",
+        "pr51_merge": "0a4a9961565d53a872d6eb62ad3f4afadbb11d6e",
+        "source_post_merge_ci": 36296114629,
+        "upgrade_commit": "dd5a2664c4422ab14fc7131a77e5c2df0e0356a0",
+        "migrated_local_entry_revision": 25
+      },
+      "source_ref": "Template #49 governed local-entry re-upgrade",
+      "observed_at": "2026-09-27"
     }
   ],
   "handoffs": [
