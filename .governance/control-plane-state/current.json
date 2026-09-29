@@ -2,23 +2,23 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 25,
+  "source_state_revision": 26,
   "template_version": "2.8.6",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
   "program_issue": 12,
-  "current_checkpoint": "C1-13_EKYC_UPGRADER_GOVMODEL_TEST_DISTRIBUTION_GREEN_PENDING_MERGE",
+  "current_checkpoint": "C1-13_EKYC_CLIENT_GREEN_MCP_TLS_EXTERNAL_BLOCKER",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "unique_next_action": "C1_13_D_MERGE_PR53_REUPGRADE_EKYC_RESUME_DISCOVERY",
+  "unique_next_action": "C1_13_E_WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_EKYC_DISCOVERY",
   "blockers": [
-    "PR53_MUST_MERGE_BEFORE_EKYC_RESUME"
+    "MCP_INTAKE_201_TLS_CERTIFICATE_EXPIRED"
   ],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
-  "freshness": "SOURCE_STATE_RECONCILED_WITH_P12_S5_UPGRADER_GOVMODEL_TEST_DISTRIBUTION_CANDIDATE",
-  "last_ci_run": 36620877757,
+  "freshness": "SOURCE_STATE_RECONCILED_WITH_LIVE_EKYC_GREEN_AND_MCP_TLS_EXTERNAL_BLOCKER",
+  "last_ci_run": 36621490571,
   "last_ci_result": "PASS",
   "release_subject_head": "02173120acfa3941e84bf69c89dac0e8d74b47ce",
-  "last_verified_main_head": "ca8ce60e31a1d5f07fc1293cac54ca29906b7501",
+  "last_verified_main_head": "7b8cf2193514efd8f3fe8ce635b0d21abfe53639",
   "canonical_memory_database": {
     "schema_version": "1.0.0",
     "status": "ACTIVE",
@@ -103,15 +103,15 @@
     "repository": "Patricked-code/Ekyc",
     "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
     "local_entry_issue": "Patricked-code/Ekyc#1",
-    "expected_head": "bbe20f4406eb794df4d2452161462f945e2d3fc6",
-    "state": "FROZEN_ON_FOURTH_GENERIC_FRAMEWORK_DEFECT",
+    "expected_head": "87c28f4fd4e36aa3d65cfc384309a054c1640e4c",
+    "state": "BLOCKED_EXTERNAL_MCP_TLS_CERTIFICATE",
     "failure_run": 36294979599,
     "failure": "HTTP 404 during MCP discovery with uncorrectable endpoint state",
     "corrective_task": "C1-13-A",
     "corrective_pr": 50,
     "red_ci_run": 36295172971,
     "green_ci_run": 36295231828,
-    "resume_after": "MERGE_PR53_AND_FOURTH_GOVERNED_CLIENT_UPDATE",
+    "resume_after": "MCP_TLS_REMEDIATED_AND_PUBLIC_ENDPOINT_PLUS_SSH_BROKER_VALIDATED",
     "first_corrective_task": "C1-13-A",
     "first_corrective_pr": 50,
     "first_corrective_merge": "dbe0014784362393c8cfbb02ce7810d483cf2bb7",
@@ -127,7 +127,8 @@
     "completed_corrective_tasks": [
       "C1-13-A",
       "C1-13-B",
-      "C1-13-C"
+      "C1-13-C",
+      "C1-13-D"
     ],
     "second_corrective_merge": "0a4a9961565d53a872d6eb62ad3f4afadbb11d6e",
     "second_corrective_post_merge_ci": 36296114629,
@@ -136,6 +137,15 @@
     "third_corrective_merge": "ca8ce60e31a1d5f07fc1293cac54ca29906b7501",
     "third_corrective_post_merge_ci": 36620454972,
     "third_governed_upgrade_commit": "bbe20f4406eb794df4d2452161462f945e2d3fc6",
-    "third_upgrade_ci_run": 36620623398
+    "third_upgrade_ci_run": 36620623398,
+    "fourth_corrective_merge": "7b8cf2193514efd8f3fe8ce635b0d21abfe53639",
+    "fourth_corrective_post_merge_ci": 36621351173,
+    "fourth_governed_upgrade_commit": "87c28f4fd4e36aa3d65cfc384309a054c1640e4c",
+    "fourth_upgrade_ci_run": 36621490571,
+    "fourth_upgrade_ci_result": "PASS",
+    "mcp_retry_run": 36621624763,
+    "mcp_retry_failure": "SSL_CERTIFICATE_VERIFY_FAILED_CERTIFICATE_EXPIRED",
+    "mcp_intake": "Patricked-code/MCP#201",
+    "active_dependency_task": "C1-13-E"
   }
 }
