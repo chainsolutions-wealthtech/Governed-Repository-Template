@@ -258,5 +258,17 @@
       "approval_gate_revision": 38,
       "profile_coordinates_persisted_in_capability_snapshot": false
     }
+  },
+  "mcp_capability_snapshot_program": {
+    "last_refresh_attempt": {
+      "run": 36646869819,
+      "discovery": "PASS",
+      "validation": "PASS",
+      "tools": 135,
+      "resources": 2,
+      "catalogue_digest": "8447f9dcc5078fdc9287068c9a791ab5366cc8f10ead5770f6830ed4aca34f1b",
+      "persistence": "FAIL_GITHUB_PUSH_403_CHECKOUT_CREDENTIAL_PRECEDENCE",
+      "corrective_branch": "governance/fix-mcp-capability-refresh-persistence"
+    }
   }
 }

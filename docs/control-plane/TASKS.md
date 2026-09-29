@@ -535,3 +535,14 @@ Therefore `C1-13-E-B` is DONE and `C1-13-E` is again the active dependency task,
 - Current seed is intentionally `PARTIAL_LIVE_EVIDENCE`; a first central live refresh after merge must populate the full runtime catalogue/resources and case/tool map.
 - Relational projection: `PENDING_PROJECTION_GMC_INTEGRATION`.
 - DONE requires: Template CI green, merge, live refresh workflow green, generated snapshot PR green, snapshot merge, and source-state checkpoint reconciliation.
+
+### C1-13-H live refresh persistence correction
+
+- Live refresh run `36646869819`: MCP discovery PASS.
+- Snapshot validation: PASS.
+- Observed catalogue: 135 tools, 2 resources.
+- Catalogue digest: `8447f9dcc5078fdc9287068c9a791ab5366cc8f10ead5770f6830ed4aca34f1b`.
+- Only failure: branch push 403 caused by checkout's persisted `GITHUB_TOKEN` credential taking precedence over the minted GitHub App token.
+- Corrective action: `persist-credentials: false` on checkout, then explicit GitHub App token for push/PR.
+- Compaction: input fields instead of full input schemas; case maps reference global tool names instead of duplicating tool records.
+- C1-13-H remains IN_PROGRESS until the corrected live refresh produces and merges the governed snapshot PR.

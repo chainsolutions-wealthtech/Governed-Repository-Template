@@ -87,6 +87,10 @@ def main():
     mapping = derive_case_operation_map(snapshot["catalogue"]["tools"])
     if mapping["MAP_EXISTING_PROJECT"]["pre_mutation_live_refresh_required"] is not True:
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: mapping refresh gate")
+    if "deploy_project_s2" not in mapping["ADOPT_EXISTING_REPOSITORY"]["candidate_tools"]:
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: compact case/tool mapping")
+    if "input_schema" in deploy or not isinstance(deploy.get("input_fields"), list):
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: compact input field summary")
     if snapshot["relational_projection"]["status"] != "PENDING_PROJECTION_GMC_INTEGRATION":
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: relational projection")
 
