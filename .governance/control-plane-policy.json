@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.3.0",
+  "schema_version": "1.3.1",
   "control_plane_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "source_role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
   "client_role_after_instantiation": "GOVERNED_TARGET_CLIENT",
@@ -221,6 +221,17 @@
     "server_connection_coordinates_persisted": false,
     "persist_via": "DEDICATED_BRANCH_AND_PULL_REQUEST",
     "loop_engineering": "EXISTING_LOOP_ENGINEERING",
-    "relational_projection": "PENDING_PROJECTION_GMC_INTEGRATION"
+    "relational_projection": "PENDING_PROJECTION_GMC_INTEGRATION",
+    "refresh_command": {
+      "surface": "GITHUB_ISSUE_COMMENT",
+      "issue_number": 12,
+      "command": "/refresh-mcp-capabilities",
+      "allowed_author_associations": [
+        "OWNER",
+        "MEMBER",
+        "COLLABORATOR"
+      ],
+      "effect": "READ_ONLY_MCP_REFRESH_THEN_GOVERNED_PR_IF_CHANGED"
+    }
   }
 }
