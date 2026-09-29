@@ -2,23 +2,23 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 31,
+  "source_state_revision": 32,
   "template_version": "2.8.6",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
   "program_issue": 12,
-  "current_checkpoint": "C1-13_EKYC_DIRECT_MCP_PASS_SSH_PROFILE_GENERIC_RECOVERY",
+  "current_checkpoint": "C1-13_MCP_CAPABILITY_SNAPSHOT_IMPLEMENTATION",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "unique_next_action": "C1_13_G_IMPLEMENT_SIGNED_SSH_PROFILE_RECOVERY",
+  "unique_next_action": "C1_13_H_VALIDATE_PERSISTENT_MCP_CAPABILITY_SNAPSHOT",
   "blockers": [
-    "GENERIC_TEMPLATE_SSH_PROFILE_RECOVERY_MISSING"
+    "MCP_CAPABILITY_SNAPSHOT_VALIDATION_PENDING"
   ],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
-  "freshness": "SOURCE_STATE_RECONCILED_WITH_REAPPROVED_DIRECT_MCP_PASS_AND_SSH_PROFILE_MISMATCH",
+  "freshness": "SOURCE_STATE_RECONCILED_WITH_V288_EKYC_SSH_RECOVERY_AND_CAPABILITY_SNAPSHOT_IMPLEMENTATION",
   "last_ci_run": 36637371154,
   "last_ci_result": "PASS",
   "release_subject_head": "8b3a1ac4abf250820558ba873110581f8607a2b3",
-  "last_verified_main_head": "f5ba27597f4fb8214233a69b30577fcddeae6193",
+  "last_verified_main_head": "7bb1199f5b7683003fa62c373a211d0736b67908",
   "canonical_memory_database": {
     "schema_version": "1.0.0",
     "status": "ACTIVE",
@@ -112,8 +112,8 @@
     "repository": "Patricked-code/Ekyc",
     "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
     "local_entry_issue": "Patricked-code/Ekyc#1",
-    "expected_head": "a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6",
-    "state": "FROZEN_GENERIC_FRAMEWORK_SSH_PROFILE_RECOVERY_DEFECT",
+    "expected_head": "4d552458afab32df12aaafd6c7290fab6246d96b",
+    "state": "WAITING_FOR_CORRECTED_BOTH_DISCOVERY_APPROVAL_WHILE_CONTROL_PLANE_CAPABILITY_SNAPSHOT_VALIDATES",
     "failure_run": 36294979599,
     "failure": "HTTP 404 during MCP discovery with uncorrectable endpoint state",
     "corrective_task": "C1-13-A",
@@ -128,11 +128,11 @@
     "first_governed_upgrade_commit": "2ece8cff98258f7c40cf7b7383ceb5c026db9639",
     "first_upgrade_ci_run": 36295714554,
     "first_upgrade_ci_result": "FAIL",
-    "active_corrective_task": "C1-13-G",
+    "active_corrective_task": null,
     "active_corrective_pr": 53,
     "active_red_ci_run": 36620804501,
     "active_green_ci_run": 36620877757,
-    "active_defect": "SSH_PROFILE_MISMATCH_RECOVERY_DEAD_END",
+    "active_defect": null,
     "completed_corrective_tasks": [
       "C1-13-A",
       "C1-13-B",
@@ -155,7 +155,7 @@
     "mcp_retry_run": 36621624763,
     "mcp_retry_failure": "SSL_CERTIFICATE_VERIFY_FAILED_CERTIFICATE_EXPIRED",
     "mcp_intake": "Patricked-code/MCP#201",
-    "active_dependency_task": "C1-13-G",
+    "active_dependency_task": "C1-13-H",
     "preserved_external_dependency": {
       "task": "C1-13-E",
       "intake": "Patricked-code/MCP#201",
@@ -169,11 +169,11 @@
     "discovery_gate": {
       "status": "WAITING_FOR_DISCOVERY_APPROVAL",
       "phase": "MCP_DISCOVERY_APPROVAL",
-      "local_entry_revision": 33,
+      "local_entry_revision": 38,
       "approval_persisted": false,
-      "approval_field": "mcp_discovery_approved",
       "endpoint": "https://mcp.wealthtechinnovations.com/mcp",
-      "reason": "MATERIAL_ENDPOINT_CHANGE_INVALIDATED_PRIOR_APPROVAL"
+      "ssh_profile_source": "SIGNED_MCP_SSH_BROKER_RESPONSE",
+      "reason": "MATERIAL_SSH_PROFILE_CHANGE_INVALIDATED_PRIOR_APPROVAL"
     },
     "authorized_discovery_run": 36638780542,
     "authorized_discovery_result": "SSL_CERTIFICATE_VERIFY_FAILED_CERTIFICATE_EXPIRED",
@@ -233,12 +233,30 @@
     },
     "mcp_capability_snapshot_program": {
       "task": "C1-13-H",
-      "status": "PLANNED_AFTER_C1_13_G",
+      "status": "IN_PROGRESS",
+      "authority_id": "CP-MCP-CAP-001",
+      "human_authority": "docs/control-plane/MCP_CAPABILITY_MODEL.md",
+      "machine_projection": ".governance/control-plane-state/mcp-capability-snapshot.json",
+      "refresh_workflow": ".github/workflows/mcp-capability-refresh.yml",
       "scope": "CONTROL_PLANE_SOURCE_ONLY",
-      "refresh": "READ_ONLY_EVENT_AND_NEED_BASED",
+      "refresh": "EVENT_AND_NEED_BASED_READ_ONLY",
+      "standing_readonly_refresh_authority": true,
+      "server_connection_coordinates_persisted": false,
       "loop_engineering_integration": true,
       "parallel_engine": false,
       "relational_projection": "PENDING_PROJECTION_GMC_INTEGRATION"
+    },
+    "ssh_profile_recovery": {
+      "status": "DONE",
+      "template_merge": "7bb1199f5b7683003fa62c373a211d0736b67908",
+      "template_ci": 36645221136,
+      "ekyc_upgrade": "4d552458afab32df12aaafd6c7290fab6246d96b",
+      "ekyc_ci": 36645315558,
+      "recovery_run": 36645372827,
+      "recovery_revision": 37,
+      "factual_profile_correction_comment": 5901027821,
+      "approval_gate_revision": 38,
+      "profile_coordinates_persisted_in_capability_snapshot": false
     }
   }
 }
