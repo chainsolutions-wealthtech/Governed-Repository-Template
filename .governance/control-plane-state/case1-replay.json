@@ -7,7 +7,7 @@
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
   "current_phase": "C1-13",
   "current_status": "IN_PROGRESS",
-  "unique_next_action": "C1_13_E_WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_APPROVED_EKYC_DISCOVERY",
+  "unique_next_action": "C1_13_F_APPROVE_CORRECTED_MCP_DISCOVERY_PLAN",
   "phases": [
     {
       "id": "C1-00",
@@ -158,13 +158,13 @@
       "depends_on": [
         "C1-12"
       ],
-      "next_action": "WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_APPROVED_EKYC_DISCOVERY",
+      "next_action": "APPROVE_CORRECTED_MCP_DISCOVERY_PLAN",
       "live_state": {
         "repository": "Patricked-code/Ekyc",
         "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
         "local_entry_issue": "Patricked-code/Ekyc#1",
         "expected_head": "a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6",
-        "status": "BLOCKED_EXTERNAL_MCP_TLS_CERTIFICATE_AFTER_EXPLICIT_APPROVAL",
+        "status": "WAITING_FOR_CORRECTED_MCP_DISCOVERY_APPROVAL",
         "completed_corrective_tasks": [
           "C1-13-A",
           "C1-13-B",
@@ -174,26 +174,38 @@
         "target_ci": 36637639375,
         "target_ci_result": "PASS",
         "mcp_retry_run": 36621624763,
-        "external_dependency": "MCP_TLS_CERTIFICATE_EXPIRED",
+        "external_dependency": null,
         "external_intake": "Patricked-code/MCP#201",
         "target_specific_repair": false,
-        "active_corrective_task": null,
+        "active_corrective_task": "C1-13-F",
         "active_defect": null,
         "preserved_external_dependency": {
           "code": "MCP_TLS_CERTIFICATE_EXPIRED",
           "intake": "Patricked-code/MCP#201",
-          "run": 36621624763
+          "status": "HISTORICAL_REMEDIATED_EVIDENCE"
         },
         "v287_template_merge": "8b3a1ac4abf250820558ba873110581f8607a2b3",
         "discovery_gate": {
-          "status": "MCP_DISCOVERY_FAILED_RETRYABLE",
-          "phase": "MCP_DISCOVERY",
-          "revision": 31,
-          "explicit_approval": true,
-          "retry_authority": "SAME_APPROVED_PLAN_AFTER_EXTERNAL_REMEDIATION"
+          "status": "WAITING_FOR_DISCOVERY_APPROVAL",
+          "phase": "MCP_DISCOVERY_APPROVAL",
+          "revision": 33,
+          "explicit_approval": false,
+          "prior_approval_invalidated_by": "MCP_ENDPOINT_MATERIAL_CHANGE"
         },
         "authorized_discovery_run": 36638780542,
-        "authorized_discovery_result": "SSL_CERTIFICATE_VERIFY_FAILED_CERTIFICATE_EXPIRED"
+        "authorized_discovery_result": "SSL_CERTIFICATE_VERIFY_FAILED_CERTIFICATE_EXPIRED",
+        "tls_remediation": {
+          "status": "CONFIRMED_EFFECTIVE",
+          "governed_deploy_run": 36625479517,
+          "readonly_oidc_evidence_run": 36642167257
+        },
+        "endpoint_recovery": {
+          "retry_run": 36642689845,
+          "result": "HTTP_404_NOT_FOUND",
+          "corrected_endpoint": "https://mcp.wealthtechinnovations.com/mcp",
+          "correction_run": 36642777140,
+          "local_entry_revision": 33
+        }
       },
       "owner_feedback": {
         "clarification": "MCP configuration answers prepare target state and do not authorize immediate network discovery",
