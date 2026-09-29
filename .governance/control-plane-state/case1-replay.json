@@ -7,7 +7,7 @@
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
   "current_phase": "C1-13",
   "current_status": "IN_PROGRESS",
-  "unique_next_action": "C1_13_E_WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_EKYC_DISCOVERY",
+  "unique_next_action": "C1_13_E_A_IMPLEMENT_EXPLICIT_MCP_DISCOVERY_APPROVAL_GATE",
   "phases": [
     {
       "id": "C1-00",
@@ -158,13 +158,13 @@
       "depends_on": [
         "C1-12"
       ],
-      "next_action": "WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_EKYC_DISCOVERY",
+      "next_action": "IMPLEMENT_EXPLICIT_MCP_DISCOVERY_APPROVAL_GATE",
       "live_state": {
         "repository": "Patricked-code/Ekyc",
         "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
         "local_entry_issue": "Patricked-code/Ekyc#1",
         "expected_head": "87c28f4fd4e36aa3d65cfc384309a054c1640e4c",
-        "status": "BLOCKED_EXTERNAL_MCP_TLS_CERTIFICATE",
+        "status": "FROZEN_GENERIC_FRAMEWORK_DISCOVERY_AUTHORITY_DEFECT",
         "completed_corrective_tasks": [
           "C1-13-A",
           "C1-13-B",
@@ -176,7 +176,19 @@
         "mcp_retry_run": 36621624763,
         "external_dependency": "MCP_TLS_CERTIFICATE_EXPIRED",
         "external_intake": "Patricked-code/MCP#201",
-        "target_specific_repair": false
+        "target_specific_repair": false,
+        "active_corrective_task": "C1-13-E-A",
+        "active_defect": "MCP_DISCOVERY_CONFIGURATION_IMPLICITLY_AUTHORIZES_EXECUTION",
+        "preserved_external_dependency": {
+          "code": "MCP_TLS_CERTIFICATE_EXPIRED",
+          "intake": "Patricked-code/MCP#201",
+          "run": 36621624763
+        }
+      },
+      "owner_feedback": {
+        "clarification": "MCP configuration answers prepare target state and do not authorize immediate network discovery",
+        "return_point": "AFTER_MCP_CONFIGURATION_BEFORE_CREDENTIAL_OR_NETWORK_EXECUTION",
+        "preserve_prior_answers": true
       }
     },
     {
@@ -194,6 +206,7 @@
     "post_gate_pre_baseline_change": "RETURN_TO_EARLIEST_AFFECTED_PHASE_AND_REVALIDATE_DEPENDENTS",
     "post_baseline_change": "GOVERNED_UPDATE_PRESERVE_HISTORY",
     "generic_framework_defect": "FIX_TEMPLATE_TEST_MERGE_UPGRADE_RESUME",
-    "mcp_dependency_defect": "INTAKE_ONLY_NO_MCP_IMPLEMENTATION"
+    "mcp_dependency_defect": "INTAKE_ONLY_NO_MCP_IMPLEMENTATION",
+    "configuration_vs_execution": "CONFIGURATION_INTENT_NE_EXECUTION_AUTHORITY"
   }
 }
