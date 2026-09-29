@@ -493,6 +493,18 @@ The owner may choose different answers from the historical pilot. The framework 
 - Expected client behavior: source-only control-plane workflow assertions are skipped when `.template-source` is absent; source validation remains active when that marker exists.
 - Continuation after correction: governed client re-upgrade, target CI validation, then resumption of the preserved MCP discovery checkpoint.
 
+### C1-13-C live corrective state
+
+- `C1-13-B` completed through PR #51 merge `0a4a9961565d53a872d6eb62ad3f4afadbb11d6e` and source CI `36296114629` PASS.
+- Governed re-upgrade produced `Patricked-code/Ekyc@dd5a2664c4422ab14fc7131a77e5c2df0e0356a0`.
+- `Ekyc#1` migrated to revision 25 while preserving its accepted baseline/setup answers and previous discovery evidence.
+- Target Governance CI `36296169271` passed portable client tests and failed only because Governance Model integrity loaded source-only control-plane state.
+- Classification: generic framework defect.
+- Corrective task: `C1-13-C`.
+- Template PR #52: RED `36296258279` → GREEN `36296295586`.
+- Correct behavior: Governance Model source state remains source-only; its integrity test skips on clients without `.template-source`.
+- Resume rule: merge PR #52 → governed client re-upgrade → client CI PASS → resume preserved MCP discovery/recovery flow.
+
 ### Checkpoint
 `SECOND_FRESH_E2E_PASS`.
 
