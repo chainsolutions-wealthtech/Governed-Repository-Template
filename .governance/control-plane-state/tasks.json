@@ -884,7 +884,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": null,
+  "unique_executable_item": "C1-13-E",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",
