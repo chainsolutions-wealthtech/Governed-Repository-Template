@@ -1,49 +1,45 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_13_F_APPROVE_CORRECTED_MCP_DISCOVERY_PLAN
-STATE = WAITING_FOR_OWNER_APPROVAL
+NEXT_ACTION = C1_13_G_IMPLEMENT_SIGNED_SSH_PROFILE_RECOVERY
+STATE = FRAMEWORK_CORRECTION_REQUIRED
 PARENT = P12_S5_SECOND_FRESH_REPOSITORY_E2E
 ```
 
-## Verified transition
+## Verified evidence
 
-- Template main: `b35db53981cac9cad80ae051e460e08d1fdc3d0d`.
+- Template main reobserved before correction: `f5ba27597f4fb8214233a69b30577fcddeae6193`.
 - Ekyc HEAD: `a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6`.
-- TLS remediation is effective: MCP Governed Deploy `36625479517` PASS.
-- GitHub OIDC → MCP HTTPS read-only evidence `36642167257`: PASS.
-- Authorized Ekyc retry `36642689845` no longer failed on TLS; it reached the service and returned `HTTP 404 Not Found`.
-- Root cause: stored MCP endpoint was the host root rather than the MCP path.
-- Canonical MCP endpoint is `https://mcp.wealthtechinnovations.com/mcp`.
-- Endpoint correction was applied through the governed central command, not by direct target patch.
-- Ekyc run `36642777140` advanced Ekyc#1 to revision `33`, status `WAITING_FOR_DISCOVERY_APPROVAL`.
-- The previous approval was invalidated automatically because the endpoint changed materially.
+- Owner reapproved the corrected `/mcp` read-only discovery plan.
+- Governed Ekyc run: `36644247227`.
+- Direct MCP: PASS.
+- Endpoint: `https://mcp.wealthtechinnovations.com/mcp`.
+- MCP protocol: `2025-06-18`.
+- MCP server: `wealthtech_ssh_bridge 0.1.0`.
+- Read-only probes PASS: `ping`, `get_project_context`, `list_domains_s1`, `list_domains_s2`, `get_write_tools_context`.
+- SSH path: `SSH_PROFILE_MISMATCH`.
+- Configured SSH profile: `mcp.wealthtechinnovations.com:22/root`.
+- Signed broker profile: `212.227.212.33:22/root`.
+- First-agent baseline: SKIPPED.
+- Ekyc#1 revision after failure: `35`.
 
-## Corrected plan awaiting approval
+## Generic correction
 
-```text
-operation = READ_ONLY_MCP_DISCOVERY
-repository = Patricked-code/Ekyc
-transport = BOTH
-endpoint = https://mcp.wealthtechinnovations.com/mcp
-SSH profile = mcp.wealthtechinnovations.com:22 / root
-scope = FULL_GOVERNED_MAPPING
-domain strategy = DISCOVER_EXISTING_THEN_PROPOSE
-runtime mutation policy = EXPLICIT_APPROVAL_FOR_SCOPED_WRITE
-tools =
-  ping
-  get_project_context
-  list_domains_s1
-  list_domains_s2
-  get_write_tools_context
-mutation authority = false
-secret value exposure = false
-```
+1. Preserve the signed broker host/port/user as non-secret discovery evidence.
+2. Reopen `Q_SSH_PROFILE_RECOVERY` instead of blind `/local-execute` retry.
+3. Preserve direct MCP PASS evidence in failure history.
+4. Correcting the SSH profile invalidates prior discovery approval because the plan materially changes.
+5. After Template CI/merge, distribute V2.8.8 through the governed Ekyc upgrader.
+6. Resume Ekyc only at SSH-profile recovery, then rebuild the read-only plan for explicit approval.
+
+## Complementary follow-up already queued
+
+`C1-13-H` will add a source-only persistent MCP capability snapshot to the Template: refreshable read-only inventory, tool/resource catalogue, case-to-capability mapping and prepared-operation model feeding the existing Loop Engineering. It does not create a parallel engine or MCP intake.
 
 ## Safety boundary
 
-- No new MCP intake or MCP programme mutation is needed for this transition.
-- Do not infer approval from the prior root-endpoint plan.
-- Do not run discovery before explicit approval of this corrected plan.
-- Do not apply the first-agent baseline before discovery completes and the remaining setup gates are reached.
+- Do not patch Ekyc directly.
+- Do not mutate Patricked-code/MCP.
+- Do not infer SSH profile correction as mutation authority.
+- Do not execute a materially changed discovery plan without renewed approval.
 - P12-S6 and GMC remain blocked behind P12-S5.

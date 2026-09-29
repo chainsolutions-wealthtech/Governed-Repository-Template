@@ -700,3 +700,27 @@ WAITING_FOR_DISCOVERY_APPROVAL
 ```
 
 This is a normal adaptive recovery path, not a new generic framework defect. The existing endpoint-recovery mechanism introduced earlier in CASE 1 handled it without target-specific patching.
+
+## Reapproved /mcp proof — signed SSH profile recovery
+
+```text
+explicit reapproval
+→ Ekyc run 36644247227
+→ DIRECT MCP PASS
+   - initialize PASS
+   - ping PASS
+   - get_project_context PASS
+   - list_domains_s1 PASS
+   - list_domains_s2 PASS
+   - get_write_tools_context PASS
+→ SSH OIDC broker reached
+→ signed target = 212.227.212.33:22/root
+→ configured target = mcp.wealthtechinnovations.com:22/root
+→ SSH_PROFILE_MISMATCH
+→ baseline write skipped
+→ Ekyc#1 revision 35
+```
+
+The next generic return point is `C1-13-G`: the Template must use the signed broker profile as factual recovery evidence, reopen the SSH-profile field and invalidate prior discovery approval after the material correction. No client-specific patch is permitted.
+
+The observed direct MCP success also becomes input to the separately queued `C1-13-H` source-only persistent capability snapshot.

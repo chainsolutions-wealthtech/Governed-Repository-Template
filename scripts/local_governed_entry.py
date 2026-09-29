@@ -233,12 +233,12 @@ def answer(s,field,value):
     if request.get("field")!=field:raise ValueError(f"unexpected field {field}")
     err=validate(field,value)
     if err:raise ValueError(err)
-    if request.get("id")=="Q_MCP_ENDPOINT_RECOVERY":
+    if request.get("id") in {"Q_MCP_ENDPOINT_RECOVERY","Q_SSH_PROFILE_RECOVERY"}:
         current=s.get("mcp_discovery")
         history=list(s.get("mcp_discovery_history") or [])[-4:]
         if isinstance(current,dict):
             history.append({
-              "reason":"MCP_ENDPOINT_CORRECTION_AFTER_DISCOVERY_FAILURE",
+              "reason":"MCP_ENDPOINT_CORRECTION_AFTER_DISCOVERY_FAILURE" if request.get("id")=="Q_MCP_ENDPOINT_RECOVERY" else "SSH_PROFILE_CORRECTION_AFTER_SIGNED_BROKER_MISMATCH",
               "evidence":copy.deepcopy(current)
             })
         s["mcp_discovery_history"]=history
@@ -327,6 +327,18 @@ def record_mcp_discovery_failure(s,evidence):
           "mcp_endpoint",
           "La découverte MCP a reçu HTTP 404. Corrige ou confirme l'URL exacte du endpoint MCP avant de relancer la découverte.",
           extra={"last_failure":copy.deepcopy(evidence)}
+        )
+        return s
+    if code=="SSH_PROFILE_MISMATCH" and isinstance((evidence or {}).get("observed_ssh_profile"),dict):
+        observed=copy.deepcopy(evidence["observed_ssh_profile"])
+        s["status"]="WAITING_FOR_SETUP_ANSWER"
+        s["phase"]="Q_SSH_PROFILE_RECOVERY"
+        s["next_request"]=q(
+          "Q_SSH_PROFILE_RECOVERY",
+          "ssh_connection_profile",
+          "Le profil SSH configuré ne correspond pas au profil signé par le broker MCP. Utilise le profil observé et signé avant de relancer la découverte.",
+          typ="object",
+          extra={"last_failure":copy.deepcopy(evidence),"observed_ssh_profile":observed}
         )
         return s
     s["status"]="MCP_DISCOVERY_FAILED_RETRYABLE"

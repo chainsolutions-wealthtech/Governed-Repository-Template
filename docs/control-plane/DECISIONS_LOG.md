@@ -56,3 +56,22 @@ Append-only durable decisions for the source/control-plane repository.
 - Only unknown facts or owner decisions are requested one at a time.
 - Answers/observations enrich the project/resource model, classify resources as existing/unknown/planned/to-create/to-configure/to-verify, and derive prepared work-items, dependencies and authority requirements.
 - Those prepared work-items are executed later by the existing Loop Engineering when their dependencies and authority gates make them READY.
+
+### CPD-032 — Signed MCP SSH broker profile is factual recovery evidence
+
+- Date: 2026-09-30.
+- Decision: when the authenticated MCP repository-SSH broker signs a certificate for a host/port/username that differs from the configured non-secret SSH profile, the signed profile is treated as observed factual evidence.
+- The Template must reopen SSH-profile recovery instead of blindly retrying the same configuration.
+- The prior discovery evidence is archived, the corrected profile becomes configuration, and prior discovery approval is invalidated because the target is a material plan element.
+- This does not grant SSH write authority.
+
+### CPD-033 — Persistent MCP capability image feeds existing Loop Engineering
+
+- Date: 2026-09-30.
+- Decision: the central Template will maintain a source-only, versioned last-known MCP capability snapshot.
+- The snapshot is refreshable through authorized read-only discovery when missing, stale, contradicted or required by a pending operation.
+- It captures non-secret MCP identity/protocol, servers, tools/resources and their declared read/write surfaces, observed evidence, freshness/provenance, plus derived case-to-capability and prepared-operation mappings.
+- It is knowledge/planning authority only: it never grants mutation authority and never stores tokens, private keys or secret values.
+- CREATE, ADOPT, MAP, LAB and CONTINUE consume this knowledge through the existing project model/work-items/Loop Engineering. No parallel governance or task engine is created.
+- MCP-side changes are not requested merely to maintain this snapshot; no new MCP intake is created unless a concrete missing external capability later blocks an authorized action.
+- Relational projection is explicitly pending the scheduled Governance Model integration rather than creating a parallel database.

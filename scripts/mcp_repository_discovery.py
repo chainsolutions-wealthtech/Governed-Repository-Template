@@ -27,6 +27,12 @@ SSH_BROKER_BASE_URL = "https://mcp.wealthtechinnovations.com"
 REQUIRED_DISCOVERY_TOOLS = ("ping", "get_project_context")
 
 
+class SshProfileMismatch(RuntimeError):
+    def __init__(self, observed_profile: dict):
+        super().__init__("SSH_PROFILE_MISMATCH")
+        self.observed_profile = observed_profile
+
+
 def unavailable_direct_credential_evidence():
     return {
         "status": "UNAVAILABLE_CREDENTIAL",
@@ -236,7 +242,12 @@ def validate_ssh_certificate(cert, repository: str, expected_profile: dict):
         or cert.get("username") != expected_user
         or int(cert.get("port", -1)) != expected_port
     ):
-        raise RuntimeError("SSH_PROFILE_MISMATCH")
+        raise SshProfileMismatch({
+            "host": cert.get("host"),
+            "port": int(cert.get("port", -1)),
+            "user": cert.get("username"),
+            "source": "SIGNED_MCP_SSH_BROKER_RESPONSE",
+        })
 
     return {
         "certificate": certificate,
@@ -407,6 +418,8 @@ def main():
             "ssh_certificate": evidence.get("ssh_certificate"),
             "retryable": True,
         }
+        if isinstance(exc, SshProfileMismatch):
+            failure["observed_ssh_profile"] = dict(exc.observed_profile)
         state2 = record_mcp_discovery_failure(state, failure)
         persist(args.issue_number, issue.get("body"), state2)
         api(

@@ -494,3 +494,29 @@ Therefore `C1-13-E-B` is DONE and `C1-13-E` is again the active dependency task,
 - Ekyc#1: revision 33, `WAITING_FOR_DISCOVERY_APPROVAL`.
 - Prior approval was invalidated by the endpoint material change exactly as required by policy.
 - No new MCP intake is required.
+
+### C1-13-G signed SSH profile recovery
+
+- Parent: `P12-S5 / C1-13`.
+- Depends on: `C1-13-F`.
+- Status: `IN_PROGRESS`.
+- Defect: `SSH_PROFILE_MISMATCH_RECOVERY_DEAD_END`.
+- Direct MCP in Ekyc run `36644247227`: PASS.
+- Signed broker SSH target: `212.227.212.33:22/root`.
+- Current configured target: `mcp.wealthtechinnovations.com:22/root`.
+- Required generic behavior: retain broker profile as factual evidence, reopen `ssh_connection_profile`, archive current failure/direct evidence, invalidate prior discovery approval and rebuild the plan.
+- Ekyc remains frozen until the Template correction is merged and distributed.
+
+### C1-13-H persistent MCP capability snapshot
+
+- Parent: `P12-S5 / C1-13`.
+- Depends on: `C1-13-G`.
+- Status: `PLANNED`.
+- Objective: give the central Template a durable, source-only, refreshable image of MCP capabilities so agents/Loop Engineering reuse current knowledge instead of rediscovering blindly.
+- Required content: MCP identity/protocol, servers, live tool/resource catalogue, capability surfaces, core read-only evidence, freshness/provenance, case-to-capability map, prepared-operation contract and authority requirements.
+- Refresh model: read-only, event/need based; refresh when missing/stale/contradicted or before a capability-dependent operation whose evidence is insufficient.
+- Execution model: existing Loop Engineering only; no parallel task engine.
+- Secret values: forbidden.
+- Mutation authority: not granted by the snapshot.
+- MCP intake: not required.
+- Relational projection: `PENDING_PROJECTION_GMC_INTEGRATION` until the scheduled Governance Model relational extension.

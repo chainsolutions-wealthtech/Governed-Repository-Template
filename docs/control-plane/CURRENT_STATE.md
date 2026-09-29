@@ -56,7 +56,7 @@ From this framework program:
 
 ## Unique next action
 
-`C1_13_F_APPROVE_CORRECTED_MCP_DISCOVERY_PLAN`
+`C1_13_G_IMPLEMENT_SIGNED_SSH_PROFILE_RECOVERY`
 
 ## Latest proof
 
@@ -417,3 +417,22 @@ The 404 exposed a configuration fact already present in MCP architecture: the MC
 Because an endpoint change is material, V2.8.7 correctly invalidated the previous discovery approval. Ekyc#1 is now revision 33 at `WAITING_FOR_DISCOVERY_APPROVAL / MCP_DISCOVERY_APPROVAL`.
 
 `Patricked-code/MCP#201` is retained as historical evidence only; no new intake or MCP mutation was created.
+
+## Reapproved /mcp discovery — direct PASS, signed SSH profile mismatch
+
+The owner explicitly reapproved the corrected read-only plan. Ekyc run `36644247227` proved the direct MCP path end-to-end:
+
+- MCP initialize: PASS;
+- protocol: `2025-06-18`;
+- server: `wealthtech_ssh_bridge 0.1.0`;
+- `ping`: PASS;
+- `get_project_context`: PASS;
+- `list_domains_s1`: PASS;
+- `list_domains_s2`: PASS;
+- `get_write_tools_context`: PASS.
+
+The combined BOTH result failed only because the stored SSH profile `mcp.wealthtechinnovations.com:22/root` differs from the authenticated broker-signed S1 target `212.227.212.33:22/root`.
+
+This is a generic recovery gap: the state machine currently exposes blind retry instead of reopening the SSH profile. `C1-13-G` fixes that in the Template first.
+
+Owner feedback also adds `C1-13-H`: the source Control Plane must maintain a persistent, refreshable MCP capability image and derive case/tool/operation planning from it for the existing Loop Engineering. This is complementary source memory, not a second governance engine.
