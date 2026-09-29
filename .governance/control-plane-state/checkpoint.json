@@ -125,7 +125,14 @@
     "c1_13_g_recovery_revision": 37,
     "c1_13_g_profile_correction_comment": 5901027821,
     "c1_13_g_approval_gate_revision": 38,
-    "c1_13_h_authority_id": "CP-MCP-CAP-001"
+    "c1_13_h_authority_id": "CP-MCP-CAP-001",
+    "c1_13_h_live_refresh_run": 36646869819,
+    "c1_13_h_live_refresh_discovery": "PASS",
+    "c1_13_h_live_refresh_validation": "PASS",
+    "c1_13_h_live_tool_count": 135,
+    "c1_13_h_live_resource_count": 2,
+    "c1_13_h_catalogue_digest": "8447f9dcc5078fdc9287068c9a791ab5366cc8f10ead5770f6830ed4aca34f1b",
+    "c1_13_h_persistence_result": "FAIL_GITHUB_PUSH_403_CHECKOUT_CREDENTIAL_PRECEDENCE"
   },
   "next_action": "C1_13_H_VALIDATE_PERSISTENT_MCP_CAPABILITY_SNAPSHOT",
   "reconciliation_required_before_write": true,
