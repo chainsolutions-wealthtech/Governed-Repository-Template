@@ -75,6 +75,10 @@ def main():
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: server connection coordinates leaked")
     if snapshot["servers"]["s1"].get("connection_coordinates_persisted") is not False:
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: server coordinate policy")
+    if snapshot["write_context_summary"].get("project_ids") != ["demo"]:
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: project id summary")
+    if snapshot["write_context_summary"].get("project_paths_persisted") is not False:
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: project paths policy")
     if snapshot["catalogue"]["counts"]["tools"] != 2:
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: tool count")
     deploy = next(item for item in snapshot["catalogue"]["tools"] if item["name"] == "deploy_project_s2")
@@ -87,7 +91,7 @@ def main():
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: relational projection")
 
     serialized = json.dumps(snapshot)
-    for forbidden in ["/SECRET", "privateKeyPath", "Authorization: Bearer", "212.227.212.33"]:
+    for forbidden in ["/SECRET", "privateKeyPath", "Authorization: Bearer", "212.227.212.33", "/var/www/"]:
         if forbidden in serialized:
             raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: secret-like data leaked")
 
