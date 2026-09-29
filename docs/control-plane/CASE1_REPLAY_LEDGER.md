@@ -674,3 +674,29 @@ Evidence:
 - external intake: `Patricked-code/MCP#201`.
 
 This closes the owner-feedback authority correction and proves that the remaining blocker belongs to the external MCP programme.
+
+## TLS-clearance proof and endpoint recovery
+
+```text
+previous state
+TLS certificate expired
+        ↓
+MCP Governed Deploy 36625479517 PASS
+        ↓
+OIDC MCP read-only evidence PASS
+        ↓
+Ekyc retry 36642689845
+        ↓
+HTTP 404 (TLS passed)
+        ↓
+root endpoint diagnosed
+        ↓
+endpoint corrected to /mcp
+        ↓
+prior approval invalidated
+        ↓
+Ekyc#1 revision 33
+WAITING_FOR_DISCOVERY_APPROVAL
+```
+
+This is a normal adaptive recovery path, not a new generic framework defect. The existing endpoint-recovery mechanism introduced earlier in CASE 1 handled it without target-specific patching.
