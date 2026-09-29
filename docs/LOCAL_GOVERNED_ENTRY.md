@@ -137,3 +137,11 @@ ANSWER / OBSERVED FACT
 ```
 
 For an existing repository, already observed fresh facts are reused and only missing owner decisions or unresolved facts are asked. For a new repository, more questions are required because fewer resources exist. No parallel task engine or governance model is introduced.
+
+## Signed SSH profile recovery
+
+When an approved SSH or BOTH discovery reaches the authenticated MCP SSH certificate broker, the signed broker response is factual read-only evidence for the actual SSH target profile.
+
+If the configured `ssh_connection_profile` differs from the signed broker `host / port / username`, discovery must not loop blindly. The local entry reopens `Q_SSH_PROFILE_RECOVERY`, exposes the observed non-secret profile, preserves the failed/direct evidence in bounded history, and requires a corrected profile.
+
+Because the SSH target is part of the approved discovery plan, correcting it is a material plan change: the previous `mcp_discovery_approved` answer is invalidated and the corrected read-only plan must be approved again before network execution.
