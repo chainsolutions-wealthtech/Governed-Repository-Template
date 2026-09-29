@@ -2,23 +2,23 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 27,
+  "source_state_revision": 28,
   "template_version": "2.8.6",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
   "program_issue": 12,
-  "current_checkpoint": "C1-13_EKYC_DISCOVERY_AUTHORITY_RECONCILIATION",
+  "current_checkpoint": "C1-13_EKYC_DISCOVERY_APPROVAL_READY",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "unique_next_action": "C1_13_E_A_IMPLEMENT_EXPLICIT_MCP_DISCOVERY_APPROVAL_GATE",
+  "unique_next_action": "C1_13_E_B_REQUEST_EXPLICIT_EKYC_MCP_DISCOVERY_APPROVAL",
   "blockers": [
-    "GENERIC_TEMPLATE_DISCOVERY_APPROVAL_GATE_MISSING"
+    "OWNER_APPROVAL_REQUIRED_FOR_READ_ONLY_MCP_DISCOVERY"
   ],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
-  "freshness": "SOURCE_STATE_RECONCILED_WITH_OWNER_FEEDBACK_DISCOVERY_AUTHORITY_DEFECT",
-  "last_ci_run": 36621490571,
+  "freshness": "SOURCE_STATE_RECONCILED_WITH_V287_EKYC_APPROVAL_GATE",
+  "last_ci_run": 36637371154,
   "last_ci_result": "PASS",
-  "release_subject_head": "02173120acfa3941e84bf69c89dac0e8d74b47ce",
-  "last_verified_main_head": "e7a62eb6547bf68a28dd477903bf30631f0f9b13",
+  "release_subject_head": "8b3a1ac4abf250820558ba873110581f8607a2b3",
+  "last_verified_main_head": "8b3a1ac4abf250820558ba873110581f8607a2b3",
   "canonical_memory_database": {
     "schema_version": "1.0.0",
     "status": "ACTIVE",
@@ -112,8 +112,8 @@
     "repository": "Patricked-code/Ekyc",
     "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
     "local_entry_issue": "Patricked-code/Ekyc#1",
-    "expected_head": "87c28f4fd4e36aa3d65cfc384309a054c1640e4c",
-    "state": "FROZEN_GENERIC_FRAMEWORK_DISCOVERY_AUTHORITY_DEFECT",
+    "expected_head": "a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6",
+    "state": "WAITING_FOR_EXPLICIT_MCP_DISCOVERY_APPROVAL",
     "failure_run": 36294979599,
     "failure": "HTTP 404 during MCP discovery with uncorrectable endpoint state",
     "corrective_task": "C1-13-A",
@@ -128,11 +128,11 @@
     "first_governed_upgrade_commit": "2ece8cff98258f7c40cf7b7383ceb5c026db9639",
     "first_upgrade_ci_run": 36295714554,
     "first_upgrade_ci_result": "FAIL",
-    "active_corrective_task": "C1-13-E-A",
+    "active_corrective_task": "C1-13-E-B",
     "active_corrective_pr": 53,
     "active_red_ci_run": 36620804501,
     "active_green_ci_run": 36620877757,
-    "active_defect": "MCP_DISCOVERY_CONFIGURATION_IMPLICITLY_AUTHORIZES_EXECUTION",
+    "active_defect": null,
     "completed_corrective_tasks": [
       "C1-13-A",
       "C1-13-B",
@@ -155,12 +155,24 @@
     "mcp_retry_run": 36621624763,
     "mcp_retry_failure": "SSL_CERTIFICATE_VERIFY_FAILED_CERTIFICATE_EXPIRED",
     "mcp_intake": "Patricked-code/MCP#201",
-    "active_dependency_task": "C1-13-E-A",
+    "active_dependency_task": "C1-13-E-B",
     "preserved_external_dependency": {
       "task": "C1-13-E",
       "failure_run": 36621624763,
       "intake": "Patricked-code/MCP#201",
-      "code": "MCP_TLS_CERTIFICATE_EXPIRED"
+      "code": "MCP_TLS_CERTIFICATE_EXPIRED",
+      "status": "DOWNSTREAM_PRESERVED_EVIDENCE"
+    },
+    "v287_template_merge": "8b3a1ac4abf250820558ba873110581f8607a2b3",
+    "v287_template_ci": 36637371154,
+    "v287_upgrade_commit": "a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6",
+    "v287_target_ci": 36637639375,
+    "discovery_gate": {
+      "status": "WAITING_FOR_DISCOVERY_APPROVAL",
+      "phase": "MCP_DISCOVERY_APPROVAL",
+      "local_entry_revision": 29,
+      "prior_discovery_current_evidence": null,
+      "prior_tls_evidence_archived": true
     }
   }
 }
