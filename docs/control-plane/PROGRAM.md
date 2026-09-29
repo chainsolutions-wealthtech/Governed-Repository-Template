@@ -114,7 +114,20 @@ By the same pilot-defect rule:
 - the self-test now guards source-only assertions behind the `.template-source` marker;
 - after merge the current Template surface must be redistributed through the official governed upgrader before C1-13 resumes.
 
-`C1-13-A` is DONE. `C1-13-B` is IN_PROGRESS. `P12-S5` remains the active parent and STEP 6 remains blocked.
+`C1-13-A` and `C1-13-B` are DONE. `P12-S5` remains the active parent and STEP 6 remains blocked.
+
+#### Inserted corrective gate — C1-13-C
+
+After PR #51 merged and the current governance surface was redistributed to `Patricked-code/Ekyc`, target CI passed every portable client/local-entry test and then failed on Governance Model projection integrity because that test attempted to load source-only control-plane state.
+
+The correct generic behavior is:
+- Governance Model planning authority remains source-only;
+- client repositories do not receive the source control-plane state;
+- the integrity self-test explicitly skips when `.template-source` is absent;
+- Template source continues to run the full integrity validation;
+- the fresh E2E remains frozen until PR #52 is merged and redistributed through the governed upgrader.
+
+`C1-13-C` is IN_PROGRESS. `P12-S5` remains the active parent and STEP 6 remains blocked.
 
 ### STEP 6 — Close CREATE_NEW_REPOSITORY and release next macro case
 State: `PENDING_STEP_5`
