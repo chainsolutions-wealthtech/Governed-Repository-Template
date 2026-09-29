@@ -56,7 +56,7 @@ From this framework program:
 
 ## Unique next action
 
-`C1_13_E_WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_APPROVED_EKYC_DISCOVERY`
+`C1_13_F_APPROVE_CORRECTED_MCP_DISCOVERY_PLAN`
 
 ## Latest proof
 
@@ -403,3 +403,17 @@ certificate has expired
 Ekyc#1 is now revision 31 with `mcp_discovery_approved=true`, status `MCP_DISCOVERY_FAILED_RETRYABLE`, phase `MCP_DISCOVERY`. The baseline-write step was skipped.
 
 This means the earlier authority defect is closed and the TLS condition is now a genuine external dependency. MCP intake `Patricked-code/MCP#201` remains open and independently confirms remediation is not complete.
+
+## TLS remediation confirmed; MCP endpoint corrected
+
+Fresh live evidence supersedes the prior external TLS blocker:
+
+- MCP Governed Deploy `36625479517`: PASS.
+- GitHub OIDC read-only MCP evidence `36642167257`: PASS.
+- Ekyc retry `36642689845` reached the HTTPS service and returned `HTTP 404 Not Found`, proving the previous certificate failure is no longer the blocking condition.
+
+The 404 exposed a configuration fact already present in MCP architecture: the MCP endpoint is `/mcp`, not the host root. The central governed command corrected Ekyc from `https://mcp.wealthtechinnovations.com/` to `https://mcp.wealthtechinnovations.com/mcp`.
+
+Because an endpoint change is material, V2.8.7 correctly invalidated the previous discovery approval. Ekyc#1 is now revision 33 at `WAITING_FOR_DISCOVERY_APPROVAL / MCP_DISCOVERY_APPROVAL`.
+
+`Patricked-code/MCP#201` is retained as historical evidence only; no new intake or MCP mutation was created.
