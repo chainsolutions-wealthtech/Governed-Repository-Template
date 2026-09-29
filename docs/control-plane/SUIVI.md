@@ -446,3 +446,15 @@ The corrected `/mcp` plan was explicitly reapproved. Ekyc run `36644247227` reac
 Baseline application was skipped. Ekyc#1 persisted revision 35.
 
 The new generic task `C1-13-G` adds a recovery path from signed broker evidence. The owner additionally required a persistent MCP capability image in the central Template; that additive work is queued as `C1-13-H` and will feed the existing Loop Engineering rather than replace it.
+
+## 2026-09-30 — Persistent MCP capability image implementation
+
+The owner requested that the central Template keep a durable MCP discovery image and refresh it whenever necessary, including a case-aware map of candidate MCP tools and prepared operations.
+
+C1-13-H implements this as source-only Control Plane memory, not as a second engine. The snapshot consumes the MCP's own dynamic current-state/tool catalogue when refreshed and maps every observed tool to its declared surface and required authority. CREATE, ADOPT, MAP, LAB and CONTINUE receive planning candidates that flow into the existing Loop Engineering.
+
+Refresh is read-only and event/need based. It uses the existing central MCP credential, validates the resulting snapshot, and persists changes only through a dedicated branch/PR.
+
+During implementation, a security boundary was tightened: persistent public capability memory excludes server connection coordinates. Logical server IDs and capability metadata remain persisted; actual connection coordinates are refreshed live when an operation needs them.
+
+Ekyc is separately waiting at revision 38 for explicit approval of the materially changed BOTH plan. No approval is inferred from this capability-memory work.
