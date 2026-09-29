@@ -167,13 +167,24 @@ def compact_write_context(value):
     payload = tool_content_json(value)
     if not isinstance(payload, dict):
         return {}
+    raw_projects = payload.get("projects")
+    project_ids = []
+    if isinstance(raw_projects, str):
+        for line in raw_projects.splitlines():
+            stripped = line.strip()
+            if ":" not in stripped:
+                continue
+            candidate = stripped.split(":", 1)[0].strip()
+            if candidate and all(ch.isalnum() or ch in "._-" for ch in candidate):
+                project_ids.append(candidate)
     return {
         "mode": payload.get("mode"),
         "free_shell": payload.get("free_shell"),
         "run_command_s1": payload.get("run_command_s1"),
         "run_command_s2": payload.get("run_command_s2"),
         "sql": payload.get("sql"),
-        "projects": payload.get("projects"),
+        "project_ids": sorted(set(project_ids))[:500],
+        "project_paths_persisted": False,
     }
 
 
