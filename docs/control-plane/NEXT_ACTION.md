@@ -1,41 +1,37 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_13_D_MERGE_PR53_REUPGRADE_EKYC_RESUME_DISCOVERY
-STATE = IN_PROGRESS
+NEXT_ACTION = C1_13_E_WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_EKYC_DISCOVERY
+STATE = BLOCKED_EXTERNAL_DEPENDENCY
 PARENT = P12_S5_SECOND_FRESH_REPOSITORY_E2E
 ```
 
-## Objective
+## Current verified state
 
-Merge the client-upgrader distribution correction, redistribute the portable Governance Model integrity test to Ekyc, require the client Governance CI to pass fully, then resume the preserved MCP discovery checkpoint.
+- Template main: `7b8cf2193514efd8f3fe8ce635b0d21abfe53639`.
+- Ekyc HEAD: `87c28f4fd4e36aa3d65cfc384309a054c1640e4c`.
+- Ekyc Governance CI: `36621490571` PASS.
+- Ekyc local-entry baseline/setup answers remain preserved.
+- MCP retry run: `36621624763`.
+- Blocker: public TLS certificate for `mcp.wealthtechinnovations.com` is expired.
+- External intake: `Patricked-code/MCP#201`.
 
-## Evidence
+## Resume condition
 
-- Template main before PR #53: `ca8ce60e31a1d5f07fc1293cac54ca29906b7501`.
-- Ekyc current HEAD: `bbe20f4406eb794df4d2452161462f945e2d3fc6`.
-- Ekyc CI `36620623398`: stale portable Governance Model test detected by governed-upgrade continuity.
-- PR #53 RED: `36620804501`.
-- PR #53 GREEN: `36620877757`.
+Resume only after the MCP programme provides fresh evidence that the public TLS certificate is valid and both the public MCP endpoint and repository-SSH certificate broker are reachable over trusted TLS.
 
-## Required sequence
+Then:
 
-1. require final PR #53 HEAD CI green;
-2. reobserve Template main and PR #53 exact HEAD;
-3. merge PR #53 under exact-head guard;
-4. require source post-merge CI green;
-5. reobserve Ekyc exact HEAD;
-6. redistribute via `/governed-upgrade-local-entry`;
-7. require Ekyc Governance CI fully green;
-8. preserve `Ekyc#1` answers and prior 404 evidence;
-9. execute the preserved MCP discovery gate;
-10. correct the endpoint at the recovery question to `https://mcp.wealthtechinnovations.com/mcp`;
-11. rerun read-only discovery and continue C1-13 chronologically.
+1. reobserve Template main and Ekyc exact HEAD;
+2. re-read `Ekyc#1`;
+3. retry the preserved read-only MCP discovery checkpoint;
+4. if endpoint correction is requested, use the previously proven direct route `https://mcp.wealthtechinnovations.com/mcp`;
+5. continue C1-13 chronologically only after discovery evidence is usable.
 
 ## Safety boundary
 
-- No direct Ekyc patch.
-- Distribute the portable test, not source-only control-plane state.
-- Do not recreate baseline/history.
-- Runtime writes remain separately approval-gated.
-- P12-S6 and GMC remain blocked behind P12-S5.
+- Do not patch Ekyc.
+- Do not mutate `Patricked-code/MCP` from this workstream; #201 is intake only.
+- Do not bypass TLS verification.
+- Do not weaken HTTPS, OIDC, SSH certificate, or exact-HEAD protections.
+- Do not advance P12-S6 or GMC while P12-S5 is blocked.

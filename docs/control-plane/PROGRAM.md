@@ -139,7 +139,19 @@ The generic correction is:
 - add the corrected test to upgrader `static_paths`;
 - require a fresh governed client upgrade and fully green target CI before MCP discovery resumes.
 
-`C1-13-D` is IN_PROGRESS. `P12-S5` remains the active parent and STEP 6 remains blocked.
+`C1-13-A` through `C1-13-D` are DONE. `P12-S5` remains the active parent and STEP 6 remains blocked.
+
+#### External dependency gate — C1-13-E
+
+After the full client portability chain was corrected and `Patricked-code/Ekyc` reached an all-green Governance CI, the preserved MCP discovery retry failed because the public TLS certificate for `mcp.wealthtechinnovations.com` is expired.
+
+This is not a Template defect:
+- direct MCP is blocked at TLS verification;
+- SSH fallback cannot bootstrap because the GitHub-OIDC SSH certificate broker is HTTPS on the same host;
+- TLS verification must not be bypassed;
+- MCP is observation/intake-only from this workstream.
+
+External intake `Patricked-code/MCP#201` records the blocker. C1-13 resumes only after MCP-side governed remediation and fresh TLS evidence.
 
 ### STEP 6 — Close CREATE_NEW_REPOSITORY and release next macro case
 State: `PENDING_STEP_5`

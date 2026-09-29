@@ -517,6 +517,16 @@ The owner may choose different answers from the historical pilot. The framework 
 - Correct behavior: distribute the portable test without distributing source-only Governance Model state.
 - Resume rule: merge PR #53 → governed client re-upgrade → client CI PASS → resume preserved MCP discovery/recovery.
 
+### C1-13-E external dependency state
+
+- `C1-13-D` completed through PR #53 merge `7b8cf2193514efd8f3fe8ce635b0d21abfe53639`.
+- Governed upgrade produced `Patricked-code/Ekyc@87c28f4fd4e36aa3d65cfc384309a054c1640e4c`.
+- Target Governance CI `36621490571`: PASS.
+- Preserved MCP discovery retry `36621624763`: FAIL at trusted TLS verification because the public certificate is expired.
+- Classification: external MCP dependency, not Template framework defect.
+- Intake: `Patricked-code/MCP#201`; no Task/Session/Lock or MCP mutation created by this workstream.
+- Resume rule: MCP TLS remediation attested → exact-head reobserve → retry preserved read-only discovery → continue C1-13.
+
 ### Checkpoint
 `SECOND_FRESH_E2E_PASS`.
 
