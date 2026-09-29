@@ -1,0 +1,96 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import json
+import tempfile
+from pathlib import Path
+
+from control_plane_mcp_capability_snapshot import (
+    AUTHORITY_ID,
+    authority_for_surface,
+    build_snapshot,
+    classify_tool,
+    derive_case_operation_map,
+)
+
+
+def envelope(result):
+    return {"jsonrpc": "2.0", "id": 1, "result": result}
+
+
+def tool_envelope(payload):
+    return envelope({"content": [{"type": "text", "text": json.dumps(payload)}]})
+
+
+def main():
+    if authority_for_surface("read") != "READ_ONLY_DISCOVERY_AUTHORITY":
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: read authority")
+    if authority_for_surface("scoped-write") != "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED":
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: scoped write authority")
+    tags = classify_tool({"name": "deploy_project_s2", "description": "Deploy repository on S2 runtime"})
+    if not {"DEPLOYMENT", "REPOSITORY", "SERVER_RUNTIME"}.intersection(tags):
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: tool classification")
+
+    inventory = {
+        "repository": "Patricked-code/MCP",
+        "source": {
+            "githubHead": "a" * 40,
+            "runtimeRevision": "a" * 40,
+            "liveStateVersion": 12,
+            "inventoryDigest": "inv",
+            "catalogueDigest": "cat",
+        },
+        "catalogue": {
+            "catalogueVersion": 1,
+            "catalogueDigest": "cat",
+            "tools": [
+                {"name": "ping", "title": "Ping", "description": "Read health", "surface": "read", "contractDigest": "1"},
+                {"name": "deploy_project_s2", "title": "Deploy", "description": "Deploy repository on S2", "surface": "scoped-write", "contractDigest": "2"},
+            ],
+        },
+        "contradictions": [],
+    }
+    snapshot = build_snapshot(
+        endpoint="https://mcp.example.test/mcp",
+        observed_at="2026-09-30T00:00:00+00:00",
+        source_head="b" * 40,
+        init_response=envelope({"protocolVersion": "2025-06-18", "serverInfo": {"name": "bridge", "version": "1"}}),
+        tools_response=envelope({"tools": [
+            {"name": "ping", "title": "Ping", "description": "Read health", "annotations": {"readOnlyHint": True, "destructiveHint": False}, "inputSchema": {}},
+            {"name": "deploy_project_s2", "title": "Deploy", "description": "Deploy repository on S2", "annotations": {"readOnlyHint": False, "destructiveHint": True}, "inputSchema": {"type": "object"}},
+        ]}),
+        resources_response=envelope({"resources": [{"name": "inventory", "uri": "mcp://wealthtech/current-state/inventory", "mimeType": "application/json"}]}),
+        inventory_response=tool_envelope(inventory),
+        project_context_response=tool_envelope({"servers": {
+            "s1": {"id": "s1", "label": "S1", "host": "212.227.212.33", "port": 22, "username": "root", "privateKeyPath": "/SECRET", "protectedDomains": ["example.test"]},
+        }}),
+        write_context_response=tool_envelope({"mode": "scoped-write-tools", "free_shell": False, "run_command_s1": False, "run_command_s2": False, "sql": "SELECT uniquement", "projects": "demo"}),
+        prior_snapshot={"refresh_sequence": 4},
+    )
+    if snapshot["authority_id"] != AUTHORITY_ID or snapshot["refresh_sequence"] != 5:
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: identity/sequence")
+    if snapshot["mutation_authority_granted"] is not False or snapshot["secrets_persisted"] is not False:
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: authority/secrets")
+    if snapshot["servers"]["s1"].get("privateKeyPath") is not None:
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: private key path leaked")
+    if snapshot["catalogue"]["counts"]["tools"] != 2:
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: tool count")
+    deploy = next(item for item in snapshot["catalogue"]["tools"] if item["name"] == "deploy_project_s2")
+    if deploy["surface"] != "scoped-write" or deploy["authority_required"] != "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED":
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: write tool authority")
+    mapping = derive_case_operation_map(snapshot["catalogue"]["tools"])
+    if mapping["MAP_EXISTING_PROJECT"]["pre_mutation_live_refresh_required"] is not True:
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: mapping refresh gate")
+    if snapshot["relational_projection"]["status"] != "PENDING_PROJECTION_GMC_INTEGRATION":
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: relational projection")
+
+    serialized = json.dumps(snapshot)
+    for forbidden in ["/SECRET", "privateKeyPath", "Authorization: Bearer"]:
+        if forbidden in serialized:
+            raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: secret-like data leaked")
+
+    print("MCP_CAPABILITY_SNAPSHOT_SELFTEST_PASS")
+
+
+if __name__ == "__main__":
+    main()
