@@ -64,7 +64,7 @@ def main():
         project_context_response=tool_envelope({"servers": {
             "s1": {"id": "s1", "label": "S1", "host": "212.227.212.33", "port": 22, "username": "root", "privateKeyPath": "/SECRET", "protectedDomains": ["example.test"]},
         }}),
-        write_context_response=tool_envelope({"mode": "scoped-write-tools", "free_shell": False, "run_command_s1": False, "run_command_s2": False, "sql": "SELECT uniquement", "projects": "demo"}),
+        write_context_response=tool_envelope({"mode": "scoped-write-tools", "free_shell": False, "run_command_s1": False, "run_command_s2": False, "sql": "SELECT uniquement", "projects": "demo: Demo project"}),
         prior_snapshot={"refresh_sequence": 4},
     )
     if snapshot["authority_id"] != AUTHORITY_ID or snapshot["refresh_sequence"] != 5:
