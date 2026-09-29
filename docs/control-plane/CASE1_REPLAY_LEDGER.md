@@ -629,3 +629,22 @@ C1-06 MCP discovery configuration
 ```
 
 No prior Ekyc business/setup answer is invalidated. The TLS failure evidence remains historical and external; it is not the immediate execution gate until discovery is explicitly approved.
+
+## Ekyc V2.8.7 return-point proof
+
+The generic correction was merged through PR #55 and propagated through the governed client upgrade path.
+
+Observed target state:
+
+```text
+Patricked-code/Ekyc
+HEAD a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6
+Governance CI 36637639375 PASS
+Ekyc#1 revision 29
+status WAITING_FOR_DISCOVERY_APPROVAL
+phase MCP_DISCOVERY_APPROVAL
+current discovery evidence = null
+prior TLS evidence = archived
+```
+
+This proves the owner-feedback return protocol without replaying the business questionnaire or patching the client.
