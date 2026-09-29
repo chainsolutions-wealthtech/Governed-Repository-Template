@@ -250,3 +250,14 @@ The second fresh E2E remains inside STEP 5. Owner feedback established that MCP 
 Before resuming the previously observed TLS-dependent discovery, the Template must add and validate an explicit read-only discovery-plan approval gate, then distribute that generic correction to Ekyc through the governed upgrader.
 
 This is an additive correction to the existing programme. STEP 6 and the dependency-bound GMC programme remain unchanged and blocked behind completion of STEP 5.
+
+### P12-S5 MCP capability-memory enrichment
+
+CASE 1 live discovery has now produced enough evidence to refine the reusable control plane without changing the macro chronology.
+
+- `C1-13-G` — generic signed SSH profile recovery; blocking before Ekyc can continue.
+- `C1-13-H` — persistent source-only MCP capability snapshot and case/tool/operation planning map; additive to the existing Loop Engineering.
+
+The capability snapshot is not a second execution engine and does not authorize writes. It lets the Template reuse a dated last-known MCP image, refresh it through read-only discovery when freshness/need requires it, and prepare existing work-items with the correct tools, dependencies and authority gates.
+
+P12-S6 and GMC remain downstream of P12-S5 exactly as before.
