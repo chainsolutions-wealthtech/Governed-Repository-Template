@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "checkpoint_id": "CP-CHECKPOINT-20260930-002",
+  "checkpoint_id": "CP-CHECKPOINT-20260930-003",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-  "subject_head": "b35db53981cac9cad80ae051e460e08d1fdc3d0d",
+  "subject_head": "f5ba27597f4fb8214233a69b30577fcddeae6193",
   "template_version_before": "2.7.0",
-  "state": "P12_S5_EKYC_TLS_CLEARED_ENDPOINT_CORRECTED_WAITING_REAPPROVAL",
+  "state": "P12_S5_EKYC_DIRECT_MCP_PASS_SSH_PROFILE_RECOVERY_REQUIRED",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
@@ -105,18 +105,27 @@
     "c1_13_e_ekyc_retry_result": "HTTP_404_NOT_FOUND",
     "c1_13_f_endpoint_correction": "https://mcp.wealthtechinnovations.com/mcp",
     "c1_13_f_endpoint_correction_run": 36642777140,
-    "c1_13_f_local_entry_revision": 33,
-    "c1_13_f_status": "WAITING_FOR_DISCOVERY_APPROVAL"
+    "c1_13_f_local_entry_revision": 35,
+    "c1_13_f_status": "WAITING_FOR_DISCOVERY_APPROVAL",
+    "c1_13_f_owner_reapproval": true,
+    "c1_13_f_approval_comment": 5900882256,
+    "c1_13_f_target_run": 36644247227,
+    "c1_13_f_direct_mcp": "PASS",
+    "c1_13_f_ssh_result": "SSH_PROFILE_MISMATCH",
+    "c1_13_f_baseline_write": "SKIPPED",
+    "c1_13_g_signed_profile_host": "212.227.212.33",
+    "c1_13_g_signed_profile_port": 22,
+    "c1_13_g_signed_profile_user": "root"
   },
-  "next_action": "C1_13_F_APPROVE_CORRECTED_MCP_DISCOVERY_PLAN",
+  "next_action": "C1_13_G_IMPLEMENT_SIGNED_SSH_PROFILE_RECOVERY",
   "reconciliation_required_before_write": true,
   "ci_run": 36637371154,
   "ci_result": "PASS",
   "client_source_memory_removal": "PASS",
   "self_governance": "PASS",
-  "reconciliation_reason": "TLS_CONFIRMED_WORKING_HTTP404_EXPOSED_ROOT_URL_ENDPOINT_ERROR_CORRECTED_TO_MCP_PATH",
+  "reconciliation_reason": "REAPPROVED_MCP_ENDPOINT_SUCCEEDED_DIRECTLY_BUT_SIGNED_BROKER_SSH_PROFILE_DIFFERS_FROM_CONFIGURED_PROFILE",
   "canonical_memory_database": "PASS",
-  "blocker": "OWNER_APPROVAL_REQUIRED_FOR_CORRECTED_MCP_DISCOVERY_PLAN",
+  "blocker": "GENERIC_TEMPLATE_SSH_PROFILE_RECOVERY_MISSING",
   "knowledge_enrichment": {
     "canonical_architecture": {
       "authority_id": "CP-ARCH-001",
@@ -154,6 +163,12 @@
       ],
       "status": "IN_PROGRESS",
       "reuse_existing_loop_engineering": true
+    },
+    "mcp_capability_snapshot": {
+      "task": "C1-13-H",
+      "status": "PLANNED",
+      "decision_id": "CPD-033",
+      "relational_projection": "PENDING_PROJECTION_GMC_INTEGRATION"
     }
   }
 }
