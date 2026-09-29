@@ -422,7 +422,7 @@ C1-12-K must resume the existing `Patricked-code/Gouvern#3` proof via exact-HEAD
 
 - Parent: `P12-S5 / C1-13`.
 - Depends on: `C1-13-C`.
-- Status: `IN_PROGRESS`.
+- Status: `DONE`.
 - PR #52 merged at `ca8ce60e31a1d5f07fc1293cac54ca29906b7501`; post-merge CI `36620454972` PASS.
 - Governed Ekyc upgrade produced `bbe20f4406eb794df4d2452161462f945e2d3fc6`.
 - Ekyc CI `36620623398` failed because the client retained the stale Governance Model integrity test: the upgrader did not distribute the corrected script.
@@ -430,3 +430,17 @@ C1-12-K must resume the existing `Patricked-code/Gouvern#3` proof via exact-HEAD
 - PR #53 RED `36620804501` → GREEN `36620877757`.
 - Fix: add `scripts/test_governance_model_integrity.py` to client upgrader `static_paths`; source-only model state remains excluded.
 - Ekyc stays frozen until PR #53 merges and is redistributed.
+
+
+### C1-13-E MCP TLS external dependency
+
+- Parent: `P12-S5 / C1-13`.
+- Depends on: `C1-13-D`.
+- Status: `IN_PROGRESS / EXTERNAL_BLOCKER`.
+- Ekyc HEAD `87c28f4fd4e36aa3d65cfc384309a054c1640e4c`.
+- Ekyc Governance CI `36621490571`: PASS.
+- MCP discovery retry `36621624763`: blocked by expired TLS certificate on `mcp.wealthtechinnovations.com`.
+- `BOTH` cannot degrade successfully because the SSH certificate broker is HTTPS on the same affected host.
+- External intake: `Patricked-code/MCP#201`.
+- No MCP code/runtime mutation is authorized from this Template workstream.
+- Next: wait for governed MCP TLS remediation/attestation, then retry the preserved Ekyc discovery checkpoint.
