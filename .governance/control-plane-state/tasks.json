@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 31,
+  "revision": 32,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -43,7 +43,7 @@
       "depends_on": [
         "P12-S4"
       ],
-      "next_action": "C1-13-E",
+      "next_action": "C1-13-E-A",
       "evidence": [
         "C1-13-A inserted for generic MCP endpoint recovery defect discovered on Ekyc"
       ]
@@ -144,22 +144,43 @@
       ]
     },
     {
-      "id": "C1-13-E",
+      "id": "C1-13-E-A",
       "status": "IN_PROGRESS",
       "depends_on": [
         "C1-13-D"
       ],
       "blocks": [
+        "C1-13-E",
         "P12-S5"
       ],
-      "next_action": "WAIT_MCP_INTAKE_201_TLS_REMEDIATION_THEN_RETRY_EKYC_DISCOVERY",
+      "next_action": "IMPLEMENT_EXPLICIT_MCP_DISCOVERY_APPROVAL_GATE",
+      "defect_code": "MCP_DISCOVERY_CONFIGURATION_IMPLICITLY_AUTHORIZES_EXECUTION",
+      "evidence": [
+        "Ekyc#1 preserves all setup answers through runtime_mutation_policy=EXPLICIT_APPROVAL_FOR_SCOPED_WRITE",
+        "No domain_binding, workflow_model or final setup approval exists yet",
+        "Owner clarified configuration answers were intended to prepare, not execute, MCP discovery",
+        "Prior TLS failure run 36621624763 remains preserved historical evidence",
+        "Generic correction must be implemented in Template then distributed through governed upgrade"
+      ]
+    },
+    {
+      "id": "C1-13-E",
+      "status": "PENDING",
+      "depends_on": [
+        "C1-13-E-A"
+      ],
+      "blocks": [
+        "P12-S5"
+      ],
+      "next_action": "WAIT_FOR_EXPLICIT_DISCOVERY_APPROVAL_THEN_REEVALUATE_TLS_DEPENDENCY",
       "defect_code": "MCP_TLS_CERTIFICATE_EXPIRED_EXTERNAL_DEPENDENCY",
       "evidence": [
         "Ekyc exact HEAD 87c28f4fd4e36aa3d65cfc384309a054c1640e4c has fully green Governance CI 36621490571",
         "Governed MCP discovery retry run 36621624763 failed with SSL CERTIFICATE_VERIFY_FAILED certificate has expired",
         "Transport BOTH cannot reach direct MCP and cannot acquire the HTTPS SSH certificate broker while the same public TLS certificate is expired",
         "External MCP intake opened as Patricked-code/MCP#201",
-        "No MCP code/runtime mutation authorized from Template workstream"
+        "No MCP code/runtime mutation authorized from Template workstream",
+        "Owner feedback reclassified TLS as downstream evidence because discovery execution had not been explicitly approved"
       ]
     },
     {
@@ -828,7 +849,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-13-E",
+  "unique_executable_item": "C1-13-E-A",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",
