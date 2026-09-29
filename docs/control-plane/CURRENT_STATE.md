@@ -11,7 +11,7 @@
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
 - Template version: `2.8.6`
 - V2.7.0 release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`
-- Source-state revision: `23`
+- Source-state revision: `24`
 
 ## Current framework program
 
@@ -56,7 +56,7 @@ From this framework program:
 
 ## Unique next action
 
-`C1_13_B_MERGE_PR51_REUPGRADE_EKYC_RESUME_DISCOVERY`
+`C1_13_C_MERGE_PR52_REUPGRADE_EKYC_RESUME_DISCOVERY`
 
 ## Latest proof
 
@@ -313,3 +313,16 @@ The future admin web application is intentionally deferred until all structuring
 - Correction: guard source-only control-plane assertions behind the `.template-source` marker; do not distribute the source-only workflow to clients.
 - Ekyc remains frozen; no client-specific patch is permitted.
 - Unique next action: `C1_13_B_MERGE_PR51_REUPGRADE_EKYC_RESUME_DISCOVERY`.
+
+
+## C1-13-C Governance Model client portability gate
+
+- PR #51 merged at `0a4a9961565d53a872d6eb62ad3f4afadbb11d6e`; source post-merge CI `36296114629`: PASS.
+- Governed Ekyc re-upgrade: `dd5a2664c4422ab14fc7131a77e5c2df0e0356a0`; `Ekyc#1` migrated to revision 25.
+- Ekyc CI `36296169271`: all portable/client tests PASS through governed-upgrade continuity, then FAIL only at Governance Model projection integrity.
+- Root cause: that test loaded source-only `.governance/control-plane-state/governance-model-*.json` in a client repository.
+- Corrective task: `C1-13-C`.
+- PR #52 RED `36296258279` → GREEN `36296295586`.
+- Correction: source-only Governance Model integrity test exits successfully on clients without `.template-source`.
+- Target remains frozen; no target-specific patch.
+- Unique next action: `C1_13_C_MERGE_PR52_REUPGRADE_EKYC_RESUME_DISCOVERY`.
