@@ -378,3 +378,17 @@ Purpose: make the control-plane source self-governed while guaranteeing that its
 - Minimal fix commit `d0d4c3faabe561f60e80f9e2fd23c7956580e553`: `test_governance_model_integrity.py` exits successfully when `.template-source` is absent; full source validation is unchanged.
 - Functional GREEN Governance CI `36296295586`: PASS.
 - Next: finish source reconciliation, require final PR #52 CI green, merge exact-head, governed-reupgrade Ekyc, require client CI fully green, then resume the preserved MCP discovery checkpoint.
+
+
+## 2026-09-29 — C1-13-D upgrader Governance Model test distribution
+
+- PR #52 merged to Template main at `ca8ce60e31a1d5f07fc1293cac54ca29906b7501`; source post-merge Governance CI `36620454972`: PASS.
+- Official governed client upgrade advanced `Patricked-code/Ekyc` to `bbe20f4406eb794df4d2452161462f945e2d3fc6`.
+- Ekyc Governance CI `36620623398` failed in governed-upgrade continuity with `UPGRADE_SELFTEST_FAILED: client governance-model integrity test must skip source-only model state`.
+- Diagnosis: the Template source already contained the portable Governance Model integrity test from C1-13-C, but `control_plane_upgrade_local_entry.py` did not distribute that script, leaving a stale client copy.
+- Ekyc stayed frozen; no target-specific change was made.
+- Created Template PR #53 / corrective task `C1-13-D`.
+- RED commit `58cdbc1e0565a0937ea4c4bcdd0dea545277d82e`; CI `36620804501` failed exactly on the missing-distribution regression assertion.
+- Minimal fix commit `5aa1601ee5c91a8523454197e76b47bed59459ba`: add `scripts/test_governance_model_integrity.py` to upgrader `static_paths`.
+- Functional GREEN Governance CI `36620877757`: PASS.
+- Next: final reconciled PR #53 CI, exact-head merge, governed Ekyc re-upgrade, fully green client CI, then resume MCP endpoint recovery/discovery.

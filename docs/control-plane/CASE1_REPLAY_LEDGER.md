@@ -505,6 +505,18 @@ The owner may choose different answers from the historical pilot. The framework 
 - Correct behavior: Governance Model source state remains source-only; its integrity test skips on clients without `.template-source`.
 - Resume rule: merge PR #52 → governed client re-upgrade → client CI PASS → resume preserved MCP discovery/recovery flow.
 
+### C1-13-D live corrective state
+
+- `C1-13-C` completed through PR #52 merge `ca8ce60e31a1d5f07fc1293cac54ca29906b7501` and source CI `36620454972` PASS.
+- Governed upgrade produced `Patricked-code/Ekyc@bbe20f4406eb794df4d2452161462f945e2d3fc6`.
+- Target CI `36620623398` detected a stale client copy of the Governance Model integrity test.
+- Root cause: the client upgrader omitted `scripts/test_governance_model_integrity.py` from its portable static paths.
+- Classification: generic framework defect.
+- Corrective task: `C1-13-D`.
+- Template PR #53: RED `36620804501` → GREEN `36620877757`.
+- Correct behavior: distribute the portable test without distributing source-only Governance Model state.
+- Resume rule: merge PR #53 → governed client re-upgrade → client CI PASS → resume preserved MCP discovery/recovery.
+
 ### Checkpoint
 `SECOND_FRESH_E2E_PASS`.
 

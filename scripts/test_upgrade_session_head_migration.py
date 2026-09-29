@@ -123,6 +123,13 @@ def main() -> None:
     if 'if not (ROOT/".template-source").exists():' not in governance_model_test:
         raise SystemExit("UPGRADE_SELFTEST_FAILED: client governance-model integrity test must skip source-only model state")
 
+    # Client CI runs the Governance Model integrity script, so the upgrader
+    # must distribute the current portable version rather than leave a stale copy.
+    source=open(upgrade.__file__, "r", encoding="utf-8").read()
+    static_block=source.split("static_paths=[",1)[1].split("]",1)[0]
+    if '"scripts/test_governance_model_integrity.py"' not in static_block:
+        raise SystemExit("UPGRADE_SELFTEST_FAILED: upgrader must distribute portable governance-model integrity test")
+
     # Portable client CI requires the generic intent runtime/test surface.
     for required in [
         '"scripts/governance_agent.py"',

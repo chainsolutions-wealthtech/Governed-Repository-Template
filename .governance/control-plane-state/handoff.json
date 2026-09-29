@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "handoff_id": "CP-HANDOFF-20260927-018",
+  "handoff_id": "CP-HANDOFF-20260929-019",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "canonical_branch": "main",
-  "baseline_subject_head": "0a4a9961565d53a872d6eb62ad3f4afadbb11d6e",
-  "active_branch": "governance/fix-client-governance-model-test-portability",
+  "baseline_subject_head": "ca8ce60e31a1d5f07fc1293cac54ca29906b7501",
+  "active_branch": "governance/fix-upgrader-distribute-governance-model-test",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "current_task": "C1-13-C_GOVERNANCE_MODEL_CLIENT_TEST_PORTABILITY",
-  "unique_next_action": "C1_13_C_MERGE_PR52_REUPGRADE_EKYC_RESUME_DISCOVERY",
+  "current_task": "C1-13-D_UPGRADER_GOVERNANCE_MODEL_TEST_DISTRIBUTION",
+  "unique_next_action": "C1_13_D_MERGE_PR53_REUPGRADE_EKYC_RESUME_DISCOVERY",
   "read_first": [
     "docs/control-plane/CURRENT_STATE.md",
     ".governance/control-plane-state/canonical-architecture.json",
@@ -55,7 +55,10 @@
     "C1_13_B_COMPLETED_BY_PR51_AND_GOVERNED_EKYC_REUPGRADE",
     "FREEZE_EKYC_UNTIL_PR52_MODEL_TEST_PORTABILITY_FIX_MERGED",
     "DO_NOT_DISTRIBUTE_SOURCE_CONTROL_PLANE_STATE_TO_CLIENT",
-    "PRESERVE_EKYC_LOCAL_ENTRY_STATE_AND_DISCOVERY_EVIDENCE"
+    "PRESERVE_EKYC_LOCAL_ENTRY_STATE_AND_DISCOVERY_EVIDENCE",
+    "C1_13_C_COMPLETED_BY_PR52_AND_GOVERNED_EKYC_REUPGRADE",
+    "FREEZE_EKYC_UNTIL_PR53_UPGRADER_DISTRIBUTION_FIX_MERGED",
+    "DISTRIBUTE_PORTABLE_GOVERNANCE_MODEL_TEST_NOT_SOURCE_STATE"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",
@@ -69,19 +72,20 @@
   },
   "second_fresh_repository": {
     "repository": "Patricked-code/Ekyc",
-    "head": "dd5a2664c4422ab14fc7131a77e5c2df0e0356a0",
+    "head": "bbe20f4406eb794df4d2452161462f945e2d3fc6",
     "source_request": 49,
     "local_entry_issue": 1,
     "frozen": true,
     "completed_corrective_tasks": [
       "C1-13-A",
-      "C1-13-B"
+      "C1-13-B",
+      "C1-13-C"
     ],
-    "active_defect": "CLIENT_GOVERNANCE_MODEL_TEST_REQUIRES_SOURCE_ONLY_STATE",
-    "active_corrective_task": "C1-13-C",
-    "corrective_pr": 52,
-    "red_ci_run": 36296258279,
-    "green_ci_run": 36296295586,
-    "failed_target_ci": 36296169271
+    "active_defect": "UPGRADER_DOES_NOT_DISTRIBUTE_PORTABLE_GOVERNANCE_MODEL_TEST",
+    "active_corrective_task": "C1-13-D",
+    "corrective_pr": 53,
+    "red_ci_run": 36620804501,
+    "green_ci_run": 36620877757,
+    "failed_target_ci": 36620623398
   }
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 29,
+  "revision": 30,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -43,7 +43,7 @@
       "depends_on": [
         "P12-S4"
       ],
-      "next_action": "C1-13-C",
+      "next_action": "C1-13-D",
       "evidence": [
         "C1-13-A inserted for generic MCP endpoint recovery defect discovered on Ekyc"
       ]
@@ -98,14 +98,14 @@
     },
     {
       "id": "C1-13-C",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-13-B"
       ],
       "blocks": [
         "P12-S5"
       ],
-      "next_action": "MERGE_PR52_REUPGRADE_EKYC_RESUME_MCP_DISCOVERY",
+      "next_action": null,
       "defect_code": "CLIENT_GOVERNANCE_MODEL_TEST_REQUIRES_SOURCE_ONLY_STATE",
       "evidence": [
         "Ekyc Governance CI 36296169271 passed all client/local-entry tests through governed upgrade continuity",
@@ -113,6 +113,29 @@
         "Client intentionally lacks .governance/control-plane-state Governance Model source memory",
         "PR #52 RED Governance CI 36296258279 failed exactly on missing client skip regression assertion",
         "PR #52 GREEN Governance CI 36296295586 PASS after source-only test skip",
+        "Ekyc remains frozen; no target-specific patch",
+        "PR #52 merged at ca8ce60e31a1d5f07fc1293cac54ca29906b7501",
+        "Post-merge Governance CI 36620454972 PASS",
+        "Governed Ekyc upgrade applied at bbe20f4406eb794df4d2452161462f945e2d3fc6"
+      ]
+    },
+    {
+      "id": "C1-13-D",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "C1-13-C"
+      ],
+      "blocks": [
+        "P12-S5"
+      ],
+      "next_action": "MERGE_PR53_REUPGRADE_EKYC_RESUME_MCP_DISCOVERY",
+      "defect_code": "UPGRADER_DOES_NOT_DISTRIBUTE_PORTABLE_GOVERNANCE_MODEL_TEST",
+      "evidence": [
+        "Ekyc Governance CI 36620623398 failed at governed upgrade continuity self-test",
+        "Failure: client governance-model integrity test must skip source-only model state",
+        "Template source had the corrected test but client upgrader static_paths omitted scripts/test_governance_model_integrity.py",
+        "PR #53 RED Governance CI 36620804501 failed exactly on missing distribution assertion",
+        "PR #53 GREEN Governance CI 36620877757 PASS after adding the portable test to static_paths",
         "Ekyc remains frozen; no target-specific patch"
       ]
     },
@@ -782,7 +805,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-13-C",
+  "unique_executable_item": "C1-13-D",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",

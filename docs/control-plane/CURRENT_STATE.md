@@ -11,7 +11,7 @@
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
 - Template version: `2.8.6`
 - V2.7.0 release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`
-- Source-state revision: `24`
+- Source-state revision: `25`
 
 ## Current framework program
 
@@ -56,7 +56,7 @@ From this framework program:
 
 ## Unique next action
 
-`C1_13_C_MERGE_PR52_REUPGRADE_EKYC_RESUME_DISCOVERY`
+`C1_13_D_MERGE_PR53_REUPGRADE_EKYC_RESUME_DISCOVERY`
 
 ## Latest proof
 
@@ -326,3 +326,16 @@ The future admin web application is intentionally deferred until all structuring
 - Correction: source-only Governance Model integrity test exits successfully on clients without `.template-source`.
 - Target remains frozen; no target-specific patch.
 - Unique next action: `C1_13_C_MERGE_PR52_REUPGRADE_EKYC_RESUME_DISCOVERY`.
+
+
+## C1-13-D upgrader distribution gate
+
+- PR #52 merged at `ca8ce60e31a1d5f07fc1293cac54ca29906b7501`; source post-merge CI `36620454972`: PASS.
+- Governed Ekyc upgrade: `bbe20f4406eb794df4d2452161462f945e2d3fc6`.
+- Ekyc CI `36620623398`: local-entry tests PASS; upgrade-continuity self-test detected that the client still held the stale Governance Model integrity test.
+- Root cause: `control_plane_upgrade_local_entry.py` did not include `scripts/test_governance_model_integrity.py` in `static_paths`.
+- Corrective task: `C1-13-D`.
+- PR #53 RED `36620804501` → GREEN `36620877757`.
+- Correction distributes the portable test only; source control-plane state remains excluded.
+- Target remains frozen; no target-specific patch.
+- Unique next action: `C1_13_D_MERGE_PR53_REUPGRADE_EKYC_RESUME_DISCOVERY`.
