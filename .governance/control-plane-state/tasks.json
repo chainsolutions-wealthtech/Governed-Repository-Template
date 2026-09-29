@@ -278,7 +278,7 @@
         "C1-13-G"
       ],
       "blocks": [],
-      "next_action": "VALIDATE_PERSISTENT_MCP_CAPABILITY_SNAPSHOT",
+      "next_action": "FIX_SNAPSHOT_PR_PERSISTENCE_THEN_REPEAT_LIVE_REFRESH",
       "objective": "Persist a refreshable source-only MCP capability image and case-to-tool-to-operation planning map that feeds existing Loop Engineering",
       "execution_model": "EXISTING_LOOP_ENGINEERING",
       "external_mcp_intake_required": false,
@@ -290,7 +290,11 @@
         "source-only refresh script and regression test implemented",
         "source-only refresh workflow uses event/need based direct MCP read-only discovery and governed PR persistence",
         "server connection coordinates intentionally excluded from persisted public snapshot",
-        "relational projection remains PENDING_PROJECTION_GMC_INTEGRATION"
+        "relational projection remains PENDING_PROJECTION_GMC_INTEGRATION",
+        "Template v2.8.10 live refresh run 36646869819 reached MCP and generated a validated snapshot",
+        "Live refresh observed 135 tools and 2 resources; catalogue digest 8447f9dcc5078fdc9287068c9a791ab5366cc8f10ead5770f6830ed4aca34f1b",
+        "Snapshot persistence failed only at git push 403 because checkout persisted GITHUB_TOKEN extraheader overrode the minted GitHub App token",
+        "Corrective fix disables checkout persisted credentials and compacts snapshot metadata before retry"
       ]
     },
     {
