@@ -140,7 +140,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.6",
+  "template_version": "2.8.7",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -256,7 +256,11 @@
     "source-only relational materialization CI skips cleanly on clients",
     "complete portable connection-intent synthetic bootstrap fixture",
     "self-tests reset all bootstrap-influencing copied client state before template simulation",
-    "connection-intent self-test surfaces subprocess stdout and stderr on failure"
+    "connection-intent self-test surfaces subprocess stdout and stderr on failure",
+    "configuration intent is distinct from execution authority",
+    "explicit read-only MCP discovery plan approval gate",
+    "legacy preapproval MCP discovery state reconciles without losing evidence",
+    "adaptive questionnaire enriches existing project model and loop engineering rather than creating a parallel engine"
   ],
   "automatic_initialization_supported": true
 }
