@@ -447,6 +447,25 @@
         "red_ci_run": 36295815960,
         "green_ci_run": 36295850914
       }
+    },
+    {
+      "checkpoint_id": "CP-CHECKPOINT-20260927-020",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-13",
+      "subject_head_sha": "0a4a9961565d53a872d6eb62ad3f4afadbb11d6e",
+      "state": "P12_S5_EKYC_GOVERNANCE_MODEL_CLIENT_SKIP_GREEN_PENDING_MERGE",
+      "next_action": "C1_13_C_MERGE_PR52_REUPGRADE_EKYC_RESUME_DISCOVERY",
+      "source_ref": ".governance/control-plane-state/checkpoint.json",
+      "created_at": "2026-09-27",
+      "payload": {
+        "source_state_revision": 24,
+        "target_repository": "Patricked-code/Ekyc",
+        "target_head": "dd5a2664c4422ab14fc7131a77e5c2df0e0356a0",
+        "failed_target_ci": 36296169271,
+        "corrective_pr": 52,
+        "red_ci_run": 36296258279,
+        "green_ci_run": 36296295586
+      }
     }
   ],
   "intakes": [
@@ -855,6 +874,55 @@
         "repair": "SOURCE_ONLY_ASSERTION_GUARDED_BY_TEMPLATE_SOURCE"
       },
       "source_ref": "Template PR #51",
+      "observed_at": "2026-09-27"
+    },
+    {
+      "evidence_id": "EVID-C1-13-B-PORTABILITY-DISTRIBUTED",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-13",
+      "evidence_type": "GOVERNED_EXTERNAL_PILOT_UPGRADE",
+      "status": "PASS",
+      "payload": {
+        "target": "Patricked-code/Ekyc",
+        "pr51_merge": "0a4a9961565d53a872d6eb62ad3f4afadbb11d6e",
+        "source_post_merge_ci": 36296114629,
+        "upgrade_commit": "dd5a2664c4422ab14fc7131a77e5c2df0e0356a0",
+        "local_entry_selftest_after_upgrade": "PASS"
+      },
+      "source_ref": "Template #49 governed local-entry upgrade",
+      "observed_at": "2026-09-27"
+    },
+    {
+      "evidence_id": "EVID-C1-13-C-GOVERNANCE-MODEL-CLIENT-SKIP",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-13",
+      "evidence_type": "GOVERNANCE_MODEL_CLIENT_PORTABILITY",
+      "status": "PASS",
+      "payload": {
+        "defect_code": "CLIENT_GOVERNANCE_MODEL_TEST_REQUIRES_SOURCE_ONLY_STATE",
+        "target_ci_run": 36296169271,
+        "corrective_pr": 52,
+        "red_ci_run": 36296258279,
+        "green_ci_run": 36296295586,
+        "repair": "SKIP_MODEL_INTEGRITY_TEST_WHEN_TEMPLATE_SOURCE_MARKER_ABSENT"
+      },
+      "source_ref": "Template PR #52",
+      "observed_at": "2026-09-27"
+    },
+    {
+      "evidence_id": "EVID-C1-13-B-CLIENT-PORTABILITY-DISTRIBUTED",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-13",
+      "evidence_type": "GOVERNED_EXTERNAL_PILOT_UPGRADE",
+      "status": "PASS",
+      "payload": {
+        "target": "Patricked-code/Ekyc",
+        "pr51_merge": "0a4a9961565d53a872d6eb62ad3f4afadbb11d6e",
+        "source_post_merge_ci": 36296114629,
+        "upgrade_commit": "dd5a2664c4422ab14fc7131a77e5c2df0e0356a0",
+        "migrated_local_entry_revision": 25
+      },
+      "source_ref": "Template #49 governed local-entry re-upgrade",
       "observed_at": "2026-09-27"
     }
   ],
@@ -1858,6 +1926,35 @@
         "next_action": "MERGE_PR51_REUPGRADE_EKYC_RESUME_MCP_DISCOVERY"
       },
       "source_ref": "Template PR #51",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-C113B-DONE",
+      "event_type": "TASK_COMPLETED",
+      "scope_type": "TASK",
+      "scope_id": "C1-13-B",
+      "payload": {
+        "pr": 51,
+        "merge_sha": "0a4a9961565d53a872d6eb62ad3f4afadbb11d6e",
+        "target_upgrade_commit": "dd5a2664c4422ab14fc7131a77e5c2df0e0356a0",
+        "local_entry_selftest": "PASS"
+      },
+      "source_ref": "Template PR #51 and #49",
+      "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CME-20260927-C113C-ACTIVE",
+      "event_type": "TASK_ACTIVATED",
+      "scope_type": "TASK",
+      "scope_id": "C1-13-C",
+      "payload": {
+        "defect_code": "CLIENT_GOVERNANCE_MODEL_TEST_REQUIRES_SOURCE_ONLY_STATE",
+        "corrective_pr": 52,
+        "red_ci_run": 36296258279,
+        "green_ci_run": 36296295586,
+        "next_action": "MERGE_PR52_REUPGRADE_EKYC_RESUME_MCP_DISCOVERY"
+      },
+      "source_ref": "Template PR #52",
       "occurred_at": "2026-09-27"
     }
   ]

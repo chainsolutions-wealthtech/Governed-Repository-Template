@@ -391,7 +391,7 @@ C1-12-K must resume the existing `Patricked-code/Gouvern#3` proof via exact-HEAD
 
 - Parent: `P12-S5 / C1-13`.
 - Depends on: `C1-13-A`.
-- Status: `IN_PROGRESS`.
+- Status: `DONE`.
 - PR #50 merged at `dbe0014784362393c8cfbb02ce7810d483cf2bb7`; post-merge Governance CI `36295619581` PASS.
 - Governed client upgrade produced `Patricked-code/Ekyc@2ece8cff98258f7c40cf7b7383ceb5c026db9639` and migrated the open local-entry state without losing answers.
 - Ekyc Governance CI `36295714554` failed only because the distributed local-entry self-test tried to read source-only `.github/workflows/governed-control-plane.yml`.
@@ -401,3 +401,18 @@ C1-12-K must resume the existing `Patricked-code/Gouvern#3` proof via exact-HEAD
 - PR #51 functional GREEN: `36295850914`.
 - Fix: source-only token-permission assertions run only when `.template-source` exists.
 - Ekyc remains frozen until PR #51 merges and the correction is redistributed through the governed upgrader.
+
+
+### C1-13-C Governance Model client self-test portability
+
+- Parent: `P12-S5 / C1-13`.
+- Depends on: `C1-13-B`.
+- Status: `IN_PROGRESS`.
+- PR #51 merged at `0a4a9961565d53a872d6eb62ad3f4afadbb11d6e`; post-merge CI `36296114629` PASS.
+- Governed Ekyc re-upgrade produced `dd5a2664c4422ab14fc7131a77e5c2df0e0356a0`; `Ekyc#1` migrated to revision 25 with history preserved.
+- Ekyc CI `36296169271` passed client/local-entry tests and failed only when the Governance Model integrity test attempted source-only control-plane state.
+- Generic defect: `CLIENT_GOVERNANCE_MODEL_TEST_REQUIRES_SOURCE_ONLY_STATE`.
+- PR #52 RED: `36296258279`.
+- PR #52 GREEN: `36296295586`.
+- Fix: Governance Model integrity test skips on clients without `.template-source`; source validation remains mandatory.
+- Ekyc stays frozen until PR #52 merges and is redistributed through the governed upgrader.

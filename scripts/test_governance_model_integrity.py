@@ -16,6 +16,9 @@ def fail(message: str) -> None:
     raise SystemExit(f"GOVERNANCE_MODEL_INTEGRITY_FAILED: {message}")
 
 def main() -> None:
+    if not (ROOT/".template-source").exists():
+        print("GOVERNANCE_MODEL_SOURCE_ONLY_SKIP: client repository has no source-only model state")
+        return
     blueprint = load(BLUEPRINT)
     catalogue = load(CATALOGUE)
     groups = blueprint.get("groups") or []
