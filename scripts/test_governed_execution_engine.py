@@ -42,6 +42,22 @@ IDENTITY_INTENTS = {
     "REVOKE_CREDENTIAL",
     "VERIFY_SECRET_OR_CREDENTIAL_WITHOUT_READBACK",
 }
+GITHUB_INTENTS = {
+    "GITHUB_CREATE_REPOSITORY_FROM_TEMPLATE",
+    "GITHUB_CREATE_BRANCH",
+    "GITHUB_UPSERT_FILE",
+    "GITHUB_CREATE_PULL_REQUEST",
+    "GITHUB_MERGE_PULL_REQUEST",
+    "GITHUB_CONFIGURE_BRANCH_PROTECTION",
+    "GITHUB_CONFIGURE_RULESET",
+    "GITHUB_CONFIGURE_WEBHOOK",
+    "GITHUB_CONFIGURE_ENVIRONMENT",
+    "GITHUB_SET_ACTIONS_VARIABLE",
+    "GITHUB_DISPATCH_WORKFLOW",
+    "GITHUB_CREATE_DEPLOYMENT",
+    "GITHUB_UPDATE_REPOSITORY_SETTINGS",
+    "GITHUB_ADD_COLLABORATOR",
+}
 
 
 def package(intent: str, *, approved: bool | None = None, project_id: str = "brvmchainsolution") -> dict:
@@ -67,13 +83,14 @@ def package(intent: str, *, approved: bool | None = None, project_id: str = "brv
 
 def assert_registry_complete() -> None:
     intents = set(REGISTRY["intents"])
-    expected = SERVER_INTENTS | IDENTITY_INTENTS
+    expected = SERVER_INTENTS | IDENTITY_INTENTS | GITHUB_INTENTS
     if intents != expected:
         raise SystemExit(f"EXECUTION_ENGINE_TEST_FAILED: registry mismatch missing={expected-intents} extra={intents-expected}")
     for intent, spec in REGISTRY["intents"].items():
         if spec["handler"] not in {
             "MCP_RECIPE", "PLAN_ONLY", "GITHUB_APP_TOKEN", "GITHUB_SECRET",
             "SSH_OIDC_CERT", "CREDENTIAL_LIFECYCLE", "CREDENTIAL_VERIFY",
+            "GITHUB_REST_OPERATION",
         }:
             raise SystemExit(f"EXECUTION_ENGINE_TEST_FAILED: handler missing {intent}")
         if "required_authority" not in spec or "side_effecting" not in spec:
@@ -356,9 +373,97 @@ def assert_secret_reference_runtime_only() -> None:
             os.environ["TEST_EXECUTION_SECRET"] = old
 
 
+def assert_github_operations_are_allowlisted() -> None:
+    allowlist = REGISTRY.get("github_operation_allowlist") or {}
+    if set(allowlist) != GITHUB_INTENTS:
+        raise SystemExit("EXECUTION_ENGINE_TEST_FAILED: GitHub operation allowlist mismatch")
+    for intent in GITHUB_INTENTS:
+        if REGISTRY["intents"][intent]["handler"] != "GITHUB_REST_OPERATION":
+            raise SystemExit(f"EXECUTION_ENGINE_TEST_FAILED: GitHub handler mismatch {intent}")
+        if not allowlist[intent].get("required_parameters"):
+            raise SystemExit(f"EXECUTION_ENGINE_TEST_FAILED: GitHub parameter contract missing {intent}")
+
+
+def assert_github_create_branch_execution() -> None:
+    original_api = gee.github_api
+    original_target = gee._target_token
+    calls = []
+    source_sha = "a" * 40
+
+    def fake_api(token, method, path, payload=None):
+        calls.append((method, path, copy.deepcopy(payload)))
+        if method == "POST" and path.endswith("/git/refs"):
+            return {"ref": "refs/heads/feature/test", "object": {"sha": source_sha}}
+        if method == "GET" and "/git/ref/heads/" in path:
+            return {"ref": "refs/heads/feature/test", "object": {"sha": source_sha}}
+        raise AssertionError((method, path, payload))
+
+    try:
+        gee.github_api = fake_api
+        gee._target_token = lambda runtime, generated, parameters: "fake-target-token"
+        p = package("GITHUB_CREATE_BRANCH")
+        p["parameters"] = {
+            "repository": "owner/repo",
+            "branch": "feature/test",
+            "source_sha": source_sha,
+        }
+        result = gee.execute(p, do_execute=True, registry=REGISTRY, snapshot=SNAPSHOT)
+        if result["status"] != "PASS":
+            raise SystemExit(f"EXECUTION_ENGINE_TEST_FAILED: GitHub branch execution {result}")
+        if [x[0] for x in calls] != ["POST", "GET"]:
+            raise SystemExit("EXECUTION_ENGINE_TEST_FAILED: GitHub branch create/verify sequence")
+        if "fake-target-token" in json.dumps(result):
+            raise SystemExit("EXECUTION_ENGINE_TEST_FAILED: GitHub token leaked")
+    finally:
+        gee.github_api = original_api
+        gee._target_token = original_target
+
+
+def assert_github_merge_head_guard() -> None:
+    original_api = gee.github_api
+    original_target = gee._target_token
+    try:
+        gee._target_token = lambda runtime, generated, parameters: "fake-target-token"
+        def fake_api(token, method, path, payload=None):
+            if method == "GET" and path.endswith("/pulls/7"):
+                return {"head": {"sha": "b" * 40}, "merged": False}
+            raise AssertionError((method, path))
+        gee.github_api = fake_api
+        p = package("GITHUB_MERGE_PULL_REQUEST")
+        p["parameters"] = {
+            "repository": "owner/repo",
+            "pull_number": 7,
+            "expected_head_sha": "a" * 40,
+            "merge_method": "merge",
+        }
+        result = gee.execute(p, do_execute=True, registry=REGISTRY, snapshot=SNAPSHOT)
+        if result["failure_code"] != "HEAD_MOVED":
+            raise SystemExit("EXECUTION_ENGINE_TEST_FAILED: PR merge HEAD guard")
+    finally:
+        gee.github_api = original_api
+        gee._target_token = original_target
+
+
+def assert_github_unknown_setting_rejected() -> None:
+    original_target = gee._target_token
+    try:
+        gee._target_token = lambda runtime, generated, parameters: "fake-target-token"
+        p = package("GITHUB_UPDATE_REPOSITORY_SETTINGS")
+        p["parameters"] = {"repository": "owner/repo", "settings": {"delete_repository": True}}
+        result = gee.execute(p, do_execute=True, registry=REGISTRY, snapshot=SNAPSHOT)
+        if result["failure_code"] != "GITHUB_REPOSITORY_SETTING_NOT_ALLOWLISTED":
+            raise SystemExit("EXECUTION_ENGINE_TEST_FAILED: unsafe GitHub setting not rejected")
+    finally:
+        gee._target_token = original_target
+
+
 def main() -> None:
     assert_registry_complete()
+    assert_github_operations_are_allowlisted()
     assert_all_intents_compile_without_side_effect()
+    assert_github_create_branch_execution()
+    assert_github_merge_head_guard()
+    assert_github_unknown_setting_rejected()
     assert_current_mcp_gap_is_fail_closed()
     assert_available_deploy_can_be_bound()
     assert_production_attestation_can_bind_reads()
