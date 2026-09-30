@@ -512,3 +512,15 @@ The old implementation in `scripts/mcp_repository_discovery.py` executed DIRECT 
 Generic corrective task `C1-13-I-A` is active. The framework is being changed to `DUAL_READY_SMART_ROUTING`, with one selected route per operation and independent alternate-route readiness.
 
 No new Ekyc network call is required to recover the already-authorized DIRECT evidence.
+
+## Adaptive choice-question planning enrichment
+
+A source-only choice-question catalogue has been added as additive planning knowledge.
+
+It preserves the current CASE 1 execution checkpoint and does not bind a new runtime engine.
+
+The catalogue defines 34 one-at-a-time choice questions across identity/topology, governance posture, infrastructure, domain/network, runtime/data, delivery/operations, MCP/access, authority/security and quality/recovery.
+
+Fresh observations resolve factual questions before owner interaction. Dynamic choices are generated from observed repositories/servers/domains/paths/runtimes/databases. AfricaFunds is captured as an ADOPT_EXISTING replay fixture; Ekyc-like fresh creation is captured as a CREATE_NEW fixture.
+
+Runtime binding remains deferred to small future AQI slices and the existing GMC/Loop Engineering chronology.
