@@ -94,6 +94,23 @@
         "scripts/test_adaptive_question_catalogue.py"
       ],
       "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
+    },
+    "persistent_control_plane_knowledge": {
+      "authority_id": "CP-KNOWLEDGE-001",
+      "decision_id": "CPD-037",
+      "status": "CANONICAL_MODEL_SEED",
+      "scope": "CONTROL_PLANE_SOURCE_ONLY",
+      "reuse_rule": "REUSE_WHILE_CURRENT_REFRESH_ONLY_WHEN_VOLATILE_CONTRADICTED_OR_ACTION_SENSITIVE",
+      "execution_authority_granted": false,
+      "parallel_engine": false,
+      "future_incremental_work": [
+        "KBI-03",
+        "KBI-04",
+        "KBI-05",
+        "KBI-06",
+        "KBI-07"
+      ],
+      "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
     }
   },
   "framework_product_boundary": {

@@ -134,7 +134,10 @@
       "docs/control-plane/ADAPTIVE_CHOICE_QUESTION_CATALOGUE.md",
       ".governance/control-plane-state/adaptive-question-catalogue.json",
       "scripts/adaptive_question_planner.py",
-      "scripts/test_adaptive_question_catalogue.py"
+      "scripts/test_adaptive_question_catalogue.py",
+      "docs/control-plane/KNOWLEDGE_BASE.md",
+      ".governance/control-plane-state/knowledge-base.json",
+      "scripts/test_control_plane_knowledge_base.py"
     ],
     "local_entry_ui": [
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml"
@@ -149,7 +152,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.15",
+  "template_version": "2.8.16",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -299,7 +302,12 @@
     "one-question-at-a-time observation-first owner decision flow",
     "question answers prepare and derive but never authorize execution",
     "incremental AQI implementation slices with source-only unit and E2E fixtures",
-    "AfricaFunds existing-project replay fixture without project hard-coding"
+    "AfricaFunds existing-project replay fixture without project hard-coding",
+    "persistent reusable control-plane knowledge layers with provenance and freshness",
+    "stable knowledge reused without repeated discovery",
+    "volatile operational facts refreshed only when action freshness requires it",
+    "owner decisions reused until superseded or invalidated by scope change",
+    "observed conventions remain candidates until governed promotion"
   ],
   "automatic_initialization_supported": true
 }

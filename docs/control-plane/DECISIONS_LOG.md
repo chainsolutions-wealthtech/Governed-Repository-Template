@@ -110,3 +110,15 @@ Append-only durable decisions for the source/control-plane repository.
 - Every answer may classify, derive, prepare, schedule or gate future work, but never grants execution authority by itself.
 - Long implementation is decomposed into small resumable slices with source-only unit/E2E tests before runtime binding.
 - AfricaFunds is a worked ADOPT_EXISTING example only; generic logic must not hard-code AfricaFunds.
+
+### CPD-037 — Reusable knowledge must prevent redundant discovery
+
+- Date: 2026-09-30.
+- The Control Plane must persist reusable knowledge so a new agent does not repeatedly rediscover the same stable project/server/provider/governance facts.
+- Knowledge is layered by stability: target model, question/decision model, MCP capability semantics, provider knowledge, server-organization knowledge, project facts, owner decisions, candidate conventions and volatile operational evidence.
+- Every reusable project fact must carry provenance and freshness semantics.
+- Fresh current facts and prior owner decisions are reused before discovery or questioning.
+- Volatile/action-sensitive facts are refreshed only when the pending operation requires current evidence or when contradiction/scope change invalidates stored knowledge.
+- Observed cross-project conventions remain candidate patterns until explicitly promoted by governance; one project's layout never silently becomes a universal rule.
+- Knowledge never grants execution authority and must not persist secret values or sensitive connection coordinates.
+- This extends existing relational/canonical memory; it does not create a parallel runtime or database.

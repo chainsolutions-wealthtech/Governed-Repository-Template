@@ -524,3 +524,13 @@ The catalogue defines 34 one-at-a-time choice questions across identity/topology
 Fresh observations resolve factual questions before owner interaction. Dynamic choices are generated from observed repositories/servers/domains/paths/runtimes/databases. AfricaFunds is captured as an ADOPT_EXISTING replay fixture; Ekyc-like fresh creation is captured as a CREATE_NEW fixture.
 
 Runtime binding remains deferred to small future AQI slices and the existing GMC/Loop Engineering chronology.
+
+## Persistent reusable knowledge model
+
+The Control Plane now has a source-only knowledge model `CP-KNOWLEDGE-001`.
+
+Purpose: agents should reuse what the Control Plane already knows instead of repeatedly rediscovering the same stable facts.
+
+The model separates stable governance/provider/project knowledge from volatile operational evidence and requires provenance plus freshness semantics before reuse.
+
+This is planning/memory enrichment only. It does not change the current CASE 1 executable task, grant execution authority or create another runtime engine.
