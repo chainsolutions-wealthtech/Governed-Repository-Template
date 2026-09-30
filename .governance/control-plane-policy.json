@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.3.1",
+  "schema_version": "1.4.0",
   "control_plane_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "source_role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
   "client_role_after_instantiation": "GOVERNED_TARGET_CLIENT",
@@ -57,7 +57,12 @@
     "MCP_CAPABILITY_REFRESH_READ_ONLY_NE_MUTATION_AUTHORITY",
     "MCP_TOOL_AVAILABILITY_NE_WRITE_AUTHORITY",
     "SERVER_CONNECTION_COORDINATES_NOT_PERSISTED_IN_PUBLIC_SNAPSHOT",
-    "MCP_CAPABILITY_SNAPSHOT_FEEDS_EXISTING_LOOP_ENGINEERING"
+    "MCP_CAPABILITY_SNAPSHOT_FEEDS_EXISTING_LOOP_ENGINEERING",
+    "CAPABILITY_MODEL_BEFORE_TOOL_SELECTION",
+    "OBSERVE_AND_REUSE_BEFORE_ASK",
+    "FRESH_RESOLVED_FACT_MUST_NOT_BE_REASKED",
+    "MISSING_MCP_CAPABILITY_REQUEST_ONLY_WHEN_CONCRETE_OPERATION_REQUIRES_IT",
+    "MCP_SNAPSHOT_NE_TARGET_GOVERNANCE_MODEL"
   ],
   "source_only_paths": [
     ".github/workflows/governed-control-plane.yml",
@@ -232,6 +237,21 @@
         "COLLABORATOR"
       ],
       "effect": "READ_ONLY_MCP_REFRESH_THEN_GOVERNED_PR_IF_CHANGED"
+    },
+    "planning_model": {
+      "mode": "CAPABILITY_FIRST_ADAPTIVE_QUESTION_PLANNING",
+      "stable_semantics": "CAPABILITY_MODEL",
+      "dynamic_implementation": "LIVE_MCP_TOOL_RESOURCE_CATALOGUE",
+      "question_resolution_order": [
+        "FRESH_DIRECT_REPOSITORY_OBSERVATION",
+        "FRESH_PERSISTED_PROJECT_MEMORY",
+        "PRIOR_OWNER_DECISION",
+        "AUTHORIZED_MCP_READ_ONLY_DISCOVERY",
+        "ASK_OWNER"
+      ],
+      "missing_capability_policy": "PREPARE_SCOPED_CAPABILITY_REQUEST_ONLY_WHEN_CONCRETE_OPERATION_REQUIRES_IT",
+      "tool_availability_is_requirement": false,
+      "tool_availability_is_authority": false
     }
   }
 }
