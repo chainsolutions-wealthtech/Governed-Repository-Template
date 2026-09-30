@@ -98,3 +98,15 @@ Append-only durable decisions for the source/control-plane repository.
 - Alternate-route readiness is tracked independently and does not downgrade a successful selected route.
 - The framework must not force rediscovery merely because another configured route later becomes available.
 - Legacy evidence from Ekyc where DIRECT passed but the old coupled engine then failed on SSH may reuse the already-authorized DIRECT PASS after generic framework migration; the corrected SSH route remains independently attestable.
+
+### CPD-036 — Adaptive questions are choice-based and observation-first
+
+- Date: 2026-09-30.
+- New questionnaire logic must extend the existing CREATE / ADOPT / MAP / LAB and Loop Engineering model; no parallel engine.
+- Questions are asked one at a time.
+- Answers are choice-based by default. Values such as repositories, servers, domains, paths, runtimes and databases should be presented as dynamic choices derived from observation rather than requested as free-form text.
+- Fresh factual observations are reused automatically and are not re-asked.
+- Owner/business decisions remain explicit choices even when observations provide candidates.
+- Every answer may classify, derive, prepare, schedule or gate future work, but never grants execution authority by itself.
+- Long implementation is decomposed into small resumable slices with source-only unit/E2E tests before runtime binding.
+- AfricaFunds is a worked ADOPT_EXISTING example only; generic logic must not hard-code AfricaFunds.
