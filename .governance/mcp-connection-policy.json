@@ -1,8 +1,8 @@
 {
-  "schema_version": "1.8.0",
+  "schema_version": "1.9.0",
   "role": "REPOSITORY_TO_MCP_BINDING",
-  "preferred_transport": "DIRECT_MCP_TOKEN",
-  "fallback_transport": "GITHUB_OIDC_EPHEMERAL_SSH_CERTIFICATE",
+  "preferred_transport": "ADAPTIVE_BY_CONFIGURED_ROUTE_AND_CAPABILITY",
+  "fallback_transport": "CONFIGURED_ALTERNATE_ROUTE",
   "direct_mcp": {
     "endpoint_variable": "GOVERNED_MCP_URL",
     "token_secret": "GOVERNED_MCP_AUTH_TOKEN",
@@ -23,7 +23,7 @@
       "source_value_exposure": "FORBIDDEN",
       "trigger": "ANY_GOVERNED_LOCAL_COMMAND_WHEN_DIRECT_CREDENTIAL_APPLIES",
       "attestation": "TARGET_SECRET_METADATA_ONLY",
-      "fallback": "BOTH_MAY_DEGRADE_TO_GITHUB_OIDC_EPHEMERAL_SSH_READONLY",
+      "fallback": "BOTH_CONFIGURES_DIRECT_AND_SSH;_SSH_IS_USED_ONLY_WHEN_SELECTED_AS_ALTERNATE_ROUTE",
       "mandatory_for": [
         "DIRECT_MCP_TOKEN"
       ],
@@ -59,9 +59,18 @@
     ],
     "write_authority": "MCP_SCOPED_WRITE_ONLY",
     "both_semantics": {
-      "preferred": "DIRECT_MCP_PLUS_SSH_EVIDENCE",
-      "degraded_without_direct_credential": "SSH_OIDC_READONLY_DISCOVERY",
-      "degraded_status": "PARTIAL",
+      "mode": "DUAL_READY_SMART_ROUTING",
+      "configured_transports": [
+        "DIRECT_MCP_TOKEN",
+        "SSH"
+      ],
+      "initial_preference": "DIRECT_MCP_TOKEN",
+      "fallback": "SSH",
+      "route_selection": "ONE_ROUTE_PER_OPERATION_UNLESS_INDEPENDENT_ATTESTATION_IS_EXPLICITLY_REQUIRED",
+      "simultaneous_execution_required": false,
+      "one_successful_route_satisfies_current_discovery": true,
+      "alternate_route": "CONFIGURED_AND_AVAILABLE_WITH_INDEPENDENT_READINESS_STATE",
+      "fallback_success_status": "PASS_IF_SELECTED_ROUTE_PASSES",
       "write_authority": "UNCHANGED_MCP_SCOPED_WRITE_ONLY"
     }
   },
@@ -75,18 +84,20 @@
     "CONTROL_PLANE_MCP_SECRET_PROVISIONING_NEVER_EXPOSES_SECRET_VALUE",
     "TARGET_MCP_SECRET_IS_PROVISIONED_ONLY_AT_EXACT_HEAD_CREDENTIAL_GATE",
     "BOTH_DIRECT_CREDENTIAL_ABSENCE_MUST_NOT_BLOCK_READ_ONLY_SSH_DISCOVERY",
-    "BOTH_SSH_ONLY_EVIDENCE_MUST_BE_RECORDED_AS_PARTIAL_DEGRADED",
     "MCP_DISCOVERY_FAILURES_ON_EXACT_HEAD_ARE_PERSISTED_RETRYABLE",
     "HEAD_MOVED_NEVER_PERSISTS_AS_DISCOVERY_EVIDENCE",
-    "BOTH_USES_CENTRAL_DIRECT_CREDENTIAL_WHEN_AVAILABLE",
-    "BOTH_STALE_DEGRADED_DISCOVERY_MUST_REFRESH_BEFORE_SETUP_APPROVAL",
     "DISCOVERY_REFRESH_PRESERVES_EXISTING_SETUP_ANSWERS",
     "MCP_CONFIGURATION_INTENT_NE_DISCOVERY_EXECUTION_AUTHORITY",
     "MCP_DISCOVERY_PLAN_MUST_BE_PRESENTED_BEFORE_EXECUTION",
     "MCP_DISCOVERY_EXECUTION_REQUIRES_EXPLICIT_APPROVAL",
     "SIGNED_BROKER_SSH_PROFILE_IS_FACTUAL_DISCOVERY_EVIDENCE",
     "SSH_PROFILE_MISMATCH_REOPENS_PROFILE_RECOVERY",
-    "SSH_PROFILE_CHANGE_INVALIDATES_PRIOR_DISCOVERY_APPROVAL"
+    "SSH_PROFILE_CHANGE_INVALIDATES_PRIOR_DISCOVERY_APPROVAL",
+    "BOTH_MEANS_DUAL_READY_SMART_ROUTING_NOT_COUPLED_EXECUTION",
+    "BOTH_ONE_OPERATION_SELECTS_ONE_ROUTE_UNLESS_INDEPENDENT_ATTESTATION_IS_REQUIRED",
+    "BOTH_ONE_SUCCESSFUL_SELECTED_ROUTE_SATISFIES_CURRENT_DISCOVERY",
+    "BOTH_ALTERNATE_ROUTE_READINESS_NE_CURRENT_ROUTE_SUCCESS",
+    "BOTH_PRIOR_AUTHORIZED_DIRECT_PASS_MAY_BE_REUSED_AFTER_ALTERNATE_SSH_PROFILE_CORRECTION"
   ],
   "discovery_failure_policy": {
     "persist_exact_head_failures": true,
@@ -102,12 +113,13 @@
     }
   },
   "discovery_reconciliation_policy": {
-    "both_refresh_when_direct_credential_becomes_available": true,
+    "both_refresh_when_direct_credential_becomes_available": false,
     "preserve_existing_answers": true,
     "preserve_prior_evidence": "BOUNDED_HISTORY",
     "max_prior_evidence_entries": 5,
-    "setup_approval_requires_current_evidence": true,
-    "authority_change": "NONE_READ_ONLY_REFRESH"
+    "setup_approval_requires_current_selected_route_evidence": true,
+    "alternate_route_attestation_blocks_setup": false,
+    "authority_change": "NONE_FOR_REUSING_PREVIOUSLY_AUTHORIZED_SUCCESSFUL_ROUTE_EVIDENCE"
   },
   "discovery_authorization_policy": {
     "configuration_answers_are_execution_authority": false,
