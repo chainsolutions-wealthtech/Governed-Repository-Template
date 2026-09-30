@@ -613,3 +613,22 @@ These are framework refinements. PR #66 remains unmerged until the corrected eng
   - newly available alternate route does not force rediscovery;
   - no write authority is added.
 - Ekyc migration requirement: reuse the already-authorized DIRECT PASS from run `36644247227`; preserve corrected SSH as `CONFIGURED_NOT_ATTESTED`; do not execute new network discovery merely to compensate for the old coupling defect.
+
+### C1-13-I-A completion — BOTH smart routing
+
+- Status: `DONE`.
+- Template PR #70 merged at `b1fd2ca51bc53a2502972440019bdbabb036ff7b`.
+- Template post-merge CI `36654687133`: PASS.
+- Governed Ekyc upgrade `9ace9f9882a06df69c9466cec633bd191f7cad12`.
+- Ekyc#1 migrated to revision 39 without new MCP network replay.
+- Current route: DIRECT PASS.
+- Alternate SSH route: configured, independently attestable, non-blocking.
+- The prior redundant C1-13-I approval gate is superseded by CPD-035.
+
+### C1-13-I-B — Ekyc domain binding
+
+- Status: `IN_PROGRESS`.
+- Depends on: `C1-13-I-A`.
+- Observed facts: no Ekyc project registration and no Ekyc/KYC domain found in the authorized MCP discovery evidence.
+- Remaining field is an owner decision: `CREATE_NEW`, `EXISTING`, or `UNRESOLVED`.
+- Answering this question does not authorize domain creation or server mutation.

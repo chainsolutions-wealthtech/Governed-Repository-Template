@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 40,
+  "revision": 41,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -43,7 +43,7 @@
       "depends_on": [
         "P12-S4"
       ],
-      "next_action": "C1-13-I-A",
+      "next_action": "C1-13-I-B",
       "evidence": [
         "C1-13-A inserted for generic MCP endpoint recovery defect discovered on Ekyc"
       ]
@@ -315,7 +315,7 @@
     },
     {
       "id": "C1-13-I-A",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-13-H"
       ],
@@ -323,18 +323,42 @@
         "C1-13-I",
         "P12-S5"
       ],
-      "next_action": "FIX_TEST_MERGE_UPGRADE_EKYC_SMART_ROUTING",
+      "next_action": null,
       "defect_code": "BOTH_COUPLED_EXECUTION_SEMANTICS",
       "evidence": [
         "Owner clarified BOTH = two configured intelligent alternative routes, not coupled execution",
         "Current discovery runner executes DIRECT then SSH for BOTH",
         "Ekyc run 36644247227 contains authorized DIRECT PASS before SSH_PROFILE_MISMATCH",
-        "No target-specific Ekyc patch permitted"
+        "No target-specific Ekyc patch permitted",
+        "Template PR #70 merged b1fd2ca51bc53a2502972440019bdbabb036ff7b",
+        "Template post-merge Governance CI 36654687133 PASS",
+        "Governed Ekyc v2.8.14 upgrade run 36654732506 PASS",
+        "Ekyc 9ace9f9882a06df69c9466cec633bd191f7cad12 revision 39 Q_DOMAIN_BINDING",
+        "Ekyc CI 36654779276 PASS",
+        "DIRECT PASS reused; SSH configured alternate; no new network discovery"
+      ]
+    },
+    {
+      "id": "C1-13-I-B",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "C1-13-I-A"
+      ],
+      "blocks": [
+        "P12-S5"
+      ],
+      "next_action": "RESOLVE_EKYC_DOMAIN_BINDING",
+      "gate_code": "OWNER_DOMAIN_BINDING_DECISION_REQUIRED",
+      "evidence": [
+        "Ekyc HEAD 9ace9f9882a06df69c9466cec633bd191f7cad12",
+        "Ekyc#1 revision 39 Q_DOMAIN_BINDING",
+        "Authorized discovery contains no Ekyc/KYC domain",
+        "MCP scoped-project registry contains no Ekyc project entry"
       ]
     },
     {
       "id": "C1-13-I",
-      "status": "BLOCKED",
+      "status": "SUPERSEDED",
       "depends_on": [
         "C1-13-H",
         "C1-13-I-A"
@@ -342,7 +366,7 @@
       "blocks": [
         "P12-S5"
       ],
-      "next_action": "WAIT_FOR_BOTH_SMART_ROUTING_FRAMEWORK_CORRECTION",
+      "next_action": null,
       "gate_code": "OWNER_APPROVAL_REQUIRED_FOR_MATERIALLY_CHANGED_BOTH_DISCOVERY_PLAN",
       "evidence": [
         "Ekyc HEAD 4d552458afab32df12aaafd6c7290fab6246d96b",
@@ -350,7 +374,9 @@
         "Corrected MCP endpoint preserved",
         "Broker-observed SSH profile correction materially changed the BOTH discovery plan",
         "Prior approval invalidated by policy; current discovery is null; baseline remains unapplied"
-      ]
+      ],
+      "superseded_by": "C1-13-I-A",
+      "supersession_reason": "OWNER_CLARIFIED_BOTH_NE_COUPLED_EXECUTION"
     },
     {
       "id": "P12-S6",
@@ -1018,7 +1044,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-13-I-A",
+  "unique_executable_item": "C1-13-I-B",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",

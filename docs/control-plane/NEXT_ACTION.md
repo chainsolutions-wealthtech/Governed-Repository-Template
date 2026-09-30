@@ -1,67 +1,67 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_13_I_A_FIX_BOTH_SMART_ROUTING_SEMANTICS
-STATE = GENERIC_FRAMEWORK_CORRECTION
+NEXT_ACTION = C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING
+STATE = WAITING_FOR_OWNER_DOMAIN_DECISION
 PARENT = P12_S5_SECOND_FRESH_REPOSITORY_E2E
 ```
 
-## Owner correction
+## C1-13-I-A complete
 
-`BOTH` means **both transport paths are configured and available for intelligent selection**, not that DIRECT and SSH must execute together.
+The owner correction for `BOTH` is now implemented and proven.
 
-Canonical semantics:
+- Template PR #70 merged: `b1fd2ca51bc53a2502972440019bdbabb036ff7b`.
+- Template post-merge Governance CI `36654687133`: PASS.
+- Governed Ekyc upgrade run `36654732506`: PASS.
+- Ekyc upgraded to `9ace9f9882a06df69c9466cec633bd191f7cad12` / Template v2.8.14.
+- Ekyc Governance CI `36654779276`: PASS.
+- Ekyc Governance Auto Bootstrap `36654779302`: PASS.
+- Ekyc Governed Local Entry `36654783722`: PASS.
 
-```text
-BOTH = DUAL_READY_SMART_ROUTING
-
-operation
-→ choose one appropriate ready route
-   ├── DIRECT MCP
-   └── SSH governed route
-→ execute selected route
-→ use alternate only if needed / selected / separately attested
-```
-
-A successful selected route satisfies the current operation. Alternate-route readiness is independent.
-
-## Why this changes Ekyc
-
-Ekyc run `36644247227` already produced an explicitly authorized `DIRECT MCP = PASS`. The old implementation then forced SSH in the same `BOTH` discovery and converted the whole run into `SSH_PROFILE_MISMATCH`.
-
-That is now classified as a generic framework semantic defect, not a reason to ask the owner to approve another coupled discovery.
-
-The Template correction must:
-
-1. stop automatic DIRECT+SSH coupled execution for `BOTH`;
-2. record route selection and fallback explicitly;
-3. let one successful selected route satisfy discovery;
-4. keep the alternate route configured with independent readiness;
-5. stop forced rediscovery when an alternate route becomes available;
-6. migrate legacy Ekyc state by reusing the already-authorized DIRECT PASS;
-7. leave corrected SSH configured as an alternate route to attest only when needed.
-
-## Exact Ekyc state before migration
+Migrated discovery state:
 
 ```text
-repository = Patricked-code/Ekyc
-HEAD = 4d552458afab32df12aaafd6c7290fab6246d96b
-issue = Ekyc#1
-revision = 38
-current discovery = null
-historical run 36644247227:
-  DIRECT = PASS
-  SSH = SSH_PROFILE_MISMATCH
-corrected SSH profile = persisted
-baseline = not applied
+transport = BOTH
+routing_mode = DUAL_READY_SMART_ROUTING
+selected_transport = DIRECT_MCP_TOKEN
+DIRECT = PASS
+SSH = CONFIGURED_NOT_ATTESTED
+simultaneous_execution_required = false
+reused_authorized_evidence = true
 ```
 
-No Ekyc-specific patch is authorized. Fix Template → test → merge → governed upgrade → verify migrated Ekyc state.
+No new MCP discovery was required.
+
+## Ekyc current point
+
+```text
+HEAD = 9ace9f9882a06df69c9466cec633bd191f7cad12
+Ekyc#1 revision = 39
+status = WAITING_FOR_SETUP_ANSWER
+phase = Q_DOMAIN_BINDING
+```
+
+Fresh discovery evidence contains no `Ekyc`/`eKYC` domain and no Ekyc project registration in the current MCP scoped-project registry.
+
+Therefore existing facts resolve the factual part:
+
+- no existing Ekyc MCP project binding was observed;
+- no existing Ekyc/KYC domain was observed in the discovered S1/S2 inventory;
+- the remaining question is an owner/business decision, not a technical fact.
+
+## Owner decision required
+
+Choose the domain-binding intent:
+
+1. `CREATE_NEW` — create/propose a new domain for Ekyc;
+2. `EXISTING` — bind to an existing domain you explicitly designate;
+3. `UNRESOLVED` — keep domain selection open for later.
+
+No domain/server mutation occurs from this answer alone; it enriches the project model and prepares later governed work.
 
 ## Safety boundary
 
-- Do not ask for redundant coupled-discovery approval.
+- Do not rerun MCP discovery merely to test BOTH routes.
 - Do not patch Ekyc directly.
-- Do not mutate Patricked-code/MCP.
-- Do not weaken discovery authority.
+- Do not invent a domain without owner choice.
 - P12-S6 and GMC remain downstream of P12-S5.

@@ -2,23 +2,23 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 35,
+  "source_state_revision": 36,
   "template_version": "2.8.6",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
   "program_issue": 12,
-  "current_checkpoint": "C1-13_BOTH_SMART_ROUTING_FRAMEWORK_CORRECTION",
+  "current_checkpoint": "C1-13_EKYC_SMART_ROUTING_MIGRATED_DOMAIN_BINDING",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "unique_next_action": "C1_13_I_A_FIX_BOTH_SMART_ROUTING_SEMANTICS",
+  "unique_next_action": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING",
   "blockers": [
-    "GENERIC_BOTH_COUPLED_EXECUTION_SEMANTICS"
+    "OWNER_DOMAIN_BINDING_DECISION_REQUIRED"
   ],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
-  "freshness": "SOURCE_STATE_RECONCILED_WITH_OWNER_BOTH_SMART_ROUTING_CLARIFICATION",
+  "freshness": "SOURCE_STATE_RECONCILED_WITH_EKYC_V2814_SMART_ROUTING_MIGRATION",
   "last_ci_run": 36637371154,
   "last_ci_result": "PASS",
   "release_subject_head": "8b3a1ac4abf250820558ba873110581f8607a2b3",
-  "last_verified_main_head": "0155206c9e2771ab0cf311a957c33ad16a30915a",
+  "last_verified_main_head": "b1fd2ca51bc53a2502972440019bdbabb036ff7b",
   "canonical_memory_database": {
     "schema_version": "1.0.0",
     "status": "ACTIVE",
@@ -112,8 +112,8 @@
     "repository": "Patricked-code/Ekyc",
     "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
     "local_entry_issue": "Patricked-code/Ekyc#1",
-    "expected_head": "4d552458afab32df12aaafd6c7290fab6246d96b",
-    "state": "FROZEN_GENERIC_FRAMEWORK_SEMANTIC_DEFECT",
+    "expected_head": "9ace9f9882a06df69c9466cec633bd191f7cad12",
+    "state": "WAITING_FOR_DOMAIN_BINDING_DECISION",
     "failure_run": 36294979599,
     "failure": "HTTP 404 during MCP discovery with uncorrectable endpoint state",
     "corrective_task": "C1-13-A",
@@ -128,11 +128,11 @@
     "first_governed_upgrade_commit": "2ece8cff98258f7c40cf7b7383ceb5c026db9639",
     "first_upgrade_ci_run": 36295714554,
     "first_upgrade_ci_result": "FAIL",
-    "active_corrective_task": "C1-13-I-A",
+    "active_corrective_task": null,
     "active_corrective_pr": 53,
     "active_red_ci_run": 36620804501,
     "active_green_ci_run": 36620877757,
-    "active_defect": "BOTH_COUPLED_EXECUTION_SEMANTICS",
+    "active_defect": null,
     "completed_corrective_tasks": [
       "C1-13-A",
       "C1-13-B",
@@ -155,7 +155,7 @@
     "mcp_retry_run": 36621624763,
     "mcp_retry_failure": "SSL_CERTIFICATE_VERIFY_FAILED_CERTIFICATE_EXPIRED",
     "mcp_intake": "Patricked-code/MCP#201",
-    "active_dependency_task": "C1-13-I-A",
+    "active_dependency_task": "C1-13-I-B",
     "preserved_external_dependency": {
       "task": "C1-13-E",
       "intake": "Patricked-code/MCP#201",
@@ -166,15 +166,7 @@
     "v287_template_ci": 36637371154,
     "v287_upgrade_commit": "a6b0c99cc8d90a1d5cbaf4d6288d52b995e596c6",
     "v287_target_ci": 36637639375,
-    "discovery_gate": {
-      "status": "WAITING_FOR_DISCOVERY_APPROVAL",
-      "phase": "MCP_DISCOVERY_APPROVAL",
-      "local_entry_revision": 38,
-      "approval_persisted": false,
-      "endpoint": "https://mcp.wealthtechinnovations.com/mcp",
-      "ssh_profile_source": "SIGNED_MCP_SSH_BROKER_RESPONSE",
-      "reason": "MATERIAL_SSH_PROFILE_CHANGE_INVALIDATED_PRIOR_APPROVAL"
-    },
+    "discovery_gate": null,
     "authorized_discovery_run": 36638780542,
     "authorized_discovery_result": "SSL_CERTIFICATE_VERIFY_FAILED_CERTIFICATE_EXPIRED",
     "tls_remediation": {
@@ -282,6 +274,24 @@
       ],
       "one_successful_selected_route_satisfies_current_discovery": true,
       "ekyc_reusable_authorized_direct_pass_run": 36644247227
+    },
+    "smart_routing_migration": {
+      "status": "PASS",
+      "template_merge": "b1fd2ca51bc53a2502972440019bdbabb036ff7b",
+      "control_plane_upgrade_run": 36654732506,
+      "ekyc_head": "9ace9f9882a06df69c9466cec633bd191f7cad12",
+      "local_entry_revision": 39,
+      "selected_transport": "DIRECT_MCP_TOKEN",
+      "direct_status": "PASS",
+      "ssh_status": "CONFIGURED_NOT_ATTESTED",
+      "simultaneous_execution_required": false,
+      "reused_authorized_evidence": true,
+      "target_ci": 36654779276
+    },
+    "domain_binding_observation": {
+      "ekyc_project_registration_observed": false,
+      "ekyc_domain_observed": false,
+      "owner_decision_required": true
     }
   },
   "mcp_capability_snapshot_program": {
