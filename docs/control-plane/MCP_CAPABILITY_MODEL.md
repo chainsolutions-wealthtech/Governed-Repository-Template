@@ -197,3 +197,15 @@ A live catalogue refresh therefore answers:
 > “Which current MCP surface can satisfy this already-understood capability?”
 
 It must never redefine the project need merely because a tool exists.
+
+## Authority classes
+
+MCP surface classes are distinct:
+
+- `read` → `READ_ONLY_DISCOVERY_AUTHORITY`;
+- `operational-write` → `GOVERNED_OPERATIONAL_AUTHORITY_REQUIRED`;
+- `scoped-write` → `EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED`.
+
+Governed operational transitions (claiming or transitioning a governed task, reconciling intent) must not be represented as server/runtime mutation authority.
+
+Tool scope is also explicit. A tool hard-wired to one project or project family is `PROJECT_SPECIFIC`; a tool with an allowlisted project enum is `PROJECT_REGISTRY_SCOPED`; only genuinely reusable tools are `GENERIC`.
