@@ -1074,7 +1074,7 @@
     },
     {
       "id": "KBI-04E",
-      "status": "PLANNED",
+      "status": "MAPPING_IMPLEMENTED_SNAPSHOT_NOT_LIVE_ATTESTED",
       "objective": "Map each recipe requirement to currently available MCP tools and explicit missing capabilities"
     },
     {

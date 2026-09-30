@@ -475,6 +475,28 @@
       ],
       "proposals": [],
       "unique_next_action": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
+    },
+    {
+      "activity_id": "AAL-20260930-KBI04E-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "KBI-04E_SERVER_RECIPE_CAPABILITY_MAPPING",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "41f3975c9a5f21f8d8ad271542522bfb6e1ce721",
+      "objective": "Derive each server recipe's required inventory and MCP capability candidates from the current source model without claiming live or mutation authority.",
+      "evidence_refs": [
+        "scripts/control_plane_server_recipe_capabilities.py",
+        "scripts/test_control_plane_server_recipe_capabilities.py",
+        ".governance/control-plane-state/mcp-capability-snapshot.json",
+        ".governance/control-plane-state/server-knowledge-model.json"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "KBI-04D PR #79 and post-merge CI were verified before starting this separate source-only slice.",
+        "The derived matrix maps 15 recipes and distinguishes unmodelled capabilities, absent matching tools, project-scoped candidates and generic snapshot candidates.",
+        "No live MCP tools/list, server mutation, Ekyc binding or server observation was performed. Inventory revision remains 0."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
     }
   ]
 }

@@ -291,3 +291,13 @@
 - Implemented: strict ten-slot allowlist, snapshot/tool classification, time and revision guards, idempotent replay, contradiction/older-observation refusal, stale downgrade, SQLite migration `004` and CI/source-only boundaries.
 - The source inventory is `NOT_COLLECTED` revision `0`, with no live S1/S2 facts. Tests use synthetic inputs only; live collection still requires the current read-only MCP credential.
 - No server, Ekyc, domain or secret mutation occurred. The CASE 1 unique next action remains `C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING`.
+
+## Entry AAL-20260930-KBI04E-001
+
+- Agent identity: ChatGPT.
+- Workstream: `KBI-04E` source-derived server recipe/capability matrix.
+- Template main after KBI-04D PR #79: `41f3975c9a5f21f8d8ad271542522bfb6e1ce721`; post-merge Governance CI `36765789555`: PASS.
+- Objective: map every recipe's inventory and capability requirements to the versioned MCP snapshot without duplicating a volatile authority.
+- Implementation: classify generic snapshot candidates, absent capability/tool, catalogue contradiction and project-scoped restrictions; report inventory coverage and provenance. Add source/client boundary, tests and CI.
+- No live tool availability or server state was inferred from snapshot candidates. S1/S2 source inventory remains revision `0` / `NOT_COLLECTED`.
+- Unique CASE 1 action remains `C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING`; `KBI-04F` is the next server knowledge slice.

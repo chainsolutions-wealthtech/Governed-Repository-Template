@@ -176,6 +176,8 @@ SOURCE_ONLY_REQUIRED = {
     "scripts/test_control_plane_server_inventory_collector.py",
     "scripts/control_plane_server_inventory_facts.py",
     "scripts/test_control_plane_server_inventory_facts.py",
+    "scripts/control_plane_server_recipe_capabilities.py",
+    "scripts/test_control_plane_server_recipe_capabilities.py",
     "scripts/control_plane_github_secret_metadata.py",
     "scripts/test_control_plane_github_secret_metadata.py",
     "docs/control-plane/MCP_CAPABILITY_MODEL.md",
@@ -482,6 +484,8 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
         "scripts/test_control_plane_server_inventory_collector.py",
         "scripts/control_plane_server_inventory_facts.py",
         "scripts/test_control_plane_server_inventory_facts.py",
+        "scripts/control_plane_server_recipe_capabilities.py",
+        "scripts/test_control_plane_server_recipe_capabilities.py",
         "scripts/control_plane_github_secret_metadata.py",
         "scripts/test_control_plane_github_secret_metadata.py",
     }
