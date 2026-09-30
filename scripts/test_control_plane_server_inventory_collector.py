@@ -67,6 +67,7 @@ def main():
     assert len(calls) == 10 and "deploy_project_s2" not in calls
     s1 = result["servers"]["S1"]
     assert s1["DOMAINS_VHOSTS"]["facts"] == {"domains": ["example.org"]}
+    assert s1["DOMAINS_VHOSTS"]["status"] == "PARTIAL_BOUNDED"
     assert s1["RUNTIMES"]["docker_status"]["facts"] == {"container_count": 1, "states": {"running": 1}}
     assert s1["RUNTIMES"]["pm2_status"]["facts"] == {"process_count": 1, "states": {"online": 1}}
     assert s1["CAPACITY"]["facts"] == {"max_disk_used_percent": 81}
@@ -76,6 +77,13 @@ def main():
     serialized = json.dumps(result)
     for leak in ("unstructured secret", "confidential-data", "/private", "https://bad", "password"):
         assert leak not in serialized, leak
+
+    def schema_error(name):
+        return envelope({"error": "Bearer confidential-data", "domains": []}) if name == "list_domains_s2" else invoke(name)
+
+    failed_domain = collect_inventory(snapshot, live, schema_error, observed_at="2026-09-30T01:00:00+00:00")
+    assert failed_domain["servers"]["S2"]["DOMAINS_VHOSTS"]["status"] == "UNKNOWN_DISCOVERABLE"
+    assert "confidential-data" not in json.dumps(failed_domain)
 
     snapshot["catalogue"]["tools"][1]["surface"] = "scoped-write"
     live[2]["annotations"]["readOnlyHint"] = False

@@ -88,11 +88,14 @@ def domain_facts(payload):
     if len(candidates) > 200:
         return None
     domains = []
+    unrecognized = 0
     for item in candidates:
         name = item.get("domain") or item.get("name") if isinstance(item, dict) else item
         if isinstance(name, str) and DOMAIN.fullmatch(name.lower().strip()):
             domains.append(name.lower().strip())
-    return {"domains": sorted(set(domains))}
+        else:
+            unrecognized += 1
+    return {"domains": sorted(set(domains)), "_partial": unrecognized > 0}
 
 
 def runtime_facts(payload, slot: str):
@@ -131,6 +134,8 @@ def backup_facts(payload):
 
 
 def extract_facts(payload, slot: str):
+    if isinstance(payload, dict) and (payload.get("error") or payload.get("success") is False):
+        return None
     if slot == "domains":
         return domain_facts(payload)
     if slot in ("docker_status", "pm2_status"):
@@ -153,7 +158,8 @@ def collect_inventory(
                 if not rpc_result(response).get("isError"):
                     facts = extract_facts(tool_content_json(response), item["slot"])
                     if facts is not None:
-                        observation.update(status="KNOWN_CURRENT", facts=facts)
+                        partial = facts.pop("_partial", False)
+                        observation.update(status="PARTIAL_BOUNDED" if partial else "KNOWN_CURRENT", facts=facts)
             except Exception:
                 # Remote errors can include credential or host material; never copy them.
                 pass
