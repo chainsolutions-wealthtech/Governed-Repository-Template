@@ -455,6 +455,202 @@
         "preflight",
         "verify"
       ]
+    },
+    "GITHUB_CREATE_REPOSITORY_FROM_TEMPLATE": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "GITHUB_REST_OPERATION",
+      "required_authority": "GITHUB_REPOSITORY_ADMIN",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "ALLOWLISTED_GITHUB_REST_OPERATION"
+    },
+    "GITHUB_CREATE_BRANCH": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "GITHUB_REST_OPERATION",
+      "required_authority": "SCOPED_GIT_WRITE",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "ALLOWLISTED_GITHUB_REST_OPERATION"
+    },
+    "GITHUB_UPSERT_FILE": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "GITHUB_REST_OPERATION",
+      "required_authority": "SCOPED_GIT_WRITE",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "ALLOWLISTED_GITHUB_REST_OPERATION"
+    },
+    "GITHUB_CREATE_PULL_REQUEST": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "GITHUB_REST_OPERATION",
+      "required_authority": "SCOPED_GIT_WRITE",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "ALLOWLISTED_GITHUB_REST_OPERATION"
+    },
+    "GITHUB_MERGE_PULL_REQUEST": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "GITHUB_REST_OPERATION",
+      "required_authority": "SCOPED_GIT_WRITE",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "ALLOWLISTED_GITHUB_REST_OPERATION"
+    },
+    "GITHUB_CONFIGURE_BRANCH_PROTECTION": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "GITHUB_REST_OPERATION",
+      "required_authority": "GITHUB_REPOSITORY_ADMIN",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "ALLOWLISTED_GITHUB_REST_OPERATION"
+    },
+    "GITHUB_CONFIGURE_RULESET": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "GITHUB_REST_OPERATION",
+      "required_authority": "GITHUB_REPOSITORY_ADMIN",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "ALLOWLISTED_GITHUB_REST_OPERATION"
+    },
+    "GITHUB_CONFIGURE_WEBHOOK": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "GITHUB_REST_OPERATION",
+      "required_authority": "GITHUB_WEBHOOK_ADMIN",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "ALLOWLISTED_GITHUB_REST_OPERATION"
+    },
+    "GITHUB_CONFIGURE_ENVIRONMENT": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "GITHUB_REST_OPERATION",
+      "required_authority": "GITHUB_ENVIRONMENT_ADMIN",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "ALLOWLISTED_GITHUB_REST_OPERATION"
+    },
+    "GITHUB_SET_ACTIONS_VARIABLE": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "GITHUB_REST_OPERATION",
+      "required_authority": "SCOPED_GITHUB_VARIABLE_WRITE",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "ALLOWLISTED_GITHUB_REST_OPERATION"
+    },
+    "GITHUB_DISPATCH_WORKFLOW": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "GITHUB_REST_OPERATION",
+      "required_authority": "SCOPED_GITHUB_WORKFLOW_EXECUTE",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "ALLOWLISTED_GITHUB_REST_OPERATION"
+    },
+    "GITHUB_CREATE_DEPLOYMENT": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "GITHUB_REST_OPERATION",
+      "required_authority": "SCOPED_GITHUB_DEPLOYMENT_WRITE",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "ALLOWLISTED_GITHUB_REST_OPERATION"
+    },
+    "GITHUB_UPDATE_REPOSITORY_SETTINGS": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "GITHUB_REST_OPERATION",
+      "required_authority": "GITHUB_REPOSITORY_ADMIN",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "ALLOWLISTED_GITHUB_REST_OPERATION"
+    },
+    "GITHUB_ADD_COLLABORATOR": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "GITHUB_REST_OPERATION",
+      "required_authority": "GITHUB_REPOSITORY_ADMIN",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "ALLOWLISTED_GITHUB_REST_OPERATION"
     }
   },
   "evidence_contract": {
@@ -479,5 +675,155 @@
       "authorization_header"
     ],
     "max_text_field": 4000
-  }
+  },
+  "github_operation_allowlist": {
+    "GITHUB_CREATE_REPOSITORY_FROM_TEMPLATE": {
+      "method": "POST",
+      "endpoint_template": "/repos/{template_owner}/{template_repo}/generate",
+      "required_parameters": [
+        "template_owner",
+        "template_repo",
+        "target_owner",
+        "name",
+        "private"
+      ],
+      "verify": "GET_TARGET_REPOSITORY"
+    },
+    "GITHUB_CREATE_BRANCH": {
+      "method": "POST",
+      "endpoint_template": "/repos/{repository}/git/refs",
+      "required_parameters": [
+        "repository",
+        "branch",
+        "source_sha"
+      ],
+      "verify": "GET_BRANCH_REF"
+    },
+    "GITHUB_UPSERT_FILE": {
+      "method": "PUT",
+      "endpoint_template": "/repos/{repository}/contents/{path}",
+      "required_parameters": [
+        "repository",
+        "path",
+        "message",
+        "content_b64",
+        "branch"
+      ],
+      "verify": "GET_CONTENT"
+    },
+    "GITHUB_CREATE_PULL_REQUEST": {
+      "method": "POST",
+      "endpoint_template": "/repos/{repository}/pulls",
+      "required_parameters": [
+        "repository",
+        "title",
+        "head",
+        "base"
+      ],
+      "verify": "GET_PULL_REQUEST"
+    },
+    "GITHUB_MERGE_PULL_REQUEST": {
+      "method": "PUT",
+      "endpoint_template": "/repos/{repository}/pulls/{pull_number}/merge",
+      "required_parameters": [
+        "repository",
+        "pull_number",
+        "expected_head_sha"
+      ],
+      "verify": "GET_PULL_REQUEST"
+    },
+    "GITHUB_CONFIGURE_BRANCH_PROTECTION": {
+      "method": "PUT",
+      "endpoint_template": "/repos/{repository}/branches/{branch}/protection",
+      "required_parameters": [
+        "repository",
+        "branch",
+        "protection"
+      ],
+      "verify": "GET_BRANCH_PROTECTION"
+    },
+    "GITHUB_CONFIGURE_RULESET": {
+      "method": "POST_OR_PUT",
+      "endpoint_template": "/repos/{repository}/rulesets",
+      "required_parameters": [
+        "repository",
+        "ruleset"
+      ],
+      "verify": "LIST_RULESETS"
+    },
+    "GITHUB_CONFIGURE_WEBHOOK": {
+      "method": "POST_OR_PATCH",
+      "endpoint_template": "/repos/{repository}/hooks",
+      "required_parameters": [
+        "repository",
+        "webhook"
+      ],
+      "verify": "LIST_WEBHOOKS"
+    },
+    "GITHUB_CONFIGURE_ENVIRONMENT": {
+      "method": "PUT",
+      "endpoint_template": "/repos/{repository}/environments/{environment}",
+      "required_parameters": [
+        "repository",
+        "environment"
+      ],
+      "verify": "GET_ENVIRONMENT"
+    },
+    "GITHUB_SET_ACTIONS_VARIABLE": {
+      "method": "POST_OR_PATCH",
+      "endpoint_template": "/repos/{repository}/actions/variables",
+      "required_parameters": [
+        "repository",
+        "name",
+        "value_ref"
+      ],
+      "verify": "LIST_ACTIONS_VARIABLES"
+    },
+    "GITHUB_DISPATCH_WORKFLOW": {
+      "method": "POST",
+      "endpoint_template": "/repos/{repository}/actions/workflows/{workflow}/dispatches",
+      "required_parameters": [
+        "repository",
+        "workflow",
+        "ref"
+      ],
+      "verify": "NO_IMMEDIATE_RUN_ID_GUARANTEE"
+    },
+    "GITHUB_CREATE_DEPLOYMENT": {
+      "method": "POST",
+      "endpoint_template": "/repos/{repository}/deployments",
+      "required_parameters": [
+        "repository",
+        "ref",
+        "environment"
+      ],
+      "verify": "LIST_DEPLOYMENTS"
+    },
+    "GITHUB_UPDATE_REPOSITORY_SETTINGS": {
+      "method": "PATCH",
+      "endpoint_template": "/repos/{repository}",
+      "required_parameters": [
+        "repository",
+        "settings"
+      ],
+      "verify": "GET_TARGET_REPOSITORY"
+    },
+    "GITHUB_ADD_COLLABORATOR": {
+      "method": "PUT",
+      "endpoint_template": "/repos/{repository}/collaborators/{username}",
+      "required_parameters": [
+        "repository",
+        "username",
+        "permission"
+      ],
+      "verify": "GET_COLLABORATOR_PERMISSION"
+    }
+  },
+  "github_execution_principles": [
+    "NO_ARBITRARY_GITHUB_URL_OR_METHOD",
+    "ALL_GITHUB_MUTATIONS_USE_ALLOWLISTED_OPERATION_BUILDERS",
+    "TARGET_TOKEN_SCOPE_IS_SEPARATE_FROM_AUTHORITY_ENVELOPE",
+    "EXPECTED_HEAD_REQUIRED_FOR_CONTENT_OR_MERGE_WHEN_APPLICABLE",
+    "SECRET_REFERENCES_NOT_VALUES_IN_PACKAGES"
+  ]
 }
