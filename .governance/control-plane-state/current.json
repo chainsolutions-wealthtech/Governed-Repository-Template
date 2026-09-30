@@ -2,23 +2,23 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 32,
+  "source_state_revision": 33,
   "template_version": "2.8.6",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
   "program_issue": 12,
-  "current_checkpoint": "C1-13_MCP_CAPABILITY_SNAPSHOT_IMPLEMENTATION",
+  "current_checkpoint": "C1-13_MCP_CAPABILITY_MAP_SEMANTIC_REFINEMENT",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "unique_next_action": "C1_13_H_VALIDATE_PERSISTENT_MCP_CAPABILITY_SNAPSHOT",
+  "unique_next_action": "C1_13_H_REFINE_CAPABILITY_FIRST_MAP_THEN_REGENERATE_SNAPSHOT",
   "blockers": [
-    "MCP_CAPABILITY_SNAPSHOT_VALIDATION_PENDING"
+    "MCP_CAPABILITY_MAP_SEMANTIC_REFINEMENT_PENDING"
   ],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
-  "freshness": "SOURCE_STATE_RECONCILED_WITH_V288_EKYC_SSH_RECOVERY_AND_CAPABILITY_SNAPSHOT_IMPLEMENTATION",
+  "freshness": "SOURCE_STATE_RECONCILED_WITH_PR63_SEMANTIC_QA_STOP",
   "last_ci_run": 36637371154,
   "last_ci_result": "PASS",
   "release_subject_head": "8b3a1ac4abf250820558ba873110581f8607a2b3",
-  "last_verified_main_head": "7bb1199f5b7683003fa62c373a211d0736b67908",
+  "last_verified_main_head": "fde48fedfcdc1589147c0b3e38507241c18878f1",
   "canonical_memory_database": {
     "schema_version": "1.0.0",
     "status": "ACTIVE",
@@ -269,6 +269,26 @@
       "catalogue_digest": "8447f9dcc5078fdc9287068c9a791ab5366cc8f10ead5770f6830ed4aca34f1b",
       "persistence": "FAIL_GITHUB_PUSH_403_CHECKOUT_CREDENTIAL_PRECEDENCE",
       "corrective_branch": "governance/fix-mcp-capability-refresh-persistence"
+    },
+    "task": "C1-13-H",
+    "status": "SEMANTIC_REFINEMENT_IN_PROGRESS",
+    "active_branch": "governance/refine-mcp-capability-map",
+    "stale_snapshot_pr": 63,
+    "stale_snapshot_pr_merge_allowed": false,
+    "live_catalogue_evidence": {
+      "tools": 135,
+      "resources": 2,
+      "catalogue_digest": "8447f9dcc5078fdc9287068c9a791ab5366cc8f10ead5770f6830ed4aca34f1b",
+      "validity": "CATALOGUE_EVIDENCE_VALID_PLANNING_PROJECTION_REJECTED"
+    },
+    "refinement": {
+      "defects": [
+        "PROJECT_ID_PARSER_ACCEPTED_INDENTED_METADATA_LABELS",
+        "CASE_TOOL_MAPPING_OVERBROAD_TAG_INTERSECTION"
+      ],
+      "target_model": "CASE_TO_CAPABILITY_TO_SURFACE_TO_TOOL_TO_AUTHORITY_TO_PREPARED_OPERATION",
+      "question_resolution": "OBSERVE_AND_REUSE_BEFORE_ASK",
+      "missing_capability_policy": "PREPARE_SCOPED_CAPABILITY_REQUEST_ONLY_WHEN_CONCRETE_OPERATION_REQUIRES_IT"
     }
   }
 }

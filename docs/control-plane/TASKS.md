@@ -546,3 +546,17 @@ Therefore `C1-13-E-B` is DONE and `C1-13-E` is again the active dependency task,
 - Corrective action: `persist-credentials: false` on checkout, then explicit GitHub App token for push/PR.
 - Compaction: input fields instead of full input schemas; case maps reference global tool names instead of duplicating tool records.
 - C1-13-H remains IN_PROGRESS until the corrected live refresh produces and merges the governed snapshot PR.
+
+### C1-13-H semantic refinement — capability-first map
+
+- Status: `IN_PROGRESS`.
+- Live snapshot PR #63 is intentionally not mergeable as canonical knowledge yet despite technically successful generation.
+- Defect 1: project-id parser admitted indented registry metadata labels.
+- Defect 2: case mapping used broad semantic tags and attached approximately the full MCP catalogue to each case.
+- Required replacement:
+  `CASE → CAPABILITY → SURFACE AVAILABILITY → TOOL CANDIDATE → REQUIRED AUTHORITY → PREPARED OPERATION`.
+- Required questionnaire rule:
+  `FRESH GIT OBSERVATION → PROJECT MEMORY → PRIOR OWNER ANSWER → AUTHORIZED MCP DISCOVERY → ASK OWNER`.
+- Existing repo facts must answer questionnaire fields automatically.
+- Missing capabilities remain explicit `NOT_EXPOSED_BY_CURRENT_MCP_CATALOGUE`; a scoped capability request is prepared only when the concrete project operation requires it.
+- PR #63 must be superseded after the refined engine is merged and a new live refresh is generated.

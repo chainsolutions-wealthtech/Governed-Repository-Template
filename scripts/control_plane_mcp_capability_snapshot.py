@@ -15,27 +15,213 @@ DEFAULT_OUTPUT = ".governance/control-plane-state/mcp-capability-snapshot.json"
 MAX_TOOLS = 500
 MAX_RESOURCES = 500
 
-CASE_TAGS = {
-    "CREATE_NEW_REPOSITORY": {
-        "GOVERNANCE", "REPOSITORY", "DISCOVERY", "SERVER_RUNTIME", "DOMAIN_NETWORK",
-        "DEPLOYMENT", "SECURITY_IDENTITY"
+CAPABILITY_MODEL = {
+    "GIT_REPOSITORY_OBSERVATION": {
+        "kind": "OBSERVATION",
+        "target_fields": [
+            "provider", "repository.exists", "repository.visibility", "repository.default_branch",
+            "repository.head", "repository.workflows", "repository.rulesets",
+            "repository.required_checks", "repository.webhooks"
+        ],
+        "resolution_order": [
+            "DIRECT_GIT_OBSERVATION", "PERSISTED_PROJECT_MEMORY",
+            "MCP_READ_ONLY_IF_PROVIDER_SURFACE_REQUIRED", "ASK_OWNER_ONLY_IF_UNRESOLVED"
+        ],
+        "preferred_tools": [
+            "github_get_repository_state", "github_get_branch_state", "github_get_tree",
+            "github_get_workflow_runs", "github_get_rulesets", "github_get_required_checks",
+            "github_get_webhooks", "github_get_deployments"
+        ],
+        "missing_surface_action": "USE_DIRECT_GIT_PROVIDER_BEFORE_MCP_CAPABILITY_REQUEST",
     },
-    "ADOPT_EXISTING_REPOSITORY": {
-        "GOVERNANCE", "REPOSITORY", "DISCOVERY", "SERVER_RUNTIME", "DOMAIN_NETWORK",
-        "DEPLOYMENT", "DATABASE", "OBSERVABILITY", "SECURITY_IDENTITY"
+    "GOVERNANCE_STATE_OBSERVATION": {
+        "kind": "OBSERVATION",
+        "target_fields": [
+            "governance.present", "governance.current_state", "governance.next_action",
+            "governance.work_queue", "governance.sessions", "governance.locks"
+        ],
+        "resolution_order": [
+            "REPOSITORY_GOVERNANCE_FILES", "PERSISTED_PROJECT_MEMORY",
+            "MCP_READ_ONLY_DISCOVERY", "ASK_OWNER_ONLY_IF_CONFLICT_OR_DECISION"
+        ],
+        "preferred_tools": [
+            "mcp_get_current_state_inventory", "mcp_get_live_state", "mcp_get_work_queue",
+            "mcp_get_governed_context", "mcp_get_governed_session", "mcp_list_governed_sessions"
+        ],
+        "missing_surface_action": "KEEP_REPOSITORY_AUTHORITIES_AS_PRIMARY_SOURCE",
     },
-    "MAP_EXISTING_PROJECT": {
-        "GOVERNANCE", "REPOSITORY", "DISCOVERY", "SERVER_RUNTIME", "DOMAIN_NETWORK",
-        "DATABASE", "OBSERVABILITY"
+    "PROJECT_INFRASTRUCTURE_MAPPING": {
+        "kind": "OBSERVATION",
+        "target_fields": [
+            "mcp.project_registration", "infrastructure.server_binding",
+            "infrastructure.logical_server", "domain.existing_bindings",
+            "runtime.available_write_surfaces"
+        ],
+        "resolution_order": [
+            "PERSISTED_PROJECT_MEMORY", "MCP_READ_ONLY_DISCOVERY",
+            "ASK_OWNER_ONLY_FOR_TARGET_DECISION_OR_UNRESOLVED_FACT"
+        ],
+        "preferred_tools": [
+            "get_project_context", "get_write_tools_context"
+        ],
+        "missing_surface_action": "PREPARE_READ_ONLY_CAPABILITY_REQUEST_ONLY_IF_PROJECT_NEEDS_IT",
     },
-    "LAB_EVOLUTION": {
-        "GOVERNANCE", "REPOSITORY", "DISCOVERY", "SERVER_RUNTIME", "DEPLOYMENT",
-        "OBSERVABILITY"
+    "DOMAIN_WEB_OBSERVATION": {
+        "kind": "OBSERVATION",
+        "target_fields": [
+            "domain.existing", "domain.server", "web.https_reachable", "web.current_binding"
+        ],
+        "resolution_order": [
+            "PERSISTED_PROJECT_MEMORY", "MCP_READ_ONLY_DISCOVERY",
+            "ASK_OWNER_ONLY_FOR_DOMAIN_NAMING_DECISION"
+        ],
+        "preferred_tools": ["list_domains_s1", "list_domains_s2", "curl_domain"],
+        "missing_surface_action": "PREPARE_READ_ONLY_CAPABILITY_REQUEST_ONLY_IF_PROJECT_NEEDS_IT",
     },
-    "CONTINUE_GOVERNED_WORK": {
-        "GOVERNANCE", "REPOSITORY", "DISCOVERY", "OBSERVABILITY", "DEPLOYMENT",
-        "SERVER_RUNTIME"
+    "SERVER_RUNTIME_OBSERVATION": {
+        "kind": "OBSERVATION",
+        "target_fields": [
+            "runtime.container_engine", "runtime.process_manager", "runtime.health",
+            "runtime.capacity", "runtime.backup_presence"
+        ],
+        "resolution_order": [
+            "PERSISTED_PROJECT_MEMORY", "MCP_READ_ONLY_DISCOVERY",
+            "ASK_OWNER_ONLY_IF_RUNTIME_TARGET_IS_A_DECISION"
+        ],
+        "preferred_tools": [
+            "docker_status_s1", "docker_status_s2", "pm2_status_s1", "pm2_status_s2",
+            "check_disk_s1", "check_disk_s2", "list_backups_s1", "list_backups_s2"
+        ],
+        "missing_surface_action": "PREPARE_READ_ONLY_CAPABILITY_REQUEST_ONLY_IF_PROJECT_NEEDS_IT",
     },
+    "DATABASE_READ_OBSERVATION": {
+        "kind": "OBSERVATION",
+        "target_fields": [
+            "database.exists", "database.engine", "database.schema_state"
+        ],
+        "resolution_order": [
+            "REPOSITORY_CONFIGURATION", "PERSISTED_PROJECT_MEMORY",
+            "MCP_READ_ONLY_IF_PROJECT_REGISTERED", "ASK_OWNER_ONLY_IF_DATABASE_CHOICE_IS_UNRESOLVED"
+        ],
+        "preferred_tools": ["run_sql_readonly_s2", "brvm_run_sql_readonly_s2"],
+        "missing_surface_action": "PREPARE_PROJECT_SCOPED_READ_CAPABILITY_REQUEST_IF_NEEDED",
+    },
+    "GIT_REPOSITORY_CHANGE": {
+        "kind": "MUTATION",
+        "target_fields": [
+            "repository.branch_change", "repository.file_change", "repository.pull_request",
+            "repository.merge"
+        ],
+        "resolution_order": ["PREPARE_OPERATION", "VERIFY_EXACT_HEAD", "VERIFY_AUTHORITY", "EXECUTE"],
+        "preferred_tools": [
+            "github_create_branch", "github_create_commit", "github_create_or_update_file",
+            "github_create_pull_request", "github_mark_pr_ready", "github_merge_pull_request"
+        ],
+        "missing_surface_action": "PREPARE_SCOPED_CAPABILITY_REQUEST_ONLY_WHEN_OPERATION_IS_REQUIRED",
+    },
+    "GOVERNED_TASK_COORDINATION": {
+        "kind": "OPERATIONAL",
+        "target_fields": [
+            "work.next_task", "work.claim", "work.state_transition", "work.lock"
+        ],
+        "resolution_order": ["LOAD_CANONICAL_STATE", "VERIFY_AUTHORITY", "EXECUTE_EXISTING_LOOP_ENGINEERING"],
+        "preferred_tools": [
+            "mcp_reconcile_governed_context", "mcp_reconcile_agent_intent",
+            "mcp_claim_next_governed_task", "mcp_transition_governed_task",
+            "mcp_acquire_governed_lock", "mcp_release_governed_lock"
+        ],
+        "missing_surface_action": "USE_REPOSITORY_LOCAL_LOOP_ENGINEERING_IF_MCP_COORDINATION_NOT_REQUIRED",
+    },
+    "SERVER_REPOSITORY_CHANGE": {
+        "kind": "MUTATION",
+        "target_fields": [
+            "runtime.repository_sync", "runtime.work_branch", "runtime.repo_script"
+        ],
+        "resolution_order": ["VERIFY_PROJECT_MAPPING", "VERIFY_AUTHORITY", "LIVE_PREFLIGHT", "EXECUTE"],
+        "preferred_tools": [
+            "git_status_project_s2", "git_pull_project_s2", "exec_repo_script_s2"
+        ],
+        "missing_surface_action": "PREPARE_SCOPED_CAPABILITY_REQUEST_ONLY_WHEN_OPERATION_IS_REQUIRED",
+    },
+    "SERVER_FILESYSTEM_CHANGE": {
+        "kind": "MUTATION",
+        "target_fields": [
+            "runtime.directory_create", "runtime.file_write", "runtime.file_delete",
+            "runtime.permissions"
+        ],
+        "resolution_order": [
+            "VERIFY_PROJECT_MAPPING", "VERIFY_TARGET_PATH", "VERIFY_AUTHORITY",
+            "LIVE_PREFLIGHT", "EXECUTE"
+        ],
+        "preferred_tools": [],
+        "missing_surface_action": "PREPARE_SCOPED_CAPABILITY_REQUEST_ONLY_WHEN_OPERATION_IS_REQUIRED",
+    },
+    "WEB_HOSTING_CHANGE": {
+        "kind": "MUTATION",
+        "target_fields": [
+            "web.vhost", "web.reverse_proxy", "web.runtime_port_binding", "web.healthcheck"
+        ],
+        "resolution_order": [
+            "VERIFY_DOMAIN_AND_SERVER", "VERIFY_RUNTIME", "VERIFY_AUTHORITY",
+            "LIVE_PREFLIGHT", "EXECUTE"
+        ],
+        "preferred_tools": [],
+        "missing_surface_action": "PREPARE_SCOPED_CAPABILITY_REQUEST_ONLY_WHEN_OPERATION_IS_REQUIRED",
+    },
+    "TLS_CHANGE": {
+        "kind": "MUTATION",
+        "target_fields": ["web.tls_certificate", "web.tls_renewal"],
+        "resolution_order": [
+            "VERIFY_DNS", "VERIFY_WEB_BINDING", "VERIFY_AUTHORITY", "LIVE_PREFLIGHT", "EXECUTE"
+        ],
+        "preferred_tools": [],
+        "missing_surface_action": "PREPARE_SCOPED_CAPABILITY_REQUEST_ONLY_WHEN_OPERATION_IS_REQUIRED",
+    },
+    "DEPLOYMENT_RUNTIME_CHANGE": {
+        "kind": "MUTATION",
+        "target_fields": [
+            "deployment.build", "deployment.deploy", "deployment.restart",
+            "deployment.rollback", "deployment.production_attestation"
+        ],
+        "resolution_order": [
+            "VERIFY_EXACT_SOURCE", "VERIFY_PROJECT_MAPPING", "VERIFY_AUTHORITY",
+            "LIVE_PREFLIGHT", "EXECUTE", "VERIFY", "EVIDENCE"
+        ],
+        "preferred_tools": ["deploy_project_s2"],
+        "missing_surface_action": "PREPARE_SCOPED_CAPABILITY_REQUEST_ONLY_WHEN_OPERATION_IS_REQUIRED",
+    },
+}
+
+CASE_CAPABILITY_SEQUENCE = {
+    "CREATE_NEW_REPOSITORY": [
+        "GIT_REPOSITORY_OBSERVATION", "GOVERNANCE_STATE_OBSERVATION",
+        "PROJECT_INFRASTRUCTURE_MAPPING", "DOMAIN_WEB_OBSERVATION",
+        "SERVER_RUNTIME_OBSERVATION", "GIT_REPOSITORY_CHANGE",
+        "SERVER_FILESYSTEM_CHANGE", "WEB_HOSTING_CHANGE", "TLS_CHANGE",
+        "DEPLOYMENT_RUNTIME_CHANGE"
+    ],
+    "ADOPT_EXISTING_REPOSITORY": [
+        "GIT_REPOSITORY_OBSERVATION", "GOVERNANCE_STATE_OBSERVATION",
+        "PROJECT_INFRASTRUCTURE_MAPPING", "DOMAIN_WEB_OBSERVATION",
+        "SERVER_RUNTIME_OBSERVATION", "DATABASE_READ_OBSERVATION",
+        "GIT_REPOSITORY_CHANGE", "SERVER_REPOSITORY_CHANGE",
+        "SERVER_FILESYSTEM_CHANGE", "WEB_HOSTING_CHANGE", "TLS_CHANGE",
+        "DEPLOYMENT_RUNTIME_CHANGE"
+    ],
+    "MAP_EXISTING_PROJECT": [
+        "GIT_REPOSITORY_OBSERVATION", "GOVERNANCE_STATE_OBSERVATION",
+        "PROJECT_INFRASTRUCTURE_MAPPING", "DOMAIN_WEB_OBSERVATION",
+        "SERVER_RUNTIME_OBSERVATION", "DATABASE_READ_OBSERVATION"
+    ],
+    "LAB_EVOLUTION": [
+        "GIT_REPOSITORY_OBSERVATION", "GOVERNANCE_STATE_OBSERVATION",
+        "GIT_REPOSITORY_CHANGE", "PROJECT_INFRASTRUCTURE_MAPPING",
+        "SERVER_RUNTIME_OBSERVATION", "DEPLOYMENT_RUNTIME_CHANGE"
+    ],
+    "CONTINUE_GOVERNED_WORK": [
+        "GOVERNANCE_STATE_OBSERVATION", "GIT_REPOSITORY_OBSERVATION",
+        "GOVERNED_TASK_COORDINATION", "PROJECT_INFRASTRUCTURE_MAPPING"
+    ],
 }
 
 TAG_KEYWORDS = {
@@ -169,13 +355,17 @@ def compact_write_context(value):
         return {}
     raw_projects = payload.get("projects")
     project_ids = []
+    reserved = {"path", "note", "server", "host", "domain", "url"}
     if isinstance(raw_projects, str):
         for line in raw_projects.splitlines():
-            stripped = line.strip()
-            if ":" not in stripped:
+            if not line or line[:1].isspace() or ":" not in line:
                 continue
-            candidate = stripped.split(":", 1)[0].strip()
-            if candidate and all(ch.isalnum() or ch in "._-" for ch in candidate):
+            candidate = line.split(":", 1)[0].strip()
+            if (
+                candidate
+                and candidate.lower() not in reserved
+                and all(ch.isalnum() or ch in "._-" for ch in candidate)
+            ):
                 project_ids.append(candidate)
     return {
         "mode": payload.get("mode"),
@@ -266,34 +456,116 @@ def normalize_resource(resource: dict):
     }
 
 
+def tool_project_scope(tool: dict):
+    name = str(tool.get("name") or "")
+    fields = tool.get("input_fields") if isinstance(tool.get("input_fields"), list) else []
+    project_field = next((item for item in fields if isinstance(item, dict) and item.get("name") == "project"), None)
+    if isinstance(project_field, dict) and isinstance(project_field.get("enum"), list):
+        return {
+            "mode": "PROJECT_REGISTRY_SCOPED",
+            "project_ids": [str(value) for value in project_field["enum"] if isinstance(value, str)][:100],
+        }
+    if name.startswith(("sadiaaf_", "legacy_vhost_", "legacy_funds_", "nigeria_", "amf_registry_", "brvm_")):
+        return {"mode": "PROJECT_SPECIFIC", "project_ids": []}
+    if name.startswith(("mcp_build_", "mcp_sync_", "mcp_typecheck_", "restart_mcp_", "patch_mcp_", "read_mcp_", "search_mcp_", "scan_mcp_")):
+        return {"mode": "MCP_SELF", "project_ids": ["Patricked-code/MCP"]}
+    return {"mode": "GENERIC", "project_ids": []}
+
+
+def capability_candidates(capability_id: str, tools: list[dict]):
+    spec = CAPABILITY_MODEL[capability_id]
+    by_name = {tool.get("name"): tool for tool in tools if tool.get("name")}
+    candidates = []
+    for name in spec.get("preferred_tools", []):
+        tool = by_name.get(name)
+        if not tool:
+            continue
+        scope = tool_project_scope(tool)
+        candidates.append({
+            "tool": name,
+            "surface": tool.get("surface"),
+            "authority_required": tool.get("authority_required"),
+            "scope": scope,
+        })
+    generic = [item for item in candidates if item["scope"]["mode"] == "GENERIC"]
+    registry = [item for item in candidates if item["scope"]["mode"] == "PROJECT_REGISTRY_SCOPED"]
+    project_specific = [item for item in candidates if item["scope"]["mode"] in {"PROJECT_SPECIFIC", "MCP_SELF"}]
+    if generic:
+        availability = "AVAILABLE_GENERIC"
+    elif registry:
+        availability = "AVAILABLE_PROJECT_REGISTRY_SCOPED"
+    elif project_specific:
+        availability = "AVAILABLE_ONLY_PROJECT_SPECIFIC"
+    else:
+        availability = "NOT_EXPOSED_BY_CURRENT_MCP_CATALOGUE"
+    return {
+        "availability": availability,
+        "candidate_tools": candidates,
+        "missing_surface_action": spec.get("missing_surface_action"),
+    }
+
+
+def derive_capability_map(tools: list[dict]):
+    result = {}
+    for capability_id, spec in CAPABILITY_MODEL.items():
+        candidates = capability_candidates(capability_id, tools)
+        result[capability_id] = {
+            "kind": spec["kind"],
+            "target_fields": list(spec.get("target_fields", [])),
+            "resolution_order": list(spec.get("resolution_order", [])),
+            **candidates,
+        }
+    return result
+
+
 def derive_case_operation_map(tools: list[dict]):
+    capabilities = derive_capability_map(tools)
     mapping = {}
-    for case_id, desired_tags in CASE_TAGS.items():
-        selected = [
-            tool for tool in tools
-            if set(tool.get("tags") or []).intersection(desired_tags)
-        ]
-        names = sorted({tool.get("name") for tool in selected if tool.get("name")})
-        read_names = sorted({
-            tool.get("name") for tool in selected
-            if tool.get("name") and tool.get("surface") == "read"
-        })
-        mutation_names = sorted({
-            tool.get("name") for tool in selected
-            if tool.get("name") and tool.get("surface") in {"operational-write", "scoped-write"}
-        })
-        unknown_names = sorted({
-            tool.get("name") for tool in selected
-            if tool.get("name") and tool.get("surface") == "unknown"
-        })
+    for case_id, sequence in CASE_CAPABILITY_SEQUENCE.items():
+        steps = []
+        observable_fields = []
+        planned_operation_fields = []
+        for order, capability_id in enumerate(sequence, start=1):
+            capability = capabilities[capability_id]
+            fields = list(capability.get("target_fields", []))
+            if capability["kind"] == "OBSERVATION":
+                observable_fields.extend(fields)
+            elif capability["kind"] in {"MUTATION", "OPERATIONAL"}:
+                planned_operation_fields.extend(fields)
+            if capability["kind"] == "MUTATION":
+                question_policy = "PREPARE_OPERATION_AND_AUTHORITY;_DO_NOT_ASK_TECHNICAL_FACTS_ALREADY_OBSERVABLE"
+            elif capability["kind"] == "OBSERVATION":
+                question_policy = "OBSERVE_FIRST;_ASK_OWNER_ONLY_IF_UNRESOLVED_OR_DECISION"
+            else:
+                question_policy = "USE_EXISTING_GOVERNED_STATE_AND_AUTHORITY"
+            steps.append({
+                "order": order,
+                "capability": capability_id,
+                "kind": capability["kind"],
+                "availability": capability["availability"],
+                "candidate_tools": [item["tool"] for item in capability["candidate_tools"]],
+                "required_authorities": sorted({
+                    item.get("authority_required") for item in capability["candidate_tools"]
+                    if item.get("authority_required")
+                }),
+                "target_fields": fields,
+                "resolution_order": capability["resolution_order"],
+                "question_policy": question_policy,
+                "missing_surface_action": capability["missing_surface_action"],
+            })
         mapping[case_id] = {
-            "mode": "PLANNING_CANDIDATES_NOT_EXECUTION_AUTHORITY",
-            "candidate_tools": names,
-            "read_only_candidates": read_names,
-            "mutation_candidates": mutation_names,
-            "unclassified_surface_candidates": unknown_names,
-            "tool_metadata_source": "catalogue.tools",
+            "mode": "CAPABILITY_FIRST_ADAPTIVE_QUESTION_PLANNING",
+            "sequence": steps,
+            "observable_target_fields": sorted(set(observable_fields)),
+            "planned_operation_fields": sorted(set(planned_operation_fields)),
+            "owner_question_candidates": "DERIVE_FROM_UNRESOLVED_PROJECT_DECISIONS_NOT_FROM_TOOL_AVAILABILITY",
+            "owner_question_rule": (
+                "DO_NOT_ASK_IF_FRESH_OBSERVATION_OR_PERSISTED_OWNER_DECISION_ALREADY_RESOLVES_FIELD;"
+                "ASK_ONLY_FOR_UNRESOLVED_OWNER_DECISION_OR_NON_DISCOVERABLE_FACT"
+            ),
             "pre_mutation_live_refresh_required": True,
+            "tool_metadata_source": "catalogue.tools",
+            "capability_metadata_source": "capability_map",
         }
     return mapping
 
@@ -353,7 +625,9 @@ def build_snapshot(
     }
     prior_sequence = int((prior_snapshot or {}).get("refresh_sequence") or 0)
     return {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
+        "capability_model_version": "1.0.0",
+        "stable_capability_ids": sorted(CAPABILITY_MODEL),
         "authority_id": AUTHORITY_ID,
         "authority_type": "MCP_CAPABILITY_SNAPSHOT",
         "scope": "CONTROL_PLANE_SOURCE_ONLY",
@@ -404,7 +678,25 @@ def build_snapshot(
             "resources": resources,
         },
         "write_context_summary": compact_write_context(write_context_response),
+        "capability_map": derive_capability_map(normalized_tools),
         "case_operation_map": derive_case_operation_map(normalized_tools),
+        "question_resolution_contract": {
+            "principle": "OBSERVE_AND_REUSE_BEFORE_ASK",
+            "source_priority": [
+                "FRESH_DIRECT_REPOSITORY_OBSERVATION",
+                "FRESH_PERSISTED_PROJECT_MEMORY",
+                "PRIOR_OWNER_DECISION",
+                "AUTHORIZED_MCP_READ_ONLY_DISCOVERY",
+                "ASK_OWNER"
+            ],
+            "ask_owner_only_when": [
+                "OWNER_DECISION_REQUIRED",
+                "FACT_NOT_DISCOVERABLE_WITH_AVAILABLE_AUTHORITY",
+                "CONTRADICTORY_AUTHORITIES_REQUIRE_OWNER_RESOLUTION"
+            ],
+            "never_reask_fresh_resolved_fact": True,
+            "answers_feed_existing_project_model_and_loop_engineering": True,
+        },
         "operation_planning_contract": {
             "pipeline": [
                 "CASE_OR_WORK_ITEM",

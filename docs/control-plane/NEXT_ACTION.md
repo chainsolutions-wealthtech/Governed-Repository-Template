@@ -1,50 +1,55 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_13_H_VALIDATE_PERSISTENT_MCP_CAPABILITY_SNAPSHOT
-STATE = FRAMEWORK_VALIDATION_REQUIRED
+NEXT_ACTION = C1_13_H_REFINE_CAPABILITY_FIRST_MAP_THEN_REGENERATE_SNAPSHOT
+STATE = FRAMEWORK_SEMANTIC_REFINEMENT
 PARENT = P12_S5_SECOND_FRESH_REPOSITORY_E2E
+BRANCH = governance/refine-mcp-capability-map
 ```
 
-## Ekyc return point
+## Exact resume state
 
-The generic signed-SSH recovery is proven end-to-end:
+- Template `main`: `fde48fedfcdc1589147c0b3e38507241c18878f1`.
+- Refinement branch was created from that exact HEAD and had no changes before this correction.
+- Automated live snapshot PR #63 is OPEN and intentionally NOT MERGED.
+- PR #63 is technically valid but semantically over-broad: its case maps attach roughly the whole MCP catalogue to each case and its first project-id parser admitted metadata labels such as `path` / `note`.
+- Live catalogue evidence remains valid: 135 tools, 2 resources, catalogue digest `8447f9dcc5078fdc9287068c9a791ab5366cc8f10ead5770f6830ed4aca34f1b`.
 
-- Template v2.8.8 merge: `7bb1199f5b7683003fa62c373a211d0736b67908`.
-- Template post-merge Governance CI: `36645221136` PASS.
-- Ekyc governed upgrade: `4d552458afab32df12aaafd6c7290fab6246d96b`.
-- Ekyc Governance CI: `36645315558` PASS.
-- Ekyc discovery retry: `36645372827`.
-- Recovery state: `Q_SSH_PROFILE_RECOVERY`, revision 37.
-- Signed broker evidence was used to correct the factual SSH profile through central command `5901027821`.
-- Ekyc#1 is now revision 38 at `WAITING_FOR_DISCOVERY_APPROVAL / MCP_DISCOVERY_APPROVAL`.
-- Because the SSH target materially changed, prior discovery approval is invalidated.
-- First-agent baseline remains unapplied.
+## Active correction
 
-## Active Template work — C1-13-H
+1. filter project IDs to actual top-level registry entries;
+2. replace case → bulk-tool mapping with:
+   `CASE → CAPABILITY → CURRENT SURFACE → TOOL CANDIDATE → AUTHORITY → PREPARED OPERATION`;
+3. encode observation-first question resolution;
+4. explicitly represent capabilities currently absent from MCP;
+5. prepare scoped capability requests only when a concrete operation needs an absent capability;
+6. validate RED→GREEN;
+7. merge the framework refinement;
+8. supersede/close stale snapshot PR #63;
+9. rerun `/refresh-mcp-capabilities`;
+10. inspect and merge the regenerated capability-first snapshot only after Governance CI.
 
-Validate the new persistent source-only MCP capability memory:
+## Ekyc — separate gate
 
-1. validate `CP-MCP-CAP-001` human and machine authorities;
-2. validate source-only removal from generated/adopted clients;
-3. validate the read-only refresh script and no-secret/no-server-coordinate persistence;
-4. validate case → tool → required-authority planning;
-5. validate that the model feeds the existing Loop Engineering rather than a parallel engine;
-6. merge only after full Governance CI;
-7. trigger one live source-only refresh from the Template;
-8. verify the refresh opens a governed PR with the current MCP catalogue/resource image;
-9. merge the refreshed snapshot only after its Governance CI.
+Ekyc remains:
 
-## Separate Ekyc gate
+```text
+HEAD = 4d552458afab32df12aaafd6c7290fab6246d96b
+Ekyc#1 revision = 38
+status = WAITING_FOR_DISCOVERY_APPROVAL
+phase = MCP_DISCOVERY_APPROVAL
+endpoint = https://mcp.wealthtechinnovations.com/mcp
+transport = BOTH
+SSH profile = broker-observed corrected profile
+current discovery = null
+```
 
-The corrected BOTH plan is ready but requires explicit owner approval because its SSH target changed materially. Capability-snapshot validation does not grant or infer that approval.
+The previous approval was invalidated because the SSH target changed materially. Do not execute Ekyc discovery again until the corrected plan is explicitly approved.
 
 ## Safety boundary
 
-- No MCP mutation.
-- No new MCP intake.
-- No direct Ekyc patch.
-- No persisted server connection coordinates in the public Template snapshot.
-- No secret value persistence.
-- Snapshot/tool availability does not imply write authority.
+- Do not merge PR #63 as-is.
+- Do not patch Ekyc directly.
+- Do not mutate Patricked-code/MCP.
+- Do not create a new MCP intake merely because a generic capability is absent.
 - P12-S6 and GMC remain downstream of P12-S5.

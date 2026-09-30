@@ -5,7 +5,7 @@
 
 ## Purpose
 
-The central Control Plane keeps a **persistent last-known image of MCP capabilities** so CREATE, ADOPT, MAP, LAB and CONTINUE do not start from zero each time.
+The central Control Plane keeps a **stable capability model plus a persistent last-known image of the current MCP implementation** so CREATE, ADOPT, MAP, LAB and CONTINUE do not start from zero each time.
 
 The snapshot is knowledge and planning authority only:
 
@@ -32,7 +32,7 @@ The snapshot stores only non-secret information needed for planning:
 
 - MCP server identity and protocol;
 - observed source/runtime/catalogue digests;
-- S1/S2 non-secret target coordinates;
+- logical server identities and non-secret capability metadata;
 - current MCP tool catalogue and declared surfaces;
 - current MCP resources;
 - safe summary of the scoped-write context;
@@ -109,3 +109,91 @@ The canonical on-demand source command is:
 It is accepted only on the canonical Control Plane programme issue `#12` and only when the comment author association is `OWNER`, `MEMBER` or `COLLABORATOR`.
 
 The command authorizes only the already-standing read-only capability refresh. It does not authorize any MCP/server mutation. A changed snapshot is persisted through a unique branch and pull request, then normal Governance CI must pass before merge.
+
+## Capability-first planning model
+
+The live MCP catalogue is **not** the questionnaire and is **not** the governance model.
+
+The stable planning chain is:
+
+```text
+TARGET GOVERNANCE / PROJECT PROFILE
+→ CASE + CURRENT PROJECT REALITY
+→ UNRESOLVED REQUIREMENT
+→ CAPABILITY NEEDED
+→ CURRENT MCP SURFACE
+→ CANDIDATE TOOL(S)
+→ REQUIRED AUTHORITY
+→ PREPARED OPERATION
+→ EXISTING LOOP_ENGINEERING
+```
+
+A case must therefore contain a short ordered sequence of capabilities, never an indiscriminate list of most MCP tools.
+
+Current generic capabilities include:
+
+- Git repository observation;
+- governance-state observation;
+- project/infrastructure mapping;
+- domain/web observation;
+- server/runtime observation;
+- database read observation;
+- Git repository mutation;
+- governed task coordination;
+- server-side repository mutation;
+- server filesystem mutation;
+- web-hosting mutation;
+- TLS mutation;
+- deployment/runtime mutation.
+
+A capability may be:
+
+- `AVAILABLE_GENERIC`;
+- `AVAILABLE_PROJECT_REGISTRY_SCOPED`;
+- `AVAILABLE_ONLY_PROJECT_SPECIFIC`;
+- `NOT_EXPOSED_BY_CURRENT_MCP_CATALOGUE`.
+
+When a required mutation capability is not exposed, the Control Plane does **not** invent a tool and does **not** immediately create an MCP intake. It prepares a bounded `SCOPED_CAPABILITY_REQUEST` only when the concrete project operation actually needs that capability.
+
+## Adaptive question resolution
+
+The capability model feeds the questionnaire.
+
+```text
+QUESTION TARGET FIELD
+→ fresh direct Git observation?
+→ fresh project memory?
+→ prior owner decision?
+→ authorized MCP read-only discovery?
+→ only then ASK OWNER
+```
+
+A fresh resolved fact must not be re-asked.
+
+For an existing repository, Git observation should automatically resolve repository/provider/default-branch/workflow/ruleset/check facts before owner questions are considered.
+
+MCP observation should resolve project registration, server binding, existing domains/runtime surfaces and other factual infrastructure fields when the current standing read authority covers that observation.
+
+Owner interaction is reserved for:
+
+- genuine owner/business decisions;
+- facts that cannot be discovered with available authority;
+- contradictions requiring owner resolution;
+- authority expansion when a concrete operation needs a capability that is not currently granted/exposed.
+
+For CREATE, the same engine asks more questions because fewer facts exist. For ADOPT/MAP/CONTINUE, existing observations and prior answers collapse the questionnaire automatically.
+
+## Snapshot versus capability model
+
+`CP-MCP-CAP-001` has two complementary roles:
+
+1. **Stable capability semantics** — what kind of capability a project may need, what fields it can resolve, what authority class it requires, and how it feeds the questionnaire/Loop Engineering.
+2. **Refreshable implementation image** — which MCP tools/resources currently implement those capabilities.
+
+The implementation image may change frequently. The capability semantics should remain stable and evolve through governed decisions.
+
+A live catalogue refresh therefore answers:
+
+> “Which current MCP surface can satisfy this already-understood capability?”
+
+It must never redefine the project need merely because a tool exists.

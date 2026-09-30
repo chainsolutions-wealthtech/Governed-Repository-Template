@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "checkpoint_id": "CP-CHECKPOINT-20260930-004",
+  "checkpoint_id": "CP-CHECKPOINT-20260930-005",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-  "subject_head": "7bb1199f5b7683003fa62c373a211d0736b67908",
+  "subject_head": "fde48fedfcdc1589147c0b3e38507241c18878f1",
   "template_version_before": "2.7.0",
-  "state": "P12_S5_MCP_CAPABILITY_SNAPSHOT_IMPLEMENTATION",
+  "state": "P12_S5_MCP_CAPABILITY_MAP_SEMANTIC_REFINEMENT",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
@@ -132,17 +132,24 @@
     "c1_13_h_live_tool_count": 135,
     "c1_13_h_live_resource_count": 2,
     "c1_13_h_catalogue_digest": "8447f9dcc5078fdc9287068c9a791ab5366cc8f10ead5770f6830ed4aca34f1b",
-    "c1_13_h_persistence_result": "FAIL_GITHUB_PUSH_403_CHECKOUT_CREDENTIAL_PRECEDENCE"
+    "c1_13_h_persistence_result": "FAIL_GITHUB_PUSH_403_CHECKOUT_CREDENTIAL_PRECEDENCE",
+    "c1_13_h_snapshot_pr": 63,
+    "c1_13_h_snapshot_pr_state": "OPEN_NOT_MERGED",
+    "c1_13_h_snapshot_semantic_merge_allowed": false,
+    "c1_13_h_refinement_branch": "governance/refine-mcp-capability-map",
+    "c1_13_h_refinement_model": "CAPABILITY_FIRST_ADAPTIVE_QUESTION_PLANNING",
+    "c1_13_h_ekyc_revision": 38,
+    "c1_13_h_ekyc_state": "WAITING_FOR_DISCOVERY_APPROVAL"
   },
-  "next_action": "C1_13_H_VALIDATE_PERSISTENT_MCP_CAPABILITY_SNAPSHOT",
+  "next_action": "C1_13_H_REFINE_CAPABILITY_FIRST_MAP_THEN_REGENERATE_SNAPSHOT",
   "reconciliation_required_before_write": true,
   "ci_run": 36637371154,
   "ci_result": "PASS",
   "client_source_memory_removal": "PASS",
   "self_governance": "PASS",
-  "reconciliation_reason": "V288_SSH_PROFILE_RECOVERY_PROVEN_ON_EKYC_AND_SOURCE_ONLY_MCP_CAPABILITY_MEMORY_NOW_IMPLEMENTED_FOR_VALIDATION",
+  "reconciliation_reason": "LIVE_SNAPSHOT_PR63_VALID_RUNTIME_EVIDENCE_BUT_OVERBROAD_PLANNING_PROJECTION",
   "canonical_memory_database": "PASS",
-  "blocker": "MCP_CAPABILITY_SNAPSHOT_VALIDATION_PENDING",
+  "blocker": "MCP_CAPABILITY_MAP_SEMANTIC_REFINEMENT_PENDING",
   "knowledge_enrichment": {
     "canonical_architecture": {
       "authority_id": "CP-ARCH-001",

@@ -476,3 +476,18 @@ Run `36646869819` proved the core design:
 The run failed only during Git persistence. Root cause: `actions/checkout` persisted the workflow `GITHUB_TOKEN` extraheader, which took precedence over the separately minted GitHub App token and produced a 403 push refusal.
 
 The corrective branch disables checkout credential persistence so the explicit GitHub App token owns branch/PR persistence. The snapshot representation is also compacted: global tool metadata is stored once, case maps reference tool names, and only safe input-field metadata is retained.
+
+## 2026-09-30 — C1-13-H semantic QA before snapshot merge
+
+The automated MCP refresh successfully produced PR #63 from live runtime evidence. Security and transport controls passed, but semantic QA correctly stopped the merge.
+
+Two defects were found:
+
+1. the write-context parser treated indented metadata labels (`path:`, `note:`) as project IDs;
+2. tag-intersection mapping made nearly every MCP tool a candidate for nearly every governance case.
+
+The live catalogue remains valid evidence; only its planning projection is rejected.
+
+The refinement branch `governance/refine-mcp-capability-map` now implements a capability-first model and observation-first questionnaire resolution. The purpose is not to know every tool exhaustively. It is to let an agent know, before asking the owner, which facts can already be observed and which MCP capability/authority would be needed for a concrete next operation.
+
+Ekyc remains independently frozen at its corrected discovery approval gate, revision 38.

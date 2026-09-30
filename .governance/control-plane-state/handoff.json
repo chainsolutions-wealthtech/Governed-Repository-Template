@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "handoff_id": "CP-HANDOFF-20260930-004",
+  "handoff_id": "CP-HANDOFF-20260930-005",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "canonical_branch": "main",
-  "baseline_subject_head": "7bb1199f5b7683003fa62c373a211d0736b67908",
-  "active_branch": "governance/c1-13-mcp-capability-snapshot",
+  "baseline_subject_head": "fde48fedfcdc1589147c0b3e38507241c18878f1",
+  "active_branch": "governance/refine-mcp-capability-map",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "current_task": "C1-13-H_VALIDATE_PERSISTENT_MCP_CAPABILITY_SNAPSHOT",
-  "unique_next_action": "C1_13_H_VALIDATE_PERSISTENT_MCP_CAPABILITY_SNAPSHOT",
+  "current_task": "C1-13-H_REFINE_CAPABILITY_FIRST_MAP",
+  "unique_next_action": "C1_13_H_REFINE_CAPABILITY_FIRST_MAP_THEN_REGENERATE_SNAPSHOT",
   "read_first": [
     "docs/control-plane/CURRENT_STATE.md",
     ".governance/control-plane-state/canonical-architecture.json",
@@ -110,7 +110,7 @@
       "phase": "MCP_DISCOVERY_APPROVAL",
       "revision": 38,
       "explicit_approval": false,
-      "prior_approval_invalidated_by": "SSH_PROFILE_MATERIAL_CHANGE",
+      "current_discovery": null,
       "baseline_write": "SKIPPED"
     },
     "tls_status": "REMEDIATED_CONFIRMED_BY_LIVE_HTTPS_MCP_EVIDENCE",
@@ -124,11 +124,16 @@
   },
   "mcp_capability_snapshot": {
     "authority_id": "CP-MCP-CAP-001",
-    "status": "IMPLEMENTED_PENDING_CI_AND_LIVE_REFRESH",
+    "status": "SEMANTIC_REFINEMENT_IN_PROGRESS",
     "refresh_mode": "EVENT_AND_NEED_BASED",
     "standing_readonly_refresh_authority": true,
     "mutation_authority_granted": false,
     "server_connection_coordinates_persisted": false,
-    "parallel_engine": false
+    "parallel_engine": false,
+    "stale_snapshot_pr": 63,
+    "merge_stale_snapshot": false,
+    "capability_first": true,
+    "observation_first_questionnaire": true,
+    "missing_capability_request_on_demand_only": true
   }
 }

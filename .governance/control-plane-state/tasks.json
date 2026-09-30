@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 37,
+  "revision": 38,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -278,7 +278,7 @@
         "C1-13-G"
       ],
       "blocks": [],
-      "next_action": "FIX_SNAPSHOT_PR_PERSISTENCE_THEN_REPEAT_LIVE_REFRESH",
+      "next_action": "REFINE_CAPABILITY_FIRST_MAP_THEN_REGENERATE_SNAPSHOT",
       "objective": "Persist a refreshable source-only MCP capability image and case-to-tool-to-operation planning map that feeds existing Loop Engineering",
       "execution_model": "EXISTING_LOOP_ENGINEERING",
       "external_mcp_intake_required": false,
@@ -294,8 +294,16 @@
         "Template v2.8.10 live refresh run 36646869819 reached MCP and generated a validated snapshot",
         "Live refresh observed 135 tools and 2 resources; catalogue digest 8447f9dcc5078fdc9287068c9a791ab5366cc8f10ead5770f6830ed4aca34f1b",
         "Snapshot persistence failed only at git push 403 because checkout persisted GITHUB_TOKEN extraheader overrode the minted GitHub App token",
-        "Corrective fix disables checkout persisted credentials and compacts snapshot metadata before retry"
-      ]
+        "Corrective fix disables checkout persisted credentials and compacts snapshot metadata before retry",
+        "Automated live snapshot PR #63 is open and intentionally not merged",
+        "PR #63 live catalogue evidence remains valid: 135 tools, 2 resources, digest 8447f9dcc5078fdc9287068c9a791ab5366cc8f10ead5770f6830ed4aca34f1b",
+        "Semantic QA found metadata labels path/note admitted as project ids",
+        "Semantic QA found tag-intersection case mapping attached nearly the whole catalogue to each case",
+        "Refinement branch governance/refine-mcp-capability-map created from exact main fde48fedfcdc1589147c0b3e38507241c18878f1",
+        "Target model is CASE -> CAPABILITY -> SURFACE -> TOOL -> AUTHORITY -> PREPARED OPERATION",
+        "Question resolution is observation-first; fresh resolved facts are not re-asked"
+      ],
+      "defect_code": "MCP_CAPABILITY_CASE_MAP_OVERBROAD_AND_PROJECT_ID_PARSE_NOISY"
     },
     {
       "id": "P12-S6",
