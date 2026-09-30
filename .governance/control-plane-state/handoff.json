@@ -27,7 +27,9 @@
     "docs/control-plane/AGENT_ACTIVITY_LOG.md",
     ".governance/control-plane-state/agent-activity.json",
     "docs/control-plane/ADAPTIVE_CHOICE_QUESTION_CATALOGUE.md",
-    ".governance/control-plane-state/adaptive-question-catalogue.json"
+    ".governance/control-plane-state/adaptive-question-catalogue.json",
+    "docs/control-plane/KNOWLEDGE_BASE.md",
+    ".governance/control-plane-state/knowledge-base.json"
   ],
   "rules": [
     "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",
@@ -77,7 +79,12 @@
     "QUESTIONS_ARE_CHOICE_BASED_AND_ONE_AT_A_TIME",
     "REUSE_FRESH_OBSERVED_FACTS_BEFORE_ASKING",
     "QUESTION_ANSWER_NE_EXECUTION_AUTHORITY",
-    "LONG_IMPLEMENTATION_IS_SPLIT_INTO_SMALL_RESUMABLE_TESTED_SLICES"
+    "LONG_IMPLEMENTATION_IS_SPLIT_INTO_SMALL_RESUMABLE_TESTED_SLICES",
+    "REUSE_CURRENT_CANONICAL_KNOWLEDGE_BEFORE_DISCOVERY",
+    "REFRESH_ONLY_VOLATILE_CONTRADICTED_OR_ACTION_SENSITIVE_FACTS",
+    "OWNER_DECISIONS_ARE_REUSED_UNTIL_SUPERSEDED_OR_SCOPE_INVALIDATED",
+    "OBSERVED_CONVENTIONS_ARE_CANDIDATES_NOT_AUTOMATIC_STANDARDS",
+    "KNOWLEDGE_NE_EXECUTION_AUTHORITY"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",
