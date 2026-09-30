@@ -588,6 +588,48 @@ class CapabilityResolver:
         return resolved
 
 
+def validate_intent_parameters(package: dict, registry: dict, spec: dict) -> None:
+    intent = package.get("intent")
+    params = package.get("parameters") or {}
+    handler = spec.get("handler")
+
+    if handler == "GITHUB_REST_OPERATION":
+        contract = (registry.get("github_operation_allowlist") or {}).get(intent) or {}
+        missing = [
+            key for key in (contract.get("required_parameters") or [])
+            if key not in params or params.get(key) is None
+        ]
+        if missing:
+            raise ExecutionError("GITHUB_OPERATION_PARAMETER_MISSING", ",".join(missing))
+
+    elif handler == "GITHUB_APP_TOKEN":
+        if not (params.get("repository") or params.get("target_owner")):
+            raise ExecutionError("GITHUB_INSTALLATION_TARGET_REQUIRED")
+
+    elif handler == "GITHUB_SECRET":
+        missing = [key for key in ("repository", "secret_name", "value_ref") if not params.get(key)]
+        if missing:
+            raise ExecutionError("GITHUB_SECRET_PARAMETER_MISSING", ",".join(missing))
+
+    elif handler == "SSH_OIDC_CERT":
+        missing = [key for key in ("repository", "expected_head") if not params.get(key)]
+        if missing:
+            raise ExecutionError("SSH_CERT_PARAMETER_MISSING", ",".join(missing))
+
+    elif handler in {"CREDENTIAL_LIFECYCLE", "CREDENTIAL_VERIFY"}:
+        credential_type = params.get("credential_type")
+        if not credential_type:
+            raise ExecutionError("CREDENTIAL_TYPE_REQUIRED")
+        if credential_type in {"GITHUB_ACTIONS_REPOSITORY_SECRET", "GITHUB_ACTIONS_ENVIRONMENT_SECRET"}:
+            missing = [key for key in ("repository", "secret_name") if not params.get(key)]
+            if intent == "ROTATE_CREDENTIAL" and not params.get("value_ref"):
+                missing.append("value_ref")
+            if missing:
+                raise ExecutionError("GITHUB_CREDENTIAL_PARAMETER_MISSING", ",".join(sorted(set(missing))))
+            if credential_type == "GITHUB_ACTIONS_ENVIRONMENT_SECRET" and not params.get("environment"):
+                raise ExecutionError("GITHUB_ENVIRONMENT_NAME_REQUIRED")
+
+
 def validate_package(package: dict, registry: dict) -> dict:
     _walk_forbidden(package)
     required = (registry.get("package_contract") or {}).get("required") or []
@@ -626,6 +668,7 @@ def validate_package(package: dict, registry: dict) -> dict:
         and not expected_head
     ):
         raise ExecutionError("PACKAGE_EXPECTED_HEAD_REQUIRED")
+    validate_intent_parameters(package, registry, spec)
     return spec
 
 
@@ -998,6 +1041,16 @@ def compile_plan(package: dict, registry: dict, snapshot: dict) -> dict:
                 missing = [x for x in (exc.detail or "").split(",") if x]
             else:
                 raise
+    elif spec.get("handler") == "CREDENTIAL_LIFECYCLE":
+        credential_type = (package.get("parameters") or {}).get("credential_type")
+        if credential_type not in {"GITHUB_ACTIONS_REPOSITORY_SECRET", "GITHUB_ACTIONS_ENVIRONMENT_SECRET"}:
+            if not steps.get("execute") or not steps.get("verify"):
+                missing.append("CREDENTIAL_LIFECYCLE_MCP_EXECUTE_AND_VERIFY_BINDINGS")
+    elif spec.get("handler") == "CREDENTIAL_VERIFY":
+        credential_type = (package.get("parameters") or {}).get("credential_type")
+        if credential_type not in {"GITHUB_ACTIONS_REPOSITORY_SECRET", "GITHUB_ACTIONS_ENVIRONMENT_SECRET"}:
+            if not steps.get("verify"):
+                missing.append("CREDENTIAL_VERIFY_MCP_BINDING")
     return {
         "operation_id": package["operation_id"],
         "intent": package["intent"],
