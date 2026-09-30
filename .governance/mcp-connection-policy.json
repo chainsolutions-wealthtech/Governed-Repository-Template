@@ -2,7 +2,7 @@
   "schema_version": "1.9.0",
   "role": "REPOSITORY_TO_MCP_BINDING",
   "preferred_transport": "ADAPTIVE_BY_CONFIGURED_ROUTE_AND_CAPABILITY",
-  "fallback_transport": "CONFIGURED_ALTERNATE_ROUTE",
+  "fallback_transport": "GITHUB_OIDC_EPHEMERAL_SSH_CERTIFICATE",
   "direct_mcp": {
     "endpoint_variable": "GOVERNED_MCP_URL",
     "token_secret": "GOVERNED_MCP_AUTH_TOKEN",
