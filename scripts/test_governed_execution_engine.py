@@ -280,7 +280,7 @@ def assert_mcp_execute_and_verify() -> None:
             "execute": [{
                 "capability": "DEPLOYMENT_RUNTIME_CHANGE",
                 "tool": "deploy_project_s2",
-                "arguments": {"project_id": "brvmchainsolution"},
+                "arguments": {"project": "brvmchainsolution"},
             }],
             "verify": [{
                 "capability": "SERVER_RUNTIME_OBSERVATION",
