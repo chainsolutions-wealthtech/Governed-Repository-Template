@@ -28,6 +28,8 @@ def main():
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: read authority")
     if authority_for_surface("scoped-write") != "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED":
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: scoped write authority")
+    if authority_for_surface("operational-write") != "GOVERNED_OPERATIONAL_AUTHORITY_REQUIRED":
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: operational authority")
     tags = classify_tool({"name": "deploy_project_s2", "description": "Deploy repository on S2 runtime"})
     if not {"DEPLOYMENT", "REPOSITORY", "SERVER_RUNTIME"}.intersection(tags):
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: tool classification")
@@ -102,6 +104,9 @@ def main():
     capabilities = derive_capability_map(snapshot["catalogue"]["tools"])
     if capabilities["SERVER_FILESYSTEM_CHANGE"]["availability"] != "NOT_EXPOSED_BY_CURRENT_MCP_CATALOGUE":
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: missing generic server filesystem surface must remain explicit")
+    database_cap = capabilities["DATABASE_READ_OBSERVATION"]
+    if database_cap["availability"] != "AVAILABLE_ONLY_PROJECT_SPECIFIC":
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: project-specific database observation scope")
     deploy_cap = capabilities["DEPLOYMENT_RUNTIME_CHANGE"]
     if deploy_cap["availability"] != "AVAILABLE_PROJECT_REGISTRY_SCOPED":
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: project-registry scoped deployment classification")
