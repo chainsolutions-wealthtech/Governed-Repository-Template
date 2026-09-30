@@ -387,6 +387,7 @@ def assert_github_operations_are_allowlisted() -> None:
 def assert_github_create_branch_execution() -> None:
     original_api = gee.github_api
     original_target = gee._target_token
+    original_head = gee.current_repository_head
     calls = []
     source_sha = "a" * 40
 
@@ -401,7 +402,10 @@ def assert_github_create_branch_execution() -> None:
     try:
         gee.github_api = fake_api
         gee._target_token = lambda runtime, generated, parameters: "fake-target-token"
+        gee.current_repository_head = lambda token, repository: source_sha
         p = package("GITHUB_CREATE_BRANCH")
+        p["repository"] = "owner/repo"
+        p["expected_head"] = source_sha
         p["parameters"] = {
             "repository": "owner/repo",
             "branch": "feature/test",
@@ -417,19 +421,24 @@ def assert_github_create_branch_execution() -> None:
     finally:
         gee.github_api = original_api
         gee._target_token = original_target
+        gee.current_repository_head = original_head
 
 
 def assert_github_merge_head_guard() -> None:
     original_api = gee.github_api
     original_target = gee._target_token
+    original_head = gee.current_repository_head
     try:
         gee._target_token = lambda runtime, generated, parameters: "fake-target-token"
+        gee.current_repository_head = lambda token, repository: "c" * 40
         def fake_api(token, method, path, payload=None):
             if method == "GET" and path.endswith("/pulls/7"):
                 return {"head": {"sha": "b" * 40}, "merged": False}
             raise AssertionError((method, path))
         gee.github_api = fake_api
         p = package("GITHUB_MERGE_PULL_REQUEST")
+        p["repository"] = "owner/repo"
+        p["expected_head"] = "c" * 40
         p["parameters"] = {
             "repository": "owner/repo",
             "pull_number": 7,
@@ -442,19 +451,25 @@ def assert_github_merge_head_guard() -> None:
     finally:
         gee.github_api = original_api
         gee._target_token = original_target
+        gee.current_repository_head = original_head
 
 
 def assert_github_unknown_setting_rejected() -> None:
     original_target = gee._target_token
+    original_head = gee.current_repository_head
     try:
         gee._target_token = lambda runtime, generated, parameters: "fake-target-token"
+        gee.current_repository_head = lambda token, repository: "d" * 40
         p = package("GITHUB_UPDATE_REPOSITORY_SETTINGS")
+        p["repository"] = "owner/repo"
+        p["expected_head"] = "d" * 40
         p["parameters"] = {"repository": "owner/repo", "settings": {"delete_repository": True}}
         result = gee.execute(p, do_execute=True, registry=REGISTRY, snapshot=SNAPSHOT)
         if result["failure_code"] != "GITHUB_REPOSITORY_SETTING_NOT_ALLOWLISTED":
             raise SystemExit("EXECUTION_ENGINE_TEST_FAILED: unsafe GitHub setting not rejected")
     finally:
         gee._target_token = original_target
+        gee.current_repository_head = original_head
 
 
 def main() -> None:
