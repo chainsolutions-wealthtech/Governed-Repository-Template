@@ -89,10 +89,11 @@ def build_baseline(s):
 
 def build_mcp_discovery_plan(s):
     a=s["answers"]
-    return {
+    transport=a.get("mcp_transport")
+    plan={
       "operation":"READ_ONLY_MCP_DISCOVERY",
       "repository":s["repository"],
-      "transport":a.get("mcp_transport"),
+      "transport":transport,
       "endpoint":a.get("mcp_endpoint"),
       "ssh_connection_profile":copy.deepcopy(a.get("ssh_connection_profile")),
       "scope":a.get("mcp_discovery_scope"),
@@ -103,6 +104,17 @@ def build_mcp_discovery_plan(s):
       "secret_value_exposure":False,
       "purpose":"OBSERVE_EXISTING_PROJECT_SERVER_DOMAIN_AND_CAPABILITY_STATE_BEFORE_GAP_ANALYSIS"
     }
+    if transport=="BOTH":
+        plan["configured_transports"]=["DIRECT_MCP_TOKEN","SSH"]
+        plan["routing"]={
+          "mode":"DUAL_READY_SMART_ROUTING",
+          "initial_preference":"DIRECT_MCP_TOKEN",
+          "fallback":"SSH",
+          "fallback_condition":"PRIMARY_UNAVAILABLE_FAILED_OR_CAPABILITY_REQUIRES_ALTERNATE",
+          "simultaneous_execution_required":False,
+          "one_successful_route_satisfies_current_discovery":True
+        }
+    return plan
 
 def credential_requirements(a):
     t=a.get("mcp_transport")
@@ -133,6 +145,13 @@ def build_setup(s):
           "credential_requirements":credential_requirements(a),
           "optional_credentials":[{"kind":"secret","name":"GOVERNED_MCP_AUTH_TOKEN","purpose":"PREFERRED_DIRECT_MCP"}] if a.get("mcp_transport")=="BOTH" else [],
           "ssh_authentication":"GITHUB_OIDC_EPHEMERAL_CERTIFICATE" if a.get("mcp_transport") in {"SSH","BOTH"} else None,
+          "routing_strategy":{
+            "mode":"DUAL_READY_SMART_ROUTING",
+            "configured_transports":["DIRECT_MCP_TOKEN","SSH"],
+            "initial_preference":"DIRECT_MCP_TOKEN",
+            "fallback":"SSH",
+            "simultaneous_execution_required":False
+          } if a.get("mcp_transport")=="BOTH" else None,
           "discovery_scope":a.get("mcp_discovery_scope"),"domain_strategy":a.get("domain_strategy"),
           "domain_binding":a.get("domain_binding"),"runtime_mutation_policy":a.get("runtime_mutation_policy"),
           "discovery_tools":["ping","get_project_context","list_domains_s1","list_domains_s2","get_write_tools_context"],
@@ -189,12 +208,12 @@ def refresh(s):
         ]:
             if r["field"] not in s["answers"]:s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]=r["id"];s["next_request"]=r;return s
 
-        if "mcp_discovery_approved" not in s["answers"]:
+        if s.get("mcp_discovery") is None and "mcp_discovery_approved" not in s["answers"]:
             s["status"]="WAITING_FOR_DISCOVERY_APPROVAL";s["phase"]="MCP_DISCOVERY_APPROVAL"
             s["next_request"]={"kind":"PLAN_APPROVAL","id":"Q_MCP_DISCOVERY_APPROVAL","field":"mcp_discovery_approved",
               "text":"Le plan de découverte MCP en lecture seule est prêt. L'approuves-tu pour exécution maintenant ? La configuration exprimée jusque-là ne constitue pas une autorisation d'exécution.",
               "required":True,"response_type":"boolean","plan":build_mcp_discovery_plan(s)};return s
-        if s["answers"]["mcp_discovery_approved"] is False:
+        if s.get("mcp_discovery") is None and s["answers"].get("mcp_discovery_approved") is False:
             s["status"]="HOLD_FOR_REVIEW";s["phase"]="MCP_DISCOVERY_APPROVAL";s["hold_reason"]="MCP discovery not approved";return s
 
         requirements=credential_requirements(s["answers"])
@@ -272,6 +291,54 @@ def reconcile_legacy_discovery_authority(s):
     s["revision"]=int(s.get("revision") or 0)+1
     return refresh(s)
 
+def reconcile_both_smart_routing(s):
+    s=copy.deepcopy(s)
+    a=s.get("answers") or {}
+    if s.get("mode")!="FIRST_AGENT_BOOTSTRAP" or a.get("mcp_transport")!="BOTH":
+        return s
+    if isinstance(s.get("mcp_discovery"),dict):
+        return s
+
+    endpoint=a.get("mcp_endpoint")
+    for item in reversed(s.get("mcp_discovery_history") or []):
+        evidence=item.get("evidence") if isinstance(item,dict) else None
+        if not isinstance(evidence,dict):
+            continue
+        direct=evidence.get("direct_mcp")
+        if (
+            item.get("reason")=="SSH_PROFILE_CORRECTION_AFTER_SIGNED_BROKER_MISMATCH"
+            and isinstance(direct,dict)
+            and direct.get("status") in {"PASS","PARTIAL"}
+            and evidence.get("endpoint")==endpoint
+        ):
+            selected={
+              "transport":"BOTH",
+              "endpoint":endpoint,
+              "observed_at":evidence.get("observed_at"),
+              "routing_mode":"DUAL_READY_SMART_ROUTING",
+              "configured_transports":["DIRECT_MCP_TOKEN","SSH"],
+              "routing_policy":"PREFER_DIRECT_WHEN_READY_ELSE_SSH_FALLBACK",
+              "simultaneous_execution_required":False,
+              "selected_transport":"DIRECT_MCP_TOKEN",
+              "selection_reason":"REUSED_PREVIOUSLY_AUTHORIZED_DIRECT_ROUTE_EVIDENCE",
+              "direct_mcp":copy.deepcopy(direct),
+              "ssh_certificate":{
+                "status":"CONFIGURED_NOT_ATTESTED",
+                "reason":"ALTERNATE_ROUTE_PROFILE_CORRECTED_AFTER_PRIOR_DIRECT_SUCCESS"
+              },
+              "status":direct.get("status"),
+              "degraded":direct.get("status")=="PARTIAL",
+              "fallback_used":False,
+              "alternate_transport_status":"CONFIGURED_NOT_ATTESTED",
+              "reused_authorized_evidence":True
+            }
+            s["mcp_discovery"]=selected
+            s["hold_reason"]=None
+            s["revision"]=int(s.get("revision") or 0)+1
+            return refresh(s)
+    return s
+
+
 def mark_credentials_verified(s):
     s=copy.deepcopy(s)
     if (s.get("next_request") or {}).get("kind")!="CREDENTIAL_GATE":raise ValueError("not at credential gate")
@@ -279,15 +346,10 @@ def mark_credentials_verified(s):
     return refresh(s)
 
 def both_discovery_needs_refresh(s,direct_credential_available):
-    if not direct_credential_available:
-        return False
-    if (s.get("answers") or {}).get("mcp_transport")!="BOTH":
-        return False
-    evidence=s.get("mcp_discovery")
-    if not isinstance(evidence,dict):
-        return False
-    direct=evidence.get("direct_mcp")
-    return isinstance(direct,dict) and direct.get("status")=="UNAVAILABLE_CREDENTIAL"
+    # BOTH means both routes are configured for smart selection/fallback.
+    # Availability of the alternate route must not invalidate a successful
+    # current discovery or block setup merely to force dual execution.
+    return False
 
 def require_mcp_discovery_refresh(s,reason):
     s=copy.deepcopy(s)
