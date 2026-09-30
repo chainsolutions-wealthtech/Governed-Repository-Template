@@ -741,3 +741,31 @@ Template v2.8.8
 This proves C1-13-G.
 
 C1-13-H then materializes the owner's complementary requirement: a persistent, refreshable, source-only MCP capability image for the central Template. Its case/tool mappings are planning evidence only and cannot authorize writes.
+
+## C1-13-H completion — capability-first MCP planning
+
+```text
+raw live catalogue
+→ semantic QA reject #63
+→ capability-first engine #65
+→ regenerated snapshot
+→ authority/scope QA reject #66
+→ scope refinement #67
+→ final refresh 36652696942
+→ canonical snapshot #68
+→ post-merge CI PASS
+```
+
+The final model preserves the live MCP catalogue but makes project needs/capabilities primary. Existing-repository facts are consumed as questionnaire answers before any owner prompt.
+
+CASE 1 return point after C1-13-H:
+
+```text
+Ekyc#1 revision 38
+WAITING_FOR_DISCOVERY_APPROVAL
+corrected BOTH plan
+no current discovery
+baseline not applied
+```
+
+The next gate is explicit owner approval because the SSH target changed materially after signed-broker recovery.
