@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "handoff_id": "CP-HANDOFF-20260930-005",
+  "handoff_id": "CP-HANDOFF-20260930-006",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "canonical_branch": "main",
-  "baseline_subject_head": "fde48fedfcdc1589147c0b3e38507241c18878f1",
-  "active_branch": "governance/refine-mcp-capability-map",
+  "baseline_subject_head": "6c293a809df15b85fe40685b3a0f6a3508e1ee4d",
+  "active_branch": "governance/checkpoint-c1-13-capability-map-complete",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "current_task": "C1-13-H_REFINE_CAPABILITY_FIRST_MAP",
-  "unique_next_action": "C1_13_H_REFINE_CAPABILITY_FIRST_MAP_THEN_REGENERATE_SNAPSHOT",
+  "current_task": "C1-13-I_REQUEST_EKYC_CORRECTED_BOTH_DISCOVERY_APPROVAL",
+  "unique_next_action": "C1_13_I_REQUEST_EKYC_CORRECTED_BOTH_DISCOVERY_APPROVAL",
   "read_first": [
     "docs/control-plane/CURRENT_STATE.md",
     ".governance/control-plane-state/canonical-architecture.json",
@@ -124,16 +124,20 @@
   },
   "mcp_capability_snapshot": {
     "authority_id": "CP-MCP-CAP-001",
-    "status": "SEMANTIC_REFINEMENT_IN_PROGRESS",
-    "refresh_mode": "EVENT_AND_NEED_BASED",
-    "standing_readonly_refresh_authority": true,
-    "mutation_authority_granted": false,
-    "server_connection_coordinates_persisted": false,
-    "parallel_engine": false,
-    "stale_snapshot_pr": 63,
-    "merge_stale_snapshot": false,
+    "status": "CURRENT_CANONICAL",
+    "capability_model_version": "1.0.0",
+    "snapshot_schema_version": "1.1.0",
+    "refresh_run": 36652696942,
+    "snapshot_pr": 68,
+    "snapshot_merge": "6c293a809df15b85fe40685b3a0f6a3508e1ee4d",
+    "post_merge_ci": 36652771078,
+    "tools": 135,
+    "resources": 2,
+    "catalogue_digest": "8447f9dcc5078fdc9287068c9a791ab5366cc8f10ead5770f6830ed4aca34f1b",
     "capability_first": true,
     "observation_first_questionnaire": true,
-    "missing_capability_request_on_demand_only": true
+    "mutation_authority_granted": false,
+    "server_connection_coordinates_persisted": false,
+    "parallel_engine": false
   }
 }
