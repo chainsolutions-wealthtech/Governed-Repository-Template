@@ -500,7 +500,52 @@ class CapabilityResolver:
             return project_id in project_ids
         return False
 
-    def validate_tool(self, capability: str, tool: str) -> dict:
+    def tool_contract(self, tool: str) -> dict | None:
+        for item in ((self.snapshot.get("catalogue") or {}).get("tools") or []):
+            if item.get("name") == tool:
+                return item
+        return None
+
+    @staticmethod
+    def _type_ok(value: Any, expected: str | None) -> bool:
+        if expected in (None, "any"):
+            return True
+        if expected == "string":
+            return isinstance(value, str)
+        if expected in {"integer", "number"}:
+            return isinstance(value, (int, float)) and not isinstance(value, bool)
+        if expected == "boolean":
+            return isinstance(value, bool)
+        if expected == "array":
+            return isinstance(value, list)
+        if expected == "object":
+            return isinstance(value, dict)
+        return True
+
+    def validate_arguments(self, tool: str, arguments: dict) -> None:
+        if not isinstance(arguments, dict):
+            raise ExecutionError("MCP_TOOL_ARGUMENTS_INVALID", tool)
+        contract = self.tool_contract(tool)
+        if not contract:
+            return
+        fields = contract.get("input_fields") or []
+        allowed = {f.get("name") for f in fields if f.get("name")}
+        unknown = set(arguments) - allowed
+        if unknown:
+            raise ExecutionError("MCP_TOOL_ARGUMENT_UNKNOWN", f"{tool}:{','.join(sorted(unknown))}")
+        for field in fields:
+            name = field.get("name")
+            if field.get("required") and name not in arguments:
+                raise ExecutionError("MCP_TOOL_ARGUMENT_REQUIRED", f"{tool}:{name}")
+            if name in arguments:
+                value = arguments[name]
+                if not self._type_ok(value, field.get("type")):
+                    raise ExecutionError("MCP_TOOL_ARGUMENT_TYPE", f"{tool}:{name}:{field.get('type')}")
+                enum = field.get("enum")
+                if isinstance(enum, list) and enum and value not in enum:
+                    raise ExecutionError("MCP_TOOL_ARGUMENT_ENUM", f"{tool}:{name}")
+
+    def validate_tool(self, capability: str, tool: str, arguments: dict | None = None) -> dict:
         entry = self.capability_map.get(capability)
         if not entry:
             raise ExecutionError("MISSING_CAPABILITY", capability)
@@ -512,6 +557,7 @@ class CapabilityResolver:
         candidate = next((c for c in candidates if self._project_scope_ok(c)), None)
         if candidate is None:
             raise ExecutionError("CAPABILITY_PROJECT_SCOPE_MISMATCH", f"{capability}:{tool}:{self.package.get('project_id')}")
+        self.validate_arguments(tool, arguments or {})
         return candidate
 
     def resolve_required(self, required: list[str], steps: dict) -> dict:
@@ -522,7 +568,7 @@ class CapabilityResolver:
                 cap = step.get("capability")
                 tool = step.get("tool")
                 if cap and tool:
-                    candidate = self.validate_tool(cap, tool)
+                    candidate = self.validate_tool(cap, tool, step.get("arguments") or {})
                     bound.append((cap, tool))
                     resolved.setdefault(cap, candidate)
         missing = []
@@ -620,7 +666,7 @@ def run_mcp_steps(steps: list[dict], resolver: CapabilityResolver, package: dict
         tool = step.get("tool")
         if not capability or not tool:
             raise ExecutionError("MCP_STEP_BINDING_INVALID", str(index))
-        candidate = resolver.validate_tool(capability, tool)
+        candidate = resolver.validate_tool(capability, tool, step.get("arguments") or {})
         result = client.call_tool(tool, copy.deepcopy(step.get("arguments") or {}))
         evidence.append({
             "index": index,
