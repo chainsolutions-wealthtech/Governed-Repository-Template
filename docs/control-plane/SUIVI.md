@@ -509,3 +509,11 @@ Owner clarified that `BOTH` means “configure both so the system can intelligen
 Live source review confirmed the defect: the discovery runner currently executes DIRECT and then SSH for `BOTH`, and its historical summarizer expects combined evidence.
 
 C1-13-I-A corrects the Template first. Ekyc remains untouched. Its prior DIRECT PASS is authorized evidence and will be migrated as the selected current route after the generic release; corrected SSH becomes an alternate configured route with independent readiness.
+
+## 2026-09-30 — Ekyc resumes after BOTH smart-routing migration
+
+PR #70 and its post-merge CI proved the generic correction. The governed v2.8.14 upgrade migrated Ekyc from revision 38 to revision 39 and reused the explicitly authorized DIRECT PASS from run 36644247227.
+
+Ekyc now records DIRECT as the selected successful route and SSH as `CONFIGURED_NOT_ATTESTED`; no coupled rediscovery occurred.
+
+All target workflows on the new Ekyc HEAD passed. The next unresolved step is `Q_DOMAIN_BINDING`. Discovery found no Ekyc registration/domain, so the factual part is resolved and only the owner's domain-binding intent remains.
