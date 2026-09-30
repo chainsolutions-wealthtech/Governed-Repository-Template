@@ -28,6 +28,8 @@ def main():
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: read authority")
     if authority_for_surface("scoped-write") != "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED":
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: scoped write authority")
+    if authority_for_surface("operational-write") != "GOVERNED_OPERATIONAL_AUTHORITY_REQUIRED":
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: operational authority")
     tags = classify_tool({"name": "deploy_project_s2", "description": "Deploy repository on S2 runtime"})
     if not {"DEPLOYMENT", "REPOSITORY", "SERVER_RUNTIME"}.intersection(tags):
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: tool classification")
@@ -54,6 +56,8 @@ def main():
                 {"name": "deploy_project_s2", "title": "Deploy", "description": "Deploy repository on S2", "surface": "scoped-write", "contractDigest": "7"},
                 {"name": "mcp_get_current_state_inventory", "title": "State", "description": "Read governed current state inventory", "surface": "read", "contractDigest": "8"},
                 {"name": "mcp_claim_next_governed_task", "title": "Claim", "description": "Claim next governed task", "surface": "operational-write", "contractDigest": "9"},
+                {"name": "run_sql_readonly_s2", "title": "OPCVM SQL", "description": "Read-only SQL for OPCVM on S2", "surface": "read", "contractDigest": "10"},
+                {"name": "brvm_run_sql_readonly_s2", "title": "BRVM SQL", "description": "Read-only SQL for BRVM on S2", "surface": "scoped-write", "contractDigest": "11"},
             ],
         },
         "contradictions": [],
@@ -73,6 +77,8 @@ def main():
             {"name": "deploy_project_s2", "title": "Deploy", "description": "Deploy repository on S2", "annotations": {"readOnlyHint": False, "destructiveHint": True}, "inputSchema": {"type": "object", "properties": {"project": {"type": "string", "enum": ["demo"]}}, "required": ["project"]}},
             {"name": "mcp_get_current_state_inventory", "title": "State", "description": "Read governed current state inventory", "annotations": {"readOnlyHint": True, "destructiveHint": False}, "inputSchema": {}},
             {"name": "mcp_claim_next_governed_task", "title": "Claim", "description": "Claim next governed task", "annotations": {"readOnlyHint": False, "destructiveHint": False}, "inputSchema": {"type": "object"}},
+            {"name": "run_sql_readonly_s2", "title": "OPCVM SQL", "description": "Read-only SQL for OPCVM on S2", "annotations": {"readOnlyHint": True, "destructiveHint": False}, "inputSchema": {"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]}},
+            {"name": "brvm_run_sql_readonly_s2", "title": "BRVM SQL", "description": "Read-only SQL for BRVM on S2", "annotations": {"readOnlyHint": True, "destructiveHint": False}, "inputSchema": {"type": "object", "properties": {"query": {"type": "string"}}, "required": ["query"]}},
         ]}),
         resources_response=envelope({"resources": [{"name": "inventory", "uri": "mcp://wealthtech/current-state/inventory", "mimeType": "application/json"}]}),
         inventory_response=tool_envelope(inventory),
@@ -94,7 +100,7 @@ def main():
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: project id summary / metadata-line filtering")
     if snapshot["write_context_summary"].get("project_paths_persisted") is not False:
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: project paths policy")
-    if snapshot["catalogue"]["counts"]["tools"] != 9:
+    if snapshot["catalogue"]["counts"]["tools"] != 11:
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: tool count")
     deploy = next(item for item in snapshot["catalogue"]["tools"] if item["name"] == "deploy_project_s2")
     if deploy["surface"] != "scoped-write" or deploy["authority_required"] != "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED":
@@ -102,6 +108,9 @@ def main():
     capabilities = derive_capability_map(snapshot["catalogue"]["tools"])
     if capabilities["SERVER_FILESYSTEM_CHANGE"]["availability"] != "NOT_EXPOSED_BY_CURRENT_MCP_CATALOGUE":
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: missing generic server filesystem surface must remain explicit")
+    database_cap = capabilities["DATABASE_READ_OBSERVATION"]
+    if database_cap["availability"] != "AVAILABLE_ONLY_PROJECT_SPECIFIC":
+        raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: project-specific database observation scope")
     deploy_cap = capabilities["DEPLOYMENT_RUNTIME_CHANGE"]
     if deploy_cap["availability"] != "AVAILABLE_PROJECT_REGISTRY_SCOPED":
         raise SystemExit("MCP_CAPABILITY_SNAPSHOT_SELFTEST_FAILED: project-registry scoped deployment classification")

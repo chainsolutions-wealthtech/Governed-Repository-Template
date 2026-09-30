@@ -385,7 +385,9 @@ def normalize_surface(value):
 def authority_for_surface(surface: str):
     if surface == "read":
         return "READ_ONLY_DISCOVERY_AUTHORITY"
-    if surface in {"operational-write", "scoped-write"}:
+    if surface == "operational-write":
+        return "GOVERNED_OPERATIONAL_AUTHORITY_REQUIRED"
+    if surface == "scoped-write":
         return "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED"
     return "AUTHORITY_CLASSIFICATION_REQUIRED"
 
@@ -465,6 +467,8 @@ def tool_project_scope(tool: dict):
             "mode": "PROJECT_REGISTRY_SCOPED",
             "project_ids": [str(value) for value in project_field["enum"] if isinstance(value, str)][:100],
         }
+    if name in {"run_sql_readonly_s2"}:
+        return {"mode": "PROJECT_SPECIFIC", "project_ids": ["api_opcv"]}
     if name.startswith(("sadiaaf_", "legacy_vhost_", "legacy_funds_", "nigeria_", "amf_registry_", "brvm_")):
         return {"mode": "PROJECT_SPECIFIC", "project_ids": []}
     if name.startswith(("mcp_build_", "mcp_sync_", "mcp_typecheck_", "restart_mcp_", "patch_mcp_", "read_mcp_", "search_mcp_", "scan_mcp_")):

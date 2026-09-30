@@ -560,3 +560,12 @@ Therefore `C1-13-E-B` is DONE and `C1-13-E` is again the active dependency task,
 - Existing repo facts must answer questionnaire fields automatically.
 - Missing capabilities remain explicit `NOT_EXPOSED_BY_CURRENT_MCP_CATALOGUE`; a scoped capability request is prepared only when the concrete project operation requires it.
 - PR #63 must be superseded after the refined engine is merged and a new live refresh is generated.
+
+### C1-13-H scope refinement before final snapshot
+
+Semantic QA of refreshed PR #66 found two final scope distinctions before canonical merge:
+
+- `operational-write` is governed coordination authority, not server/runtime mutation authority;
+- `run_sql_readonly_s2` is historically OPCVM-specific and must not make database observation appear generic for unrelated projects.
+
+These are framework refinements. PR #66 remains unmerged until the corrected engine regenerates a new snapshot.
