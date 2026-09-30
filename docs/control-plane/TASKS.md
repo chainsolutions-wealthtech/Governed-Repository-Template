@@ -569,3 +569,29 @@ Semantic QA of refreshed PR #66 found two final scope distinctions before canoni
 - `run_sql_readonly_s2` is historically OPCVM-specific and must not make database observation appear generic for unrelated projects.
 
 These are framework refinements. PR #66 remains unmerged until the corrected engine regenerates a new snapshot.
+
+### C1-13-H completion attestation
+
+- Status: `DONE`.
+- Authority: `CP-MCP-CAP-001`.
+- Capability model: `1.0.0`.
+- Snapshot schema: `1.1.0`.
+- Canonical snapshot merge: `6c293a809df15b85fe40685b3a0f6a3508e1ee4d`.
+- Final post-merge Governance CI: `36652771078` PASS.
+- Live catalogue: 135 tools / 2 resources.
+- Case mapping is capability-sized, not catalogue-sized.
+- Existing repository observation resolves questionnaire fields before owner interaction.
+- Missing mutation surfaces become bounded future capability requirements only when concretely needed.
+- Existing Loop Engineering remains the only execution engine.
+
+### C1-13-I corrected BOTH discovery approval
+
+- Parent: `P12-S5 / C1-13`.
+- Depends on: `C1-13-H`.
+- Status: `IN_PROGRESS`.
+- Gate: `OWNER_APPROVAL_REQUIRED_FOR_MATERIALLY_CHANGED_BOTH_DISCOVERY_PLAN`.
+- Ekyc HEAD: `4d552458afab32df12aaafd6c7290fab6246d96b`.
+- Ekyc#1: revision 38, `WAITING_FOR_DISCOVERY_APPROVAL / MCP_DISCOVERY_APPROVAL`.
+- Current discovery: null.
+- First-agent baseline: not applied.
+- The corrected plan retains read-only discovery only; prior approval cannot be reused because the SSH target materially changed.

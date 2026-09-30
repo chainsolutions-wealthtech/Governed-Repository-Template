@@ -491,3 +491,13 @@ The live catalogue remains valid evidence; only its planning projection is rejec
 The refinement branch `governance/refine-mcp-capability-map` now implements a capability-first model and observation-first questionnaire resolution. The purpose is not to know every tool exhaustively. It is to let an agent know, before asking the owner, which facts can already be observed and which MCP capability/authority would be needed for a concrete next operation.
 
 Ekyc remains independently frozen at its corrected discovery approval gate, revision 38.
+
+## 2026-09-30 — Capability-first MCP memory canonical; return to Ekyc
+
+The raw-tool snapshot approach was refined through two semantic QA cycles before canonical merge. PRs #63 and #66 were deliberately closed unmerged. PR #65 established capability-first/adaptive-question semantics; PR #67 separated project scope and governed operational authority; the final refresh generated PR #68.
+
+PR #68 merged at `6c293a809df15b85fe40685b3a0f6a3508e1ee4d`, and post-merge Governance CI `36652771078` passed.
+
+C1-13-H is therefore DONE. The Template now knows both (a) stable project capabilities/question-resolution rules and (b) the refreshable current MCP implementation image.
+
+Ekyc remains intentionally untouched at revision 38. CASE 1 resumes at C1-13-I: explicit approval of the corrected read-only BOTH discovery plan.
