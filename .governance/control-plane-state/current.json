@@ -76,6 +76,24 @@
       "status": "CASE1_GENERIC_CORRECTION_IN_PROGRESS",
       "execution_model": "EXISTING_LOOP_ENGINEERING",
       "parallel_engine": false
+    },
+    "adaptive_choice_question_catalogue": {
+      "authority_id": "CP-ADAPTIVE-QUESTIONS-001",
+      "decision_id": "CPD-036",
+      "status": "PLANNING_ONLY_NOT_RUNTIME_BOUND",
+      "question_count": 34,
+      "choice_based": true,
+      "one_question_at_a_time": true,
+      "observation_first": true,
+      "parallel_engine": false,
+      "runtime_binding": "DEFERRED_INCREMENTAL_AQI_04_PLUS",
+      "artifacts": [
+        "docs/control-plane/ADAPTIVE_CHOICE_QUESTION_CATALOGUE.md",
+        ".governance/control-plane-state/adaptive-question-catalogue.json",
+        "scripts/adaptive_question_planner.py",
+        "scripts/test_adaptive_question_catalogue.py"
+      ],
+      "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
     }
   },
   "framework_product_boundary": {

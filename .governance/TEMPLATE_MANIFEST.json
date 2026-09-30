@@ -130,7 +130,11 @@
       "scripts/control_plane_mcp_capability_snapshot.py",
       "scripts/test_control_plane_mcp_capability_snapshot.py",
       "docs/control-plane/MCP_CAPABILITY_MODEL.md",
-      ".governance/control-plane-state/mcp-capability-snapshot.json"
+      ".governance/control-plane-state/mcp-capability-snapshot.json",
+      "docs/control-plane/ADAPTIVE_CHOICE_QUESTION_CATALOGUE.md",
+      ".governance/control-plane-state/adaptive-question-catalogue.json",
+      "scripts/adaptive_question_planner.py",
+      "scripts/test_adaptive_question_catalogue.py"
     ],
     "local_entry_ui": [
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml"
@@ -145,7 +149,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.14",
+  "template_version": "2.8.15",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -289,7 +293,13 @@
     "BOTH transport means dual-ready smart routing rather than coupled execution",
     "one successful selected MCP route satisfies current discovery",
     "alternate transport readiness is tracked independently",
-    "legacy authorized direct PASS may migrate without redundant network replay"
+    "legacy authorized direct PASS may migrate without redundant network replay",
+    "choice-based adaptive project questionnaire",
+    "dynamic choices derived from observed repositories servers domains paths runtimes and databases",
+    "one-question-at-a-time observation-first owner decision flow",
+    "question answers prepare and derive but never authorize execution",
+    "incremental AQI implementation slices with source-only unit and E2E fixtures",
+    "AfricaFunds existing-project replay fixture without project hard-coding"
   ],
   "automatic_initialization_supported": true
 }

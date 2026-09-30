@@ -1,0 +1,1264 @@
+{
+  "schema_version": "1.0.0",
+  "authority_id": "CP-ADAPTIVE-QUESTIONS-001",
+  "status": "PLANNING_ONLY_NOT_RUNTIME_BOUND",
+  "purpose": "CHOICE_BASED_ADAPTIVE_QUESTION_CATALOGUE_FOR_CREATE_ADOPT_MAP_LAB",
+  "principles": [
+    "COMPLEMENT_EXISTING_GOVERNANCE_NO_PARALLEL_ENGINE",
+    "OBSERVE_AND_REUSE_BEFORE_ASK",
+    "ONE_QUESTION_AT_A_TIME",
+    "ANSWERS_ARE_CHOICES_NOT_FREEFORM_BY_DEFAULT",
+    "DYNAMIC_CHOICES_MAY_BE_GENERATED_FROM_OBSERVED_FACTS",
+    "UNKNOWN_DISCOVER_AND_DECIDE_LATER_ARE_VALID_CHOICES_WHERE_APPROPRIATE",
+    "ANSWER_NE_EXECUTION_AUTHORITY",
+    "QUESTION_EFFECTS_PREPARE_DERIVE_CLASSIFY_OR_GATE_ONLY",
+    "EXISTING_PROJECTS_ARE_ADOPTED_DIFFERENTIALLY",
+    "NO_DESTRUCTIVE_REBUILD_BY_DEFAULT"
+  ],
+  "cases": [
+    "CREATE_NEW_REPOSITORY",
+    "ADOPT_EXISTING_REPOSITORY",
+    "MAP_EXISTING_PROJECT",
+    "LAB_EVOLUTION"
+  ],
+  "resolution_policies": {
+    "OBSERVED_FACT_AUTO_RESOLVE": "Reuse fresh observed fact without asking.",
+    "OBSERVED_THEN_OWNER_IF_AMBIGUOUS": "Auto-resolve one unambiguous observed factual candidate; otherwise present observed candidates as choices.",
+    "OWNER_CHOICE_REQUIRED": "Always ask the owner because this is a decision, even if observations provide candidate values."
+  },
+  "effect_kinds": [
+    "CLASSIFY",
+    "DERIVE",
+    "PREPARE",
+    "SCHEDULE",
+    "GATE"
+  ],
+  "question_groups": [
+    "IDENTITY_TOPOLOGY",
+    "GOVERNANCE_POSTURE",
+    "INFRASTRUCTURE",
+    "DOMAIN_NETWORK",
+    "RUNTIME_DATA",
+    "DELIVERY_OPERATIONS",
+    "MCP_ACCESS",
+    "AUTHORITY_SECURITY",
+    "QUALITY_RECOVERY"
+  ],
+  "questions": [
+    {
+      "id": "AQ-001",
+      "group": "IDENTITY_TOPOLOGY",
+      "field": "project_existence",
+      "text": "Le projet est-il nouveau, existant ou hybride ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OBSERVED_FACT_AUTO_RESOLVE",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "NEW",
+            "EXISTING",
+            "HYBRID",
+            "UNKNOWN_DISCOVER"
+          ]
+        }
+      },
+      "observed_fact_key": "project.existence",
+      "effects": [
+        {
+          "kind": "CLASSIFY",
+          "target": "project.lifecycle"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-002",
+      "group": "IDENTITY_TOPOLOGY",
+      "field": "git_provider",
+      "text": "Quel fournisseur Git porte le projet ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OBSERVED_FACT_AUTO_RESOLVE",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "GITHUB",
+            "GITLAB",
+            "MULTI_PROVIDER",
+            "UNKNOWN_DISCOVER"
+          ]
+        }
+      },
+      "observed_fact_key": "git.provider",
+      "effects": [
+        {
+          "kind": "DERIVE",
+          "target": "provider.adapter"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-003",
+      "group": "IDENTITY_TOPOLOGY",
+      "field": "repository_topology",
+      "text": "Quelle topologie de repositories s'applique ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OBSERVED_FACT_AUTO_RESOLVE",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "SINGLE_REPOSITORY",
+            "MULTI_REPOSITORY",
+            "MONOREPO",
+            "UNKNOWN_DISCOVER"
+          ]
+        }
+      },
+      "observed_fact_key": "repository.topology",
+      "effects": [
+        {
+          "kind": "DERIVE",
+          "target": "repository.scope_graph"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-004",
+      "group": "IDENTITY_TOPOLOGY",
+      "field": "repository_members",
+      "text": "Quels repositories observés appartiennent au projet ?",
+      "applies_to": [
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "MANY",
+        "choice_source": {
+          "type": "OBSERVED",
+          "kind": "REPOSITORIES",
+          "fallback_values": [
+            "DISCOVER_MORE",
+            "NONE_OF_THESE"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "CLASSIFY",
+          "target": "project.repositories"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-005",
+      "group": "GOVERNANCE_POSTURE",
+      "field": "environment_scope",
+      "text": "Quel environnement représente ce périmètre ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OBSERVED_THEN_OWNER_IF_AMBIGUOUS",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "OBSERVED_PLUS_STATIC",
+          "kind": "ENVIRONMENTS",
+          "static_values": [
+            "PRODUCTION",
+            "STAGING",
+            "DEVELOPMENT",
+            "MULTI_ENVIRONMENT",
+            "UNKNOWN_DISCOVER"
+          ]
+        }
+      },
+      "observed_fact_key": "environment.scope",
+      "effects": [
+        {
+          "kind": "CLASSIFY",
+          "target": "environment.scope"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-006",
+      "group": "GOVERNANCE_POSTURE",
+      "field": "governance_adoption_posture",
+      "text": "Comment traiter la gouvernance déjà présente ?",
+      "applies_to": [
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "PRESERVE_AND_COMPLETE",
+            "ALIGN_WITH_TARGET_MODEL",
+            "MIGRATE_LEGACY_INCREMENTALLY",
+            "MAP_ONLY_NO_CHANGE",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "PREPARE",
+          "target": "governance.gap_analysis"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-007",
+      "group": "GOVERNANCE_POSTURE",
+      "field": "project_profile",
+      "text": "Quel profil de projet doit piloter les exigences applicables ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OBSERVED_THEN_OWNER_IF_AMBIGUOUS",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "OBSERVED_PLUS_STATIC",
+          "kind": "PROJECT_PROFILES",
+          "static_values": [
+            "generic",
+            "application",
+            "chainsolutions-fullstack-web",
+            "data-platform",
+            "UNKNOWN_DISCOVER"
+          ]
+        }
+      },
+      "observed_fact_key": "project.profile",
+      "effects": [
+        {
+          "kind": "DERIVE",
+          "target": "profile.requirements"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-008",
+      "group": "GOVERNANCE_POSTURE",
+      "field": "architecture_posture",
+      "text": "Que faut-il faire de l'architecture observée ?",
+      "applies_to": [
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "PRESERVE_EXISTING",
+            "ALIGN_INCREMENTALLY",
+            "MIGRATE_SELECTED_PARTS",
+            "TARGET_MODEL_ONLY_NO_CHANGE",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "PREPARE",
+          "target": "architecture.gap_tasks"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-009",
+      "group": "INFRASTRUCTURE",
+      "field": "server_binding_mode",
+      "text": "Le projet a-t-il déjà une cible serveur exploitable ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OBSERVED_FACT_AUTO_RESOLVE",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "EXISTING_SINGLE",
+            "EXISTING_MULTI",
+            "NONE_PLAN_NEW",
+            "UNKNOWN_DISCOVER"
+          ]
+        }
+      },
+      "observed_fact_key": "infrastructure.server_binding_mode",
+      "effects": [
+        {
+          "kind": "CLASSIFY",
+          "target": "infrastructure.server_binding"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-010",
+      "group": "INFRASTRUCTURE",
+      "field": "server_selection",
+      "text": "Quel serveur observé doit être associé au projet ?",
+      "applies_to": [
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OBSERVED_THEN_OWNER_IF_AMBIGUOUS",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "MANY",
+        "choice_source": {
+          "type": "OBSERVED_PLUS_STATIC",
+          "kind": "SERVERS",
+          "static_values": [
+            "PLAN_NEW_SERVER",
+            "DISCOVER_MORE",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "PREPARE",
+          "target": "infrastructure.server_binding"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-011",
+      "group": "INFRASTRUCTURE",
+      "field": "deployment_path_posture",
+      "text": "Comment traiter les chemins de déploiement observés ?",
+      "applies_to": [
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "REUSE_OBSERVED_PATHS",
+            "ALIGN_EXISTING_PATHS",
+            "PLAN_NEW_PATHS",
+            "MAP_ONLY",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "PREPARE",
+          "target": "deployment.paths"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-012",
+      "group": "INFRASTRUCTURE",
+      "field": "deployment_path_selection",
+      "text": "Quels chemins observés appartiennent réellement au projet ?",
+      "applies_to": [
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OBSERVED_THEN_OWNER_IF_AMBIGUOUS",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "MANY",
+        "choice_source": {
+          "type": "OBSERVED_PLUS_STATIC",
+          "kind": "DEPLOYMENT_PATHS",
+          "static_values": [
+            "DISCOVER_MORE",
+            "PLAN_NEW_PATH"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "CLASSIFY",
+          "target": "deployment.path_bindings"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-013",
+      "group": "DOMAIN_NETWORK",
+      "field": "domain_posture",
+      "text": "Que faut-il faire pour le ou les domaines ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "REUSE_EXISTING",
+            "CREATE_NEW",
+            "REUSE_AND_ADD",
+            "NO_DOMAIN_REQUIRED",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "PREPARE",
+          "target": "domain.plan"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-014",
+      "group": "DOMAIN_NETWORK",
+      "field": "domain_selection",
+      "text": "Quels domaines observés sont liés au projet ?",
+      "applies_to": [
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OBSERVED_THEN_OWNER_IF_AMBIGUOUS",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "MANY",
+        "choice_source": {
+          "type": "OBSERVED_PLUS_STATIC",
+          "kind": "DOMAINS",
+          "static_values": [
+            "NONE_OF_THESE",
+            "DISCOVER_MORE"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "CLASSIFY",
+          "target": "domain.bindings"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-015",
+      "group": "DOMAIN_NETWORK",
+      "field": "dns_tls_posture",
+      "text": "Comment traiter DNS et TLS ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "PRESERVE_IF_VALID",
+            "VERIFY_AND_COMPLETE",
+            "PLAN_NEW",
+            "MAP_ONLY",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "PREPARE",
+          "target": "network.dns_tls_tasks"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-016",
+      "group": "RUNTIME_DATA",
+      "field": "runtime_posture",
+      "text": "Que faut-il faire du runtime observé ?",
+      "applies_to": [
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "PRESERVE_RUNTIME",
+            "ALIGN_RUNTIME",
+            "MIGRATE_RUNTIME",
+            "MAP_ONLY",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "PREPARE",
+          "target": "runtime.tasks"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-017",
+      "group": "RUNTIME_DATA",
+      "field": "runtime_selection",
+      "text": "Quels runtimes/process managers observés sont réellement utilisés ?",
+      "applies_to": [
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OBSERVED_THEN_OWNER_IF_AMBIGUOUS",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "MANY",
+        "choice_source": {
+          "type": "OBSERVED_PLUS_STATIC",
+          "kind": "RUNTIMES",
+          "static_values": [
+            "DISCOVER_MORE",
+            "NONE"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "CLASSIFY",
+          "target": "runtime.bindings"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-018",
+      "group": "RUNTIME_DATA",
+      "field": "database_posture",
+      "text": "Comment traiter la base de données ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "REUSE_EXISTING",
+            "CREATE_NEW",
+            "REUSE_AND_EXTEND",
+            "NO_DATABASE",
+            "DISCOVER_FIRST",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "PREPARE",
+          "target": "database.plan"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-019",
+      "group": "RUNTIME_DATA",
+      "field": "database_selection",
+      "text": "Quelle base observée appartient au projet ?",
+      "applies_to": [
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OBSERVED_THEN_OWNER_IF_AMBIGUOUS",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "MANY",
+        "choice_source": {
+          "type": "OBSERVED_PLUS_STATIC",
+          "kind": "DATABASES",
+          "static_values": [
+            "NONE_OF_THESE",
+            "DISCOVER_MORE"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "CLASSIFY",
+          "target": "database.bindings"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-020",
+      "group": "RUNTIME_DATA",
+      "field": "external_system_posture",
+      "text": "Comment traiter les systèmes externes détectés ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "REUSE_EXISTING_INTEGRATIONS",
+            "VERIFY_AND_KEEP",
+            "REPLACE_SELECTED",
+            "ADD_NEW",
+            "NONE",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "PREPARE",
+          "target": "external_systems.tasks"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-021",
+      "group": "DELIVERY_OPERATIONS",
+      "field": "ci_cd_posture",
+      "text": "Comment traiter le CI/CD existant ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "PRESERVE_IF_VALID",
+            "ALIGN_INCREMENTALLY",
+            "CREATE_IF_MISSING",
+            "MAP_ONLY",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "PREPARE",
+          "target": "delivery.ci_cd"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-022",
+      "group": "DELIVERY_OPERATIONS",
+      "field": "deployment_strategy",
+      "text": "Quel modèle de déploiement doit être retenu ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "PRESERVE_OBSERVED",
+            "GIT_TO_SERVER_GOVERNED",
+            "CONTAINER_GOVERNED",
+            "PLESK_GOVERNED",
+            "NO_DEPLOYMENT",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "DERIVE",
+          "target": "delivery.task_dag"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-023",
+      "group": "DELIVERY_OPERATIONS",
+      "field": "observability_posture",
+      "text": "Quel niveau d'observabilité faut-il préparer ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "PRESERVE_EXISTING",
+            "VERIFY_AND_COMPLETE",
+            "ADD_MINIMUM_HEALTH",
+            "ADD_FULL_MONITORING",
+            "NONE",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "PREPARE",
+          "target": "operations.observability"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-024",
+      "group": "DELIVERY_OPERATIONS",
+      "field": "backup_rollback_posture",
+      "text": "Quel niveau de sauvegarde/rollback faut-il préparer ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "PRESERVE_EXISTING",
+            "VERIFY_AND_COMPLETE",
+            "REQUIRE_BEFORE_WRITE",
+            "NOT_APPLICABLE",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "GATE",
+          "target": "operations.rollback_readiness"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-025",
+      "group": "MCP_ACCESS",
+      "field": "mcp_linkage",
+      "text": "Le projet doit-il être lié au MCP gouverné ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "REUSE_EXISTING_BINDING",
+            "CREATE_BINDING",
+            "VERIFY_EXISTING_BINDING",
+            "NO_MCP",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "PREPARE",
+          "target": "mcp.binding"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-026",
+      "group": "MCP_ACCESS",
+      "field": "mcp_transport",
+      "text": "Quelles routes MCP doivent être préparées ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "DIRECT_MCP_TOKEN",
+            "SSH",
+            "BOTH",
+            "NO_MCP"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "DERIVE",
+          "target": "mcp.transport_requirements"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-027",
+      "group": "MCP_ACCESS",
+      "field": "mcp_scope",
+      "text": "Quel périmètre d'observation MCP faut-il préparer ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "PROJECT_ONLY",
+            "PROJECT_AND_RUNTIME",
+            "FULL_GOVERNED_MAPPING",
+            "NO_DISCOVERY",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "PREPARE",
+          "target": "mcp.discovery_plan"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-028",
+      "group": "AUTHORITY_SECURITY",
+      "field": "authority_envelope",
+      "text": "Quel niveau d'autorité permanente peut être préparé pour Loop Engineering ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "READ_ONLY",
+            "SCOPED_GIT_WRITE",
+            "SCOPED_RUNTIME_WRITE",
+            "SCOPED_DEPLOY",
+            "SCOPED_FULL_LIFECYCLE",
+            "PER_ACTION_APPROVAL",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "PREPARE",
+          "target": "authority.envelope"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-029",
+      "group": "AUTHORITY_SECURITY",
+      "field": "secret_provisioning",
+      "text": "Comment les secrets nécessaires doivent-ils être fournis ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "REUSE_EXISTING_SECURE_SOURCE",
+            "OIDC_OR_SHORT_LIVED_IDENTITY",
+            "GITHUB_OR_GITLAB_SECRET",
+            "SERVER_SECRET_STORE",
+            "NO_SECRET_REQUIRED",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "PREPARE",
+          "target": "secrets.provisioning"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-030",
+      "group": "AUTHORITY_SECURITY",
+      "field": "data_classification",
+      "text": "Quelle classification de données s'applique ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "PUBLIC",
+            "INTERNAL",
+            "CONFIDENTIAL",
+            "SENSITIVE_PERSONAL",
+            "REGULATED",
+            "MIXED",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "DERIVE",
+          "target": "security.controls"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-031",
+      "group": "AUTHORITY_SECURITY",
+      "field": "compliance_profile",
+      "text": "Quel profil de conformité doit être prévu ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "NONE",
+            "PERSONAL_DATA",
+            "FINANCIAL_SERVICES",
+            "KYC_AML",
+            "PCI_LIKE",
+            "MULTI_PROFILE",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "DERIVE",
+          "target": "compliance.requirements"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-032",
+      "group": "QUALITY_RECOVERY",
+      "field": "test_posture",
+      "text": "Quel niveau de tests doit être préparé avant modification ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "PRESERVE_EXISTING_TESTS",
+            "ADD_UNIT_ONLY",
+            "ADD_UNIT_AND_INTEGRATION",
+            "ADD_FULL_E2E",
+            "MAP_ONLY",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "PREPARE",
+          "target": "quality.test_plan"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-033",
+      "group": "QUALITY_RECOVERY",
+      "field": "gap_action_policy",
+      "text": "Comment transformer les écarts observés en travail futur ?",
+      "applies_to": [
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "REUSE_ALIGN_CREATE_VERIFY",
+            "PREPARE_ONLY",
+            "PREPARE_AND_AUTO_EXECUTE_WITHIN_AUTHORITY",
+            "MAP_ONLY",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "DERIVE",
+          "target": "gap.task_dag"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-034",
+      "group": "QUALITY_RECOVERY",
+      "field": "execution_timing",
+      "text": "Quand les tâches préparées peuvent-elles être exécutées ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY",
+        "ADOPT_EXISTING_REPOSITORY",
+        "MAP_EXISTING_PROJECT",
+        "LAB_EVOLUTION"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "STATIC",
+          "values": [
+            "PREPARE_ONLY_NOW",
+            "AUTO_WHEN_DEPENDENCIES_AND_AUTHORITY_READY",
+            "EXPLICIT_APPROVAL_PER_MUTATION",
+            "HOLD_ALL_EXECUTION"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "SCHEDULE",
+          "target": "loop_engineering.execution_policy"
+        }
+      ],
+      "execution_authority_granted": false
+    }
+  ],
+  "future_incremental_implementation": [
+    {
+      "id": "AQI-01",
+      "status": "DONE_IN_THIS_SLICE",
+      "objective": "Persist choice-based catalogue and invariants"
+    },
+    {
+      "id": "AQI-02",
+      "status": "DONE_IN_THIS_SLICE",
+      "objective": "Add pure no-side-effect question planner skeleton"
+    },
+    {
+      "id": "AQI-03",
+      "status": "DONE_IN_THIS_SLICE",
+      "objective": "Add unit and E2E fixture tests for NEW and EXISTING cases"
+    },
+    {
+      "id": "AQI-04",
+      "status": "PLANNED",
+      "objective": "Bind selected catalogue questions into existing local_governed_entry without replacing its state machine",
+      "depends_on": [
+        "P12-S5_OR_LATER_APPROPRIATE_GATE"
+      ]
+    },
+    {
+      "id": "AQI-05",
+      "status": "PLANNED",
+      "objective": "Project derived requirements into existing Loop Engineering task graph",
+      "depends_on": [
+        "GMC-G13",
+        "GMC-G18"
+      ]
+    },
+    {
+      "id": "AQI-06",
+      "status": "PLANNED",
+      "objective": "Add provider adapters for GitHub/GitLab dynamic choice discovery",
+      "depends_on": [
+        "GMC-G18"
+      ]
+    },
+    {
+      "id": "AQI-07",
+      "status": "PLANNED",
+      "objective": "Add standing AuthorityEnvelope auto-execution routing",
+      "depends_on": [
+        "GMC-G18"
+      ]
+    },
+    {
+      "id": "AQI-08",
+      "status": "PLANNED",
+      "objective": "Cross-case E2E validate question reuse and no-regression behavior",
+      "depends_on": [
+        "GMC-G19"
+      ]
+    }
+  ],
+  "consumed_by": [
+    "C1-13",
+    "ADOPT_EXISTING_REPOSITORY",
+    "MAP_EXISTING_PROJECT",
+    "LAB_EVOLUTION",
+    "GMC-G13",
+    "GMC-G18",
+    "GMC-G19"
+  ]
+}
