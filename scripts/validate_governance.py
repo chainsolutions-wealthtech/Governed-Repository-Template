@@ -528,6 +528,23 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
             fail("canonical architecture status mismatch")
         if canonical_arch.get("revision", {}).get("approval_eligible_from_imported_memory") is not False:
             fail("imported architecture memory must never satisfy live approval")
+        if mcp_capability.get("schema_version") != "1.1.0":
+            fail("MCP capability snapshot schema version mismatch")
+        if mcp_capability.get("capability_model_version") != "1.0.0":
+            fail("MCP capability model version mismatch")
+        stable_capabilities = mcp_capability.get("stable_capability_ids") or []
+        if len(stable_capabilities) < 10 or len(stable_capabilities) != len(set(stable_capabilities)):
+            fail("MCP stable capability registry missing or duplicated")
+        question_contract = mcp_capability.get("question_resolution_contract") or {}
+        if question_contract.get("principle") != "OBSERVE_AND_REUSE_BEFORE_ASK":
+            fail("MCP question resolution principle mismatch")
+        if question_contract.get("never_reask_fresh_resolved_fact") is not True:
+            fail("MCP resolved facts must not be re-asked")
+        capability_map = mcp_capability.get("capability_map") or {}
+        if set(stable_capabilities) - set(capability_map):
+            fail("MCP capability map missing stable capabilities")
+        if (capability_map.get("SERVER_FILESYSTEM_CHANGE") or {}).get("missing_surface_action") != "PREPARE_SCOPED_CAPABILITY_REQUEST_ONLY_WHEN_OPERATION_IS_REQUIRED":
+            fail("MCP missing capability planning contract mismatch")
         if mcp_capability.get("authority_id") != "CP-MCP-CAP-001":
             fail("MCP capability snapshot authority id mismatch")
         if mcp_capability.get("authority_type") != "MCP_CAPABILITY_SNAPSHOT":
