@@ -175,12 +175,11 @@ jobs:
 
       - name: Execute governed package
         env:
-          GOVERNED_TARGET_TOKEN: >-
-            ${{ steps.read-token.outputs.token || steps.git-token.outputs.token || steps.secret-repo-token.outputs.token || steps.secret-env-token.outputs.token || steps.admin-token.outputs.token || steps.webhook-token.outputs.token || steps.environment-token.outputs.token || steps.variable-token.outputs.token || steps.actions-token.outputs.token || steps.deployment-token.outputs.token }}
-          GOVERNED_MCP_AUTH_TOKEN: ${{ secrets.GOVERNED_MCP_AUTH_TOKEN }}
+          GOVERNED_TARGET_TOKEN: ${{ steps.read-token.outputs.token || steps.git-token.outputs.token || steps.secret-repo-token.outputs.token || steps.secret-env-token.outputs.token || steps.admin-token.outputs.token || steps.webhook-token.outputs.token || steps.environment-token.outputs.token || steps.variable-token.outputs.token || steps.actions-token.outputs.token || steps.deployment-token.outputs.token }}
+          GOVERNED_MCP_AUTH_TOKEN: ${{ steps.plan.outputs.needs_mcp == 'true' && secrets.GOVERNED_MCP_AUTH_TOKEN || '' }}
           GOVERNED_MCP_URL: https://mcp.wealthtechinnovations.com/mcp
-          GOVERNED_GITHUB_APP_CLIENT_ID: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
-          GOVERNED_GITHUB_APP_PRIVATE_KEY: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          GOVERNED_GITHUB_APP_CLIENT_ID: ${{ steps.plan.outputs.needs_app_source == 'true' && vars.GOVERNED_GITHUB_APP_CLIENT_ID || '' }}
+          GOVERNED_GITHUB_APP_PRIVATE_KEY: ${{ steps.plan.outputs.needs_app_source == 'true' && secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY || '' }}
         shell: bash
         run: |
           set -euo pipefail
