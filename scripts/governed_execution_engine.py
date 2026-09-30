@@ -629,6 +629,292 @@ def _target_token(runtime: RuntimeSecretStore, generated: dict[str, str], parame
     return resolve_secret_reference(ref, runtime, generated)
 
 
+def _valid_repo(value: str) -> str:
+    if not isinstance(value, str) or not REPO_RE.fullmatch(value):
+        raise ExecutionError("GITHUB_REPOSITORY_INVALID")
+    return value
+
+
+def _valid_branch(value: str) -> str:
+    if not isinstance(value, str) or not re.fullmatch(r"[A-Za-z0-9._/-]{1,200}", value) or ".." in value:
+        raise ExecutionError("GITHUB_BRANCH_INVALID")
+    return value
+
+
+def _valid_name(value: str, code: str = "GITHUB_NAME_INVALID") -> str:
+    if not isinstance(value, str) or not re.fullmatch(r"[A-Za-z0-9_. -]{1,160}", value):
+        raise ExecutionError(code)
+    return value
+
+
+def github_rest_operation(intent: str, parameters: dict, runtime: RuntimeSecretStore, generated: dict[str, str]) -> dict:
+    token = _target_token(runtime, generated, parameters)
+    result: dict[str, Any]
+    verification: dict[str, Any] = {}
+
+    if intent == "GITHUB_CREATE_REPOSITORY_FROM_TEMPLATE":
+        template_owner = _valid_name(parameters.get("template_owner"), "GITHUB_TEMPLATE_OWNER_INVALID")
+        template_repo = _valid_name(parameters.get("template_repo"), "GITHUB_TEMPLATE_REPOSITORY_INVALID")
+        target_owner = _valid_name(parameters.get("target_owner"), "GITHUB_TARGET_OWNER_INVALID")
+        name = _valid_name(parameters.get("name"), "GITHUB_TARGET_REPOSITORY_NAME_INVALID")
+        private = parameters.get("private")
+        if not isinstance(private, bool):
+            raise ExecutionError("GITHUB_TARGET_VISIBILITY_INVALID")
+        payload = {
+            "owner": target_owner,
+            "name": name,
+            "private": private,
+            "include_all_branches": bool(parameters.get("include_all_branches", False)),
+        }
+        if parameters.get("description") is not None:
+            payload["description"] = str(parameters["description"])[:350]
+        result = github_api(token, "POST", f"/repos/{template_owner}/{template_repo}/generate", payload)
+        target_repo = f"{target_owner}/{name}"
+        verification = github_api(token, "GET", f"/repos/{target_repo}")
+        if verification.get("full_name") != target_repo:
+            raise ExecutionError("GITHUB_REPOSITORY_CREATE_VERIFY_FAILED")
+
+    elif intent == "GITHUB_CREATE_BRANCH":
+        repository = _valid_repo(parameters.get("repository"))
+        branch = _valid_branch(parameters.get("branch"))
+        source_sha = str(parameters.get("source_sha") or "")
+        if not SHA_RE.fullmatch(source_sha):
+            raise ExecutionError("GITHUB_SOURCE_SHA_INVALID")
+        result = github_api(token, "POST", f"/repos/{repository}/git/refs", {
+            "ref": f"refs/heads/{branch}",
+            "sha": source_sha,
+        })
+        verification = github_api(token, "GET", f"/repos/{repository}/git/ref/heads/{urllib.parse.quote(branch, safe='')}")
+        if ((verification.get("object") or {}).get("sha")) != source_sha:
+            raise ExecutionError("GITHUB_BRANCH_CREATE_VERIFY_FAILED")
+
+    elif intent == "GITHUB_UPSERT_FILE":
+        repository = _valid_repo(parameters.get("repository"))
+        branch = _valid_branch(parameters.get("branch"))
+        path = str(parameters.get("path") or "").strip("/")
+        if not path or ".." in Path(path).parts:
+            raise ExecutionError("GITHUB_FILE_PATH_INVALID")
+        message = str(parameters.get("message") or "")[:500]
+        content_b64 = parameters.get("content_b64")
+        if not message or not isinstance(content_b64, str):
+            raise ExecutionError("GITHUB_FILE_CONTENT_INVALID")
+        try:
+            base64.b64decode(content_b64, validate=True)
+        except Exception as exc:
+            raise ExecutionError("GITHUB_FILE_CONTENT_BASE64_INVALID") from exc
+        payload = {"message": message, "content": content_b64, "branch": branch}
+        if parameters.get("sha"):
+            if not re.fullmatch(r"[0-9a-f]{40}", str(parameters["sha"])):
+                raise ExecutionError("GITHUB_FILE_SHA_INVALID")
+            payload["sha"] = parameters["sha"]
+        encoded_path = urllib.parse.quote(path, safe="/")
+        result = github_api(token, "PUT", f"/repos/{repository}/contents/{encoded_path}", payload)
+        verification = github_api(token, "GET", f"/repos/{repository}/contents/{encoded_path}?ref={urllib.parse.quote(branch, safe='')}")
+        if verification.get("path") != path:
+            raise ExecutionError("GITHUB_FILE_UPSERT_VERIFY_FAILED")
+
+    elif intent == "GITHUB_CREATE_PULL_REQUEST":
+        repository = _valid_repo(parameters.get("repository"))
+        head = _valid_branch(parameters.get("head"))
+        base = _valid_branch(parameters.get("base"))
+        title = str(parameters.get("title") or "")[:250]
+        if not title:
+            raise ExecutionError("GITHUB_PR_TITLE_REQUIRED")
+        payload = {
+            "title": title,
+            "head": head,
+            "base": base,
+            "body": str(parameters.get("body") or "")[:60000],
+            "draft": bool(parameters.get("draft", False)),
+        }
+        result = github_api(token, "POST", f"/repos/{repository}/pulls", payload)
+        number = result.get("number")
+        if not isinstance(number, int):
+            raise ExecutionError("GITHUB_PR_CREATE_FAILED")
+        verification = github_api(token, "GET", f"/repos/{repository}/pulls/{number}")
+        if verification.get("state") != "open":
+            raise ExecutionError("GITHUB_PR_CREATE_VERIFY_FAILED")
+
+    elif intent == "GITHUB_MERGE_PULL_REQUEST":
+        repository = _valid_repo(parameters.get("repository"))
+        pull_number = parameters.get("pull_number")
+        expected_head_sha = str(parameters.get("expected_head_sha") or "")
+        if not isinstance(pull_number, int) or pull_number < 1 or not SHA_RE.fullmatch(expected_head_sha):
+            raise ExecutionError("GITHUB_PR_MERGE_INPUT_INVALID")
+        before = github_api(token, "GET", f"/repos/{repository}/pulls/{pull_number}")
+        actual_head = (((before.get("head") or {}).get("sha")) or "")
+        if actual_head != expected_head_sha:
+            raise ExecutionError("HEAD_MOVED", f"expected={expected_head_sha},actual={actual_head}")
+        merge_method = parameters.get("merge_method", "merge")
+        if merge_method not in {"merge", "squash", "rebase"}:
+            raise ExecutionError("GITHUB_MERGE_METHOD_INVALID")
+        result = github_api(token, "PUT", f"/repos/{repository}/pulls/{pull_number}/merge", {
+            "sha": expected_head_sha,
+            "merge_method": merge_method,
+            **({"commit_title": str(parameters["commit_title"])[:250]} if parameters.get("commit_title") else {}),
+            **({"commit_message": str(parameters["commit_message"])[:60000]} if parameters.get("commit_message") else {}),
+        })
+        verification = github_api(token, "GET", f"/repos/{repository}/pulls/{pull_number}")
+        if result.get("merged") is not True or verification.get("merged") is not True:
+            raise ExecutionError("GITHUB_PR_MERGE_VERIFY_FAILED")
+
+    elif intent == "GITHUB_CONFIGURE_BRANCH_PROTECTION":
+        repository = _valid_repo(parameters.get("repository"))
+        branch = _valid_branch(parameters.get("branch"))
+        protection = parameters.get("protection")
+        if not isinstance(protection, dict):
+            raise ExecutionError("GITHUB_BRANCH_PROTECTION_INVALID")
+        ep = f"/repos/{repository}/branches/{urllib.parse.quote(branch, safe='')}/protection"
+        result = github_api(token, "PUT", ep, protection)
+        verification = github_api(token, "GET", ep)
+        if not verification:
+            raise ExecutionError("GITHUB_BRANCH_PROTECTION_VERIFY_FAILED")
+
+    elif intent == "GITHUB_CONFIGURE_RULESET":
+        repository = _valid_repo(parameters.get("repository"))
+        ruleset = parameters.get("ruleset")
+        if not isinstance(ruleset, dict) or not ruleset.get("name"):
+            raise ExecutionError("GITHUB_RULESET_INVALID")
+        ruleset_id = parameters.get("ruleset_id")
+        if ruleset_id is None:
+            result = github_api(token, "POST", f"/repos/{repository}/rulesets", ruleset)
+            ruleset_id = result.get("id")
+        else:
+            if not isinstance(ruleset_id, int):
+                raise ExecutionError("GITHUB_RULESET_ID_INVALID")
+            result = github_api(token, "PUT", f"/repos/{repository}/rulesets/{ruleset_id}", ruleset)
+        verification = github_api(token, "GET", f"/repos/{repository}/rulesets/{ruleset_id}")
+        if verification.get("name") != ruleset.get("name"):
+            raise ExecutionError("GITHUB_RULESET_VERIFY_FAILED")
+
+    elif intent == "GITHUB_CONFIGURE_WEBHOOK":
+        repository = _valid_repo(parameters.get("repository"))
+        webhook = parameters.get("webhook")
+        if not isinstance(webhook, dict) or not isinstance(webhook.get("config"), dict):
+            raise ExecutionError("GITHUB_WEBHOOK_INVALID")
+        config = webhook.get("config") or {}
+        url = config.get("url")
+        if not isinstance(url, str) or not url.startswith("https://"):
+            raise ExecutionError("GITHUB_WEBHOOK_URL_MUST_BE_HTTPS")
+        hook_id = parameters.get("hook_id")
+        if hook_id is None:
+            result = github_api(token, "POST", f"/repos/{repository}/hooks", webhook)
+            hook_id = result.get("id")
+        else:
+            if not isinstance(hook_id, int):
+                raise ExecutionError("GITHUB_WEBHOOK_ID_INVALID")
+            result = github_api(token, "PATCH", f"/repos/{repository}/hooks/{hook_id}", webhook)
+        verification = github_api(token, "GET", f"/repos/{repository}/hooks/{hook_id}")
+        if verification.get("id") != hook_id:
+            raise ExecutionError("GITHUB_WEBHOOK_VERIFY_FAILED")
+
+    elif intent == "GITHUB_CONFIGURE_ENVIRONMENT":
+        repository = _valid_repo(parameters.get("repository"))
+        environment = _valid_name(parameters.get("environment"), "GITHUB_ENVIRONMENT_INVALID")
+        allowed = {"wait_timer", "prevent_self_review", "reviewers", "deployment_branch_policy"}
+        body = {k: copy.deepcopy(v) for k, v in parameters.items() if k in allowed}
+        ep = f"/repos/{repository}/environments/{urllib.parse.quote(environment, safe='')}"
+        result = github_api(token, "PUT", ep, body)
+        verification = github_api(token, "GET", ep)
+        if verification.get("name") != environment:
+            raise ExecutionError("GITHUB_ENVIRONMENT_VERIFY_FAILED")
+
+    elif intent == "GITHUB_SET_ACTIONS_VARIABLE":
+        repository = _valid_repo(parameters.get("repository"))
+        name = parameters.get("name")
+        if not isinstance(name, str) or not SECRET_NAME_RE.fullmatch(name):
+            raise ExecutionError("GITHUB_VARIABLE_NAME_INVALID")
+        value = parameters.get("value")
+        if not isinstance(value, str) or len(value) > 48000:
+            raise ExecutionError("GITHUB_VARIABLE_VALUE_INVALID")
+        existing = github_api(token, "GET", f"/repos/{repository}/actions/variables")
+        exists = any(x.get("name") == name for x in existing.get("variables") or [])
+        if exists:
+            result = github_api(token, "PATCH", f"/repos/{repository}/actions/variables/{name}", {"name": name, "value": value})
+        else:
+            result = github_api(token, "POST", f"/repos/{repository}/actions/variables", {"name": name, "value": value})
+        verification = github_api(token, "GET", f"/repos/{repository}/actions/variables/{name}")
+        if verification.get("name") != name or verification.get("value") != value:
+            raise ExecutionError("GITHUB_VARIABLE_VERIFY_FAILED")
+
+    elif intent == "GITHUB_DISPATCH_WORKFLOW":
+        repository = _valid_repo(parameters.get("repository"))
+        workflow = str(parameters.get("workflow") or "")
+        ref = _valid_branch(parameters.get("ref"))
+        if not re.fullmatch(r"[A-Za-z0-9_.\-/]{1,200}", workflow):
+            raise ExecutionError("GITHUB_WORKFLOW_INVALID")
+        payload = {"ref": ref, "inputs": copy.deepcopy(parameters.get("inputs") or {})}
+        result = github_api(token, "POST", f"/repos/{repository}/actions/workflows/{urllib.parse.quote(workflow, safe='')}/dispatches", payload)
+        verification = {"accepted": True, "note": "GitHub workflow dispatch API does not synchronously return a run id"}
+
+    elif intent == "GITHUB_CREATE_DEPLOYMENT":
+        repository = _valid_repo(parameters.get("repository"))
+        ref = str(parameters.get("ref") or "")
+        environment = _valid_name(parameters.get("environment"), "GITHUB_DEPLOYMENT_ENVIRONMENT_INVALID")
+        if not ref or len(ref) > 200:
+            raise ExecutionError("GITHUB_DEPLOYMENT_REF_INVALID")
+        payload = {
+            "ref": ref,
+            "environment": environment,
+            "auto_merge": bool(parameters.get("auto_merge", False)),
+            "required_contexts": copy.deepcopy(parameters.get("required_contexts") or []),
+            "transient_environment": bool(parameters.get("transient_environment", False)),
+            "production_environment": bool(parameters.get("production_environment", True)),
+            "description": str(parameters.get("description") or "")[:500],
+        }
+        result = github_api(token, "POST", f"/repos/{repository}/deployments", payload)
+        deployment_id = result.get("id")
+        if not isinstance(deployment_id, int):
+            raise ExecutionError("GITHUB_DEPLOYMENT_CREATE_FAILED")
+        verification = github_api(token, "GET", f"/repos/{repository}/deployments/{deployment_id}")
+        if verification.get("id") != deployment_id:
+            raise ExecutionError("GITHUB_DEPLOYMENT_VERIFY_FAILED")
+
+    elif intent == "GITHUB_UPDATE_REPOSITORY_SETTINGS":
+        repository = _valid_repo(parameters.get("repository"))
+        settings = parameters.get("settings")
+        if not isinstance(settings, dict):
+            raise ExecutionError("GITHUB_REPOSITORY_SETTINGS_INVALID")
+        allowed = {
+            "name", "description", "homepage", "private", "visibility",
+            "has_issues", "has_projects", "has_wiki", "is_template",
+            "default_branch", "allow_squash_merge", "allow_merge_commit",
+            "allow_rebase_merge", "allow_auto_merge", "delete_branch_on_merge",
+            "allow_update_branch", "use_squash_pr_title_as_default",
+            "squash_merge_commit_title", "squash_merge_commit_message",
+            "merge_commit_title", "merge_commit_message",
+        }
+        unknown = set(settings) - allowed
+        if unknown:
+            raise ExecutionError("GITHUB_REPOSITORY_SETTING_NOT_ALLOWLISTED", ",".join(sorted(unknown)))
+        result = github_api(token, "PATCH", f"/repos/{repository}", copy.deepcopy(settings))
+        verification = github_api(token, "GET", f"/repos/{repository}")
+        for key, value in settings.items():
+            if key in verification and verification.get(key) != value:
+                raise ExecutionError("GITHUB_REPOSITORY_SETTINGS_VERIFY_FAILED", key)
+
+    elif intent == "GITHUB_ADD_COLLABORATOR":
+        repository = _valid_repo(parameters.get("repository"))
+        username = _valid_name(parameters.get("username"), "GITHUB_COLLABORATOR_INVALID")
+        permission = parameters.get("permission", "push")
+        if permission not in {"pull", "triage", "push", "maintain", "admin"}:
+            raise ExecutionError("GITHUB_COLLABORATOR_PERMISSION_INVALID")
+        result = github_api(token, "PUT", f"/repos/{repository}/collaborators/{username}", {"permission": permission})
+        verification = github_api(token, "GET", f"/repos/{repository}/collaborators/{username}/permission")
+        if not (verification.get("permission") or verification.get("user")):
+            raise ExecutionError("GITHUB_COLLABORATOR_VERIFY_FAILED")
+
+    else:
+        raise ExecutionError("GITHUB_OPERATION_NOT_ALLOWLISTED", intent)
+
+    return {
+        "status": "PASS",
+        "intent": intent,
+        "result": redact(result),
+        "verification": redact(verification),
+    }
+
+
 def verify_exact_head_if_required(package: dict, spec: dict, runtime: RuntimeSecretStore, generated: dict[str, str]) -> dict:
     repository = package.get("repository")
     expected = package.get("expected_head")
@@ -732,6 +1018,12 @@ def execute(package: dict, *, do_execute: bool, registry: dict, snapshot: dict) 
         elif handler == "SSH_OIDC_CERT":
             result = mint_ephemeral_ssh_certificate(params)
             receipt["execute"].append(redact(result))
+
+        elif handler == "GITHUB_REST_OPERATION":
+            result = github_rest_operation(package["intent"], params, runtime, generated)
+            receipt["execute"].append(redact(result))
+            receipt["verification"].append(redact(result.get("verification") or {}))
+            executed_side_effect = True
 
         elif handler == "MCP_RECIPE":
             resolver.resolve_required(spec.get("required_capabilities") or [], steps)
