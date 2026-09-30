@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "checkpoint_id": "CP-CHECKPOINT-20260930-006",
+  "checkpoint_id": "CP-CHECKPOINT-20260930-007",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-  "subject_head": "6c293a809df15b85fe40685b3a0f6a3508e1ee4d",
+  "subject_head": "0155206c9e2771ab0cf311a957c33ad16a30915a",
   "template_version_before": "2.7.0",
-  "state": "P12_S5_CAPABILITY_MAP_COMPLETE_WAITING_EKYC_CORRECTED_BOTH_APPROVAL",
+  "state": "P12_S5_BOTH_SMART_ROUTING_FRAMEWORK_CORRECTION",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
@@ -156,17 +156,19 @@
     "c1_13_h_status": "DONE",
     "c1_13_i_ekyc_head": "4d552458afab32df12aaafd6c7290fab6246d96b",
     "c1_13_i_ekyc_revision": 38,
-    "c1_13_i_ekyc_gate": "WAITING_FOR_DISCOVERY_APPROVAL"
+    "c1_13_i_ekyc_gate": "WAITING_FOR_DISCOVERY_APPROVAL",
+    "c1_13_i_a_owner_clarification": "BOTH_CONFIGURES_TWO_ELIGIBLE_ROUTES_ONE_SELECTED_PER_OPERATION",
+    "c1_13_i_a_ekyc_reusable_direct_pass_run": 36644247227
   },
-  "next_action": "C1_13_I_REQUEST_EKYC_CORRECTED_BOTH_DISCOVERY_APPROVAL",
+  "next_action": "C1_13_I_A_FIX_BOTH_SMART_ROUTING_SEMANTICS",
   "reconciliation_required_before_write": true,
   "ci_run": 36637371154,
   "ci_result": "PASS",
   "client_source_memory_removal": "PASS",
   "self_governance": "PASS",
-  "reconciliation_reason": "C1_13_H_COMPLETE_CAPABILITY_FIRST_MCP_SNAPSHOT_CANONICAL_AND_POST_MERGE_GREEN",
+  "reconciliation_reason": "OWNER_CLARIFIED_BOTH_IS_DUAL_READY_SMART_ROUTING_NOT_COUPLED_EXECUTION",
   "canonical_memory_database": "PASS",
-  "blocker": "OWNER_APPROVAL_REQUIRED_FOR_CORRECTED_BOTH_DISCOVERY_PLAN",
+  "blocker": "GENERIC_BOTH_COUPLED_EXECUTION_SEMANTICS",
   "knowledge_enrichment": {
     "canonical_architecture": {
       "authority_id": "CP-ARCH-001",

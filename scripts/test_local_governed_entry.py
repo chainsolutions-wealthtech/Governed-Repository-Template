@@ -2,7 +2,7 @@
 from __future__ import annotations
 import copy
 from pathlib import Path
-from local_governed_entry import answer, both_discovery_needs_refresh, complete_baseline, decode_state, encode_state, mark_credentials_verified, new_request, reconcile_legacy_discovery_authority, record_mcp_discovery, record_mcp_discovery_failure, require_mcp_discovery_refresh
+from local_governed_entry import answer, both_discovery_needs_refresh, complete_baseline, decode_state, encode_state, mark_credentials_verified, new_request, reconcile_both_smart_routing, reconcile_legacy_discovery_authority, record_mcp_discovery, record_mcp_discovery_failure, require_mcp_discovery_refresh
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -85,8 +85,13 @@ def main():
     if both["next_request"]["kind"]!="PLAN_APPROVAL" or both["next_request"].get("field")!="mcp_discovery_approved":
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: BOTH configuration must stop at discovery approval")
     discovery_plan=both["next_request"].get("plan") or {}
+    routing=discovery_plan.get("routing") or {}
     if discovery_plan.get("mutation_authority") is not False or discovery_plan.get("transport")!="BOTH":
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: discovery plan must be read-only and preserve transport")
+    if discovery_plan.get("configured_transports")!=["DIRECT_MCP_TOKEN","SSH"] or routing.get("mode")!="DUAL_READY_SMART_ROUTING":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: BOTH must configure two independent routes")
+    if routing.get("simultaneous_execution_required") is not False or routing.get("one_successful_route_satisfies_current_discovery") is not True:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: BOTH must not require coupled execution")
     legacy=copy.deepcopy(both)
     legacy["status"]="MCP_DISCOVERY_FAILED_RETRYABLE"
     legacy["phase"]="MCP_DISCOVERY"
@@ -153,6 +158,32 @@ def main():
     if corrected_plan.get("ssh_connection_profile")!={"host":"212.227.212.33","port":22,"user":"root"}:
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: corrected SSH profile must flow into renewed discovery plan")
 
+    legacy_both=copy.deepcopy(ssh_profile_failed)
+    legacy_both["answers"].pop("mcp_discovery_approved",None)
+    legacy_both["mcp_discovery"]=None
+    legacy_both["status"]="WAITING_FOR_DISCOVERY_APPROVAL"
+    legacy_both["phase"]="MCP_DISCOVERY_APPROVAL"
+    legacy_both["next_request"]={"kind":"PLAN_APPROVAL","id":"Q_MCP_DISCOVERY_APPROVAL","field":"mcp_discovery_approved"}
+    legacy_both["mcp_discovery_history"]=[{
+      "reason":"SSH_PROFILE_CORRECTION_AFTER_SIGNED_BROKER_MISMATCH",
+      "evidence":{
+        "status":"ERROR",
+        "failure_code":"SSH_PROFILE_MISMATCH",
+        "transport":"BOTH",
+        "endpoint":"https://mcp.example.test/mcp",
+        "observed_at":"2026-09-30T00:00:00+00:00",
+        "direct_mcp":{"status":"PASS","tools":{"ping":{"status":"PASS"},"get_project_context":{"status":"PASS"}}},
+        "observed_ssh_profile":{"host":"212.227.212.33","port":22,"user":"root","source":"SIGNED_MCP_SSH_BROKER_RESPONSE"}
+      }
+    }]
+    migrated=reconcile_both_smart_routing(legacy_both)
+    if migrated.get("mcp_discovery",{}).get("selected_transport")!="DIRECT_MCP_TOKEN":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: authorized legacy direct PASS must migrate as current smart route")
+    if migrated.get("mcp_discovery",{}).get("alternate_transport_status")!="CONFIGURED_NOT_ATTESTED":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: corrected SSH route must remain alternate and independently attestable")
+    if (migrated.get("next_request") or {}).get("field")!="domain_binding":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: smart-routing migration must not demand redundant discovery approval")
+
     failed=record_mcp_discovery_failure(both,{
       "status":"ERROR",
       "failure_code":"SSH_CERTIFICATE_BROKER_FORBIDDEN",
@@ -164,8 +195,13 @@ def main():
     if failed["mcp_discovery"]["failure_code"]!="SSH_CERTIFICATE_BROKER_FORBIDDEN":
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: failure evidence lost")
     recovered=record_mcp_discovery(failed,{
-      "status":"PARTIAL",
-      "degraded":True,
+      "status":"PASS",
+      "degraded":False,
+      "transport":"BOTH",
+      "routing_mode":"DUAL_READY_SMART_ROUTING",
+      "selected_transport":"SSH",
+      "fallback_used":True,
+      "simultaneous_execution_required":False,
       "direct_mcp":{"status":"UNAVAILABLE_CREDENTIAL"},
       "ssh_certificate":{"status":"PASS"}
     })
@@ -174,30 +210,12 @@ def main():
     recovered=answer_expected(recovered,"domain_binding",{"mode":"UNRESOLVED"})
     recovered=answer_expected(recovered,"workflow_model","STANDARD_GOVERNED_FLOW")
     if recovered["next_request"]["field"]!="setup_approved":
-        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: expected setup approval before refresh simulation")
-    if not both_discovery_needs_refresh(recovered,True):
-        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: degraded BOTH evidence must refresh when direct credential appears")
-    refreshed=require_mcp_discovery_refresh(recovered,"DIRECT_CREDENTIAL_BECAME_AVAILABLE")
-    if refreshed["next_request"]["kind"]!="MCP_DISCOVERY":
-        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: BOTH refresh discovery gate")
-    if refreshed["answers"]["domain_binding"]!={"mode":"UNRESOLVED"} or refreshed["answers"]["workflow_model"]!="STANDARD_GOVERNED_FLOW":
-        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: refresh lost approved answers")
-    if len(refreshed.get("mcp_discovery_history") or [])!=1:
-        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: prior discovery evidence not archived")
-    if refreshed["mcp_discovery_history"][0]["evidence"]["direct_mcp"]["status"]!="UNAVAILABLE_CREDENTIAL":
-        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: archived direct evidence mismatch")
-    reconciled=record_mcp_discovery(refreshed,{
-      "status":"PASS",
-      "degraded":False,
-      "direct_mcp":{"status":"PASS"},
-      "ssh_certificate":{"status":"PASS"}
-    })
-    if reconciled["next_request"]["field"]!="setup_approved":
-        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: refreshed discovery did not return to setup approval")
-    if reconciled["setup_package"]["mcp"]["discovery_evidence"]["status"]!="PASS":
-        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: setup package retained stale discovery")
-    if both_discovery_needs_refresh(reconciled,True):
-        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: fresh BOTH evidence must not refresh again")
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: expected setup approval after successful smart fallback")
+    if both_discovery_needs_refresh(recovered,True):
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: alternate direct availability must not force coupled rediscovery")
+    setup_routing=(recovered.get("setup_package") or {}).get("mcp",{}).get("routing_strategy") or {}
+    if setup_routing.get("mode")!="DUAL_READY_SMART_ROUTING" or setup_routing.get("simultaneous_execution_required") is not False:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: setup package lost smart routing")
 
     n=new_request("LOCAL-2","owner/repo","c"*40,False,"later agent")
     for field,value in [

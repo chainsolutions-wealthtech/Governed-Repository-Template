@@ -501,3 +501,11 @@ PR #68 merged at `6c293a809df15b85fe40685b3a0f6a3508e1ee4d`, and post-merge Gove
 C1-13-H is therefore DONE. The Template now knows both (a) stable project capabilities/question-resolution rules and (b) the refreshable current MCP implementation image.
 
 Ekyc remains intentionally untouched at revision 38. CASE 1 resumes at C1-13-I: explicit approval of the corrected read-only BOTH discovery plan.
+
+## 2026-09-30 — BOTH transport semantic correction
+
+Owner clarified that `BOTH` means “configure both so the system can intelligently use one or the other”, not “couple both executions”.
+
+Live source review confirmed the defect: the discovery runner currently executes DIRECT and then SSH for `BOTH`, and its historical summarizer expects combined evidence.
+
+C1-13-I-A corrects the Template first. Ekyc remains untouched. Its prior DIRECT PASS is authorized evidence and will be migrated as the selected current route after the generic release; corrected SSH becomes an alternate configured route with independent readiness.

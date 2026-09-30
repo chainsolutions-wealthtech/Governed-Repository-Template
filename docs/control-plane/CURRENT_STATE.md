@@ -500,3 +500,15 @@ Evidence:
 - MCP operational-write authority is distinct from scoped server mutation authority.
 
 CASE 1 now returns to Ekyc#1 revision 38 at the explicit approval gate for the materially corrected BOTH discovery plan.
+
+## Owner correction — BOTH is not coupled execution
+
+Owner clarification supersedes the previous immediate C1-13-I approval request.
+
+`BOTH` means DIRECT and SSH are both configured as eligible governed routes. It does not mean every discovery must run both.
+
+The old implementation in `scripts/mcp_repository_discovery.py` executed DIRECT and then SSH whenever `mcp_transport=BOTH`. On Ekyc, this incorrectly converted an authorized DIRECT PASS into a whole-discovery failure because the alternate SSH profile mismatched.
+
+Generic corrective task `C1-13-I-A` is active. The framework is being changed to `DUAL_READY_SMART_ROUTING`, with one selected route per operation and independent alternate-route readiness.
+
+No new Ekyc network call is required to recover the already-authorized DIRECT evidence.

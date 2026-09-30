@@ -88,3 +88,13 @@ Append-only durable decisions for the source/control-plane repository.
 - A missing mutation capability produces a prepared scoped-capability requirement only when a concrete authorized project operation needs it; it does not automatically create an MCP intake.
 - Tool presence never grants authority. Tool absence never authorizes inventing or bypassing a surface.
 - Outputs continue into the existing project model, work-items and Loop Engineering.
+
+### CPD-035 — BOTH is dual-ready smart routing, not coupled execution
+
+- Date: 2026-09-30.
+- Owner clarification: selecting `BOTH` means prepare/configure both DIRECT MCP and governed SSH so the system can use either intelligently; it does not mean both must execute together.
+- One operation selects one route according to capability, readiness, credential availability and failure state.
+- A successful selected route satisfies the current discovery unless a distinct gate explicitly requires dual-route attestation.
+- Alternate-route readiness is tracked independently and does not downgrade a successful selected route.
+- The framework must not force rediscovery merely because another configured route later becomes available.
+- Legacy evidence from Ekyc where DIRECT passed but the old coupled engine then failed on SSH may reuse the already-authorized DIRECT PASS after generic framework migration; the corrected SSH route remains independently attestable.

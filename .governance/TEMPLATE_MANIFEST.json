@@ -145,7 +145,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.13",
+  "template_version": "2.8.14",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -285,7 +285,11 @@
     "missing MCP capability request prepared only for concrete needed operation",
     "project registry parser ignores indented path and note metadata",
     "operational MCP writes use governed operational authority class",
-    "project-specific MCP tools do not satisfy generic project capability"
+    "project-specific MCP tools do not satisfy generic project capability",
+    "BOTH transport means dual-ready smart routing rather than coupled execution",
+    "one successful selected MCP route satisfies current discovery",
+    "alternate transport readiness is tracked independently",
+    "legacy authorized direct PASS may migrate without redundant network replay"
   ],
   "automatic_initialization_supported": true
 }

@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "role": "REPOSITORY_LOCAL_CONTROL_PLANE",
   "applies_to": "INITIALIZED_GOVERNED_TARGET_REPOSITORIES",
   "source_template_behavior": "DEFINED_BUT_NOT_ACTIVE",
@@ -38,7 +38,10 @@
     "NO_PRODUCTION_OR_INFRASTRUCTURE_FACT_WITHOUT_OBSERVATION",
     "CONFIGURATION_INTENT_NE_EXECUTION_AUTHORITY",
     "MCP_DISCOVERY_REQUIRES_EXPLICIT_OWNER_APPROVAL",
-    "OBSERVED_OR_OWNER_PROVIDED_FRESH_FACTS_SHOULD_NOT_BE_REASKED"
+    "OBSERVED_OR_OWNER_PROVIDED_FRESH_FACTS_SHOULD_NOT_BE_REASKED",
+    "BOTH_CONFIGURES_DUAL_READY_ROUTES_NOT_COUPLED_EXECUTION",
+    "ONE_SUCCESSFUL_SELECTED_ROUTE_SATISFIES_CURRENT_DISCOVERY",
+    "ALTERNATE_ROUTE_READINESS_IS_INDEPENDENT_AND_NON_BLOCKING"
   ],
   "adaptive_preparation": {
     "mode": "ADDITIVE_TO_EXISTING_LOOP_ENGINEERING",
@@ -46,5 +49,19 @@
     "reuse_fresh_observed_answers": true,
     "ask_only_missing_or_owner_decision_fields": true,
     "parallel_task_engine_forbidden": true
+  },
+  "mcp_transport_routing": {
+    "BOTH": {
+      "mode": "DUAL_READY_SMART_ROUTING",
+      "configured_transports": [
+        "DIRECT_MCP_TOKEN",
+        "SSH"
+      ],
+      "simultaneous_execution_required": false,
+      "selection": "ONE_ROUTE_PER_OPERATION",
+      "initial_discovery_preference": "DIRECT_MCP_TOKEN",
+      "fallback": "SSH",
+      "alternate_readiness_blocks_current_success": false
+    }
   }
 }

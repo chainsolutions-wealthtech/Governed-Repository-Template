@@ -178,3 +178,9 @@ READ AUTHORITIES
 ```
 
 GitHub is the versioned authority. The server is the runtime authority. Their equality is never assumed.
+
+## Dual-ready BOTH routing
+
+`BOTH` is a configuration of two eligible transport routes, not a coupled execution primitive.
+
+The runtime selector chooses the appropriate route per operation. DIRECT may be nominal when its credential is ready; SSH may be selected as fallback or when the requested capability is better served by that governed route. Only the selected route must succeed for the current operation unless a separate attestation gate explicitly requests validation of both routes.

@@ -145,3 +145,28 @@ When an approved SSH or BOTH discovery reaches the authenticated MCP SSH certifi
 If the configured `ssh_connection_profile` differs from the signed broker `host / port / username`, discovery must not loop blindly. The local entry reopens `Q_SSH_PROFILE_RECOVERY`, exposes the observed non-secret profile, preserves the failed/direct evidence in bounded history, and requires a corrected profile.
 
 Because the SSH target is part of the approved discovery plan, correcting it is a material plan change: the previous `mcp_discovery_approved` answer is invalidated and the corrected read-only plan must be approved again before network execution.
+
+## BOTH transport semantics — dual-ready smart routing
+
+`BOTH` does **not** mean “execute DIRECT and SSH together”.
+
+It means both transport paths are prepared as available governed routes:
+
+```text
+BOTH
+├── DIRECT_MCP_TOKEN
+└── SSH / GitHub OIDC ephemeral certificate
+```
+
+For one operation, the router selects one route according to current capability, credential/readiness and failure state. The default read-only discovery policy prefers DIRECT when it is ready and uses SSH when DIRECT is unavailable or fails. The alternate route is not executed merely to prove that both exist.
+
+Therefore:
+
+- simultaneous DIRECT+SSH execution is not required;
+- one successful selected route satisfies the current read-only discovery;
+- fallback use is a normal governed route selection, not automatically a degraded discovery;
+- readiness of the alternate route is tracked independently;
+- a newly available alternate route does not invalidate already successful discovery evidence;
+- independent dual-route attestation may still be performed when a specific gate explicitly requires it.
+
+For legacy `BOTH` evidence where DIRECT already passed and the run failed only because the old engine subsequently forced SSH, the authorized DIRECT success can be reused. The SSH path remains configured as an alternate route whose readiness can be attested separately.

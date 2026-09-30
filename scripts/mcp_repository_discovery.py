@@ -41,19 +41,59 @@ def unavailable_direct_credential_evidence():
     }
 
 
+def route_succeeded(part):
+    return isinstance(part, dict) and part.get("status") in {"PASS", "PARTIAL"}
+
+
 def summarize_discovery_evidence(evidence):
-    components = [
-        part for part in (evidence.get("direct_mcp"), evidence.get("ssh_certificate"))
-        if isinstance(part, dict)
-    ]
+    direct = evidence.get("direct_mcp")
+    ssh = evidence.get("ssh_certificate")
+    components = [part for part in (direct, ssh) if isinstance(part, dict)]
     if not components:
         raise RuntimeError("MCP_DISCOVERY_NO_EVIDENCE")
-    successful = [part for part in components if part.get("status") in {"PASS","PARTIAL"}]
+
+    result = dict(evidence)
+    transport = evidence.get("transport")
+
+    if transport == "BOTH":
+        selected = evidence.get("selected_transport")
+        if selected == "DIRECT_MCP_TOKEN" and not route_succeeded(direct):
+            selected = None
+        if selected == "SSH" and not route_succeeded(ssh):
+            selected = None
+        if selected is None:
+            if route_succeeded(direct):
+                selected = "DIRECT_MCP_TOKEN"
+            elif route_succeeded(ssh):
+                selected = "SSH"
+        if selected is None:
+            raise RuntimeError("MCP_DISCOVERY_NO_USABLE_EVIDENCE")
+
+        selected_part = direct if selected == "DIRECT_MCP_TOKEN" else ssh
+        alternate = ssh if selected == "DIRECT_MCP_TOKEN" else direct
+        result["selected_transport"] = selected
+        result["routing_mode"] = "DUAL_READY_SMART_ROUTING"
+        result["simultaneous_execution_required"] = False
+        result["status"] = selected_part.get("status")
+        result["degraded"] = selected_part.get("status") == "PARTIAL"
+        result["fallback_used"] = selected == "SSH" and not route_succeeded(direct)
+        result["alternate_transport_status"] = (
+            alternate.get("status") if isinstance(alternate, dict) else "NOT_ATTESTED"
+        )
+        return result
+
+    successful = [part for part in components if route_succeeded(part)]
     if not successful:
         raise RuntimeError("MCP_DISCOVERY_NO_USABLE_EVIDENCE")
-    result = dict(evidence)
-    result["status"] = "PASS" if all(part.get("status")=="PASS" for part in components) else "PARTIAL"
-    result["degraded"] = any(part.get("status")=="UNAVAILABLE_CREDENTIAL" for part in components)
+    selected = "DIRECT_MCP_TOKEN" if transport == "DIRECT_MCP_TOKEN" else "SSH"
+    selected_part = direct if selected == "DIRECT_MCP_TOKEN" else ssh
+    if not route_succeeded(selected_part):
+        raise RuntimeError("MCP_DISCOVERY_NO_USABLE_EVIDENCE")
+    result["selected_transport"] = selected
+    result["status"] = selected_part.get("status")
+    result["degraded"] = selected_part.get("status") == "PARTIAL"
+    result["fallback_used"] = False
+    result["simultaneous_execution_required"] = False
     return result
 
 
@@ -383,26 +423,63 @@ def main():
     }
 
     try:
-        if transport in {"DIRECT_MCP_TOKEN", "BOTH"}:
+        if transport == "DIRECT_MCP_TOKEN":
             token = os.environ.get("GOVERNED_MCP_AUTH_TOKEN")
             if not token:
-                if transport=="DIRECT_MCP_TOKEN":
-                    raise RuntimeError("MCP_DIRECT_CREDENTIAL_MISSING")
-                evidence["direct_mcp"] = unavailable_direct_credential_evidence()
-            else:
-                evidence["direct_mcp"] = discover_direct(endpoint, token)
+                raise RuntimeError("MCP_DIRECT_CREDENTIAL_MISSING")
+            evidence["selected_transport"] = "DIRECT_MCP_TOKEN"
+            evidence["direct_mcp"] = discover_direct(endpoint, token)
 
-        if transport in {"SSH", "BOTH"}:
+        elif transport == "SSH":
             profile = answers.get("ssh_connection_profile")
             if not isinstance(profile, dict):
                 raise RuntimeError("SSH_PROFILE_MISSING")
+            evidence["selected_transport"] = "SSH"
             evidence["ssh_certificate"] = discover_ssh(
                 repository,
                 expected_head,
                 profile,
             )
 
-        if transport not in {"DIRECT_MCP_TOKEN", "SSH", "BOTH"}:
+        elif transport == "BOTH":
+            evidence["routing_mode"] = "DUAL_READY_SMART_ROUTING"
+            evidence["configured_transports"] = ["DIRECT_MCP_TOKEN", "SSH"]
+            evidence["simultaneous_execution_required"] = False
+            evidence["routing_policy"] = "PREFER_DIRECT_WHEN_READY_ELSE_SSH_FALLBACK"
+
+            token = os.environ.get("GOVERNED_MCP_AUTH_TOKEN")
+            if not token:
+                evidence["direct_mcp"] = unavailable_direct_credential_evidence()
+            else:
+                try:
+                    evidence["direct_mcp"] = discover_direct(endpoint, token)
+                except Exception as direct_exc:
+                    evidence["direct_mcp"] = {
+                        "status": "ERROR",
+                        "failure_code": str(direct_exc)[:200] or type(direct_exc).__name__,
+                        "retryable": True,
+                    }
+
+            if route_succeeded(evidence.get("direct_mcp")):
+                evidence["selected_transport"] = "DIRECT_MCP_TOKEN"
+                evidence["selection_reason"] = "DIRECT_ROUTE_READY"
+                evidence["ssh_certificate"] = {
+                    "status": "CONFIGURED_NOT_ATTEMPTED",
+                    "reason": "ALTERNATE_ROUTE_NOT_REQUIRED_FOR_THIS_DISCOVERY",
+                }
+            else:
+                profile = answers.get("ssh_connection_profile")
+                if not isinstance(profile, dict):
+                    raise RuntimeError("SSH_PROFILE_MISSING")
+                evidence["selected_transport"] = "SSH"
+                evidence["selection_reason"] = "DIRECT_ROUTE_UNAVAILABLE_OR_FAILED"
+                evidence["ssh_certificate"] = discover_ssh(
+                    repository,
+                    expected_head,
+                    profile,
+                )
+
+        else:
             raise RuntimeError("MCP_TRANSPORT_INVALID")
 
         evidence = summarize_discovery_evidence(evidence)

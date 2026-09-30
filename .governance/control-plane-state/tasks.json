@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 39,
+  "revision": 40,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -43,7 +43,7 @@
       "depends_on": [
         "P12-S4"
       ],
-      "next_action": "C1-13-I",
+      "next_action": "C1-13-I-A",
       "evidence": [
         "C1-13-A inserted for generic MCP endpoint recovery defect discovered on Ekyc"
       ]
@@ -314,15 +314,35 @@
       "defect_code": "MCP_CAPABILITY_CASE_MAP_OVERBROAD_AND_PROJECT_ID_PARSE_NOISY"
     },
     {
-      "id": "C1-13-I",
+      "id": "C1-13-I-A",
       "status": "IN_PROGRESS",
       "depends_on": [
         "C1-13-H"
       ],
       "blocks": [
+        "C1-13-I",
         "P12-S5"
       ],
-      "next_action": "REQUEST_EKYC_CORRECTED_BOTH_DISCOVERY_APPROVAL",
+      "next_action": "FIX_TEST_MERGE_UPGRADE_EKYC_SMART_ROUTING",
+      "defect_code": "BOTH_COUPLED_EXECUTION_SEMANTICS",
+      "evidence": [
+        "Owner clarified BOTH = two configured intelligent alternative routes, not coupled execution",
+        "Current discovery runner executes DIRECT then SSH for BOTH",
+        "Ekyc run 36644247227 contains authorized DIRECT PASS before SSH_PROFILE_MISMATCH",
+        "No target-specific Ekyc patch permitted"
+      ]
+    },
+    {
+      "id": "C1-13-I",
+      "status": "BLOCKED",
+      "depends_on": [
+        "C1-13-H",
+        "C1-13-I-A"
+      ],
+      "blocks": [
+        "P12-S5"
+      ],
+      "next_action": "WAIT_FOR_BOTH_SMART_ROUTING_FRAMEWORK_CORRECTION",
       "gate_code": "OWNER_APPROVAL_REQUIRED_FOR_MATERIALLY_CHANGED_BOTH_DISCOVERY_PLAN",
       "evidence": [
         "Ekyc HEAD 4d552458afab32df12aaafd6c7290fab6246d96b",
@@ -998,7 +1018,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-13-I",
+  "unique_executable_item": "C1-13-I-A",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",
