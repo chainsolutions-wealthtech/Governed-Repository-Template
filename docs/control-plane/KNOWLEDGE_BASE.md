@@ -101,9 +101,17 @@ This slice only establishes the canonical model and tests.
 Future KBI work will be small and resumable:
 
 - KBI-03 normalized project-fact persistence in the existing relational model;
-- KBI-04 server-organization pattern persistence;
+- KBI-04 server-organization model and operation recipes — IN PROGRESS incrementally; taxonomy/recipes seed complete;
 - KBI-05 adaptive-question reuse binding;
 - KBI-06 selective freshness refresh;
 - KBI-07 cross-project convention learning with evidence thresholds.
 
 No current CASE 1 task is displaced.
+
+## Server-platform knowledge extension
+
+`CP-SERVER-KNOWLEDGE-001` extends this knowledge base with a complete server inventory taxonomy and reusable operation recipes.
+
+The Control Plane can therefore reason from a future owner choice such as `production = S2` and `domain = subdomain` into the inventory facts, capabilities, authorities and ordered operations required to make that project real.
+
+Live S1/S2 population remains intentionally separate and will be performed as bounded authorized discovery.
