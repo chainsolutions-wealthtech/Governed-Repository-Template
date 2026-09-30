@@ -128,7 +128,7 @@ def assert_available_deploy_can_be_bound() -> None:
             "backend": "MCP_DIRECT",
             "capability": "DEPLOYMENT_RUNTIME_CHANGE",
             "tool": "deploy_project_s2",
-            "arguments": {"project_id": "brvmchainsolution"},
+            "arguments": {"project": "brvmchainsolution"},
         }],
         "verify": [],
         "rollback": [],
