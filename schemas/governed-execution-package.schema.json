@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsolutions.local/schemas/governed-execution-package.schema.json",
+  "title": "Governed Execution Package",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "operation_id",
+    "intent",
+    "project_id",
+    "authority",
+    "parameters",
+    "bindings"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "operation_id": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 160,
+      "pattern": "^[A-Za-z0-9_.:-]+$"
+    },
+    "intent": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "project_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9_.-]+/[A-Za-z0-9_.-]+$"
+    },
+    "expected_head": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "server_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "environment": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
+    },
+    "authority": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "approved",
+        "grants",
+        "scope"
+      ],
+      "properties": {
+        "approved": {
+          "type": "boolean"
+        },
+        "grants": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "scope": {
+          "type": "object"
+        },
+        "decision_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "expires_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "parameters": {
+      "type": "object",
+      "description": "Secret-free operation parameters. Secret values are forbidden; use value_ref/secret_ref/token_ref."
+    },
+    "bindings": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "capabilities",
+        "credentials"
+      ],
+      "properties": {
+        "capabilities": {
+          "type": "object"
+        },
+        "credentials": {
+          "type": "object"
+        },
+        "steps": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "preflight": {
+              "$ref": "#/$defs/steps"
+            },
+            "execute": {
+              "$ref": "#/$defs/steps"
+            },
+            "verify": {
+              "$ref": "#/$defs/steps"
+            },
+            "rollback": {
+              "$ref": "#/$defs/steps"
+            }
+          }
+        }
+      }
+    },
+    "evidence_context": {
+      "type": "object"
+    },
+    "rollback_policy": {
+      "type": "string",
+      "enum": [
+        "AUTOMATIC_WHEN_SAFE",
+        "NO_AUTOMATIC_ROLLBACK_APPROVED",
+        "READ_ONLY_NOT_APPLICABLE"
+      ]
+    }
+  },
+  "$defs": {
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "capability",
+          "tool"
+        ],
+        "properties": {
+          "backend": {
+            "type": "string",
+            "enum": [
+              "MCP_DIRECT"
+            ]
+          },
+          "capability": {
+            "type": "string",
+            "minLength": 1
+          },
+          "tool": {
+            "type": "string",
+            "minLength": 1
+          },
+          "arguments": {
+            "type": "object"
+          },
+          "required": {
+            "type": "boolean"
+          }
+        }
+      }
+    }
+  }
+}

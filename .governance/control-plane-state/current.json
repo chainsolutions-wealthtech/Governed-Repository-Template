@@ -149,6 +149,35 @@
         "KBI-04M"
       ],
       "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
+    },
+    "governed_execution_engine": {
+      "authority_id": "CP-EXECUTION-001",
+      "decision_id": "CPD-040",
+      "status": "IMPLEMENTED_SOURCE_ONLY",
+      "template_version": "2.8.19",
+      "registered_intents": 39,
+      "server_intents": 15,
+      "identity_secret_intents": 10,
+      "github_intents": 14,
+      "default_mode": "DRY_RUN",
+      "exact_head_guard": true,
+      "capability_snapshot_contract_validation": true,
+      "arbitrary_github_endpoint_allowed": false,
+      "secret_values_persisted": false,
+      "current_mcp_generic_gaps": [
+        "SERVER_FILESYSTEM_CHANGE",
+        "WEB_HOSTING_CHANGE",
+        "TLS_CHANGE",
+        "DOMAIN_DNS_CHANGE",
+        "DATABASE_CHANGE",
+        "SECRET_PROVISIONING",
+        "SERVER_RUNTIME_CHANGE",
+        "SERVER_SCHEDULER_CHANGE",
+        "OBSERVABILITY_CHANGE",
+        "BACKUP_RECOVERY_CHANGE"
+      ],
+      "mcp_intake_created": false,
+      "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
     }
   },
   "framework_product_boundary": {

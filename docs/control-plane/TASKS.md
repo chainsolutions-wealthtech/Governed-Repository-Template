@@ -651,3 +651,17 @@ Authority/artifacts:
 - `.governance/control-plane-state/adaptive-question-catalogue.json`
 - `scripts/adaptive_question_planner.py`
 - `scripts/test_adaptive_question_catalogue.py`
+
+### Governed execution engine implementation
+
+Additive source-only implementation; current CASE 1 unique next action remains unchanged.
+
+- `EXE-01` — register all server + identity + GitHub intents — DONE.
+- `EXE-02` — implement dry-run/authority/exact-HEAD/capability resolver — DONE.
+- `EXE-03` — implement MCP execute/verify/rollback adapter — DONE.
+- `EXE-04` — implement allowlisted GitHub repository/admin/delivery operations — DONE.
+- `EXE-05` — implement GitHub App token, GitHub secret and SSH OIDC credential paths — DONE.
+- `EXE-06` — implement credential rotation/revocation dispatch — DONE for GitHub secret class; MCP-backed lifecycle path coded and fail-closed until binding supplied.
+- `EXE-07` — add canonical-main exact-HEAD manual execution workflow and receipts — DONE.
+- `EXE-08` — unit/E2E regression surface covering all registered intents, HEAD_MOVED, secret redaction and rollback — DONE.
+- `EXE-09` — generic server capabilities absent from current MCP catalogue — EXTERNAL_CAPABILITY_GAP; no speculative intake created.

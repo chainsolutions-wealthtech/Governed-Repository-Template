@@ -143,7 +143,15 @@
       "scripts/test_server_knowledge_model.py",
       "docs/control-plane/IDENTITY_SECRET_LIFECYCLE.md",
       ".governance/control-plane-state/identity-secret-lifecycle.json",
-      "scripts/test_identity_secret_lifecycle.py"
+      "scripts/test_identity_secret_lifecycle.py",
+      "docs/control-plane/GOVERNED_EXECUTION_ENGINE.md",
+      ".governance/control-plane-state/execution-registry.json",
+      "schemas/governed-execution-package.schema.json",
+      "scripts/governed_execution_engine.py",
+      "scripts/governed_execution_workflow_bridge.py",
+      "scripts/test_governed_execution_engine.py",
+      "scripts/test_governed_execution_workflow.py",
+      ".github/workflows/governed-execution.yml"
     ],
     "local_entry_ui": [
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml"
@@ -158,7 +166,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.18",
+  "template_version": "2.8.19",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -324,7 +332,14 @@
     "GitHub App installation tokens preferred for scoped GitHub actions",
     "GitHub OIDC preferred for short-lived downstream server credentials",
     "secret verification uses metadata or behavior without value readback",
-    "credential rotation and revocation are first-class governed operations"
+    "credential rotation and revocation are first-class governed operations",
+    "single governed execution adapter extends existing Loop Engineering",
+    "39 allowlisted GitHub server and credential execution intents",
+    "dry-run by default and exact-head guarded execution packages",
+    "MCP tool arguments validated against current capability snapshot contracts",
+    "GitHub REST operations use explicit allowlisted builders not arbitrary endpoints",
+    "missing production capabilities fail closed instead of bypassing MCP governance",
+    "execution receipts redact credential values and record verification rollback evidence"
   ],
   "automatic_initialization_supported": true
 }
