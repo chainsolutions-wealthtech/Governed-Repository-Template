@@ -25,7 +25,9 @@
     "docs/control-plane/DATA_MODEL.md",
     ".governance/control-plane-db/catalog.json",
     "docs/control-plane/AGENT_ACTIVITY_LOG.md",
-    ".governance/control-plane-state/agent-activity.json"
+    ".governance/control-plane-state/agent-activity.json",
+    "docs/control-plane/ADAPTIVE_CHOICE_QUESTION_CATALOGUE.md",
+    ".governance/control-plane-state/adaptive-question-catalogue.json"
   ],
   "rules": [
     "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",
@@ -70,7 +72,12 @@
     "ADAPTIVE_QUESTIONNAIRE_FEEDS_EXISTING_LOOP_ENGINEERING_NO_PARALLEL_ENGINE",
     "SIGNED_MCP_SSH_BROKER_PROFILE_IS_FACTUAL_EVIDENCE",
     "SSH_PROFILE_MISMATCH_MUST_REOPEN_RECOVERY_NOT_BLIND_RETRY",
-    "MCP_CAPABILITY_SNAPSHOT_FEEDS_EXISTING_LOOP_ENGINEERING_NO_PARALLEL_ENGINE"
+    "MCP_CAPABILITY_SNAPSHOT_FEEDS_EXISTING_LOOP_ENGINEERING_NO_PARALLEL_ENGINE",
+    "ADAPTIVE_QUESTIONS_EXTEND_EXISTING_CASES_NO_PARALLEL_ENGINE",
+    "QUESTIONS_ARE_CHOICE_BASED_AND_ONE_AT_A_TIME",
+    "REUSE_FRESH_OBSERVED_FACTS_BEFORE_ASKING",
+    "QUESTION_ANSWER_NE_EXECUTION_AUTHORITY",
+    "LONG_IMPLEMENTATION_IS_SPLIT_INTO_SMALL_RESUMABLE_TESTED_SLICES"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",
