@@ -74,7 +74,9 @@ def main() -> None:
         raise SystemExit("SERVER_KNOWLEDGE_TEST_FAILED: collector status")
     if slices.get("KBI-04D")!="PERSISTENCE_ADAPTER_IMPLEMENTED_LIVE_INVENTORY_PENDING":
         raise SystemExit("SERVER_KNOWLEDGE_TEST_FAILED: inventory persistence status")
-    for sid in ["KBI-04E","KBI-04F","KBI-04G"]:
+    if slices.get("KBI-04E")!="MAPPING_IMPLEMENTED_SNAPSHOT_NOT_LIVE_ATTESTED":
+        raise SystemExit("SERVER_KNOWLEDGE_TEST_FAILED: recipe capability mapping status")
+    for sid in ["KBI-04F","KBI-04G"]:
         if slices.get(sid)!="PLANNED":
             raise SystemExit(f"SERVER_KNOWLEDGE_TEST_FAILED: {sid} must remain planned")
 

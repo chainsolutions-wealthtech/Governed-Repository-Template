@@ -134,7 +134,7 @@ Incremental slices:
 
 - `KBI-04C` — read-only S1/S2 inventory collector implemented; live collection pending;
 - `KBI-04D` — normalization, versioned persistence and relational projection implemented; live ingestion pending;
-- `KBI-04E` — map recipe requirements to actual MCP tools and identify only truly missing capabilities;
+- `KBI-04E` — source-derived recipe/capability mapping implemented; live tool attestation remains operation-specific;
 - `KBI-04F` — E2E dry-run: S2 + subdomain → complete deployment blueprint, no mutation;
 - `KBI-04G` — later Loop Engineering binding under AuthorityEnvelope.
 
@@ -200,6 +200,41 @@ before an operation that depends on them. The local source state starts at
 conditions. A JSON observation asserts its collector origin and matching
 snapshot, but is not cryptographically signed. Review its origin before
 ingestion. Neither collection nor persistence grants production authority.
+
+### KBI-04E — derived recipe capability mapping
+
+Run `python3 scripts/control_plane_server_recipe_capabilities.py` to derive a
+deterministic JSON matrix from the versioned recipes, the current
+`CP-MCP-CAP-001` snapshot and the persisted KBI-04D inventory. It covers every
+`required_capabilities` and `required_inventory` item of every recipe without
+creating a second mapping authority. The result includes the snapshot digest,
+observation time and inventory revision. Re-running against a refreshed
+snapshot recomputes the mapping; no permanent copy of volatile project registry
+IDs is stored.
+
+For each capability, the matrix distinguishes:
+
+| Status | Meaning |
+|---|---|
+| `CAPABILITY_UNDEFINED` | Required by a recipe, absent from the capability map. |
+| `NO_MUTATION_CANDIDATE` / `NO_OBSERVATION_CANDIDATE` | Modelled capability without a matching tool of the required surface. |
+| `PROJECT_SCOPED_ONLY` / `PROJECT_SPECIFIC_ONLY` | Candidate exists, but is bound to registered/specific projects. |
+| `GENERIC_SNAPSHOT_CANDIDATE` | Generic candidate exists in the versioned snapshot, pending live check and authority. |
+| `CATALOGUE_CONTRADICTION` | Candidate and catalogue disagree; candidate selection fails closed. |
+
+The current snapshot exposes generic read candidates for domain/runtime
+observation. It does not expose generic create-subdomain, DNS-change or TLS
+mutation candidates. A Git pull and deployment candidate on S2 are scoped to
+registered projects, so they do not provide an Ekyc binding or deployment path
+merely because their names appear in the catalogue. The output also reports
+the precise gap IDs and scope constraints. Inventory requirement status remains
+`NO_PERSISTED_OBSERVATION` while KBI-04D has zero live facts.
+
+This matrix states *snapshot candidates*, never live callable tools, free
+capacity, project eligibility, execution authority or production readiness.
+Only a concrete governed operation may trigger a missing-capability intake or
+live capability refresh. `KBI-04F` may consume the derived matrix for a
+non-executing blueprint.
 
 ## Identity and credential plane
 

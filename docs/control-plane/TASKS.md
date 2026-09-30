@@ -674,7 +674,7 @@ This independent source-only stream does not replace the current CASE 1 action.
 |---|---|---|
 | KBI-04C | COLLECTOR_IMPLEMENTED_LIVE_INVENTORY_PENDING | Bounded read-only S1/S2 observation to stdout; current credential and live run required. |
 | KBI-04D | PERSISTENCE_ADAPTER_IMPLEMENTED_LIVE_INVENTORY_PENDING | Allowlisted facts, provenance, freshness, revision guard and existing relational projection; no live facts ingested. |
-| KBI-04E | PLANNED | Map recipe requirements to current MCP tools and explicit missing capabilities. |
+| KBI-04E | MAPPING_IMPLEMENTED_SNAPSHOT_NOT_LIVE_ATTESTED | Derive every recipe inventory/capability requirement from the versioned model and MCP snapshot; gaps and project scope constraints remain explicit. |
 | KBI-04F | PLANNED | Non-executing S2/subdomain deployment blueprint. |
 | KBI-04G | PLANNED | Governed Loop Engineering binding under AuthorityEnvelope. |
 
