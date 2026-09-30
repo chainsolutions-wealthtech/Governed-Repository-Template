@@ -566,12 +566,20 @@ def validate_package(package: dict, registry: dict) -> dict:
             raise ExecutionError("EXECUTION_AUTHORITY_GRANT_MISSING", str(required_authority))
         if not authority.get("decision_ref"):
             raise ExecutionError("EXECUTION_AUTHORITY_DECISION_REF_MISSING")
-    repository = package.get("repository")
+    parameters = package.get("parameters") or {}
+    repository = package.get("repository") or parameters.get("repository")
     expected_head = package.get("expected_head")
     if repository is not None and not REPO_RE.fullmatch(str(repository)):
         raise ExecutionError("PACKAGE_REPOSITORY_INVALID")
     if expected_head is not None and not SHA_RE.fullmatch(str(expected_head)):
         raise ExecutionError("PACKAGE_EXPECTED_HEAD_INVALID")
+    if (
+        spec.get("side_effecting")
+        and repository
+        and package.get("intent") != "GITHUB_CREATE_REPOSITORY_FROM_TEMPLATE"
+        and not expected_head
+    ):
+        raise ExecutionError("PACKAGE_EXPECTED_HEAD_REQUIRED")
     return spec
 
 
@@ -916,7 +924,8 @@ def github_rest_operation(intent: str, parameters: dict, runtime: RuntimeSecretS
 
 
 def verify_exact_head_if_required(package: dict, spec: dict, runtime: RuntimeSecretStore, generated: dict[str, str]) -> dict:
-    repository = package.get("repository")
+    parameters = package.get("parameters") or {}
+    repository = package.get("repository") or parameters.get("repository")
     expected = package.get("expected_head")
     if not repository or not expected:
         return {"required": False}
