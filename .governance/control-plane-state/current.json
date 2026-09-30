@@ -178,6 +178,25 @@
       ],
       "mcp_intake_created": false,
       "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
+    },
+    "execution_package_compiler": {
+      "authority_id": "CP-EXECUTION-001",
+      "decision_id": "CPD-041",
+      "status": "IMPLEMENTED_SOURCE_ONLY",
+      "template_version": "2.8.20",
+      "inputs": [
+        "PROJECT_REQUIREMENT",
+        "OWNER_DECISION",
+        "MCP_CAPABILITY_SNAPSHOT",
+        "OPTIONAL_TRANSIENT_SERVER_INVENTORY",
+        "OPTIONAL_TRANSIENT_GITHUB_SECRET_METADATA"
+      ],
+      "deterministic_bindings": [
+        "REGISTERED_S2_PROJECT_DEPLOYMENT",
+        "S1_S2_PRODUCTION_ATTESTATION"
+      ],
+      "speculative_mcp_intake": false,
+      "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
     }
   },
   "framework_product_boundary": {
