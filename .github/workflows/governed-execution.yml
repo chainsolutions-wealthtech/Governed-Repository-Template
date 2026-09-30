@@ -1,0 +1,197 @@
+name: Governed Execution
+
+on:
+  workflow_dispatch:
+    inputs:
+      package_path:
+        description: 'Reviewed execution package under .governance/control-plane-state/execution-packages/'
+        required: true
+        type: string
+      expected_source_head:
+        description: 'Exact Governed-Repository-Template HEAD expected by the approver'
+        required: true
+        type: string
+      execute:
+        description: 'Execute side effects. False performs validation/dry-run only.'
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: governed-execution-${{ inputs.package_path }}
+  cancel-in-progress: false
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact source
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Verify exact source HEAD
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "${{ inputs.expected_source_head }}" || {
+            echo "::error::HEAD_MOVED expected=${{ inputs.expected_source_head }} actual=$actual"
+            exit 1
+          }
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Validate package and derive execution requirements
+        id: plan
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/governed_execution_workflow_bridge.py             --package "${{ inputs.package_path }}"
+
+      - name: Mint Git target token
+        if: inputs.execute && steps.plan.outputs.token_class == 'GIT'
+        id: git-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ steps.plan.outputs.target_owner }}
+          permission-contents: write
+          permission-pull-requests: write
+          permission-workflows: write
+
+      - name: Mint repository-secret target token
+        if: inputs.execute && steps.plan.outputs.token_class == 'SECRET_REPO'
+        id: secret-repo-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ steps.plan.outputs.target_owner }}
+          permission-contents: read
+          permission-secrets: write
+
+      - name: Mint environment-secret target token
+        if: inputs.execute && steps.plan.outputs.token_class == 'SECRET_ENV'
+        id: secret-env-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ steps.plan.outputs.target_owner }}
+          permission-contents: read
+          permission-secrets: write
+          permission-environments: write
+
+      - name: Mint repository-admin target token
+        if: inputs.execute && steps.plan.outputs.token_class == 'ADMIN'
+        id: admin-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ steps.plan.outputs.target_owner }}
+          permission-administration: write
+          permission-contents: read
+          permission-pull-requests: write
+
+      - name: Mint webhook target token
+        if: inputs.execute && steps.plan.outputs.token_class == 'WEBHOOK'
+        id: webhook-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ steps.plan.outputs.target_owner }}
+          permission-contents: read
+          permission-webhooks: write
+
+      - name: Mint environment-admin target token
+        if: inputs.execute && steps.plan.outputs.token_class == 'ENVIRONMENT'
+        id: environment-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ steps.plan.outputs.target_owner }}
+          permission-contents: read
+          permission-environments: write
+
+      - name: Mint variable target token
+        if: inputs.execute && steps.plan.outputs.token_class == 'VARIABLE'
+        id: variable-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ steps.plan.outputs.target_owner }}
+          permission-contents: read
+          permission-variables: write
+
+      - name: Mint Actions target token
+        if: inputs.execute && steps.plan.outputs.token_class == 'ACTIONS'
+        id: actions-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ steps.plan.outputs.target_owner }}
+          permission-actions: write
+          permission-contents: read
+          permission-workflows: write
+
+      - name: Mint deployment target token
+        if: inputs.execute && steps.plan.outputs.token_class == 'DEPLOYMENT'
+        id: deployment-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ steps.plan.outputs.target_owner }}
+          permission-contents: read
+          permission-deployments: write
+
+      - name: Execute governed package
+        env:
+          GOVERNED_TARGET_TOKEN: ${{
+            steps.git-token.outputs.token ||
+            steps.secret-repo-token.outputs.token ||
+            steps.secret-env-token.outputs.token ||
+            steps.admin-token.outputs.token ||
+            steps.webhook-token.outputs.token ||
+            steps.environment-token.outputs.token ||
+            steps.variable-token.outputs.token ||
+            steps.actions-token.outputs.token ||
+            steps.deployment-token.outputs.token
+          }}
+          GOVERNED_MCP_AUTH_TOKEN: ${{ secrets.GOVERNED_MCP_AUTH_TOKEN }}
+          GOVERNED_MCP_URL: https://mcp.wealthtechinnovations.com/mcp
+          GOVERNED_GITHUB_APP_CLIENT_ID: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          GOVERNED_GITHUB_APP_PRIVATE_KEY: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .governance/control-plane-state/execution-receipts
+          receipt=".governance/control-plane-state/execution-receipts/${{ steps.plan.outputs.operation_id }}.json"
+          if [ "${{ inputs.execute }}" = "true" ]; then
+            python3 scripts/governed_execution_engine.py               --package "${{ inputs.package_path }}"               --execute               --receipt "$receipt"
+          else
+            python3 scripts/governed_execution_engine.py               --package "${{ inputs.package_path }}"               --receipt "$receipt"
+          fi
+
+      - name: Upload execution receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: governed-execution-${{ steps.plan.outputs.operation_id }}
+          path: .governance/control-plane-state/execution-receipts/*.json
+          if-no-files-found: warn
+          retention-days: 30
