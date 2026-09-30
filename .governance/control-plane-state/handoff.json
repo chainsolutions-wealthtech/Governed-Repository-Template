@@ -33,7 +33,9 @@
     "docs/control-plane/SERVER_KNOWLEDGE_MODEL.md",
     ".governance/control-plane-state/server-knowledge-model.json",
     "docs/control-plane/IDENTITY_SECRET_LIFECYCLE.md",
-    ".governance/control-plane-state/identity-secret-lifecycle.json"
+    ".governance/control-plane-state/identity-secret-lifecycle.json",
+    "docs/control-plane/GOVERNED_EXECUTION_ENGINE.md",
+    ".governance/control-plane-state/execution-registry.json"
   ],
   "rules": [
     "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",
@@ -99,7 +101,14 @@
     "FETCH_OR_MINT_CREDENTIAL_AT_RUNTIME_WHEN_POSSIBLE",
     "VERIFY_SECRET_PRESENCE_WITHOUT_VALUE_READBACK",
     "ROTATION_AND_REVOCATION_ARE_FIRST_CLASS",
-    "CREDENTIAL_NE_EXECUTION_AUTHORITY"
+    "CREDENTIAL_NE_EXECUTION_AUTHORITY",
+    "EXECUTION_EXTENDS_EXISTING_LOOP_ENGINEERING_NO_PARALLEL_TASK_ENGINE",
+    "DRY_RUN_BEFORE_SIDE_EFFECT",
+    "EXACT_TARGET_HEAD_BEFORE_REPOSITORY_SCOPED_MUTATION",
+    "MCP_TOOL_MUST_MATCH_CURRENT_CAPABILITY_AND_INPUT_CONTRACT",
+    "GITHUB_MUTATIONS_USE_ALLOWLISTED_BUILDERS",
+    "MISSING_CAPABILITY_FAILS_CLOSED",
+    "EXECUTION_RECEIPT_MUST_NOT_CONTAIN_SECRET_VALUES"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",
