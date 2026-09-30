@@ -80,6 +80,10 @@ def token_class(package: dict, spec: dict) -> str:
     klass = TOKEN_CLASSES.get(intent, "NONE")
     if klass == "SECRET_DYNAMIC":
         return "SECRET_ENV" if (package.get("parameters") or {}).get("environment") else "SECRET_REPO"
+    if klass == "NONE" and spec.get("side_effecting") and (
+        package.get("repository") or (package.get("parameters") or {}).get("repository")
+    ):
+        return "READ"
     return klass
 
 
