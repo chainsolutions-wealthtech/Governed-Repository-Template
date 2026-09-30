@@ -31,7 +31,9 @@
     "docs/control-plane/KNOWLEDGE_BASE.md",
     ".governance/control-plane-state/knowledge-base.json",
     "docs/control-plane/SERVER_KNOWLEDGE_MODEL.md",
-    ".governance/control-plane-state/server-knowledge-model.json"
+    ".governance/control-plane-state/server-knowledge-model.json",
+    "docs/control-plane/IDENTITY_SECRET_LIFECYCLE.md",
+    ".governance/control-plane-state/identity-secret-lifecycle.json"
   ],
   "rules": [
     "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",
@@ -91,7 +93,13 @@
     "REUSE_VALID_SERVER_CONVENTIONS_BEFORE_INVENTING_LAYOUT",
     "SERVER_RECIPE_REQUIRES_PREFLIGHT_VERIFY_ROLLBACK_EVIDENCE",
     "PERSIST_BOUNDED_PROJECT_PATHS_NOT_UNBOUNDED_FILESYSTEM_DUMPS",
-    "SERVER_KNOWLEDGE_NE_EXECUTION_AUTHORITY"
+    "SERVER_KNOWLEDGE_NE_EXECUTION_AUTHORITY",
+    "MODEL_GITHUB_AND_SERVER_ACCESS_AS_TWO_LINKED_PLANES",
+    "PREFER_SHORT_LIVED_PROVIDER_NATIVE_IDENTITY",
+    "FETCH_OR_MINT_CREDENTIAL_AT_RUNTIME_WHEN_POSSIBLE",
+    "VERIFY_SECRET_PRESENCE_WITHOUT_VALUE_READBACK",
+    "ROTATION_AND_REVOCATION_ARE_FIRST_CLASS",
+    "CREDENTIAL_NE_EXECUTION_AUTHORITY"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",
