@@ -456,3 +456,47 @@ The capability snapshot is a persistent last-known image, not a credential or ex
 Refresh is event/need based. The Template has standing authority for these read-only refreshes, but any server/MCP mutation still requires its normal scoped authority. A pre-mutation live refresh is mandatory.
 
 The relational projection remains `PENDING_PROJECTION_GMC_INTEGRATION` by design; no second database or parallel Loop Engineering engine is introduced.
+
+## C1-13-H capability-first MCP memory complete
+
+C1-13-H is DONE.
+
+The Control Plane now keeps a persistent MCP implementation image behind stable capability semantics. It does not use the raw catalogue as the questionnaire.
+
+Canonical planning chain:
+
+```text
+PROJECT REALITY / CASE
+→ unresolved requirement
+→ stable capability
+→ current MCP surface
+→ candidate tool
+→ required authority
+→ prepared operation
+→ existing Loop Engineering
+```
+
+Canonical question resolution:
+
+```text
+fresh direct repository observation
+→ fresh persisted project memory
+→ prior owner decision
+→ authorized MCP read-only discovery
+→ ask owner only if still unresolved or a genuine decision
+```
+
+Evidence:
+
+- #63: CLOSED UNMERGED after semantic QA.
+- #65: merged `07b1f073c6ba5c9c5038efcd0f0e61c2271e73cf`; post-merge CI `36652171736` PASS.
+- #66: CLOSED UNMERGED after authority/scope QA.
+- #67: merged `662072891a66046ca07bb7e356ed4bf2345a12be`; post-merge CI `36652640862` PASS.
+- final refresh `36652696942`: PASS.
+- #68: canonical snapshot merged `6c293a809df15b85fe40685b3a0f6a3508e1ee4d`; post-merge CI `36652771078` PASS.
+- current MCP image: 135 tools, 2 resources, zero unclassified tool surfaces.
+- generic filesystem/web/TLS mutations remain explicitly absent rather than invented.
+- project-specific MCP tools do not masquerade as generic project capabilities.
+- MCP operational-write authority is distinct from scoped server mutation authority.
+
+CASE 1 now returns to Ekyc#1 revision 38 at the explicit approval gate for the materially corrected BOTH discovery plan.
