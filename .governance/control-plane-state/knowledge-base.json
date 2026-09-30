@@ -1,0 +1,331 @@
+{
+  "schema_version": "1.0.0",
+  "authority_id": "CP-KNOWLEDGE-001",
+  "status": "CANONICAL_KNOWLEDGE_MODEL_SEED",
+  "scope": "CONTROL_PLANE_SOURCE_ONLY",
+  "execution_authority_granted": false,
+  "secrets_persisted": false,
+  "server_connection_coordinates_persisted": false,
+  "server_filesystem_paths_persisted": false,
+  "purpose": "REUSE_STABLE_KNOWLEDGE_AND_REFRESH_ONLY_WHEN_REQUIRED",
+  "principles": [
+    "KNOWLEDGE_NE_EXECUTION_AUTHORITY",
+    "OBSERVE_ONCE_REUSE_WHILE_FRESH",
+    "PROVENANCE_REQUIRED",
+    "OWNER_DECISION_DISTINCT_FROM_OBSERVED_FACT",
+    "VOLATILE_FACTS_REFRESH_BEFORE_SENSITIVE_ACTION",
+    "CONTRADICTION_INVALIDATES_REUSE",
+    "PROJECT_SPECIFIC_FACTS_NE_GLOBAL_CONVENTIONS",
+    "OBSERVED_CONVENTION_NE_MANDATORY_STANDARD_UNTIL_GOVERNED",
+    "NO_SECRET_VALUES_OR_SERVER_CONNECTION_COORDINATES",
+    "NO_PARALLEL_RUNTIME_ENGINE"
+  ],
+  "knowledge_layers": [
+    {
+      "id": "TARGET_GOVERNANCE_MODEL",
+      "kind": "STABLE_MODEL",
+      "examples": [
+        "governance objects",
+        "states",
+        "authority classes",
+        "workflow semantics",
+        "repository profiles",
+        "evidence rules"
+      ],
+      "freshness": "VERSION_GOVERNED",
+      "reuse": "ALWAYS_UNTIL_NEW_GOVERNED_REVISION"
+    },
+    {
+      "id": "QUESTION_DECISION_MODEL",
+      "kind": "STABLE_MODEL",
+      "examples": [
+        "adaptive choice questions",
+        "answer dependencies",
+        "owner decisions",
+        "question-resolution rules"
+      ],
+      "freshness": "VERSION_GOVERNED",
+      "reuse": "ALWAYS_UNTIL_NEW_GOVERNED_REVISION"
+    },
+    {
+      "id": "MCP_CAPABILITY_MODEL",
+      "kind": "STABLE_MODEL_PLUS_REFRESHABLE_IMPLEMENTATION",
+      "examples": [
+        "capabilities",
+        "tool surfaces",
+        "authority classes",
+        "case capability mapping"
+      ],
+      "freshness": "EVENT_AND_NEED_BASED",
+      "reuse": "REUSE_CAPABILITY_SEMANTICS_REFRESH_IMPLEMENTATION_WHEN_REQUIRED"
+    },
+    {
+      "id": "PROVIDER_KNOWLEDGE",
+      "kind": "REUSABLE_PLATFORM_KNOWLEDGE",
+      "examples": [
+        "GitHub adapter behavior",
+        "future GitLab adapter behavior",
+        "branch/PR/MR/CI permission semantics"
+      ],
+      "freshness": "PROVIDER_VERSION_OR_CONTRADICTION",
+      "reuse": "REUSE_UNTIL_CONTRADICTION_OR_PROVIDER_CHANGE"
+    },
+    {
+      "id": "SERVER_ORGANIZATION_KNOWLEDGE",
+      "kind": "OBSERVED_ENVIRONMENT_KNOWLEDGE",
+      "examples": [
+        "logical servers",
+        "hosting conventions",
+        "runtime patterns",
+        "domain/vhost patterns",
+        "deployment conventions"
+      ],
+      "freshness": "REFRESH_BEFORE_MUTATION_OR_ON_CONTRADICTION",
+      "reuse": "REUSE_FOR_PLANNING_WHILE_MARKED_CURRENT"
+    },
+    {
+      "id": "PROJECT_FACTS",
+      "kind": "PROJECT_SPECIFIC_FACT",
+      "examples": [
+        "repositories",
+        "provider",
+        "server binding",
+        "domain binding",
+        "runtime",
+        "database",
+        "MCP registration",
+        "CI/CD"
+      ],
+      "freshness": "FIELD_SPECIFIC",
+      "reuse": "REUSE_WHILE_FRESH_AND_NON_CONTRADICTED"
+    },
+    {
+      "id": "OWNER_DECISIONS",
+      "kind": "OWNER_AUTHORED_DECISION",
+      "examples": [
+        "target server",
+        "domain intent",
+        "architecture posture",
+        "authority envelope",
+        "execution timing"
+      ],
+      "freshness": "UNTIL_SUPERSEDED_BY_OWNER",
+      "reuse": "DO_NOT_REASK_UNLESS_CONTEXT_CHANGE_INVALIDATES_DECISION"
+    },
+    {
+      "id": "OBSERVED_CONVENTIONS",
+      "kind": "CANDIDATE_PATTERN",
+      "examples": [
+        "common server layout",
+        "common deployment shape",
+        "common domain naming",
+        "common runtime topology"
+      ],
+      "freshness": "REVALIDATE_WITH_MULTIPLE_EVIDENCE_POINTS",
+      "reuse": "PROPOSE_AS_CANDIDATE_NOT_MANDATORY_STANDARD"
+    },
+    {
+      "id": "OPERATIONAL_EVIDENCE",
+      "kind": "VOLATILE_EVIDENCE",
+      "examples": [
+        "HEAD",
+        "CI status",
+        "runtime health",
+        "disk",
+        "TLS state",
+        "DNS state",
+        "process status"
+      ],
+      "freshness": "LIVE_OR_BOUNDED_TTL",
+      "reuse": "REFRESH_WHEN_ACTION_DEPENDS_ON_CURRENT_STATE"
+    }
+  ],
+  "freshness_classes": {
+    "VERSION_GOVERNED": {
+      "refresh_when": [
+        "GOVERNED_REVISION_CHANGES"
+      ],
+      "mutation_preflight": false
+    },
+    "OWNER_DECISION": {
+      "refresh_when": [
+        "OWNER_SUPERSEDES",
+        "SCOPE_CHANGE_INVALIDATES_DECISION"
+      ],
+      "mutation_preflight": false
+    },
+    "REUSE_UNTIL_CONTRADICTION": {
+      "refresh_when": [
+        "CONTRADICTION",
+        "SOURCE_CHANGED",
+        "PROJECT_SCOPE_CHANGED"
+      ],
+      "mutation_preflight": false
+    },
+    "REFRESH_BEFORE_MUTATION": {
+      "refresh_when": [
+        "MUTATION_PREPARED",
+        "CONTRADICTION",
+        "SOURCE_CHANGED"
+      ],
+      "mutation_preflight": true
+    },
+    "LIVE_ONLY": {
+      "refresh_when": [
+        "EVERY_OPERATION_REQUIRING_CURRENT_STATE"
+      ],
+      "mutation_preflight": true
+    }
+  },
+  "reuse_resolution_order": [
+    "CURRENT_CANONICAL_KNOWLEDGE",
+    "FRESH_PROJECT_FACT",
+    "PRIOR_OWNER_DECISION",
+    "CURRENT_OBSERVED_CONVENTION_AS_CANDIDATE",
+    "AUTHORIZED_DISCOVERY",
+    "ASK_OWNER_IF_DECISION_OR_NON_DISCOVERABLE"
+  ],
+  "invalidation_conditions": [
+    "EXACT_HEAD_MOVED",
+    "PROJECT_SCOPE_CHANGED",
+    "PROVIDER_CHANGED",
+    "SERVER_BINDING_CHANGED",
+    "DOMAIN_BINDING_CHANGED",
+    "RUNTIME_CHANGED",
+    "MCP_CATALOGUE_CONTRADICTION",
+    "OWNER_DECISION_SUPERSEDED",
+    "SECURITY_OR_AUTHORITY_SCOPE_CHANGED"
+  ],
+  "project_memory_contract": {
+    "required_fields": [
+      "project_id",
+      "fact_key",
+      "value",
+      "kind",
+      "source",
+      "observed_at_or_decided_at",
+      "freshness_class",
+      "status",
+      "evidence_ref"
+    ],
+    "fact_kinds": [
+      "OBSERVED_FACT",
+      "OWNER_DECISION",
+      "DERIVED_REQUIREMENT",
+      "CANDIDATE_CONVENTION"
+    ],
+    "statuses": [
+      "CURRENT",
+      "STALE",
+      "CONTRADICTED",
+      "SUPERSEDED",
+      "UNKNOWN"
+    ],
+    "reuse_requires": [
+      "status=CURRENT",
+      "provenance present",
+      "scope match"
+    ],
+    "never_store": [
+      "secret_value",
+      "private_key",
+      "password",
+      "bearer_token",
+      "server_connection_coordinates",
+      "unbounded_server_path_inventory"
+    ]
+  },
+  "seed_subjects": [
+    {
+      "subject_id": "CONTROL_PLANE_TEMPLATE",
+      "subject_type": "PRODUCT",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "known_layers": [
+        "TARGET_GOVERNANCE_MODEL",
+        "QUESTION_DECISION_MODEL",
+        "MCP_CAPABILITY_MODEL"
+      ],
+      "source_of_truth": "docs/control-plane/* + .governance/control-plane-state/*"
+    },
+    {
+      "subject_id": "CASE1_EKYC",
+      "subject_type": "PROJECT_CASE",
+      "repository": "Patricked-code/Ekyc",
+      "known_layers": [
+        "PROJECT_FACTS",
+        "OWNER_DECISIONS",
+        "OPERATIONAL_EVIDENCE"
+      ],
+      "current_role": "SECOND_FRESH_REPOSITORY_E2E",
+      "canonical_detail_source": "case1-replay + Ekyc local-entry state"
+    },
+    {
+      "subject_id": "AFRICAFUNDS_REFERENCE",
+      "subject_type": "ADOPT_EXISTING_REFERENCE",
+      "repositories": [
+        "Wealthtechinnovations/api_opcv",
+        "Wealthtechinnovations/front_end_opcvm"
+      ],
+      "known_layers": [
+        "PROJECT_FACTS",
+        "OBSERVED_CONVENTIONS"
+      ],
+      "use": "REFERENCE_FIXTURE_ONLY_NOT_HARDCODED_PRODUCT_LOGIC"
+    },
+    {
+      "subject_id": "SERVER_S1",
+      "subject_type": "LOGICAL_SERVER",
+      "known_layers": [
+        "SERVER_ORGANIZATION_KNOWLEDGE",
+        "OPERATIONAL_EVIDENCE"
+      ],
+      "coordinates_persisted": false
+    },
+    {
+      "subject_id": "SERVER_S2",
+      "subject_type": "LOGICAL_SERVER",
+      "known_layers": [
+        "SERVER_ORGANIZATION_KNOWLEDGE",
+        "OPERATIONAL_EVIDENCE"
+      ],
+      "coordinates_persisted": false
+    }
+  ],
+  "future_incremental_work": [
+    {
+      "id": "KBI-01",
+      "status": "DONE_IN_THIS_SLICE",
+      "objective": "Persist canonical knowledge layers and freshness rules"
+    },
+    {
+      "id": "KBI-02",
+      "status": "DONE_IN_THIS_SLICE",
+      "objective": "Add source-only invariants test"
+    },
+    {
+      "id": "KBI-03",
+      "status": "PLANNED",
+      "objective": "Persist normalized project facts with provenance/freshness in existing control-plane relational model"
+    },
+    {
+      "id": "KBI-04",
+      "status": "PLANNED",
+      "objective": "Persist server organization patterns without secret/coordinate leakage"
+    },
+    {
+      "id": "KBI-05",
+      "status": "PLANNED",
+      "objective": "Bind adaptive questionnaire to knowledge reuse so resolved facts are never re-asked"
+    },
+    {
+      "id": "KBI-06",
+      "status": "PLANNED",
+      "objective": "Add selective refresh scheduler by freshness class and operation risk"
+    },
+    {
+      "id": "KBI-07",
+      "status": "PLANNED",
+      "objective": "Cross-project convention learning with evidence threshold and no automatic standard promotion"
+    }
+  ]
+}
