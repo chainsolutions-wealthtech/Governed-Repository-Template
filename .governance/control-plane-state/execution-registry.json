@@ -775,7 +775,7 @@
       "required_parameters": [
         "repository",
         "name",
-        "value_ref"
+        "value"
       ],
       "verify": "LIST_ACTIONS_VARIABLES"
     },
