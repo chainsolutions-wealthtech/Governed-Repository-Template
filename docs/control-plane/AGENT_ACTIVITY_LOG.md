@@ -267,3 +267,17 @@
 - `C1-12-J-C` and parent `C1-12-J`: DONE.
 - `C1-12-K`: IN_PROGRESS.
 - Unique next action: `C1_12_K_RERUN_GOUVERN_ISSUE_3`.
+
+## Entry AAL-20260930-KBI04CJ-001
+
+- Agent identity: ChatGPT
+- Workstream: reusable server knowledge `KBI-04C` and GitHub secret metadata `KBI-04J`.
+- Source repository: `chainsolutions-wealthtech/Governed-Repository-Template`.
+- Starting source HEAD observed: `205fda15a9e16a10af08fb560c76968fb2a97e9e`.
+- Intervening main HEAD reconciled: `b9a60756ccc006c27f2140f91c3c355e1fe71e3d` (execution engine PR #76).
+- Objective: implement two independent, bounded read-only collectors without changing Ekyc or the unique CASE 1 execution action.
+- Actions: added source-only collectors, allowlisted metadata reducers, regression tests, CI gates, template exclusion and explicit partial implementation states.
+- Evidence: server inventory collector test, GitHub secret metadata test, Governance validation, execution-engine tests and template bootstrap test all PASS after rebase.
+- Live collection: pending; no MCP or GitHub API read credential was available to the local scripts. No server, secret or Ekyc mutation was performed.
+- Handoff: review the dedicated PR; after merge, authorized live collection can feed later `KBI-04D` persistence. `KBI-04K` remains planned.
+- Unique next action remains: `C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING`.

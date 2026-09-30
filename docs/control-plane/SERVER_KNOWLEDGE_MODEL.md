@@ -140,6 +140,30 @@ Next small slices:
 
 This preserves the current CASE 1 execution order.
 
+### KBI-04C — collector implemented; live inventory pending
+
+`scripts/control_plane_server_inventory_collector.py` intersects the existing
+`CP-MCP-CAP-001` capability map and catalogue with a live MCP `tools/list`. It
+calls only the fixed S1/S2 domain, Docker, PM2, disk and backup read tools that
+remain generic and read-only. A missing or contradictory classification blocks
+that tool. The transient JSON result reports only validated domain names,
+aggregate process states/counts, maximum disk usage and backup counts. It marks
+all other inventory domains unobserved and copies no raw tool response, host
+coordinate, project path or secret value.
+
+Run from the control-plane source with `GOVERNED_MCP_AUTH_TOKEN` available in
+the process environment:
+
+```bash
+python3 scripts/control_plane_server_inventory_collector.py
+```
+
+The collector writes JSON to stdout only. No live observation was performed
+while implementing the code because that credential was unavailable in the
+execution environment. `KBI-04D` remains the separate persistence and
+provenance step; do not treat this collector output as current canonical state
+until live collection and validation have completed.
+
 ## Identity and credential plane
 
 Server operation recipes consume `CP-IDENTITY-SECRET-001`.

@@ -149,3 +149,24 @@ Next small slices:
 - `KBI-04K` — read-only S1/S2 identity/secret-store mapping;
 - `KBI-04L` — E2E dry-run project → complete GitHub + server credential plan;
 - `KBI-04M` — later bind provisioning/rotation/revocation to Loop Engineering under AuthorityEnvelope.
+
+### KBI-04J — collector implemented; live metadata pending
+
+`scripts/control_plane_github_secret_metadata.py` reads repository metadata,
+repository secret names/timestamps, organization secrets shared with that
+repository, deployment environment names and their secret names/timestamps. It
+uses only bounded GitHub REST `GET` requests and emits allowlisted metadata to
+stdout. A denied or incomplete listing stays unknown or partial; successful
+read access never asserts write capability or grants execution authority.
+
+Run from the control-plane source with a GitHub read token in the process
+environment:
+
+```bash
+python3 scripts/control_plane_github_secret_metadata.py --repository OWNER/REPO
+```
+
+`GOVERNED_GITHUB_READ_TOKEN` is preferred; `GH_TOKEN` is also accepted. The
+token and raw API responses are not stored. This environment did not expose a
+GitHub API token to the collector, so live secret metadata remains pending.
+Further server identity discovery is `KBI-04K` and is not inferred here.

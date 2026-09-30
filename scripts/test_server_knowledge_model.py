@@ -70,7 +70,9 @@ def main() -> None:
             raise SystemExit(f"SERVER_KNOWLEDGE_TEST_FAILED: {sid} coordinate leak")
 
     slices={item["id"]:item["status"] for item in model.get("next_incremental_slices") or []}
-    for sid in ["KBI-04C","KBI-04D","KBI-04E","KBI-04F","KBI-04G"]:
+    if slices.get("KBI-04C")!="COLLECTOR_IMPLEMENTED_LIVE_INVENTORY_PENDING":
+        raise SystemExit("SERVER_KNOWLEDGE_TEST_FAILED: collector status")
+    for sid in ["KBI-04D","KBI-04E","KBI-04F","KBI-04G"]:
         if slices.get(sid)!="PLANNED":
             raise SystemExit(f"SERVER_KNOWLEDGE_TEST_FAILED: {sid} must remain planned")
 
