@@ -534,3 +534,19 @@ Purpose: agents should reuse what the Control Plane already knows instead of rep
 The model separates stable governance/provider/project knowledge from volatile operational evidence and requires provenance plus freshness semantics before reuse.
 
 This is planning/memory enrichment only. It does not change the current CASE 1 executable task, grant execution authority or create another runtime engine.
+
+## Governed execution engine
+
+`CP-EXECUTION-001` is implemented source-only as the execution adapter for the existing Loop Engineering model.
+
+Coverage:
+- 15 server/production intents;
+- 10 identity/credential/secret lifecycle intents;
+- 14 GitHub administration/delivery intents;
+- 39 total registered intents.
+
+The engine validates authority, exact target HEAD, MCP capability/tool/project scope, live MCP tool argument contracts and secret-free package rules before side effects.
+
+GitHub operations are implemented with allowlisted REST builders and post-operation verification. Server operations run through MCP bindings only. Missing generic MCP write surfaces remain fail-closed blockers.
+
+No Ekyc mutation and no Patricked-code/MCP mutation is included in this implementation.
