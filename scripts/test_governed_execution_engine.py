@@ -65,7 +65,7 @@ def package(intent: str, *, approved: bool | None = None, project_id: str = "brv
     if approved is None:
         approved = bool(spec["side_effecting"])
     grants = [spec["required_authority"]] if approved else []
-    return {
+    p = {
         "schema_version": "1.0.0",
         "operation_id": f"TEST-{intent}",
         "intent": intent,
@@ -79,6 +79,55 @@ def package(intent: str, *, approved: bool | None = None, project_id: str = "brv
         "parameters": {},
         "bindings": {"capabilities": {}, "credentials": {}, "steps": {}},
     }
+    sha = "a" * 40
+    github_params = {
+        "GITHUB_CREATE_REPOSITORY_FROM_TEMPLATE": {
+            "template_owner": "chainsolutions-wealthtech", "template_repo": "Governed-Repository-Template",
+            "target_owner": "owner", "name": "repo", "private": True,
+        },
+        "GITHUB_CREATE_BRANCH": {"repository": "owner/repo", "branch": "feature/test", "source_sha": sha},
+        "GITHUB_UPSERT_FILE": {
+            "repository": "owner/repo", "path": "README.md", "message": "test",
+            "content_b64": "dGVzdA==", "branch": "main",
+        },
+        "GITHUB_CREATE_PULL_REQUEST": {
+            "repository": "owner/repo", "title": "Test", "head": "feature/test", "base": "main",
+        },
+        "GITHUB_MERGE_PULL_REQUEST": {
+            "repository": "owner/repo", "pull_number": 1, "expected_head_sha": sha,
+        },
+        "GITHUB_CONFIGURE_BRANCH_PROTECTION": {
+            "repository": "owner/repo", "branch": "main", "protection": {},
+        },
+        "GITHUB_CONFIGURE_RULESET": {
+            "repository": "owner/repo", "ruleset": {"name": "governed-test"},
+        },
+        "GITHUB_CONFIGURE_WEBHOOK": {
+            "repository": "owner/repo", "webhook": {"config": {"url": "https://example.test/hook"}},
+        },
+        "GITHUB_CONFIGURE_ENVIRONMENT": {"repository": "owner/repo", "environment": "production"},
+        "GITHUB_SET_ACTIONS_VARIABLE": {"repository": "owner/repo", "name": "EXAMPLE", "value": "nonsecret"},
+        "GITHUB_DISPATCH_WORKFLOW": {"repository": "owner/repo", "workflow": "ci.yml", "ref": "main"},
+        "GITHUB_CREATE_DEPLOYMENT": {"repository": "owner/repo", "ref": sha, "environment": "production"},
+        "GITHUB_UPDATE_REPOSITORY_SETTINGS": {"repository": "owner/repo", "settings": {"delete_branch_on_merge": True}},
+        "GITHUB_ADD_COLLABORATOR": {"repository": "owner/repo", "username": "collaborator", "permission": "push"},
+    }
+    if intent in github_params:
+        p["parameters"] = github_params[intent]
+        if intent != "GITHUB_CREATE_REPOSITORY_FROM_TEMPLATE":
+            p["repository"] = "owner/repo"
+            p["expected_head"] = sha
+    elif intent == "MINT_GITHUB_APP_INSTALLATION_TOKEN":
+        p["parameters"] = {"target_owner": "owner", "target_account_type": "ORGANIZATION"}
+    elif intent == "PROVISION_GITHUB_SECRET":
+        p["repository"] = "owner/repo"
+        p["expected_head"] = sha
+        p["parameters"] = {"repository": "owner/repo", "secret_name": "EXAMPLE", "value_ref": "generated:32"}
+    elif intent == "MINT_EPHEMERAL_SSH_CERTIFICATE":
+        p["parameters"] = {"repository": "owner/repo", "expected_head": sha}
+    elif intent in {"ROTATE_CREDENTIAL", "REVOKE_CREDENTIAL", "VERIFY_SECRET_OR_CREDENTIAL_WITHOUT_READBACK"}:
+        p["parameters"] = {"credential_type": "SERVER_SERVICE_ACCOUNT"}
+    return p
 
 
 def assert_registry_complete() -> None:
