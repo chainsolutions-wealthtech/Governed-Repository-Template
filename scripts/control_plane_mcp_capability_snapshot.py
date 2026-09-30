@@ -524,11 +524,14 @@ def derive_case_operation_map(tools: list[dict]):
     for case_id, sequence in CASE_CAPABILITY_SEQUENCE.items():
         steps = []
         observable_fields = []
-        owner_question_fields = []
+        planned_operation_fields = []
         for order, capability_id in enumerate(sequence, start=1):
             capability = capabilities[capability_id]
             fields = list(capability.get("target_fields", []))
-            observable_fields.extend(fields)
+            if capability["kind"] == "OBSERVATION":
+                observable_fields.extend(fields)
+            elif capability["kind"] in {"MUTATION", "OPERATIONAL"}:
+                planned_operation_fields.extend(fields)
             if capability["kind"] == "MUTATION":
                 question_policy = "PREPARE_OPERATION_AND_AUTHORITY;_DO_NOT_ASK_TECHNICAL_FACTS_ALREADY_OBSERVABLE"
             elif capability["kind"] == "OBSERVATION":
@@ -550,13 +553,12 @@ def derive_case_operation_map(tools: list[dict]):
                 "question_policy": question_policy,
                 "missing_surface_action": capability["missing_surface_action"],
             })
-            if capability["kind"] == "MUTATION":
-                owner_question_fields.extend(fields)
         mapping[case_id] = {
             "mode": "CAPABILITY_FIRST_ADAPTIVE_QUESTION_PLANNING",
             "sequence": steps,
             "observable_target_fields": sorted(set(observable_fields)),
-            "owner_question_candidates": sorted(set(owner_question_fields)),
+            "planned_operation_fields": sorted(set(planned_operation_fields)),
+            "owner_question_candidates": "DERIVE_FROM_UNRESOLVED_PROJECT_DECISIONS_NOT_FROM_TOOL_AVAILABILITY",
             "owner_question_rule": (
                 "DO_NOT_ASK_IF_FRESH_OBSERVATION_OR_PERSISTED_OWNER_DECISION_ALREADY_RESOLVES_FIELD;"
                 "ASK_ONLY_FOR_UNRESOLVED_OWNER_DECISION_OR_NON_DISCOVERABLE_FACT"
@@ -623,7 +625,9 @@ def build_snapshot(
     }
     prior_sequence = int((prior_snapshot or {}).get("refresh_sequence") or 0)
     return {
-        "schema_version": "1.0.0",
+        "schema_version": "1.1.0",
+        "capability_model_version": "1.0.0",
+        "stable_capability_ids": sorted(CAPABILITY_MODEL),
         "authority_id": AUTHORITY_ID,
         "authority_type": "MCP_CAPABILITY_SNAPSHOT",
         "scope": "CONTROL_PLANE_SOURCE_ONLY",
