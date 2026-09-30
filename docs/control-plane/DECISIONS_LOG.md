@@ -154,3 +154,16 @@ Append-only durable decisions for the source/control-plane repository.
 - Server access should prefer ephemeral SSH certificates or scoped service identities.
 - GitHub Actions secrets, server application secrets, database credentials, DNS credentials and TLS private keys are represented by references/metadata only.
 - Credential possession never implies execution authority; mutations still require the existing scoped AuthorityEnvelope/gates.
+
+### CPD-040 — One governed execution adapter for GitHub and production
+
+- Date: 2026-09-30.
+- The server recipes, identity/secret lifecycle and GitHub administration surfaces are now executable through one source-control-plane adapter: `CP-EXECUTION-001`.
+- This adapter extends existing Loop Engineering; it does not introduce a parallel task engine.
+- Execution is package-driven, dry-run by default and fail-closed.
+- Side effects require explicit persisted authority and, when repository-scoped, an exact target HEAD.
+- MCP steps must bind a capability to a tool present in the current canonical capability snapshot and their arguments must satisfy the live tool input contract.
+- GitHub operations use explicit allowlisted endpoint builders; arbitrary GitHub URLs/methods are forbidden.
+- Credentials are supplied only by runtime references/minting. Values are not serialized into packages or receipts.
+- Every mutation path is structured as preflight → execute → verify → rollback/evidence.
+- Missing generic MCP production capabilities remain explicit blockers. The Template must not create speculative/broad MCP intake merely because the executor supports the future intent.
