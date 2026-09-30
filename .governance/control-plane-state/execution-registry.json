@@ -1,0 +1,483 @@
+{
+  "schema_version": "1.0.0",
+  "authority_id": "CP-EXECUTION-001",
+  "status": "EXECUTABLE_ENGINE_REGISTRY",
+  "execution_model": "EXISTING_LOOP_ENGINEERING_ADAPTER",
+  "source_authorities": [
+    "CP-SERVER-KNOWLEDGE-001",
+    "CP-IDENTITY-SECRET-001",
+    "CP-MCP-CAP-001"
+  ],
+  "principles": [
+    "NO_PARALLEL_TASK_ENGINE",
+    "PACKAGE_MUST_BE_REVIEWABLE_AND_SECRET_FREE",
+    "CAPABILITY_BINDING_MUST_MATCH_CURRENT_MCP_SNAPSHOT",
+    "AUTHORITY_REQUIRED_BEFORE_SIDE_EFFECT",
+    "EXACT_HEAD_REQUIRED_FOR_REPOSITORY_SCOPED_MUTATION",
+    "CREDENTIAL_REFERENCE_ONLY",
+    "SECRET_VALUES_NEVER_SERIALIZED",
+    "PREFLIGHT_BEFORE_EXECUTE",
+    "VERIFY_AFTER_EXECUTE",
+    "ROLLBACK_ON_EXECUTION_OR_VERIFICATION_FAILURE_WHEN_SAFE",
+    "MISSING_CAPABILITY_FAILS_CLOSED",
+    "UNMAPPED_TOOL_FAILS_CLOSED",
+    "DRY_RUN_IS_DEFAULT"
+  ],
+  "package_contract": {
+    "required": [
+      "schema_version",
+      "operation_id",
+      "intent",
+      "project_id",
+      "authority",
+      "parameters",
+      "bindings"
+    ],
+    "optional": [
+      "repository",
+      "expected_head",
+      "server_id",
+      "environment",
+      "evidence_context",
+      "rollback_policy"
+    ],
+    "authority_fields": [
+      "approved",
+      "grants",
+      "scope",
+      "decision_ref"
+    ],
+    "bindings_fields": [
+      "capabilities",
+      "credentials"
+    ],
+    "secret_values_forbidden": true
+  },
+  "backends": {
+    "MCP_DIRECT": {
+      "credential_ref": "GOVERNED_MCP_AUTH_TOKEN",
+      "endpoint_env": "GOVERNED_MCP_URL",
+      "protocol": "MCP_JSON_RPC"
+    },
+    "GITHUB_REST": {
+      "target_token_env": "GOVERNED_TARGET_TOKEN",
+      "api": "https://api.github.com"
+    },
+    "GITHUB_APP": {
+      "client_id_env": "GOVERNED_GITHUB_APP_CLIENT_ID",
+      "private_key_env": "GOVERNED_GITHUB_APP_PRIVATE_KEY",
+      "mint_at_runtime": true
+    },
+    "GITHUB_CLI_SECRET": {
+      "target_token_env": "GOVERNED_TARGET_TOKEN",
+      "value_reference_only": true
+    },
+    "SSH_OIDC_BROKER": {
+      "audience": "https://mcp.wealthtechinnovations.com/access/github/repository-ssh",
+      "broker_path": "/access/github/repository-ssh/certificate",
+      "ephemeral_only": true
+    }
+  },
+  "intents": {
+    "CREATE_PROJECT_DIRECTORY": {
+      "source": "CP-SERVER-KNOWLEDGE-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "SCOPED_RUNTIME_WRITE",
+      "required_capabilities": [
+        "SERVER_FILESYSTEM_CHANGE"
+      ],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "PACKAGE_CAPABILITY_BINDINGS_VALIDATED_AGAINST_CURRENT_MCP_SNAPSHOT"
+    },
+    "CREATE_SUBDOMAIN": {
+      "source": "CP-SERVER-KNOWLEDGE-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "SCOPED_WEB_AND_DNS_WRITE",
+      "required_capabilities": [
+        "WEB_HOSTING_CHANGE",
+        "DOMAIN_DNS_CHANGE",
+        "TLS_CHANGE"
+      ],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "PACKAGE_CAPABILITY_BINDINGS_VALIDATED_AGAINST_CURRENT_MCP_SNAPSHOT"
+    },
+    "CREATE_NEW_DOMAIN_BINDING": {
+      "source": "CP-SERVER-KNOWLEDGE-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "SCOPED_WEB_AND_DNS_WRITE",
+      "required_capabilities": [
+        "DOMAIN_DNS_CHANGE",
+        "WEB_HOSTING_CHANGE",
+        "TLS_CHANGE"
+      ],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "PACKAGE_CAPABILITY_BINDINGS_VALIDATED_AGAINST_CURRENT_MCP_SNAPSHOT"
+    },
+    "ALLOCATE_APPLICATION_PORT": {
+      "source": "CP-SERVER-KNOWLEDGE-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "SCOPED_RUNTIME_WRITE",
+      "required_capabilities": [
+        "SERVER_RUNTIME_OBSERVATION",
+        "SERVER_RUNTIME_CHANGE"
+      ],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "PACKAGE_CAPABILITY_BINDINGS_VALIDATED_AGAINST_CURRENT_MCP_SNAPSHOT"
+    },
+    "CONFIGURE_REVERSE_PROXY": {
+      "source": "CP-SERVER-KNOWLEDGE-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "SCOPED_WEB_WRITE",
+      "required_capabilities": [
+        "WEB_HOSTING_CHANGE"
+      ],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "PACKAGE_CAPABILITY_BINDINGS_VALIDATED_AGAINST_CURRENT_MCP_SNAPSHOT"
+    },
+    "PROVISION_TLS": {
+      "source": "CP-SERVER-KNOWLEDGE-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "SCOPED_TLS_WRITE",
+      "required_capabilities": [
+        "TLS_CHANGE"
+      ],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "PACKAGE_CAPABILITY_BINDINGS_VALIDATED_AGAINST_CURRENT_MCP_SNAPSHOT"
+    },
+    "CREATE_DATABASE": {
+      "source": "CP-SERVER-KNOWLEDGE-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "SCOPED_DATABASE_WRITE",
+      "required_capabilities": [
+        "DATABASE_CHANGE"
+      ],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "PACKAGE_CAPABILITY_BINDINGS_VALIDATED_AGAINST_CURRENT_MCP_SNAPSHOT"
+    },
+    "BIND_REPOSITORY_TO_SERVER_PROJECT": {
+      "source": "CP-SERVER-KNOWLEDGE-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "SCOPED_GIT_AND_RUNTIME_WRITE",
+      "required_capabilities": [
+        "SERVER_REPOSITORY_CHANGE",
+        "MCP_PROJECT_BINDING_CHANGE"
+      ],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "PACKAGE_CAPABILITY_BINDINGS_VALIDATED_AGAINST_CURRENT_MCP_SNAPSHOT"
+    },
+    "DEPLOY_APPLICATION": {
+      "source": "CP-SERVER-KNOWLEDGE-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "SCOPED_DEPLOY",
+      "required_capabilities": [
+        "DEPLOYMENT_RUNTIME_CHANGE"
+      ],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "PACKAGE_CAPABILITY_BINDINGS_VALIDATED_AGAINST_CURRENT_MCP_SNAPSHOT"
+    },
+    "CONFIGURE_ENV_AND_SECRETS": {
+      "source": "CP-SERVER-KNOWLEDGE-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "SCOPED_SECRET_PROVISIONING",
+      "required_capabilities": [
+        "SECRET_PROVISIONING",
+        "SERVER_FILESYSTEM_CHANGE"
+      ],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "PACKAGE_CAPABILITY_BINDINGS_VALIDATED_AGAINST_CURRENT_MCP_SNAPSHOT"
+    },
+    "CONFIGURE_PROCESS_OR_SERVICE": {
+      "source": "CP-SERVER-KNOWLEDGE-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "SCOPED_RUNTIME_WRITE",
+      "required_capabilities": [
+        "SERVER_RUNTIME_CHANGE"
+      ],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "PACKAGE_CAPABILITY_BINDINGS_VALIDATED_AGAINST_CURRENT_MCP_SNAPSHOT"
+    },
+    "CONFIGURE_SCHEDULED_JOB": {
+      "source": "CP-SERVER-KNOWLEDGE-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "SCOPED_RUNTIME_WRITE",
+      "required_capabilities": [
+        "SERVER_SCHEDULER_CHANGE"
+      ],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "PACKAGE_CAPABILITY_BINDINGS_VALIDATED_AGAINST_CURRENT_MCP_SNAPSHOT"
+    },
+    "CONFIGURE_OBSERVABILITY": {
+      "source": "CP-SERVER-KNOWLEDGE-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "SCOPED_OBSERVABILITY_WRITE",
+      "required_capabilities": [
+        "OBSERVABILITY_CHANGE"
+      ],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "PACKAGE_CAPABILITY_BINDINGS_VALIDATED_AGAINST_CURRENT_MCP_SNAPSHOT"
+    },
+    "CONFIGURE_BACKUP_AND_ROLLBACK": {
+      "source": "CP-SERVER-KNOWLEDGE-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "SCOPED_BACKUP_WRITE",
+      "required_capabilities": [
+        "BACKUP_RECOVERY_CHANGE"
+      ],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ],
+      "execution_binding": "PACKAGE_CAPABILITY_BINDINGS_VALIDATED_AGAINST_CURRENT_MCP_SNAPSHOT"
+    },
+    "PRODUCTION_ATTESTATION": {
+      "source": "CP-SERVER-KNOWLEDGE-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "READ_ONLY_DISCOVERY_AUTHORITY",
+      "required_capabilities": [
+        "SERVER_RUNTIME_OBSERVATION",
+        "DOMAIN_WEB_OBSERVATION"
+      ],
+      "side_effecting": false,
+      "phases": [
+        "preflight",
+        "verify"
+      ],
+      "execution_binding": "PACKAGE_CAPABILITY_BINDINGS_VALIDATED_AGAINST_CURRENT_MCP_SNAPSHOT"
+    },
+    "DISCOVER_CREDENTIAL_REQUIREMENT": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "PLAN_ONLY",
+      "required_authority": "READ_ONLY_OR_PLANNING",
+      "required_capabilities": [],
+      "side_effecting": false,
+      "phases": [
+        "preflight",
+        "verify"
+      ]
+    },
+    "MINT_GITHUB_APP_INSTALLATION_TOKEN": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "GITHUB_APP_TOKEN",
+      "required_authority": "GITHUB_APP_AUTHORITY",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ]
+    },
+    "PROVISION_GITHUB_SECRET": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "GITHUB_SECRET",
+      "required_authority": "SCOPED_GITHUB_SECRET_WRITE",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ]
+    },
+    "MINT_EPHEMERAL_SSH_CERTIFICATE": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "SSH_OIDC_CERT",
+      "required_authority": "BROKER_TRUST_PLUS_SCOPED_SERVER_AUTHORITY",
+      "required_capabilities": [],
+      "side_effecting": false,
+      "phases": [
+        "preflight",
+        "verify"
+      ]
+    },
+    "CREATE_OR_BIND_SERVER_APPLICATION_SECRET": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "SCOPED_SECRET_PROVISIONING",
+      "required_capabilities": [
+        "SECRET_PROVISIONING"
+      ],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ]
+    },
+    "CREATE_DATABASE_CREDENTIAL": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "SCOPED_DATABASE_AND_SECRET_WRITE",
+      "required_capabilities": [
+        "DATABASE_CHANGE",
+        "SECRET_PROVISIONING"
+      ],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ]
+    },
+    "CREATE_DNS_AUTOMATION_CREDENTIAL": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "MCP_RECIPE",
+      "required_authority": "SCOPED_DNS_CREDENTIAL_ADMIN",
+      "required_capabilities": [
+        "DNS_CREDENTIAL_ADMIN"
+      ],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ]
+    },
+    "ROTATE_CREDENTIAL": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "CREDENTIAL_LIFECYCLE",
+      "required_authority": "SAME_OR_HIGHER_THAN_ORIGINAL_PROVISIONING",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ]
+    },
+    "REVOKE_CREDENTIAL": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "CREDENTIAL_LIFECYCLE",
+      "required_authority": "SCOPED_CREDENTIAL_REVOCATION",
+      "required_capabilities": [],
+      "side_effecting": true,
+      "phases": [
+        "preflight",
+        "execute",
+        "verify",
+        "rollback"
+      ]
+    },
+    "VERIFY_SECRET_OR_CREDENTIAL_WITHOUT_READBACK": {
+      "source": "CP-IDENTITY-SECRET-001",
+      "handler": "CREDENTIAL_VERIFY",
+      "required_authority": "READ_ONLY_OR_SAFE_PROBE",
+      "required_capabilities": [],
+      "side_effecting": false,
+      "phases": [
+        "preflight",
+        "verify"
+      ]
+    }
+  },
+  "evidence_contract": {
+    "persist": [
+      "operation_id",
+      "intent",
+      "status",
+      "started_at",
+      "completed_at",
+      "selected_bindings",
+      "preflight",
+      "verification",
+      "rollback",
+      "failure_code"
+    ],
+    "redact": [
+      "secret",
+      "token",
+      "password",
+      "private_key",
+      "certificate_private_material",
+      "authorization_header"
+    ],
+    "max_text_field": 4000
+  }
+}
