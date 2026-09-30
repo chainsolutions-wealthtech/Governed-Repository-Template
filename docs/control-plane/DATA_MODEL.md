@@ -21,6 +21,8 @@ Files:
 - `catalog.json` — reusable cases, modes, questions, options and activities;
 - `runtime-seed.json` — current known repositories/runs/decisions/checkpoints/intakes;
 - `materialize.py` — builds and validates a SQLite projection.
+- `004_server_inventory_facts.sql` — normalized S1/S2 observation slots, freshness and provenance.
+- `.governance/control-plane-state/server-inventory-facts.json` — versioned KBI-04D source facts, initially `NOT_COLLECTED`.
 
 The same logical schema is intentionally suitable for later migration to PostgreSQL for the admin web application.
 
@@ -57,6 +59,16 @@ These tables answer: **What happened for a concrete repository/run?**
 - `artifacts`
 
 These tables answer: **Where do we resume, what did the owner change, what evidence exists, and what external dependency remains?**
+
+### 4. Server knowledge projection
+
+`server_inventory_facts` carries the ten bounded S1/S2 observation slots from
+KBI-04C. Each row contains a fact status and freshness class, an allowlisted
+value if known, last successful provenance if any, last attempt provenance and
+the source-memory revision. The materializer validates the source state first.
+An initial source at revision 0 produces zero rows, not invented infrastructure
+facts. A failed refresh preserves an older value as `KNOWN_STALE`, which does
+not satisfy an execution preflight. The relational binary remains derived.
 
 ## Reuse across all cases
 

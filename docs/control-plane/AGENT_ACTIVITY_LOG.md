@@ -281,3 +281,13 @@
 - Live collection: pending; no MCP or GitHub API read credential was available to the local scripts. No server, secret or Ekyc mutation was performed.
 - Handoff: review the dedicated PR; after merge, authorized live collection can feed later `KBI-04D` persistence. `KBI-04K` remains planned.
 - Unique next action remains: `C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING`.
+
+## Entry AAL-20260930-KBI04D-001
+
+- Agent identity: ChatGPT.
+- Workstream: server knowledge `KBI-04D`, source-only inventory persistence.
+- Template source HEAD reobserved and reconciled: `bc826b88be57d990df157d99bfac6875421b2077` (PR #78 intervened).
+- Objective: normalize the bounded `KBI-04C` observations with exact source provenance and freshness into versioned source memory, then project them into the existing control-plane relational database.
+- Implemented: strict ten-slot allowlist, snapshot/tool classification, time and revision guards, idempotent replay, contradiction/older-observation refusal, stale downgrade, SQLite migration `004` and CI/source-only boundaries.
+- The source inventory is `NOT_COLLECTED` revision `0`, with no live S1/S2 facts. Tests use synthetic inputs only; live collection still requires the current read-only MCP credential.
+- No server, Ekyc, domain or secret mutation occurred. The CASE 1 unique next action remains `C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING`.

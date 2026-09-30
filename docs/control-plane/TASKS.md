@@ -665,3 +665,17 @@ Additive source-only implementation; current CASE 1 unique next action remains u
 - `EXE-07` — add canonical-main exact-HEAD manual execution workflow and receipts — DONE.
 - `EXE-08` — unit/E2E regression surface covering all registered intents, HEAD_MOVED, secret redaction and rollback — DONE.
 - `EXE-09` — generic server capabilities absent from current MCP catalogue — EXTERNAL_CAPABILITY_GAP; no speculative intake created.
+
+### Server knowledge incremental continuation (KBI-04)
+
+This independent source-only stream does not replace the current CASE 1 action.
+
+| Slice | Status | Reusable result / remaining gate |
+|---|---|---|
+| KBI-04C | COLLECTOR_IMPLEMENTED_LIVE_INVENTORY_PENDING | Bounded read-only S1/S2 observation to stdout; current credential and live run required. |
+| KBI-04D | PERSISTENCE_ADAPTER_IMPLEMENTED_LIVE_INVENTORY_PENDING | Allowlisted facts, provenance, freshness, revision guard and existing relational projection; no live facts ingested. |
+| KBI-04E | PLANNED | Map recipe requirements to current MCP tools and explicit missing capabilities. |
+| KBI-04F | PLANNED | Non-executing S2/subdomain deployment blueprint. |
+| KBI-04G | PLANNED | Governed Loop Engineering binding under AuthorityEnvelope. |
+
+The unique CASE 1 action remains `C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING`.

@@ -4,11 +4,14 @@ from __future__ import annotations
 import argparse
 import json
 import sqlite3
+import sys
 import tempfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 DB_ROOT = ROOT / ".governance" / "control-plane-db"
+sys.path.insert(0, str(ROOT / "scripts"))
+from control_plane_server_inventory_facts import validate_inventory_state
 
 def jdump(value):
     return json.dumps(value, sort_keys=True, separators=(",", ":"))
@@ -99,7 +102,21 @@ def insert_runtime(conn, seed):
         conn.execute("INSERT INTO canonical_memory_events(event_id,event_type,scope_type,scope_id,payload_json,source_ref,occurred_at) VALUES(?,?,?,?,?,?,?)",
                      (ev["event_id"],ev["event_type"],ev["scope_type"],ev["scope_id"],jdump(ev.get("payload",{})),ev.get("source_ref"),ev.get("occurred_at")))
 
-def validate(conn):
+def insert_server_inventory(conn, inventory):
+    model = json.loads((ROOT/".governance/control-plane-state/server-knowledge-model.json").read_text(encoding="utf-8"))
+    validate_inventory_state(inventory, model)
+    for fact in inventory["facts"]:
+        conn.execute(
+            "INSERT INTO server_inventory_facts(fact_id,server_id,domain_id,slot,status,value_json,"
+            "freshness_class,observed_at,known_from_json,last_attempt_json,source_revision) "
+            "VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+            (fact["fact_id"], fact["server_id"], fact["domain_id"], fact["slot"], fact["status"],
+             jdump(fact["value"]) if fact["value"] is not None else None, fact["freshness_class"],
+             fact["observed_at"], jdump(fact["known_from"]) if fact["known_from"] else None,
+             jdump(fact["last_attempt"]), inventory["revision"]),
+        )
+
+def validate(conn, expected_inventory_count=0):
     conn.execute("PRAGMA foreign_key_check")
     fk = conn.fetchall() if False else []
     if conn.execute("PRAGMA foreign_key_check").fetchall():
@@ -223,27 +240,33 @@ def validate(conn):
     ).fetchall()]
     if structuring_cases != ["CREATE_NEW_REPOSITORY","ADOPT_EXISTING_REPOSITORY","MAP_EXISTING_PROJECT","LAB_EVOLUTION"]:
         raise SystemExit(f"CONTROL_PLANE_DB_FAILED: structuring case choices mismatch: {structuring_cases}")
+    facts_count = conn.execute("SELECT COUNT(*) FROM server_inventory_facts").fetchone()[0]
+    if facts_count != expected_inventory_count:
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: server inventory projection count mismatch")
     print("CONTROL_PLANE_DB_VALIDATION_PASS")
     print("cases=4")
     print(f"questions={conn.execute('SELECT COUNT(*) FROM questions').fetchone()[0]}")
     print(f"activities={conn.execute('SELECT COUNT(*) FROM activities').fetchone()[0]}")
     print(f"current_phase={active[0][0]}")
+    print(f"server_inventory_slots={facts_count}")
 
-def build(path: Path):
+def build(path: Path, inventory_path: Path | None = None):
     catalog = json.loads((DB_ROOT/"catalog.json").read_text(encoding="utf-8"))
     seed = json.loads((DB_ROOT/"runtime-seed.json").read_text(encoding="utf-8"))
     replay = json.loads((ROOT/".governance"/"control-plane-state"/"case1-replay.json").read_text(encoding="utf-8"))
+    inventory = json.loads((inventory_path or ROOT/".governance/control-plane-state/server-inventory-facts.json").read_text(encoding="utf-8"))
     conn = sqlite3.connect(path)
     try:
         for migration in sorted(DB_ROOT.glob("[0-9][0-9][0-9]_*.sql")):
             conn.executescript(migration.read_text(encoding="utf-8"))
-        conn.execute("INSERT INTO schema_meta(key,value) VALUES('schema_version','1.2.0')")
+        conn.execute("INSERT INTO schema_meta(key,value) VALUES('schema_version','1.3.0')")
         insert_case_data(conn,catalog)
         insert_replay(conn,replay)
         insert_questions_activities(conn,catalog)
         insert_runtime(conn,seed)
+        insert_server_inventory(conn,inventory)
         conn.commit()
-        validate(conn)
+        validate(conn, len(inventory["facts"]))
     finally:
         conn.close()
 

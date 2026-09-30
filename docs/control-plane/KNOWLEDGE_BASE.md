@@ -116,6 +116,13 @@ The Control Plane can therefore reason from a future owner choice such as `produ
 
 Live S1/S2 population remains intentionally separate and will be performed as bounded authorized discovery.
 
+The `KBI-04C` bounded collector and `KBI-04D` source-only persistence adapter
+now exist. `.governance/control-plane-state/server-inventory-facts.json` is
+initialized at revision `0` / `NOT_COLLECTED`; the existing control-plane
+relational materializer projects its validated facts. This does not claim that
+either server has been observed live. See `SERVER_KNOWLEDGE_MODEL.md` for the
+exact collector slots, provenance and pre-mutation refresh rules.
+
 ## Identity / secret knowledge extension
 
 `CP-IDENTITY-SECRET-001` adds reusable knowledge of **how credentials are obtained and managed** across GitHub and production servers.

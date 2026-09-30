@@ -80,6 +80,8 @@
     "scripts/test_control_plane_mcp_capability_snapshot.py",
     "scripts/control_plane_server_inventory_collector.py",
     "scripts/test_control_plane_server_inventory_collector.py",
+    "scripts/control_plane_server_inventory_facts.py",
+    "scripts/test_control_plane_server_inventory_facts.py",
     "scripts/control_plane_github_secret_metadata.py",
     "scripts/test_control_plane_github_secret_metadata.py"
   ],
@@ -112,7 +114,8 @@
       ".governance/control-plane-state/case1-replay.json",
       ".governance/control-plane-state/agent-activity.json",
       ".governance/control-plane-state/canonical-architecture.json",
-      ".governance/control-plane-state/mcp-capability-snapshot.json"
+      ".governance/control-plane-state/mcp-capability-snapshot.json",
+      ".governance/control-plane-state/server-inventory-facts.json"
     ],
     "issue_role": "ORCHESTRATION_AND_EVIDENCE_NOT_CANONICAL_SOURCE",
     "conversation_role": "SUPPLEMENTAL_CONTEXT_ONLY"
@@ -130,7 +133,9 @@
       ".governance/control-plane-db/runtime-seed.json",
       ".governance/control-plane-db/materialize.py",
       ".governance/control-plane-db/002_agent_activity.sql",
-      ".governance/control-plane-db/003_canonical_authorities.sql"
+      ".governance/control-plane-db/003_canonical_authorities.sql",
+      ".governance/control-plane-db/004_server_inventory_facts.sql",
+      ".governance/control-plane-state/server-inventory-facts.json"
     ],
     "invariants": [
       "DATABASE_BINARY_NOT_CANONICAL_IN_GIT",
@@ -146,7 +151,7 @@
       "DURABLE_STRUCTURED_MEMORY_PROJECTS_TO_RELATIONAL_MODEL",
       "UNPROJECTED_STRUCTURED_MEMORY_MUST_BE_EXPLICITLY_MARKED_PENDING"
     ],
-    "schema_version": "1.2.0",
+    "schema_version": "1.3.0",
     "projection_contract": {
       "mode": "CONTINUOUS_GOVERNED_PROJECTION",
       "git_authority_first": true,
@@ -160,7 +165,8 @@
         "HANDOFF",
         "INTAKE",
         "ARTIFACT",
-        "CANONICAL_AUTHORITY_REVISION"
+        "CANONICAL_AUTHORITY_REVISION",
+        "SERVER_INVENTORY_FACT"
       ],
       "unprojected_state": "PENDING_PROJECTION_EXPLICIT_ONLY"
     }

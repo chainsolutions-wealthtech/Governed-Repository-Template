@@ -1069,7 +1069,7 @@
     },
     {
       "id": "KBI-04D",
-      "status": "PLANNED",
+      "status": "PERSISTENCE_ADAPTER_IMPLEMENTED_LIVE_INVENTORY_PENDING",
       "objective": "Persist normalized S1/S2 inventory facts with provenance and freshness"
     },
     {

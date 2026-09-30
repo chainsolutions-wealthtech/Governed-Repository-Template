@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "authority_id": "CP-SERVER-KNOWLEDGE-001",
+  "scope": "CONTROL_PLANE_SOURCE_ONLY",
+  "status": "NOT_COLLECTED",
+  "revision": 0,
+  "last_ingested_at": null,
+  "execution_authority_granted": false,
+  "secret_values_persisted": false,
+  "facts": []
+}
