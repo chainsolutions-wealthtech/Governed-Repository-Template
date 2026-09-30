@@ -129,6 +129,26 @@
         "KBI-04G"
       ],
       "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
+    },
+    "identity_secret_lifecycle": {
+      "authority_id": "CP-IDENTITY-SECRET-001",
+      "decision_id": "CPD-039",
+      "status": "MODEL_AND_LIFECYCLE_RECIPES_READY",
+      "planes": [
+        "GITHUB_PLANE",
+        "SERVER_PRODUCTION_PLANE"
+      ],
+      "credential_types": 13,
+      "lifecycle_operations": 10,
+      "secret_values_persisted": false,
+      "execution_authority_granted": false,
+      "next_slices": [
+        "KBI-04J",
+        "KBI-04K",
+        "KBI-04L",
+        "KBI-04M"
+      ],
+      "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
     }
   },
   "framework_product_boundary": {
