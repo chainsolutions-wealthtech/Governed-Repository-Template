@@ -595,3 +595,21 @@ These are framework refinements. PR #66 remains unmerged until the corrected eng
 - Current discovery: null.
 - First-agent baseline: not applied.
 - The corrected plan retains read-only discovery only; prior approval cannot be reused because the SSH target materially changed.
+
+### C1-13-I-A — BOTH smart-routing semantic correction
+
+- Parent: `P12-S5 / C1-13`.
+- Depends on: `C1-13-H`.
+- Blocks: `C1-13-I`, `P12-S5`.
+- Status: `IN_PROGRESS`.
+- Defect: `BOTH_COUPLED_EXECUTION_SEMANTICS`.
+- Owner correction: `BOTH` means two configured eligible routes with intelligent selection/fallback, not mandatory simultaneous/sequential execution of both.
+- Required generic behavior:
+  - one operation selects one route;
+  - DIRECT is the initial discovery preference when ready;
+  - SSH is selected when DIRECT is unavailable/failed or the capability requires it;
+  - selected-route PASS satisfies current discovery;
+  - alternate readiness is independent and non-blocking;
+  - newly available alternate route does not force rediscovery;
+  - no write authority is added.
+- Ekyc migration requirement: reuse the already-authorized DIRECT PASS from run `36644247227`; preserve corrected SSH as `CONFIGURED_NOT_ATTESTED`; do not execute new network discovery merely to compensate for the old coupling defect.
