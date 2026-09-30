@@ -115,3 +115,9 @@ No current CASE 1 task is displaced.
 The Control Plane can therefore reason from a future owner choice such as `production = S2` and `domain = subdomain` into the inventory facts, capabilities, authorities and ordered operations required to make that project real.
 
 Live S1/S2 population remains intentionally separate and will be performed as bounded authorized discovery.
+
+## Identity / secret knowledge extension
+
+`CP-IDENTITY-SECRET-001` adds reusable knowledge of **how credentials are obtained and managed** across GitHub and production servers.
+
+The persistent knowledge stores references, types, scopes, lifecycle and provenance — never secret values. Runtime operations fetch or mint the credential only when required.

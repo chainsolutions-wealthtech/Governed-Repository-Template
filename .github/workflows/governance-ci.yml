@@ -93,6 +93,15 @@ jobs:
             echo "SERVER_KNOWLEDGE_MODEL_SOURCE_ONLY_SKIP: client repository"
           fi
 
+      - name: Test source-only identity and secret lifecycle
+        run: |
+          if [ -f .template-source ]; then
+            python3 -m py_compile scripts/test_identity_secret_lifecycle.py
+            python3 scripts/test_identity_secret_lifecycle.py
+          else
+            echo "IDENTITY_SECRET_LIFECYCLE_SOURCE_ONLY_SKIP: client repository"
+          fi
+
       - name: Test source-only MCP capability snapshot model
         run: |
           if [ -f .template-source ]; then
