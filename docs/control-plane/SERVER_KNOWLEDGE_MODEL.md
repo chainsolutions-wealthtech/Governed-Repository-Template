@@ -139,3 +139,13 @@ Next small slices:
 - `KBI-04G` — later Loop Engineering binding under AuthorityEnvelope.
 
 This preserves the current CASE 1 execution order.
+
+## Identity and credential plane
+
+Server operation recipes consume `CP-IDENTITY-SECRET-001`.
+
+The server model knows what must be configured; the identity/secret model knows how the required credentials are obtained, created, injected, verified, rotated and revoked.
+
+Examples include ephemeral SSH certificates, scoped service identities, application environment secrets, database credentials, DNS-provider credentials and TLS key material under the certificate manager.
+
+No recipe may infer authority merely because a credential exists.
