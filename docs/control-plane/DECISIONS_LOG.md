@@ -122,3 +122,16 @@ Append-only durable decisions for the source/control-plane repository.
 - Observed cross-project conventions remain candidate patterns until explicitly promoted by governance; one project's layout never silently becomes a universal rule.
 - Knowledge never grants execution authority and must not persist secret values or sensitive connection coordinates.
 - This extends existing relational/canonical memory; it does not create a parallel runtime or database.
+
+### CPD-038 — Server knowledge includes platform inventory and operational recipes
+
+- Date: 2026-09-30.
+- The Control Plane must understand S1/S2 as managed platforms, not merely as hosts.
+- Durable server knowledge therefore contains both:
+  1. structured inventory of organization/configuration/capabilities; and
+  2. governed operation recipes describing how to create/configure/deploy/verify/rollback project resources.
+- Inventory covers hosting, networking, DNS, TLS, vhosts, filesystem conventions, runtimes, ports, databases, Git/deployment, secrets metadata, scheduling, observability, backup/recovery, security/access, capacity, project mappings and MCP surfaces.
+- Governed path templates and named project paths may be persisted when needed for planning/operation; unbounded filesystem dumps remain prohibited.
+- Recipes never grant authority. Execution remains gated by capability, scoped authority, live preflight and existing Loop Engineering.
+- Existing server conventions should be reused when valid before inventing a new layout.
+- Detailed live S1/S2 inventory collection is a later bounded read-only slice, not part of this change.

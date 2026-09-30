@@ -1,0 +1,1091 @@
+{
+  "schema_version": "1.0.0",
+  "authority_id": "CP-SERVER-KNOWLEDGE-001",
+  "status": "PLANNING_MODEL_SEED",
+  "scope": "CONTROL_PLANE_SOURCE_ONLY",
+  "execution_authority_granted": false,
+  "secret_values_persisted": false,
+  "connection_credentials_persisted": false,
+  "exhaustive_filesystem_inventory_persisted": false,
+  "bounded_project_paths_allowed": true,
+  "purpose": "KNOW_SERVER_PLATFORM_STRUCTURE_AND_HOW_TO_CREATE_CONFIGURE_DEPLOY_VERIFY_AND_ROLLBACK",
+  "principles": [
+    "SERVER_IS_A_MANAGED_PLATFORM_NOT_JUST_A_HOST",
+    "INVENTORY_AND_OPERATION_RECIPES_ARE_BOTH_REQUIRED",
+    "KNOW_CURRENT_STATE_BEFORE_MUTATION",
+    "REUSE_SERVER_CONVENTIONS_WHILE_CURRENT",
+    "REFRESH_VOLATILE_STATE_BEFORE_MUTATION",
+    "PATH_TEMPLATES_AND_PROJECT_BOUND_PATHS_MAY_BE_PERSISTED",
+    "NO_UNBOUNDED_FILESYSTEM_DUMP",
+    "NO_SECRET_VALUES_OR_PRIVATE_KEYS",
+    "CAPABILITY_NE_AUTHORITY",
+    "OPERATION_RECIPE_NE_EXECUTION_AUTHORITY",
+    "ALL_MUTATIONS_REQUIRE_PREFLIGHT_VERIFY_AND_ROLLBACK",
+    "EXISTING_SERVER_PATTERNS_ARE_REUSED_BEFORE_NEW_LAYOUT_IS_INVENTED"
+  ],
+  "fact_statuses": [
+    "KNOWN_CURRENT",
+    "KNOWN_STALE",
+    "UNKNOWN_DISCOVERABLE",
+    "UNKNOWN_OWNER_DECISION",
+    "SENSITIVE_FETCH_ON_DEMAND",
+    "NOT_APPLICABLE",
+    "CONTRADICTED"
+  ],
+  "inventory_domains": [
+    {
+      "id": "SERVER_IDENTITY",
+      "fields": [
+        "logical_id",
+        "role",
+        "environment",
+        "os_family",
+        "os_version",
+        "control_panel",
+        "virtualization",
+        "provider"
+      ],
+      "freshness": "REUSE_UNTIL_CONTRADICTION"
+    },
+    {
+      "id": "HOSTING_STACK",
+      "fields": [
+        "web_servers",
+        "reverse_proxy_stack",
+        "control_panel_modules",
+        "default_vhost_model",
+        "http2_http3_capability"
+      ],
+      "freshness": "REFRESH_BEFORE_MUTATION"
+    },
+    {
+      "id": "NETWORK",
+      "fields": [
+        "public_network_role",
+        "private_network_role",
+        "firewall_model",
+        "ingress_policy",
+        "egress_policy",
+        "port_allocation_model"
+      ],
+      "freshness": "REFRESH_BEFORE_MUTATION"
+    },
+    {
+      "id": "DNS",
+      "fields": [
+        "managed_zones",
+        "provider_model",
+        "record_types_supported",
+        "delegation_model",
+        "propagation_verification_method"
+      ],
+      "freshness": "REFRESH_BEFORE_MUTATION"
+    },
+    {
+      "id": "TLS",
+      "fields": [
+        "certificate_manager",
+        "issuance_model",
+        "renewal_model",
+        "certificate_inventory",
+        "expiry_monitoring",
+        "challenge_methods"
+      ],
+      "freshness": "LIVE_BEFORE_TLS_CHANGE"
+    },
+    {
+      "id": "DOMAINS_VHOSTS",
+      "fields": [
+        "domains",
+        "subdomains",
+        "aliases",
+        "document_roots",
+        "proxy_targets",
+        "vhost_templates",
+        "redirects"
+      ],
+      "freshness": "REFRESH_BEFORE_MUTATION"
+    },
+    {
+      "id": "FILESYSTEM_LAYOUT",
+      "fields": [
+        "project_root_conventions",
+        "document_root_conventions",
+        "release_layout",
+        "shared_storage_layout",
+        "log_layout",
+        "backup_layout",
+        "ownership_model",
+        "permission_model"
+      ],
+      "freshness": "REUSE_UNTIL_CONTRADICTION"
+    },
+    {
+      "id": "RUNTIMES",
+      "fields": [
+        "docker",
+        "compose",
+        "pm2",
+        "systemd",
+        "node_versions",
+        "php_versions",
+        "python_versions",
+        "java_versions",
+        "runtime_images",
+        "runtime_health"
+      ],
+      "freshness": "REFRESH_BEFORE_MUTATION"
+    },
+    {
+      "id": "PORTS_SERVICES",
+      "fields": [
+        "port_allocation_convention",
+        "allocated_project_ports",
+        "listening_services",
+        "service_bindings",
+        "collision_check_method"
+      ],
+      "freshness": "LIVE_BEFORE_PORT_ALLOCATION"
+    },
+    {
+      "id": "DATABASES",
+      "fields": [
+        "engines",
+        "instances",
+        "logical_databases",
+        "schema_conventions",
+        "role_model",
+        "backup_model",
+        "connection_reference_model"
+      ],
+      "freshness": "REFRESH_BEFORE_DATABASE_CHANGE"
+    },
+    {
+      "id": "GIT_DEPLOYMENT",
+      "fields": [
+        "checkout_model",
+        "repository_bindings",
+        "branch_policy",
+        "sync_method",
+        "build_locations",
+        "artifact_model",
+        "deployment_strategy",
+        "rollback_strategy"
+      ],
+      "freshness": "REFRESH_BEFORE_DEPLOY"
+    },
+    {
+      "id": "SECRETS_ENV",
+      "fields": [
+        "secret_store_types",
+        "environment_file_conventions",
+        "secret_reference_model",
+        "rotation_model",
+        "injection_model"
+      ],
+      "freshness": "REFRESH_BEFORE_SECRET_PROVISIONING"
+    },
+    {
+      "id": "PROCESS_SCHEDULING",
+      "fields": [
+        "systemd_units",
+        "pm2_apps",
+        "cron_model",
+        "scheduled_jobs",
+        "worker_patterns",
+        "queue_patterns"
+      ],
+      "freshness": "REFRESH_BEFORE_MUTATION"
+    },
+    {
+      "id": "OBSERVABILITY",
+      "fields": [
+        "healthcheck_conventions",
+        "log_sources",
+        "metrics",
+        "alerts",
+        "uptime_checks",
+        "error_tracking",
+        "audit_logs"
+      ],
+      "freshness": "REFRESH_BEFORE_DEPLOY"
+    },
+    {
+      "id": "BACKUP_RECOVERY",
+      "fields": [
+        "backup_jobs",
+        "retention_model",
+        "restore_method",
+        "rollback_points",
+        "recovery_validation"
+      ],
+      "freshness": "REFRESH_BEFORE_MUTATION"
+    },
+    {
+      "id": "SECURITY_ACCESS",
+      "fields": [
+        "access_model",
+        "ssh_auth_model",
+        "sudo_model",
+        "service_accounts",
+        "file_ownership",
+        "audit_model",
+        "fail2ban_or_equivalent"
+      ],
+      "freshness": "REFRESH_BEFORE_PRIVILEGED_ACTION"
+    },
+    {
+      "id": "CAPACITY",
+      "fields": [
+        "disk_capacity",
+        "memory_capacity",
+        "cpu_capacity",
+        "inode_capacity",
+        "container_capacity",
+        "growth_margin"
+      ],
+      "freshness": "LIVE_BEFORE_DEPLOY"
+    },
+    {
+      "id": "PROJECT_MAPPINGS",
+      "fields": [
+        "project_to_server",
+        "project_to_domain",
+        "project_to_path",
+        "project_to_runtime",
+        "project_to_database",
+        "project_to_port",
+        "project_to_mcp_registration"
+      ],
+      "freshness": "FIELD_SPECIFIC"
+    },
+    {
+      "id": "MCP_SURFACES",
+      "fields": [
+        "read_capabilities",
+        "write_capabilities",
+        "authority_classes",
+        "project_scopes",
+        "missing_capabilities"
+      ],
+      "freshness": "EVENT_AND_NEED_BASED"
+    }
+  ],
+  "path_knowledge_policy": {
+    "may_persist": [
+      "project_bound_deployment_path",
+      "document_root_for_named_project",
+      "log_path_for_named_project",
+      "backup_path_for_named_project",
+      "governed_path_template"
+    ],
+    "must_not_persist": [
+      "unbounded_recursive_filesystem_inventory",
+      "secret_file_contents",
+      "private_key_paths_plus_contents",
+      "credential_material"
+    ],
+    "rule": "PERSIST_ONLY_PATHS_NEEDED_TO_MODEL_OR_OPERATE_GOVERNED_PROJECTS"
+  },
+  "operation_recipe_contract": {
+    "required_fields": [
+      "id",
+      "intent",
+      "required_inventory",
+      "required_capabilities",
+      "required_authority",
+      "preflight",
+      "prepare",
+      "execute",
+      "verify",
+      "rollback",
+      "evidence",
+      "refresh_before_execute"
+    ],
+    "execute_semantics": "DESCRIPTIVE_ONLY_UNTIL_RUNTIME_BINDING",
+    "all_recipes_must_be_idempotency_aware": true,
+    "all_recipes_must_define_rollback_or_explicit_nonrollbackable_gate": true
+  },
+  "operation_recipes": [
+    {
+      "id": "SRV-OP-001",
+      "intent": "CREATE_PROJECT_DIRECTORY",
+      "required_inventory": [
+        "FILESYSTEM_LAYOUT",
+        "PROJECT_MAPPINGS",
+        "SECURITY_ACCESS",
+        "CAPACITY"
+      ],
+      "required_capabilities": [
+        "SERVER_FILESYSTEM_CHANGE"
+      ],
+      "required_authority": "SCOPED_RUNTIME_WRITE",
+      "preflight": [
+        "target_server_known",
+        "project_id_known",
+        "target_path_not_conflicting",
+        "ownership_model_known",
+        "capacity_sufficient"
+      ],
+      "prepare": [
+        "derive_path_from_server_convention_or_owner_decision",
+        "derive_owner_group_permissions",
+        "prepare_rollback_remove_if_empty"
+      ],
+      "execute": [
+        "create_directory",
+        "apply_owner_group",
+        "apply_permissions"
+      ],
+      "verify": [
+        "path_exists",
+        "owner_group_match",
+        "permissions_match",
+        "path_within_authorized_scope"
+      ],
+      "rollback": [
+        "remove_created_empty_directory_or_restore_previous_metadata"
+      ],
+      "evidence": [
+        "before_path_state",
+        "operation_receipt",
+        "after_path_state"
+      ],
+      "refresh_before_execute": [
+        "CAPACITY",
+        "FILESYSTEM_LAYOUT",
+        "PROJECT_MAPPINGS"
+      ]
+    },
+    {
+      "id": "SRV-OP-002",
+      "intent": "CREATE_SUBDOMAIN",
+      "required_inventory": [
+        "SERVER_IDENTITY",
+        "DOMAINS_VHOSTS",
+        "DNS",
+        "TLS",
+        "FILESYSTEM_LAYOUT",
+        "PROJECT_MAPPINGS"
+      ],
+      "required_capabilities": [
+        "WEB_HOSTING_CHANGE",
+        "DOMAIN_DNS_CHANGE",
+        "TLS_CHANGE"
+      ],
+      "required_authority": "SCOPED_WEB_AND_DNS_WRITE",
+      "preflight": [
+        "server_selected",
+        "parent_domain_exists_or_is_authorized",
+        "fqdn_not_conflicting",
+        "target_path_or_proxy_plan_known"
+      ],
+      "prepare": [
+        "derive_fqdn",
+        "derive_vhost_plan",
+        "derive_dns_record_plan",
+        "derive_tls_plan",
+        "derive_document_root_or_proxy_target"
+      ],
+      "execute": [
+        "create_subdomain_or_vhost",
+        "create_or_update_dns",
+        "bind_document_root_or_proxy",
+        "provision_tls"
+      ],
+      "verify": [
+        "dns_resolves",
+        "vhost_matches",
+        "https_valid",
+        "expected_http_response"
+      ],
+      "rollback": [
+        "remove_dns_change",
+        "remove_vhost_or_restore_previous",
+        "revoke_or_detach_new_certificate_if_safe"
+      ],
+      "evidence": [
+        "dns_before_after",
+        "vhost_before_after",
+        "tls_validation",
+        "http_healthcheck"
+      ],
+      "refresh_before_execute": [
+        "DOMAINS_VHOSTS",
+        "DNS",
+        "TLS",
+        "PORTS_SERVICES"
+      ]
+    },
+    {
+      "id": "SRV-OP-003",
+      "intent": "CREATE_NEW_DOMAIN_BINDING",
+      "required_inventory": [
+        "DNS",
+        "TLS",
+        "DOMAINS_VHOSTS",
+        "PROJECT_MAPPINGS"
+      ],
+      "required_capabilities": [
+        "DOMAIN_DNS_CHANGE",
+        "WEB_HOSTING_CHANGE",
+        "TLS_CHANGE"
+      ],
+      "required_authority": "SCOPED_WEB_AND_DNS_WRITE",
+      "preflight": [
+        "domain_decision_present",
+        "dns_authority_known",
+        "server_target_known"
+      ],
+      "prepare": [
+        "dns_plan",
+        "vhost_plan",
+        "tls_plan",
+        "project_binding_plan"
+      ],
+      "execute": [
+        "configure_dns",
+        "configure_vhost",
+        "configure_tls",
+        "persist_project_binding"
+      ],
+      "verify": [
+        "authoritative_dns_check",
+        "https_check",
+        "binding_attestation"
+      ],
+      "rollback": [
+        "restore_prior_dns",
+        "remove_new_vhost_if_unused",
+        "restore_binding"
+      ],
+      "evidence": [
+        "dns_receipt",
+        "vhost_receipt",
+        "tls_receipt",
+        "binding_receipt"
+      ],
+      "refresh_before_execute": [
+        "DNS",
+        "TLS",
+        "DOMAINS_VHOSTS"
+      ]
+    },
+    {
+      "id": "SRV-OP-004",
+      "intent": "ALLOCATE_APPLICATION_PORT",
+      "required_inventory": [
+        "PORTS_SERVICES",
+        "NETWORK",
+        "PROJECT_MAPPINGS"
+      ],
+      "required_capabilities": [
+        "SERVER_RUNTIME_OBSERVATION",
+        "SERVER_RUNTIME_CHANGE"
+      ],
+      "required_authority": "SCOPED_RUNTIME_WRITE",
+      "preflight": [
+        "runtime_requires_port",
+        "port_policy_known",
+        "live_collision_check_passed"
+      ],
+      "prepare": [
+        "select_port_from_allowed_range",
+        "prepare_service_binding"
+      ],
+      "execute": [
+        "bind_runtime_port"
+      ],
+      "verify": [
+        "port_listening_expected_interface_only",
+        "no_collision",
+        "healthcheck_passes"
+      ],
+      "rollback": [
+        "stop_binding_and_release_port"
+      ],
+      "evidence": [
+        "port_preflight",
+        "service_binding",
+        "post_bind_check"
+      ],
+      "refresh_before_execute": [
+        "PORTS_SERVICES",
+        "NETWORK"
+      ]
+    },
+    {
+      "id": "SRV-OP-005",
+      "intent": "CONFIGURE_REVERSE_PROXY",
+      "required_inventory": [
+        "HOSTING_STACK",
+        "DOMAINS_VHOSTS",
+        "PORTS_SERVICES",
+        "TLS"
+      ],
+      "required_capabilities": [
+        "WEB_HOSTING_CHANGE"
+      ],
+      "required_authority": "SCOPED_WEB_WRITE",
+      "preflight": [
+        "fqdn_known",
+        "backend_target_known",
+        "backend_health_passes",
+        "proxy_stack_known"
+      ],
+      "prepare": [
+        "derive_proxy_config",
+        "derive_headers_timeouts_websocket_rules",
+        "prepare_config_test"
+      ],
+      "execute": [
+        "write_scoped_proxy_config",
+        "validate_config",
+        "reload_web_stack"
+      ],
+      "verify": [
+        "config_test_pass",
+        "https_route_reaches_backend",
+        "headers_and_status_expected"
+      ],
+      "rollback": [
+        "restore_previous_proxy_config",
+        "reload_web_stack"
+      ],
+      "evidence": [
+        "config_diff_digest",
+        "config_test",
+        "http_check"
+      ],
+      "refresh_before_execute": [
+        "DOMAINS_VHOSTS",
+        "PORTS_SERVICES",
+        "HOSTING_STACK"
+      ]
+    },
+    {
+      "id": "SRV-OP-006",
+      "intent": "PROVISION_TLS",
+      "required_inventory": [
+        "DNS",
+        "TLS",
+        "DOMAINS_VHOSTS"
+      ],
+      "required_capabilities": [
+        "TLS_CHANGE"
+      ],
+      "required_authority": "SCOPED_TLS_WRITE",
+      "preflight": [
+        "dns_resolves_to_target",
+        "challenge_method_available",
+        "fqdn_bound_to_vhost"
+      ],
+      "prepare": [
+        "select_issuance_method",
+        "prepare_certificate_request",
+        "prepare_renewal_registration"
+      ],
+      "execute": [
+        "issue_or_attach_certificate",
+        "enable_https",
+        "register_renewal"
+      ],
+      "verify": [
+        "certificate_chain_valid",
+        "hostname_matches",
+        "expiry_expected",
+        "https_healthcheck"
+      ],
+      "rollback": [
+        "restore_previous_certificate_or_disable_new_binding_if_safe"
+      ],
+      "evidence": [
+        "certificate_metadata_no_private_key",
+        "https_validation"
+      ],
+      "refresh_before_execute": [
+        "DNS",
+        "TLS"
+      ]
+    },
+    {
+      "id": "SRV-OP-007",
+      "intent": "CREATE_DATABASE",
+      "required_inventory": [
+        "DATABASES",
+        "BACKUP_RECOVERY",
+        "SECURITY_ACCESS",
+        "PROJECT_MAPPINGS"
+      ],
+      "required_capabilities": [
+        "DATABASE_CHANGE"
+      ],
+      "required_authority": "SCOPED_DATABASE_WRITE",
+      "preflight": [
+        "database_required",
+        "engine_selected",
+        "name_not_conflicting",
+        "backup_recovery_policy_known"
+      ],
+      "prepare": [
+        "derive_database_name",
+        "derive_role",
+        "prepare_secret_reference_not_value",
+        "prepare_initial_schema_strategy"
+      ],
+      "execute": [
+        "create_database",
+        "create_or_bind_role",
+        "provision_secret_via_secure_source",
+        "apply_initial_schema_if_authorized"
+      ],
+      "verify": [
+        "connection_test",
+        "least_privilege_check",
+        "schema_version_check"
+      ],
+      "rollback": [
+        "drop_new_empty_database_or_restore_prior_binding_under_explicit_gate"
+      ],
+      "evidence": [
+        "database_metadata_without_password",
+        "role_metadata",
+        "schema_attestation"
+      ],
+      "refresh_before_execute": [
+        "DATABASES",
+        "BACKUP_RECOVERY"
+      ]
+    },
+    {
+      "id": "SRV-OP-008",
+      "intent": "BIND_REPOSITORY_TO_SERVER_PROJECT",
+      "required_inventory": [
+        "GIT_DEPLOYMENT",
+        "PROJECT_MAPPINGS",
+        "FILESYSTEM_LAYOUT",
+        "MCP_SURFACES"
+      ],
+      "required_capabilities": [
+        "SERVER_REPOSITORY_CHANGE",
+        "MCP_PROJECT_BINDING_CHANGE"
+      ],
+      "required_authority": "SCOPED_GIT_AND_RUNTIME_WRITE",
+      "preflight": [
+        "repository_exact_head_known",
+        "server_selected",
+        "deployment_path_known",
+        "project_scope_authorized"
+      ],
+      "prepare": [
+        "binding_plan",
+        "checkout_or_sync_plan",
+        "branch_policy",
+        "rollback_target"
+      ],
+      "execute": [
+        "create_or_update_project_mapping",
+        "checkout_or_sync_repository"
+      ],
+      "verify": [
+        "remote_origin_expected",
+        "head_expected",
+        "cleanliness_expected",
+        "mapping_attested"
+      ],
+      "rollback": [
+        "restore_previous_mapping_and_checkout_state"
+      ],
+      "evidence": [
+        "mapping_receipt",
+        "git_state_before_after"
+      ],
+      "refresh_before_execute": [
+        "GIT_DEPLOYMENT",
+        "PROJECT_MAPPINGS"
+      ]
+    },
+    {
+      "id": "SRV-OP-009",
+      "intent": "DEPLOY_APPLICATION",
+      "required_inventory": [
+        "GIT_DEPLOYMENT",
+        "RUNTIMES",
+        "PORTS_SERVICES",
+        "SECRETS_ENV",
+        "OBSERVABILITY",
+        "BACKUP_RECOVERY",
+        "CAPACITY"
+      ],
+      "required_capabilities": [
+        "DEPLOYMENT_RUNTIME_CHANGE"
+      ],
+      "required_authority": "SCOPED_DEPLOY",
+      "preflight": [
+        "exact_source_known",
+        "dependencies_ready",
+        "secrets_references_ready",
+        "runtime_ready",
+        "rollback_point_ready",
+        "capacity_sufficient"
+      ],
+      "prepare": [
+        "build_plan",
+        "release_plan",
+        "restart_or_switch_plan",
+        "healthcheck_plan",
+        "rollback_plan"
+      ],
+      "execute": [
+        "sync_source_or_artifact",
+        "build",
+        "activate_release",
+        "start_or_reload_runtime"
+      ],
+      "verify": [
+        "process_healthy",
+        "local_healthcheck",
+        "external_healthcheck_if_applicable",
+        "expected_version_attested"
+      ],
+      "rollback": [
+        "restore_previous_release_or_runtime_state"
+      ],
+      "evidence": [
+        "source_sha",
+        "build_receipt",
+        "runtime_receipt",
+        "healthcheck",
+        "production_attestation"
+      ],
+      "refresh_before_execute": [
+        "GIT_DEPLOYMENT",
+        "RUNTIMES",
+        "PORTS_SERVICES",
+        "CAPACITY",
+        "OBSERVABILITY",
+        "BACKUP_RECOVERY"
+      ]
+    },
+    {
+      "id": "SRV-OP-010",
+      "intent": "CONFIGURE_ENV_AND_SECRETS",
+      "required_inventory": [
+        "SECRETS_ENV",
+        "SECURITY_ACCESS",
+        "PROJECT_MAPPINGS"
+      ],
+      "required_capabilities": [
+        "SECRET_PROVISIONING",
+        "SERVER_FILESYSTEM_CHANGE"
+      ],
+      "required_authority": "SCOPED_SECRET_PROVISIONING",
+      "preflight": [
+        "required_secret_metadata_known",
+        "secure_source_known",
+        "target_scope_known"
+      ],
+      "prepare": [
+        "secret_reference_plan",
+        "environment_key_plan",
+        "rotation_plan"
+      ],
+      "execute": [
+        "provision_secret_without_readback",
+        "bind_environment_reference",
+        "reload_only_if_required"
+      ],
+      "verify": [
+        "presence_metadata",
+        "application_can_start",
+        "secret_value_not_logged"
+      ],
+      "rollback": [
+        "restore_previous_reference_or_remove_new_binding"
+      ],
+      "evidence": [
+        "secret_reference_metadata_only",
+        "application_readiness"
+      ],
+      "refresh_before_execute": [
+        "SECRETS_ENV",
+        "SECURITY_ACCESS"
+      ]
+    },
+    {
+      "id": "SRV-OP-011",
+      "intent": "CONFIGURE_PROCESS_OR_SERVICE",
+      "required_inventory": [
+        "RUNTIMES",
+        "PROCESS_SCHEDULING",
+        "FILESYSTEM_LAYOUT",
+        "OBSERVABILITY"
+      ],
+      "required_capabilities": [
+        "SERVER_RUNTIME_CHANGE"
+      ],
+      "required_authority": "SCOPED_RUNTIME_WRITE",
+      "preflight": [
+        "runtime_selected",
+        "entrypoint_known",
+        "user_context_known",
+        "logs_healthcheck_known"
+      ],
+      "prepare": [
+        "service_definition",
+        "restart_policy",
+        "log_binding",
+        "healthcheck"
+      ],
+      "execute": [
+        "install_or_update_service_definition",
+        "enable_if_authorized",
+        "start_or_reload"
+      ],
+      "verify": [
+        "service_active",
+        "restart_policy_loaded",
+        "logs_available",
+        "healthcheck_passes"
+      ],
+      "rollback": [
+        "restore_previous_service_definition_and_state"
+      ],
+      "evidence": [
+        "service_status",
+        "config_digest",
+        "healthcheck"
+      ],
+      "refresh_before_execute": [
+        "RUNTIMES",
+        "PROCESS_SCHEDULING"
+      ]
+    },
+    {
+      "id": "SRV-OP-012",
+      "intent": "CONFIGURE_SCHEDULED_JOB",
+      "required_inventory": [
+        "PROCESS_SCHEDULING",
+        "RUNTIMES",
+        "OBSERVABILITY"
+      ],
+      "required_capabilities": [
+        "SERVER_SCHEDULER_CHANGE"
+      ],
+      "required_authority": "SCOPED_RUNTIME_WRITE",
+      "preflight": [
+        "job_command_or_entrypoint_known",
+        "cadence_owner_decision_present",
+        "collision_check"
+      ],
+      "prepare": [
+        "schedule_definition",
+        "logging",
+        "failure_alerting"
+      ],
+      "execute": [
+        "install_or_update_schedule"
+      ],
+      "verify": [
+        "schedule_registered",
+        "next_run_expected",
+        "dry_run_or_safe_test_if_supported"
+      ],
+      "rollback": [
+        "restore_previous_schedule_or_remove_new_job"
+      ],
+      "evidence": [
+        "schedule_definition_digest",
+        "registration_state"
+      ],
+      "refresh_before_execute": [
+        "PROCESS_SCHEDULING"
+      ]
+    },
+    {
+      "id": "SRV-OP-013",
+      "intent": "CONFIGURE_OBSERVABILITY",
+      "required_inventory": [
+        "OBSERVABILITY",
+        "RUNTIMES",
+        "DOMAINS_VHOSTS"
+      ],
+      "required_capabilities": [
+        "OBSERVABILITY_CHANGE"
+      ],
+      "required_authority": "SCOPED_OBSERVABILITY_WRITE",
+      "preflight": [
+        "health_endpoint_or_process_signal_known",
+        "log_sources_known"
+      ],
+      "prepare": [
+        "healthcheck",
+        "log_collection",
+        "alert_plan",
+        "uptime_check"
+      ],
+      "execute": [
+        "configure_observability_surfaces"
+      ],
+      "verify": [
+        "signals_received",
+        "alerts_tested_if_safe"
+      ],
+      "rollback": [
+        "remove_or_restore_observability_config"
+      ],
+      "evidence": [
+        "healthcheck_receipt",
+        "monitor_registration"
+      ],
+      "refresh_before_execute": [
+        "OBSERVABILITY"
+      ]
+    },
+    {
+      "id": "SRV-OP-014",
+      "intent": "CONFIGURE_BACKUP_AND_ROLLBACK",
+      "required_inventory": [
+        "BACKUP_RECOVERY",
+        "DATABASES",
+        "FILESYSTEM_LAYOUT",
+        "GIT_DEPLOYMENT"
+      ],
+      "required_capabilities": [
+        "BACKUP_RECOVERY_CHANGE"
+      ],
+      "required_authority": "SCOPED_BACKUP_WRITE",
+      "preflight": [
+        "assets_to_protect_known",
+        "retention_decision_known",
+        "restore_target_known"
+      ],
+      "prepare": [
+        "backup_scope",
+        "schedule",
+        "retention",
+        "restore_test_plan"
+      ],
+      "execute": [
+        "configure_backup",
+        "create_initial_restore_point_if_authorized"
+      ],
+      "verify": [
+        "backup_present",
+        "retention_configured",
+        "restore_test_or_validation"
+      ],
+      "rollback": [
+        "restore_previous_backup_configuration"
+      ],
+      "evidence": [
+        "backup_metadata",
+        "restore_validation"
+      ],
+      "refresh_before_execute": [
+        "BACKUP_RECOVERY",
+        "CAPACITY"
+      ]
+    },
+    {
+      "id": "SRV-OP-015",
+      "intent": "PRODUCTION_ATTESTATION",
+      "required_inventory": [
+        "DOMAINS_VHOSTS",
+        "TLS",
+        "RUNTIMES",
+        "OBSERVABILITY",
+        "GIT_DEPLOYMENT"
+      ],
+      "required_capabilities": [
+        "SERVER_RUNTIME_OBSERVATION",
+        "DOMAIN_WEB_OBSERVATION"
+      ],
+      "required_authority": "READ_ONLY_DISCOVERY_AUTHORITY",
+      "preflight": [
+        "deployment_completed"
+      ],
+      "prepare": [
+        "expected_version",
+        "expected_endpoints",
+        "expected_health"
+      ],
+      "execute": [
+        "read_only_checks_only"
+      ],
+      "verify": [
+        "source_version_matches",
+        "runtime_healthy",
+        "https_valid_if_public",
+        "expected_http_status",
+        "critical_logs_clean"
+      ],
+      "rollback": [
+        "NOT_APPLICABLE_READ_ONLY"
+      ],
+      "evidence": [
+        "production_attestation"
+      ],
+      "refresh_before_execute": [
+        "DOMAINS_VHOSTS",
+        "TLS",
+        "RUNTIMES",
+        "OBSERVABILITY",
+        "GIT_DEPLOYMENT"
+      ]
+    }
+  ],
+  "server_subjects": [
+    {
+      "id": "S1",
+      "status": "PARTIAL_KNOWLEDGE_REQUIRES_STRUCTURED_INVENTORY",
+      "inventory_state": "TO_POPULATE_BY_BOUNDED_AUTHORIZED_DISCOVERY",
+      "operation_recipe_compatibility": "TO_VALIDATE",
+      "coordinates_persisted": false
+    },
+    {
+      "id": "S2",
+      "status": "PARTIAL_KNOWLEDGE_REQUIRES_STRUCTURED_INVENTORY",
+      "inventory_state": "TO_POPULATE_BY_BOUNDED_AUTHORIZED_DISCOVERY",
+      "operation_recipe_compatibility": "TO_VALIDATE",
+      "coordinates_persisted": false
+    }
+  ],
+  "next_incremental_slices": [
+    {
+      "id": "KBI-04A",
+      "status": "DONE_IN_THIS_SLICE",
+      "objective": "Define complete server inventory taxonomy"
+    },
+    {
+      "id": "KBI-04B",
+      "status": "DONE_IN_THIS_SLICE",
+      "objective": "Define operation recipe contract and seed recipes"
+    },
+    {
+      "id": "KBI-04C",
+      "status": "PLANNED",
+      "objective": "Build read-only S1/S2 inventory collector using existing MCP capability map"
+    },
+    {
+      "id": "KBI-04D",
+      "status": "PLANNED",
+      "objective": "Persist normalized S1/S2 inventory facts with provenance and freshness"
+    },
+    {
+      "id": "KBI-04E",
+      "status": "PLANNED",
+      "objective": "Map each recipe requirement to currently available MCP tools and explicit missing capabilities"
+    },
+    {
+      "id": "KBI-04F",
+      "status": "PLANNED",
+      "objective": "Add E2E dry-run: choose S2 + subdomain and produce complete non-executing deployment blueprint"
+    },
+    {
+      "id": "KBI-04G",
+      "status": "PLANNED",
+      "objective": "Later bind recipes to Loop Engineering under AuthorityEnvelope"
+    }
+  ]
+}

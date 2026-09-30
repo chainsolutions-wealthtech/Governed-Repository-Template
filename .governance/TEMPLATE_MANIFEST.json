@@ -137,7 +137,10 @@
       "scripts/test_adaptive_question_catalogue.py",
       "docs/control-plane/KNOWLEDGE_BASE.md",
       ".governance/control-plane-state/knowledge-base.json",
-      "scripts/test_control_plane_knowledge_base.py"
+      "scripts/test_control_plane_knowledge_base.py",
+      "docs/control-plane/SERVER_KNOWLEDGE_MODEL.md",
+      ".governance/control-plane-state/server-knowledge-model.json",
+      "scripts/test_server_knowledge_model.py"
     ],
     "local_entry_ui": [
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml"
@@ -152,7 +155,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.16",
+  "template_version": "2.8.17",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -307,7 +310,12 @@
     "stable knowledge reused without repeated discovery",
     "volatile operational facts refreshed only when action freshness requires it",
     "owner decisions reused until superseded or invalidated by scope change",
-    "observed conventions remain candidates until governed promotion"
+    "observed conventions remain candidates until governed promotion",
+    "complete server-platform inventory taxonomy",
+    "server operation recipes with preflight verification rollback and evidence",
+    "bounded governed project paths may be persisted without filesystem dumps",
+    "existing server conventions reused before inventing new layouts",
+    "server knowledge separates capability from authority"
   ],
   "automatic_initialization_supported": true
 }

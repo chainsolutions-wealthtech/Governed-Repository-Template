@@ -29,7 +29,9 @@
     "docs/control-plane/ADAPTIVE_CHOICE_QUESTION_CATALOGUE.md",
     ".governance/control-plane-state/adaptive-question-catalogue.json",
     "docs/control-plane/KNOWLEDGE_BASE.md",
-    ".governance/control-plane-state/knowledge-base.json"
+    ".governance/control-plane-state/knowledge-base.json",
+    "docs/control-plane/SERVER_KNOWLEDGE_MODEL.md",
+    ".governance/control-plane-state/server-knowledge-model.json"
   ],
   "rules": [
     "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",
@@ -84,7 +86,12 @@
     "REFRESH_ONLY_VOLATILE_CONTRADICTED_OR_ACTION_SENSITIVE_FACTS",
     "OWNER_DECISIONS_ARE_REUSED_UNTIL_SUPERSEDED_OR_SCOPE_INVALIDATED",
     "OBSERVED_CONVENTIONS_ARE_CANDIDATES_NOT_AUTOMATIC_STANDARDS",
-    "KNOWLEDGE_NE_EXECUTION_AUTHORITY"
+    "KNOWLEDGE_NE_EXECUTION_AUTHORITY",
+    "UNDERSTAND_SERVER_AS_MANAGED_PLATFORM_BEFORE_PROJECT_MUTATION",
+    "REUSE_VALID_SERVER_CONVENTIONS_BEFORE_INVENTING_LAYOUT",
+    "SERVER_RECIPE_REQUIRES_PREFLIGHT_VERIFY_ROLLBACK_EVIDENCE",
+    "PERSIST_BOUNDED_PROJECT_PATHS_NOT_UNBOUNDED_FILESYSTEM_DUMPS",
+    "SERVER_KNOWLEDGE_NE_EXECUTION_AUTHORITY"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",

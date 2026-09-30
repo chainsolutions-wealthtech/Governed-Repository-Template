@@ -111,6 +111,24 @@
         "KBI-07"
       ],
       "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
+    },
+    "server_platform_knowledge": {
+      "authority_id": "CP-SERVER-KNOWLEDGE-001",
+      "decision_id": "CPD-038",
+      "status": "MODEL_AND_RECIPE_SEED_READY",
+      "inventory_domains": 19,
+      "operation_recipes": 15,
+      "bounded_project_paths_allowed": true,
+      "exhaustive_filesystem_inventory_persisted": false,
+      "execution_authority_granted": false,
+      "next_slices": [
+        "KBI-04C",
+        "KBI-04D",
+        "KBI-04E",
+        "KBI-04F",
+        "KBI-04G"
+      ],
+      "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
     }
   },
   "framework_product_boundary": {
