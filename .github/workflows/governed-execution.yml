@@ -34,10 +34,14 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Verify exact source HEAD
+      - name: Verify canonical branch and exact source HEAD
         shell: bash
         run: |
           set -euo pipefail
+          test "${{ github.ref }}" = "refs/heads/main" || {
+            echo "::error::GOVERNED_EXECUTION_REQUIRES_CANONICAL_MAIN"
+            exit 1
+          }
           actual="$(git rev-parse HEAD)"
           test "$actual" = "${{ inputs.expected_source_head }}" || {
             echo "::error::HEAD_MOVED expected=${{ inputs.expected_source_head }} actual=$actual"
@@ -55,6 +59,16 @@ jobs:
         run: |
           set -euo pipefail
           python3 scripts/governed_execution_workflow_bridge.py             --package "${{ inputs.package_path }}"
+
+      - name: Mint read-only target token
+        if: inputs.execute && steps.plan.outputs.token_class == 'READ'
+        id: read-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          owner: ${{ steps.plan.outputs.target_owner }}
+          permission-contents: read
 
       - name: Mint Git target token
         if: inputs.execute && steps.plan.outputs.token_class == 'GIT'
@@ -161,17 +175,8 @@ jobs:
 
       - name: Execute governed package
         env:
-          GOVERNED_TARGET_TOKEN: ${{
-            steps.git-token.outputs.token ||
-            steps.secret-repo-token.outputs.token ||
-            steps.secret-env-token.outputs.token ||
-            steps.admin-token.outputs.token ||
-            steps.webhook-token.outputs.token ||
-            steps.environment-token.outputs.token ||
-            steps.variable-token.outputs.token ||
-            steps.actions-token.outputs.token ||
-            steps.deployment-token.outputs.token
-          }}
+          GOVERNED_TARGET_TOKEN: >-
+            ${{ steps.read-token.outputs.token || steps.git-token.outputs.token || steps.secret-repo-token.outputs.token || steps.secret-env-token.outputs.token || steps.admin-token.outputs.token || steps.webhook-token.outputs.token || steps.environment-token.outputs.token || steps.variable-token.outputs.token || steps.actions-token.outputs.token || steps.deployment-token.outputs.token }}
           GOVERNED_MCP_AUTH_TOKEN: ${{ secrets.GOVERNED_MCP_AUTH_TOKEN }}
           GOVERNED_MCP_URL: https://mcp.wealthtechinnovations.com/mcp
           GOVERNED_GITHUB_APP_CLIENT_ID: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
