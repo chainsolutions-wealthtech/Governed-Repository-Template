@@ -19,7 +19,7 @@ from governed_execution_engine import (
 ALLOWED_PREFIX = (ROOT / ".governance" / "control-plane-state" / "execution-packages").resolve()
 
 TOKEN_CLASSES = {
-    "PROVISION_GITHUB_SECRET": "SECRET",
+    "PROVISION_GITHUB_SECRET": "SECRET_DYNAMIC",
     "ROTATE_CREDENTIAL": "CREDENTIAL",
     "REVOKE_CREDENTIAL": "CREDENTIAL",
     "VERIFY_SECRET_OR_CREDENTIAL_WITHOUT_READBACK": "CREDENTIAL",
@@ -72,10 +72,15 @@ def token_class(package: dict, spec: dict) -> str:
     intent = package["intent"]
     if intent in {"ROTATE_CREDENTIAL", "REVOKE_CREDENTIAL", "VERIFY_SECRET_OR_CREDENTIAL_WITHOUT_READBACK"}:
         credential_type = (package.get("parameters") or {}).get("credential_type")
-        if credential_type in {"GITHUB_ACTIONS_REPOSITORY_SECRET", "GITHUB_ACTIONS_ENVIRONMENT_SECRET"}:
-            return "SECRET"
+        if credential_type == "GITHUB_ACTIONS_ENVIRONMENT_SECRET":
+            return "SECRET_ENV"
+        if credential_type == "GITHUB_ACTIONS_REPOSITORY_SECRET":
+            return "SECRET_REPO"
         return "NONE"
-    return TOKEN_CLASSES.get(intent, "NONE")
+    klass = TOKEN_CLASSES.get(intent, "NONE")
+    if klass == "SECRET_DYNAMIC":
+        return "SECRET_ENV" if (package.get("parameters") or {}).get("environment") else "SECRET_REPO"
+    return klass
 
 
 def main() -> None:
