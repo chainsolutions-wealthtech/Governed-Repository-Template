@@ -632,3 +632,22 @@ These are framework refinements. PR #66 remains unmerged until the corrected eng
 - Observed facts: no Ekyc project registration and no Ekyc/KYC domain found in the authorized MCP discovery evidence.
 - Remaining field is an owner decision: `CREATE_NEW`, `EXISTING`, or `UNRESOLVED`.
 - Answering this question does not authorize domain creation or server mutation.
+
+### Adaptive choice-question incremental plan (AQI)
+
+This is planning/knowledge enrichment and does not replace the current CASE 1 unique executable action.
+
+- `AQI-01` — catalogue + invariants — DONE in current slice.
+- `AQI-02` — pure no-side-effect planner skeleton — DONE in current slice.
+- `AQI-03` — unit/E2E fixtures for fresh Ekyc-like and existing AfricaFunds-like projects — DONE in current slice.
+- `AQI-04` — bind selected questions to existing local-entry state machine — PLANNED.
+- `AQI-05` — project derived requirements into existing Loop Engineering DAG — PLANNED, consumed by GMC dependency work.
+- `AQI-06` — add GitHub/GitLab dynamic observation adapters — PLANNED.
+- `AQI-07` — bind standing AuthorityEnvelope to autonomous routine execution — PLANNED.
+- `AQI-08` — cross-case E2E/no-regression validation before final Governance Model freeze — PLANNED.
+
+Authority/artifacts:
+- `docs/control-plane/ADAPTIVE_CHOICE_QUESTION_CATALOGUE.md`
+- `.governance/control-plane-state/adaptive-question-catalogue.json`
+- `scripts/adaptive_question_planner.py`
+- `scripts/test_adaptive_question_catalogue.py`
