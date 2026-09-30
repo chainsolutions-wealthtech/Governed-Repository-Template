@@ -130,10 +130,10 @@ Before execution, current volatile facts are refreshed. Stable conventions are r
 
 This slice intentionally stops at knowledge and recipes.
 
-Next small slices:
+Incremental slices:
 
-- `KBI-04C` — read-only S1/S2 inventory collector;
-- `KBI-04D` — normalized persisted inventory with provenance/freshness;
+- `KBI-04C` — read-only S1/S2 inventory collector implemented; live collection pending;
+- `KBI-04D` — normalization, versioned persistence and relational projection implemented; live ingestion pending;
 - `KBI-04E` — map recipe requirements to actual MCP tools and identify only truly missing capabilities;
 - `KBI-04F` — E2E dry-run: S2 + subdomain → complete deployment blueprint, no mutation;
 - `KBI-04G` — later Loop Engineering binding under AuthorityEnvelope.
@@ -159,10 +159,47 @@ python3 scripts/control_plane_server_inventory_collector.py
 ```
 
 The collector writes JSON to stdout only. No live observation was performed
-while implementing the code because that credential was unavailable in the
-execution environment. `KBI-04D` remains the separate persistence and
-provenance step; do not treat this collector output as current canonical state
-until live collection and validation have completed.
+while implementing the collector because that credential was unavailable in the
+execution environment.
+
+### KBI-04D — persistence adapter implemented; live facts pending
+
+`scripts/control_plane_server_inventory_facts.py` validates a saved `KBI-04C`
+observation against the versioned MCP capability snapshot and the server
+knowledge model. It reduces only the ten bounded S1/S2 slots supported by the
+collector: domains, Docker, PM2, maximum disk usage, and backup counts.
+Other inventory domains remain unobserved. Success from a tool whose source
+classification is no longer read-only is refused.
+
+For a reviewed live observation, use the current source checkout and its exact
+state revision:
+
+```bash
+python3 scripts/control_plane_server_inventory_collector.py > /tmp/kbi-04c-observation.json
+python3 scripts/control_plane_server_inventory_facts.py \
+  --input /tmp/kbi-04c-observation.json --expected-revision 0
+python3 .governance/control-plane-db/materialize.py
+```
+
+The command requires the collector's current process credential and a real
+read-only response. The importer performs no network call and never fetches
+credentials. `--expected-revision` protects the exact versioned state; use the
+actual current revision rather than the example `0` after the first ingestion.
+Commit the reviewed JSON state through the governed GitHub PR/CI path. The
+SQLite database is deterministically rebuilt from that state and is not
+committed. A same-time replay is idempotent; conflicting or older observations
+fail. Unknown or partial responses do not become known facts. A later failed
+refresh marks a formerly known value `KNOWN_STALE` for planning and preserves
+its last successful provenance. No raw MCP output, secret, connection
+coordinate, container name, filesystem path or unbounded inventory is stored.
+
+`KNOWN_CURRENT` means observed successfully **at the recorded time**. Domain,
+runtime, disk and backup facts still require their model-specific live refresh
+before an operation that depends on them. The local source state starts at
+`NOT_COLLECTED`, revision `0`, with zero facts; it does not assert current S1/S2
+conditions. A JSON observation asserts its collector origin and matching
+snapshot, but is not cryptographically signed. Review its origin before
+ingestion. Neither collection nor persistence grants production authority.
 
 ## Identity and credential plane
 

@@ -453,6 +453,28 @@
       ],
       "proposals": [],
       "unique_next_action": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
+    },
+    {
+      "activity_id": "AAL-20260930-KBI04D-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "KBI-04D_SERVER_INVENTORY_PERSISTENCE",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "bc826b88be57d990df157d99bfac6875421b2077",
+      "objective": "Project bounded S1/S2 observations into governed source memory and the existing relational database without fabricating live infrastructure facts.",
+      "evidence_refs": [
+        "scripts/control_plane_server_inventory_facts.py",
+        "scripts/test_control_plane_server_inventory_facts.py",
+        ".governance/control-plane-state/server-inventory-facts.json",
+        ".governance/control-plane-db/004_server_inventory_facts.sql"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "Intervening Template PR #78 was reconciled before implementation; KBI-04D uses a distinct source-only collision domain.",
+        "The source inventory remains NOT_COLLECTED at revision 0. Synthetic fixtures validate projection and staleness; they are never committed as server observations.",
+        "No server, secret, domain or Ekyc mutation was performed. A live KBI-04C collection remains required before facts may be ingested."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
     }
   ]
 }
