@@ -75,3 +75,16 @@ Append-only durable decisions for the source/control-plane repository.
 - CREATE, ADOPT, MAP, LAB and CONTINUE consume this knowledge through the existing project model/work-items/Loop Engineering. No parallel governance or task engine is created.
 - MCP-side changes are not requested merely to maintain this snapshot; no new MCP intake is created unless a concrete missing external capability later blocks an authorized action.
 - Relational projection is explicitly pending the scheduled Governance Model integration rather than creating a parallel database.
+
+### CPD-034 — Capability model precedes MCP tool selection and owner questions
+
+- Date: 2026-09-30.
+- Decision: the MCP snapshot is an implementation image, not the questionnaire and not the target Governance Model.
+- The Control Plane first resolves the project need into a stable capability, then maps that capability to the currently exposed MCP surface.
+- Existing repositories are observation-first: fresh Git/repository facts, persisted project facts, prior owner decisions and authorized MCP observations resolve fields before any owner question is emitted.
+- A fresh resolved fact must not be re-asked.
+- CREATE and ADOPT/MAP/CONTINUE use the same capability/question resolver; CREATE simply has fewer initially resolved facts.
+- Case plans are ordered capability sequences, not bulk tool lists.
+- A missing mutation capability produces a prepared scoped-capability requirement only when a concrete authorized project operation needs it; it does not automatically create an MCP intake.
+- Tool presence never grants authority. Tool absence never authorizes inventing or bypassing a surface.
+- Outputs continue into the existing project model, work-items and Loop Engineering.
