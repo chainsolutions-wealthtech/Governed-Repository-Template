@@ -135,3 +135,22 @@ Append-only durable decisions for the source/control-plane repository.
 - Recipes never grant authority. Execution remains gated by capability, scoped authority, live preflight and existing Loop Engineering.
 - Existing server conventions should be reused when valid before inventing a new layout.
 - Detailed live S1/S2 inventory collection is a later bounded read-only slice, not part of this change.
+
+### CPD-039 — GitHub and server credentials have a complete governed lifecycle
+
+- Date: 2026-09-30.
+- The governed platform has two operational planes: GitHub and server/production.
+- A cross-cutting identity/credential/secret model links them.
+- The Control Plane must know for every required action:
+  - which identity performs it;
+  - which credential type is required;
+  - whether it can be reused, minted, created, rotated or revoked;
+  - where the credential is securely sourced;
+  - how it is injected;
+  - how presence/scope are verified without secret-value readback;
+  - how it is rotated and revoked.
+- Provider-native and short-lived identities are preferred over persistent credentials.
+- GitHub App installation tokens and GitHub OIDC are preferred patterns where supported.
+- Server access should prefer ephemeral SSH certificates or scoped service identities.
+- GitHub Actions secrets, server application secrets, database credentials, DNS credentials and TLS private keys are represented by references/metadata only.
+- Credential possession never implies execution authority; mutations still require the existing scoped AuthorityEnvelope/gates.
