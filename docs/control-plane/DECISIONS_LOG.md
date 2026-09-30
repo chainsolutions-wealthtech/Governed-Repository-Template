@@ -167,3 +167,14 @@ Append-only durable decisions for the source/control-plane repository.
 - Credentials are supplied only by runtime references/minting. Values are not serialized into packages or receipts.
 - Every mutation path is structured as preflight → execute → verify → rollback/evidence.
 - Missing generic MCP production capabilities remain explicit blockers. The Template must not create speculative/broad MCP intake merely because the executor supports the future intent.
+
+### CPD-041 — Project knowledge compiles into executable packages without speculative capability widening
+
+- Date: 2026-09-30.
+- Project requirements, owner decisions and bounded GitHub/server observations must compile into the existing `CP-EXECUTION-001` package format before execution.
+- The compiler reuses known observations first and derives deterministic facts such as a subdomain FQDN from selected parent + label.
+- An MCP tool is auto-bound only when its live catalogue contract, capability classification and project scope unambiguously match the requested operation.
+- A project not present in an existing MCP project allowlist is never silently added or treated as supported.
+- Missing capabilities become explicit blockers in the package plan; this compiler does not create MCP intake automatically.
+- GitHub secret metadata can classify CREATE versus ALIGN/ROTATE without reading the secret value.
+- Existing CASE 1 chronology and owner domain-binding decision remain unchanged.

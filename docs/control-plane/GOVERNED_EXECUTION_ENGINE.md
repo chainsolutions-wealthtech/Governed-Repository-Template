@@ -262,3 +262,22 @@ If Ekyc selects S2 + a new subdomain, the domain/vhost/TLS/filesystem recipes wi
 - Patricked-code/MCP is not modified;
 - execution is source-control-plane only;
 - missing MCP capabilities remain explicit blockers rather than shortcuts.
+
+## Knowledge-driven package compiler
+
+`scripts/governed_execution_package_compiler.py` converts a project requirement into the existing secret-free execution package.
+
+It consumes:
+- the execution registry;
+- the canonical MCP capability snapshot;
+- the server operation model;
+- optional transient S1/S2 inventory from KBI-04C;
+- optional transient GitHub secret metadata from KBI-04J.
+
+The compiler may derive deterministic facts and bindings, but it never grants authority and never creates broad MCP intake.
+
+Current deterministic bindings include:
+- an already registered S2 project → `deploy_project_s2` with `git_status_project_s2` preflight/verification;
+- S1/S2 production attestation → bounded read-only disk/runtime/domain probes.
+
+For an unregistered project such as the current fresh Ekyc case, deployment remains blocked with `PROJECT_NOT_IN_CURRENT_MCP_DEPLOY_REGISTRY` until a governed registration capability exists or is explicitly provided.

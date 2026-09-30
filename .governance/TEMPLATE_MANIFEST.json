@@ -155,7 +155,9 @@
       "scripts/governed_execution_workflow_bridge.py",
       "scripts/test_governed_execution_engine.py",
       "scripts/test_governed_execution_workflow.py",
-      ".github/workflows/governed-execution.yml"
+      ".github/workflows/governed-execution.yml",
+      "scripts/governed_execution_package_compiler.py",
+      "scripts/test_governed_execution_package_compiler.py"
     ],
     "local_entry_ui": [
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml"
@@ -170,7 +172,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.19",
+  "template_version": "2.8.20",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -343,7 +345,12 @@
     "MCP tool arguments validated against current capability snapshot contracts",
     "GitHub REST operations use explicit allowlisted builders not arbitrary endpoints",
     "missing production capabilities fail closed instead of bypassing MCP governance",
-    "execution receipts redact credential values and record verification rollback evidence"
+    "execution receipts redact credential values and record verification rollback evidence",
+    "project requirements compile into secret-free governed execution packages",
+    "current S1 S2 and GitHub read-only knowledge feeds execution preparation",
+    "deterministic MCP bindings are auto-selected only when live tool contracts and project scope match",
+    "unknown project registry membership blocks deployment instead of silently widening MCP scope",
+    "missing MCP capabilities are reported without automatic intake creation"
   ],
   "automatic_initialization_supported": true
 }

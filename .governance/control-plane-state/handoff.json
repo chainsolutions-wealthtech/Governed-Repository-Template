@@ -35,7 +35,8 @@
     "docs/control-plane/IDENTITY_SECRET_LIFECYCLE.md",
     ".governance/control-plane-state/identity-secret-lifecycle.json",
     "docs/control-plane/GOVERNED_EXECUTION_ENGINE.md",
-    ".governance/control-plane-state/execution-registry.json"
+    ".governance/control-plane-state/execution-registry.json",
+    "scripts/governed_execution_package_compiler.py"
   ],
   "rules": [
     "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",
@@ -108,7 +109,11 @@
     "MCP_TOOL_MUST_MATCH_CURRENT_CAPABILITY_AND_INPUT_CONTRACT",
     "GITHUB_MUTATIONS_USE_ALLOWLISTED_BUILDERS",
     "MISSING_CAPABILITY_FAILS_CLOSED",
-    "EXECUTION_RECEIPT_MUST_NOT_CONTAIN_SECRET_VALUES"
+    "EXECUTION_RECEIPT_MUST_NOT_CONTAIN_SECRET_VALUES",
+    "COMPILE_PROJECT_REQUIREMENTS_TO_EXECUTION_PACKAGE_BEFORE_EXECUTION",
+    "AUTO_BIND_MCP_TOOL_ONLY_WHEN_CAPABILITY_SCOPE_AND_LIVE_CONTRACT_MATCH",
+    "NEVER_SILENTLY_WIDEN_MCP_PROJECT_REGISTRY",
+    "MISSING_CAPABILITY_BLOCKS_WITHOUT_AUTOMATIC_INTAKE"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",
