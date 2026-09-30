@@ -430,6 +430,29 @@
       ],
       "proposals": [],
       "unique_next_action": "C1_12_K_RERUN_GOUVERN_ISSUE_3"
+    },
+    {
+      "activity_id": "AAL-20260930-KBI04CJ-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "KBI-04C/KBI-04J_READ_ONLY_KNOWLEDGE_COLLECTORS",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "b9a60756ccc006c27f2140f91c3c355e1fe71e3d",
+      "objective": "Implement bounded independent read-only server and GitHub secret-metadata collectors without changing Ekyc or the unique CASE 1 execution action.",
+      "evidence_refs": [
+        "scripts/control_plane_server_inventory_collector.py",
+        "scripts/control_plane_github_secret_metadata.py",
+        "scripts/test_control_plane_server_inventory_collector.py",
+        "scripts/test_control_plane_github_secret_metadata.py",
+        "Template main b9a60756ccc006c27f2140f91c3c355e1fe71e3d"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "The intervening execution-engine PR #76 was reconciled before publication; its tests still pass.",
+        "No MCP or GitHub API read credential was available to the local scripts; live inventory and secret metadata remain pending.",
+        "No server, secret or Ekyc mutation was performed. KBI-04D and KBI-04K remain planned."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
     }
   ]
 }

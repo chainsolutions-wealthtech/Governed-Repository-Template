@@ -77,7 +77,11 @@
     ".governance/control-plane-db",
     ".github/workflows/mcp-capability-refresh.yml",
     "scripts/control_plane_mcp_capability_snapshot.py",
-    "scripts/test_control_plane_mcp_capability_snapshot.py"
+    "scripts/test_control_plane_mcp_capability_snapshot.py",
+    "scripts/control_plane_server_inventory_collector.py",
+    "scripts/test_control_plane_server_inventory_collector.py",
+    "scripts/control_plane_github_secret_metadata.py",
+    "scripts/test_control_plane_github_secret_metadata.py"
   ],
   "current_role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
   "executor": {

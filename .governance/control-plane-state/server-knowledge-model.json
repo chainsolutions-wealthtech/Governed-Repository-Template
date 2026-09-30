@@ -1064,7 +1064,7 @@
     },
     {
       "id": "KBI-04C",
-      "status": "PLANNED",
+      "status": "COLLECTOR_IMPLEMENTED_LIVE_INVENTORY_PENDING",
       "objective": "Build read-only S1/S2 inventory collector using existing MCP capability map"
     },
     {

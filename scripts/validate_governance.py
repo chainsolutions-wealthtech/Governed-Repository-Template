@@ -171,6 +171,10 @@ SOURCE_ONLY_REQUIRED = {
     ".github/workflows/mcp-capability-refresh.yml",
     "scripts/control_plane_mcp_capability_snapshot.py",
     "scripts/test_control_plane_mcp_capability_snapshot.py",
+    "scripts/control_plane_server_inventory_collector.py",
+    "scripts/test_control_plane_server_inventory_collector.py",
+    "scripts/control_plane_github_secret_metadata.py",
+    "scripts/test_control_plane_github_secret_metadata.py",
     "docs/control-plane/MCP_CAPABILITY_MODEL.md",
     ".governance/control-plane-state/mcp-capability-snapshot.json",
 }
@@ -471,6 +475,10 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
         ".github/workflows/mcp-capability-refresh.yml",
         "scripts/control_plane_mcp_capability_snapshot.py",
         "scripts/test_control_plane_mcp_capability_snapshot.py",
+        "scripts/control_plane_server_inventory_collector.py",
+        "scripts/test_control_plane_server_inventory_collector.py",
+        "scripts/control_plane_github_secret_metadata.py",
+        "scripts/test_control_plane_github_secret_metadata.py",
     }
     if set(policy.get("source_only_paths") or []) != expected_source_only:
         fail("control plane source-only path contract is invalid")
