@@ -32,7 +32,7 @@ The snapshot stores only non-secret information needed for planning:
 
 - MCP server identity and protocol;
 - observed source/runtime/catalogue digests;
-- S1/S2 non-secret target coordinates;
+- logical server identities and non-secret capability metadata;
 - current MCP tool catalogue and declared surfaces;
 - current MCP resources;
 - safe summary of the scoped-write context;
