@@ -1041,6 +1041,10 @@ def compile_plan(package: dict, registry: dict, snapshot: dict) -> dict:
                 missing = [x for x in (exc.detail or "").split(",") if x]
             else:
                 raise
+        if spec.get("side_effecting") and not steps.get("execute"):
+            missing.append("EXPLICIT_EXECUTE_STEP_BINDING")
+        if not spec.get("side_effecting") and not (steps.get("preflight") or steps.get("verify")):
+            missing.append("READ_ONLY_VERIFICATION_STEP_BINDING")
     elif spec.get("handler") == "CREDENTIAL_LIFECYCLE":
         credential_type = (package.get("parameters") or {}).get("credential_type")
         if credential_type not in {"GITHUB_ACTIONS_REPOSITORY_SECRET", "GITHUB_ACTIONS_ENVIRONMENT_SECRET"}:
