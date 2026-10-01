@@ -14,6 +14,7 @@ DOMAIN_STRATEGIES=["DISCOVER_EXISTING_THEN_PROPOSE","CREATE_NEW_AFTER_APPROVAL",
 DOMAIN_INTENTS=["REUSE_EXISTING_DOMAIN","CREATE_SUBDOMAIN","CREATE_NEW_ROOT_DOMAIN","CREATE_CHILD_DOMAIN","NO_PUBLIC_DOMAIN","DECIDE_LATER"]
 DOMAIN_LABEL_CHOICES=["ekyc","kyc","identity","verify","OTHER_CUSTOM","DECIDE_LATER"]
 DOMAIN_ROOT_NAME_MODES=["CUSTOM_NAME","DISCOVER_AVAILABLE_NAMES","DECIDE_LATER"]
+DEPLOYMENT_MOUNT_MODES=["HOST_ROOT","CREATE_PATH","REUSE_EXISTING_PATH","DECIDE_LATER"]
 RUNTIME_POLICIES=["READ_ONLY_DISCOVERY","EXPLICIT_APPROVAL_FOR_SCOPED_WRITE"]
 WORKFLOW_MODELS=["REGULATORY_AFRICAFUNDS_GOVERNED_FLOW","STANDARD_GOVERNED_FLOW"]
 
@@ -84,6 +85,9 @@ def validate(field,v):
     if field=="domain_root_name_mode" and v not in DOMAIN_ROOT_NAME_MODES:return "invalid root domain mode"
     if field=="domain_root_name":
         if not isinstance(v,str) or not re.fullmatch(r"[A-Za-z0-9.-]+\.[A-Za-z]{2,}",v):return "invalid root domain name"
+    if field=="deployment_mount_mode" and v not in DEPLOYMENT_MOUNT_MODES:return "invalid deployment mount mode"
+    if field=="deployment_path":
+        if not isinstance(v,str) or not re.fullmatch(r"/[A-Za-z0-9._~-]+(?:/[A-Za-z0-9._~-]+)*",v):return "invalid deployment path"
     if field=="project_scope":
         if not isinstance(v,dict) or not isinstance(v.get("in_scope"),list) or not isinstance(v.get("out_of_scope"),list):return "project_scope requires in_scope/out_of_scope arrays"
     if field in {"external_systems","constraints"} and not isinstance(v,list):return "array required"
@@ -231,6 +235,69 @@ def domain_operation_requirements(intent):
       "execution_authority_granted":False
     }
 
+def derive_deployment_binding(s):
+    a=s.get("answers") or {}
+    if a.get("domain_intent")!="REUSE_EXISTING_DOMAIN":return None
+    host=a.get("domain_existing_selection")
+    if not host or host=="DECIDE_LATER":return None
+    selected_server=a.get("production_server_selection")
+    mode=a.get("deployment_mount_mode")
+    if mode=="HOST_ROOT":
+        return {
+          "mode":"HOST_ROOT",
+          "kind":"EXISTING_HOST_ROOT",
+          "host":host,
+          "path":"/",
+          "server":selected_server
+        }
+    if mode in {"CREATE_PATH","REUSE_EXISTING_PATH"} and a.get("deployment_path"):
+        return {
+          "mode":mode,
+          "kind":"EXISTING_HOST_PATH",
+          "host":host,
+          "path":a.get("deployment_path"),
+          "server":selected_server
+        }
+    if mode=="DECIDE_LATER":
+        return {
+          "mode":"UNRESOLVED",
+          "kind":"EXISTING_HOST_PATH",
+          "host":host,
+          "reason":"DECIDE_LATER",
+          "server":selected_server
+        }
+    return None
+
+def deployment_operation_requirements(binding):
+    binding=binding or {}
+    mode=binding.get("mode")
+    if mode=="CREATE_PATH":
+        return {
+          "intent":"CONFIGURE_EXISTING_HOST_PATH_BINDING",
+          "execution_intent":"CONFIGURE_REVERSE_PROXY",
+          "required_capabilities":["WEB_HOSTING_CHANGE","SERVER_RUNTIME_OBSERVATION"],
+          "required_authority":"SCOPED_WEB_WRITE",
+          "prepared_only":True,
+          "execution_authority_granted":False
+        }
+    if mode in {"HOST_ROOT","REUSE_EXISTING_PATH"}:
+        return {
+          "intent":"VERIFY_EXISTING_HOST_MOUNT",
+          "execution_intent":"PRODUCTION_ATTESTATION",
+          "required_capabilities":["DOMAIN_WEB_OBSERVATION","SERVER_RUNTIME_OBSERVATION"],
+          "required_authority":"READ_ONLY_DISCOVERY_AUTHORITY",
+          "prepared_only":True,
+          "execution_authority_granted":False
+        }
+    return {
+      "intent":"NO_DEPLOYMENT_PATH_MUTATION",
+      "execution_intent":None,
+      "required_capabilities":[],
+      "required_authority":None,
+      "prepared_only":True,
+      "execution_authority_granted":False
+    }
+
 def derive_domain_binding(s):
     a=s.get("answers") or {}
     intent=a.get("domain_intent")
@@ -292,6 +359,25 @@ def reconcile_domain_question_order(s):
         return refresh(s)
     return s
 
+def reconcile_existing_host_path_question_order(s):
+    s=copy.deepcopy(s)
+    a=s.get("answers") or {}
+    if (
+      s.get("mode")=="FIRST_AGENT_BOOTSTRAP"
+      and a.get("domain_intent")=="REUSE_EXISTING_DOMAIN"
+      and a.get("domain_existing_selection") not in {None,"DECIDE_LATER"}
+      and "deployment_binding" not in a
+      and "deployment_mount_mode" not in a
+      and (
+        (s.get("next_request") or {}).get("field") in {"workflow_model","setup_approved"}
+        or s.get("phase") in {"Q_WORKFLOW_MODEL","SETUP_APPROVAL"}
+      )
+    ):
+        s["setup_package"]=None
+        s["hold_reason"]=None
+        return refresh(s)
+    return s
+
 def fresh_project_requires_production_server_choice(s):
     if s.get("mode")!="FIRST_AGENT_BOOTSTRAP":return False
     a=s.get("answers") or {}
@@ -316,6 +402,8 @@ def build_setup(s):
       "setup_repository_now":a.get("setup_repository_now"),
       "link_mcp_server":linked,
       "workflow_model":a.get("workflow_model"),
+      "deployment_binding":copy.deepcopy(a.get("deployment_binding")),
+      "deployment_operation_requirements":deployment_operation_requirements(a.get("deployment_binding")),
       "git_rights":{
         "read":["metadata","contents","commits","branches","pull requests","issues","actions/checks"],
         "governed_write":["contents","issues","pull requests","workflow files when explicitly required"],
@@ -341,6 +429,8 @@ def build_setup(s):
           "domain_intent":a.get("domain_intent"),
           "domain_binding":a.get("domain_binding"),
           "domain_operation_requirements":domain_operation_requirements(a.get("domain_intent")),
+          "deployment_binding":copy.deepcopy(a.get("deployment_binding")),
+          "deployment_operation_requirements":deployment_operation_requirements(a.get("deployment_binding")),
           "runtime_mutation_policy":a.get("runtime_mutation_policy"),
           "discovery_tools":["ping","get_project_context","list_domains_s1","list_domains_s2","get_write_tools_context"],
           "write_tools":"DISABLED_UNTIL_MCP_PROJECT_REGISTRATION_AND_EXPLICIT_AUTHORITY",
@@ -524,6 +614,49 @@ def refresh(s):
                 s["answers"]["domain_binding"]=binding
             else:
                 raise RuntimeError("DOMAIN_BINDING_DERIVATION_INCOMPLETE")
+
+        if (
+          domain_intent=="REUSE_EXISTING_DOMAIN"
+          and s["answers"].get("domain_existing_selection") not in {None,"DECIDE_LATER"}
+        ):
+            if "deployment_mount_mode" not in s["answers"]:
+                host=s["answers"].get("domain_existing_selection")
+                s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DEPLOYMENT_MOUNT_MODE"
+                s["next_request"]=q(
+                  "Q_DEPLOYMENT_MOUNT_MODE","deployment_mount_mode",
+                  "Comment veux-tu monter l'application sur ce host existant ?",
+                  DEPLOYMENT_MOUNT_MODES,
+                  extra={
+                    "host":host,
+                    "examples":{
+                      "HOST_ROOT":f"https://{host}/",
+                      "CREATE_PATH":f"https://{host}/ekyc",
+                      "REUSE_EXISTING_PATH":f"https://{host}/<chemin-existant>"
+                    },
+                    "decision_kind":"OWNER_DEPLOYMENT_MOUNT",
+                    "execution_authority_granted":False
+                  }
+                );return s
+            mount=s["answers"].get("deployment_mount_mode")
+            if mount in {"CREATE_PATH","REUSE_EXISTING_PATH"} and "deployment_path" not in s["answers"]:
+                host=s["answers"].get("domain_existing_selection")
+                s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DEPLOYMENT_PATH"
+                s["next_request"]=q(
+                  "Q_DEPLOYMENT_PATH","deployment_path",
+                  "Quel chemin HTTP veux-tu utiliser sur ce host ? Indique un chemin comme /ekyc.",
+                  typ="string",
+                  extra={
+                    "host":host,
+                    "mount_mode":mount,
+                    "path_is_not_dns_name":True,
+                    "execution_authority_granted":False
+                  }
+                );return s
+            if "deployment_binding" not in s["answers"]:
+                deployment=derive_deployment_binding(s)
+                if deployment is None:
+                    raise RuntimeError("DEPLOYMENT_BINDING_DERIVATION_INCOMPLETE")
+                s["answers"]["deployment_binding"]=deployment
 
     if "workflow_model" not in s["answers"]:
         s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_WORKFLOW_MODEL";s["next_request"]=q("Q_WORKFLOW_MODEL","workflow_model","Quel flux de lecture et de travail veux-tu appliquer ?",WORKFLOW_MODELS);return s
