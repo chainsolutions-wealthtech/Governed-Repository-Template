@@ -22,14 +22,14 @@ Objective: V2.7.0 Self-Governed Control Plane.
 | P12-S2 Gouvern MCP discovery | DONE | P12-S1 | PASS/non-degraded discovery |
 | P12-S3 Setup approval + APPLY_BASELINE | DONE | P12-S2 | baseline commit + first-agent handoff |
 | P12-S4 Prove subsequent NORMAL_GOVERNED_ENTRY on external CASE 1 pilot (current pilot: Gouvern) | DONE | P12-S3 | `Gouvern#4` NORMAL_GOVERNED_ENTRY + LOCAL_HANDOFF_READY; no baseline reset |
-| P12-S5 Second fresh repository E2E | ACTIVE_PARENT | P12-S4 | clean uninterrupted lifecycle; current child C1-13-I-B-E |
-| P12-S6 Close CASE 1 and release next macro case | PENDING | P12-S5 | reconciled final evidence |
+| P12-S5 Second fresh repository E2E | DONE | P12-S4 | Ekyc fresh baseline + subsequent NORMAL_GOVERNED_ENTRY `LOCAL_HANDOFF_READY`; no target-specific repair |
+| P12-S6 Close CASE 1 and release next macro case | READY | P12-S5 | reconcile final CASE 1 evidence and release GMC-A |
 
 ## Unique executable task
 
-`C1-13-I-B-F_APPROVE_EKYC_SETUP`
+`P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`
 
-`P12-S5` remains the active parent. No later task may become executable before this owner-decision gate completes.
+`P12-S5` exit gate is PASS. `P12-S6` is the only executable task; GMC remains dependency-bound behind CASE 1 closure.
 
 ### C1-12 discovered sub-tasks
 
@@ -833,10 +833,26 @@ These slices do not change the CASE 1 unique action.
 
 ### C1-13-I-B-F — Ekyc setup approval
 
-- Status: `IN_PROGRESS`.
+- Status: `DONE`.
 - Depends on: `C1-13-I-B-E`.
-- Gate: `OWNER_SETUP_APPROVAL_REQUIRED`.
-- Ekyc#1 revision 46 / `SETUP_APPROVAL`.
-- Field: `setup_approved` (boolean).
-- Approval concerns repository setup + governed rights matrix materialization.
-- Domain/server operations remain `prepared_only`; no S1/DNS/Plesk/TLS execution authority is granted by this gate.
+- Owner approved `setup_approved=true` through central comment `5936330817`.
+- Control Plane run `36895996929`: PASS.
+- Ekyc Governed Local Entry run `36896033996`: PASS.
+- Baseline materialization commit: `3e889a2bdac78312ebcc7e31d1388ead65c9fceb`.
+- Local state: `PROJECT_BASELINE_READY`; first-agent session `LOCAL-000001-S1`; `WORK-PROJECT-001` remains `READY`.
+- No S1/domain/DNS/Plesk/TLS execution authority was granted.
+
+### C1-13-I-B-G — Ekyc subsequent normal-entry proof
+
+- Status: `DONE`.
+- Depends on: `C1-13-I-B-F`.
+- Central normal-entry start comment: `5936415975`.
+- Ekyc#2 / request `LOCAL-000002` / mode `NORMAL_GOVERNED_ENTRY`.
+- Start run `36896607275`: PASS.
+- Final target command run `36896992524`: PASS.
+- Final state: `LOCAL_HANDOFF_READY`, revision 6.
+- Ekyc HEAD remained `3e889a2bdac78312ebcc7e31d1388ead65c9fceb`.
+- `LOCAL-000001-S1` remains the single first-agent session.
+- `WORK-PROJECT-001` remains `READY` and was not executed.
+- No baseline/session/work duplication and no target Git mutation.
+- P12-S5 exit gate: `PASS`.
