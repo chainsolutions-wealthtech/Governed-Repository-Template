@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0.0",
+  "process_name": "GACR",
+  "process_title": "Governed Agent Continuity Relay",
+  "authority_id": "CP-AGENT-RELAY-001",
+  "enabled": true,
+  "heartbeat_interval_seconds": 300,
+  "suspected_stall_after_seconds": 900,
+  "stalled_after_seconds": 1800,
+  "supervisor_scan_interval_minutes": 10,
+  "external_conversation_reference": {
+    "allowed": true,
+    "persist_full_url": false,
+    "persist_provider_reference": true,
+    "reconstruct_known_provider_url_when_requested": true,
+    "automatic_browser_url_capture": false,
+    "note": "A provider URL/reference is recorded only when explicitly supplied by the client/orchestrator. The model must never invent a conversation identifier."
+  },
+  "takeover": {
+    "auto_detect_stall": true,
+    "auto_offer_to_compatible_standby": true,
+    "auto_execute_takeover": false,
+    "requires_exact_head_reconciliation": true,
+    "transfers_active_claims_only_after_accept": true,
+    "stale_predecessor_cannot_resume_after_transfer": true
+  },
+  "states": [
+    "ACTIVE",
+    "STANDBY",
+    "SUSPECTED_STALL",
+    "STALLED",
+    "TAKEOVER_READY",
+    "HANDOFF_STALLED",
+    "CLOSED"
+  ],
+  "reusable_across_projects": true,
+  "execution_authority_granted": false
+}
