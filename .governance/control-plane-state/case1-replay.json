@@ -7,7 +7,7 @@
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
   "current_phase": "C1-13",
   "current_status": "IN_PROGRESS",
-  "unique_next_action": "C1_13_I_B_B_SELECT_EKYC_PRODUCTION_SERVER",
+  "unique_next_action": "C1_13_I_B_C_SPLIT_SERVER_SCOPED_DOMAIN_CHOICES",
   "phases": [
     {
       "id": "C1-00",
@@ -158,13 +158,13 @@
       "depends_on": [
         "C1-12"
       ],
-      "next_action": "SELECT_EKYC_PRODUCTION_SERVER",
+      "next_action": "SPLIT_SERVER_SCOPED_DOMAIN_CHOICES",
       "live_state": {
         "repository": "Patricked-code/Ekyc",
         "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
         "local_entry_issue": "Patricked-code/Ekyc#1",
         "expected_head": "b67a4ec58d837a66f3c3dedb02caadaf044912d5",
-        "status": "WAITING_FOR_PRODUCTION_SERVER_DECISION",
+        "status": "FROZEN_GENERIC_DOMAIN_QUESTION_DEFECT",
         "completed_corrective_tasks": [
           "C1-13-A",
           "C1-13-B",
@@ -177,8 +177,8 @@
         "external_dependency": null,
         "external_intake": "Patricked-code/MCP#201",
         "target_specific_repair": false,
-        "active_corrective_task": null,
-        "active_defect": null,
+        "active_corrective_task": "C1-13-I-B-C",
+        "active_defect": "DOMAIN_BINDING_COARSE_OBJECT_NOT_PROGRESSIVE_CHOICES",
         "preserved_external_dependency": {
           "code": "MCP_TLS_CERTIFICATE_EXPIRED",
           "intake": "Patricked-code/MCP#201",
@@ -278,19 +278,16 @@
           "target_ci": 36869667945
         },
         "production_server_selection": {
-          "phase": "Q_PRODUCTION_SERVER_SELECTION",
-          "revision": 40,
-          "observed_servers": [
-            "S1",
-            "S2"
-          ],
-          "choices": [
-            "S1",
-            "S2",
-            "PLAN_NEW_SERVER",
-            "DECIDE_LATER"
-          ],
-          "owner_decision_required": true,
+          "status": "DONE",
+          "value": "S1",
+          "owner_decision": true,
+          "target_run": 36873334194,
+          "local_entry_revision": 41,
+          "execution_authority_granted": false
+        },
+        "domain_choice_target": {
+          "target_phase": "Q_DOMAIN_INTENT",
+          "reuse_selected_server_inventory": true,
           "execution_authority_granted": false
         }
       },
