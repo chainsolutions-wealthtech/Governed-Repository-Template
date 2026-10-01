@@ -348,3 +348,23 @@
 - No independent lock subsystem, parallel task engine, parallel database, CASE 1 execution or target-project mutation was introduced.
 - Global programme priority remains `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
 - Owner gate: do not resume the global programme until explicit owner OK after GACR finalization.
+
+## Entry AAL-20261002-GACR-R4-001
+
+- Agent identity: ChatGPT.
+- Workstream: `GACR_R4_AUTOMATIC_CONTINUITY_ATTACHMENT`.
+- Source repository: `chainsolutions-wealthtech/Governed-Repository-Template`.
+- R4 baseline main: `75996ee63ae283fd0d6d94549c9746f1bd2ac2bc`.
+- PR #109 candidate commit: `0cc8f1330ce8103db5eb66678f6d7f2c9fc98d82`.
+- Candidate Governance CI `36939255201`: PASS.
+- PR #109 merge: `4c7db9f0e2e782de147ef316c41086ed0863b49e`.
+- Post-merge Governance CI `36939325620`: PASS.
+- Post-merge GACR live run `36939325451`: PASS.
+- Live automatic attachment created `session-68c97d4bb1ef71c86444de12`.
+- Attachment source: `CONVERSATION_CHRONICLE`.
+- Chronicle binding: `CHAT-MEM-20261002-001 / SESSION-000002`.
+- AUTO_ATTACH Beacon: `GACR-B-6e9a2275ea04`.
+- Correlation: `GACR-C-caffb7cb6efd / EXACT`.
+- Runtime persistence advanced main to `7467bbbca0f554df9d43831588ca03a0d1862c9f`.
+- No recursive auto-attach was observed from the persistence commit.
+- Global programme remains parked at `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` until explicit owner OK.

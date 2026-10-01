@@ -672,3 +672,15 @@ P12-S5 therefore satisfies its exit gate without target-specific repair. No S1/d
 - Source-main push activation is protected against repository-automation state-persistence loops.
 - Template candidate version: `2.8.34`.
 - `P12-S6` remains preserved and unexecuted pending owner OK after GACR completion.
+
+## 2026-10-02 — GACR R4 live auto-attach proof
+
+- PR #109 candidate Governance CI `36939255201`: PASS.
+- PR #109 merged at `4c7db9f0e2e782de147ef316c41086ed0863b49e`.
+- Post-merge Governance CI `36939325620`: PASS.
+- Post-merge GACR workflow `36939325451`: PASS.
+- Active Chronicle `CHAT-MEM-20261002-001 / SESSION-000002` automatically produced GACR session `session-68c97d4bb1ef71c86444de12`.
+- Beacon `GACR-B-6e9a2275ea04` records `source=CONVERSATION_CHRONICLE`, `event_type=AUTO_ATTACH`.
+- Correlation `GACR-C-caffb7cb6efd` is `EXACT`.
+- Runtime state persisted at `7467bbbca0f554df9d43831588ca03a0d1862c9f`.
+- R4 attestation is the remaining GACR step; global `P12-S6` remains waiting for owner OK.

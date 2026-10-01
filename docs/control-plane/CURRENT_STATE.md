@@ -733,7 +733,7 @@ GACR cross-cutting finalization does not execute the global programme. The canon
 
 ## GACR R4 — Automatic Continuity Attachment
 
-Cross-cutting candidate status: `IMPLEMENTED_ON_GOVERNED_BRANCH / CI_PENDING`.
+Cross-cutting status: `LIVE_AUTO_ATTACH_PROVEN / CI_PROVEN`.
 
 - Parent authority: `CP-AGENT-RELAY-001`.
 - Previous proven revision: `CP-AGENT-RELAY-001-R3`.
@@ -746,3 +746,16 @@ Cross-cutting candidate status: `IMPLEMENTED_ON_GOVERNED_BRANCH / CI_PENDING`.
 - Late explicit provider metadata must enrich the existing connection-bound session without duplication.
 - Normal source-main activity invokes auto-attachment; repository automation state-persistence pushes are loop-guarded.
 - Programme-level `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` remains unchanged and is not executed by this cross-cutting work.
+
+### GACR R4 live proof
+
+- PR #109 merged at `4c7db9f0e2e782de147ef316c41086ed0863b49e`.
+- Candidate Governance CI `36939255201`: PASS.
+- Post-merge Governance CI `36939325620`: PASS.
+- GACR push run `36939325451`: PASS.
+- Current Conversation Chronicle auto-attached as `session-68c97d4bb1ef71c86444de12`.
+- AUTO_ATTACH Beacon `GACR-B-6e9a2275ea04`.
+- Correlator `GACR-C-caffb7cb6efd`: `EXACT`.
+- Persisted runtime main after auto-attach: `7467bbbca0f554df9d43831588ca03a0d1862c9f`.
+- Provider conversation reference remains optional/unavailable; attachment succeeded without invention.
+- No recursive auto-attach was observed from repository-automation state persistence.
