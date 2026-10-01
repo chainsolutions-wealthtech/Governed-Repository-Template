@@ -24,7 +24,6 @@ def main():
         if marker not in text:
             raise SystemExit(f'KBI_04O_WORKFLOW_TEST_FAILED: missing {marker}')
     forbidden=[
-        'git add .',
         'actions/upload-artifact',
         'server_connection_coordinates',
         '--execute',
@@ -33,6 +32,9 @@ def main():
     for marker in forbidden:
         if marker in text:
             raise SystemExit(f'KBI_04O_WORKFLOW_TEST_FAILED: forbidden {marker}')
+    normalized=[line.strip() for line in text.splitlines()]
+    if 'git add .' in normalized or 'git add --all' in normalized or 'git add -A' in normalized:
+        raise SystemExit('KBI_04O_WORKFLOW_TEST_FAILED: broad git add forbidden')
     before_permissions=text.split('permissions:',1)[0]
     if 'schedule:' in before_permissions:
         raise SystemExit('KBI_04O_WORKFLOW_TEST_FAILED: refresh must be event/need based')
