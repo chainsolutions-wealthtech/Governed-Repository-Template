@@ -261,3 +261,16 @@ Append-only durable decisions for the source/control-plane repository.
 - New work must extend the existing architecture/programme lineage and declare parent/integration-slot metadata before runtime binding.
 - Multi-agent collision prevention combines namespace uniqueness with existing sessions, claims, collision domains, dependency-safe dispatch, single-writer rules, exact-HEAD guards, checkpoints and handoffs.
 - Historical collisions are preserved through explicit reconciliation/supersession rather than silent overwrite.
+
+### CPD-049 — GACR provides governed agent continuity and failover
+
+- Date: 2026-10-01.
+- Authority `CP-AGENT-RELAY-001` defines **GACR — Governed Agent Continuity Relay**.
+- GACR extends the existing session / claim / checkpoint / handoff model; it does not introduce a parallel task engine.
+- Active agents carry heartbeat/lease metadata. Late agents become `SUSPECTED_STALL`; expired leases become `STALLED / TAKEOVER_READY`.
+- A stall never silently releases an active mutable claim.
+- A standby successor may receive a takeover offer, but mutable ownership transfers only after exact branch/HEAD reconciliation.
+- External provider conversation IDs/URLs are correlation metadata only and are persisted only when explicitly supplied; provider IDs are never invented.
+- Full external conversation URLs are not persisted by default; known provider URLs may be reconstructed from explicitly stored provider references.
+- Scheduled supervision may detect and prepare takeover automatically, but GitHub cannot universally wake an arbitrary browser conversation. Provider/orchestrator wake-up remains an optional external integration.
+- GACR contributes to the existing `IDN-004/005/006/010` and `RTE-008/012` objectives without marking those broader workstreams complete.
