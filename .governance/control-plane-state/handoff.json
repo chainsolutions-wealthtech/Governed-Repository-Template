@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "handoff_id": "CP-HANDOFF-20260930-008",
+  "handoff_id": "CP-HANDOFF-20261001-001",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "canonical_branch": "main",
-  "baseline_subject_head": "b1fd2ca51bc53a2502972440019bdbabb036ff7b",
-  "active_branch": "governance/checkpoint-c1-13-both-smart-routing-complete",
+  "baseline_subject_head": "b665fba88d276b9efb636a894e53d890344b2faa",
+  "active_branch": "governance/checkpoint-kbi-04o-live-refresh",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
   "current_task": "C1-13-I-B_RESOLVE_EKYC_DOMAIN_BINDING",
   "unique_next_action": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING",
@@ -214,5 +214,18 @@
     "mutation_authority_granted": false,
     "server_connection_coordinates_persisted": false,
     "parallel_engine": false
+  },
+  "knowledge_checkpoint": {
+    "server_identity_secret_facts": {
+      "status": "LIVE_CANONICAL",
+      "revision": 1,
+      "fact_count": 17,
+      "refresh_run": 36844701817,
+      "safe_facts_pr": 86,
+      "merge": "b665fba88d276b9efb636a894e53d890344b2faa",
+      "post_merge_ci": 36844997332,
+      "no_secret_values": true,
+      "no_server_mutation": true
+    }
   }
 }

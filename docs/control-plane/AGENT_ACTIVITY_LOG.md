@@ -301,3 +301,20 @@
 - Implementation: classify generic snapshot candidates, absent capability/tool, catalogue contradiction and project-scoped restrictions; report inventory coverage and provenance. Add source/client boundary, tests and CI.
 - No live tool availability or server state was inferred from snapshot candidates. S1/S2 source inventory remains revision `0` / `NOT_COLLECTED`.
 - Unique CASE 1 action remains `C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING`; `KBI-04F` is the next server knowledge slice.
+
+## Entry AAL-20261001-KBI04O-001
+
+- Agent identity: ChatGPT.
+- Workstream: `KBI-04O` governed read-only S1/S2 identity-secret knowledge refresh.
+- Starting canonical main: `6bb80e524dd1334173003915e7011a2e2af57601`.
+- KBI-04O implementation PR #84 merged at `7edffed0594cb0a2f5e54605f21c6348fd60f3fd`.
+- First live run `36844233362`: collection PASS; transient revision 1 / 17 facts; stopped on a unit-fixture defect before Git persistence.
+- KBI-04O-A PR #85 corrected the fixture; merge `30b99b1f9cb0c824c90218078d9c2c2d18a4c6e5`; CI PASS.
+- Second live run `36844701817`: complete PASS.
+- Generated PR #86: safe S1/S2 facts only; CI `36844736669` PASS.
+- PR #86 merge: `b665fba88d276b9efb636a894e53d890344b2faa`; post-merge CI `36844997332` PASS.
+- Canonical facts: revision 1, 17 facts, no secret values, no raw MCP payloads, no server connection coordinates, no execution authority.
+- No S1/S2 mutation occurred.
+- KBI-04O and KBI-04O-A: DONE.
+- CASE 1 priority preserved.
+- Unique next action: `C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING`.

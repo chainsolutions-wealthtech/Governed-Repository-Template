@@ -497,6 +497,34 @@
       ],
       "proposals": [],
       "unique_next_action": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
+    },
+    {
+      "activity_id": "AAL-20261001-KBI04O-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "KBI-04O_GOVERNED_READONLY_SERVER_IDENTITY_SECRET_REFRESH",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "b665fba88d276b9efb636a894e53d890344b2faa",
+      "objective": "Prove event-and-need based read-only S1/S2 identity-secret observation and canonical safe-fact persistence without server mutation.",
+      "evidence_refs": [
+        "Template PR #84",
+        "refresh run 36844233362",
+        "Template PR #85",
+        "refresh run 36844701817",
+        "Template PR #86",
+        "Governance CI 36844736669",
+        "post-merge Governance CI 36844997332",
+        ".governance/control-plane-state/server-identity-secret-facts.json revision 1"
+      ],
+      "discovered_tasks": [
+        "KBI-04O-A"
+      ],
+      "remarks": [
+        "First live run proved collector and persistence but exposed a unit-fixture revision coupling; no live fact PR was created.",
+        "Second live run passed and persisted only 17 safe metadata facts through governed PR #86.",
+        "No secret values, raw MCP payloads, server connection coordinates, or server mutation were persisted/performed."
+      ],
+      "proposals": [],
+      "unique_next_action": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
     }
   ]
 }
