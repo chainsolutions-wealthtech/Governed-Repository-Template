@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "process_name": "GACR",
   "process_title": "Governed Agent Continuity Relay",
   "authority_id": "CP-AGENT-RELAY-001",
@@ -62,5 +62,6 @@
     "can_receive_dispatch_offer": true,
     "outbound_browser_wakeup_implemented": false,
     "note": "Repository-side GACR can prepare and target wake events. A provider/client bridge is still required to wake a browser conversation."
-  }
+  },
+  "revision_authority_id": "CP-AGENT-RELAY-001-R2"
 }
