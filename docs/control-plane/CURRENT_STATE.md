@@ -626,3 +626,23 @@ Finding: Ekyc is a `NEW_EMPTY_PROJECT` with `UNKNOWN_TO_DISCOVER` infrastructure
 Generic correction `C1-13-I-B-A` is active in the Template. The v2.8.25 candidate adds production-server selection before domain planning, reuses selected-server discovery evidence and migrates the open local-entry state through the governed upgrader.
 
 Ekyc itself remains unchanged until Template CI/merge.
+
+## P12-S5 second fresh E2E complete
+
+The fresh Ekyc validation path has now reached its required subsequent normal-entry handoff.
+
+Evidence:
+
+- Ekyc baseline commit: `3e889a2bdac78312ebcc7e31d1388ead65c9fceb`;
+- repository state: `PROJECT_BASELINE_READY`;
+- first-agent session: `LOCAL-000001-S1`;
+- `WORK-PROJECT-001`: `READY`, not executed;
+- Ekyc#2 request `LOCAL-000002`: `NORMAL_GOVERNED_ENTRY`;
+- final state: `LOCAL_HANDOFF_READY`, revision 6;
+- Ekyc HEAD unchanged by the normal-entry proof;
+- no baseline/session/work duplication;
+- no target-specific repair;
+- no S1/domain/DNS/Plesk/TLS mutation.
+
+`P12-S5` is DONE. The unique next action is `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`. GMC-A remains blocked until CASE 1 closure passes.
+
