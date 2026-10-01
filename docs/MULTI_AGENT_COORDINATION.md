@@ -137,3 +137,9 @@ A stalled session keeps its active claim until takeover acceptance. This prevent
 External provider conversation references may be attached only when actually supplied. They are correlation metadata; the governed session ID remains canonical.
 
 An arbitrary browser conversation cannot be universally awakened by GitHub. GACR therefore persists a takeover offer that a standby agent or external orchestrator can consume deterministically.
+
+## GACR source/client boundary
+
+The central Template's GACR runtime records are source-only control-plane memory. Target repositories maintain their own GACR runtime state.
+
+This prevents a conversation, claim or takeover belonging to framework development from leaking into a project created or upgraded from the Template.

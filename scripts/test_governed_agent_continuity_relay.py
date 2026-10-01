@@ -213,6 +213,24 @@ def main():
     except ValueError:
         pass
 
+    if (ROOT/".template-source").exists():
+        assert_true(
+            gacr.SESSIONS_PATH == ROOT/".governance"/"control-plane-state"/"gacr-sessions.json",
+            "Template source must keep GACR sessions in source-only control-plane memory",
+        )
+        assert_true(
+            gacr.CLAIMS_PATH == ROOT/".governance"/"control-plane-state"/"gacr-claims.json",
+            "Template source must keep GACR claims in source-only control-plane memory",
+        )
+        assert_true(
+            gacr.TAKEOVERS_PATH == ROOT/".governance"/"control-plane-state"/"gacr-takeovers.json",
+            "Template source must keep GACR takeovers in source-only control-plane memory",
+        )
+        assert_true(
+            gacr.CONFIG_PATH == ROOT/".governance"/"agent-relay"/"config.json",
+            "GACR config remains generic/distributed",
+        )
+
     upgrader=(ROOT/"scripts"/"control_plane_upgrade_local_entry.py").read_text(encoding="utf-8")
     for fragment in [
         "docs/GACR_AGENT_CONTINUITY_RELAY.md",
@@ -222,6 +240,13 @@ def main():
         "existing_gacr_takeovers=target_text",
     ]:
         assert_true(fragment in upgrader, f"client upgrader missing GACR contract: {fragment}")
+
+    for forbidden in [
+        ".governance/control-plane-state/gacr-sessions.json",
+        ".governance/control-plane-state/gacr-claims.json",
+        ".governance/control-plane-state/gacr-takeovers.json",
+    ]:
+        assert_true(forbidden not in upgrader, f"source-only GACR state leaked into client upgrader: {forbidden}")
 
     workflow=(ROOT/".github"/"workflows"/"governed-agent-continuity-relay.yml").read_text(encoding="utf-8")
     for fragment in [

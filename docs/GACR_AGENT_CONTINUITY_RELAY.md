@@ -114,3 +114,23 @@ python3 scripts/governed_agent_continuity_relay.py takeover-accept ...
 GACR is part of the generic Template surface. A governed project receives the same config, workflow, script and state contract. The project retains its own sessions, claims, checkpoints and takeover queue.
 
 No project-specific hard-coding is required.
+
+## Source Control Plane versus client runtime state
+
+GACR preserves the same source/client memory boundary as the rest of the framework:
+
+```text
+SOURCE CONTROL PLANE GACR MEMORY
+!=
+DISTRIBUTED CLIENT GACR STATE
+```
+
+On the Template source, runtime continuity is stored only in:
+
+- `.governance/control-plane-state/gacr-sessions.json`
+- `.governance/control-plane-state/gacr-claims.json`
+- `.governance/control-plane-state/gacr-takeovers.json`
+
+On an instantiated/adopted client repository, GACR uses that project's local session/claim/takeover stores.
+
+Only the generic GACR code, schemas, configuration and workflow are distributed. A source conversation or source agent claim must never become client project state.

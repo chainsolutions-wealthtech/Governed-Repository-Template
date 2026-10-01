@@ -274,3 +274,13 @@ Append-only durable decisions for the source/control-plane repository.
 - Full external conversation URLs are not persisted by default; known provider URLs may be reconstructed from explicitly stored provider references.
 - Scheduled supervision may detect and prepare takeover automatically, but GitHub cannot universally wake an arbitrary browser conversation. Provider/orchestrator wake-up remains an optional external integration.
 - GACR contributes to the existing `IDN-004/005/006/010` and `RTE-008/012` objectives without marking those broader workstreams complete.
+
+### CPD-050 — GACR source runtime memory is isolated from distributed client state
+
+- Date: 2026-10-01.
+- GACR keeps the Control Plane source's own agent/session continuity separate from runtime state distributed to governed client repositories.
+- On the Template source, GACR sessions, claims and takeover queue live under `.governance/control-plane-state/gacr-*.json`.
+- In initialized/adopted clients, GACR continues to use the repository-local `.governance/sessions`, `.governance/work/claims.json` and `.governance/agent-relay/takeovers.json` surfaces.
+- The generic GACR configuration, automation, schemas and documentation remain distributed.
+- Source agent/conversation history must never be copied into a client repository.
+- This is a boundary correction to `CP-AGENT-RELAY-001`, not a new programme or task engine.

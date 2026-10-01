@@ -119,11 +119,19 @@ jobs:
           TARGET_BRANCH: ${{ github.event.repository.default_branch || github.ref_name || 'main' }}
         run: |
           set -euo pipefail
-          paths=(
-            .governance/sessions/sessions.json
-            .governance/work/claims.json
-            .governance/agent-relay/takeovers.json
-          )
+          if [ -f .template-source ]; then
+            paths=(
+              .governance/control-plane-state/gacr-sessions.json
+              .governance/control-plane-state/gacr-claims.json
+              .governance/control-plane-state/gacr-takeovers.json
+            )
+          else
+            paths=(
+              .governance/sessions/sessions.json
+              .governance/work/claims.json
+              .governance/agent-relay/takeovers.json
+            )
+          fi
           if git diff --quiet -- "${paths[@]}"; then
             echo "GACR_NO_STATE_CHANGE"
             exit 0
