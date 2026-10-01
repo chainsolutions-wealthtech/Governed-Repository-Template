@@ -674,3 +674,14 @@ The implementation does not change the unique CASE 1 programme action and grants
 - Post-merge Governance CI `36915276875`: PASS.
 - GACR regression test: PASS.
 - Existing CASE 1 priority remains unchanged: `P12-S6`.
+
+## GACR v2.8.30 source-boundary attestation
+
+- Authority: `CP-AGENT-RELAY-001`.
+- Boundary decision: `CPD-050`.
+- Template version: `2.8.30`.
+- PR #100: MERGED.
+- Merge commit: `d894d29eca6fcc2a1784c459e9e3ddac672b3515`.
+- Post-merge Governance CI `36916456136`: PASS.
+- Source Control Plane GACR runtime memory is isolated from distributed client GACR state.
+- Programme priority remains unchanged: `P12-S6`.
