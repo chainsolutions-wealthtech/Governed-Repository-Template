@@ -16,6 +16,11 @@ on:
           - heartbeat
           - takeover-plan
           - takeover-accept
+          - beacon
+          - correlate
+          - dispatch
+          - context
+          - telemetry-status
       agent:
         required: false
         type: string
@@ -51,6 +56,26 @@ on:
         required: false
         type: boolean
         default: false
+      client_instance_id:
+        required: false
+        type: string
+      agent_role:
+        required: false
+        type: string
+      capabilities:
+        description: Comma-separated declared capabilities
+        required: false
+        type: string
+      wake_channels:
+        description: Comma-separated POLL_REPOSITORY,REPOSITORY_DISPATCH,EXTERNAL_BRIDGE
+        required: false
+        type: string
+      bridge_registration_ref:
+        required: false
+        type: string
+      event_type:
+        required: false
+        type: string
       session_id:
         required: false
         type: string
@@ -77,6 +102,11 @@ on:
       - gacr_status
       - gacr_takeover-plan
       - gacr_takeover-accept
+      - gacr_beacon
+      - gacr_correlate
+      - gacr_dispatch
+      - gacr_context
+      - gacr_telemetry-status
 
 permissions:
   contents: write
@@ -109,7 +139,7 @@ jobs:
 
       - name: Validate GACR state
         run: |
-          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py
+          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py
           python3 scripts/validate_governance.py
 
       - name: Persist changed relay state
@@ -124,12 +154,18 @@ jobs:
               .governance/control-plane-state/gacr-sessions.json
               .governance/control-plane-state/gacr-claims.json
               .governance/control-plane-state/gacr-takeovers.json
+              .governance/control-plane-state/gacr-beacons.json
+              .governance/control-plane-state/gacr-correlations.json
+              .governance/control-plane-state/gacr-dispatches.json
             )
           else
             paths=(
               .governance/sessions/sessions.json
               .governance/work/claims.json
               .governance/agent-relay/takeovers.json
+              .governance/agent-relay/beacons.json
+              .governance/agent-relay/correlations.json
+              .governance/agent-relay/dispatches.json
             )
           fi
           if git diff --quiet -- "${paths[@]}"; then
