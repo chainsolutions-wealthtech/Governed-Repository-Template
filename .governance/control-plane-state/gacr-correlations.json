@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 3,
+  "revision": 4,
   "items": [
     {
       "correlation_id": "GACR-C-caffb7cb6efd",
@@ -8,14 +8,15 @@
       "level": "EXACT",
       "selected_session_id": "session-68c97d4bb1ef71c86444de12",
       "candidate_session_ids": [
-        "session-68c97d4bb1ef71c86444de12"
+        "session-68c97d4bb1ef71c86444de12",
+        "session-cb22a4ed0d9e29eba5383f5d"
       ],
       "reasons": [
         "SESSION_ID_EXACT",
         "CLIENT_INSTANCE_ID_EXACT",
         "CONNECTION_REF_EXACT"
       ],
-      "evaluated_at": "2026-10-01T23:10:28+00:00"
+      "evaluated_at": "2026-10-01T23:35:46+00:00"
     },
     {
       "correlation_id": "GACR-C-bafd8ddf4926",
@@ -23,14 +24,15 @@
       "level": "EXACT",
       "selected_session_id": "session-68c97d4bb1ef71c86444de12",
       "candidate_session_ids": [
-        "session-68c97d4bb1ef71c86444de12"
+        "session-68c97d4bb1ef71c86444de12",
+        "session-cb22a4ed0d9e29eba5383f5d"
       ],
       "reasons": [
         "SESSION_ID_EXACT",
         "CLIENT_INSTANCE_ID_EXACT",
         "CONNECTION_REF_EXACT"
       ],
-      "evaluated_at": "2026-10-01T23:15:51+00:00"
+      "evaluated_at": "2026-10-01T23:35:46+00:00"
     },
     {
       "correlation_id": "GACR-C-976bbba3924d",
@@ -38,6 +40,23 @@
       "level": "EXACT",
       "selected_session_id": "session-68c97d4bb1ef71c86444de12",
       "candidate_session_ids": [
+        "session-68c97d4bb1ef71c86444de12",
+        "session-cb22a4ed0d9e29eba5383f5d"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "evaluated_at": "2026-10-01T23:35:46+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-ff890996cea5",
+      "beacon_id": "GACR-B-127716e672d9",
+      "level": "EXACT",
+      "selected_session_id": "session-cb22a4ed0d9e29eba5383f5d",
+      "candidate_session_ids": [
+        "session-cb22a4ed0d9e29eba5383f5d",
         "session-68c97d4bb1ef71c86444de12"
       ],
       "reasons": [
@@ -45,7 +64,7 @@
         "CLIENT_INSTANCE_ID_EXACT",
         "CONNECTION_REF_EXACT"
       ],
-      "evaluated_at": "2026-10-01T23:31:01+00:00"
+      "evaluated_at": "2026-10-01T23:35:46+00:00"
     }
   ]
 }
