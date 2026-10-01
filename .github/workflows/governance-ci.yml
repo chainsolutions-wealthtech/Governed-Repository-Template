@@ -153,8 +153,9 @@ jobs:
       - name: Test bounded server identity and secret metadata
         run: |
           if [ -f .template-source ]; then
-            python3 -m py_compile scripts/control_plane_server_identity_secret_metadata.py scripts/test_control_plane_server_identity_secret_metadata.py
+            python3 -m py_compile scripts/control_plane_server_identity_secret_metadata.py scripts/test_control_plane_server_identity_secret_metadata.py scripts/control_plane_server_identity_secret_facts.py scripts/test_control_plane_server_identity_secret_facts.py
             python3 scripts/test_control_plane_server_identity_secret_metadata.py
+            python3 scripts/test_control_plane_server_identity_secret_facts.py
           else
             echo "SERVER_IDENTITY_SECRET_METADATA_SOURCE_ONLY_SKIP: client repository"
           fi
