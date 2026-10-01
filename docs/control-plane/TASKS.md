@@ -701,6 +701,11 @@ These slices do not change the CASE 1 unique action.
 
 ### KBI-04O — governed read-only identity-secret refresh
 
-- Status: `PLANNED`.
+- Status: `IMPLEMENTED_SOURCE_ONLY_LIVE_REFRESH_PENDING`.
+- Workflow: `.github/workflows/server-identity-secret-refresh.yml`.
+- Regression test: `scripts/test_server_identity_secret_refresh_workflow.py`.
 - Objective: run KBI-04K read-only observation, persist KBI-04N facts under exact revision, validate, and open a governed PR only when safe metadata changed.
+- Trigger policy: workflow dispatch, governed repository dispatch, or exact authorized issue #12 command `/refresh-server-identity-secret-facts`.
+- Persisted surface: only `.governance/control-plane-state/server-identity-secret-facts.json`.
 - No MCP/server mutation authority is part of this slice.
+- Live refresh remains pending until the workflow is merged and run from canonical `main`.
