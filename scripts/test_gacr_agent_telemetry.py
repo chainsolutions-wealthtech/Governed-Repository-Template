@@ -194,6 +194,8 @@ def main():
         sessions_doc["sessions"].append(session_c)
         write(g.SESSIONS_PATH, sessions_doc)
 
+        os.environ.pop("GITHUB_ACTOR", None)
+
         ambiguous = g.record_beacon(
             session=None,
             event_type="AMBIGUOUS_ACTIVITY",
