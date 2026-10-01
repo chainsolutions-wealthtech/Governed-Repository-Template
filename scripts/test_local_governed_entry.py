@@ -2,7 +2,7 @@
 from __future__ import annotations
 import copy
 from pathlib import Path
-from local_governed_entry import answer, both_discovery_needs_refresh, complete_baseline, decode_state, encode_state, mark_credentials_verified, new_request, reconcile_both_smart_routing, reconcile_legacy_discovery_authority, record_mcp_discovery, record_mcp_discovery_failure, require_mcp_discovery_refresh
+from local_governed_entry import answer, both_discovery_needs_refresh, complete_baseline, decode_state, encode_state, mark_credentials_verified, new_request, observed_domains_for_server, reconcile_both_smart_routing, reconcile_legacy_discovery_authority, reconcile_setup_question_order, record_mcp_discovery, record_mcp_discovery_failure, require_mcp_discovery_refresh
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -40,7 +40,24 @@ def main():
     if s["next_request"]["kind"]!="CREDENTIAL_GATE": raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: credential gate")
     s=mark_credentials_verified(s)
     if s["next_request"]["kind"]!="MCP_DISCOVERY": raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: discovery gate")
-    s=record_mcp_discovery(s,{"observed_at":"2026-09-25T00:00:00+00:00","tools":{"list_domains_s1":{"status":"PASS"}}})
+    s=record_mcp_discovery(s,{
+      "observed_at":"2026-09-25T00:00:00+00:00",
+      "tools":{
+        "list_domains_s1":{
+          "status":"PASS",
+          "result":{"result":{"content":[{"type":"text","text":"/var/www/vhosts/example.com/app.example.com\n/var/www/vhosts/system/api.example.com"}]}}
+        }
+      }
+    })
+    if s["next_request"]["field"]!="production_server_selection":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: fresh project must choose production server before domain")
+    if "S1" not in s["next_request"].get("choices",[]):
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: observed S1 candidate missing")
+    s=answer_expected(s,"production_server_selection","S1")
+    if s["next_request"]["field"]!="domain_binding" or s["next_request"].get("selected_server")!="S1":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: domain question must be scoped to selected server")
+    if "example.com" not in s["next_request"].get("observed_domains",[]):
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: selected-server domain inventory not reused")
     s=answer_expected(s,"domain_binding",{"mode":"UNRESOLVED"})
     s=answer_expected(s,"workflow_model","REGULATORY_AFRICAFUNDS_GOVERNED_FLOW")
     if s["next_request"]["field"]!="setup_approved": raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: setup approval")
@@ -181,8 +198,8 @@ def main():
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: authorized legacy direct PASS must migrate as current smart route")
     if migrated.get("mcp_discovery",{}).get("alternate_transport_status")!="CONFIGURED_NOT_ATTESTED":
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: corrected SSH route must remain alternate and independently attestable")
-    if (migrated.get("next_request") or {}).get("field")!="domain_binding":
-        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: smart-routing migration must not demand redundant discovery approval")
+    if (migrated.get("next_request") or {}).get("field")!="production_server_selection":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: fresh smart-routing migration must return to production server choice before domain")
 
     failed=record_mcp_discovery_failure(both,{
       "status":"ERROR",
@@ -205,8 +222,9 @@ def main():
       "direct_mcp":{"status":"UNAVAILABLE_CREDENTIAL"},
       "ssh_certificate":{"status":"PASS"}
     })
-    if recovered["next_request"]["field"]!="domain_binding":
-        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: discovery retry did not resume setup")
+    if recovered["next_request"]["field"]!="production_server_selection":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: discovery retry did not resume at production server choice")
+    recovered=answer_expected(recovered,"production_server_selection","DECIDE_LATER")
     recovered=answer_expected(recovered,"domain_binding",{"mode":"UNRESOLVED"})
     recovered=answer_expected(recovered,"workflow_model","STANDARD_GOVERNED_FLOW")
     if recovered["next_request"]["field"]!="setup_approved":
@@ -216,6 +234,17 @@ def main():
     setup_routing=(recovered.get("setup_package") or {}).get("mcp",{}).get("routing_strategy") or {}
     if setup_routing.get("mode")!="DUAL_READY_SMART_ROUTING" or setup_routing.get("simultaneous_execution_required") is not False:
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: setup package lost smart routing")
+
+    ekyc_like=copy.deepcopy(migrated)
+    ekyc_like["answers"].pop("production_server_selection",None)
+    ekyc_like["phase"]="Q_DOMAIN_BINDING"
+    ekyc_like["status"]="WAITING_FOR_SETUP_ANSWER"
+    ekyc_like["next_request"]={"kind":"QUESTION","id":"Q_DOMAIN_BINDING","field":"domain_binding"}
+    reordered=reconcile_setup_question_order(ekyc_like)
+    if reordered["phase"]!="Q_PRODUCTION_SERVER_SELECTION":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: Ekyc-like legacy domain gate not reordered")
+    if reordered["next_request"].get("execution_authority_granted") is not False:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: production server decision granted execution authority")
 
     n=new_request("LOCAL-2","owner/repo","c"*40,False,"later agent")
     for field,value in [
