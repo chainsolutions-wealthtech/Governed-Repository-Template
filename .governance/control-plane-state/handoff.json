@@ -43,7 +43,9 @@
     ".governance/control-plane-state/server-identity-secret-facts.json",
     "scripts/control_plane_server_identity_secret_facts.py",
     ".github/workflows/server-identity-secret-refresh.yml",
-    "scripts/test_server_identity_secret_refresh_workflow.py"
+    "scripts/test_server_identity_secret_refresh_workflow.py",
+    "docs/control-plane/NAMESPACE_WORK_REGISTRY.md",
+    ".governance/control-plane-state/namespace-work-registry.json"
   ],
   "rules": [
     "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",
@@ -151,7 +153,12 @@
     "PRESERVE_STANDARD_GOVERNED_FLOW_SELECTION",
     "P12_S5_SECOND_FRESH_E2E_IS_DONE_ONLY_AFTER_NORMAL_ENTRY_PROOF",
     "DO_NOT_EXECUTE_EKYC_WORK_PROJECT_001_DURING_CASE1_VALIDATION",
-    "P12_S6_PRECEDES_GMC_A"
+    "P12_S6_PRECEDES_GMC_A",
+    "REGISTERED_NAMESPACE_REQUIRED_FOR_NEW_CANONICAL_ID",
+    "DUPLICATE_CANONICAL_DEFINITION_FAILS_CLOSED",
+    "NEW_WORK_EXTENDS_EXISTING_PARENT_AND_INTEGRATION_SLOT",
+    "MULTI_AGENT_SEMANTIC_COLLISIONS_USE_NAMESPACE_REGISTRY",
+    "MULTI_AGENT_MUTABLE_COLLISIONS_STILL_REQUIRE_CLAIMS_SINGLE_WRITER_AND_EXACT_HEAD"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",

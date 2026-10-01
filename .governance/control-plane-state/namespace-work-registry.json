@@ -1,0 +1,283 @@
+{
+  "schema_version": "1.0.0",
+  "authority_id": "CP-NAMESPACE-001",
+  "status": "CANONICAL_NAMESPACE_AND_WORK_ID_RULES",
+  "scope": "CONTROL_PLANE_SOURCE_ONLY",
+  "purpose": "PREVENT_ID_NAMESPACE_LINEAGE_AND_MULTI_AGENT_SEMANTIC_COLLISIONS_WITHOUT_DUPLICATING_CANONICAL_WORK_SOURCES",
+  "source_of_truth_model": "NAMESPACE_RULES_PLUS_DERIVED_INDEX_FROM_CANONICAL_AUTHORITIES",
+  "principles": [
+    "DO_NOT_DUPLICATE_CANONICAL_TASK_LISTS",
+    "EVERY_NEW_CANONICAL_ID_MUST_MATCH_ONE_REGISTERED_NAMESPACE",
+    "CANONICAL_DEFINITION_IDS_ARE_UNIQUE_WITHIN_THEIR_TYPE",
+    "NEW_WORK_EXTENDS_EXISTING_LINEAGE",
+    "NEW_WORK_MUST_DECLARE_PARENT_OR_INTEGRATION_SLOT_BEFORE_EXECUTION_BINDING",
+    "HISTORY_IS_APPEND_OR_SUPERSEDE_NEVER_SILENT_OVERWRITE",
+    "MULTI_AGENT_WRITERS_SHARE_CANONICAL_NAMESPACE_RULES",
+    "SINGLE_WRITER_PER_COLLISION_DOMAIN",
+    "EXACT_HEAD_RECONCILIATION_BEFORE_MUTATION",
+    "CLAIMS_AND_DEPENDENCY_SAFE_DISPATCH_REMAIN_REQUIRED_FOR_CONCURRENT_EXECUTION"
+  ],
+  "namespaces": [
+    {
+      "id": "CP-CHECKPOINT",
+      "pattern": "^CP-CHECKPOINT-\\d{8}-\\d{3}$",
+      "kind": "CONTINUITY_CHECKPOINT",
+      "canonical_source": ".governance/control-plane-state/checkpoint.json"
+    },
+    {
+      "id": "CP-HANDOFF",
+      "pattern": "^CP-HANDOFF-\\d{8}-\\d{3}$",
+      "kind": "CONTINUITY_HANDOFF",
+      "canonical_source": ".governance/control-plane-state/handoff.json"
+    },
+    {
+      "id": "CP",
+      "pattern": "^CP-(?!CHECKPOINT-|HANDOFF-)[A-Z][A-Z0-9-]*-\\d{3}(?:-R\\d+)?$",
+      "kind": "CANONICAL_AUTHORITY",
+      "canonical_source": "authority-owning source files"
+    },
+    {
+      "id": "CPD",
+      "pattern": "^CPD-\\d{3}$",
+      "kind": "CANONICAL_DECISION",
+      "canonical_source": "docs/control-plane/DECISIONS_LOG.md"
+    },
+    {
+      "id": "SG-PACKAGE",
+      "pattern": "^SG-\\d{8}-\\d{3}$",
+      "kind": "HISTORICAL_WORK_PACKAGE",
+      "canonical_source": "program/history authorities"
+    },
+    {
+      "id": "SG",
+      "pattern": "^SG-\\d{3}$",
+      "kind": "SELF_GOVERNED_TASK",
+      "canonical_source": "task/program authorities"
+    },
+    {
+      "id": "P12",
+      "pattern": "^P12-S\\d+$",
+      "kind": "PROGRAM_PHASE",
+      "canonical_source": ".governance/control-plane-state/tasks.json"
+    },
+    {
+      "id": "C1",
+      "pattern": "^C1-\\d{2}(?:-[A-Z])+$",
+      "kind": "CASE1_TASK_OR_SUBTASK",
+      "canonical_source": ".governance/control-plane-state/tasks.json"
+    },
+    {
+      "id": "ARCH",
+      "pattern": "^ARCH-\\d{3}$",
+      "kind": "ARCHITECTURE_BACKLOG",
+      "canonical_source": ".governance/control-plane-state/tasks.json"
+    },
+    {
+      "id": "IDN",
+      "pattern": "^IDN-\\d{3}$",
+      "kind": "IDENTITY_SESSION_BACKLOG",
+      "canonical_source": ".governance/control-plane-state/tasks.json"
+    },
+    {
+      "id": "RTE",
+      "pattern": "^RTE-\\d{3}$",
+      "kind": "ROUTING_BACKLOG",
+      "canonical_source": ".governance/control-plane-state/tasks.json"
+    },
+    {
+      "id": "AQ",
+      "pattern": "^AQ-\\d{3}[A-Z]?$",
+      "kind": "ADAPTIVE_QUESTION",
+      "canonical_source": ".governance/control-plane-state/adaptive-question-catalogue.json"
+    },
+    {
+      "id": "AQI",
+      "pattern": "^AQI-\\d{2}[A-Z]?$",
+      "kind": "ADAPTIVE_QUESTION_IMPLEMENTATION",
+      "canonical_source": ".governance/control-plane-state/adaptive-question-catalogue.json"
+    },
+    {
+      "id": "KBI",
+      "pattern": "^KBI-\\d{2}(?:[A-Z])?(?:-[A-Z])?$",
+      "kind": "KNOWLEDGE_BASE_IMPLEMENTATION",
+      "canonical_source": "knowledge/server/identity source-only models"
+    },
+    {
+      "id": "SRV-OP",
+      "pattern": "^SRV-OP-\\d{3}$",
+      "kind": "SERVER_OPERATION_RECIPE",
+      "canonical_source": ".governance/control-plane-state/server-knowledge-model.json"
+    },
+    {
+      "id": "IDSEC-OP",
+      "pattern": "^IDSEC-OP-\\d{3}$",
+      "kind": "IDENTITY_SECRET_OPERATION",
+      "canonical_source": ".governance/control-plane-state/identity-secret-lifecycle.json"
+    },
+    {
+      "id": "GMC-LEGACY",
+      "pattern": "^GMC-\\d{2}$",
+      "kind": "GOVERNANCE_MODEL_LEGACY_GROUP",
+      "canonical_source": ".governance/control-plane-state/tasks.json"
+    },
+    {
+      "id": "GMC-GROUP",
+      "pattern": "^GMC-G\\d{2}$",
+      "kind": "GOVERNANCE_MODEL_WORK_PACKAGE",
+      "canonical_source": ".governance/control-plane-state/governance-model-execution-blueprint.json"
+    },
+    {
+      "id": "GMC-TASK",
+      "pattern": "^GMC-G\\d{2}-T\\d{2}$",
+      "kind": "GOVERNANCE_MODEL_ATOMIC_TASK",
+      "canonical_source": ".governance/control-plane-state/governance-model-execution-blueprint.json"
+    },
+    {
+      "id": "GMC-EXIT",
+      "pattern": "^GMC-EXIT-G\\d{2}-[A-Z0-9-]+$",
+      "kind": "GOVERNANCE_MODEL_EXIT_CONTROL",
+      "canonical_source": ".governance/control-plane-state/governance-model-execution-blueprint.json"
+    },
+    {
+      "id": "GMA",
+      "pattern": "^GMA-[A-Z0-9-]+$",
+      "kind": "GOVERNANCE_MODEL_ARTIFACT",
+      "canonical_source": ".governance/control-plane-state/governance-model-execution-blueprint.json"
+    },
+    {
+      "id": "EVREQ",
+      "pattern": "^EVREQ-G\\d{2}-[A-Z0-9-]+$",
+      "kind": "EVIDENCE_REQUIREMENT",
+      "canonical_source": ".governance/control-plane-state/governance-model-execution-blueprint.json"
+    }
+  ],
+  "canonical_authorities": [
+    "CP-ARCH-001",
+    "CP-GOVMODEL-001",
+    "CP-GOVMODEL-001-R2",
+    "CP-MCP-CAP-001",
+    "CP-ADAPTIVE-QUESTIONS-001",
+    "CP-KNOWLEDGE-001",
+    "CP-SERVER-KNOWLEDGE-001",
+    "CP-IDENTITY-SECRET-001",
+    "CP-EXECUTION-001",
+    "CP-NAMESPACE-001"
+  ],
+  "definition_sources": [
+    {
+      "kind": "CPD",
+      "path": "docs/control-plane/DECISIONS_LOG.md",
+      "extractor": "MARKDOWN_H3_DECISION_HEADINGS"
+    },
+    {
+      "kind": "TASK",
+      "path": ".governance/control-plane-state/tasks.json",
+      "extractor": "ITEM_IDS"
+    },
+    {
+      "kind": "AQ_AQI",
+      "path": ".governance/control-plane-state/adaptive-question-catalogue.json",
+      "extractor": "QUESTIONS_AND_IMPLEMENTATION_IDS"
+    },
+    {
+      "kind": "KBI_CORE",
+      "path": ".governance/control-plane-state/knowledge-base.json",
+      "extractor": "FUTURE_INCREMENTAL_WORK_IDS"
+    },
+    {
+      "kind": "KBI_SERVER_SRV_OP",
+      "path": ".governance/control-plane-state/server-knowledge-model.json",
+      "extractor": "INCREMENTAL_SLICE_AND_RECIPE_IDS"
+    },
+    {
+      "kind": "KBI_IDSEC",
+      "path": ".governance/control-plane-state/identity-secret-lifecycle.json",
+      "extractor": "INCREMENTAL_SLICE_AND_OPERATION_IDS"
+    },
+    {
+      "kind": "GMC",
+      "path": ".governance/control-plane-state/governance-model-execution-blueprint.json",
+      "extractor": "GROUP_TASK_ARTIFACT_EVIDENCE_EXIT_IDS"
+    },
+    {
+      "kind": "CONTINUITY",
+      "path": ".governance/control-plane-state/checkpoint.json",
+      "extractor": "CHECKPOINT_ID"
+    },
+    {
+      "kind": "CONTINUITY",
+      "path": ".governance/control-plane-state/handoff.json",
+      "extractor": "HANDOFF_ID"
+    }
+  ],
+  "new_definition_contract": {
+    "required_before_runtime_binding": [
+      "id",
+      "kind",
+      "parent_or_program",
+      "integration_slot",
+      "status",
+      "canonical_source",
+      "dependencies",
+      "collision_domain"
+    ],
+    "legacy_backfill_policy": "DO_NOT_BLOCK_EXISTING_LEGACY_ITEMS_ONLY_FOR_MISSING_LINEAGE_FIELDS; FAIL_NEW_ID_COLLISIONS_AND_UNREGISTERED_NAMESPACES_IMMEDIATELY",
+    "additive_rule": "APPEND_OR_SUPERSEDE_EXISTING_LINEAGE_NEVER_PARALLEL_UNSCOPED_LIST"
+  },
+  "multi_agent_collision_contract": {
+    "semantic_identity_key": "namespace + canonical id",
+    "collision_domains": [
+      "CANONICAL_NAMESPACE_REGISTRY",
+      "CANONICAL_DECISION_LOG",
+      "PROGRAM_TASK_GRAPH",
+      "GOVERNANCE_MODEL_BLUEPRINT",
+      "CURRENT_MACHINE_PROJECTION",
+      "TARGET_REPOSITORY_MUTATION"
+    ],
+    "required_guards": [
+      "registered namespace",
+      "unique canonical definition id",
+      "parent/integration-slot resolution before runtime binding",
+      "dependency-safe dispatch",
+      "claim before mutable work",
+      "single writer per collision domain",
+      "exact-head precondition",
+      "reconcile on HEAD_MOVED",
+      "structured checkpoint and handoff"
+    ],
+    "id_collision_behavior": "FAIL_CI_AND_HOLD_FOR_REVIEW",
+    "concurrent_write_behavior": "CLAIM_OR_HEAD_COLLISION_FAILS_CLOSED",
+    "note": "This registry prevents namespace/semantic identity collisions. Existing session/claim/exact-head mechanisms remain necessary to prevent concurrent write collisions."
+  },
+  "legacy_reconciliation": [
+    {
+      "old_id": "CPD-041",
+      "canonicalized_id": "CPD-047",
+      "subject": "Domain planning is a server-scoped choice chain",
+      "reason": "ACCIDENTAL_DUPLICATE_DECISION_ID",
+      "preservation": "CONTENT_PRESERVED; ONLY_CANONICAL_IDENTIFIER_DISAMBIGUATED"
+    }
+  ],
+  "integration_slots": [
+    {
+      "id": "ARCH-006",
+      "purpose": "cross-authority CI consistency checks"
+    },
+    {
+      "id": "GMC-G02",
+      "purpose": "metamodel and stable identifier contracts"
+    },
+    {
+      "id": "GMC-G13",
+      "purpose": "global dependency graph and lineage validation"
+    },
+    {
+      "id": "IDN-006",
+      "purpose": "session continuity and ownership context"
+    },
+    {
+      "id": "RTE-006",
+      "purpose": "existing-task versus new-intake resolution"
+    }
+  ]
+}

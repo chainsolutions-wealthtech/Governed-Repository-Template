@@ -266,6 +266,18 @@
       "safe_facts_merge": "b665fba88d276b9efb636a894e53d890344b2faa",
       "fact_revision": 1,
       "fact_count": 17
+    },
+    "namespace_work_registry": {
+      "authority_id": "CP-NAMESPACE-001",
+      "decision_id": "CPD-048",
+      "status": "SOURCE_ONLY_CI_ENFORCED",
+      "source_of_truth_model": "DERIVED_FROM_EXISTING_CANONICAL_DEFINITION_SOURCES",
+      "duplicate_definition_policy": "FAIL_CI_AND_HOLD_FOR_REVIEW",
+      "multi_agent_role": "SEMANTIC_ID_COLLISION_GUARD_COMPLEMENTS_CLAIMS_COLLISION_DOMAINS_AND_EXACT_HEAD",
+      "parallel_task_list": false,
+      "legacy_reconciliation": {
+        "duplicate_cpd_041_domain_planning": "CPD-047"
+      }
     }
   },
   "framework_product_boundary": {
