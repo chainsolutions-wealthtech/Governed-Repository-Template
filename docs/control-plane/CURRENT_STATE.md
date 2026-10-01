@@ -710,7 +710,7 @@ The current programme priority remains unchanged: `P12-S6`.
 
 ## GACR R3 — Interruption Forensics
 
-Cross-cutting status: `CI_PROVEN / FINAL_ATTESTATION_IN_PROGRESS`.
+Cross-cutting status: `CI_PROVEN`.
 
 - Parent continuity authority: `CP-AGENT-RELAY-001`.
 - Previous proven revision: `CP-AGENT-RELAY-001-R2`.
