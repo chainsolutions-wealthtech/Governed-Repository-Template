@@ -185,7 +185,10 @@
       "scripts/test_server_identity_secret_refresh_workflow.py",
       "docs/control-plane/NAMESPACE_WORK_REGISTRY.md",
       ".governance/control-plane-state/namespace-work-registry.json",
-      "scripts/validate_namespace_work_registry.py"
+      "scripts/validate_namespace_work_registry.py",
+      ".governance/control-plane-state/gacr-sessions.json",
+      ".governance/control-plane-state/gacr-claims.json",
+      ".governance/control-plane-state/gacr-takeovers.json"
     ],
     "local_entry_ui": [
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml"
@@ -200,7 +203,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.29",
+  "template_version": "2.8.30",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -418,7 +421,9 @@
     "standby agent failover without silent claim release",
     "external provider conversation reference linked to governed session when explicitly supplied",
     "exact-head reconciliation required before claim transfer",
-    "scheduled continuity supervisor with no-op scan suppression"
+    "scheduled continuity supervisor with no-op scan suppression",
+    "GACR source control-plane runtime memory is isolated from distributed client continuity state",
+    "Template source agent sessions claims and takeovers never leak into client repositories"
   ],
   "automatic_initialization_supported": true
 }
