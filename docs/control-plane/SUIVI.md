@@ -525,3 +525,11 @@ All target workflows on the new Ekyc HEAD passed. The next unresolved step is `Q
 - Validation then failed only because `test_control_plane_server_identity_secret_facts.py` loaded the already-mutated source file as its supposed revision-0 fixture.
 - The runner did not reach the governed PR persistence step, so no live fact state was committed.
 - Generic correction `KBI-04O-A` makes the unit fixture independent of the live canonical revision while still validating the current source state.
+
+## 2026-10-01 — KBI-04O live refresh canonical
+
+The corrected KBI-04O pipeline completed end-to-end. Run `36844701817` performed bounded read-only S1/S2 observation, revision-guarded safe-fact persistence, validation and governed PR creation.
+
+PR #86 contained only `.governance/control-plane-state/server-identity-secret-facts.json`, revision 1 / 17 facts. CI `36844736669` passed and the PR merged at `b665fba88d276b9efb636a894e53d890344b2faa`; post-merge CI `36844997332` also passed.
+
+KBI-04O and KBI-04O-A are complete. The unique CASE 1 next action remains the Ekyc domain-binding owner decision.
