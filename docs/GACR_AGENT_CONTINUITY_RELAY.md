@@ -134,3 +134,26 @@ On the Template source, runtime continuity is stored only in:
 On an instantiated/adopted client repository, GACR uses that project's local session/claim/takeover stores.
 
 Only the generic GACR code, schemas, configuration and workflow are distributed. A source conversation or source agent claim must never become client project state.
+
+## Beacon, Correlator, Dispatcher and Agent Context
+
+GACR v2 adds:
+
+- **Beacon** — safe connection/action telemetry;
+- **Correlator** — deterministic or evidence-based session attribution;
+- **Dispatcher** — target-specific takeover wake records;
+- **Agent Context** — one safe aggregate view for resume.
+
+Commands:
+
+```bash
+python3 scripts/gacr_agent_telemetry.py beacon ...
+python3 scripts/gacr_agent_telemetry.py correlate
+python3 scripts/gacr_agent_telemetry.py dispatch
+python3 scripts/gacr_agent_telemetry.py context --session-id <session>
+python3 scripts/gacr_agent_telemetry.py status
+```
+
+The GitHub workflow exposes the same operations through `workflow_dispatch` and `repository_dispatch`.
+
+Only allowlisted GitHub metadata is captured. Provider conversation references are used only when actually supplied. The Correlator fails closed on ambiguous evidence.
