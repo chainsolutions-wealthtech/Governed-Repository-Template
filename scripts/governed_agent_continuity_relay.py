@@ -216,8 +216,11 @@ def register_docs(
 
     if matches:
         session = matches[0]
-        if (session.get("relay") or {}).get("state") == "HANDOFF_STALLED":
+        relay_state = (session.get("relay") or {}).get("state")
+        if relay_state == "HANDOFF_STALLED":
             raise ValueError("predecessor ownership already transferred")
+        if relay_state in {"STALLED", "TAKEOVER_READY"}:
+            raise ValueError("stalled session requires governed reconciliation before resume")
         resolution = "RESUME"
     else:
         strongest_ref = (
@@ -287,6 +290,8 @@ def heartbeat_docs(
     r = ensure_relay(session, config, timestamp)
     if r.get("state") == "HANDOFF_STALLED":
         raise ValueError("predecessor cannot resume after takeover")
+    if r.get("state") in {"STALLED", "TAKEOVER_READY"}:
+        raise ValueError("stalled session requires governed reconciliation before heartbeat")
     desired = "STANDBY" if session.get("status") == "STANDBY" else "ACTIVE"
     session["status"] = desired
     session["last_seen_at"] = iso(timestamp)
