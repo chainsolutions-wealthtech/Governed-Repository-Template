@@ -111,3 +111,29 @@ A Governed Request has one persisted state machine revision at a time. GitHub Ac
 Multiple agents may contribute observations/evidence only through the same request state. No agent may skip ahead to a later preparatory action. The next action is determined by the persisted request revision, not by conversation memory.
 
 Once `HANDOFF_READY` is emitted, repository-local session/claim/collision-domain coordination resumes on the target repository.
+
+## GACR — Governed Agent Continuity Relay
+
+GACR is the reusable continuity/failover layer for long-running agent work.
+
+It extends the existing session/claim/checkpoint/handoff model:
+
+```text
+SESSION
+→ HEARTBEAT / LEASE
+→ ACTIVE CLAIM
+→ SUPERVISOR SCAN
+→ SUSPECTED_STALL
+→ STALLED
+→ TAKEOVER_READY
+→ STANDBY OFFER
+→ EXACT-HEAD RECONCILIATION
+→ CLAIM TRANSFER
+→ CONTINUE
+```
+
+A stalled session keeps its active claim until takeover acceptance. This prevents two writers from acting on the same collision domain.
+
+External provider conversation references may be attached only when actually supplied. They are correlation metadata; the governed session ID remains canonical.
+
+An arbitrary browser conversation cannot be universally awakened by GitHub. GACR therefore persists a takeover offer that a standby agent or external orchestrator can consume deterministically.
