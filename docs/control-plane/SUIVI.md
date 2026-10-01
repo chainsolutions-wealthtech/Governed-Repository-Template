@@ -551,3 +551,9 @@ Owner selected S1 through the exact current Ekyc local-entry gate. The governed 
 The resulting legacy `Q_DOMAIN_BINDING` is too coarse for the required adaptive flow. Generic corrective task C1-13-I-B-C splits domain planning into domain intent, observed S1 parent/existing-domain selection, label/name choice, automatic binding derivation and prepared capability requirements.
 
 No target-specific Ekyc patch is permitted.
+
+## 2026-10-01 — Ekyc domain-intent gate ready
+
+The v2.8.26 governed upgrade migrated Ekyc#1 from the legacy coarse domain object gate to the progressive domain-intent gate while preserving the owner's S1 production-server choice.
+
+All source and target validation runs passed. Ekyc is now revision 42 at `Q_DOMAIN_INTENT`. The next owner input is only the domain intent; later questions are derived from that choice and the already-known S1 inventory.

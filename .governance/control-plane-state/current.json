@@ -2,23 +2,23 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 40,
+  "source_state_revision": 41,
   "template_version": "2.8.24",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
   "program_issue": 12,
-  "current_checkpoint": "C1-13_EKYC_S1_SELECTED_DOMAIN_CHOICE_CORRECTION",
+  "current_checkpoint": "C1-13_EKYC_DOMAIN_INTENT_READY",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "unique_next_action": "C1_13_I_B_C_SPLIT_SERVER_SCOPED_DOMAIN_CHOICES",
+  "unique_next_action": "C1_13_I_B_D_SELECT_EKYC_DOMAIN_INTENT",
   "blockers": [
-    "GENERIC_DOMAIN_BINDING_TOO_COARSE_FOR_ADAPTIVE_FLOW"
+    "OWNER_DOMAIN_INTENT_DECISION_REQUIRED"
   ],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
-  "freshness": "SOURCE_STATE_RECONCILED_WITH_EKYC_S1_OWNER_DECISION",
+  "freshness": "SOURCE_STATE_RECONCILED_WITH_EKYC_V2826_DOMAIN_INTENT_GATE",
   "last_ci_run": 36844997332,
   "last_ci_result": "PASS",
   "release_subject_head": "8b3a1ac4abf250820558ba873110581f8607a2b3",
-  "last_verified_main_head": "1d5fce83f381549725373fdda68e714364882b71",
+  "last_verified_main_head": "1aed2d8f1646ca4ebc6208a6c692ec8eac7d20a4",
   "canonical_memory_database": {
     "schema_version": "1.0.0",
     "status": "ACTIVE",
@@ -304,8 +304,8 @@
     "repository": "Patricked-code/Ekyc",
     "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
     "local_entry_issue": "Patricked-code/Ekyc#1",
-    "expected_head": "b67a4ec58d837a66f3c3dedb02caadaf044912d5",
-    "state": "FROZEN_GENERIC_DOMAIN_QUESTION_DEFECT",
+    "expected_head": "5681e6f0815275797514ef62359ea258eb93b705",
+    "state": "WAITING_FOR_DOMAIN_INTENT_DECISION",
     "failure_run": 36294979599,
     "failure": "HTTP 404 during MCP discovery with uncorrectable endpoint state",
     "corrective_task": "C1-13-A",
@@ -320,11 +320,11 @@
     "first_governed_upgrade_commit": "2ece8cff98258f7c40cf7b7383ceb5c026db9639",
     "first_upgrade_ci_run": 36295714554,
     "first_upgrade_ci_result": "FAIL",
-    "active_corrective_task": "C1-13-I-B-C",
+    "active_corrective_task": null,
     "active_corrective_pr": 53,
     "active_red_ci_run": 36620804501,
     "active_green_ci_run": 36620877757,
-    "active_defect": "DOMAIN_BINDING_COARSE_OBJECT_NOT_PROGRESSIVE_CHOICES",
+    "active_defect": null,
     "completed_corrective_tasks": [
       "C1-13-A",
       "C1-13-B",
@@ -347,7 +347,7 @@
     "mcp_retry_run": 36621624763,
     "mcp_retry_failure": "SSL_CERTIFICATE_VERIFY_FAILED_CERTIFICATE_EXPIRED",
     "mcp_intake": "Patricked-code/MCP#201",
-    "active_dependency_task": "C1-13-I-B-C",
+    "active_dependency_task": "C1-13-I-B-D",
     "preserved_external_dependency": {
       "task": "C1-13-E",
       "intake": "Patricked-code/MCP#201",
@@ -501,7 +501,6 @@
       "command_comment": 5933064109,
       "control_plane_run": 36873298229,
       "target_run": 36873334194,
-      "local_entry_revision": 41,
       "execution_authority_granted": false
     },
     "server_before_domain_correction": {
@@ -530,6 +529,40 @@
       "reuse_selected_server_inventory": true,
       "derive_binding_automatically": true,
       "prepare_capabilities": true,
+      "execution_authority_granted": false
+    },
+    "domain_choice_correction": {
+      "status": "PASS",
+      "template_pr": 90,
+      "template_merge": "1aed2d8f1646ca4ebc6208a6c692ec8eac7d20a4",
+      "premerge_ci": 36874806040,
+      "postmerge_ci": 36874904197,
+      "upgrade_run": 36875001892,
+      "ekyc_head": "5681e6f0815275797514ef62359ea258eb93b705",
+      "local_entry_revision": 42,
+      "target_ci": 36875104777,
+      "target_auto_bootstrap": 36875104910,
+      "target_local_entry": 36875114901,
+      "discovery_replay": false,
+      "server_mutation": false
+    },
+    "domain_intent_gate": {
+      "phase": "Q_DOMAIN_INTENT",
+      "choices": [
+        "REUSE_EXISTING_DOMAIN",
+        "CREATE_SUBDOMAIN",
+        "CREATE_NEW_ROOT_DOMAIN",
+        "CREATE_CHILD_DOMAIN",
+        "NO_PUBLIC_DOMAIN",
+        "DECIDE_LATER"
+      ],
+      "selected_server": "S1",
+      "observed_parent_domains": [
+        "berebytours.com",
+        "niakara.com",
+        "wealthtechinnovation.com",
+        "wealthtechinnovations.com"
+      ],
       "execution_authority_granted": false
     }
   },

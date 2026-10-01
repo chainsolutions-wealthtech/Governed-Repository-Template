@@ -793,3 +793,25 @@ These slices do not change the CASE 1 unique action.
   - preserve execution authority as false;
   - preserve already answered legacy `domain_binding` states.
 - Target migration: Ekyc revision 41 `Q_DOMAIN_BINDING` → `Q_DOMAIN_INTENT` through governed Template upgrade only.
+
+### C1-13-I-B-C completion — progressive domain-choice chain
+
+- Status: `DONE`.
+- Template PR #90 merge: `1aed2d8f1646ca4ebc6208a6c692ec8eac7d20a4`.
+- Pre-merge CI: `36874806040` PASS.
+- Post-merge CI: `36874904197` PASS.
+- Governed Ekyc upgrade: `36875001892` PASS.
+- Ekyc HEAD: `5681e6f0815275797514ef62359ea258eb93b705`.
+- Ekyc#1 revision 42 / `Q_DOMAIN_INTENT`.
+- Ekyc CI `36875104777`, Auto Bootstrap `36875104910`, Local Entry `36875114901`: PASS.
+- S1 decision preserved; no discovery replay; no S1/domain mutation.
+
+### C1-13-I-B-D — Ekyc domain intent
+
+- Status: `IN_PROGRESS`.
+- Depends on: `C1-13-I-B-C`.
+- Gate: `OWNER_DOMAIN_INTENT_DECISION_REQUIRED`.
+- Choices: `REUSE_EXISTING_DOMAIN | CREATE_SUBDOMAIN | CREATE_NEW_ROOT_DOMAIN | CREATE_CHILD_DOMAIN | NO_PUBLIC_DOMAIN | DECIDE_LATER`.
+- Selected server: `S1`.
+- Current parent candidates: `berebytours.com | niakara.com | wealthtechinnovation.com | wealthtechinnovations.com`.
+- Answer grants no execution authority.
