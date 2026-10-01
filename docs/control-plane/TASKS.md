@@ -22,14 +22,14 @@ Objective: V2.7.0 Self-Governed Control Plane.
 | P12-S2 Gouvern MCP discovery | DONE | P12-S1 | PASS/non-degraded discovery |
 | P12-S3 Setup approval + APPLY_BASELINE | DONE | P12-S2 | baseline commit + first-agent handoff |
 | P12-S4 Prove subsequent NORMAL_GOVERNED_ENTRY on external CASE 1 pilot (current pilot: Gouvern) | DONE | P12-S3 | `Gouvern#4` NORMAL_GOVERNED_ENTRY + LOCAL_HANDOFF_READY; no baseline reset |
-| P12-S5 Second fresh repository E2E | ACTIVE_PARENT | P12-S4 | clean uninterrupted lifecycle; current child C1-13-A |
+| P12-S5 Second fresh repository E2E | ACTIVE_PARENT | P12-S4 | clean uninterrupted lifecycle; current child C1-13-I-B-E |
 | P12-S6 Close CASE 1 and release next macro case | PENDING | P12-S5 | reconciled final evidence |
 
 ## Unique executable task
 
-`C1-13-B_MERGE_PR51_REUPGRADE_EKYC_RESUME_DISCOVERY`
+`C1-13-I-B-E_SELECT_EKYC_WORKFLOW_MODEL`
 
-`P12-S5` remains the active parent. No later task may become executable before this inserted corrective gate completes.
+`P12-S5` remains the active parent. No later task may become executable before this owner-decision gate completes.
 
 ### C1-12 discovered sub-tasks
 
@@ -808,10 +808,24 @@ These slices do not change the CASE 1 unique action.
 
 ### C1-13-I-B-D — Ekyc domain intent
 
-- Status: `IN_PROGRESS`.
+- Status: `DONE`.
 - Depends on: `C1-13-I-B-C`.
-- Gate: `OWNER_DOMAIN_INTENT_DECISION_REQUIRED`.
-- Choices: `REUSE_EXISTING_DOMAIN | CREATE_SUBDOMAIN | CREATE_NEW_ROOT_DOMAIN | CREATE_CHILD_DOMAIN | NO_PUBLIC_DOMAIN | DECIDE_LATER`.
-- Selected server: `S1`.
-- Current parent candidates: `berebytours.com | niakara.com | wealthtechinnovation.com | wealthtechinnovations.com`.
+- Owner selected `CREATE_NEW_ROOT_DOMAIN`.
+- Owner then selected `DISCOVER_AVAILABLE_NAMES`.
+- Ekyc progressed revision 42 `Q_DOMAIN_INTENT` → 43 `Q_DOMAIN_ROOT_NAME_MODE` → 44 `Q_WORKFLOW_MODEL`.
+- No domain registration, DNS, Plesk/vhost, TLS or S1 mutation occurred.
+- Generic host/path gap found during owner review was fixed in Template PR #92, version `2.8.27`, without changing Ekyc's root-domain decision.
+- PR #92 merge: `8143db05b8ed412bdbc3d710f4a1fdf49f652161`; post-merge CI `36880059834` PASS.
+- Governed Ekyc upgrade `36880153919` produced `4bf80309313f3d34f74ffca183bd540583d2e87f`, revision 45.
+- Ekyc CI `36880223661`, Auto Bootstrap `36880223820`, Local Entry `36880228405`: PASS.
 - Answer grants no execution authority.
+
+### C1-13-I-B-E — Ekyc workflow model
+
+- Status: `IN_PROGRESS`.
+- Depends on: `C1-13-I-B-D`.
+- Gate: `OWNER_WORKFLOW_MODEL_DECISION_REQUIRED`.
+- Ekyc#1 revision 45 / `Q_WORKFLOW_MODEL`.
+- Choices: `REGULATORY_AFRICAFUNDS_GOVERNED_FLOW | STANDARD_GOVERNED_FLOW`.
+- Existing answers preserved: `S1`, `CREATE_NEW_ROOT_DOMAIN`, `DISCOVER_AVAILABLE_NAMES`.
+- Choice grants no execution authority.
