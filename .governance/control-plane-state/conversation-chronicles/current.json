@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0.0",
+  "chronicle_id": "CHAT-MEM-20261002-001",
+  "status": "ACTIVE",
+  "markdown_path": ".governance/control-plane-state/conversation-chronicles/CHAT-MEM-20261002-001.md",
+  "state_path": ".governance/control-plane-state/conversation-chronicles/CHAT-MEM-20261002-001.json",
+  "current_checkpoint": "CHK-000001",
+  "completeness": "COMPLETE_FOR_RECOVERABLE_VISIBLE_CONTEXT",
+  "raw_pre_activation_transcript_completeness": "PARTIAL",
+  "updated_at": {
+    "value": "2026-10-02T00:24+02:00",
+    "timezone": "Europe/Paris",
+    "precision": "minute",
+    "source": "platform"
+  }
+}
