@@ -139,7 +139,7 @@ jobs:
 
       - name: Validate GACR state
         run: |
-          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py
+          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py scripts/gacr_bridge_notifier.py
           python3 scripts/validate_governance.py
 
       - name: Persist changed relay state
@@ -186,3 +186,9 @@ jobs:
           fi
 
           git push origin "HEAD:$TARGET_BRANCH"
+
+      - name: Deliver optional external GACR wake events
+        env:
+          GACR_BRIDGE_WEBHOOK_URL: ${{ vars.GACR_BRIDGE_WEBHOOK_URL }}
+          GACR_BRIDGE_WEBHOOK_TOKEN: ${{ secrets.GACR_BRIDGE_WEBHOOK_TOKEN }}
+        run: python3 scripts/gacr_bridge_notifier.py
