@@ -13,11 +13,18 @@ from urllib.parse import urlparse
 
 ROOT = Path(os.environ.get("GACR_ROOT") or Path(__file__).resolve().parents[1]).resolve()
 GOV = ROOT / ".governance"
-SESSIONS_PATH = GOV / "sessions" / "sessions.json"
-CLAIMS_PATH = GOV / "work" / "claims.json"
-WORK_PATH = GOV / "work" / "work-items.json"
+TEMPLATE_SOURCE = (ROOT / ".template-source").exists()
 CONFIG_PATH = GOV / "agent-relay" / "config.json"
-TAKEOVERS_PATH = GOV / "agent-relay" / "takeovers.json"
+WORK_PATH = GOV / "work" / "work-items.json"
+
+if TEMPLATE_SOURCE:
+    SESSIONS_PATH = GOV / "control-plane-state" / "gacr-sessions.json"
+    CLAIMS_PATH = GOV / "control-plane-state" / "gacr-claims.json"
+    TAKEOVERS_PATH = GOV / "control-plane-state" / "gacr-takeovers.json"
+else:
+    SESSIONS_PATH = GOV / "sessions" / "sessions.json"
+    CLAIMS_PATH = GOV / "work" / "claims.json"
+    TAKEOVERS_PATH = GOV / "agent-relay" / "takeovers.json"
 
 ACTIVEISH = {"ACTIVE", "SUSPECTED_STALL", "STALLED", "TAKEOVER_READY", "STANDBY"}
 TERMINAL_RELAY = {"HANDOFF_STALLED", "CLOSED"}
