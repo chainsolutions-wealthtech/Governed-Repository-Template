@@ -88,3 +88,26 @@ Do not start normal target-repository work until the control plane emits `HANDOF
 ## Repository-local control plane
 
 After central handoff, start local work through a `[Governed Local Entry]` issue or `repository_dispatch: governed_local_start`. The first agent is routed through `FIRST_AGENT_BOOTSTRAP`; later agents are routed through `NORMAL_GOVERNED_ENTRY`. Do not bypass a pending first-agent baseline.
+
+## GACR — continuité et relève des agents
+
+Pour un travail susceptible de durer, enregistre la connexion dans **GACR — Governed Agent Continuity Relay**.
+
+Si une référence de conversation fournisseur est réellement disponible, transmets-la ; ne l'invente jamais.
+
+Exemple actif :
+
+```bash
+python3 scripts/governed_agent_continuity_relay.py register \
+  --agent "<agent>" \
+  --provider chatgpt \
+  --provider-ref "<conversation-id>" \
+  --task-id "<task>" \
+  --branch "<branch>"
+```
+
+Un agent de secours peut se déclarer avec `--standby`.
+
+Les actions `session-start`, `dispatch`, `checkpoint` et `handoff` renouvellent automatiquement le lease GACR lorsqu'elles passent par `governance_agent.py`. Pour une longue opération sans action gouvernée intermédiaire, émettre un heartbeat GACR.
+
+Si une session devient `STALLED / TAKEOVER_READY`, aucun agent ne doit reprendre son claim par simple supposition. La relève exige la lecture du checkpoint, de la branche/PR, puis une réconciliation exact-HEAD avant `takeover-accept`.
