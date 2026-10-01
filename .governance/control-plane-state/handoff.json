@@ -38,7 +38,8 @@
     ".governance/control-plane-state/execution-registry.json",
     "scripts/governed_execution_package_compiler.py",
     "scripts/governed_project_execution_blueprint.py",
-    "scripts/governed_loop_execution_adapter.py"
+    "scripts/governed_loop_execution_adapter.py",
+    "scripts/control_plane_server_identity_secret_metadata.py"
   ],
   "rules": [
     "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",
@@ -120,7 +121,11 @@
     "LOOP_ENGINEERING_RELEASES_ONE_READY_NODE_AT_A_TIME",
     "PASS_RECEIPT_UNLOCKS_ONLY_DEPENDENTS",
     "BLOCKED_CAPABILITY_IS_NOT_SKIPPED",
-    "PROJECT_EXECUTION_DAG_NE_EXECUTION_AUTHORITY"
+    "PROJECT_EXECUTION_DAG_NE_EXECUTION_AUTHORITY",
+    "SERVER_IDENTITY_SECRET_KNOWLEDGE_IS_METADATA_NOT_VALUES",
+    "RAW_REMOTE_SECRET_SCAN_PAYLOAD_IS_NEVER_PERSISTED",
+    "MISSING_S2_SECRET_SCAN_SURFACE_REMAINS_EXPLICIT",
+    "SERVER_IDENTITY_SECRET_KNOWLEDGE_NE_EXECUTION_AUTHORITY"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",
