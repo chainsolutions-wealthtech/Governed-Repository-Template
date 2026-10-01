@@ -170,3 +170,23 @@ Therefore:
 - independent dual-route attestation may still be performed when a specific gate explicitly requires it.
 
 For legacy `BOTH` evidence where DIRECT already passed and the run failed only because the old engine subsequently forced SSH, the authorized DIRECT success can be reused. The SSH path remains configured as an alternate route whose readiness can be attested separately.
+
+## Fresh project: production server before domain
+
+For a fresh project with no existing infrastructure binding, successful read-only discovery does not jump directly to a domain decision.
+
+The order is:
+
+```text
+DISCOVERY
+→ observed server candidates
+→ OWNER production-server choice
+→ reuse domain inventory from selected server
+→ domain planning
+→ remaining setup
+```
+
+An observed server is a candidate, not an owner decision. Selecting `S1`, `S2`, another/new server, or deferring the choice enriches the project model but grants no runtime mutation authority.
+
+When a server is selected, the next domain question reuses the already-authorized discovery evidence for that server instead of rerunning the same discovery.
+

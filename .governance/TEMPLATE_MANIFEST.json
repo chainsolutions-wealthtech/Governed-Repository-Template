@@ -189,7 +189,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.24",
+  "template_version": "2.8.25",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -382,7 +382,11 @@
     "event-and-need governed read-only S1 S2 identity-secret fact refresh",
     "safe metadata persistence uses exact revision and governed PR",
     "refresh workflow never persists raw MCP payloads or secret values",
-    "server identity-secret refresh remains separate from mutation authority"
+    "server identity-secret refresh remains separate from mutation authority",
+    "fresh projects choose production server before domain planning",
+    "observed S1/S2 candidates are reused without auto-selecting an owner production target",
+    "domain question reuses selected-server discovery evidence",
+    "governed upgrader reorders legacy fresh-project domain gates without answer loss"
   ],
   "automatic_initialization_supported": true
 }

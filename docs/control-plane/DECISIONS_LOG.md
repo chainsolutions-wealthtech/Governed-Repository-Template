@@ -225,3 +225,14 @@ Append-only durable decisions for the source/control-plane repository.
 - Persistence is guarded by the exact current `server-identity-secret-facts.json` revision.
 - A source-repository GitHub App token is minted only to create the governed branch/PR after validation.
 - No MCP/server mutation, secret readback, raw payload persistence, server connection coordinate persistence or execution authority is introduced.
+
+### CPD-046 — Fresh project production-server choice precedes domain planning
+
+- Date: 2026-10-01.
+- Owner correction: when a fresh project has no existing infrastructure binding, the system must choose the production server before asking how to create or bind a domain.
+- Read-only discovery supplies server candidates and server-scoped domain inventory, but does not choose the production target on behalf of the owner.
+- Canonical order:
+  `DISCOVERY → PRODUCTION_SERVER_SELECTION → SERVER_SCOPED_DOMAIN_PLANNING → REMAINING_SETUP`.
+- The production-server answer is a project decision only; it grants no runtime/server mutation authority.
+- Once a server is selected, domain planning must reuse the already-authorized discovery evidence for that server rather than rediscovering the same inventory.
+- Existing/adopted projects keep observation-first reuse semantics; this correction specifically closes the fresh-project sequencing gap without replacing the adaptive questionnaire or Loop Engineering.

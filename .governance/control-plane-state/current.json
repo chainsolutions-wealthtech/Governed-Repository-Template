@@ -2,23 +2,23 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 37,
+  "source_state_revision": 38,
   "template_version": "2.8.24",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
   "program_issue": 12,
-  "current_checkpoint": "C1-13_EKYC_SMART_ROUTING_MIGRATED_DOMAIN_BINDING",
+  "current_checkpoint": "C1-13_EKYC_SERVER_BEFORE_DOMAIN_GENERIC_CORRECTION",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "unique_next_action": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING",
+  "unique_next_action": "C1_13_I_B_A_FIX_FRESH_PROJECT_SERVER_BEFORE_DOMAIN_ORDER",
   "blockers": [
-    "OWNER_DOMAIN_BINDING_DECISION_REQUIRED"
+    "GENERIC_FRESH_PROJECT_QUESTION_ORDER_DEFECT"
   ],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
-  "freshness": "SOURCE_STATE_RECONCILED_WITH_KBI04O_LIVE_REFRESH",
+  "freshness": "SOURCE_STATE_RECONCILED_WITH_OWNER_SERVER_BEFORE_DOMAIN_REQUIREMENT",
   "last_ci_run": 36844997332,
   "last_ci_result": "PASS",
   "release_subject_head": "8b3a1ac4abf250820558ba873110581f8607a2b3",
-  "last_verified_main_head": "b665fba88d276b9efb636a894e53d890344b2faa",
+  "last_verified_main_head": "c9266b8f9acb6eff9084f4a989397bae3d997762",
   "canonical_memory_database": {
     "schema_version": "1.0.0",
     "status": "ACTIVE",
@@ -80,20 +80,21 @@
     "adaptive_choice_question_catalogue": {
       "authority_id": "CP-ADAPTIVE-QUESTIONS-001",
       "decision_id": "CPD-036",
-      "status": "PLANNING_ONLY_NOT_RUNTIME_BOUND",
-      "question_count": 34,
+      "status": "SERVER_BEFORE_DOMAIN_CORRECTION_IN_PROGRESS",
+      "question_count": 35,
       "choice_based": true,
       "one_question_at_a_time": true,
       "observation_first": true,
       "parallel_engine": false,
-      "runtime_binding": "DEFERRED_INCREMENTAL_AQI_04_PLUS",
+      "runtime_binding": "C1-13-I-B-A",
       "artifacts": [
         "docs/control-plane/ADAPTIVE_CHOICE_QUESTION_CATALOGUE.md",
         ".governance/control-plane-state/adaptive-question-catalogue.json",
         "scripts/adaptive_question_planner.py",
         "scripts/test_adaptive_question_catalogue.py"
       ],
-      "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
+      "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING",
+      "fresh_project_production_server_question": "AQ-010N"
     },
     "persistent_control_plane_knowledge": {
       "authority_id": "CP-KNOWLEDGE-001",
@@ -304,7 +305,7 @@
     "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
     "local_entry_issue": "Patricked-code/Ekyc#1",
     "expected_head": "9ace9f9882a06df69c9466cec633bd191f7cad12",
-    "state": "WAITING_FOR_DOMAIN_BINDING_DECISION",
+    "state": "FROZEN_GENERIC_FRAMEWORK_QUESTION_ORDER_DEFECT",
     "failure_run": 36294979599,
     "failure": "HTTP 404 during MCP discovery with uncorrectable endpoint state",
     "corrective_task": "C1-13-A",
@@ -319,11 +320,11 @@
     "first_governed_upgrade_commit": "2ece8cff98258f7c40cf7b7383ceb5c026db9639",
     "first_upgrade_ci_run": 36295714554,
     "first_upgrade_ci_result": "FAIL",
-    "active_corrective_task": null,
+    "active_corrective_task": "C1-13-I-B-A",
     "active_corrective_pr": 53,
     "active_red_ci_run": 36620804501,
     "active_green_ci_run": 36620877757,
-    "active_defect": null,
+    "active_defect": "FRESH_PROJECT_DOMAIN_BEFORE_SERVER_SELECTION",
     "completed_corrective_tasks": [
       "C1-13-A",
       "C1-13-B",
@@ -346,7 +347,7 @@
     "mcp_retry_run": 36621624763,
     "mcp_retry_failure": "SSL_CERTIFICATE_VERIFY_FAILED_CERTIFICATE_EXPIRED",
     "mcp_intake": "Patricked-code/MCP#201",
-    "active_dependency_task": "C1-13-I-B",
+    "active_dependency_task": "C1-13-I-B-A",
     "preserved_external_dependency": {
       "task": "C1-13-E",
       "intake": "Patricked-code/MCP#201",
@@ -483,6 +484,16 @@
       "ekyc_project_registration_observed": false,
       "ekyc_domain_observed": false,
       "owner_decision_required": true
+    },
+    "question_order_target": {
+      "current_legacy_phase": "Q_DOMAIN_BINDING",
+      "target_phase": "Q_PRODUCTION_SERVER_SELECTION",
+      "observed_server_candidates": [
+        "S1",
+        "S2"
+      ],
+      "discovery_replay_required": false,
+      "server_choice_grants_execution_authority": false
     }
   },
   "mcp_capability_snapshot_program": {

@@ -7,7 +7,7 @@
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
   "current_phase": "C1-13",
   "current_status": "IN_PROGRESS",
-  "unique_next_action": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING",
+  "unique_next_action": "C1_13_I_B_A_FIX_FRESH_PROJECT_SERVER_BEFORE_DOMAIN_ORDER",
   "phases": [
     {
       "id": "C1-00",
@@ -158,13 +158,13 @@
       "depends_on": [
         "C1-12"
       ],
-      "next_action": "RESOLVE_EKYC_DOMAIN_BINDING",
+      "next_action": "FIX_FRESH_PROJECT_SERVER_BEFORE_DOMAIN_ORDER",
       "live_state": {
         "repository": "Patricked-code/Ekyc",
         "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
         "local_entry_issue": "Patricked-code/Ekyc#1",
         "expected_head": "9ace9f9882a06df69c9466cec633bd191f7cad12",
-        "status": "WAITING_FOR_DOMAIN_BINDING_DECISION",
+        "status": "FROZEN_GENERIC_FRAMEWORK_QUESTION_ORDER_DEFECT",
         "completed_corrective_tasks": [
           "C1-13-A",
           "C1-13-B",
@@ -177,8 +177,8 @@
         "external_dependency": null,
         "external_intake": "Patricked-code/MCP#201",
         "target_specific_repair": false,
-        "active_corrective_task": null,
-        "active_defect": null,
+        "active_corrective_task": "C1-13-I-B-A",
+        "active_defect": "FRESH_PROJECT_DOMAIN_BEFORE_SERVER_SELECTION",
         "preserved_external_dependency": {
           "code": "MCP_TLS_CERTIFICATE_EXPIRED",
           "intake": "Patricked-code/MCP#201",
@@ -257,6 +257,17 @@
           "revision": 39,
           "existing_ekyc_project_registration_observed": false,
           "existing_ekyc_domain_observed": false,
+          "owner_decision_required": true
+        },
+        "question_order_target": {
+          "current_phase": "Q_DOMAIN_BINDING",
+          "target_phase": "Q_PRODUCTION_SERVER_SELECTION",
+          "observed_server_candidates": [
+            "S1",
+            "S2"
+          ],
+          "domain_answer_present": false,
+          "discovery_replay_required": false,
           "owner_decision_required": true
         }
       },

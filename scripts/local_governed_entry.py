@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import base64, copy, json
+import base64, copy, json, re
 
 PROVIDERS=["CHATGPT","CLAUDE","CODEX","GITHUB_COPILOT","HUMAN","OTHER"]
 INTENTS=["OBSERVE","CONTEXT_INTAKE","INFORMATION_INTAKE","WORK_REQUEST","CODE_CHANGE","REVIEW","INFRASTRUCTURE"]
@@ -67,6 +67,9 @@ def validate(field,v):
     if field=="domain_strategy" and v not in DOMAIN_STRATEGIES:return "invalid domain strategy"
     if field=="runtime_mutation_policy" and v not in RUNTIME_POLICIES:return "invalid runtime mutation policy"
     if field=="workflow_model" and v not in WORKFLOW_MODELS:return "invalid workflow model"
+    if field=="production_server_selection":
+        if not isinstance(v,str) or not v.strip():return "production_server_selection requires a non-empty choice"
+        if not re.fullmatch(r"[A-Za-z0-9_.:-]{1,128}",v):return "invalid production server selection"
     if field=="project_scope":
         if not isinstance(v,dict) or not isinstance(v.get("in_scope"),list) or not isinstance(v.get("out_of_scope"),list):return "project_scope requires in_scope/out_of_scope arrays"
     if field in {"external_systems","constraints"} and not isinstance(v,list):return "array required"
@@ -126,6 +129,66 @@ def credential_requirements(a):
     # SSH/BOTH never require a persistent repository SSH private-key secret.
     return req
 
+def _discovery_tool_evidence(s,tool):
+    evidence=s.get("mcp_discovery")
+    if not isinstance(evidence,dict):return None
+    candidates=[evidence,evidence.get("direct_mcp"),evidence.get("ssh_certificate")]
+    for candidate in candidates:
+        if not isinstance(candidate,dict):continue
+        tools=candidate.get("tools")
+        if isinstance(tools,dict) and isinstance(tools.get(tool),dict):
+            return tools.get(tool)
+    return None
+
+def observed_server_choices(s):
+    choices=[]
+    for server_id in ("S1","S2"):
+        item=_discovery_tool_evidence(s,f"list_domains_{server_id.lower()}")
+        if isinstance(item,dict) and item.get("status") in {"PASS","PARTIAL"}:
+            choices.append(server_id)
+    return choices
+
+def _collect_text(value,out):
+    if isinstance(value,str):out.append(value);return
+    if isinstance(value,list):
+        for item in value:_collect_text(item,out)
+        return
+    if isinstance(value,dict):
+        for item in value.values():_collect_text(item,out)
+
+def observed_domains_for_server(s,server_id):
+    item=_discovery_tool_evidence(s,f"list_domains_{str(server_id).lower()}")
+    if not isinstance(item,dict):return []
+    texts=[];_collect_text(item.get("result"),texts)
+    domains=set()
+    patterns=[
+      r"/var/www/vhosts/system/([A-Za-z0-9.-]+\.[A-Za-z]{2,})(?:/|\s|$)",
+      r"/var/www/vhosts/([A-Za-z0-9.-]+\.[A-Za-z]{2,})(?:/|\s|$)"
+    ]
+    for text in texts:
+        for pattern in patterns:
+            for domain in re.findall(pattern,text):
+                domains.add(domain.lower())
+    return sorted(domains)[:100]
+
+def fresh_project_requires_production_server_choice(s):
+    if s.get("mode")!="FIRST_AGENT_BOOTSTRAP":return False
+    a=s.get("answers") or {}
+    return (
+      a.get("architecture_status")=="NEW_EMPTY_PROJECT"
+      and a.get("infrastructure_status") in {"NO_INFRASTRUCTURE_YET","UNKNOWN_TO_DISCOVER"}
+      and isinstance(s.get("mcp_discovery"),dict)
+      and "domain_binding" not in a
+    )
+
+def reconcile_setup_question_order(s):
+    s=copy.deepcopy(s)
+    if fresh_project_requires_production_server_choice(s) and "production_server_selection" not in (s.get("answers") or {}):
+        s["setup_package"]=None
+        s["hold_reason"]=None
+        return refresh(s)
+    return s
+
 def build_setup(s):
     a=s["answers"]; linked=a.get("link_mcp_server") is True
     plan={
@@ -153,6 +216,7 @@ def build_setup(s):
             "simultaneous_execution_required":False
           } if a.get("mcp_transport")=="BOTH" else None,
           "discovery_scope":a.get("mcp_discovery_scope"),"domain_strategy":a.get("domain_strategy"),
+          "production_server_selection":a.get("production_server_selection"),
           "domain_binding":a.get("domain_binding"),"runtime_mutation_policy":a.get("runtime_mutation_policy"),
           "discovery_tools":["ping","get_project_context","list_domains_s1","list_domains_s2","get_write_tools_context"],
           "write_tools":"DISABLED_UNTIL_MCP_PROJECT_REGISTRATION_AND_EXPLICIT_AUTHORITY",
@@ -227,9 +291,31 @@ def refresh(s):
         if s.get("mcp_discovery") is None:
             s["status"]="MCP_DISCOVERY_REQUIRED";s["phase"]="MCP_DISCOVERY"
             s["next_request"]={"kind":"MCP_DISCOVERY","id":"MCP_DISCOVERY","text":"Run read-only MCP discovery.","tools":["ping","get_project_context","list_domains_s1","list_domains_s2","get_write_tools_context"]};return s
+        if fresh_project_requires_production_server_choice(s) and "production_server_selection" not in s["answers"]:
+            observed=observed_server_choices(s)
+            choices=observed+[x for x in ["PLAN_NEW_SERVER","DECIDE_LATER"] if x not in observed]
+            s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_PRODUCTION_SERVER_SELECTION"
+            s["next_request"]=q(
+              "Q_PRODUCTION_SERVER_SELECTION","production_server_selection",
+              "Aucun binding serveur n'est encore établi pour ce projet neuf. Sur quel serveur veux-tu préparer la production ?",
+              choices,
+              extra={"observed_servers":observed,"decision_kind":"OWNER_PRODUCTION_TARGET","execution_authority_granted":False}
+            );return s
         if "domain_binding" not in s["answers"]:
+            selected=s["answers"].get("production_server_selection")
+            domains=observed_domains_for_server(s,selected) if selected in {"S1","S2"} else []
             s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DOMAIN_BINDING"
-            s["next_request"]=q("Q_DOMAIN_BINDING","domain_binding","À partir de l'inventaire MCP, veux-tu joindre un domaine existant, demander un nouveau domaine, ou laisser ce point non résolu ?",typ="object",extra={"mcp_discovery":copy.deepcopy(s["mcp_discovery"])});return s
+            s["next_request"]=q(
+              "Q_DOMAIN_BINDING","domain_binding",
+              "À partir du serveur de production choisi et de son inventaire, veux-tu joindre un domaine existant, préparer un nouveau domaine/sous-domaine, ou laisser ce point non résolu ?",
+              typ="object",
+              extra={
+                "selected_server":selected,
+                "observed_domains":domains,
+                "mcp_discovery_reused":True,
+                "execution_authority_granted":False
+              }
+            );return s
 
     if "workflow_model" not in s["answers"]:
         s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_WORKFLOW_MODEL";s["next_request"]=q("Q_WORKFLOW_MODEL","workflow_model","Quel flux de lecture et de travail veux-tu appliquer ?",WORKFLOW_MODELS);return s

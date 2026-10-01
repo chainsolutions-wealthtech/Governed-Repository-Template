@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "1.1.0",
   "authority_id": "CP-ADAPTIVE-QUESTIONS-001",
   "status": "PLANNING_ONLY_NOT_RUNTIME_BOUND",
   "purpose": "CHOICE_BASED_ADAPTIVE_QUESTION_CATALOGUE_FOR_CREATE_ADOPT_MAP_LAB",
@@ -375,6 +375,43 @@
         }
       },
       "effects": [
+        {
+          "kind": "PREPARE",
+          "target": "infrastructure.server_binding"
+        }
+      ],
+      "execution_authority_granted": false
+    },
+    {
+      "id": "AQ-010N",
+      "group": "INFRASTRUCTURE",
+      "field": "production_server_selection",
+      "text": "Sur quel serveur veux-tu préparer la production de ce projet neuf ?",
+      "applies_to": [
+        "CREATE_NEW_REPOSITORY"
+      ],
+      "resolution_policy": "OWNER_CHOICE_REQUIRED",
+      "response": {
+        "type": "CHOICE",
+        "cardinality": "ONE",
+        "choice_source": {
+          "type": "OBSERVED_PLUS_STATIC",
+          "kind": "SERVERS",
+          "static_values": [
+            "PLAN_NEW_SERVER",
+            "DECIDE_LATER"
+          ]
+        }
+      },
+      "effects": [
+        {
+          "kind": "CLASSIFY",
+          "target": "infrastructure.production_server"
+        },
+        {
+          "kind": "DERIVE",
+          "target": "domain.server_scoped_choices"
+        },
         {
           "kind": "PREPARE",
           "target": "infrastructure.server_binding"
