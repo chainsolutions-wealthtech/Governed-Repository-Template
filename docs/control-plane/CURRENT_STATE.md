@@ -588,3 +588,9 @@ The Control Plane now has an event/need-based workflow that can run the bounded 
 The workflow persists no secret values, raw MCP responses or server connection coordinates and grants no production authority.
 
 Live refresh remains pending until this workflow is merged and invoked from canonical `main`. CASE 1 remains at Ekyc domain-binding resolution.
+
+## KBI-04O live-refresh correction
+
+First canonical-main refresh run `36844233362` proved live read-only MCP collection and safe-fact persistence, then stopped before Git persistence because the persistence unit test incorrectly depended on source revision 0.
+
+Corrective task `KBI-04O-A` is active. No live observation entered canonical state and no server mutation occurred.
