@@ -221,7 +221,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.35",
+  "template_version": "2.8.36",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -463,7 +463,11 @@
     "runtime-only client transport credential never persisted in GACR payloads",
     "client heartbeat daemon with explicit-signal interruption reporting",
     "client action/tool trace emission",
-    "client wake polling without automatic takeover authority"
+    "client wake polling without automatic takeover authority",
+    "GACR internal workflow transport is never an agent identity",
+    "stale conversation chronicle never promotes internal GACR transport into a session",
+    "unobservable internal auto-attach skips without session or beacon creation",
+    "terminal and superseded GACR sessions are excluded from correlation candidates"
   ],
   "automatic_initialization_supported": true
 }

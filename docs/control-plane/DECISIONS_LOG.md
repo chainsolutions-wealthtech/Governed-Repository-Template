@@ -338,3 +338,16 @@ Append-only durable decisions for the source/control-plane repository.
 - Exact-HEAD reconciliation, claims, collision domains and authority checks remain unchanged.
 - Hosts that cannot execute or invoke a client emitter remain partially observable; the system must not claim continuous client liveness in that case.
 - This is cross-cutting GACR work and does not execute or replace `P12-S6`.
+
+### CPD-055 — GACR internal transport is never an agent/session identity
+
+- Date: 2026-10-02.
+- Post-R5 attestation observation found that when the active Conversation Chronicle exceeded its freshness window, the `Governed Agent Continuity Relay` workflow itself was incorrectly accepted as a GitHub Actions attachment anchor.
+- The resulting GitHub Actions session is a transport-classification defect, not a second user/agent conversation.
+- The internal GACR workflow is therefore explicitly classified as transport/runtime infrastructure and may never create a governed agent session.
+- When no explicit client, fresh Chronicle or external GitHub worker anchor is observable, push-triggered auto-attach returns a successful no-op `GACR_AUTO_ATTACH_SKIPPED` and may refresh derived correlations only.
+- Stale Chronicle evidence is not made fresh artificially and is not used to fabricate liveness.
+- A genuine external GitHub worker remains an eligible attachment anchor.
+- Erroneously created transport sessions are preserved in history but closed/superseded; they are never silently deleted.
+- CLOSED / HANDOFF_STALLED sessions are excluded from Correlator candidates.
+- This corrective decision remains within `CP-AGENT-RELAY-001-R5` and does not alter `P12-S6`.

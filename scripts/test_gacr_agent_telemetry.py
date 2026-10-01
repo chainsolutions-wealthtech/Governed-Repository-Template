@@ -211,6 +211,13 @@ def main():
         except ValueError:
             pass
 
+
+        terminal = json.loads(json.dumps(session_a))
+        terminal["status"] = "CLOSED"
+        terminal.setdefault("relay", {})["state"] = "CLOSED"
+        score, reasons, exact = g.correlation_score(beacon, terminal)
+        assert_true(score < 0 and reasons == [] and exact is False, "terminal session must be excluded from correlation")
+
         # A second indistinguishable session must make heuristic correlation ambiguous.
         session_c = json.loads(json.dumps(session_a))
         session_c["session_id"] = "session-c"

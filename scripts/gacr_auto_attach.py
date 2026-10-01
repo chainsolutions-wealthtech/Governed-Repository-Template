@@ -20,6 +20,7 @@ from gacr_agent_telemetry import correlate_all, record_beacon
 
 ROOT = Path(os.environ.get("GACR_ROOT") or Path(__file__).resolve().parents[1]).resolve()
 CHRONICLE_CURRENT = ROOT / ".governance" / "control-plane-state" / "conversation-chronicles" / "current.json"
+INTERNAL_GACR_WORKFLOWS = {"Governed Agent Continuity Relay"}
 
 
 def read_json(path: Path) -> dict:
@@ -72,6 +73,9 @@ def chronicle_anchor(max_age_seconds: int, prefer: bool = False) -> dict | None:
 
 
 def github_anchor() -> dict | None:
+    # GACR's own workflow is transport/runtime infrastructure, not a new agent.
+    if (os.environ.get("GITHUB_WORKFLOW") or "").strip() in INTERNAL_GACR_WORKFLOWS:
+        return None
     repository = os.environ.get("GITHUB_REPOSITORY")
     actor = os.environ.get("GITHUB_ACTOR")
     if not repository or not actor:
@@ -90,7 +94,7 @@ def github_anchor() -> dict | None:
     }
 
 
-def choose_anchor(args: argparse.Namespace, config: dict) -> dict:
+def choose_anchor(args: argparse.Namespace, config: dict) -> dict | None:
     explicit = args.connection_ref or args.provider_ref or args.provider_url or args.client_instance_id
     if explicit:
         return {
@@ -111,7 +115,7 @@ def choose_anchor(args: argparse.Namespace, config: dict) -> dict:
     if github:
         return github
 
-    raise SystemExit("GACR_AUTO_ATTACH_UNOBSERVABLE: no explicit client, fresh chronicle or GitHub execution anchor")
+    return None
 
 
 def main() -> None:
@@ -134,6 +138,7 @@ def main() -> None:
     p.add_argument("--wake-channel", action="append", choices=["POLL_REPOSITORY","REPOSITORY_DISPATCH","EXTERNAL_BRIDGE"])
     p.add_argument("--source")
     p.add_argument("--prefer-chronicle", action="store_true")
+    p.add_argument("--allow-unobservable-skip", action="store_true")
     a = p.parse_args()
 
     config, sessions, claims, _work, takeovers = load_all()
@@ -141,6 +146,20 @@ def main() -> None:
         raise SystemExit("GACR_AUTO_ATTACH_DISABLED")
 
     anchor = choose_anchor(a, config)
+    if anchor is None:
+        if a.allow_unobservable_skip:
+            correlation = correlate_all()
+            print(json.dumps({
+                "status": "GACR_AUTO_ATTACH_SKIPPED",
+                "process": "GACR",
+                "authority": "CP-AGENT-RELAY-001-R5",
+                "reason": "NO_EXTERNAL_AGENT_ANCHOR",
+                "attachment_created": False,
+                "correlation": correlation,
+            }, indent=2, ensure_ascii=False))
+            return
+        raise SystemExit("GACR_AUTO_ATTACH_UNOBSERVABLE: no explicit client, fresh chronicle or external GitHub execution anchor")
+
     provider = a.provider or anchor.get("provider") or os.environ.get("GACR_PROVIDER") or "other"
     connection_ref = a.connection_ref or anchor.get("connection_ref")
     client_instance_id = a.client_instance_id or anchor.get("client_instance_id")
@@ -189,7 +208,7 @@ def main() -> None:
     print(json.dumps({
         "status": resolution,
         "process": "GACR",
-        "authority": "CP-AGENT-RELAY-001-R4",
+        "authority": "CP-AGENT-RELAY-001-R5",
         "attachment_source": anchor.get("source"),
         "session": session,
         "beacon_id": beacon.get("beacon_id"),

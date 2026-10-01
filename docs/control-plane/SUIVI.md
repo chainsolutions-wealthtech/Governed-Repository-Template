@@ -713,3 +713,16 @@ P12-S5 therefore satisfies its exit gate without target-specific repair. No S1/d
 - The current ChatGPT host does not expose a persistent client process or direct repository-dispatch action to this assistant; therefore autonomous browser-side heartbeat remains an external host-instrumentation boundary, not a repository-core defect.
 - Generic GACR R1-R5 is now complete as a reusable repository/client protocol.
 - Do not resume `P12-S6` until explicit owner OK.
+
+## 2026-10-02 — GACR R5 post-attestation internal-transport regression
+
+- Final control after PR #112 detected `session_count=2`; GACR was therefore not declared final.
+- The added session `session-cb22a4ed0d9e29eba5383f5d` came from GACR workflow run `36941625864`, not from a second conversation/agent.
+- Its Beacon is `GACR-B-127716e672d9` with `source=GITHUB_ACTIONS` and workflow `Governed Agent Continuity Relay`.
+- Root cause: stale Chronicle → internal GitHub Actions fallback.
+- Corrective decision `CPD-055`: internal GACR transport is never an agent identity.
+- The correction does not increase Chronicle freshness and does not invent client liveness.
+- Historical defective records are preserved; the invalid session is closed/superseded and terminal sessions are removed from future correlation candidates.
+- Candidate Template version: `2.8.36`.
+- Final acceptance requires post-merge proof of no new internal-transport session.
+- `P12-S6` remains preserved and unexecuted.

@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.4.0",
+  "schema_version": "1.4.1",
   "process_name": "GACR",
   "process_title": "Governed Agent Continuity Relay",
   "authority_id": "CP-AGENT-RELAY-001",
@@ -111,7 +111,13 @@
     "unobservable_provider_reference_state": "UNAVAILABLE",
     "main_push_auto_attach": true,
     "github_actions_bot_state_push_reentry": false,
-    "note": "A governed arrival attaches with the strongest observable anchor. Missing provider conversation metadata never blocks attachment and may enrich the same session later."
+    "note": "A governed arrival attaches with the strongest observable anchor. Missing provider conversation metadata never blocks attachment and may enrich the same session later.",
+    "internal_transport_workflows": [
+      "Governed Agent Continuity Relay"
+    ],
+    "internal_transport_identity_policy": "NEVER_CREATE_SESSION",
+    "unobservable_internal_transport_behavior": "SKIP_AND_REFRESH_DERIVED_CORRELATIONS",
+    "stale_chronicle_behavior": "DO_NOT_PROMOTE_INTERNAL_GACR_TRANSPORT_TO_AGENT"
   },
   "client_emitter": {
     "enabled": true,

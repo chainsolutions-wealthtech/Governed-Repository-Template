@@ -942,7 +942,7 @@ This does not supersede or execute the global programme task `P12-S6_CLOSE_CREAT
 
 ### GACR R5 — client liveness and trace emitter
 
-Status: **CLIENT_PROTOCOL_CI_PROVEN / GENERIC_CORE_COMPLETE**.
+Status: **POST_ATTESTATION_REGRESSION_CORRECTION / CI_PENDING**.
 
 Additive candidate under `CP-AGENT-RELAY-001-R5` / `CPD-054`:
 
@@ -958,3 +958,19 @@ Additive candidate under `CP-AGENT-RELAY-001-R5` / `CPD-054`:
 - dedicated regression test.
 
 R5 does not execute `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+
+### GACR R5-A — internal transport identity correction
+
+Status: **IN_PROGRESS / CI_PENDING**.
+
+Corrective slice under `CP-AGENT-RELAY-001-R5` / `CPD-055`:
+
+- classify the GACR workflow as transport, never agent identity;
+- skip auto-attach when no real external anchor exists;
+- preserve stale Chronicle status instead of extending freshness artificially;
+- close/supersede the historical transport-created session;
+- exclude terminal/superseded sessions from Correlator candidates;
+- prove a genuine external GitHub worker can still attach;
+- prove post-merge GACR push creates no new session/Beacon when only internal transport is observable.
+
+Global programme priority remains `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.

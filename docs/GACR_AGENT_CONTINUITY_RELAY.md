@@ -274,3 +274,13 @@ Therefore two claims stay distinct:
 - `PROVIDER_HOST_LIVE`: only true for a host that actually invokes/runs the emitter or equivalent adapter.
 
 This distinction is required to preserve evidence quality and fail-closed behavior.
+
+## Internal transport is not an agent
+
+Corrective decision: `CPD-055`.
+
+The `Governed Agent Continuity Relay` GitHub Actions workflow transports GACR state/events. It is never itself an agent identity and must never create a fallback session when a Chronicle becomes stale.
+
+A stale Chronicle is preserved as stale evidence. If no real external anchor is observable, auto-attachment skips session/Beacon creation and may only refresh derived correlations.
+
+Any historical transport session created before this correction is retained as evidence but marked terminal/superseded. Terminal sessions are excluded from future correlation candidates.
