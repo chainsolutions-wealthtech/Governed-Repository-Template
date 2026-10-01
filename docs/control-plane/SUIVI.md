@@ -517,3 +517,11 @@ PR #70 and its post-merge CI proved the generic correction. The governed v2.8.14
 Ekyc now records DIRECT as the selected successful route and SSH as `CONFIGURED_NOT_ATTESTED`; no coupled rediscovery occurred.
 
 All target workflows on the new Ekyc HEAD passed. The next unresolved step is `Q_DOMAIN_BINDING`. Discovery found no Ekyc registration/domain, so the factual part is resolved and only the owner's domain-binding intent remains.
+
+## 2026-10-01 — KBI-04O first live refresh exposed a test-fixture defect
+
+- Workflow run `36844233362` reached the live MCP read-only collector successfully.
+- KBI-04N persistence succeeded transiently at revision 1 with 17 validated facts.
+- Validation then failed only because `test_control_plane_server_identity_secret_facts.py` loaded the already-mutated source file as its supposed revision-0 fixture.
+- The runner did not reach the governed PR persistence step, so no live fact state was committed.
+- Generic correction `KBI-04O-A` makes the unit fixture independent of the live canonical revision while still validating the current source state.
