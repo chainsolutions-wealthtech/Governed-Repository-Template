@@ -9,12 +9,23 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 MODULE_PATH = ROOT / "scripts" / "gacr_agent_telemetry.py"
+NOTIFIER_PATH = ROOT / "scripts" / "gacr_bridge_notifier.py"
 
 
 def load_module():
     spec = importlib.util.spec_from_file_location("gacr_agent_telemetry", MODULE_PATH)
     if spec is None or spec.loader is None:
         raise SystemExit("GACR_TELEMETRY_TEST_FAILED: unable to load module")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+
+def load_notifier():
+    spec = importlib.util.spec_from_file_location("gacr_bridge_notifier", NOTIFIER_PATH)
+    if spec is None or spec.loader is None:
+        raise SystemExit("GACR_TELEMETRY_TEST_FAILED: unable to load notifier")
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)
     return mod
@@ -148,6 +159,13 @@ def main():
         assert_true(item["target_session_id"] == "session-b", "standby target")
         assert_true(set(item["delivery_modes"]) == {"POLL_REPOSITORY","REPOSITORY_DISPATCH","EXTERNAL_BRIDGE"}, "all declared delivery modes")
         assert_true(item["may_write_before_takeover_accept"] is False, "dispatch must not grant write")
+
+        notifier = load_notifier()
+        bridge_payload = notifier.build_payload("owner/repo", item)
+        assert_true(bridge_payload["dispatch_id"] == item["dispatch_id"], "bridge dispatch id")
+        assert_true(bridge_payload["delivery"]["idempotency_key"] == item["dispatch_id"], "bridge idempotency key")
+        assert_true(bridge_payload["delivery"]["may_write"] is False, "bridge wake must not grant write")
+        assert_true(notifier.eligible([item]) == [item], "ready external dispatch should be bridge-eligible")
 
         context = g.agent_context("session-b")
         assert_true(context["session"]["session_id"] == "session-b", "context resolves session")
