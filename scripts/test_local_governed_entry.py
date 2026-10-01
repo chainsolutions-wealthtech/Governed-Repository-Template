@@ -2,7 +2,7 @@
 from __future__ import annotations
 import copy
 from pathlib import Path
-from local_governed_entry import answer, both_discovery_needs_refresh, complete_baseline, decode_state, encode_state, mark_credentials_verified, new_request, observed_domains_for_server, reconcile_both_smart_routing, reconcile_domain_question_order, reconcile_legacy_discovery_authority, reconcile_setup_question_order, record_mcp_discovery, record_mcp_discovery_failure, require_mcp_discovery_refresh
+from local_governed_entry import answer, both_discovery_needs_refresh, complete_baseline, decode_state, encode_state, mark_credentials_verified, new_request, observed_domains_for_server, reconcile_both_smart_routing, reconcile_domain_question_order, reconcile_existing_host_path_question_order, reconcile_legacy_discovery_authority, reconcile_setup_question_order, record_mcp_discovery, record_mcp_discovery_failure, require_mcp_discovery_refresh
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -290,6 +290,34 @@ def main():
     reuse=answer_expected(reuse,"domain_existing_selection","api.example.com")
     if reuse["answers"].get("domain_binding",{}).get("domain")!="api.example.com":
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: existing domain binding not derived")
+    if reuse["next_request"].get("field")!="deployment_mount_mode":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: existing host must ask root-vs-path mount")
+
+    reuse_root=answer_expected(copy.deepcopy(reuse),"deployment_mount_mode","HOST_ROOT")
+    root_binding=reuse_root["answers"].get("deployment_binding") or {}
+    if root_binding.get("host")!="api.example.com" or root_binding.get("path")!="/" or root_binding.get("mode")!="HOST_ROOT":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: existing host root binding not derived")
+
+    reuse_path=answer_expected(copy.deepcopy(reuse),"deployment_mount_mode","CREATE_PATH")
+    if reuse_path["next_request"].get("field")!="deployment_path":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: create-path mount must ask one path question")
+    reuse_path=answer_expected(reuse_path,"deployment_path","/ekyc")
+    path_binding=reuse_path["answers"].get("deployment_binding") or {}
+    if path_binding.get("host")!="api.example.com" or path_binding.get("path")!="/ekyc" or path_binding.get("mode")!="CREATE_PATH":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: existing host path binding not derived")
+    reuse_path=answer_expected(reuse_path,"workflow_model","STANDARD_GOVERNED_FLOW")
+    prepared=(reuse_path.get("setup_package") or {}).get("deployment_operation_requirements") or {}
+    if prepared.get("execution_intent")!="CONFIGURE_REVERSE_PROXY" or prepared.get("execution_authority_granted") is not False:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: path binding must prepare reverse-proxy work without authority")
+
+    legacy_mount=copy.deepcopy(reuse)
+    legacy_mount["phase"]="Q_WORKFLOW_MODEL"
+    legacy_mount["next_request"]={"kind":"QUESTION","id":"Q_WORKFLOW_MODEL","field":"workflow_model"}
+    legacy_mount["answers"].pop("deployment_mount_mode",None)
+    legacy_mount["answers"].pop("deployment_binding",None)
+    migrated_mount=reconcile_existing_host_path_question_order(legacy_mount)
+    if migrated_mount["phase"]!="Q_DEPLOYMENT_MOUNT_MODE" or migrated_mount["next_request"].get("field")!="deployment_mount_mode":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: existing-host path migration gate not reopened")
 
     # NO_PUBLIC_DOMAIN path closes domain planning without mutation authority.
     no_domain=copy.deepcopy(domain_start)
