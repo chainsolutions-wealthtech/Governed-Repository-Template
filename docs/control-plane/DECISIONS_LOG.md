@@ -237,7 +237,9 @@ Append-only durable decisions for the source/control-plane repository.
 - Once a server is selected, domain planning must reuse the already-authorized discovery evidence for that server rather than rediscovering the same inventory.
 - Existing/adopted projects keep observation-first reuse semantics; this correction specifically closes the fresh-project sequencing gap without replacing the adaptive questionnaire or Loop Engineering.
 
-### CPD-041 — Domain planning is a server-scoped choice chain
+### CPD-047 — Domain planning is a server-scoped choice chain
+
+- Canonicalization note: this decision was initially introduced with the already-used identifier `CPD-041`. Its semantic content is preserved; only the canonical identifier is disambiguated under `CP-NAMESPACE-001`.
 
 - Date: 2026-10-01.
 - A fresh project first selects its production server.
@@ -248,3 +250,14 @@ Append-only durable decisions for the source/control-plane repository.
 - The resulting binding is derived automatically and future execution capabilities/authority requirements are prepared.
 - Domain answers never authorize DNS, vhost, TLS or server mutations.
 - Existing projects/states with an already answered `domain_binding` are preserved and must not be re-questioned merely because the questionnaire model evolved.
+
+### CPD-048 — Canonical namespace and work registry prevents semantic ID collisions
+
+- Date: 2026-10-01.
+- Authority `CP-NAMESPACE-001` owns the canonical namespace and work-ID rules.
+- The registry does not duplicate the task/programme catalogues; it derives identity validation from their existing canonical definition sources.
+- Every new canonical identifier must match exactly one registered namespace.
+- Duplicate canonical definitions fail CI and HOLD_FOR_REVIEW.
+- New work must extend the existing architecture/programme lineage and declare parent/integration-slot metadata before runtime binding.
+- Multi-agent collision prevention combines namespace uniqueness with existing sessions, claims, collision domains, dependency-safe dispatch, single-writer rules, exact-HEAD guards, checkpoints and handoffs.
+- Historical collisions are preserved through explicit reconciliation/supersession rather than silent overwrite.
