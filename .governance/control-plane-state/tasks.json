@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 47,
+  "revision": 48,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -39,13 +39,16 @@
     },
     {
       "id": "P12-S5",
-      "status": "ACTIVE_PARENT",
+      "status": "DONE",
       "depends_on": [
         "P12-S4"
       ],
-      "next_action": "C1-13-I-B-F",
+      "next_action": null,
       "evidence": [
-        "C1-13-A inserted for generic MCP endpoint recovery defect discovered on Ekyc"
+        "C1-13-A inserted for generic MCP endpoint recovery defect discovered on Ekyc",
+        "Second fresh Ekyc baseline commit 3e889a2bdac78312ebcc7e31d1388ead65c9fceb",
+        "Ekyc#2 NORMAL_GOVERNED_ENTRY LOCAL_HANDOFF_READY revision 6",
+        "P12-S5 exit gate PASS: uninterrupted governed lifecycle after generic fixes, no target-specific repair, normal entry proven"
       ]
     },
     {
@@ -468,12 +471,12 @@
     {
       "id": "C1-13-I-B-F",
       "task": "Approve Ekyc technical setup and governed rights matrix",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-13-I-B-E"
       ],
-      "next_action": "APPROVE_EKYC_SETUP",
-      "gate_code": "OWNER_SETUP_APPROVAL_REQUIRED",
+      "next_action": null,
+      "gate_code": null,
       "evidence": [
         "Ekyc HEAD 4bf80309313f3d34f74ffca183bd540583d2e87f",
         "Ekyc#1 revision 46 SETUP_APPROVAL",
@@ -483,7 +486,33 @@
         "domain_intent=CREATE_NEW_ROOT_DOMAIN",
         "domain_root_name_mode=DISCOVER_AVAILABLE_NAMES",
         "domain operation requirements are prepared_only and execution_authority_granted=false",
-        "MCP write tools remain disabled until project registration and explicit authority"
+        "MCP write tools remain disabled until project registration and explicit authority",
+        "Owner approved setup_approved=true through central comment 5936330817",
+        "Control Plane run 36895996929 PASS",
+        "Ekyc Governed Local Entry run 36896033996 PASS",
+        "Approved baseline materialized as Ekyc commit 3e889a2bdac78312ebcc7e31d1388ead65c9fceb",
+        "Repository local state PROJECT_BASELINE_READY; session LOCAL-000001-S1; WORK-PROJECT-001 READY",
+        "No S1/domain/DNS/Plesk/TLS execution authority granted"
+      ]
+    },
+    {
+      "id": "C1-13-I-B-G",
+      "task": "Prove Ekyc subsequent-agent NORMAL_GOVERNED_ENTRY after fresh baseline",
+      "status": "DONE",
+      "depends_on": [
+        "C1-13-I-B-F"
+      ],
+      "next_action": null,
+      "evidence": [
+        "Normal-entry start comment 5936415975 under exact Ekyc HEAD 3e889a2bdac78312ebcc7e31d1388ead65c9fceb",
+        "Ekyc#2 request LOCAL-000002 mode NORMAL_GOVERNED_ENTRY",
+        "Ekyc#2 revision 6 final status LOCAL_HANDOFF_READY",
+        "Normal-entry start run 36896607275 PASS",
+        "Final target command run 36896992524 PASS",
+        "Ekyc HEAD remained 3e889a2bdac78312ebcc7e31d1388ead65c9fceb",
+        "LOCAL-000001-S1 preserved as the single first-agent session",
+        "WORK-PROJECT-001 preserved READY and not executed",
+        "No baseline/session/work duplication and no target Git mutation"
       ]
     },
     {
@@ -531,7 +560,7 @@
     },
     {
       "id": "P12-S6",
-      "status": "PENDING",
+      "status": "READY",
       "depends_on": [
         "P12-S5"
       ],
@@ -1195,7 +1224,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-13-I-B-F",
+  "unique_executable_item": "P12-S6",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",
