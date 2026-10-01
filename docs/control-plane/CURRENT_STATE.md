@@ -550,3 +550,13 @@ The engine validates authority, exact target HEAD, MCP capability/tool/project s
 GitHub operations are implemented with allowlisted REST builders and post-operation verification. Server operations run through MCP bindings only. Missing generic MCP write surfaces remain fail-closed blockers.
 
 No Ekyc mutation and no Patricked-code/MCP mutation is included in this implementation.
+
+## Project execution DAG and Loop binding
+
+The governed execution layer now includes a source-only project-level compiler.
+
+A complete project specification can expand into an ordered DAG spanning GitHub environment/secrets, server directory/port, domain/vhost/TLS, database/credentials, runtime/service, repository binding, deployment, observability, backup and final production attestation.
+
+The Loop adapter evaluates package readiness against the current execution registry and MCP capability snapshot and releases only one eligible node at a time.
+
+Missing MCP production capabilities remain blockers. The current CASE 1 action remains Ekyc domain-binding resolution.
