@@ -47,6 +47,7 @@ All answers are choices. Dynamic choices are populated from observation when pos
 
 9. `AQ-009 server_binding_mode`: EXISTING_SINGLE | EXISTING_MULTI | NONE_PLAN_NEW | UNKNOWN_DISCOVER
 10. `AQ-010 server_selection`: observed servers | PLAN_NEW_SERVER | DISCOVER_MORE | DECIDE_LATER
+10N. `AQ-010N production_server_selection` (CREATE_NEW): observed servers | PLAN_NEW_SERVER | DECIDE_LATER. This owner choice is required before domain planning when no server binding exists.
 11. `AQ-011 deployment_path_posture`: REUSE_OBSERVED_PATHS | ALIGN_EXISTING_PATHS | PLAN_NEW_PATHS | MAP_ONLY | DECIDE_LATER
 12. `AQ-012 deployment_path_selection`: observed paths | DISCOVER_MORE | PLAN_NEW_PATH (multi-select)
 
@@ -140,3 +141,18 @@ The same pattern continues for paths, domains, runtime, database, CI/CD, MCP and
 - `AQI-08` later cross-case E2E validate question reuse/no-regression behavior.
 
 The existing CASE 1 unique executable task is not replaced by this planning work.
+
+## Fresh-project infrastructure ordering
+
+For a fresh project with no existing infrastructure binding, the canonical sequence is:
+
+```text
+read-only discovery
+→ observed candidate servers
+→ owner chooses production server
+→ server-scoped domain choices
+→ domain intent / later domain decomposition
+→ derived resource/capability graph
+```
+
+A discovered server candidate is not auto-selected for a new project because the production target is an owner decision. The answer prepares the project model only and grants no mutation authority.
