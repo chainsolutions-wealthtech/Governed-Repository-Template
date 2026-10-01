@@ -582,3 +582,12 @@ The required subsequent-agent proof then ran through Ekyc#2 / `LOCAL-000002` in 
 
 P12-S5 therefore satisfies its exit gate without target-specific repair. No S1/domain/DNS/Plesk/TLS mutation occurred. P12-S6 is now the unique chronological next task; GMC-A remains blocked behind CASE 1 closure.
 
+## 2026-10-01 — GACR agent continuity relay
+
+- Added reusable **Governed Agent Continuity Relay**.
+- Heartbeat/lease, stall detection, standby takeover, exact-HEAD reconciliation and claim transfer implemented.
+- Provider conversation references can be correlated when explicitly supplied; no identifier is invented.
+- Client upgrades preserve mutable GACR takeover/session/claim state.
+- PR #98 merged at `0d0c595be7f6833bb36778a0cdac46c82abbd2ab`.
+- Post-merge Governance CI `36915276875`: PASS.
+- No change to programme priority; `P12-S6` remains active.
