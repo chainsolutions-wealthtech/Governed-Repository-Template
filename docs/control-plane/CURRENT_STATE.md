@@ -730,3 +730,19 @@ Cross-cutting status: `CI_PROVEN`.
 ### GACR owner return gate
 
 GACR cross-cutting finalization does not execute the global programme. The canonical global next action remains `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`, but execution is held until explicit owner OK.
+
+## GACR R4 — Automatic Continuity Attachment
+
+Cross-cutting candidate status: `IMPLEMENTED_ON_GOVERNED_BRANCH / CI_PENDING`.
+
+- Parent authority: `CP-AGENT-RELAY-001`.
+- Previous proven revision: `CP-AGENT-RELAY-001-R3`.
+- Candidate revision: `CP-AGENT-RELAY-001-R4`.
+- Decision: `CPD-053`.
+- Baseline main: `75996ee63ae283fd0d6d94549c9746f1bd2ac2bc`.
+- Candidate branch: `governance/gacr-r4-auto-attach`.
+- A fresh active Conversation Chronicle may act as a provider-independent attachment anchor.
+- Missing provider conversation metadata does not block attachment.
+- Late explicit provider metadata must enrich the existing connection-bound session without duplication.
+- Normal source-main activity invokes auto-attachment; repository automation state-persistence pushes are loop-guarded.
+- Programme-level `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` remains unchanged and is not executed by this cross-cutting work.

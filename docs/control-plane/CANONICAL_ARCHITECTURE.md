@@ -859,3 +859,27 @@ BEACON
 FORENSICS is a reducer/current projection over canonical GACR evidence. It does not duplicate sessions, claims, task queues, checkpoints, handoffs or Git history. Missing evidence remains explicitly unknown.
 
 No independent lock subsystem is introduced: mutable ownership remains the existing claim + collision-domain + exact-HEAD model. An interruption report cannot authorize execution or blind replay of an in-flight action.
+
+## 34. GACR Automatic Continuity Attachment
+
+Revision authority `CP-AGENT-RELAY-001-R4` adds the missing governed-arrival nerve.
+
+```text
+ARRIVAL
+→ ATTACH
+→ SESSION
+→ BEACON
+→ WATCH
+→ CORRELATOR
+→ FORENSICS
+→ DISPATCHER
+→ EXACT-HEAD CONTINUATION
+```
+
+Attachment is automatic for an observable governed arrival, while provider metadata remains opportunistic. A missing provider conversation reference does not block the session.
+
+Attachment anchors are ordered by evidentiary strength: explicit client/provider metadata, fresh active Conversation Chronicle, then GitHub execution identity. Ambiguity fails closed.
+
+Late provider metadata enriches the existing connection-bound session. It does not replace the canonical GACR session ID and must not create a parallel session.
+
+This remains additive to IDN/RTE and introduces no task engine, lock subsystem, business authority or mutation permission.
