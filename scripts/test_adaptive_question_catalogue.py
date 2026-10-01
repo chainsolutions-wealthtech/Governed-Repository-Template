@@ -139,12 +139,18 @@ def assert_fresh_ekyc_fixture() -> None:
     }
     result = resolve_next_question("CREATE_NEW_REPOSITORY", observations=observations)
     q = result["question"]
-    if q["id"] != "AQ-013" or q["field"] != "domain_posture":
-        raise SystemExit("ADAPTIVE_QUESTION_TEST_FAILED: new project should reach domain intent after factual reuse")
-    if "CREATE_NEW" not in q["choices"] or "DECIDE_LATER" not in q["choices"]:
-        raise SystemExit("ADAPTIVE_QUESTION_TEST_FAILED: new-project domain choices incomplete")
+    if q["id"] != "AQ-010N" or q["field"] != "production_server_selection":
+        raise SystemExit("ADAPTIVE_QUESTION_TEST_FAILED: new project must select production server before domain")
+    if "PLAN_NEW_SERVER" not in q["choices"] or "DECIDE_LATER" not in q["choices"]:
+        raise SystemExit("ADAPTIVE_QUESTION_TEST_FAILED: new-project server choices incomplete")
     if q["execution_authority_granted"] is not False:
-        raise SystemExit("ADAPTIVE_QUESTION_TEST_FAILED: domain choice must not execute creation")
+        raise SystemExit("ADAPTIVE_QUESTION_TEST_FAILED: server choice must not authorize infrastructure mutation")
+
+    answers={"production_server_selection":"S2"}
+    observations["choice_sources"]["SERVERS"]=["S1","S2"]
+    after_server=resolve_next_question("CREATE_NEW_REPOSITORY",answers=answers,observations=observations)
+    if after_server["question"]["id"] != "AQ-013" or after_server["question"]["field"] != "domain_posture":
+        raise SystemExit("ADAPTIVE_QUESTION_TEST_FAILED: domain intent must follow production server choice")
 
 
 def main() -> None:
