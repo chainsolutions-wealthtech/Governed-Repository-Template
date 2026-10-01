@@ -762,7 +762,7 @@ Cross-cutting status: `LIVE_AUTO_ATTACH_PROVEN / CI_PROVEN`.
 
 ## GACR R5 — Client Liveness and Trace Emitter
 
-Cross-cutting status: `CLIENT_PROTOCOL_CI_PROVEN / GENERIC_CORE_COMPLETE`.
+Cross-cutting status: `POST_ATTESTATION_REGRESSION_CORRECTION / CI_PENDING`.
 
 - Parent authority: `CP-AGENT-RELAY-001`.
 - Previous proven revision: `CP-AGENT-RELAY-001-R4`.
@@ -791,3 +791,16 @@ Cross-cutting status: `CLIENT_PROTOCOL_CI_PROVEN / GENERIC_CORE_COMPLETE`.
 - No persistent client process or direct `repository_dispatch` surface is exposed by the current ChatGPT host in this conversation, so autonomous browser heartbeat is not claimed live here.
 - This remaining provider-host instrumentation boundary is external to the generic repository GACR core.
 - Global programme action `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` remains unchanged and unexecuted.
+
+### GACR R5 internal-transport regression correction
+
+- Post-attestation runtime main `0e64a3d2c0f1c99d1aa76f1f25a68d70d425beb2` exposed an invalid second GACR session.
+- Canonical conversation session: `session-68c97d4bb1ef71c86444de12`.
+- Invalid transport session: `session-cb22a4ed0d9e29eba5383f5d`.
+- Defect trigger: Chronicle exceeded the configured freshness window; the internal `Governed Agent Continuity Relay` workflow fell back to GitHub Actions identity and was misclassified as an agent.
+- Corrective branch: `governance/gacr-r5-internal-transport-fix`.
+- Decision: `CPD-055`.
+- Correction: internal GACR workflow may never create a session; no observable external anchor yields a no-op skip; terminal sessions are excluded from live correlation candidates.
+- Invalid transport session is preserved but will be `CLOSED / SUPERSEDED`, never deleted.
+- R5 cannot return to final-complete status until candidate CI, merge, post-merge GACR no-duplication proof and final attestation pass.
+- `P12-S6` remains unchanged and unexecuted.

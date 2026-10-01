@@ -30,7 +30,7 @@ def main():
         command='scan'
     elif event_name=='push':
         command='auto-attach'
-        payload={}
+        payload={'allow_unobservable_skip': True}
     elif event_name=='repository_dispatch':
         action=str(event.get('action') or '')
         command=action.removeprefix('gacr_')
@@ -81,6 +81,8 @@ def main():
             args.append('--standby')
         if str(payload.get('prefer_chronicle','')).lower() in {'1','true','yes','on'}:
             args.append('--prefer-chronicle')
+        if str(payload.get('allow_unobservable_skip','')).lower() in {'1','true','yes','on'}:
+            args.append('--allow-unobservable-skip')
     elif command=='register':
         add(args,'--agent',payload.get('agent') or os.environ.get('GITHUB_ACTOR') or 'github-actions')
         add(args,'--provider',payload.get('provider') or 'github-actions')

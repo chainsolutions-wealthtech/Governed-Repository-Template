@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 4,
+  "revision": 5,
   "sessions": [
     {
       "session_id": "session-68c97d4bb1ef71c86444de12",
@@ -53,7 +53,7 @@
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "ac7767823869725643bd8a8cce0d8a0757cb9c95",
       "last_observed_head_sha": "ac7767823869725643bd8a8cce0d8a0757cb9c95",
-      "status": "ACTIVE",
+      "status": "CLOSED",
       "created_at": "2026-10-01T23:35:46+00:00",
       "last_seen_at": "2026-10-01T23:35:46+00:00",
       "client_instance_id": "github-actor:Wealthtechinnovations",
@@ -67,13 +67,20 @@
       "bridge_registration_ref": null,
       "relay": {
         "process": "GACR",
-        "state": "ACTIVE",
+        "state": "CLOSED",
         "last_heartbeat_at": "2026-10-01T23:35:46+00:00",
         "lease_expires_at": "2026-10-02T00:05:46+00:00",
-        "last_action": "REGISTER",
+        "last_action": "SUPERSEDED_INTERNAL_TRANSPORT_SESSION",
         "task_id": null,
         "branch": "main",
         "pull_request": null
+      },
+      "superseded_by_session_id": "session-68c97d4bb1ef71c86444de12",
+      "reconciliation": {
+        "decision_id": "CPD-055",
+        "classification": "INTERNAL_GACR_TRANSPORT_MISCLASSIFIED_AS_AGENT",
+        "evidence_workflow_run": "36941625864",
+        "preserve_history": true
       }
     }
   ]

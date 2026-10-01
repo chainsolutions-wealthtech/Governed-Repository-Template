@@ -908,3 +908,29 @@ The client transport credential is runtime-only and is not part of GACR state. C
 The emitter may surface a wake record but cannot accept takeover or mutate claims. Exact-HEAD reconciliation, claim ownership and authority checks remain mandatory.
 
 If a provider host cannot run or call the emitter, continuous client liveness is not claimed. GACR preserves the weaker observable evidence and lets WATCH classify silence without inventing a cause.
+
+## 36. GACR internal transport identity boundary
+
+`CPD-055` corrects a post-R5 identity-boundary defect.
+
+```text
+GACR WORKFLOW
+= transport/runtime
+!= agent
+!= conversation
+!= governed session identity
+```
+
+When no real external attachment anchor is observable:
+
+```text
+internal GACR push
+→ AUTO_ATTACH evaluation
+→ NO_EXTERNAL_AGENT_ANCHOR
+→ SKIP session creation
+→ refresh derived correlations if needed
+→ no Beacon
+→ no invented liveness
+```
+
+A stale Chronicle remains stale. Its age must not be widened merely to keep a session alive. Terminal/superseded sessions remain historical records but are removed from live correlation candidates.

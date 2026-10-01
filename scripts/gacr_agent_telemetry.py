@@ -296,6 +296,8 @@ def correlation_score(beacon: dict, session: dict) -> tuple[int, list[str], bool
     if beacon.get("repository") != session.get("repository"):
         return -1, [], False
     relay = session.get("relay") or {}
+    if session.get("status") == "CLOSED" or relay.get("state") in {"CLOSED", "HANDOFF_STALLED"}:
+        return -1, [], False
     reasons: list[str] = []
     exact = False
     if beacon.get("session_id") and beacon.get("session_id") == session.get("session_id"):

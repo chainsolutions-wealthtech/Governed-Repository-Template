@@ -106,6 +106,54 @@ def main() -> None:
         assert_true(len(beacons["items"]) == 3, "each attach emits beacon")
         assert_true(any(x.get("selected_session_id") == sid for x in correlations["items"]), "correlator binds canonical session")
 
+
+        # Once the Chronicle is stale, GACR's own workflow must never become
+        # a second agent/session identity. The push bridge may skip cleanly.
+        pointer_path = chron_dir / "current.json"
+        stale_pointer = json.loads(pointer_path.read_text(encoding="utf-8"))
+        stale_pointer["updated_at"] = {"value":"2000-01-01T00:00:00+00:00"}
+        write(pointer_path, stale_pointer)
+        os.environ["GITHUB_ACTOR"] = "repo-actor"
+        os.environ["GITHUB_WORKFLOW"] = "Governed Agent Continuity Relay"
+        os.environ["GITHUB_RUN_ID"] = "999"
+        os.environ["GITHUB_RUN_ATTEMPT"] = "1"
+        os.environ["GITHUB_SHA"] = "c"*40
+        before_sessions = json.loads((root / ".governance" / "control-plane-state" / "gacr-sessions.json").read_text())
+        before_beacons = json.loads((root / ".governance" / "control-plane-state" / "gacr-beacons.json").read_text())
+        skipped = json.loads(run(
+            env | {
+                "GITHUB_ACTOR":"repo-actor",
+                "GITHUB_WORKFLOW":"Governed Agent Continuity Relay",
+                "GITHUB_RUN_ID":"999",
+                "GITHUB_RUN_ATTEMPT":"1",
+                "GITHUB_SHA":"c"*40,
+            },
+            "--allow-unobservable-skip",
+            "--observed-head", "c"*40,
+            "--branch", "main",
+        ).stdout)
+        after_sessions = json.loads((root / ".governance" / "control-plane-state" / "gacr-sessions.json").read_text())
+        after_beacons = json.loads((root / ".governance" / "control-plane-state" / "gacr-beacons.json").read_text())
+        assert_true(skipped["status"] == "GACR_AUTO_ATTACH_SKIPPED", "internal workflow should skip")
+        assert_true(skipped["attachment_created"] is False, "skip must not attach")
+        assert_true(len(after_sessions["sessions"]) == len(before_sessions["sessions"]), "internal workflow must not create session")
+        assert_true(len(after_beacons["items"]) == len(before_beacons["items"]), "internal workflow must not emit auto-attach beacon")
+
+        # A different GitHub workflow remains a valid external execution anchor.
+        external = json.loads(run(
+            env | {
+                "GITHUB_ACTOR":"external-worker",
+                "GITHUB_WORKFLOW":"External Governed Worker",
+                "GITHUB_RUN_ID":"1000",
+                "GITHUB_RUN_ATTEMPT":"1",
+                "GITHUB_SHA":"d"*40,
+            },
+            "--observed-head", "d"*40,
+            "--branch", "main",
+        ).stdout)
+        assert_true(external["status"] == "CREATE", "external GitHub worker may attach")
+        assert_true(external["attachment_source"] == "GITHUB_ACTIONS", "external workflow source")
+
         conflict = run(
             env,
             "--provider", "claude",
