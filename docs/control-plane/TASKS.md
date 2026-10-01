@@ -675,7 +675,16 @@ This independent source-only stream does not replace the current CASE 1 action.
 | KBI-04C | COLLECTOR_IMPLEMENTED_LIVE_INVENTORY_PENDING | Bounded read-only S1/S2 observation to stdout; current credential and live run required. |
 | KBI-04D | PERSISTENCE_ADAPTER_IMPLEMENTED_LIVE_INVENTORY_PENDING | Allowlisted facts, provenance, freshness, revision guard and existing relational projection; no live facts ingested. |
 | KBI-04E | MAPPING_IMPLEMENTED_SNAPSHOT_NOT_LIVE_ATTESTED | Derive every recipe inventory/capability requirement from the versioned model and MCP snapshot; gaps and project scope constraints remain explicit. |
-| KBI-04F | PLANNED | Non-executing S2/subdomain deployment blueprint. |
-| KBI-04G | PLANNED | Governed Loop Engineering binding under AuthorityEnvelope. |
+| KBI-04F | IMPLEMENTED_SOURCE_ONLY | Project decisions compile into a full GitHub/credential/server execution DAG; Ekyc S2/subdomain is covered by E2E dry-run. |
+| KBI-04G | IMPLEMENTED_SOURCE_ONLY | Existing Loop Engineering selects one READY node at a time and projects receipts monotonically. |
 
 The unique CASE 1 action remains `C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING`.
+
+### Identity/secret execution continuation
+
+- `KBI-04J` — bounded GitHub repository/environment secret metadata collector — IMPLEMENTED_SOURCE_ONLY.
+- `KBI-04K` — bounded S1/S2 identity/secret-store mechanism mapping — PLANNED.
+- `KBI-04L` — E2E project → GitHub + server credential/execution plan — IMPLEMENTED_SOURCE_ONLY through `governed_project_execution_blueprint.py`.
+- `KBI-04M` — bind authorized provisioning/execution recipes to existing Loop Engineering — IMPLEMENTED_SOURCE_ONLY through `governed_loop_execution_adapter.py`.
+
+These slices do not change the CASE 1 unique action.
