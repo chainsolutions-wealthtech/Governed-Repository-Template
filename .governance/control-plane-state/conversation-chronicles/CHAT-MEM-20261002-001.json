@@ -16,12 +16,12 @@
     "next_tool_event": 4,
     "next_decision_event": 7,
     "next_constraint_event": 7,
-    "next_action_event": 3,
+    "next_action_event": 4,
     "next_error_event": 1,
-    "next_recovery_event": 2,
-    "next_checkpoint": 2,
-    "next_cache": 2,
-    "next_open_loop": 3,
+    "next_recovery_event": 3,
+    "next_checkpoint": 3,
+    "next_cache": 3,
+    "next_open_loop": 4,
     "next_artifact": 2,
     "next_session": 3
   },
@@ -31,15 +31,15 @@
     "previous_hash": "GENESIS"
   },
   "current_session": "SESSION-000002",
-  "current_checkpoint": "CHK-000001",
-  "current_cache": "CACHE-000001",
+  "current_checkpoint": "CHK-000002",
+  "current_cache": "CACHE-000002",
   "open_loops": [
-    "OPEN-000001",
-    "OPEN-000002"
+    "OPEN-000002",
+    "OPEN-000003"
   ],
   "current_topic": "Governed conversation memory activation while preserving GACR continuity",
-  "point_of_stop": "Immediately before implementing additive GACR BEACON + CORRELATOR + DISPATCHER evolution.",
-  "next_safe_action": "Complete chronicle activation; then continue GACR additive extension only. Keep P12-S6 waiting for owner OK.",
+  "point_of_stop": "GACR repository-side core/R2/R3 is implemented and CI-proven; optional provider/client bridge integration awaits owner direction.",
+  "next_safe_action": "Complete chronicle persistence; then await owner direction on optional external bridge versus declaring GACR complete. Keep P12-S6 waiting for owner OK.",
   "external_state_observed": {
     "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
     "branch": "main",
@@ -57,5 +57,38 @@
       "sha256": "02927d6bdef2c6eac836b1500d419bc091fbe6c4558a0fa7f86881f0a6541f6d",
       "durability": "CURRENT_CONVERSATION_UPLOAD_NOT_ASSUMED_CROSS_CHAT"
     }
+  ],
+  "recovery_history": [
+    {
+      "event_id": "EVT-R-000002",
+      "kind": "HISTORICAL_RECOVERY",
+      "supersedes": [
+        "EVT-T-000003"
+      ],
+      "finding": "GACR R2 Beacon/Correlator/Dispatcher/Agent Context and R3 Interruption Forensics were already present in newer live repository state.",
+      "r2": {
+        "authority_id": "CP-AGENT-RELAY-001-R2",
+        "decision_id": "CPD-051",
+        "pr": 102,
+        "merge": "abefcfccbf822fa2fcf590e592ad51c767e32937",
+        "post_merge_ci": 36921331490,
+        "result": "PASS"
+      },
+      "r3": {
+        "decision_id": "CPD-052",
+        "pr": 104,
+        "merge": "ada6866efdfe9d2aed2e77171c01ca774a76a885",
+        "corrective_pr": 105,
+        "corrective_merge": "05f49a634e1da46f3da5a016e32499236223ff1d",
+        "corrective_post_merge_ci": 36928024260,
+        "result": "PASS"
+      }
+    }
+  ],
+  "decision_status_overrides": {
+    "EVT-D-000006": "FULFILLED"
+  },
+  "resolved_open_loops": [
+    "OPEN-000001"
   ]
 }
