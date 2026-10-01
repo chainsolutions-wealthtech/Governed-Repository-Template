@@ -64,6 +64,11 @@ GMC-Gxx-Tyy          GMC atomic tasks
 GMC-EXIT-*           GMC exit controls
 GMA-*                Governance Model artifacts
 EVREQ-*              evidence requirements
+GACR-T-*              runtime takeover IDs
+GACR-B-*              runtime Beacon IDs
+GACR-C-*              runtime Correlator IDs
+GACR-D-*              runtime Dispatcher IDs
+GACR-F-*              runtime Interruption Forensics IDs
 ```
 
 ## Multi-agent behavior

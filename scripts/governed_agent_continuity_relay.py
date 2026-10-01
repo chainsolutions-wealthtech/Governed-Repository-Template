@@ -11,7 +11,7 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 
-from gacr_agent_telemetry import record_beacon, correlate_all, dispatch_open_takeovers
+from gacr_agent_telemetry import record_beacon, correlate_all, build_forensics_all, dispatch_open_takeovers
 
 ROOT = Path(os.environ.get("GACR_ROOT") or Path(__file__).resolve().parents[1]).resolve()
 GOV = ROOT / ".governance"
@@ -586,11 +586,13 @@ def command_scan(_: argparse.Namespace) -> None:
     changes = scan_docs(config, sessions, claims, takeovers, timestamp=now_utc())
     save(sessions, claims, takeovers)
     correlation = correlate_all()
+    forensics = build_forensics_all()
     dispatch = dispatch_open_takeovers()
     print(json.dumps({
         "status": "SUPERVISOR_SCAN_COMPLETE",
         "changes": changes,
         "correlation": correlation,
+        "forensics": forensics,
         "dispatch": dispatch,
     }, indent=2, ensure_ascii=False))
 
@@ -685,6 +687,7 @@ def command_takeover_accept(a: argparse.Namespace) -> None:
     save(sessions, claims, takeovers)
     record_beacon(session=next((x for x in sessions.get("sessions", []) if x.get("session_id") == a.successor_session_id), None), event_type="TAKEOVER_ACCEPTED")
     correlate_all()
+    build_forensics_all()
     dispatch_open_takeovers()
     print(json.dumps(result, indent=2, ensure_ascii=False))
 

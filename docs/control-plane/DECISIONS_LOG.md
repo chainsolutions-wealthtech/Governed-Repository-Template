@@ -300,3 +300,14 @@ Append-only durable decisions for the source/control-plane repository.
 - An optional external bridge webhook can receive idempotent wake events. A wake event grants no write authority; exact-HEAD takeover acceptance remains mandatory.
 - GitHub cannot infer a provider conversation URL that the provider/client never supplied. A client/browser bridge may submit that reference explicitly without exposing page content or cookies.
 - This extends existing `IDN-002/004/005/006/008/010` and `RTE-008/012`; it is not a parallel programme.
+
+### CPD-052 — GACR Interruption Forensics is an observed-evidence resume projection
+
+- Date: 2026-10-01.
+- `CP-AGENT-RELAY-001-R3` adds Interruption Forensics to the existing GACR chain.
+- FORENSICS consumes sessions, claims/collision domains, takeovers, Beacon events, Correlator results and Dispatcher state; it does not introduce a parallel task engine or canonical database.
+- Beacon may carry optional safe action-trace metadata: action ID/label/phase, tool name/call ID, outcome, written HEAD, checkpoint/evidence reference and an explicit interruption code.
+- External interruption causes are observed-only. Missing provider/client evidence remains `UNOBSERVED_EXTERNAL_CAUSE`; GACR must never infer crash/timeout/network/tool failure from absence of heartbeat alone.
+- An in-flight action may not be replayed blindly. Exact-HEAD reobservation and existing claim/authority gates remain mandatory.
+- No independent lock store is created; claims + collision domains + exact-HEAD remain the canonical mutable-ownership model.
+- This is cross-cutting hardening and does not replace or advance the programme-level priority `P12-S6`.

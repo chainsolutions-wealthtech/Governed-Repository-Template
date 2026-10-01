@@ -99,7 +99,8 @@
       ".governance/agent-relay/takeovers.json",
       ".governance/agent-relay/beacons.json",
       ".governance/agent-relay/correlations.json",
-      ".governance/agent-relay/dispatches.json"
+      ".governance/agent-relay/dispatches.json",
+      ".governance/agent-relay/forensics.json"
     ],
     "coordination_docs": [
       "docs/AUTOMATION.md",
@@ -200,7 +201,8 @@
       ".governance/control-plane-state/gacr-takeovers.json",
       ".governance/control-plane-state/gacr-beacons.json",
       ".governance/control-plane-state/gacr-correlations.json",
-      ".governance/control-plane-state/gacr-dispatches.json"
+      ".governance/control-plane-state/gacr-dispatches.json",
+      ".governance/control-plane-state/gacr-forensics.json"
     ],
     "local_entry_ui": [
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml"
@@ -215,7 +217,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.31",
+  "template_version": "2.8.32",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -441,7 +443,11 @@
     "GACR Dispatcher standby wake planning",
     "safe agent context aggregation for deterministic resume",
     "optional external bridge webhook with idempotent dispatch ids",
-    "provider conversation URL remains optional client-supplied metadata"
+    "provider conversation URL remains optional client-supplied metadata",
+    "GACR Interruption Forensics deterministic interruption projection",
+    "last-started last-completed and in-flight action reconstruction from safe Beacon traces",
+    "external interruption cause is observed-only and never inferred",
+    "forensic resume point requires exact-head reobservation before replay or takeover"
   ],
   "automatic_initialization_supported": true
 }

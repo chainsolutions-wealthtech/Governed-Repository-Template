@@ -38,7 +38,7 @@ def main():
         raise SystemExit(f'GACR_WORKFLOW_BRIDGE_FAILED: unsupported event {event_name}')
 
     core_commands={'register','heartbeat','scan','status','takeover-plan','takeover-accept'}
-    telemetry_commands={'beacon','correlate','dispatch','context','telemetry-status'}
+    telemetry_commands={'beacon','correlate','dispatch','context','forensics','telemetry-status'}
     if command not in core_commands | telemetry_commands:
         raise SystemExit(f'GACR_WORKFLOW_BRIDGE_FAILED: unsupported command {command}')
 
@@ -92,7 +92,12 @@ def main():
             capability=capability.strip()
             if capability:
                 add(args,'--capability',capability)
+        add(args,'--action-id',payload.get('action_id')); add(args,'--action-label',payload.get('action_label')); add(args,'--action-phase',payload.get('action_phase'))
+        add(args,'--tool-name',payload.get('tool_name')); add(args,'--tool-call-id',payload.get('tool_call_id')); add(args,'--outcome',payload.get('outcome')); add(args,'--written-head',payload.get('written_head'))
+        add(args,'--checkpoint-ref',payload.get('checkpoint_ref')); add(args,'--evidence-ref',payload.get('evidence_ref')); add(args,'--interruption-code',payload.get('interruption_code'))
     elif command=='context':
+        add(args,'--session-id',payload.get('session_id'))
+    elif command=='forensics':
         add(args,'--session-id',payload.get('session_id'))
     elif command=='takeover-plan':
         add(args,'--stalled-session-id',payload.get('stalled_session_id'))

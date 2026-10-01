@@ -707,3 +707,16 @@ The current programme priority remains unchanged: `P12-S6`.
 - Beacon / Correlator / Dispatcher / Agent Context regression test: PASS.
 - Optional external bridge wake contract is installed but remains provider/client dependent.
 - Programme priority remains `P12-S6`.
+
+## GACR R3 — Interruption Forensics
+
+Cross-cutting candidate status: `IMPLEMENTED_ON_GOVERNED_BRANCH / CI_PENDING`.
+
+- Parent continuity authority: `CP-AGENT-RELAY-001`.
+- Previous proven revision: `CP-AGENT-RELAY-001-R2`.
+- Candidate revision: `CP-AGENT-RELAY-001-R3`.
+- Baseline main: `0d4ca9ff007b88f8fee040ff845ea9a0387d1815`.
+- Candidate branch: `governance/gacr-r3-interruption-forensics`.
+- External failure cause is never inferred from missing heartbeat.
+- Every generated resume point still requires exact-HEAD reobservation and normal claim/authority gates.
+- Programme-level unique next action remains `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` and is intentionally not executed by this cross-cutting work.

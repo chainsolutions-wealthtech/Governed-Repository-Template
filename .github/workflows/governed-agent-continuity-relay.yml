@@ -20,6 +20,7 @@ on:
           - correlate
           - dispatch
           - context
+          - forensics
           - telemetry-status
       agent:
         required: false
@@ -85,6 +86,33 @@ on:
       evidence:
         required: false
         type: string
+      action_id:
+        required: false
+        type: string
+      action_phase:
+        required: false
+        type: string
+      tool_name:
+        required: false
+        type: string
+      tool_call_id:
+        required: false
+        type: string
+      outcome:
+        required: false
+        type: string
+      written_head:
+        required: false
+        type: string
+      checkpoint_ref:
+        required: false
+        type: string
+      evidence_ref:
+        required: false
+        type: string
+      interruption_code:
+        required: false
+        type: string
       stalled_session_id:
         required: false
         type: string
@@ -106,6 +134,7 @@ on:
       - gacr_correlate
       - gacr_dispatch
       - gacr_context
+      - gacr_forensics
       - gacr_telemetry-status
 
 permissions:
@@ -157,6 +186,7 @@ jobs:
               .governance/control-plane-state/gacr-beacons.json
               .governance/control-plane-state/gacr-correlations.json
               .governance/control-plane-state/gacr-dispatches.json
+              .governance/control-plane-state/gacr-forensics.json
             )
           else
             paths=(
@@ -166,6 +196,7 @@ jobs:
               .governance/agent-relay/beacons.json
               .governance/agent-relay/correlations.json
               .governance/agent-relay/dispatches.json
+              .governance/agent-relay/forensics.json
             )
           fi
           if git diff --quiet -- "${paths[@]}"; then

@@ -22,6 +22,7 @@ if TEMPLATE_SOURCE:
     BEACONS_PATH = GOV / "control-plane-state" / "gacr-beacons.json"
     CORRELATIONS_PATH = GOV / "control-plane-state" / "gacr-correlations.json"
     DISPATCHES_PATH = GOV / "control-plane-state" / "gacr-dispatches.json"
+    FORENSICS_PATH = GOV / "control-plane-state" / "gacr-forensics.json"
 else:
     SESSIONS_PATH = GOV / "sessions" / "sessions.json"
     CLAIMS_PATH = GOV / "work" / "claims.json"
@@ -29,6 +30,7 @@ else:
     BEACONS_PATH = GOV / "agent-relay" / "beacons.json"
     CORRELATIONS_PATH = GOV / "agent-relay" / "correlations.json"
     DISPATCHES_PATH = GOV / "agent-relay" / "dispatches.json"
+    FORENSICS_PATH = GOV / "agent-relay" / "forensics.json"
 
 SAFE_GITHUB_ENV = (
     "GITHUB_REPOSITORY",
@@ -57,10 +59,21 @@ SAFE_GITHUB_ENV = (
     "GITHUB_GRAPHQL_URL",
 )
 FORBIDDEN_KEY_FRAGMENTS = ("token", "secret", "password", "private_key", "cookie", "authorization")
+ACTION_PHASES = {"STARTED", "COMPLETED", "FAILED", "CANCELLED"}
+INTERRUPTION_CODES = {"CLIENT_DISCONNECTED","PROVIDER_TIMEOUT","TOOL_FAILURE","AGENT_ERROR","USER_CANCELLED","NETWORK_LOSS","PROCESS_EXITED","UNKNOWN"}
 
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+
+
+def parse_iso(value: str | None) -> datetime | None:
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00")).astimezone(timezone.utc)
+    except ValueError:
+        return None
 
 
 def read_json(path: Path, default: dict | None = None) -> dict:
@@ -196,9 +209,23 @@ def record_beacon(
     capabilities: list[str] | None = None,
     source: str | None = None,
     observed_at: str | None = None,
+    action_id: str | None = None,
+    action_label: str | None = None,
+    action_phase: str | None = None,
+    tool_name: str | None = None,
+    tool_call_id: str | None = None,
+    outcome: str | None = None,
+    written_head_sha: str | None = None,
+    checkpoint_ref: str | None = None,
+    evidence_ref: str | None = None,
+    interruption_code: str | None = None,
 ) -> dict:
     store = read_json(BEACONS_PATH, {"schema_version": "1.0.0", "revision": 0, "items": []})
     timestamp = observed_at or now_iso()
+    if action_phase and action_phase not in ACTION_PHASES:
+        raise ValueError("unsupported action phase")
+    if interruption_code and interruption_code not in INTERRUPTION_CODES:
+        raise ValueError("unsupported interruption code")
     relay = (session or {}).get("relay") or {}
     resolved_provider = provider or (session or {}).get("provider")
     resolved_provider_ref = (
@@ -229,6 +256,16 @@ def record_beacon(
         "branch": resolved_branch,
         "pull_request": resolved_pr,
         "observed_head_sha": (session or {}).get("last_observed_head_sha") or os.environ.get("GITHUB_SHA") or git_value("rev-parse", "HEAD"),
+        "action_id": action_id,
+        "action_label": action_label,
+        "action_phase": action_phase,
+        "tool_name": tool_name,
+        "tool_call_id": tool_call_id,
+        "outcome": outcome,
+        "written_head_sha": written_head_sha,
+        "checkpoint_ref": checkpoint_ref,
+        "evidence_ref": evidence_ref,
+        "interruption_code": interruption_code,
         "github": github,
     }
     assert_secretless(envelope)
@@ -433,6 +470,96 @@ def dispatch_open_takeovers() -> dict:
     return {"changed": len(changes), "items": changes}
 
 
+
+def _session_beacons(session_id: str, beacons: dict, correlations: dict) -> list[dict]:
+    selected = {x.get("beacon_id") for x in correlations.get("items", []) if x.get("selected_session_id") == session_id}
+    values = [x for x in beacons.get("items", []) if x.get("session_id") == session_id or x.get("beacon_id") in selected]
+    values.sort(key=lambda x: (x.get("observed_at") or "", x.get("beacon_id") or ""))
+    return values
+
+
+def _last_value(items: list[dict], key: str):
+    for item in reversed(items):
+        value=item.get(key)
+        if value not in (None,""):
+            return value
+    return None
+
+
+def _action_projection(items: list[dict]) -> dict:
+    last_started=last_completed=last_tool_call=None
+    open_actions={}
+    for item in items:
+        phase=item.get("action_phase"); label=item.get("action_label"); aid=item.get("action_id") or label
+        if item.get("tool_name") or item.get("tool_call_id"):
+            last_tool_call={"beacon_id":item.get("beacon_id"),"observed_at":item.get("observed_at"),"tool_name":item.get("tool_name"),"tool_call_id":item.get("tool_call_id"),"action_id":item.get("action_id"),"action_label":label,"phase":phase,"outcome":item.get("outcome")}
+        if phase=="STARTED":
+            last_started={"beacon_id":item.get("beacon_id"),"observed_at":item.get("observed_at"),"action_id":item.get("action_id"),"action_label":label,"tool_name":item.get("tool_name"),"tool_call_id":item.get("tool_call_id")}
+            if aid: open_actions[str(aid)]=last_started
+        elif phase in {"COMPLETED","FAILED","CANCELLED"}:
+            last_completed={"beacon_id":item.get("beacon_id"),"observed_at":item.get("observed_at"),"action_id":item.get("action_id"),"action_label":label,"phase":phase,"outcome":item.get("outcome"),"written_head_sha":item.get("written_head_sha"),"checkpoint_ref":item.get("checkpoint_ref"),"evidence_ref":item.get("evidence_ref")}
+            if aid: open_actions.pop(str(aid),None)
+    return {"last_action_started":last_started,"last_action_completed":last_completed,"last_tool_call":last_tool_call,"in_flight_action":list(open_actions.values())[-1] if open_actions else None}
+
+
+def _interruption_classification(session: dict, generated_at: str):
+    relay=session.get("relay") or {}; state=relay.get("state"); generated=parse_iso(generated_at); lease=parse_iso(relay.get("lease_expires_at"))
+    expired=bool(generated and lease and generated>=lease)
+    mapping={
+        "HANDOFF_STALLED":("TAKEOVER_COMPLETED_AFTER_STALL","TERMINAL_PREDECESSOR"),
+        "TAKEOVER_READY":("LEASE_EXPIRED_STALL","TAKEOVER_RECONCILIATION_REQUIRED"),
+        "STALLED":("STALLED_STATE_OBSERVED","TAKEOVER_PREPARATION_REQUIRED"),
+        "SUSPECTED_STALL":("HEARTBEAT_LATE","WAIT_OR_RESCAN"),
+        "CLOSED":("SESSION_CLOSED","TERMINAL"),
+        "STANDBY":("NO_INTERRUPTION_OBSERVED","STANDBY"),
+    }
+    if state in mapping:
+        a,b=mapping[state]; return a,b,expired
+    if state=="ACTIVE" and expired: return "LEASE_EXPIRED_AWAITING_WATCH_SCAN","WATCH_SCAN_REQUIRED",expired
+    if state=="ACTIVE": return "NO_INTERRUPTION_OBSERVED","CONTINUE_CURRENT_SESSION",expired
+    return "UNKNOWN_STATE","RECONCILIATION_REQUIRED",expired
+
+
+def build_interruption_forensics(session_id: str, *, persist: bool=True, generated_at: str|None=None) -> dict:
+    sessions=read_json(SESSIONS_PATH,{"sessions":[]}); claims=read_json(CLAIMS_PATH,{"claims":[]}); takeovers=read_json(TAKEOVERS_PATH,{"items":[]})
+    beacons=read_json(BEACONS_PATH,{"items":[]}); correlations=read_json(CORRELATIONS_PATH,{"items":[]}); dispatches=read_json(DISPATCHES_PATH,{"items":[]})
+    store=read_json(FORENSICS_PATH,{"schema_version":"1.0.0","revision":0,"items":[]}); session=session_by_id(sessions,session_id)
+    if not session: raise ValueError("session not found")
+    timestamp=generated_at or now_iso(); relay=session.get("relay") or {}; related=_session_beacons(session_id,beacons,correlations); actions=_action_projection(related)
+    active=[{"work_item_id":c.get("work_item_id"),"collision_domains":c.get("collision_domains") or [],"claimed_head_sha":c.get("claimed_head_sha")} for c in claims.get("claims",[]) if c.get("session_id")==session_id and c.get("status")=="ACTIVE"]
+    tos=[x for x in takeovers.get("items",[]) if session_id in {x.get("stalled_session_id"),x.get("offered_to_session_id"),x.get("accepted_by_session_id")}]; tos.sort(key=lambda x:(x.get("created_at") or "",x.get("takeover_id") or ""))
+    ds=[x for x in dispatches.get("items",[]) if session_id in {x.get("stalled_session_id"),x.get("target_session_id")}]; ds.sort(key=lambda x:(x.get("created_at") or "",x.get("dispatch_id") or ""))
+    classification,recoverability,expired=_interruption_classification(session,timestamp)
+    explicit=_last_value(related,"interruption_code")
+    cause={"status":"OBSERVED","code":explicit,"confidence":"DIRECT_SIGNAL","note":None} if explicit not in (None,"","UNKNOWN") else {"status":"UNOBSERVED","code":"UNOBSERVED_EXTERNAL_CAUSE","confidence":"NONE","note":"GACR never infers browser crash, provider timeout, network loss or tool failure from missing heartbeat alone."}
+    last_observed=_last_value(related,"observed_head_sha") or session.get("last_observed_head_sha"); last_written=_last_value(related,"written_head_sha")
+    checkpoint=_last_value(related,"checkpoint_ref"); evidence=_last_value(related,"evidence_ref") or relay.get("last_evidence")
+    core={"process":"GACR","authority":"CP-AGENT-RELAY-001-R3","session_id":session_id,"repository":session.get("repository"),"classification":classification,"recoverability":recoverability,"cause":cause,
+      "liveness":{"session_status":session.get("status"),"relay_state":relay.get("state"),"last_seen_at":session.get("last_seen_at"),"last_heartbeat_at":relay.get("last_heartbeat_at"),"lease_expires_at":relay.get("lease_expires_at"),"lease_expired_at_analysis":expired,"stalled_at":relay.get("stalled_at")},
+      "work":{"task_id":relay.get("task_id"),"branch":relay.get("branch"),"pull_request":relay.get("pull_request"),"starting_head_sha":session.get("starting_head_sha"),"last_observed_head_sha":last_observed,"last_written_head_sha":last_written,"active_claims":active,"lock_observation":"NO_INDEPENDENT_LOCK_STORE; CLAIMS_AND_COLLISION_DOMAINS_ARE_CANONICAL"},
+      "actions":actions,"last_checkpoint_ref":checkpoint,"last_evidence_ref":evidence,"last_takeover":tos[-1] if tos else None,"last_dispatch":ds[-1] if ds else None,
+      "resume_point":{"task_id":relay.get("task_id"),"branch":relay.get("branch"),"pull_request":relay.get("pull_request"),"last_observed_head_sha":last_observed,"last_written_head_sha":last_written,"checkpoint_ref":checkpoint,"evidence_ref":evidence,"active_claim_work_items":[x.get("work_item_id") for x in active],"collision_domains":sorted({d for x in active for d in x.get("collision_domains",[]) if d}),"in_flight_action":actions.get("in_flight_action"),"last_completed_action":actions.get("last_action_completed"),"requires_exact_head_reobservation":True,"may_replay_in_flight_action_without_reconciliation":False},
+      "evidence_counts":{"beacons":len(related),"takeovers":len(tos),"dispatches":len(ds),"active_claims":len(active)}}
+    ad=digest(core); report={"forensic_id":runtime_id("GACR-F-",{"repository":session.get("repository"),"session_id":session_id}),"generated_at":timestamp,**core,"analysis_digest":ad}; assert_secretless(report)
+    if persist:
+        prev=next((x for x in store.get("items",[]) if x.get("session_id")==session_id),None)
+        if prev and prev.get("analysis_digest")==ad: return prev
+        if prev: store["items"][store["items"].index(prev)]=report
+        else: store.setdefault("items",[]).append(report)
+        store["revision"]=int(store.get("revision",0))+1; write_json(FORENSICS_PATH,store)
+    return report
+
+
+def build_forensics_all() -> dict:
+    sessions=read_json(SESSIONS_PATH,{"sessions":[]}); before=read_json(FORENSICS_PATH,{"items":[]}); old={x.get("session_id"):x.get("analysis_digest") for x in before.get("items",[])}
+    reports=[]; changed=0
+    for session in sessions.get("sessions",[]):
+        if (session.get("relay") or {}).get("process")!="GACR": continue
+        report=build_interruption_forensics(session.get("session_id"),persist=True); reports.append(report)
+        if old.get(session.get("session_id"))!=report.get("analysis_digest"): changed+=1
+    return {"changed":changed,"items":reports}
+
+
 def agent_context(session_id: str) -> dict:
     sessions = read_json(SESSIONS_PATH, {"sessions": []})
     claims = read_json(CLAIMS_PATH, {"claims": []})
@@ -440,6 +567,7 @@ def agent_context(session_id: str) -> dict:
     beacons = read_json(BEACONS_PATH, {"items": []})
     correlations = read_json(CORRELATIONS_PATH, {"items": []})
     dispatches = read_json(DISPATCHES_PATH, {"items": []})
+    forensics = read_json(FORENSICS_PATH, {"items": []})
     session = session_by_id(sessions, session_id)
     if not session:
         raise ValueError("session not found")
@@ -453,6 +581,7 @@ def agent_context(session_id: str) -> dict:
         "dispatches": [x for x in dispatches.get("items", []) if x.get("target_session_id") == session_id or x.get("stalled_session_id") == session_id],
         "recent_beacons": [x for x in beacons.get("items", []) if x.get("session_id") == session_id][-10:],
         "recent_correlations": related_correlations[-10:],
+        "interruption_forensics": next((x for x in forensics.get("items", []) if x.get("session_id") == session_id), None),
         "repository_head": git_value("rev-parse", "HEAD"),
         "repository_branch": git_value("branch", "--show-current"),
         "generated_at": now_iso(),
@@ -477,6 +606,16 @@ def command_beacon(a: argparse.Namespace) -> None:
         agent_role=a.agent_role,
         capabilities=capabilities,
         source=a.source,
+        action_id=a.action_id,
+        action_label=a.action_label,
+        action_phase=a.action_phase,
+        tool_name=a.tool_name,
+        tool_call_id=a.tool_call_id,
+        outcome=a.outcome,
+        written_head_sha=a.written_head,
+        checkpoint_ref=a.checkpoint_ref,
+        evidence_ref=a.evidence_ref,
+        interruption_code=a.interruption_code,
     )
     print(json.dumps({"status":"BEACON_RECORDED","beacon":item},indent=2,ensure_ascii=False))
 
@@ -493,16 +632,24 @@ def command_context(a: argparse.Namespace) -> None:
     print(json.dumps(agent_context(a.session_id),indent=2,ensure_ascii=False))
 
 
+def command_forensics(a: argparse.Namespace) -> None:
+    if a.session_id:
+        print(json.dumps({"status":"FORENSICS_COMPLETE","report":build_interruption_forensics(a.session_id,persist=True)},indent=2,ensure_ascii=False))
+    else:
+        print(json.dumps({"status":"FORENSICS_COMPLETE",**build_forensics_all()},indent=2,ensure_ascii=False))
+
+
 def command_status(_: argparse.Namespace) -> None:
     print(json.dumps({
         "beacons": read_json(BEACONS_PATH, {"items":[]}),
         "correlations": read_json(CORRELATIONS_PATH, {"items":[]}),
         "dispatches": read_json(DISPATCHES_PATH, {"items":[]}),
+        "forensics": read_json(FORENSICS_PATH, {"items":[]}),
     },indent=2,ensure_ascii=False))
 
 
 def parser() -> argparse.ArgumentParser:
-    p=argparse.ArgumentParser(description="GACR Beacon / Correlator / Dispatcher")
+    p=argparse.ArgumentParser(description="GACR Beacon / Correlator / Dispatcher / Interruption Forensics")
     sub=p.add_subparsers(dest="command",required=True)
 
     b=sub.add_parser("beacon")
@@ -519,6 +666,9 @@ def parser() -> argparse.ArgumentParser:
     b.add_argument("--agent-role")
     b.add_argument("--capability",action="append")
     b.add_argument("--source",choices=["GITHUB_ACTIONS","LOCAL_AGENT","EXTERNAL_BRIDGE","UNKNOWN"])
+    b.add_argument("--action-id"); b.add_argument("--action-label"); b.add_argument("--action-phase",choices=sorted(ACTION_PHASES))
+    b.add_argument("--tool-name"); b.add_argument("--tool-call-id"); b.add_argument("--outcome"); b.add_argument("--written-head")
+    b.add_argument("--checkpoint-ref"); b.add_argument("--evidence-ref"); b.add_argument("--interruption-code",choices=sorted(INTERRUPTION_CODES))
     b.set_defaults(fn=command_beacon)
 
     c=sub.add_parser("correlate")
@@ -530,6 +680,10 @@ def parser() -> argparse.ArgumentParser:
     ctx=sub.add_parser("context")
     ctx.add_argument("--session-id",required=True)
     ctx.set_defaults(fn=command_context)
+
+    forensic=sub.add_parser("forensics")
+    forensic.add_argument("--session-id")
+    forensic.set_defaults(fn=command_forensics)
 
     status=sub.add_parser("status")
     status.set_defaults(fn=command_status)

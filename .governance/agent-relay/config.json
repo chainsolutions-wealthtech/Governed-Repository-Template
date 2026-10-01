@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1.0",
+  "schema_version": "1.2.0",
   "process_name": "GACR",
   "process_title": "Governed Agent Continuity Relay",
   "authority_id": "CP-AGENT-RELAY-001",
@@ -53,7 +53,20 @@
       "EXACT",
       "STRONG"
     ],
-    "default_wake_channel": "POLL_REPOSITORY"
+    "default_wake_channel": "POLL_REPOSITORY",
+    "forensics_enabled": true,
+    "action_trace_fields": [
+      "action_id",
+      "action_label",
+      "action_phase",
+      "tool_name",
+      "tool_call_id",
+      "outcome",
+      "written_head_sha",
+      "checkpoint_ref",
+      "evidence_ref",
+      "interruption_code"
+    ]
   },
   "external_bridge": {
     "contract_only": true,
@@ -63,5 +76,22 @@
     "outbound_browser_wakeup_implemented": false,
     "note": "Repository-side GACR can prepare and target wake events. A provider/client bridge is still required to wake a browser conversation."
   },
-  "revision_authority_id": "CP-AGENT-RELAY-001-R2"
+  "revision_authority_id": "CP-AGENT-RELAY-001-R3",
+  "forensics": {
+    "enabled": true,
+    "projection_only": true,
+    "derives_from": [
+      "sessions",
+      "claims",
+      "takeovers",
+      "beacons",
+      "correlations",
+      "dispatches"
+    ],
+    "external_cause_policy": "OBSERVED_ONLY_NEVER_INFER",
+    "exact_head_reobservation_before_resume": true,
+    "in_flight_action_replay": "FORBIDDEN_WITHOUT_RECONCILIATION",
+    "independent_lock_store": false,
+    "lock_model": "CLAIMS_PLUS_COLLISION_DOMAINS"
+  }
 }

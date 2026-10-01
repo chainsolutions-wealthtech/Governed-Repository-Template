@@ -230,6 +230,11 @@ def main():
             gacr.CONFIG_PATH == ROOT/".governance"/"agent-relay"/"config.json",
             "GACR config remains generic/distributed",
         )
+        import gacr_agent_telemetry as telemetry
+        assert_true(
+            telemetry.FORENSICS_PATH == ROOT/".governance"/"control-plane-state"/"gacr-forensics.json",
+            "Template source must keep GACR forensics in source-only control-plane memory",
+        )
 
     upgrader=(ROOT/"scripts"/"control_plane_upgrade_local_entry.py").read_text(encoding="utf-8")
     for fragment in [
@@ -238,6 +243,7 @@ def main():
         "scripts/governed_agent_continuity_relay.py",
         ".github/workflows/governed-agent-continuity-relay.yml",
         "existing_gacr_takeovers=target_text",
+        '"forensics.json"',
     ]:
         assert_true(fragment in upgrader, f"client upgrader missing GACR contract: {fragment}")
 
