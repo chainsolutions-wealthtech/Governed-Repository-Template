@@ -98,6 +98,15 @@ def extract_continuity()->list[str]:
     return [cp["checkpoint_id"],ho["handoff_id"]]
 
 
+def extract_gacr_runtime_ids()->dict[str,list[str]]:
+    return {
+        "GACR takeover":[x["takeover_id"] for x in load_json(".governance/control-plane-state/gacr-takeovers.json").get("items") or []],
+        "GACR beacon":[x["beacon_id"] for x in load_json(".governance/control-plane-state/gacr-beacons.json").get("items") or []],
+        "GACR correlation":[x["correlation_id"] for x in load_json(".governance/control-plane-state/gacr-correlations.json").get("items") or []],
+        "GACR dispatch":[x["dispatch_id"] for x in load_json(".governance/control-plane-state/gacr-dispatches.json").get("items") or []],
+    }
+
+
 def main():
     registry=json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
     if registry.get("authority_id")!="CP-NAMESPACE-001":
@@ -123,6 +132,7 @@ def main():
     definitions["SRV-OP"]=srv
     definitions["IDSEC-OP"]=idsec
     definitions.update(extract_gmc_ids())
+    definitions.update(extract_gacr_runtime_ids())
 
     for label,values in definitions.items():
         assert_unique(values,label)
