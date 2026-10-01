@@ -50,7 +50,9 @@
     ".governance/agent-relay/config.json",
     "docs/MULTI_AGENT_COORDINATION.md",
     "docs/GACR_BRIDGE_CONTRACT.md",
-    ".governance/control-plane-state/gacr-forensics.json"
+    ".governance/control-plane-state/gacr-forensics.json",
+    ".governance/control-plane-state/conversation-chronicles/current.json",
+    ".governance/control-plane-state/conversation-chronicles/CHAT-MEM-20261002-001.md"
   ],
   "rules": [
     "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",
@@ -368,5 +370,12 @@
       "no_secret_values": true,
       "no_server_mutation": true
     }
+  },
+  "conversation_chronicle": {
+    "chronicle_id": "CHAT-MEM-20261002-001",
+    "status": "ACTIVE",
+    "pointer": ".governance/control-plane-state/conversation-chronicles/current.json",
+    "completeness": "COMPLETE_FOR_RECOVERABLE_VISIBLE_CONTEXT",
+    "raw_pre_activation_transcript_completeness": "PARTIAL"
   }
 }
