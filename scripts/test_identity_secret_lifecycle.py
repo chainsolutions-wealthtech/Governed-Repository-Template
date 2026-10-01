@@ -59,8 +59,8 @@ def main():
     slices={x["id"]:x["status"] for x in m.get("future_incremental_slices") or []}
     if slices.get("KBI-04J")!="COLLECTOR_IMPLEMENTED_LIVE_METADATA_PENDING":
         raise SystemExit("IDENTITY_SECRET_TEST_FAILED: collector status")
-    if slices.get("KBI-04K")!="PLANNED":
-        raise SystemExit("IDENTITY_SECRET_TEST_FAILED: KBI-04K must remain planned")
+    if slices.get("KBI-04K")!="IMPLEMENTED_SOURCE_ONLY_LIVE_OBSERVATION_PENDING":
+        raise SystemExit("IDENTITY_SECRET_TEST_FAILED: KBI-04K implementation status")
     for sid in ["KBI-04L","KBI-04M"]:
         if slices.get(sid)!="IMPLEMENTED_SOURCE_ONLY":
             raise SystemExit(f"IDENTITY_SECRET_TEST_FAILED: {sid} implementation status")

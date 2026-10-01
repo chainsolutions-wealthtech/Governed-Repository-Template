@@ -189,3 +189,14 @@ Append-only durable decisions for the source/control-plane repository.
 - A PASS receipt advances only the matching node and unlocks dependents monotonically; stale state revisions fail closed.
 - Missing MCP capabilities remain explicit blockers and never trigger automatic intake creation.
 - The Ekyc S2 + subdomain fixture is E2E dry-run proof only; no Ekyc mutation is included.
+
+### CPD-043 — Server identity and secret knowledge is bounded metadata, never values
+
+- Date: 2026-10-01.
+- S1/S2 identity and secret-store knowledge is collected only through allowlisted read-only MCP surfaces.
+- The persisted/returnable representation contains mechanism classifications, structural metadata and response digests only.
+- Raw remote payloads, secret values, bearer tokens, passwords, private keys, environment values and server connection coordinates are never persisted.
+- `scan_mcp_secrets_s1` is usable because its live catalogue contract is read-only and explicitly states that it does not display secret values.
+- Absence of an equivalent S2 secret-scan surface is represented as `NOT_EXPOSED` / `UNKNOWN_DISCOVERABLE`; it is never inferred away.
+- The mapper classifies each credential mechanism as runtime-mintable, capability-available, modelled-capability-gap or model-missing.
+- This knowledge does not grant execution authority.

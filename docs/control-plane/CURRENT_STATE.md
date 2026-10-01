@@ -560,3 +560,11 @@ A complete project specification can expand into an ordered DAG spanning GitHub 
 The Loop adapter evaluates package readiness against the current execution registry and MCP capability snapshot and releases only one eligible node at a time.
 
 Missing MCP production capabilities remain blockers. The current CASE 1 action remains Ekyc domain-binding resolution.
+
+## Bounded server identity/secret mechanism mapper
+
+`KBI-04K` is implemented source-only.
+
+The Control Plane can now build a safe S1/S2 credential-mechanism matrix from the canonical identity model and MCP capability snapshot, and can execute bounded read-only probes when a current MCP token is supplied.
+
+The live result stores only safe status/shape/digest metadata; raw responses and secret values are discarded. Live S1/S2 observation is still pending and the current CASE 1 action remains unchanged.
