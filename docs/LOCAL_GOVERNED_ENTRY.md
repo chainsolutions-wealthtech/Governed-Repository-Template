@@ -38,9 +38,12 @@ The local control plane asks one question at a time:
 18. explicitly approve that discovery execution; configuration answers alone never authorize network execution;
 19. verify/provision only the credentials required for the approved discovery path;
 20. run read-only MCP discovery for project/server/domain/write-context facts;
-21. choose existing/new/unresolved domain binding from observed evidence;
-22. choose the governed work model;
-23. approve the technical setup and access matrix.
+21. choose the domain intent from explicit choices after the production server is known;
+22. if needed, choose an observed existing domain or parent domain from that server;
+23. choose a suggested domain label/name or explicitly request a custom value;
+24. derive the domain binding and the future capability/authority requirements without executing them;
+25. choose the governed work model;
+26. approve the technical setup and access matrix.
 
 After the two approvals, the local workflow:
 
@@ -190,3 +193,33 @@ An observed server is a candidate, not an owner decision. Selecting `S1`, `S2`, 
 
 When a server is selected, the next domain question reuses the already-authorized discovery evidence for that server instead of rerunning the same discovery.
 
+## Fresh project: progressive domain decision chain
+
+After a concrete production server is selected, domain planning is no longer a single free-form object.
+
+```text
+PRODUCTION_SERVER
+→ DOMAIN_INTENT
+→ server-scoped observed choices
+→ parent/existing-domain choice when applicable
+→ label/name choice
+→ derive binding
+→ derive future operation requirements
+```
+
+Domain intent choices are:
+
+- `REUSE_EXISTING_DOMAIN`
+- `CREATE_SUBDOMAIN`
+- `CREATE_NEW_ROOT_DOMAIN`
+- `CREATE_CHILD_DOMAIN`
+- `NO_PUBLIC_DOMAIN`
+- `DECIDE_LATER`
+
+For `CREATE_SUBDOMAIN` / `CREATE_CHILD_DOMAIN`, the parent choices come from the already-authorized inventory of the selected server. Parent candidates prefer observed root/parent domains rather than presenting every nested hostname as a parent.
+
+The label question proposes reusable choices such as `ekyc`, `kyc`, `identity`, `verify`, plus `OTHER_CUSTOM` and `DECIDE_LATER`.
+
+A choice automatically derives a structured `domain_binding` where possible and prepares the corresponding execution intent/capabilities. For example, a subdomain prepares `CREATE_SUBDOMAIN` with `WEB_HOSTING_CHANGE + DOMAIN_DNS_CHANGE + TLS_CHANGE`.
+
+This preparation **never grants execution authority** and never mutates DNS, Plesk/vhosts, TLS or the server.
