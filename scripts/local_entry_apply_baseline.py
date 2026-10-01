@@ -38,7 +38,7 @@ def main():
         f"- First governed agent: {a['agent_identity']} via {a['provider']}\n\n## Mission\n\n{a['project_mission']}\n\n## Scope\n\n### In scope\n{bullets(scope['in_scope'])}\n\n"
         f"### Out of scope\n{bullets(scope['out_of_scope'])}\n\n## Architecture / stack\n\nProfile selection: {a['project_profile']}. See docs/ARCHITECTURE.md.\n\n"
         f"## Infrastructure / deployment\n\nDeclared baseline status: {a['infrastructure_status']}.\n\n## External systems\n\n{bullets(a['external_systems'])}\n\n"
-        f"## Initial constraints\n\n{bullets(a['constraints'])}\n\n## Governed repository setup\n\nWorkflow model: {a.get('workflow_model') or 'NOT_SELECTED'}\nMCP linked: {a.get('link_mcp_server') is True}\nDomain binding: {json.dumps(a.get('domain_binding'),ensure_ascii=False)}\n",encoding="utf-8")
+        f"## Initial constraints\n\n{bullets(a['constraints'])}\n\n## Governed repository setup\n\nWorkflow model: {a.get('workflow_model') or 'NOT_SELECTED'}\nMCP linked: {a.get('link_mcp_server') is True}\nDomain binding: {json.dumps(a.get('domain_binding'),ensure_ascii=False)}\nDeployment binding: {json.dumps(a.get('deployment_binding'),ensure_ascii=False)}\n",encoding="utf-8")
 
     (ROOT/"docs/ARCHITECTURE.md").write_text(
         f"# ARCHITECTURE\n\n## Baseline\n\n- Subject HEAD: {expected}\n- Status: {a['architecture_status']}\n- Project profile: {a['project_profile']}\n\n"
@@ -95,6 +95,7 @@ def main():
         binding["discovery_observed_at"]=(discovery or {}).get("observed_at")
         binding["domain_strategy"]=a.get("domain_strategy")
         binding["domain_binding"]=a.get("domain_binding")
+        binding["deployment_binding"]=a.get("deployment_binding")
         binding["project_registration_status"]="UNVERIFIED"
         binding["write_tools_status"]="DISABLED_UNTIL_REGISTERED_AND_AUTHORIZED"
         infra["server_access"]["preferred"]="DIRECT_MCP" if a.get("mcp_transport") in {"DIRECT_MCP_TOKEN","BOTH"} else "SSH"
@@ -103,6 +104,12 @@ def main():
         if a.get("domain_binding"):
             infra["deployment_target"]["domain"]=a["domain_binding"].get("domain")
             infra["deployment_target"]["domain_status"]="OBSERVED_EXISTING" if a["domain_binding"].get("mode")=="EXISTING" else ("PROVISIONING_REQUIRED" if a["domain_binding"].get("mode")=="CREATE_NEW" else "DISCOVERY_REQUIRED")
+        if a.get("deployment_binding"):
+            deployment=a["deployment_binding"]
+            infra["deployment_target"]["host"]=deployment.get("host")
+            infra["deployment_target"]["path"]=deployment.get("path")
+            infra["deployment_target"]["path_mode"]=deployment.get("mode")
+            infra["deployment_target"]["path_status"]="PROVISIONING_REQUIRED" if deployment.get("mode")=="CREATE_PATH" else ("OBSERVED_EXISTING" if deployment.get("mode") in {"HOST_ROOT","REUSE_EXISTING_PATH"} else "DISCOVERY_REQUIRED")
     writej(".governance/mcp-binding.json",binding)
     writej(".governance/infrastructure-intent.json",infra)
 

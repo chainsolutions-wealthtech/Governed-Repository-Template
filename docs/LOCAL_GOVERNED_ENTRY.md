@@ -40,10 +40,11 @@ The local control plane asks one question at a time:
 20. run read-only MCP discovery for project/server/domain/write-context facts;
 21. choose the domain intent from explicit choices after the production server is known;
 22. if needed, choose an observed existing domain or parent domain from that server;
-23. choose a suggested domain label/name or explicitly request a custom value;
-24. derive the domain binding and the future capability/authority requirements without executing them;
-25. choose the governed work model;
-26. approve the technical setup and access matrix.
+23. when reusing an existing host, choose whether the application mounts at `/` or under an HTTP path such as `/ekyc`, and capture that path separately from DNS;
+24. choose a suggested domain label/name or explicitly request a custom value when a new hostname is being prepared;
+25. derive the domain binding, deployment binding and future capability/authority requirements without executing them;
+26. choose the governed work model;
+27. approve the technical setup and access matrix.
 
 After the two approvals, the local workflow:
 
@@ -223,3 +224,30 @@ The label question proposes reusable choices such as `ekyc`, `kyc`, `identity`, 
 A choice automatically derives a structured `domain_binding` where possible and prepares the corresponding execution intent/capabilities. For example, a subdomain prepares `CREATE_SUBDOMAIN` with `WEB_HOSTING_CHANGE + DOMAIN_DNS_CHANGE + TLS_CHANGE`.
 
 This preparation **never grants execution authority** and never mutates DNS, Plesk/vhosts, TLS or the server.
+
+
+## Existing host versus HTTP deployment path
+
+An existing domain or subdomain is a **host**. A suffix such as `/ekyc` is an HTTP deployment path and must never be encoded as a DNS domain.
+
+For `REUSE_EXISTING_DOMAIN`, the local questionnaire separates the two concerns:
+
+```text
+domain_binding
+  domain = api.example.com
+
+deployment_binding
+  mode = HOST_ROOT | CREATE_PATH | REUSE_EXISTING_PATH | UNRESOLVED
+  host = api.example.com
+  path = / | /ekyc | /existing-path
+```
+
+This supports, without conflating DNS and HTTP routing:
+
+- `https://example.com/`
+- `https://example.com/ekyc`
+- `https://portal.example.com/ekyc`
+
+`CREATE_PATH` prepares a future `CONFIGURE_REVERSE_PROXY` execution intent with `WEB_HOSTING_CHANGE` and `SERVER_RUNTIME_OBSERVATION` capabilities plus `SCOPED_WEB_WRITE`. `HOST_ROOT` and `REUSE_EXISTING_PATH` start from read-only verification.
+
+A questionnaire answer remains a preparation fact only. It never authorizes a Plesk, Nginx/Apache, runtime, DNS or TLS mutation.

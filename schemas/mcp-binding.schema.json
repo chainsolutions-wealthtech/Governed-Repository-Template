@@ -68,6 +68,12 @@
         "null"
       ]
     },
+    "deployment_binding": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
     "project_registration_status": {
       "type": "string"
     },

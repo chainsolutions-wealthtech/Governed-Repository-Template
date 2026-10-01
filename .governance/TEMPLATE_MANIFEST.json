@@ -189,7 +189,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.26",
+  "template_version": "2.8.27",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -391,7 +391,12 @@
     "progressive domain choices reuse observed selected-server domains",
     "subdomain parent candidates derived from observed server inventory",
     "domain decisions derive execution capabilities without granting authority",
-    "legacy answered domain bindings are preserved without re-questioning"
+    "legacy answered domain bindings are preserved without re-questioning",
+    "existing host DNS binding is separated from HTTP deployment path binding",
+    "existing domains and subdomains can mount applications at host root or governed HTTP paths",
+    "HTTP path creation prepares reverse-proxy capability and authority requirements without granting execution authority",
+    "governed upgrades reopen the existing-host mount question when legacy state skipped path selection",
+    "deployment path binding persists into project context MCP binding and infrastructure intent"
   ],
   "automatic_initialization_supported": true
 }
