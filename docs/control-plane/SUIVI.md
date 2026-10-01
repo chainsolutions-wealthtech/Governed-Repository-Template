@@ -646,3 +646,14 @@ P12-S5 therefore satisfies its exit gate without target-specific repair. No S1/d
 - No R3 forensic capability is removed.
 - Template candidate version: `2.8.33`.
 - Programme priority remains `P12-S6`; no CASE 1 closure work is executed.
+
+## 2026-10-01 — GACR R3 corrected main CI-proven and final attestation
+
+- Corrective PR #105 merged to `main` at `05f49a634e1da46f3da5a016e32499236223ff1d`.
+- PR #105 candidate Governance CI `36927942003`: PASS.
+- Post-merge Governance CI `36928024260`: PASS.
+- The prior workflow-registration failures are tied only to superseded HEAD `ada6866efdfe9d2aed2e77171c01ca774a76a885`; no equivalent failure is present on corrected main.
+- R3 runtime, telemetry, source/client separation, upgrader preservation, namespaces and regression tests are intact.
+- Agent activity is now durably recorded as `AAL-20261001-GACR-001` in human and machine projections.
+- The global programme remains parked at `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+- Per owner instruction, do not resume `P12-S6` until explicit owner OK after GACR is attested.
