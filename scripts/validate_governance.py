@@ -593,11 +593,27 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
             fail("CASE 1 replay ledger case id mismatch")
         if case1_replay.get("unique_next_action") != source_current.get("unique_next_action"):
             fail("CASE 1 replay ledger next action mismatch")
-        if case1_replay.get("current_phase") not in {p.get("id") for p in case1_replay.get("phases", [])}:
+        case1_phases = case1_replay.get("phases", [])
+        case1_phase_ids = {p.get("id") for p in case1_phases}
+        case1_current_phase = case1_replay.get("current_phase")
+        case1_status = case1_replay.get("current_status")
+        if case1_current_phase not in case1_phase_ids:
             fail("CASE 1 replay current phase missing from phases")
-        active_case_phases = [p for p in case1_replay.get("phases", []) if p.get("status") == "IN_PROGRESS"]
-        if len(active_case_phases) != 1 or active_case_phases[0].get("id") != case1_replay.get("current_phase"):
-            fail("CASE 1 replay must have exactly one active phase matching current_phase")
+        active_case_phases = [p for p in case1_phases if p.get("status") == "IN_PROGRESS"]
+        if case1_status == "DONE":
+            terminal = next((p for p in case1_phases if p.get("id") == "C1-14"), None)
+            if case1_current_phase != "C1-14" or terminal is None or terminal.get("status") != "DONE":
+                fail("completed CASE 1 replay must terminate at DONE C1-14")
+            if active_case_phases:
+                fail("completed CASE 1 replay must not retain an active phase")
+            unfinished = [(p.get("id"), p.get("status")) for p in case1_phases if p.get("status") != "DONE"]
+            if unfinished:
+                fail(f"completed CASE 1 replay retains unfinished phases: {unfinished}")
+        elif case1_status == "IN_PROGRESS":
+            if len(active_case_phases) != 1 or active_case_phases[0].get("id") != case1_current_phase:
+                fail("active CASE 1 replay must have exactly one active phase matching current_phase")
+        else:
+            fail(f"unsupported CASE 1 replay status: {case1_status!r}")
         source_docs = [
             "docs/control-plane/CURRENT_STATE.md",
             "docs/control-plane/SUIVI.md",
