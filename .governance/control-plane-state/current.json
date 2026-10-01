@@ -211,6 +211,18 @@
       "automatic_mcp_intake": false,
       "ekyc_s2_subdomain_fixture": "E2E_DRY_RUN_ONLY",
       "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
+    },
+    "server_identity_secret_metadata": {
+      "authority_id": "CP-IDENTITY-SECRET-001",
+      "decision_id": "CPD-043",
+      "status": "IMPLEMENTED_SOURCE_ONLY_LIVE_OBSERVATION_PENDING",
+      "collector": "scripts/control_plane_server_identity_secret_metadata.py",
+      "s1_secret_scan": "scan_mcp_secrets_s1",
+      "s2_secret_scan": "NOT_EXPOSED",
+      "raw_remote_payload_persisted": false,
+      "secret_values_persisted": false,
+      "execution_authority_granted": false,
+      "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
     }
   },
   "framework_product_boundary": {
