@@ -1,0 +1,144 @@
+name: Governed Agent Continuity Relay
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+    inputs:
+      command:
+        description: GACR command
+        required: true
+        type: choice
+        options:
+          - scan
+          - status
+          - register
+          - heartbeat
+          - takeover-plan
+          - takeover-accept
+      agent:
+        required: false
+        type: string
+      provider:
+        required: false
+        type: choice
+        options:
+          - chatgpt
+          - claude
+          - codex
+          - github-actions
+          - human
+          - other
+      provider_ref:
+        required: false
+        type: string
+      provider_url:
+        required: false
+        type: string
+      connection_ref:
+        required: false
+        type: string
+      task_id:
+        required: false
+        type: string
+      branch:
+        required: false
+        type: string
+      pull_request:
+        required: false
+        type: string
+      standby:
+        required: false
+        type: boolean
+        default: false
+      session_id:
+        required: false
+        type: string
+      action_label:
+        required: false
+        type: string
+      evidence:
+        required: false
+        type: string
+      stalled_session_id:
+        required: false
+        type: string
+      successor_session_id:
+        required: false
+        type: string
+      reconciled_head:
+        required: false
+        type: string
+  repository_dispatch:
+    types:
+      - gacr_register
+      - gacr_heartbeat
+      - gacr_scan
+      - gacr_status
+      - gacr_takeover-plan
+      - gacr_takeover-accept
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gacr-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  relay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Capture exact base HEAD
+        id: base
+        shell: bash
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Execute GACR command
+        id: relay
+        run: python3 scripts/gacr_workflow_bridge.py
+
+      - name: Validate GACR state
+        run: |
+          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py
+          python3 scripts/validate_governance.py
+
+      - name: Persist changed relay state
+        shell: bash
+        env:
+          BASE_HEAD: ${{ steps.base.outputs.sha }}
+          TARGET_BRANCH: ${{ github.event.repository.default_branch || github.ref_name || 'main' }}
+        run: |
+          set -euo pipefail
+          paths=(
+            .governance/sessions/sessions.json
+            .governance/work/claims.json
+            .governance/agent-relay/takeovers.json
+          )
+          if git diff --quiet -- "${paths[@]}"; then
+            echo "GACR_NO_STATE_CHANGE"
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${paths[@]}"
+          git commit -m "governance: GACR ${{ steps.relay.outputs.command }}"
+
+          git fetch origin "$TARGET_BRANCH"
+          remote_head="$(git rev-parse FETCH_HEAD)"
+          if [ "$remote_head" != "$BASE_HEAD" ]; then
+            echo "HEAD_MOVED: expected=$BASE_HEAD remote=$remote_head"
+            exit 3
+          fi
+
+          git push origin "HEAD:$TARGET_BRANCH"
