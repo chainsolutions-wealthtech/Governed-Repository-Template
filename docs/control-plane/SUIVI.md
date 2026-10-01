@@ -699,3 +699,17 @@ P12-S5 therefore satisfies its exit gate without target-specific repair. No S1/d
 - Candidate Template version: `2.8.35`.
 - This tranche does not claim that the current ChatGPT browser UI runs a persistent emitter unless such a host surface is actually observed.
 - `P12-S6` remains preserved and unexecuted.
+
+## 2026-10-02 — GACR R5 post-merge proof and generic-core completion
+
+- PR #111 candidate Governance CI `36941120405`: PASS.
+- PR #111 merged at `9b371b45711a9274a0976fe5015d8b19b0315e6c`.
+- Post-merge Governance CI `36941216248`: PASS.
+- Post-merge GACR workflow `36941216312`: PASS.
+- Existing current-conversation session stayed singular and ACTIVE.
+- AUTO_ATTACH Beacon `GACR-B-ff8bedbc4bf2` correlated EXACT through `GACR-C-976bbba3924d`.
+- GACR runtime persistence advanced main to `34ceb14a140202ad7b57c9db2700241d50e7460c`.
+- Generic R5 client emitter supports attach, heartbeat, action/tool trace, explicit interruption, session resolution and wake polling.
+- The current ChatGPT host does not expose a persistent client process or direct repository-dispatch action to this assistant; therefore autonomous browser-side heartbeat remains an external host-instrumentation boundary, not a repository-core defect.
+- Generic GACR R1-R5 is now complete as a reusable repository/client protocol.
+- Do not resume `P12-S6` until explicit owner OK.

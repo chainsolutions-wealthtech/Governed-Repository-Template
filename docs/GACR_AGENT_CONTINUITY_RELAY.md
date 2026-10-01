@@ -246,3 +246,31 @@ The client transport credential exists only in the emitter process environment. 
 The emitter can poll a dispatch projection for `READY / ACTIVATED` wake records. A wake poll is informational only; it never calls `takeover-accept` and never grants write authority.
 
 A host that cannot run the emitter continuously must not pretend that continuous client liveness is proven. Repository activity and R4 auto-attach remain valid evidence, while absence of client heartbeat remains observable as silence.
+
+## Generic-core completion boundary
+
+With R5, the reusable GACR core is complete through:
+
+```text
+AUTO ATTACH
+→ SESSION CREATE / RESUME
+→ BEACON
+→ CLIENT HEARTBEAT CONTRACT
+→ ACTION / TOOL TRACE CONTRACT
+→ WATCH
+→ CORRELATOR
+→ INTERRUPTION FORENSICS
+→ DISPATCHER
+→ WAKE POLL / EXTERNAL WAKE
+→ EXACT-HEAD TAKEOVER
+→ CONTINUATION
+```
+
+Provider-specific host instrumentation remains a deployment/integration concern. An uninstrumented browser or proprietary client cannot be made continuously observable by repository code alone.
+
+Therefore two claims stay distinct:
+
+- `GENERIC_GACR_CORE_COMPLETE`: repository/runtime/client protocol and tests exist;
+- `PROVIDER_HOST_LIVE`: only true for a host that actually invokes/runs the emitter or equivalent adapter.
+
+This distinction is required to preserve evidence quality and fail-closed behavior.

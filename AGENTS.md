@@ -91,7 +91,7 @@ After central handoff, start local work through a `[Governed Local Entry]` issue
 
 ## GACR — continuité et relève des agents
 
-Pour un travail susceptible de durer, enregistre la connexion dans **GACR — Governed Agent Continuity Relay**.
+À chaque arrivée observable sur un repository gouverné, rattache ou reprends la connexion dans **GACR — Governed Agent Continuity Relay**. L'attachement ne dépend pas de la disponibilité d'une référence de conversation fournisseur ; cette référence enrichit la session lorsqu'elle est réellement observable.
 
 Si une référence de conversation fournisseur est réellement disponible, transmets-la ; ne l'invente jamais.
 
@@ -128,7 +128,7 @@ If a client bridge is available, it may register `client_instance_id`, `bridge_r
 
 ### GACR R5 client liveness
 
-A governed agent/client should keep its GACR session live independently of repository mutations.
+A governed agent/client must keep its GACR session live independently of repository mutations when its host/orchestrator exposes a persistent client execution surface. If the host cannot run or invoke the emitter, that limitation must remain explicit rather than being reported as continuous liveness.
 
 When the host/orchestrator can run a client process, use the distributed emitter:
 

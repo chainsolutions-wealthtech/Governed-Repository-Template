@@ -762,7 +762,7 @@ Cross-cutting status: `LIVE_AUTO_ATTACH_PROVEN / CI_PROVEN`.
 
 ## GACR R5 — Client Liveness and Trace Emitter
 
-Cross-cutting candidate status: `IMPLEMENTED_ON_GOVERNED_BRANCH / CI_PENDING`.
+Cross-cutting status: `CLIENT_PROTOCOL_CI_PROVEN / GENERIC_CORE_COMPLETE`.
 
 - Parent authority: `CP-AGENT-RELAY-001`.
 - Previous proven revision: `CP-AGENT-RELAY-001-R4`.
@@ -774,4 +774,20 @@ Cross-cutting candidate status: `IMPLEMENTED_ON_GOVERNED_BRANCH / CI_PENDING`.
 - Client provenance is `CLIENT_EMITTER`, distinct from GitHub Actions transport.
 - Wake polling cannot accept takeover.
 - Continuous browser/client liveness is not claimed unless the provider host actually invokes or runs the emitter.
+- Global programme action `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` remains unchanged and unexecuted.
+
+### GACR R5 post-merge proof and host boundary
+
+- PR #111 candidate commit: `f63b50cf70bc12b6ef9f37a4cb4a3a61e22fe245`.
+- Candidate Governance CI `36941120405`: PASS.
+- PR #111 merged at `9b371b45711a9274a0976fe5015d8b19b0315e6c`.
+- Post-merge Governance CI `36941216248`: PASS.
+- Post-merge GACR run `36941216312`: PASS.
+- R4 auto-attachment remained stable: one canonical session `session-68c97d4bb1ef71c86444de12`, no duplicate.
+- Third AUTO_ATTACH Beacon: `GACR-B-ff8bedbc4bf2`.
+- Third exact correlation: `GACR-C-976bbba3924d / EXACT`.
+- Runtime persistence advanced main to `34ceb14a140202ad7b57c9db2700241d50e7460c`.
+- R5 client-emitter transport/action/interrupt/wake-poll contracts are CI-proven.
+- No persistent client process or direct `repository_dispatch` surface is exposed by the current ChatGPT host in this conversation, so autonomous browser heartbeat is not claimed live here.
+- This remaining provider-host instrumentation boundary is external to the generic repository GACR core.
 - Global programme action `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` remains unchanged and unexecuted.
