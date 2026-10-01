@@ -568,3 +568,9 @@ PR #92 merged at `8143db05b8ed412bdbc3d710f4a1fdf49f652161`; post-merge Governan
 
 The unique next owner decision is now `C1_13_I_B_E_SELECT_EKYC_WORKFLOW_MODEL`. P12-S6 and GMC remain downstream.
 
+## 2026-10-01 — Ekyc STANDARD_GOVERNED_FLOW selected
+
+Owner selected `STANDARD_GOVERNED_FLOW` through the governed central command path. Control Plane run `36894608509` and Ekyc Governed Local Entry run `36894651525` passed. Ekyc HEAD remains `4bf80309313f3d34f74ffca183bd540583d2e87f`; Ekyc#1 advanced to revision 46 / `SETUP_APPROVAL`.
+
+The next unique gate is explicit `setup_approved` approval of the prepared repository setup and governed rights matrix. Domain/server operations remain prepared-only and no S1/DNS/Plesk/TLS execution authority is implied.
+
