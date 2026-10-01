@@ -578,3 +578,13 @@ Validated KBI-04K server identity/secret observations can now be stored as revis
 The relational Control Plane schema is extended to 1.4.0 with `server_identity_secret_facts`.
 
 The initial state remains `NOT_COLLECTED`; no live S1/S2 secret metadata has been persisted yet. CASE 1 remains at Ekyc domain-binding resolution.
+
+## Governed S1/S2 identity-secret facts refresh
+
+`KBI-04O` is implemented source-only.
+
+The Control Plane now has an event/need-based workflow that can run the bounded KBI-04K read-only S1/S2 observation, validate/persist the KBI-04N safe facts under exact revision, materialize the existing relational projection, and open a governed PR when safe metadata changes.
+
+The workflow persists no secret values, raw MCP responses or server connection coordinates and grants no production authority.
+
+Live refresh remains pending until this workflow is merged and invoked from canonical `main`. CASE 1 remains at Ekyc domain-binding resolution.
