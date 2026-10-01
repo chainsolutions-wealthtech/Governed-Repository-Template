@@ -52,7 +52,10 @@
     "docs/GACR_BRIDGE_CONTRACT.md",
     ".governance/control-plane-state/gacr-forensics.json",
     ".governance/control-plane-state/conversation-chronicles/current.json",
-    ".governance/control-plane-state/conversation-chronicles/CHAT-MEM-20261002-001.md"
+    ".governance/control-plane-state/conversation-chronicles/CHAT-MEM-20261002-001.md",
+    ".governance/control-plane-state/gacr-sessions.json",
+    ".governance/control-plane-state/gacr-beacons.json",
+    ".governance/control-plane-state/gacr-correlations.json"
   ],
   "rules": [
     "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",
@@ -180,7 +183,12 @@
     "GACR_FORENSICS_EXTERNAL_CAUSE_OBSERVED_ONLY",
     "GACR_FORENSICS_INFLIGHT_REPLAY_REQUIRES_EXACT_HEAD_RECONCILIATION",
     "GACR_FORENSICS_NE_EXECUTION_AUTHORITY",
-    "DO_NOT_RESUME_P12_S6_UNTIL_EXPLICIT_OWNER_OK_AFTER_GACR_FINALIZATION"
+    "DO_NOT_RESUME_P12_S6_UNTIL_EXPLICIT_OWNER_OK_AFTER_GACR_FINALIZATION",
+    "GACR_AUTO_ATTACH_ON_OBSERVABLE_GOVERNED_ARRIVAL",
+    "GACR_PROVIDER_CONVERSATION_REF_NE_ATTACHMENT_PREREQUISITE",
+    "GACR_LATE_PROVIDER_BINDING_REUSES_CONNECTION_SESSION",
+    "GACR_AUTO_ATTACH_AMBIGUITY_FAILS_CLOSED",
+    "GACR_STATE_PERSISTENCE_NE_RECURSIVE_AUTO_ATTACH"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",
