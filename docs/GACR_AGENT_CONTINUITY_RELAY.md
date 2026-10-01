@@ -284,3 +284,22 @@ The `Governed Agent Continuity Relay` GitHub Actions workflow transports GACR st
 A stale Chronicle is preserved as stale evidence. If no real external anchor is observable, auto-attachment skips session/Beacon creation and may only refresh derived correlations.
 
 Any historical transport session created before this correction is retained as evidence but marked terminal/superseded. Terminal sessions are excluded from future correlation candidates.
+
+## R5 final corrective attestation
+
+The post-R5 regression in which the internal GACR workflow created a second session after Chronicle freshness expired is corrected by `CPD-055`.
+
+Live post-merge evidence proves:
+
+```text
+internal GACR workflow
+→ no external agent anchor
+→ GACR_AUTO_ATTACH_SKIPPED
+→ no new session
+→ no new Beacon
+→ terminal transport session excluded from Correlator
+```
+
+The erroneous historical transport session and Beacon remain preserved for auditability. The session is terminal/superseded and cannot participate in live correlation.
+
+GACR R1-R5 is therefore complete at the generic repository/runtime/client-protocol layer. Provider-host instrumentation is separately attested only when an actual host invokes the R5 emitter or an equivalent adapter.

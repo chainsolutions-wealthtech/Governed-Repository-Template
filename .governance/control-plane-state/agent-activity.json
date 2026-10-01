@@ -620,6 +620,36 @@
       ],
       "proposals": [],
       "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE"
+    },
+    {
+      "activity_id": "AAL-20261002-GACR-R5A-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "GACR_R5A_INTERNAL_TRANSPORT_IDENTITY_CORRECTION",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "173297fee3c6ac55a03ca3787558b063cb85b668",
+      "objective": "Correct the post-attestation defect that misclassified GACR internal workflow transport as a new agent/session.",
+      "evidence_refs": [
+        "CPD-055",
+        "Template PR #113",
+        "candidate Governance CI 36942282684",
+        "merge bfb7b6fb81244f18f1b2c8c1ea82526af0dc2d62",
+        "post-merge Governance CI 36942347934",
+        "post-merge GACR run 36942347872",
+        "runtime main 173297fee3c6ac55a03ca3787558b063cb85b668",
+        "session-68c97d4bb1ef71c86444de12",
+        "session-cb22a4ed0d9e29eba5383f5d"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "Internal GACR transport is not an agent identity.",
+        "No new session or Beacon was produced by the corrected internal push path.",
+        "The invalid historical transport session is preserved CLOSED/SUPERSEDED.",
+        "Terminal sessions are excluded from live correlation candidates.",
+        "Generic GACR R1-R5 is complete; provider-host emitter activation remains external.",
+        "P12-S6 remains unchanged and unexecuted pending explicit owner OK."
+      ],
+      "proposals": [],
+      "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE"
     }
   ]
 }
