@@ -189,7 +189,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.25",
+  "template_version": "2.8.26",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -386,7 +386,12 @@
     "fresh projects choose production server before domain planning",
     "observed S1/S2 candidates are reused without auto-selecting an owner production target",
     "domain question reuses selected-server discovery evidence",
-    "governed upgrader reorders legacy fresh-project domain gates without answer loss"
+    "governed upgrader reorders legacy fresh-project domain gates without answer loss",
+    "server-scoped domain intent before concrete domain binding",
+    "progressive domain choices reuse observed selected-server domains",
+    "subdomain parent candidates derived from observed server inventory",
+    "domain decisions derive execution capabilities without granting authority",
+    "legacy answered domain bindings are preserved without re-questioning"
   ],
   "automatic_initialization_supported": true
 }

@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "handoff_id": "CP-HANDOFF-20261001-003",
+  "handoff_id": "CP-HANDOFF-20261001-004",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "canonical_branch": "main",
-  "baseline_subject_head": "c41afa4fdeffd5f12d6243b95f5d04083ca514e4",
-  "active_branch": "governance/checkpoint-ekyc-server-selection-ready",
+  "baseline_subject_head": "1d5fce83f381549725373fdda68e714364882b71",
+  "active_branch": "governance/ekyc-domain-choice-chain",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "current_task": "C1-13-I-B-B_SELECT_EKYC_PRODUCTION_SERVER",
-  "unique_next_action": "C1_13_I_B_B_SELECT_EKYC_PRODUCTION_SERVER",
+  "current_task": "C1-13-I-B-C_SPLIT_SERVER_SCOPED_DOMAIN_CHOICES",
+  "unique_next_action": "C1_13_I_B_C_SPLIT_SERVER_SCOPED_DOMAIN_CHOICES",
   "read_first": [
     "docs/control-plane/CURRENT_STATE.md",
     ".governance/control-plane-state/canonical-architecture.json",
@@ -167,7 +167,7 @@
       "C1-13-C",
       "C1-13-D"
     ],
-    "active_dependency": "OWNER_PRODUCTION_SERVER_DECISION_REQUIRED",
+    "active_dependency": "GENERIC_DOMAIN_BINDING_TOO_COARSE_FOR_ADAPTIVE_FLOW",
     "external_intake": "Patricked-code/MCP#201",
     "failed_discovery_run": 36644247227,
     "active_corrective_task": null,
@@ -194,8 +194,8 @@
       "reused_authorized_evidence": true
     },
     "local_entry_status": "WAITING_FOR_SETUP_ANSWER",
-    "local_entry_phase": "Q_PRODUCTION_SERVER_SELECTION",
-    "local_entry_revision": 40,
+    "local_entry_phase": "Q_DOMAIN_BINDING",
+    "local_entry_revision": 41,
     "domain_binding_observation": {
       "existing_ekyc_project_registration": false,
       "existing_ekyc_domain": false
@@ -222,7 +222,10 @@
         "DECIDE_LATER"
       ],
       "execution_authority_granted": false
-    }
+    },
+    "production_server_selection": "S1",
+    "production_server_execution_authority_granted": false,
+    "target_domain_phase_after_upgrade": "Q_DOMAIN_INTENT"
   },
   "mcp_capability_snapshot": {
     "authority_id": "CP-MCP-CAP-001",

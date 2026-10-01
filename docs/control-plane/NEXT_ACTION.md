@@ -1,66 +1,56 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_13_I_B_B_SELECT_EKYC_PRODUCTION_SERVER
-STATE = WAITING_FOR_OWNER_PRODUCTION_SERVER_DECISION
+NEXT_ACTION = C1_13_I_B_C_SPLIT_SERVER_SCOPED_DOMAIN_CHOICES
+STATE = GENERIC_FRAMEWORK_CORRECTION
 PARENT = P12_S5_SECOND_FRESH_REPOSITORY_E2E
 ```
 
-## C1-13-I-B-A complete
+## Owner decision captured
 
-The generic fresh-project ordering defect is fixed and proven.
+The owner selected `S1` as the production-server target for Ekyc.
 
-- Template PR #88 merged at `c41afa4fdeffd5f12d6243b95f5d04083ca514e4`.
-- PR #88 Governance CI `36869361015`: PASS.
-- Post-merge Governance CI `36869476595`: PASS.
-- Governed Ekyc upgrade run `36869574238`: PASS.
-- Ekyc upgraded to `b67a4ec58d837a66f3c3dedb02caadaf044912d5` / Template v2.8.25.
-- Ekyc Governance CI `36869667945`: PASS.
-- Ekyc Governance Auto Bootstrap `36869667894`: PASS.
-- Ekyc Governed Local Entry `36869671044`: PASS.
+Governed evidence:
 
-## Ekyc exact current state
+- source command: central issue #49 comment `5933064109`;
+- Control Plane run `36873298229`: governed command dispatch accepted;
+- Ekyc local-entry run `36873334194`: PASS;
+- Ekyc HEAD remained `b67a4ec58d837a66f3c3dedb02caadaf044912d5`;
+- Ekyc#1 advanced revision `40 → 41`;
+- `production_server_selection = S1`;
+- no server/domain mutation occurred.
 
-```text
-repository = Patricked-code/Ekyc
-HEAD = b67a4ec58d837a66f3c3dedb02caadaf044912d5
-issue = Ekyc#1
-revision = 40
-status = WAITING_FOR_SETUP_ANSWER
-phase = Q_PRODUCTION_SERVER_SELECTION
-observed servers = S1, S2
-choices = S1 | S2 | PLAN_NEW_SERVER | DECIDE_LATER
-domain binding = unanswered
-discovery replay = not required
-execution authority = not granted
-```
+## Generic correction now required
 
-Prior MCP evidence is preserved:
+The legacy next question is still one coarse `domain_binding` object. The owner requires a progressive choice chain.
+
+Target generic flow:
 
 ```text
-transport = BOTH / DUAL_READY_SMART_ROUTING
-selected route = DIRECT_MCP_TOKEN
-DIRECT = PASS
-SSH alternate = CONFIGURED_NOT_ATTESTED
+S1 selected
+→ choose DOMAIN_INTENT
+→ reuse S1 observed domains
+→ choose existing domain or parent when applicable
+→ choose label/name
+→ derive structured domain_binding
+→ derive future operation/capability requirements
+→ no execution authority
 ```
 
-## Owner decision required
+Domain-intent choices:
 
-Choose the production-server intent for Ekyc:
-
-- `S1`
-- `S2`
-- `PLAN_NEW_SERVER`
+- `REUSE_EXISTING_DOMAIN`
+- `CREATE_SUBDOMAIN`
+- `CREATE_NEW_ROOT_DOMAIN`
+- `CREATE_CHILD_DOMAIN`
+- `NO_PUBLIC_DOMAIN`
 - `DECIDE_LATER`
-
-This answer only enriches the project model. It does not create directories, domains, DNS, TLS, runtime resources or deployment state.
-
-After a concrete S1/S2 choice, the next questionnaire slice must reuse that server's observed domain inventory before asking domain/subdomain questions.
 
 ## Safety boundary
 
-- Do not rerun MCP discovery.
 - Do not patch Ekyc directly.
-- Do not infer server choice.
-- Do not mutate S1/S2 from this answer alone.
+- Do not rerun MCP discovery.
+- Do not mutate S1 from the S1 choice.
+- Preserve already answered legacy domain bindings in other repositories.
+- Domain choices prepare work only; they do not authorize DNS/vhost/TLS/server writes.
 - P12-S6 and GMC remain downstream of P12-S5.

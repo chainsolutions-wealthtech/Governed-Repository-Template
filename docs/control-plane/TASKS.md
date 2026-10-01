@@ -765,3 +765,31 @@ These slices do not change the CASE 1 unique action.
 - Additional owner choices: `PLAN_NEW_SERVER`, `DECIDE_LATER`.
 - Owner answer is configuration/project-model input only; it grants no execution authority.
 - After S1/S2 selection, reuse selected-server domain inventory before domain-type/parent/name planning.
+
+### C1-13-I-B-B completion — Ekyc production server S1
+
+- Status: `DONE`.
+- Owner choice: `S1`.
+- Central command comment: `5933064109`.
+- Control Plane run: `36873298229`.
+- Ekyc local-entry run: `36873334194` PASS.
+- Ekyc HEAD: `b67a4ec58d837a66f3c3dedb02caadaf044912d5`.
+- Ekyc#1 revision: `41`.
+- Result: `production_server_selection=S1`.
+- No S1 mutation, domain mutation or discovery replay occurred.
+
+### C1-13-I-B-C — progressive server-scoped domain choices
+
+- Status: `IN_PROGRESS`.
+- Depends on: `C1-13-I-B-B`.
+- Defect: legacy `Q_DOMAIN_BINDING` requests one coarse object instead of one choice at a time.
+- Required behavior:
+  - ask domain intent first;
+  - reuse S1 observed domain inventory;
+  - ask existing-domain or parent choice only when applicable;
+  - ask deterministic label/name choice next;
+  - derive `domain_binding` automatically;
+  - prepare execution intent/capability requirements;
+  - preserve execution authority as false;
+  - preserve already answered legacy `domain_binding` states.
+- Target migration: Ekyc revision 41 `Q_DOMAIN_BINDING` → `Q_DOMAIN_INTENT` through governed Template upgrade only.

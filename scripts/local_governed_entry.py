@@ -11,6 +11,9 @@ LOCAL_ACTIONS=["CONTINUE_GOVERNED_WORK","MAP_EXISTING_PROJECT","LAB_EVOLUTION"]
 MCP_TRANSPORTS=["DIRECT_MCP_TOKEN","SSH","BOTH"]
 MCP_SCOPES=["INFRASTRUCTURE_AND_DOMAIN_READONLY","FULL_GOVERNED_MAPPING"]
 DOMAIN_STRATEGIES=["DISCOVER_EXISTING_THEN_PROPOSE","CREATE_NEW_AFTER_APPROVAL","NO_DOMAIN_YET"]
+DOMAIN_INTENTS=["REUSE_EXISTING_DOMAIN","CREATE_SUBDOMAIN","CREATE_NEW_ROOT_DOMAIN","CREATE_CHILD_DOMAIN","NO_PUBLIC_DOMAIN","DECIDE_LATER"]
+DOMAIN_LABEL_CHOICES=["ekyc","kyc","identity","verify","OTHER_CUSTOM","DECIDE_LATER"]
+DOMAIN_ROOT_NAME_MODES=["CUSTOM_NAME","DISCOVER_AVAILABLE_NAMES","DECIDE_LATER"]
 RUNTIME_POLICIES=["READ_ONLY_DISCOVERY","EXPLICIT_APPROVAL_FOR_SCOPED_WRITE"]
 WORKFLOW_MODELS=["REGULATORY_AFRICAFUNDS_GOVERNED_FLOW","STANDARD_GOVERNED_FLOW"]
 
@@ -70,6 +73,17 @@ def validate(field,v):
     if field=="production_server_selection":
         if not isinstance(v,str) or not v.strip():return "production_server_selection requires a non-empty choice"
         if not re.fullmatch(r"[A-Za-z0-9_.:-]{1,128}",v):return "invalid production server selection"
+    if field=="domain_intent" and v not in DOMAIN_INTENTS:return "invalid domain intent"
+    if field=="domain_parent_selection":
+        if v!="DECIDE_LATER" and (not isinstance(v,str) or not re.fullmatch(r"[A-Za-z0-9.-]+\.[A-Za-z]{2,}",v)):return "invalid domain parent selection"
+    if field=="domain_existing_selection":
+        if v!="DECIDE_LATER" and (not isinstance(v,str) or not re.fullmatch(r"[A-Za-z0-9.-]+\.[A-Za-z]{2,}",v)):return "invalid existing domain selection"
+    if field=="domain_label_choice" and v not in DOMAIN_LABEL_CHOICES:return "invalid domain label choice"
+    if field=="domain_label_custom":
+        if not isinstance(v,str) or not re.fullmatch(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?",v):return "invalid custom domain label"
+    if field=="domain_root_name_mode" and v not in DOMAIN_ROOT_NAME_MODES:return "invalid root domain mode"
+    if field=="domain_root_name":
+        if not isinstance(v,str) or not re.fullmatch(r"[A-Za-z0-9.-]+\.[A-Za-z]{2,}",v):return "invalid root domain name"
     if field=="project_scope":
         if not isinstance(v,dict) or not isinstance(v.get("in_scope"),list) or not isinstance(v.get("out_of_scope"),list):return "project_scope requires in_scope/out_of_scope arrays"
     if field in {"external_systems","constraints"} and not isinstance(v,list):return "array required"
@@ -171,6 +185,113 @@ def observed_domains_for_server(s,server_id):
                 domains.add(domain.lower())
     return sorted(domains)[:100]
 
+def observed_parent_domains_for_server(s,server_id):
+    domains=observed_domains_for_server(s,server_id)
+    parents=[]
+    for domain in domains:
+        if any(domain.endswith("."+other) for other in domains if other!=domain):
+            continue
+        parents.append(domain)
+    return sorted(parents)
+
+def domain_operation_requirements(intent):
+    if intent=="REUSE_EXISTING_DOMAIN":
+        return {
+          "intent":"VERIFY_EXISTING_DOMAIN_BINDING",
+          "execution_intent":"PRODUCTION_ATTESTATION",
+          "required_capabilities":["DOMAIN_WEB_OBSERVATION","SERVER_RUNTIME_OBSERVATION"],
+          "required_authority":"READ_ONLY_DISCOVERY_AUTHORITY",
+          "prepared_only":True,
+          "execution_authority_granted":False
+        }
+    if intent in {"CREATE_SUBDOMAIN","CREATE_CHILD_DOMAIN"}:
+        return {
+          "intent":"CREATE_SUBDOMAIN",
+          "execution_intent":"CREATE_SUBDOMAIN",
+          "required_capabilities":["WEB_HOSTING_CHANGE","DOMAIN_DNS_CHANGE","TLS_CHANGE"],
+          "required_authority":"SCOPED_WEB_AND_DNS_WRITE",
+          "prepared_only":True,
+          "execution_authority_granted":False
+        }
+    if intent=="CREATE_NEW_ROOT_DOMAIN":
+        return {
+          "intent":"CREATE_NEW_DOMAIN_BINDING",
+          "execution_intent":"CREATE_NEW_DOMAIN_BINDING",
+          "required_capabilities":["DOMAIN_REGISTRATION_OR_EXTERNAL_PROVISIONING","DOMAIN_DNS_CHANGE","WEB_HOSTING_CHANGE","TLS_CHANGE"],
+          "required_authority":"SCOPED_WEB_AND_DNS_WRITE",
+          "prepared_only":True,
+          "execution_authority_granted":False
+        }
+    return {
+      "intent":"NO_DOMAIN_MUTATION",
+      "execution_intent":None,
+      "required_capabilities":[],
+      "required_authority":None,
+      "prepared_only":True,
+      "execution_authority_granted":False
+    }
+
+def derive_domain_binding(s):
+    a=s.get("answers") or {}
+    intent=a.get("domain_intent")
+    selected_server=a.get("production_server_selection")
+    if intent=="REUSE_EXISTING_DOMAIN":
+        domain=a.get("domain_existing_selection")
+        if domain:
+            return {"mode":"EXISTING","kind":"EXISTING_DOMAIN","domain":domain,"server":selected_server}
+    if intent in {"CREATE_SUBDOMAIN","CREATE_CHILD_DOMAIN"}:
+        parent=a.get("domain_parent_selection")
+        label=a.get("domain_label_choice")
+        if label=="OTHER_CUSTOM":
+            label=a.get("domain_label_custom")
+        if parent and label and label!="DECIDE_LATER":
+            return {
+              "mode":"CREATE_NEW",
+              "kind":"SUBDOMAIN" if intent=="CREATE_SUBDOMAIN" else "CHILD_DOMAIN",
+              "domain":f"{label}.{parent}",
+              "parent_domain":parent,
+              "label":label,
+              "server":selected_server
+            }
+    if intent=="CREATE_NEW_ROOT_DOMAIN":
+        mode=a.get("domain_root_name_mode")
+        if mode=="CUSTOM_NAME" and a.get("domain_root_name"):
+            return {
+              "mode":"CREATE_NEW",
+              "kind":"ROOT_DOMAIN",
+              "domain":a.get("domain_root_name"),
+              "server":selected_server
+            }
+        if mode in {"DISCOVER_AVAILABLE_NAMES","DECIDE_LATER"}:
+            return {
+              "mode":"UNRESOLVED",
+              "kind":"ROOT_DOMAIN",
+              "reason":mode,
+              "server":selected_server
+            }
+    if intent in {"NO_PUBLIC_DOMAIN","DECIDE_LATER"}:
+        return {
+          "mode":"UNRESOLVED",
+          "kind":intent,
+          "server":selected_server
+        }
+    return None
+
+def reconcile_domain_question_order(s):
+    s=copy.deepcopy(s)
+    a=s.get("answers") or {}
+    if (
+      s.get("mode")=="FIRST_AGENT_BOOTSTRAP"
+      and a.get("production_server_selection")
+      and "domain_binding" not in a
+      and "domain_intent" not in a
+      and ((s.get("next_request") or {}).get("field")=="domain_binding" or s.get("phase")=="Q_DOMAIN_BINDING")
+    ):
+        s["setup_package"]=None
+        s["hold_reason"]=None
+        return refresh(s)
+    return s
+
 def fresh_project_requires_production_server_choice(s):
     if s.get("mode")!="FIRST_AGENT_BOOTSTRAP":return False
     a=s.get("answers") or {}
@@ -217,7 +338,10 @@ def build_setup(s):
           } if a.get("mcp_transport")=="BOTH" else None,
           "discovery_scope":a.get("mcp_discovery_scope"),"domain_strategy":a.get("domain_strategy"),
           "production_server_selection":a.get("production_server_selection"),
-          "domain_binding":a.get("domain_binding"),"runtime_mutation_policy":a.get("runtime_mutation_policy"),
+          "domain_intent":a.get("domain_intent"),
+          "domain_binding":a.get("domain_binding"),
+          "domain_operation_requirements":domain_operation_requirements(a.get("domain_intent")),
+          "runtime_mutation_policy":a.get("runtime_mutation_policy"),
           "discovery_tools":["ping","get_project_context","list_domains_s1","list_domains_s2","get_write_tools_context"],
           "write_tools":"DISABLED_UNTIL_MCP_PROJECT_REGISTRATION_AND_EXPLICIT_AUTHORITY",
           "discovery_evidence":s.get("mcp_discovery")
@@ -301,21 +425,105 @@ def refresh(s):
               choices,
               extra={"observed_servers":observed,"decision_kind":"OWNER_PRODUCTION_TARGET","execution_authority_granted":False}
             );return s
-        if "domain_binding" not in s["answers"]:
-            selected=s["answers"].get("production_server_selection")
-            domains=observed_domains_for_server(s,selected) if selected in {"S1","S2"} else []
-            s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DOMAIN_BINDING"
+        selected=s["answers"].get("production_server_selection")
+        domains=observed_domains_for_server(s,selected) if selected in {"S1","S2"} else []
+        parents=observed_parent_domains_for_server(s,selected) if selected in {"S1","S2"} else []
+        if "domain_binding" not in s["answers"] and "domain_intent" not in s["answers"]:
+            s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DOMAIN_INTENT"
             s["next_request"]=q(
-              "Q_DOMAIN_BINDING","domain_binding",
-              "À partir du serveur de production choisi et de son inventaire, veux-tu joindre un domaine existant, préparer un nouveau domaine/sous-domaine, ou laisser ce point non résolu ?",
-              typ="object",
+              "Q_DOMAIN_INTENT","domain_intent",
+              "Quel type de binding de domaine veux-tu préparer sur le serveur de production choisi ?",
+              DOMAIN_INTENTS,
               extra={
                 "selected_server":selected,
                 "observed_domains":domains,
+                "observed_parent_domains":parents,
                 "mcp_discovery_reused":True,
+                "decision_kind":"OWNER_DOMAIN_INTENT",
                 "execution_authority_granted":False
               }
             );return s
+
+        domain_intent=s["answers"].get("domain_intent")
+        if "domain_binding" not in s["answers"] and domain_intent=="REUSE_EXISTING_DOMAIN" and "domain_existing_selection" not in s["answers"]:
+            choices=domains+["DECIDE_LATER"]
+            s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DOMAIN_EXISTING_SELECTION"
+            s["next_request"]=q(
+              "Q_DOMAIN_EXISTING_SELECTION","domain_existing_selection",
+              "Quel domaine déjà observé sur le serveur veux-tu rattacher au projet ?",
+              choices,
+              extra={"selected_server":selected,"execution_authority_granted":False}
+            );return s
+
+        if "domain_binding" not in s["answers"] and domain_intent in {"CREATE_SUBDOMAIN","CREATE_CHILD_DOMAIN"} and "domain_parent_selection" not in s["answers"]:
+            choices=parents+["DECIDE_LATER"]
+            s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DOMAIN_PARENT_SELECTION"
+            s["next_request"]=q(
+              "Q_DOMAIN_PARENT_SELECTION","domain_parent_selection",
+              "Sous quel domaine parent observé sur le serveur veux-tu préparer ce domaine ?",
+              choices,
+              extra={"selected_server":selected,"observed_parent_domains":parents,"execution_authority_granted":False}
+            );return s
+
+        if "domain_binding" not in s["answers"] and domain_intent in {"CREATE_SUBDOMAIN","CREATE_CHILD_DOMAIN"} and s["answers"].get("domain_parent_selection")!="DECIDE_LATER" and "domain_label_choice" not in s["answers"]:
+            s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DOMAIN_LABEL_CHOICE"
+            s["next_request"]=q(
+              "Q_DOMAIN_LABEL_CHOICE","domain_label_choice",
+              "Quel label veux-tu préparer pour ce domaine ?",
+              DOMAIN_LABEL_CHOICES,
+              extra={
+                "parent_domain":s["answers"].get("domain_parent_selection"),
+                "suggested_fqdns":[f"{label}.{s['answers'].get('domain_parent_selection')}" for label in DOMAIN_LABEL_CHOICES if label not in {"OTHER_CUSTOM","DECIDE_LATER"}],
+                "execution_authority_granted":False
+              }
+            );return s
+
+        if "domain_binding" not in s["answers"] and domain_intent in {"CREATE_SUBDOMAIN","CREATE_CHILD_DOMAIN"} and s["answers"].get("domain_label_choice")=="OTHER_CUSTOM" and "domain_label_custom" not in s["answers"]:
+            s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DOMAIN_LABEL_CUSTOM"
+            s["next_request"]=q(
+              "Q_DOMAIN_LABEL_CUSTOM","domain_label_custom",
+              "Quel label personnalisé veux-tu utiliser ?",
+              typ="string",
+              extra={"parent_domain":s["answers"].get("domain_parent_selection"),"execution_authority_granted":False}
+            );return s
+
+        if "domain_binding" not in s["answers"] and domain_intent=="CREATE_NEW_ROOT_DOMAIN" and "domain_root_name_mode" not in s["answers"]:
+            s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DOMAIN_ROOT_NAME_MODE"
+            s["next_request"]=q(
+              "Q_DOMAIN_ROOT_NAME_MODE","domain_root_name_mode",
+              "Comment veux-tu déterminer le nom du nouveau domaine racine ?",
+              DOMAIN_ROOT_NAME_MODES,
+              extra={"selected_server":selected,"execution_authority_granted":False}
+            );return s
+
+        if "domain_binding" not in s["answers"] and domain_intent=="CREATE_NEW_ROOT_DOMAIN" and s["answers"].get("domain_root_name_mode")=="CUSTOM_NAME" and "domain_root_name" not in s["answers"]:
+            s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DOMAIN_ROOT_NAME"
+            s["next_request"]=q(
+              "Q_DOMAIN_ROOT_NAME","domain_root_name",
+              "Quel nom de domaine racine veux-tu préparer ?",
+              typ="string",
+              extra={"selected_server":selected,"execution_authority_granted":False}
+            );return s
+
+        if "domain_binding" not in s["answers"]:
+            binding=derive_domain_binding(s)
+            if binding is None:
+                if (
+                  domain_intent in {"CREATE_SUBDOMAIN","CREATE_CHILD_DOMAIN"}
+                  and s["answers"].get("domain_parent_selection")=="DECIDE_LATER"
+                ):
+                    binding={"mode":"UNRESOLVED","kind":domain_intent,"reason":"PARENT_DECIDE_LATER","server":selected}
+                elif (
+                  domain_intent in {"CREATE_SUBDOMAIN","CREATE_CHILD_DOMAIN"}
+                  and s["answers"].get("domain_label_choice")=="DECIDE_LATER"
+                ):
+                    binding={"mode":"UNRESOLVED","kind":domain_intent,"reason":"LABEL_DECIDE_LATER","server":selected}
+                elif domain_intent=="REUSE_EXISTING_DOMAIN" and s["answers"].get("domain_existing_selection")=="DECIDE_LATER":
+                    binding={"mode":"UNRESOLVED","kind":"EXISTING_DOMAIN","reason":"DECIDE_LATER","server":selected}
+            if binding is not None:
+                s["answers"]["domain_binding"]=binding
+            else:
+                raise RuntimeError("DOMAIN_BINDING_DERIVATION_INCOMPLETE")
 
     if "workflow_model" not in s["answers"]:
         s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_WORKFLOW_MODEL";s["next_request"]=q("Q_WORKFLOW_MODEL","workflow_model","Quel flux de lecture et de travail veux-tu appliquer ?",WORKFLOW_MODELS);return s

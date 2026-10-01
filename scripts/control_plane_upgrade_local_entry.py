@@ -2,7 +2,7 @@
 from __future__ import annotations
 import argparse, base64, json, os, re, urllib.error, urllib.parse, urllib.request
 from pathlib import Path
-from local_governed_entry import reconcile_both_smart_routing, reconcile_legacy_discovery_authority, reconcile_setup_question_order
+from local_governed_entry import reconcile_both_smart_routing, reconcile_domain_question_order, reconcile_legacy_discovery_authority, reconcile_setup_question_order
 
 ROOT=Path(__file__).resolve().parents[1]
 CENTRAL="chainsolutions-wealthtech/Governed-Repository-Template"
@@ -85,6 +85,7 @@ def migrate_open_local_entry_heads(token,target,current_head,new_head):
             state=reconcile_legacy_discovery_authority(state)
             state=reconcile_both_smart_routing(state)
             state=reconcile_setup_question_order(state)
+            state=reconcile_domain_question_order(state)
             state["expected_head_sha"]=new_head
             state["revision"]=old_revision+1
             replacement=f"<!-- GOVERNED_LOCAL_ENTRY_STATE:{encode_local_issue_state(state)} -->"
