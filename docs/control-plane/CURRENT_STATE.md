@@ -733,7 +733,7 @@ GACR cross-cutting finalization does not execute the global programme. The canon
 
 ## GACR R4 — Automatic Continuity Attachment
 
-Cross-cutting status: `LIVE_AUTO_ATTACH_PROVEN / ATTESTATION_PENDING`.
+Cross-cutting status: `LIVE_AUTO_ATTACH_PROVEN / CI_PROVEN`.
 
 - Parent authority: `CP-AGENT-RELAY-001`.
 - Previous proven revision: `CP-AGENT-RELAY-001-R3`.
