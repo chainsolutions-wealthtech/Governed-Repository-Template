@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 DB_ROOT = ROOT / ".governance" / "control-plane-db"
 sys.path.insert(0, str(ROOT / "scripts"))
 from control_plane_server_inventory_facts import validate_inventory_state
+from control_plane_server_identity_secret_facts import validate_initial_or_persisted_state as validate_identity_secret_state
 
 def jdump(value):
     return json.dumps(value, sort_keys=True, separators=(",", ":"))
@@ -116,7 +117,23 @@ def insert_server_inventory(conn, inventory):
              jdump(fact["last_attempt"]), inventory["revision"]),
         )
 
-def validate(conn, expected_inventory_count=0):
+def insert_server_identity_secret_facts(conn, state):
+    validate_identity_secret_state(state)
+    for fact in state["facts"]:
+        conn.execute(
+            "INSERT INTO server_identity_secret_facts("
+            "fact_id,server_id,fact_kind,subject_id,status,metadata_json,freshness_class,"
+            "observed_at,known_from_json,last_attempt_json,source_revision"
+            ") VALUES(?,?,?,?,?,?,?,?,?,?,?)",
+            (
+                fact["fact_id"], fact["server_id"], fact["fact_kind"], fact["subject_id"],
+                fact["status"], jdump(fact["metadata"]), fact["freshness_class"],
+                fact["observed_at"], jdump(fact["known_from"]), jdump(fact["last_attempt"]),
+                state["revision"],
+            ),
+        )
+
+def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0):
     conn.execute("PRAGMA foreign_key_check")
     fk = conn.fetchall() if False else []
     if conn.execute("PRAGMA foreign_key_check").fetchall():
@@ -243,30 +260,36 @@ def validate(conn, expected_inventory_count=0):
     facts_count = conn.execute("SELECT COUNT(*) FROM server_inventory_facts").fetchone()[0]
     if facts_count != expected_inventory_count:
         raise SystemExit("CONTROL_PLANE_DB_FAILED: server inventory projection count mismatch")
+    identity_secret_count = conn.execute("SELECT COUNT(*) FROM server_identity_secret_facts").fetchone()[0]
+    if identity_secret_count != expected_identity_secret_count:
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: server identity-secret projection count mismatch")
     print("CONTROL_PLANE_DB_VALIDATION_PASS")
     print("cases=4")
     print(f"questions={conn.execute('SELECT COUNT(*) FROM questions').fetchone()[0]}")
     print(f"activities={conn.execute('SELECT COUNT(*) FROM activities').fetchone()[0]}")
     print(f"current_phase={active[0][0]}")
     print(f"server_inventory_slots={facts_count}")
+    print(f"server_identity_secret_facts={identity_secret_count}")
 
-def build(path: Path, inventory_path: Path | None = None):
+def build(path: Path, inventory_path: Path | None = None, identity_secret_path: Path | None = None):
     catalog = json.loads((DB_ROOT/"catalog.json").read_text(encoding="utf-8"))
     seed = json.loads((DB_ROOT/"runtime-seed.json").read_text(encoding="utf-8"))
     replay = json.loads((ROOT/".governance"/"control-plane-state"/"case1-replay.json").read_text(encoding="utf-8"))
     inventory = json.loads((inventory_path or ROOT/".governance/control-plane-state/server-inventory-facts.json").read_text(encoding="utf-8"))
+    identity_secret = json.loads((identity_secret_path or ROOT/".governance/control-plane-state/server-identity-secret-facts.json").read_text(encoding="utf-8"))
     conn = sqlite3.connect(path)
     try:
         for migration in sorted(DB_ROOT.glob("[0-9][0-9][0-9]_*.sql")):
             conn.executescript(migration.read_text(encoding="utf-8"))
-        conn.execute("INSERT INTO schema_meta(key,value) VALUES('schema_version','1.3.0')")
+        conn.execute("INSERT INTO schema_meta(key,value) VALUES('schema_version','1.4.0')")
         insert_case_data(conn,catalog)
         insert_replay(conn,replay)
         insert_questions_activities(conn,catalog)
         insert_runtime(conn,seed)
         insert_server_inventory(conn,inventory)
+        insert_server_identity_secret_facts(conn,identity_secret)
         conn.commit()
-        validate(conn, len(inventory["facts"]))
+        validate(conn, len(inventory["facts"]), len(identity_secret["facts"]))
     finally:
         conn.close()
 
