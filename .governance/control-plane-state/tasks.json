@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 45,
+  "revision": 46,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -43,7 +43,7 @@
       "depends_on": [
         "P12-S4"
       ],
-      "next_action": "C1-13-I-B-D",
+      "next_action": "C1-13-I-B-E",
       "evidence": [
         "C1-13-A inserted for generic MCP endpoint recovery defect discovered on Ekyc"
       ]
@@ -416,7 +416,7 @@
     },
     {
       "id": "C1-13-I-B-D",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-13-I-B-C"
       ],
@@ -424,13 +424,38 @@
         "C1-13-I-B",
         "P12-S5"
       ],
-      "next_action": "SELECT_EKYC_DOMAIN_INTENT",
+      "next_action": null,
       "gate_code": "OWNER_DOMAIN_INTENT_DECISION_REQUIRED",
       "evidence": [
         "Ekyc HEAD 5681e6f0815275797514ef62359ea258eb93b705",
         "Ekyc#1 revision 42 Q_DOMAIN_INTENT",
         "production_server_selection=S1",
         "S1 observed parent domains reused without discovery replay",
+        "Choice grants no execution authority",
+        "Owner selected CREATE_NEW_ROOT_DOMAIN through governed command; Ekyc#1 advanced to revision 43 Q_DOMAIN_ROOT_NAME_MODE",
+        "Owner selected DISCOVER_AVAILABLE_NAMES; Ekyc#1 advanced to revision 44 Q_WORKFLOW_MODEL",
+        "No domain registration, DNS, Plesk/vhost, TLS or S1 mutation occurred",
+        "Generic existing-host HTTP path support added in Template PR #92 / v2.8.27 and merged at 8143db05b8ed412bdbc3d710f4a1fdf49f652161",
+        "Governed Ekyc v2.8.27 upgrade advanced HEAD to 4bf80309313f3d34f74ffca183bd540583d2e87f and local entry revision 45",
+        "Ekyc Governance CI 36880223661 PASS; Auto Bootstrap 36880223820 PASS; Governed Local Entry 36880228405 PASS"
+      ]
+    },
+    {
+      "id": "C1-13-I-B-E",
+      "task": "Select Ekyc governed workflow model",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "C1-13-I-B-D"
+      ],
+      "next_action": "SELECT_EKYC_WORKFLOW_MODEL",
+      "gate_code": "OWNER_WORKFLOW_MODEL_DECISION_REQUIRED",
+      "evidence": [
+        "Ekyc HEAD 4bf80309313f3d34f74ffca183bd540583d2e87f",
+        "Ekyc#1 revision 45 Q_WORKFLOW_MODEL",
+        "production_server_selection=S1 preserved",
+        "domain_intent=CREATE_NEW_ROOT_DOMAIN preserved",
+        "domain_root_name_mode=DISCOVER_AVAILABLE_NAMES preserved",
+        "Allowed choices: REGULATORY_AFRICAFUNDS_GOVERNED_FLOW or STANDARD_GOVERNED_FLOW",
         "Choice grants no execution authority"
       ]
     },
@@ -444,13 +469,15 @@
       "blocks": [
         "P12-S5"
       ],
-      "next_action": "WAIT_FOR_DOMAIN_INTENT_THEN_CONTINUE_CONDITIONAL_DOMAIN_CHAIN",
-      "gate_code": "OWNER_DOMAIN_INTENT_DECISION_REQUIRED",
+      "next_action": "WAIT_FOR_WORKFLOW_MODEL_THEN_CONTINUE_SETUP_CHAIN",
+      "gate_code": "OWNER_WORKFLOW_MODEL_DECISION_REQUIRED",
       "evidence": [
         "Ekyc HEAD 9ace9f9882a06df69c9466cec633bd191f7cad12",
         "Ekyc#1 revision 39 Q_DOMAIN_BINDING",
         "Authorized discovery contains no Ekyc/KYC domain",
-        "MCP scoped-project registry contains no Ekyc project entry"
+        "MCP scoped-project registry contains no Ekyc project entry",
+        "Domain intent chain completed through CREATE_NEW_ROOT_DOMAIN / DISCOVER_AVAILABLE_NAMES",
+        "Ekyc#1 revision 45 is Q_WORKFLOW_MODEL"
       ]
     },
     {
@@ -1141,7 +1168,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-13-I-B-D",
+  "unique_executable_item": "C1-13-I-B-E",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",

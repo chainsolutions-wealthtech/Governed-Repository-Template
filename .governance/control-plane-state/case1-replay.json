@@ -7,7 +7,7 @@
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
   "current_phase": "C1-13",
   "current_status": "IN_PROGRESS",
-  "unique_next_action": "C1_13_I_B_D_SELECT_EKYC_DOMAIN_INTENT",
+  "unique_next_action": "C1_13_I_B_E_SELECT_EKYC_WORKFLOW_MODEL",
   "phases": [
     {
       "id": "C1-00",
@@ -158,13 +158,13 @@
       "depends_on": [
         "C1-12"
       ],
-      "next_action": "SELECT_EKYC_DOMAIN_INTENT",
+      "next_action": "SELECT_EKYC_WORKFLOW_MODEL",
       "live_state": {
         "repository": "Patricked-code/Ekyc",
         "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
         "local_entry_issue": "Patricked-code/Ekyc#1",
-        "expected_head": "5681e6f0815275797514ef62359ea258eb93b705",
-        "status": "WAITING_FOR_DOMAIN_INTENT_DECISION",
+        "expected_head": "4bf80309313f3d34f74ffca183bd540583d2e87f",
+        "status": "WAITING_FOR_WORKFLOW_MODEL_DECISION",
         "completed_corrective_tasks": [
           "C1-13-A",
           "C1-13-B",
@@ -299,22 +299,44 @@
           "target_local_entry": 36875114901
         },
         "domain_intent_gate": {
-          "phase": "Q_DOMAIN_INTENT",
-          "owner_decision_required": true,
-          "choices": [
-            "REUSE_EXISTING_DOMAIN",
-            "CREATE_SUBDOMAIN",
-            "CREATE_NEW_ROOT_DOMAIN",
-            "CREATE_CHILD_DOMAIN",
-            "NO_PUBLIC_DOMAIN",
+          "phase": "DONE",
+          "owner_decision_required": false,
+          "selected_intent": "CREATE_NEW_ROOT_DOMAIN",
+          "root_name_mode": "DISCOVER_AVAILABLE_NAMES",
+          "selected_server": "S1",
+          "execution_authority_granted": false
+        },
+        "active_dependency_task": "C1-13-I-B-E",
+        "existing_host_path_binding_extension": {
+          "status": "DONE",
+          "template_pr": 92,
+          "template_version": "2.8.27",
+          "template_merge": "8143db05b8ed412bdbc3d710f4a1fdf49f652161",
+          "post_merge_ci": 36880059834,
+          "dns_host_and_http_path_separated": true,
+          "supported_mount_modes": [
+            "HOST_ROOT",
+            "CREATE_PATH",
+            "REUSE_EXISTING_PATH",
             "DECIDE_LATER"
           ],
-          "selected_server": "S1",
-          "observed_parent_domains": [
-            "berebytours.com",
-            "niakara.com",
-            "wealthtechinnovation.com",
-            "wealthtechinnovations.com"
+          "execution_authority_granted": false
+        },
+        "v2827_target_upgrade": {
+          "status": "PASS",
+          "upgrade_run": 36880153919,
+          "target_head": "4bf80309313f3d34f74ffca183bd540583d2e87f",
+          "local_entry_revision": 45,
+          "target_ci": 36880223661,
+          "target_auto_bootstrap": 36880223820,
+          "target_local_entry": 36880228405
+        },
+        "workflow_model_gate": {
+          "phase": "Q_WORKFLOW_MODEL",
+          "owner_decision_required": true,
+          "choices": [
+            "REGULATORY_AFRICAFUNDS_GOVERNED_FLOW",
+            "STANDARD_GOVERNED_FLOW"
           ],
           "execution_authority_granted": false
         }

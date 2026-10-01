@@ -557,3 +557,14 @@ No target-specific Ekyc patch is permitted.
 The v2.8.26 governed upgrade migrated Ekyc#1 from the legacy coarse domain object gate to the progressive domain-intent gate while preserving the owner's S1 production-server choice.
 
 All source and target validation runs passed. Ekyc is now revision 42 at `Q_DOMAIN_INTENT`. The next owner input is only the domain intent; later questions are derived from that choice and the already-known S1 inventory.
+
+## 2026-10-01 — Existing-host path capability and Ekyc workflow-model gate
+
+The owner selected `CREATE_NEW_ROOT_DOMAIN`, then `DISCOVER_AVAILABLE_NAMES` for Ekyc. These answers advanced the local entry to `Q_WORKFLOW_MODEL` without registering a domain or mutating S1/DNS/Plesk/TLS.
+
+During the domain discussion the owner required the generic platform to also support an application mounted under an HTTP path of an already existing domain or subdomain. Template PR #92 implemented this additively: DNS host binding and HTTP deployment path are now separate facts, with `HOST_ROOT`, `CREATE_PATH`, `REUSE_EXISTING_PATH` and `DECIDE_LATER` mount modes. Path creation prepares reverse-proxy capability/authority requirements but never grants execution authority from the questionnaire answer.
+
+PR #92 merged at `8143db05b8ed412bdbc3d710f4a1fdf49f652161`; post-merge Governance CI `36880059834` passed. The governed v2.8.27 upgrade run `36880153919` advanced Ekyc to `4bf80309313f3d34f74ffca183bd540583d2e87f` and migrated Ekyc#1 revision 44 → 45 while preserving all business/setup answers. Target Governance CI `36880223661`, Auto Bootstrap `36880223820`, and Governed Local Entry `36880228405` all passed.
+
+The unique next owner decision is now `C1_13_I_B_E_SELECT_EKYC_WORKFLOW_MODEL`. P12-S6 and GMC remain downstream.
+
