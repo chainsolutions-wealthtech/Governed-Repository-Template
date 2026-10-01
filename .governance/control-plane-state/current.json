@@ -2,23 +2,23 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 38,
+  "source_state_revision": 39,
   "template_version": "2.8.24",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
   "program_issue": 12,
-  "current_checkpoint": "C1-13_EKYC_SERVER_BEFORE_DOMAIN_GENERIC_CORRECTION",
+  "current_checkpoint": "C1-13_EKYC_PRODUCTION_SERVER_SELECTION_READY",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "unique_next_action": "C1_13_I_B_A_FIX_FRESH_PROJECT_SERVER_BEFORE_DOMAIN_ORDER",
+  "unique_next_action": "C1_13_I_B_B_SELECT_EKYC_PRODUCTION_SERVER",
   "blockers": [
-    "GENERIC_FRESH_PROJECT_QUESTION_ORDER_DEFECT"
+    "OWNER_PRODUCTION_SERVER_DECISION_REQUIRED"
   ],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
-  "freshness": "SOURCE_STATE_RECONCILED_WITH_OWNER_SERVER_BEFORE_DOMAIN_REQUIREMENT",
+  "freshness": "SOURCE_STATE_RECONCILED_WITH_EKYC_V2825_SERVER_SELECTION_GATE",
   "last_ci_run": 36844997332,
   "last_ci_result": "PASS",
   "release_subject_head": "8b3a1ac4abf250820558ba873110581f8607a2b3",
-  "last_verified_main_head": "c9266b8f9acb6eff9084f4a989397bae3d997762",
+  "last_verified_main_head": "c41afa4fdeffd5f12d6243b95f5d04083ca514e4",
   "canonical_memory_database": {
     "schema_version": "1.0.0",
     "status": "ACTIVE",
@@ -304,8 +304,8 @@
     "repository": "Patricked-code/Ekyc",
     "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
     "local_entry_issue": "Patricked-code/Ekyc#1",
-    "expected_head": "9ace9f9882a06df69c9466cec633bd191f7cad12",
-    "state": "FROZEN_GENERIC_FRAMEWORK_QUESTION_ORDER_DEFECT",
+    "expected_head": "b67a4ec58d837a66f3c3dedb02caadaf044912d5",
+    "state": "WAITING_FOR_PRODUCTION_SERVER_DECISION",
     "failure_run": 36294979599,
     "failure": "HTTP 404 during MCP discovery with uncorrectable endpoint state",
     "corrective_task": "C1-13-A",
@@ -320,11 +320,11 @@
     "first_governed_upgrade_commit": "2ece8cff98258f7c40cf7b7383ceb5c026db9639",
     "first_upgrade_ci_run": 36295714554,
     "first_upgrade_ci_result": "FAIL",
-    "active_corrective_task": "C1-13-I-B-A",
+    "active_corrective_task": null,
     "active_corrective_pr": 53,
     "active_red_ci_run": 36620804501,
     "active_green_ci_run": 36620877757,
-    "active_defect": "FRESH_PROJECT_DOMAIN_BEFORE_SERVER_SELECTION",
+    "active_defect": null,
     "completed_corrective_tasks": [
       "C1-13-A",
       "C1-13-B",
@@ -347,7 +347,7 @@
     "mcp_retry_run": 36621624763,
     "mcp_retry_failure": "SSL_CERTIFICATE_VERIFY_FAILED_CERTIFICATE_EXPIRED",
     "mcp_intake": "Patricked-code/MCP#201",
-    "active_dependency_task": "C1-13-I-B-A",
+    "active_dependency_task": "C1-13-I-B-B",
     "preserved_external_dependency": {
       "task": "C1-13-E",
       "intake": "Patricked-code/MCP#201",
@@ -494,6 +494,35 @@
       ],
       "discovery_replay_required": false,
       "server_choice_grants_execution_authority": false
+    },
+    "production_server_gate": {
+      "status": "WAITING_FOR_OWNER_CHOICE",
+      "local_entry_revision": 40,
+      "phase": "Q_PRODUCTION_SERVER_SELECTION",
+      "observed_choices": [
+        "S1",
+        "S2"
+      ],
+      "all_choices": [
+        "S1",
+        "S2",
+        "PLAN_NEW_SERVER",
+        "DECIDE_LATER"
+      ],
+      "execution_authority_granted": false,
+      "discovery_replay_required": false
+    },
+    "server_before_domain_correction": {
+      "status": "PASS",
+      "template_pr": 88,
+      "template_merge": "c41afa4fdeffd5f12d6243b95f5d04083ca514e4",
+      "premerge_ci": 36869361015,
+      "postmerge_ci": 36869476595,
+      "governed_upgrade_run": 36869574238,
+      "ekyc_head": "b67a4ec58d837a66f3c3dedb02caadaf044912d5",
+      "target_ci": 36869667945,
+      "target_auto_bootstrap": 36869667894,
+      "target_local_entry_run": 36869671044
     }
   },
   "mcp_capability_snapshot_program": {
