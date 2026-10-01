@@ -1,43 +1,49 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_13_I_B_C_SPLIT_SERVER_SCOPED_DOMAIN_CHOICES
-STATE = GENERIC_FRAMEWORK_CORRECTION
+NEXT_ACTION = C1_13_I_B_D_SELECT_EKYC_DOMAIN_INTENT
+STATE = WAITING_FOR_OWNER_DOMAIN_INTENT
 PARENT = P12_S5_SECOND_FRESH_REPOSITORY_E2E
 ```
 
-## Owner decision captured
+## C1-13-I-B-C complete
 
-The owner selected `S1` as the production-server target for Ekyc.
+The progressive server-scoped domain question chain is implemented and proven.
 
-Governed evidence:
+- Template PR #90 merged at `1aed2d8f1646ca4ebc6208a6c692ec8eac7d20a4`.
+- PR #90 Governance CI `36874806040`: PASS.
+- Post-merge Governance CI `36874904197`: PASS.
+- Governed Ekyc upgrade `36875001892`: PASS.
+- Ekyc upgraded to `5681e6f0815275797514ef62359ea258eb93b705` / Template v2.8.26.
+- Ekyc Governance CI `36875104777`: PASS.
+- Ekyc Governance Auto Bootstrap `36875104910`: PASS.
+- Ekyc Governed Local Entry `36875114901`: PASS.
 
-- source command: central issue #49 comment `5933064109`;
-- Control Plane run `36873298229`: governed command dispatch accepted;
-- Ekyc local-entry run `36873334194`: PASS;
-- Ekyc HEAD remained `b67a4ec58d837a66f3c3dedb02caadaf044912d5`;
-- Ekyc#1 advanced revision `40 → 41`;
-- `production_server_selection = S1`;
-- no server/domain mutation occurred.
-
-## Generic correction now required
-
-The legacy next question is still one coarse `domain_binding` object. The owner requires a progressive choice chain.
-
-Target generic flow:
+## Ekyc exact current state
 
 ```text
-S1 selected
-→ choose DOMAIN_INTENT
-→ reuse S1 observed domains
-→ choose existing domain or parent when applicable
-→ choose label/name
-→ derive structured domain_binding
-→ derive future operation/capability requirements
-→ no execution authority
+repository = Patricked-code/Ekyc
+HEAD = 5681e6f0815275797514ef62359ea258eb93b705
+issue = Ekyc#1
+revision = 42
+status = WAITING_FOR_SETUP_ANSWER
+phase = Q_DOMAIN_INTENT
+production_server_selection = S1
+execution authority = false
 ```
 
-Domain-intent choices:
+The authorized S1 domain inventory is reused; no MCP discovery replay occurred.
+
+Observed S1 parent-domain candidates:
+
+- `berebytours.com`
+- `niakara.com`
+- `wealthtechinnovation.com`
+- `wealthtechinnovations.com`
+
+## Owner decision required
+
+Choose the domain intent:
 
 - `REUSE_EXISTING_DOMAIN`
 - `CREATE_SUBDOMAIN`
@@ -46,11 +52,12 @@ Domain-intent choices:
 - `NO_PUBLIC_DOMAIN`
 - `DECIDE_LATER`
 
+The answer only enriches the project model and determines the next choice/capability preparation. It does not mutate S1, DNS, Plesk/vhosts or TLS.
+
 ## Safety boundary
 
-- Do not patch Ekyc directly.
 - Do not rerun MCP discovery.
-- Do not mutate S1 from the S1 choice.
-- Preserve already answered legacy domain bindings in other repositories.
-- Domain choices prepare work only; they do not authorize DNS/vhost/TLS/server writes.
+- Do not patch Ekyc directly.
+- Do not mutate S1 from a domain-intent answer alone.
+- Reuse the current S1 inventory for subsequent choices.
 - P12-S6 and GMC remain downstream of P12-S5.
