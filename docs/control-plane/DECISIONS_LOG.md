@@ -200,3 +200,16 @@ Append-only durable decisions for the source/control-plane repository.
 - Absence of an equivalent S2 secret-scan surface is represented as `NOT_EXPOSED` / `UNKNOWN_DISCOVERABLE`; it is never inferred away.
 - The mapper classifies each credential mechanism as runtime-mintable, capability-available, modelled-capability-gap or model-missing.
 - This knowledge does not grant execution authority.
+
+### CPD-044 — Safe server identity-secret metadata is persisted as canonical facts
+
+- Date: 2026-10-01.
+- Validated KBI-04K metadata may be persisted as canonical Control Plane facts only after source-model and MCP-snapshot reconciliation.
+- Mechanism classifications are recomputed from `CP-IDENTITY-SECRET-001` and `CP-MCP-CAP-001`; incoming observations cannot invent a credential mechanism or capability.
+- Persisted probe facts contain only safe status/shape/digest metadata. Raw MCP responses, secret values, passwords, bearer tokens, private keys and server connection coordinates remain forbidden.
+- Persistence is revision-guarded and atomic; exact replay is idempotent, older observations and same-timestamp contradictions fail closed.
+- Facts carry provenance and freshness classes:
+  - credential mechanism classification → `EVENT_AND_NEED_BASED`;
+  - read-only server probes → `LIVE_OR_BOUNDED_TTL`.
+- The same validated facts are projected into canonical relational memory through `server_identity_secret_facts`.
+- Persistence grants no execution authority.
