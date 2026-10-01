@@ -27,7 +27,7 @@ Objective: V2.7.0 Self-Governed Control Plane.
 
 ## Unique executable task
 
-`C1-13-I-B-E_SELECT_EKYC_WORKFLOW_MODEL`
+`C1-13-I-B-F_APPROVE_EKYC_SETUP`
 
 `P12-S5` remains the active parent. No later task may become executable before this owner-decision gate completes.
 
@@ -822,10 +822,21 @@ These slices do not change the CASE 1 unique action.
 
 ### C1-13-I-B-E — Ekyc workflow model
 
-- Status: `IN_PROGRESS`.
+- Status: `DONE`.
 - Depends on: `C1-13-I-B-D`.
-- Gate: `OWNER_WORKFLOW_MODEL_DECISION_REQUIRED`.
-- Ekyc#1 revision 45 / `Q_WORKFLOW_MODEL`.
-- Choices: `REGULATORY_AFRICAFUNDS_GOVERNED_FLOW | STANDARD_GOVERNED_FLOW`.
+- Owner selected `STANDARD_GOVERNED_FLOW`.
+- Central comment `5936121301`; Control Plane run `36894608509` PASS.
+- Ekyc Governed Local Entry `36894651525` PASS.
+- Ekyc#1 revision 46 / `SETUP_APPROVAL`.
 - Existing answers preserved: `S1`, `CREATE_NEW_ROOT_DOMAIN`, `DISCOVER_AVAILABLE_NAMES`.
-- Choice grants no execution authority.
+- Choice grants no infrastructure/runtime execution authority.
+
+### C1-13-I-B-F — Ekyc setup approval
+
+- Status: `IN_PROGRESS`.
+- Depends on: `C1-13-I-B-E`.
+- Gate: `OWNER_SETUP_APPROVAL_REQUIRED`.
+- Ekyc#1 revision 46 / `SETUP_APPROVAL`.
+- Field: `setup_approved` (boolean).
+- Approval concerns repository setup + governed rights matrix materialization.
+- Domain/server operations remain `prepared_only`; no S1/DNS/Plesk/TLS execution authority is granted by this gate.
