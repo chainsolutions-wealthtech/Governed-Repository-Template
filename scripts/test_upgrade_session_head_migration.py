@@ -113,6 +113,7 @@ def main() -> None:
     assert "reconcile_both_smart_routing" in source
     assert "reconcile_setup_question_order" in source
     assert "reconcile_domain_question_order" in source
+    assert "reconcile_existing_host_path_question_order" in source
 
     # The distributed local-entry self-test must not require source-only
     # control-plane files that are intentionally absent from client repositories.
