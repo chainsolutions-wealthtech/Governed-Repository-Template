@@ -120,6 +120,9 @@ def main():
       ".governance/connection-intent-policy.json",".governance/entry-action-policy.json",
       "docs/CONNECTION_INTENT.md","docs/ENTRY_ACTION_ROUTER.md",
       ".governance/mcp-connection-policy.json","schemas/mcp-binding.schema.json","docs/MCP_REPOSITORY_BINDING.md",
+      "docs/MULTI_AGENT_COORDINATION.md","docs/GACR_AGENT_CONTINUITY_RELAY.md",
+      ".governance/agent-relay/config.json","schemas/gacr-state.schema.json","schemas/session.schema.json","schemas/work-claim.schema.json",
+      "scripts/governed_agent_continuity_relay.py","scripts/gacr_workflow_bridge.py","scripts/test_governed_agent_continuity_relay.py",".github/workflows/governed-agent-continuity-relay.yml",
       "scripts/mcp_repository_discovery.py","scripts/control_plane_local_command.py","scripts/control_plane_local_start.py","scripts/control_plane_provision_mcp_credential.py","scripts/test_mcp_credential_provisioning.py","scripts/test_mcp_both_ssh_fallback.py","scripts/control_plane_upgrade_local_entry.py","scripts/test_upgrade_session_head_migration.py"
     ]
     updates={p:(ROOT/p).read_text(encoding="utf-8") for p in static_paths}
@@ -156,6 +159,11 @@ def main():
     workflow_model=json.loads((ROOT/".governance/workflow-model.json").read_text(encoding="utf-8"))
     workflow_model["repository"]=target
     updates[".governance/workflow-model.json"]=json.dumps(workflow_model,ensure_ascii=False,indent=2)+"\n"
+
+    existing_gacr_takeovers=target_text(token,target,".governance/agent-relay/takeovers.json")
+    if existing_gacr_takeovers is None:
+        existing_gacr_takeovers=(ROOT/".governance/agent-relay/takeovers.json").read_text(encoding="utf-8")
+    updates[".governance/agent-relay/takeovers.json"]=existing_gacr_takeovers
 
     version=current_template_version()
 
