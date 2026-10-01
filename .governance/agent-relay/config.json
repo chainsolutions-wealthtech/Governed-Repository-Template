@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.2.0",
+  "schema_version": "1.3.0",
   "process_name": "GACR",
   "process_title": "Governed Agent Continuity Relay",
   "authority_id": "CP-AGENT-RELAY-001",
@@ -76,7 +76,7 @@
     "outbound_browser_wakeup_implemented": false,
     "note": "Repository-side GACR can prepare and target wake events. A provider/client bridge is still required to wake a browser conversation."
   },
-  "revision_authority_id": "CP-AGENT-RELAY-001-R3",
+  "revision_authority_id": "CP-AGENT-RELAY-001-R4",
   "forensics": {
     "enabled": true,
     "projection_only": true,
@@ -93,5 +93,22 @@
     "in_flight_action_replay": "FORBIDDEN_WITHOUT_RECONCILIATION",
     "independent_lock_store": false,
     "lock_model": "CLAIMS_PLUS_COLLISION_DOMAINS"
+  },
+  "auto_attachment": {
+    "enabled": true,
+    "required_for_governed_arrival": true,
+    "provider_conversation_ref_required": false,
+    "source_priority": [
+      "EXPLICIT_CLIENT",
+      "FRESH_CONVERSATION_CHRONICLE",
+      "GITHUB_ACTIONS"
+    ],
+    "chronicle_freshness_seconds": 3600,
+    "late_provider_binding_reuses_connection_session": true,
+    "duplicate_session_on_late_provider_binding": false,
+    "unobservable_provider_reference_state": "UNAVAILABLE",
+    "main_push_auto_attach": true,
+    "github_actions_bot_state_push_reentry": false,
+    "note": "A governed arrival attaches with the strongest observable anchor. Missing provider conversation metadata never blocks attachment and may enrich the same session later."
   }
 }

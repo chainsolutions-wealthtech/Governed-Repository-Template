@@ -921,3 +921,21 @@ This is additive cross-cutting hardening under `CP-AGENT-RELAY-001-R3`; it is no
 Candidate surface: safe action/tool trace metadata in Beacon; deterministic interruption report; observed-only interruption cause; last started/completed/in-flight action reconstruction; last tool-call observation; last observed/written HEAD separation; claims/collision-domain resume context; exact-head-required deterministic resume point; source/client state separation; client-upgrade preservation; unit/E2E regression coverage.
 
 Global programme priority remains `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+
+### GACR R4 — automatic continuity attachment
+
+Status: **IMPLEMENTED_ON_GOVERNED_BRANCH / CI_PENDING**.
+
+Additive GACR contribution under `CP-AGENT-RELAY-001-R4` / `CPD-053`:
+
+- automatic attach on observable governed arrival;
+- source priority: explicit client metadata → fresh Conversation Chronicle → GitHub execution identity;
+- session creation without provider conversation reference;
+- late provider enrichment without session duplication;
+- provider conflict / ambiguous connection fail-closed;
+- AUTO_ATTACH Beacon + Correlator path;
+- source-main push activation with automation-loop guard;
+- governed-client distribution through the existing upgrader;
+- dedicated E2E regression test.
+
+This does not supersede or execute the global programme task `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.

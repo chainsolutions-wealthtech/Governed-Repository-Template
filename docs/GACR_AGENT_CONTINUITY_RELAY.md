@@ -187,3 +187,31 @@ python3 scripts/gacr_agent_telemetry.py forensics --session-id <session>
 The scheduled WATCH scan refreshes forensic projections before Dispatcher evaluates takeover delivery.
 
 Rich action/interruption trace metadata is intended for the CLI, `repository_dispatch`, or a client/orchestrator Bridge. The manual `workflow_dispatch` form remains bounded and is not expanded with every telemetry field.
+
+## Automatic Continuity Attachment
+
+Revision authority: `CP-AGENT-RELAY-001-R4`.
+
+R4 makes GACR attachment the default governed-arrival behavior instead of requiring a human or agent to remember to register manually.
+
+```text
+GOVERNED AGENT / CONVERSATION ARRIVAL
+→ strongest observable attachment anchor
+   1. explicit client/provider metadata
+   2. fresh active Conversation Chronicle
+   3. GitHub Actions execution identity
+→ CREATE or RESUME GACR session
+→ AUTO_ATTACH Beacon
+→ Correlator
+→ WATCH / FORENSICS / DISPATCHER
+```
+
+A provider conversation ID or URL is not required to attach. If unavailable, the session is created from the strongest safe connection anchor and keeps provider conversation metadata unavailable. When an explicit provider reference later becomes observable, R4 enriches the same connection-bound session instead of creating a duplicate.
+
+For the Template source, an active source-only Conversation Chronicle may provide the stable pair `chronicle_id + current_session`, projected as `connection_ref = chronicle:<chronicle_id>:<session>`.
+
+The Chronicle remains conversation continuity memory, not business authority. GACR remains the liveness/relay engine. Neither replaces the other.
+
+On source `main`, normal repository activity invokes auto-attachment. GACR state-persistence pushes performed by the repository automation are excluded from re-entry so state commits cannot create an attachment loop.
+
+Missing metadata is explicit `UNAVAILABLE`; it is never invented. Auto-attachment does not grant mutation authority and does not change claim, collision-domain or exact-HEAD gates.

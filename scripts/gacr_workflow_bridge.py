@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 CORE=ROOT/'scripts'/'governed_agent_continuity_relay.py'
 TELEMETRY=ROOT/'scripts'/'gacr_agent_telemetry.py'
+AUTO_ATTACH=ROOT/'scripts'/'gacr_auto_attach.py'
 
 def add(args:list[str], flag:str, value):
     if value is None or value=='':
@@ -27,6 +28,9 @@ def main():
     command=None
     if event_name=='schedule':
         command='scan'
+    elif event_name=='push':
+        command='auto-attach'
+        payload={}
     elif event_name=='repository_dispatch':
         action=str(event.get('action') or '')
         command=action.removeprefix('gacr_')
@@ -39,15 +43,45 @@ def main():
 
     core_commands={'register','heartbeat','scan','status','takeover-plan','takeover-accept'}
     telemetry_commands={'beacon','correlate','dispatch','context','forensics','telemetry-status'}
-    if command not in core_commands | telemetry_commands:
+    auto_attach_commands={'auto-attach'}
+    if command not in core_commands | telemetry_commands | auto_attach_commands:
         raise SystemExit(f'GACR_WORKFLOW_BRIDGE_FAILED: unsupported command {command}')
 
     if command in telemetry_commands:
         telemetry_command='status' if command=='telemetry-status' else command
         args=[sys.executable,str(TELEMETRY),telemetry_command]
+    elif command in auto_attach_commands:
+        args=[sys.executable,str(AUTO_ATTACH)]
     else:
         args=[sys.executable,str(CORE),command]
-    if command=='register':
+    if command=='auto-attach':
+        add(args,'--agent',payload.get('agent'))
+        add(args,'--provider',payload.get('provider'))
+        add(args,'--provider-ref',payload.get('provider_ref'))
+        add(args,'--provider-url',payload.get('provider_url'))
+        add(args,'--connection-ref',payload.get('connection_ref'))
+        add(args,'--client-instance-id',payload.get('client_instance_id'))
+        add(args,'--bridge-registration-ref',payload.get('bridge_registration_ref'))
+        add(args,'--repository',payload.get('repository') or os.environ.get('GITHUB_REPOSITORY'))
+        add(args,'--observed-head',payload.get('observed_head'))
+        add(args,'--branch',payload.get('branch'))
+        add(args,'--task-id',payload.get('task_id'))
+        add(args,'--pull-request',payload.get('pull_request'))
+        add(args,'--agent-role',payload.get('agent_role'))
+        add(args,'--source',payload.get('source'))
+        for capability in str(payload.get('capabilities') or '').split(','):
+            capability=capability.strip()
+            if capability:
+                add(args,'--capability',capability)
+        for channel in str(payload.get('wake_channels') or '').split(','):
+            channel=channel.strip()
+            if channel:
+                add(args,'--wake-channel',channel)
+        if str(payload.get('standby','')).lower() in {'1','true','yes','on'}:
+            args.append('--standby')
+        if str(payload.get('prefer_chronicle','')).lower() in {'1','true','yes','on'}:
+            args.append('--prefer-chronicle')
+    elif command=='register':
         add(args,'--agent',payload.get('agent') or os.environ.get('GITHUB_ACTOR') or 'github-actions')
         add(args,'--provider',payload.get('provider') or 'github-actions')
         add(args,'--provider-ref',payload.get('provider_ref'))

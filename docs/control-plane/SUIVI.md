@@ -657,3 +657,18 @@ P12-S5 therefore satisfies its exit gate without target-specific repair. No S1/d
 - Agent activity is now durably recorded as `AAL-20261001-GACR-001` in human and machine projections.
 - The global programme remains parked at `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
 - Per owner instruction, do not resume `P12-S6` until explicit owner OK after GACR is attested.
+
+## 2026-10-02 — GACR R4 Automatic Continuity Attachment candidate
+
+- Reobserved canonical main: `75996ee63ae283fd0d6d94549c9746f1bd2ac2bc`.
+- Historical GACR method preserved: dedicated `governance/gacr-*` branch, additive implementation, CI, PR, merge, post-merge CI, attestation.
+- R4 candidate branch: `governance/gacr-r4-auto-attach`.
+- New runtime: `scripts/gacr_auto_attach.py`.
+- A fresh active Conversation Chronicle can provide a stable provider-independent connection anchor.
+- GitHub execution identity is the fallback when no explicit client or fresh Chronicle anchor is available.
+- Missing provider conversation reference no longer blocks GACR attachment.
+- Late provider metadata reuses and enriches the existing connection-bound session.
+- New E2E test checks create → late ChatGPT binding → resume → single-session invariant → fail-closed provider conflict.
+- Source-main push activation is protected against repository-automation state-persistence loops.
+- Template candidate version: `2.8.34`.
+- `P12-S6` remains preserved and unexecuted pending owner OK after GACR completion.

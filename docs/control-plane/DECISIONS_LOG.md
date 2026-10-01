@@ -311,3 +311,16 @@ Append-only durable decisions for the source/control-plane repository.
 - An in-flight action may not be replayed blindly. Exact-HEAD reobservation and existing claim/authority gates remain mandatory.
 - No independent lock store is created; claims + collision domains + exact-HEAD remain the canonical mutable-ownership model.
 - This is cross-cutting hardening and does not replace or advance the programme-level priority `P12-S6`.
+
+### CPD-053 — Governed arrivals auto-attach to GACR from the strongest observable anchor
+
+- Date: 2026-10-02.
+- `CP-AGENT-RELAY-001-R4` makes GACR attachment automatic for observable governed arrivals.
+- A provider conversation ID/URL is optional correlation metadata, not a prerequisite for attachment.
+- Source attachment priority is explicit client/provider metadata → fresh active Conversation Chronicle → GitHub Actions execution identity.
+- A Chronicle anchor uses its durable `chronicle_id + current_session` pair and does not become business authority.
+- Late explicit provider metadata enriches the same connection-bound session; session duplication on late binding is forbidden.
+- Provider conflicts and ambiguous connection matches fail closed.
+- Repository automation state-persistence pushes must not recursively auto-attach.
+- Auto-attachment grants no mutation authority and preserves claims, collision domains, exact-HEAD reconciliation and existing takeover gates.
+- This is cross-cutting GACR hardening and does not execute or replace `P12-S6`.

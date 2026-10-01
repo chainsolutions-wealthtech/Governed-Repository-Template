@@ -217,6 +217,23 @@ def register_docs(
             and s.get("provider_conversation_ref") == ref
             and (s.get("relay") or {}).get("state") not in TERMINAL_RELAY
         ]
+        # R4: a session may have been auto-attached before a provider
+        # conversation reference became observable. Reuse the same
+        # connection-bound session and enrich it instead of duplicating it.
+        if not matches and connection_ref:
+            connection_matches = [
+                s for s in sessions
+                if s.get("repository") == repository
+                and s.get("connection_ref") == connection_ref
+                and (s.get("relay") or {}).get("state") not in TERMINAL_RELAY
+            ]
+            if len(connection_matches) == 1:
+                existing_provider = connection_matches[0].get("provider")
+                if existing_provider not in {None, "", "other", provider}:
+                    raise ValueError("provider conflict on late conversation binding")
+                matches = connection_matches
+            elif len(connection_matches) > 1:
+                raise ValueError("ambiguous existing relay session")
     elif connection_ref:
         matches = [
             s for s in sessions
@@ -275,6 +292,10 @@ def register_docs(
     if observed_head:
         session["last_observed_head_sha"] = observed_head
     if ref:
+        existing_provider = session.get("provider")
+        if existing_provider not in {None, "", "other", provider}:
+            raise ValueError("provider conflict on conversation binding")
+        session["provider"] = provider
         session["provider_conversation_ref"] = ref
         session["provider_conversation_ref_provenance"] = provenance
     if client_instance_id:

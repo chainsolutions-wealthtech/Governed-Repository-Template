@@ -66,3 +66,21 @@ A bridge must not fabricate a conversation ID or bypass GACR claim/authority gat
 The repository cannot read a browser address bar remotely. A browser/client bridge can observe its own tab URL and explicitly submit the resulting provider reference to GACR.
 
 This keeps the provider/client boundary explicit while allowing automatic correlation when a bridge is installed.
+
+## R4 automatic attachment boundary
+
+R4 separates attachment from provider enrichment.
+
+A governed agent can attach even when a client cannot expose a provider conversation reference:
+
+```text
+repository + safe connection anchor
+→ GACR session
+→ Beacon / heartbeat
+```
+
+If a provider/client later supplies `provider_ref`, `provider_url` or `client_instance_id`, the existing connection-bound session is enriched. A late provider reference must not silently create a second session.
+
+The optional external bridge remains useful for richer provider identity and wake delivery, but it is no longer a prerequisite for basic GACR attachment.
+
+R4 attachment requires no secret material and persists only the safe metadata allowed by GACR.
