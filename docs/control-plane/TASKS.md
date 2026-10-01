@@ -914,7 +914,7 @@ Broader IDN/RTE items keep their prior status until their complete acceptance cr
 
 ### GACR R3 — interruption forensics
 
-Status: **CI_PROVEN / FINAL_ATTESTATION_IN_PROGRESS**.
+Status: **CI_PROVEN**.
 
 This is additive cross-cutting hardening under `CP-AGENT-RELAY-001-R3`; it is not a new programme and does not displace `P12-S6`.
 
