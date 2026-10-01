@@ -550,6 +550,9 @@ def command_register(a: argparse.Namespace) -> None:
         bridge_registration_ref=a.bridge_registration_ref,
         timestamp=timestamp,
     )
+    github_actor = os.environ.get("GITHUB_ACTOR")
+    if github_actor:
+        session["github_actor"] = github_actor
     save(sessions, claims, takeovers)
     record_beacon(session=session, event_type="REGISTER" if resolution == "CREATE" else "RESUME")
     correlate_all()
@@ -680,6 +683,9 @@ def command_takeover_accept(a: argparse.Namespace) -> None:
         timestamp=now_utc(),
     )
     save(sessions, claims, takeovers)
+    record_beacon(session=next((x for x in sessions.get("sessions", []) if x.get("session_id") == a.successor_session_id), None), event_type="TAKEOVER_ACCEPTED")
+    correlate_all()
+    dispatch_open_takeovers()
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
 
