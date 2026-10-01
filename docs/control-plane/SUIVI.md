@@ -636,3 +636,13 @@ P12-S5 therefore satisfies its exit gate without target-specific repair. No S1/d
 - No independent lock store, task engine or authority surface introduced.
 - Programme priority remains `P12-S6`; this cross-cutting branch does not execute CASE 1 closure.
 - Candidate CI pending.
+
+## 2026-10-01 — GACR R3 workflow registration correction
+
+- PR #104 merged R3 at `ada6866efdfe9d2aed2e77171c01ca774a76a885`; Governance CI `36927683547` passed.
+- GitHub nevertheless emitted failed workflow-registration run `36927681943` with no jobs for the changed GACR workflow.
+- The R3 runtime/tests were therefore not considered fully attested.
+- Corrective action is minimal: restore the previously accepted manual `workflow_dispatch` input surface and keep rich action/interruption trace fields on repository-dispatch/client-bridge/CLI telemetry.
+- No R3 forensic capability is removed.
+- Template candidate version: `2.8.33`.
+- Programme priority remains `P12-S6`; no CASE 1 closure work is executed.

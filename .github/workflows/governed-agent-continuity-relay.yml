@@ -86,33 +86,6 @@ on:
       evidence:
         required: false
         type: string
-      action_id:
-        required: false
-        type: string
-      action_phase:
-        required: false
-        type: string
-      tool_name:
-        required: false
-        type: string
-      tool_call_id:
-        required: false
-        type: string
-      outcome:
-        required: false
-        type: string
-      written_head:
-        required: false
-        type: string
-      checkpoint_ref:
-        required: false
-        type: string
-      evidence_ref:
-        required: false
-        type: string
-      interruption_code:
-        required: false
-        type: string
       stalled_session_id:
         required: false
         type: string

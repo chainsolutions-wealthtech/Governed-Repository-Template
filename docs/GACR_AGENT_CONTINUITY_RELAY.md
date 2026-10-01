@@ -185,3 +185,5 @@ python3 scripts/gacr_agent_telemetry.py forensics --session-id <session>
 ```
 
 The scheduled WATCH scan refreshes forensic projections before Dispatcher evaluates takeover delivery.
+
+Rich action/interruption trace metadata is intended for the CLI, `repository_dispatch`, or a client/orchestrator Bridge. The manual `workflow_dispatch` form remains bounded and is not expanded with every telemetry field.

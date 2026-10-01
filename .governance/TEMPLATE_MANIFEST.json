@@ -217,7 +217,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.32",
+  "template_version": "2.8.33",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -447,7 +447,8 @@
     "GACR Interruption Forensics deterministic interruption projection",
     "last-started last-completed and in-flight action reconstruction from safe Beacon traces",
     "external interruption cause is observed-only and never inferred",
-    "forensic resume point requires exact-head reobservation before replay or takeover"
+    "forensic resume point requires exact-head reobservation before replay or takeover",
+    "GACR rich forensic action trace uses repository-dispatch or client bridge without widening manual workflow input surface"
   ],
   "automatic_initialization_supported": true
 }
