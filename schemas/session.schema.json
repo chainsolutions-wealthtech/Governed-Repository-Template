@@ -33,6 +33,7 @@
     "provider_conversation_ref_provenance": {
       "enum": [
         "PROVIDED_BY_CLIENT",
+        "EXTRACTED_FROM_EXPLICIT_URL",
         "UNAVAILABLE"
       ]
     },
@@ -54,6 +55,8 @@
     "status": {
       "enum": [
         "ACTIVE",
+        "STANDBY",
+        "STALLED",
         "CLOSED"
       ]
     },
@@ -96,6 +99,98 @@
         "PROVIDED_BY_CLIENT",
         "DEFAULT_UNKNOWN"
       ]
+    },
+    "provider_conversation_url": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "relay": {
+      "type": "object",
+      "required": [
+        "process",
+        "state",
+        "last_heartbeat_at",
+        "lease_expires_at"
+      ],
+      "properties": {
+        "process": {
+          "const": "GACR"
+        },
+        "state": {
+          "enum": [
+            "ACTIVE",
+            "STANDBY",
+            "SUSPECTED_STALL",
+            "STALLED",
+            "TAKEOVER_READY",
+            "HANDOFF_STALLED",
+            "CLOSED"
+          ]
+        },
+        "last_heartbeat_at": {
+          "type": "string"
+        },
+        "lease_expires_at": {
+          "type": "string"
+        },
+        "last_action": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "last_evidence": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "task_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "branch": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "pull_request": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "stalled_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "handoff_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "predecessor_session_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "successor_session_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
     }
   },
   "additionalProperties": false
