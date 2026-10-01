@@ -560,7 +560,7 @@
     },
     {
       "id": "P12-S6",
-      "status": "READY",
+      "status": "IN_PROGRESS",
       "depends_on": [
         "P12-S5"
       ],
