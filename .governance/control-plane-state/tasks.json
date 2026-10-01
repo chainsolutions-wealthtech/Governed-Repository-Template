@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 41,
+  "revision": 42,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -43,7 +43,7 @@
       "depends_on": [
         "P12-S4"
       ],
-      "next_action": "C1-13-I-B",
+      "next_action": "C1-13-I-B-A",
       "evidence": [
         "C1-13-A inserted for generic MCP endpoint recovery defect discovered on Ekyc"
       ]
@@ -339,15 +339,35 @@
       ]
     },
     {
-      "id": "C1-13-I-B",
+      "id": "C1-13-I-B-A",
       "status": "IN_PROGRESS",
       "depends_on": [
         "C1-13-I-A"
       ],
       "blocks": [
+        "C1-13-I-B",
         "P12-S5"
       ],
-      "next_action": "RESOLVE_EKYC_DOMAIN_BINDING",
+      "next_action": "FIX_TEST_MERGE_UPGRADE_EKYC_SERVER_BEFORE_DOMAIN",
+      "defect_code": "FRESH_PROJECT_DOMAIN_BEFORE_SERVER_SELECTION",
+      "evidence": [
+        "Owner requires production server decision before domain planning for fresh projects",
+        "Ekyc#1 revision 39 is Q_DOMAIN_BINDING with no production server selection",
+        "Authorized Ekyc discovery observed S1 and S2 domain inventory successfully",
+        "No direct Ekyc patch permitted"
+      ]
+    },
+    {
+      "id": "C1-13-I-B",
+      "status": "BLOCKED",
+      "depends_on": [
+        "C1-13-I-A",
+        "C1-13-I-B-A"
+      ],
+      "blocks": [
+        "P12-S5"
+      ],
+      "next_action": "WAIT_FOR_SERVER_BEFORE_DOMAIN_FRAMEWORK_CORRECTION",
       "gate_code": "OWNER_DOMAIN_BINDING_DECISION_REQUIRED",
       "evidence": [
         "Ekyc HEAD 9ace9f9882a06df69c9466cec633bd191f7cad12",
@@ -1044,7 +1064,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-13-I-B",
+  "unique_executable_item": "C1-13-I-B-A",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",
