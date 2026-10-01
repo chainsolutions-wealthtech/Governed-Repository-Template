@@ -701,14 +701,15 @@ These slices do not change the CASE 1 unique action.
 
 ### KBI-04O — governed read-only identity-secret refresh
 
-- Status: `IMPLEMENTED_SOURCE_ONLY_LIVE_REFRESH_PENDING`.
+- Status: `DONE_LIVE_REFRESH_PROVEN`.
 - Workflow: `.github/workflows/server-identity-secret-refresh.yml`.
 - Regression test: `scripts/test_server_identity_secret_refresh_workflow.py`.
 - Objective: run KBI-04K read-only observation, persist KBI-04N facts under exact revision, validate, and open a governed PR only when safe metadata changed.
 - Trigger policy: workflow dispatch, governed repository dispatch, or exact authorized issue #12 command `/refresh-server-identity-secret-facts`.
 - Persisted surface: only `.governance/control-plane-state/server-identity-secret-facts.json`.
 - No MCP/server mutation authority is part of this slice.
-- Live refresh remains pending until the workflow is merged and run from canonical `main`.
+- Live proof: run `36844701817` PASS; generated safe-facts PR #86; revision 1 with 17 facts; PR #86 CI `36844736669` PASS; merge `b665fba88d276b9efb636a894e53d890344b2faa`; post-merge CI `36844997332` PASS.
+- No MCP/server mutation occurred.
 
 ### KBI-04O-A — live-state-safe persistence test fixture
 
@@ -720,3 +721,11 @@ These slices do not change the CASE 1 unique action.
 - Correction: keep a fixed synthetic initial fixture for replay/contradiction tests and validate the actual source state separately.
 - No live observation was committed because validation failed before PR persistence.
 - No MCP/server mutation occurred.
+
+### KBI-04O-A — live-state-safe persistence test fixture — DONE
+
+- First live refresh run `36844233362`: read-only collection PASS; transient persistence revision 1 / 17 facts PASS; validation exposed a test-fixture defect only.
+- PR #85 fixed the fixture by separating canonical source-state validation from the synthetic revision-0 unit fixture.
+- PR #85 merge: `30b99b1f9cb0c824c90218078d9c2c2d18a4c6e5`; post-merge CI `36844628047`: PASS.
+- Second live refresh run `36844701817`: PASS end-to-end.
+- Corrective task is closed; no replay of the failed validation path is needed.
