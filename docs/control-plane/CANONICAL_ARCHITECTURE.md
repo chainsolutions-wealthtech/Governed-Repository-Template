@@ -787,3 +787,30 @@ continuity                   → checkpoint + handoff
 ```
 
 A registry PASS is necessary for safe multi-agent work but never replaces runtime claims or mutation authority.
+
+## 31. Governed Agent Continuity Relay (GACR)
+
+Authority `CP-AGENT-RELAY-001` adds a reusable continuity layer for long-running and multi-agent execution.
+
+```text
+SESSION
+→ HEARTBEAT / LEASE
+→ CLAIM
+→ CHECKPOINT
+→ STALL DETECTION
+→ TAKEOVER QUEUE
+→ STANDBY OFFER
+→ EXACT-HEAD RECONCILIATION
+→ CLAIM TRANSFER
+→ CONTINUE
+```
+
+GACR is additive to the existing multi-agent architecture:
+
+- semantic identity collisions remain governed by `CP-NAMESPACE-001`;
+- mutable ownership remains governed by claims and collision domains;
+- dependency ordering remains governed by the task graph;
+- stale writes remain blocked by exact-HEAD guards;
+- GACR governs liveness, stall detection and safe relay between sessions.
+
+A provider conversation URL is never the canonical session identity. The governed session ID remains canonical, with provider references attached only as observed correlation metadata.
