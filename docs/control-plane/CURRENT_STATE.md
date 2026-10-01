@@ -685,3 +685,13 @@ The implementation does not change the unique CASE 1 programme action and grants
 - Post-merge Governance CI `36916456136`: PASS.
 - Source Control Plane GACR runtime memory is isolated from distributed client GACR state.
 - Programme priority remains unchanged: `P12-S6`.
+
+## GACR R2 — Beacon / Correlator / Dispatcher
+
+Revision authority `CP-AGENT-RELAY-001-R2` is implemented on the current branch and awaiting full CI.
+
+It adds safe GitHub connection telemetry, fail-closed session correlation, target-specific standby dispatch, aggregated agent context and an optional external wake bridge contract.
+
+No provider conversation identifier is inferred when absent. No raw GitHub event payload, token, cookie or secret is persisted.
+
+The current programme priority remains unchanged: `P12-S6`.
