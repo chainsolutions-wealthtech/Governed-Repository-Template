@@ -1,0 +1,61 @@
+{
+  "schema_version": "1.0.0",
+  "chronicle_id": "CHAT-MEM-20261002-001",
+  "timezone": "Europe/Paris",
+  "mode": "APPEND_ONLY",
+  "status": "ACTIVE",
+  "activation_mode": [
+    "MODE_B_CONVERSATION_ALREADY_IN_PROGRESS",
+    "MODE_D_PARTIAL_HISTORY"
+  ],
+  "completeness": "COMPLETE_FOR_RECOVERABLE_VISIBLE_CONTEXT",
+  "raw_pre_activation_transcript_completeness": "PARTIAL",
+  "counters": {
+    "next_user_message": 2,
+    "next_assistant_message": 1,
+    "next_tool_event": 4,
+    "next_decision_event": 7,
+    "next_constraint_event": 7,
+    "next_action_event": 3,
+    "next_error_event": 1,
+    "next_recovery_event": 2,
+    "next_checkpoint": 2,
+    "next_cache": 2,
+    "next_open_loop": 3,
+    "next_artifact": 2,
+    "next_session": 3
+  },
+  "last_message": {
+    "id": "MSG-U-000001",
+    "sha256": "8b45efbe51e0e9fbf26883ae2a6ee65c7975e7c782bc5c708c4ea06363db5e97",
+    "previous_hash": "GENESIS"
+  },
+  "current_session": "SESSION-000002",
+  "current_checkpoint": "CHK-000001",
+  "current_cache": "CACHE-000001",
+  "open_loops": [
+    "OPEN-000001",
+    "OPEN-000002"
+  ],
+  "current_topic": "Governed conversation memory activation while preserving GACR continuity",
+  "point_of_stop": "Immediately before implementing additive GACR BEACON + CORRELATOR + DISPATCHER evolution.",
+  "next_safe_action": "Complete chronicle activation; then continue GACR additive extension only. Keep P12-S6 waiting for owner OK.",
+  "external_state_observed": {
+    "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+    "branch": "main",
+    "head": "8b0e5b253692a95c7ac3be873fb8b30e0196a677",
+    "template_version": "2.8.33",
+    "unique_executable_item": "P12-S6",
+    "observed_at": "2026-10-02T00:24+02:00",
+    "precision": "minute",
+    "freshness": "OBSERVED_AT"
+  },
+  "attachment_artifacts": [
+    {
+      "artifact_id": "ART-000001",
+      "name": "Texte collé(20261001-222403).txt",
+      "sha256": "02927d6bdef2c6eac836b1500d419bc091fbe6c4558a0fa7f86881f0a6541f6d",
+      "durability": "CURRENT_CONVERSATION_UPLOAD_NOT_ASSUMED_CROSS_CHAT"
+    }
+  ]
+}
