@@ -178,3 +178,14 @@ Append-only durable decisions for the source/control-plane repository.
 - Missing capabilities become explicit blockers in the package plan; this compiler does not create MCP intake automatically.
 - GitHub secret metadata can classify CREATE versus ALIGN/ROTATE without reading the secret value.
 - Existing CASE 1 chronology and owner domain-binding decision remain unchanged.
+
+### CPD-042 — Project decisions compile into one governed execution DAG
+
+- Date: 2026-10-01.
+- Project-level owner decisions compile into a dependency-ordered graph of existing `CP-EXECUTION-001` intents rather than ad-hoc commands.
+- The graph may contain GitHub, credential, server, domain, database, deployment, observability, backup and production-attestation nodes.
+- Each node retains its own exact-head, authority, capability, credential and verification contract.
+- Existing Loop Engineering remains the scheduler; the adapter releases at most one executable node at a time.
+- A PASS receipt advances only the matching node and unlocks dependents monotonically; stale state revisions fail closed.
+- Missing MCP capabilities remain explicit blockers and never trigger automatic intake creation.
+- The Ekyc S2 + subdomain fixture is E2E dry-run proof only; no Ekyc mutation is included.

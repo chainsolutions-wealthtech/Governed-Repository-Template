@@ -36,7 +36,9 @@
     ".governance/control-plane-state/identity-secret-lifecycle.json",
     "docs/control-plane/GOVERNED_EXECUTION_ENGINE.md",
     ".governance/control-plane-state/execution-registry.json",
-    "scripts/governed_execution_package_compiler.py"
+    "scripts/governed_execution_package_compiler.py",
+    "scripts/governed_project_execution_blueprint.py",
+    "scripts/governed_loop_execution_adapter.py"
   ],
   "rules": [
     "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",
@@ -113,7 +115,12 @@
     "COMPILE_PROJECT_REQUIREMENTS_TO_EXECUTION_PACKAGE_BEFORE_EXECUTION",
     "AUTO_BIND_MCP_TOOL_ONLY_WHEN_CAPABILITY_SCOPE_AND_LIVE_CONTRACT_MATCH",
     "NEVER_SILENTLY_WIDEN_MCP_PROJECT_REGISTRY",
-    "MISSING_CAPABILITY_BLOCKS_WITHOUT_AUTOMATIC_INTAKE"
+    "MISSING_CAPABILITY_BLOCKS_WITHOUT_AUTOMATIC_INTAKE",
+    "PROJECT_DECISIONS_COMPILE_TO_DEPENDENCY_ORDERED_EXECUTION_DAG",
+    "LOOP_ENGINEERING_RELEASES_ONE_READY_NODE_AT_A_TIME",
+    "PASS_RECEIPT_UNLOCKS_ONLY_DEPENDENTS",
+    "BLOCKED_CAPABILITY_IS_NOT_SKIPPED",
+    "PROJECT_EXECUTION_DAG_NE_EXECUTION_AUTHORITY"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",

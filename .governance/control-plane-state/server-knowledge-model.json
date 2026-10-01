@@ -1079,12 +1079,12 @@
     },
     {
       "id": "KBI-04F",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED_SOURCE_ONLY",
       "objective": "Add E2E dry-run: choose S2 + subdomain and produce complete non-executing deployment blueprint"
     },
     {
       "id": "KBI-04G",
-      "status": "PLANNED",
+      "status": "IMPLEMENTED_SOURCE_ONLY",
       "objective": "Later bind recipes to Loop Engineering under AuthorityEnvelope"
     }
   ]
