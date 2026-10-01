@@ -111,6 +111,7 @@ def main() -> None:
     assert 'LOCAL_SETUP_V2_8_3_UPGRADE_APPLIED' not in source
     assert '"message":"governance: upgrade repository-local setup to v2.8.3"' not in source
     assert "reconcile_both_smart_routing" in source
+    assert "reconcile_setup_question_order" in source
 
     # The distributed local-entry self-test must not require source-only
     # control-plane files that are intentionally absent from client repositories.
