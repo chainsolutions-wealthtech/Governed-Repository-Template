@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "handoff_id": "CP-HANDOFF-20261001-002",
+  "handoff_id": "CP-HANDOFF-20261001-003",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "canonical_branch": "main",
-  "baseline_subject_head": "c9266b8f9acb6eff9084f4a989397bae3d997762",
-  "active_branch": "governance/ekyc-server-before-domain",
+  "baseline_subject_head": "c41afa4fdeffd5f12d6243b95f5d04083ca514e4",
+  "active_branch": "governance/checkpoint-ekyc-server-selection-ready",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "current_task": "C1-13-I-B-A_FIX_FRESH_PROJECT_SERVER_BEFORE_DOMAIN_ORDER",
-  "unique_next_action": "C1_13_I_B_A_FIX_FRESH_PROJECT_SERVER_BEFORE_DOMAIN_ORDER",
+  "current_task": "C1-13-I-B-B_SELECT_EKYC_PRODUCTION_SERVER",
+  "unique_next_action": "C1_13_I_B_B_SELECT_EKYC_PRODUCTION_SERVER",
   "read_first": [
     "docs/control-plane/CURRENT_STATE.md",
     ".governance/control-plane-state/canonical-architecture.json",
@@ -137,7 +137,11 @@
     "SERVER_IDENTITY_SECRET_REFRESH_IS_READ_ONLY_EVENT_AND_NEED_BASED",
     "SERVER_IDENTITY_SECRET_FACT_REFRESH_USES_EXACT_REVISION",
     "RAW_IDENTITY_SECRET_OBSERVATION_NEVER_PERSISTS",
-    "REFRESH_OUTPUT_ENTERS_CANONICAL_STATE_ONLY_THROUGH_GOVERNED_PR"
+    "REFRESH_OUTPUT_ENTERS_CANONICAL_STATE_ONLY_THROUGH_GOVERNED_PR",
+    "FRESH_PROJECT_SELECTS_PRODUCTION_SERVER_BEFORE_DOMAIN",
+    "SERVER_SELECTION_NE_EXECUTION_AUTHORITY",
+    "REUSE_SELECTED_SERVER_DOMAIN_INVENTORY_BEFORE_DOMAIN_QUESTION",
+    "DO_NOT_REPLAY_EKYC_MCP_DISCOVERY"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",
@@ -151,7 +155,7 @@
   },
   "second_fresh_repository": {
     "repository": "Patricked-code/Ekyc",
-    "head": "9ace9f9882a06df69c9466cec633bd191f7cad12",
+    "head": "b67a4ec58d837a66f3c3dedb02caadaf044912d5",
     "source_request": 49,
     "local_entry_issue": 1,
     "frozen": true,
@@ -163,10 +167,10 @@
       "C1-13-C",
       "C1-13-D"
     ],
-    "active_dependency": "GENERIC_FRESH_PROJECT_QUESTION_ORDER_FIX",
+    "active_dependency": "OWNER_PRODUCTION_SERVER_DECISION_REQUIRED",
     "external_intake": "Patricked-code/MCP#201",
     "failed_discovery_run": 36644247227,
-    "active_corrective_task": "C1-13-I-B-A",
+    "active_corrective_task": null,
     "preserved_external_dependency": {
       "code": "MCP_TLS_CERTIFICATE_EXPIRED",
       "intake": "Patricked-code/MCP#201",
@@ -190,8 +194,8 @@
       "reused_authorized_evidence": true
     },
     "local_entry_status": "WAITING_FOR_SETUP_ANSWER",
-    "local_entry_phase": "Q_DOMAIN_BINDING",
-    "local_entry_revision": 39,
+    "local_entry_phase": "Q_PRODUCTION_SERVER_SELECTION",
+    "local_entry_revision": 40,
     "domain_binding_observation": {
       "existing_ekyc_project_registration": false,
       "existing_ekyc_domain": false
@@ -203,7 +207,21 @@
         "S2"
       ],
       "discovery_replay_required": false,
-      "direct_target_patch": false
+      "direct_target_patch": false,
+      "status": "ACHIEVED"
+    },
+    "production_server_gate": {
+      "observed_servers": [
+        "S1",
+        "S2"
+      ],
+      "choices": [
+        "S1",
+        "S2",
+        "PLAN_NEW_SERVER",
+        "DECIDE_LATER"
+      ],
+      "execution_authority_granted": false
     }
   },
   "mcp_capability_snapshot": {

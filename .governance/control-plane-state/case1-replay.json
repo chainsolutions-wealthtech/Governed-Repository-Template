@@ -7,7 +7,7 @@
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
   "current_phase": "C1-13",
   "current_status": "IN_PROGRESS",
-  "unique_next_action": "C1_13_I_B_A_FIX_FRESH_PROJECT_SERVER_BEFORE_DOMAIN_ORDER",
+  "unique_next_action": "C1_13_I_B_B_SELECT_EKYC_PRODUCTION_SERVER",
   "phases": [
     {
       "id": "C1-00",
@@ -158,13 +158,13 @@
       "depends_on": [
         "C1-12"
       ],
-      "next_action": "FIX_FRESH_PROJECT_SERVER_BEFORE_DOMAIN_ORDER",
+      "next_action": "SELECT_EKYC_PRODUCTION_SERVER",
       "live_state": {
         "repository": "Patricked-code/Ekyc",
         "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
         "local_entry_issue": "Patricked-code/Ekyc#1",
-        "expected_head": "9ace9f9882a06df69c9466cec633bd191f7cad12",
-        "status": "FROZEN_GENERIC_FRAMEWORK_QUESTION_ORDER_DEFECT",
+        "expected_head": "b67a4ec58d837a66f3c3dedb02caadaf044912d5",
+        "status": "WAITING_FOR_PRODUCTION_SERVER_DECISION",
         "completed_corrective_tasks": [
           "C1-13-A",
           "C1-13-B",
@@ -177,8 +177,8 @@
         "external_dependency": null,
         "external_intake": "Patricked-code/MCP#201",
         "target_specific_repair": false,
-        "active_corrective_task": "C1-13-I-B-A",
-        "active_defect": "FRESH_PROJECT_DOMAIN_BEFORE_SERVER_SELECTION",
+        "active_corrective_task": null,
+        "active_defect": null,
         "preserved_external_dependency": {
           "code": "MCP_TLS_CERTIFICATE_EXPIRED",
           "intake": "Patricked-code/MCP#201",
@@ -253,8 +253,7 @@
           "migration_upgrade_run": 36654732506
         },
         "domain_binding": {
-          "phase": "Q_DOMAIN_BINDING",
-          "revision": 39,
+          "phase": "PENDING_AFTER_PRODUCTION_SERVER_SELECTION",
           "existing_ekyc_project_registration_observed": false,
           "existing_ekyc_domain_observed": false,
           "owner_decision_required": true
@@ -269,6 +268,30 @@
           "domain_answer_present": false,
           "discovery_replay_required": false,
           "owner_decision_required": true
+        },
+        "server_before_domain_correction": {
+          "status": "DONE",
+          "template_pr": 88,
+          "template_merge": "c41afa4fdeffd5f12d6243b95f5d04083ca514e4",
+          "post_merge_ci": 36869476595,
+          "upgrade_run": 36869574238,
+          "target_ci": 36869667945
+        },
+        "production_server_selection": {
+          "phase": "Q_PRODUCTION_SERVER_SELECTION",
+          "revision": 40,
+          "observed_servers": [
+            "S1",
+            "S2"
+          ],
+          "choices": [
+            "S1",
+            "S2",
+            "PLAN_NEW_SERVER",
+            "DECIDE_LATER"
+          ],
+          "owner_decision_required": true,
+          "execution_authority_granted": false
         }
       },
       "owner_feedback": {

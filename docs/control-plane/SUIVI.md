@@ -533,3 +533,13 @@ The corrected KBI-04O pipeline completed end-to-end. Run `36844701817` performed
 PR #86 contained only `.governance/control-plane-state/server-identity-secret-facts.json`, revision 1 / 17 facts. CI `36844736669` passed and the PR merged at `b665fba88d276b9efb636a894e53d890344b2faa`; post-merge CI `36844997332` also passed.
 
 KBI-04O and KBI-04O-A are complete. The unique CASE 1 next action remains the Ekyc domain-binding owner decision.
+
+## 2026-10-01 — Ekyc server-before-domain correction proven
+
+PR #88 corrected the generic fresh-project question order. Full source CI passed before and after merge.
+
+The governed v2.8.25 upgrade advanced Ekyc from `9ace9f...` revision 39 / `Q_DOMAIN_BINDING` to `b67a4ec58d837a66f3c3dedb02caadaf044912d5` revision 40 / `Q_PRODUCTION_SERVER_SELECTION`.
+
+All prior answers and authorized MCP discovery evidence were preserved. No discovery replay, server mutation or domain mutation occurred.
+
+The next unique owner decision is the Ekyc production-server selection among observed `S1` / `S2` or explicit deferral/new-server planning.

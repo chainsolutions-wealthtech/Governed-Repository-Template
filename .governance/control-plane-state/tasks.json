@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 42,
+  "revision": 43,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -43,7 +43,7 @@
       "depends_on": [
         "P12-S4"
       ],
-      "next_action": "C1-13-I-B-A",
+      "next_action": "C1-13-I-B-B",
       "evidence": [
         "C1-13-A inserted for generic MCP endpoint recovery defect discovered on Ekyc"
       ]
@@ -340,7 +340,7 @@
     },
     {
       "id": "C1-13-I-B-A",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-13-I-A"
       ],
@@ -348,13 +348,39 @@
         "C1-13-I-B",
         "P12-S5"
       ],
-      "next_action": "FIX_TEST_MERGE_UPGRADE_EKYC_SERVER_BEFORE_DOMAIN",
+      "next_action": null,
       "defect_code": "FRESH_PROJECT_DOMAIN_BEFORE_SERVER_SELECTION",
       "evidence": [
         "Owner requires production server decision before domain planning for fresh projects",
         "Ekyc#1 revision 39 is Q_DOMAIN_BINDING with no production server selection",
         "Authorized Ekyc discovery observed S1 and S2 domain inventory successfully",
-        "No direct Ekyc patch permitted"
+        "No direct Ekyc patch permitted",
+        "Template PR #88 merged c41afa4fdeffd5f12d6243b95f5d04083ca514e4",
+        "PR #88 Governance CI 36869361015 PASS",
+        "Post-merge Governance CI 36869476595 PASS",
+        "Governed Ekyc v2.8.25 upgrade 36869574238 PASS",
+        "Ekyc b67a4ec58d837a66f3c3dedb02caadaf044912d5 revision 40 Q_PRODUCTION_SERVER_SELECTION",
+        "Ekyc Governance CI 36869667945 PASS",
+        "No MCP discovery replay or server/domain mutation"
+      ]
+    },
+    {
+      "id": "C1-13-I-B-B",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "C1-13-I-B-A"
+      ],
+      "blocks": [
+        "C1-13-I-B",
+        "P12-S5"
+      ],
+      "next_action": "SELECT_EKYC_PRODUCTION_SERVER",
+      "gate_code": "OWNER_PRODUCTION_SERVER_DECISION_REQUIRED",
+      "evidence": [
+        "Ekyc HEAD b67a4ec58d837a66f3c3dedb02caadaf044912d5",
+        "Ekyc#1 revision 40 Q_PRODUCTION_SERVER_SELECTION",
+        "Observed server candidates S1 and S2 reused from authorized discovery",
+        "Choice grants no execution authority"
       ]
     },
     {
@@ -367,8 +393,8 @@
       "blocks": [
         "P12-S5"
       ],
-      "next_action": "WAIT_FOR_SERVER_BEFORE_DOMAIN_FRAMEWORK_CORRECTION",
-      "gate_code": "OWNER_DOMAIN_BINDING_DECISION_REQUIRED",
+      "next_action": "WAIT_FOR_PRODUCTION_SERVER_THEN_CONTINUE_DOMAIN_PLANNING",
+      "gate_code": "OWNER_PRODUCTION_SERVER_DECISION_REQUIRED",
       "evidence": [
         "Ekyc HEAD 9ace9f9882a06df69c9466cec633bd191f7cad12",
         "Ekyc#1 revision 39 Q_DOMAIN_BINDING",
@@ -1064,7 +1090,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-13-I-B-A",
+  "unique_executable_item": "C1-13-I-B-B",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",
