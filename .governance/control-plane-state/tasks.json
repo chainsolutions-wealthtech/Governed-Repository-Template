@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 46,
+  "revision": 47,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -43,7 +43,7 @@
       "depends_on": [
         "P12-S4"
       ],
-      "next_action": "C1-13-I-B-E",
+      "next_action": "C1-13-I-B-F",
       "evidence": [
         "C1-13-A inserted for generic MCP endpoint recovery defect discovered on Ekyc"
       ]
@@ -443,11 +443,11 @@
     {
       "id": "C1-13-I-B-E",
       "task": "Select Ekyc governed workflow model",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-13-I-B-D"
       ],
-      "next_action": "SELECT_EKYC_WORKFLOW_MODEL",
+      "next_action": null,
       "gate_code": "OWNER_WORKFLOW_MODEL_DECISION_REQUIRED",
       "evidence": [
         "Ekyc HEAD 4bf80309313f3d34f74ffca183bd540583d2e87f",
@@ -456,7 +456,34 @@
         "domain_intent=CREATE_NEW_ROOT_DOMAIN preserved",
         "domain_root_name_mode=DISCOVER_AVAILABLE_NAMES preserved",
         "Allowed choices: REGULATORY_AFRICAFUNDS_GOVERNED_FLOW or STANDARD_GOVERNED_FLOW",
-        "Choice grants no execution authority"
+        "Choice grants no execution authority",
+        "Owner selected STANDARD_GOVERNED_FLOW",
+        "Central command comment 5936121301",
+        "Control Plane run 36894608509 PASS",
+        "Ekyc Governed Local Entry run 36894651525 PASS",
+        "Ekyc#1 revision 46 SETUP_APPROVAL",
+        "Choice grants no infrastructure/runtime execution authority"
+      ]
+    },
+    {
+      "id": "C1-13-I-B-F",
+      "task": "Approve Ekyc technical setup and governed rights matrix",
+      "status": "IN_PROGRESS",
+      "depends_on": [
+        "C1-13-I-B-E"
+      ],
+      "next_action": "APPROVE_EKYC_SETUP",
+      "gate_code": "OWNER_SETUP_APPROVAL_REQUIRED",
+      "evidence": [
+        "Ekyc HEAD 4bf80309313f3d34f74ffca183bd540583d2e87f",
+        "Ekyc#1 revision 46 SETUP_APPROVAL",
+        "workflow_model=STANDARD_GOVERNED_FLOW",
+        "setup_repository_now=true",
+        "link_mcp_server=true",
+        "domain_intent=CREATE_NEW_ROOT_DOMAIN",
+        "domain_root_name_mode=DISCOVER_AVAILABLE_NAMES",
+        "domain operation requirements are prepared_only and execution_authority_granted=false",
+        "MCP write tools remain disabled until project registration and explicit authority"
       ]
     },
     {
@@ -469,8 +496,8 @@
       "blocks": [
         "P12-S5"
       ],
-      "next_action": "WAIT_FOR_WORKFLOW_MODEL_THEN_CONTINUE_SETUP_CHAIN",
-      "gate_code": "OWNER_WORKFLOW_MODEL_DECISION_REQUIRED",
+      "next_action": "WAIT_FOR_SETUP_APPROVAL_THEN_APPLY_BASELINE",
+      "gate_code": "OWNER_SETUP_APPROVAL_REQUIRED",
       "evidence": [
         "Ekyc HEAD 9ace9f9882a06df69c9466cec633bd191f7cad12",
         "Ekyc#1 revision 39 Q_DOMAIN_BINDING",
@@ -1168,7 +1195,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "C1-13-I-B-E",
+  "unique_executable_item": "C1-13-I-B-F",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",
