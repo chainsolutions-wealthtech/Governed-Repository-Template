@@ -758,3 +758,32 @@ The reusable model must become explicitly enumerable through domains, capabiliti
 The existing relational control-plane memory is extended additively. No parallel canonical database is introduced.
 
 This target enrichment is dependency-bound and does not change the current CASE 1 unique executable action.
+
+## 30. Canonical namespace and work registry
+
+Authority `CP-NAMESPACE-001` provides the machine-enforced namespace and work-identity contract.
+
+It does not duplicate task/programme sources. It validates their canonical identifiers and prevents new definitions from creating ambiguous or parallel identities.
+
+```text
+NEW WORK
+→ resolve existing architecture/programme lineage
+→ choose registered namespace
+→ ensure ID uniqueness
+→ declare parent/integration slot before runtime binding
+→ dependency/collision analysis
+→ append or supersede
+```
+
+Multi-agent collision prevention is layered:
+
+```text
+semantic ID uniqueness       → CP-NAMESPACE-001
+task ownership               → sessions + claims
+dependency ordering          → dependency-safe dispatch
+write exclusivity            → single writer / collision domain
+stale state                  → exact-HEAD reconciliation
+continuity                   → checkpoint + handoff
+```
+
+A registry PASS is necessary for safe multi-agent work but never replaces runtime claims or mutation authority.
