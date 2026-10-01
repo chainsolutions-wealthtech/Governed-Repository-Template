@@ -11,6 +11,7 @@
   "discovery_observed_at": null,
   "domain_strategy": null,
   "domain_binding": null,
+  "deployment_binding": null,
   "project_registration_status": "UNKNOWN",
   "write_tools_status": "DISABLED_UNTIL_REGISTERED_AND_AUTHORIZED"
 }
