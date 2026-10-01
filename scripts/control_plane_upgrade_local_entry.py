@@ -165,7 +165,7 @@ def main():
         existing_gacr_takeovers=(ROOT/".governance/agent-relay/takeovers.json").read_text(encoding="utf-8")
     updates[".governance/agent-relay/takeovers.json"]=existing_gacr_takeovers
 
-    for gacr_state_name in ["beacons.json","correlations.json","dispatches.json"]:
+    for gacr_state_name in ["beacons.json","correlations.json","dispatches.json","forensics.json"]:
         gacr_path=f".governance/agent-relay/{gacr_state_name}"
         existing_gacr_state=target_text(token,target,gacr_path)
         if existing_gacr_state is None:

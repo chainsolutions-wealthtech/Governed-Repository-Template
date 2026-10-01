@@ -53,6 +53,7 @@ def main():
         g.BEACONS_PATH = g.GOV / "agent-relay" / "beacons.json"
         g.CORRELATIONS_PATH = g.GOV / "agent-relay" / "correlations.json"
         g.DISPATCHES_PATH = g.GOV / "agent-relay" / "dispatches.json"
+        g.FORENSICS_PATH = g.GOV / "agent-relay" / "forensics.json"
 
         session_a = {
             "session_id": "session-a",
@@ -115,7 +116,7 @@ def main():
             "pull_request":12,
             "last_observed_head_sha":"a"*40
         }]})
-        for path in [g.BEACONS_PATH,g.CORRELATIONS_PATH,g.DISPATCHES_PATH]:
+        for path in [g.BEACONS_PATH,g.CORRELATIONS_PATH,g.DISPATCHES_PATH,g.FORENSICS_PATH]:
             write(path, {"schema_version":"1.0.0","revision":0,"items":[]})
 
         os.environ["GITHUB_REPOSITORY"] = "owner/repo"
@@ -170,6 +171,33 @@ def main():
         context = g.agent_context("session-b")
         assert_true(context["session"]["session_id"] == "session-b", "context resolves session")
         assert_true(len(context["dispatches"]) == 1, "context includes dispatch offer")
+
+
+        g.record_beacon(session=session_a,event_type="ACTION_TRACE",action_id="action-1",action_label="update TASKS",action_phase="STARTED",tool_name="GitHub.update_file",tool_call_id="tool-1",observed_at="2026-10-01T20:10:00+00:00")
+        g.record_beacon(session=session_a,event_type="ACTION_TRACE",action_id="action-1",action_label="update TASKS",action_phase="COMPLETED",tool_name="GitHub.update_file",tool_call_id="tool-1",outcome="PASS",written_head_sha="b"*40,checkpoint_ref="CP-CHECKPOINT-20261001-999",evidence_ref="ci:123",observed_at="2026-10-01T20:11:00+00:00")
+        g.record_beacon(session=session_a,event_type="ACTION_TRACE",action_id="action-2",action_label="open PR",action_phase="STARTED",tool_name="GitHub.create_pull_request",tool_call_id="tool-2",observed_at="2026-10-01T20:12:00+00:00")
+        sessions_doc=json.loads(g.SESSIONS_PATH.read_text(encoding="utf-8"))
+        persisted_a=next(x for x in sessions_doc["sessions"] if x["session_id"]=="session-a")
+        persisted_a["status"]="STALLED"; persisted_a["relay"]["state"]="TAKEOVER_READY"; persisted_a["relay"]["last_action"]="STALL_DETECTED"
+        persisted_a["relay"]["stalled_at"]="2026-10-01T20:40:00+00:00"; persisted_a["relay"]["lease_expires_at"]="2026-10-01T20:30:00+00:00"
+        write(g.SESSIONS_PATH,sessions_doc)
+        report=g.build_interruption_forensics("session-a",persist=True,generated_at="2026-10-01T20:41:00+00:00")
+        assert_true(report["forensic_id"].startswith("GACR-F-"),"forensics id")
+        assert_true(report["classification"]=="LEASE_EXPIRED_STALL","forensics classification")
+        assert_true(report["cause"]["status"]=="UNOBSERVED","external cause must not be invented")
+        assert_true(report["actions"]["last_action_started"]["action_id"]=="action-2","last started")
+        assert_true(report["actions"]["last_action_completed"]["action_id"]=="action-1","last completed")
+        assert_true(report["actions"]["last_tool_call"]["tool_call_id"]=="tool-2","last tool call")
+        assert_true(report["actions"]["in_flight_action"]["action_id"]=="action-2","in-flight action")
+        assert_true(report["work"]["last_written_head_sha"]=="b"*40,"last written head")
+        assert_true(report["resume_point"]["checkpoint_ref"]=="CP-CHECKPOINT-20261001-999","checkpoint")
+        assert_true(report["resume_point"]["requires_exact_head_reobservation"] is True,"exact-head required")
+        assert_true(report["resume_point"]["may_replay_in_flight_action_without_reconciliation"] is False,"blind replay forbidden")
+        g.record_beacon(session=session_a,event_type="INTERRUPTION_SIGNAL",interruption_code="PROVIDER_TIMEOUT",observed_at="2026-10-01T20:40:30+00:00")
+        observed=g.build_interruption_forensics("session-a",persist=True,generated_at="2026-10-01T20:42:00+00:00")
+        assert_true(observed["cause"]["status"]=="OBSERVED","explicit interruption observed")
+        assert_true(observed["cause"]["code"]=="PROVIDER_TIMEOUT","explicit cause preserved")
+        assert_true(len(json.loads(g.FORENSICS_PATH.read_text(encoding="utf-8"))["items"])==1,"one current forensic projection")
 
         assert_true(
             g.provider_ref_from_url("chatgpt","https://chatgpt.com/c/6abe6ebe-3f98-83ed-b12e-2cf0f5b1e300")

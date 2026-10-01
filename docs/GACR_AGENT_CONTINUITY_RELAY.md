@@ -157,3 +157,31 @@ python3 scripts/gacr_agent_telemetry.py status
 The GitHub workflow exposes the same operations through `workflow_dispatch` and `repository_dispatch`.
 
 Only allowlisted GitHub metadata is captured. Provider conversation references are used only when actually supplied. The Correlator fails closed on ambiguous evidence.
+
+## Interruption Forensics
+
+Revision authority: `CP-AGENT-RELAY-001-R3`.
+
+GACR R3 adds **Interruption Forensics** as a deterministic projection over the existing GACR evidence. It is not a new event store, task engine, claim system or source of truth.
+
+```text
+BEACON
+→ WATCH
+→ CORRELATOR
+→ INTERRUPTION FORENSICS
+→ DISPATCHER
+→ exact-HEAD takeover reconciliation
+→ continue
+```
+
+Forensics reconstructs, when evidence exists: last heartbeat/lease/stall state; task/branch/PR; active claims and collision domains; last observed and explicitly reported written HEAD; last action started/completed; last observed tool call; in-flight action; checkpoint/evidence references; takeover/dispatch state; and a deterministic resume point.
+
+External failure cause is **observed-only**. GACR never claims browser crash, provider timeout, network loss or tool failure unless a client/orchestrator explicitly emitted that interruption code. Otherwise the cause remains `UNOBSERVED_EXTERNAL_CAUSE`.
+
+A forensic report never grants mutation authority. Resume/takeover still requires fresh exact-HEAD observation and the existing claim/authority gates.
+
+```bash
+python3 scripts/gacr_agent_telemetry.py forensics --session-id <session>
+```
+
+The scheduled WATCH scan refreshes forensic projections before Dispatcher evaluates takeover delivery.

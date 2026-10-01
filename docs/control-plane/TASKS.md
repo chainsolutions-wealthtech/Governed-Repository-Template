@@ -859,7 +859,7 @@ These slices do not change the CASE 1 unique action.
 
 ### GACR — governed agent continuity relay
 
-Cross-cutting implementation status: **IMPLEMENTED_GENERIC_RUNTIME / CI_PENDING**.
+Cross-cutting implementation status: **CI_PROVEN**.
 
 GACR is not a new programme. It is an additive implementation contribution to:
 
@@ -887,7 +887,7 @@ The broader IDN/RTE tasks remain at their existing statuses until their full con
 
 ### GACR R2 — connection telemetry, correlation and dispatch
 
-Status: **IMPLEMENTED_GENERIC_RUNTIME / CI_PENDING**.
+Status: **CI_PROVEN**.
 
 This is additive implementation evidence for existing backlog items, not a new programme:
 
@@ -911,3 +911,13 @@ Implemented:
 - unit/E2E tests.
 
 Broader IDN/RTE items keep their prior status until their complete acceptance criteria are met.
+
+### GACR R3 — interruption forensics
+
+Status: **IMPLEMENTED_ON_GOVERNED_BRANCH / CI_PENDING**.
+
+This is additive cross-cutting hardening under `CP-AGENT-RELAY-001-R3`; it is not a new programme and does not displace `P12-S6`.
+
+Candidate surface: safe action/tool trace metadata in Beacon; deterministic interruption report; observed-only interruption cause; last started/completed/in-flight action reconstruction; last tool-call observation; last observed/written HEAD separation; claims/collision-domain resume context; exact-head-required deterministic resume point; source/client state separation; client-upgrade preservation; unit/E2E regression coverage.
+
+Global programme priority remains `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.

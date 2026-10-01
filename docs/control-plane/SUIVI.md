@@ -623,3 +623,16 @@ P12-S5 therefore satisfies its exit gate without target-specific repair. No S1/d
 - No provider conversation identifier is fabricated when unavailable.
 - No wake event bypasses claim/authority/exact-HEAD gates.
 - `P12-S6` remains the active programme priority.
+
+## 2026-10-01 — GACR R3 Interruption Forensics
+
+- Started from exact canonical main `0d4ca9ff007b88f8fee040ff845ea9a0387d1815` after R2 attestation.
+- R2 was not replayed: Beacon, Watch, Correlator, Dispatcher, Agent Context and Bridge contract remain intact.
+- Added `CP-AGENT-RELAY-001-R3` / `CPD-052`.
+- Added safe action/tool trace fields to Beacon without payload/secret capture.
+- Added deterministic Interruption Forensics current projection with observed-only external cause classification.
+- Resume reports expose last heartbeat, task/branch/PR, claims/collision domains, last observed/written HEAD, last started/completed action, last tool call, in-flight action, checkpoint/evidence references, takeover/dispatch state and exact-head resume requirements.
+- Added source/client forensics-state separation and governed-client upgrade preservation.
+- No independent lock store, task engine or authority surface introduced.
+- Programme priority remains `P12-S6`; this cross-cutting branch does not execute CASE 1 closure.
+- Candidate CI pending.

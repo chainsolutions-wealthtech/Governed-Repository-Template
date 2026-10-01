@@ -173,6 +173,12 @@
       "pattern": "^GACR-D-[0-9a-f]{12}$",
       "kind": "AGENT_WAKE_DISPATCH_RUNTIME_ID",
       "canonical_source": ".governance/agent-relay/dispatches.json"
+    },
+    {
+      "id": "GACR-FORENSICS",
+      "pattern": "^GACR-F-[0-9a-f]{12}$",
+      "kind": "AGENT_INTERRUPTION_FORENSICS_RUNTIME_ID",
+      "canonical_source": ".governance/agent-relay/forensics.json"
     }
   ],
   "canonical_authorities": [
@@ -187,7 +193,8 @@
     "CP-EXECUTION-001",
     "CP-NAMESPACE-001",
     "CP-AGENT-RELAY-001",
-    "CP-AGENT-RELAY-001-R2"
+    "CP-AGENT-RELAY-001-R2",
+    "CP-AGENT-RELAY-001-R3"
   ],
   "definition_sources": [
     {

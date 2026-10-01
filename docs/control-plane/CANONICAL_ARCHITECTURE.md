@@ -836,3 +836,26 @@ AGENT / CLIENT
 A provider-specific bridge is optional. It may supply a conversation reference/client-instance ID or receive a wake event, but it never owns task state or mutation authority.
 
 The governed repository remains the continuity source of truth.
+
+## 33. GACR Interruption Forensics
+
+Revision authority `CP-AGENT-RELAY-001-R3` extends R2 additively.
+
+```text
+BEACON
+→ WATCH
+→ CORRELATOR
+→ FORENSICS
+   → liveness evidence
+   → action/tool trace evidence
+   → task/claim/HEAD/checkpoint evidence
+   → observed-only interruption cause
+   → deterministic resume point
+→ DISPATCHER
+→ exact-HEAD reconciliation
+→ claim transfer / continuation
+```
+
+FORENSICS is a reducer/current projection over canonical GACR evidence. It does not duplicate sessions, claims, task queues, checkpoints, handoffs or Git history. Missing evidence remains explicitly unknown.
+
+No independent lock subsystem is introduced: mutable ownership remains the existing claim + collision-domain + exact-HEAD model. An interruption report cannot authorize execution or blind replay of an in-flight action.
