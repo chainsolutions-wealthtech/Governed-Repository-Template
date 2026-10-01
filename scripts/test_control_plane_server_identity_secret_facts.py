@@ -13,7 +13,20 @@ from governed_execution_engine import load_json
 
 SNAPSHOT=load_json(f.SNAPSHOT_PATH)
 IDENTITY=load_json(f.IDENTITY_MODEL_PATH)
-INITIAL=load_json(f.STATE_PATH)
+SOURCE_STATE=load_json(f.STATE_PATH)
+INITIAL={
+    "schema_version":"1.0.0",
+    "authority_id":"CP-IDENTITY-SECRET-001",
+    "scope":"CONTROL_PLANE_SOURCE_ONLY",
+    "status":"NOT_COLLECTED",
+    "revision":0,
+    "last_ingested_at":None,
+    "execution_authority_granted":False,
+    "secret_values_persisted":False,
+    "raw_remote_payload_persisted":False,
+    "server_connection_coordinates_persisted":False,
+    "facts":[],
+}
 
 
 class FakeClient:
@@ -159,6 +172,7 @@ def assert_raw_payload_rejected(obs):
 
 
 def main():
+    f.validate_initial_or_persisted_state(SOURCE_STATE)
     obs,state=assert_valid_persistence()
     assert_replay_and_contradiction(obs,state)
     assert_source_recomputation(obs)

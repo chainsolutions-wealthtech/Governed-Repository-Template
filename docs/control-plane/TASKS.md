@@ -709,3 +709,14 @@ These slices do not change the CASE 1 unique action.
 - Persisted surface: only `.governance/control-plane-state/server-identity-secret-facts.json`.
 - No MCP/server mutation authority is part of this slice.
 - Live refresh remains pending until the workflow is merged and run from canonical `main`.
+
+### KBI-04O-A — live-state-safe persistence test fixture
+
+- Status: `IN_PROGRESS`.
+- Trigger: first live KBI-04O run `36844233362`.
+- Read-only collection: PASS.
+- Persistence adapter: PASS, produced transient revision 1 with 17 facts.
+- Failure occurred only after persistence when the unit test reused the now-mutated source state as its synthetic revision-0 fixture.
+- Correction: keep a fixed synthetic initial fixture for replay/contradiction tests and validate the actual source state separately.
+- No live observation was committed because validation failed before PR persistence.
+- No MCP/server mutation occurred.
