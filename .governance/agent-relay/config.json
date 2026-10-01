@@ -34,5 +34,33 @@
     "CLOSED"
   ],
   "reusable_across_projects": true,
-  "execution_authority_granted": false
+  "execution_authority_granted": false,
+  "telemetry": {
+    "beacon_enabled": true,
+    "correlation_enabled": true,
+    "dispatcher_enabled": true,
+    "safe_github_context_only": true,
+    "raw_event_payload_persisted": false,
+    "secret_values_persisted": false,
+    "correlation_levels": [
+      "EXACT",
+      "STRONG",
+      "PROBABLE",
+      "AMBIGUOUS",
+      "UNKNOWN"
+    ],
+    "auto_bind_levels": [
+      "EXACT",
+      "STRONG"
+    ],
+    "default_wake_channel": "POLL_REPOSITORY"
+  },
+  "external_bridge": {
+    "contract_only": true,
+    "can_capture_conversation_ref_when_client_supplies_it": true,
+    "can_capture_client_instance_id": true,
+    "can_receive_dispatch_offer": true,
+    "outbound_browser_wakeup_implemented": false,
+    "note": "Repository-side GACR can prepare and target wake events. A provider/client bridge is still required to wake a browser conversation."
+  }
 }
