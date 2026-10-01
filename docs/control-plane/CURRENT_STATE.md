@@ -646,3 +646,12 @@ Evidence:
 
 `P12-S5` is DONE. The unique next action is `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`. GMC-A remains blocked until CASE 1 closure passes.
 
+## Canonical namespace/work collision guard
+
+`CP-NAMESPACE-001` is implemented source-only.
+
+It registers the canonical ID namespaces, derives definitions from their existing authorities, and fails CI on duplicate or ambiguous canonical definitions.
+
+The historical duplicate `CPD-041` has been reconciled additively: the domain-planning decision is now `CPD-047`; `CPD-048` records the registry decision.
+
+This strengthens multi-agent safety but does not replace claims, collision domains, exact-HEAD guards or single-writer execution.
