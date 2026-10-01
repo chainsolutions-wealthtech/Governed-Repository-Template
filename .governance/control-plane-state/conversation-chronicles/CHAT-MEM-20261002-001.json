@@ -12,27 +12,27 @@
   "raw_pre_activation_transcript_completeness": "PARTIAL",
   "counters": {
     "next_user_message": 2,
-    "next_assistant_message": 2,
-    "next_tool_event": 4,
+    "next_assistant_message": 3,
+    "next_tool_event": 5,
     "next_decision_event": 7,
     "next_constraint_event": 7,
     "next_action_event": 4,
     "next_error_event": 1,
-    "next_recovery_event": 3,
-    "next_checkpoint": 4,
-    "next_cache": 4,
+    "next_recovery_event": 4,
+    "next_checkpoint": 5,
+    "next_cache": 5,
     "next_open_loop": 4,
     "next_artifact": 2,
     "next_session": 3
   },
   "last_message": {
-    "id": "MSG-A-000001",
-    "sha256": "7afec122084b22c439657b880c0ca5baa2390a9fa830db5fafebfc1ebb4d6881",
+    "id": "MSG-A-000002",
+    "sha256": "8763935819e385858f2f2df5ea57b23154614c0fb0aacbfef08072c0ba7c1031",
     "previous_hash": "8b45efbe51e0e9fbf26883ae2a6ee65c7975e7c782bc5c708c4ea06363db5e97"
   },
   "current_session": "SESSION-000002",
-  "current_checkpoint": "CHK-000003",
-  "current_cache": "CACHE-000003",
+  "current_checkpoint": "CHK-000004",
+  "current_cache": "CACHE-000004",
   "open_loops": [
     "OPEN-000002",
     "OPEN-000003"
@@ -100,5 +100,19 @@
       "source": "observed_at_processing"
     },
     "sha256": "7afec122084b22c439657b880c0ca5baa2390a9fa830db5fafebfc1ebb4d6881"
+  },
+  "non_emitted_drafts": [
+    {
+      "message_id": "MSG-A-000001",
+      "status": "NOT_EMITTED_DRAFT",
+      "corrected_by": "EVT-R-000003",
+      "replacement": "MSG-A-000002"
+    }
+  ],
+  "initial_persistence": {
+    "pull_request": 107,
+    "merge_commit": "babd8a959dceab4984d8b0870a72cb277b147742",
+    "premerge_ci_run": 36935895949,
+    "premerge_ci_result": "PASS"
   }
 }
