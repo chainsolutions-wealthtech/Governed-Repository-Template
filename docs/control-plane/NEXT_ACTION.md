@@ -1,52 +1,35 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = C1_13_I_B_F_APPROVE_EKYC_SETUP
-STATE = WAITING_FOR_OWNER_SETUP_APPROVAL
-PARENT = P12_S5_SECOND_FRESH_REPOSITORY_E2E
+NEXT_ACTION = P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE
+STATE = P12_S6_IN_PROGRESS
+PARENT = CREATE_NEW_REPOSITORY_COMPLETION
 ```
 
-## C1-13-I-B-E complete
+## P12-S5 second fresh E2E — PASS
 
-Owner selected `STANDARD_GOVERNED_FLOW` through the governed command path.
+The fresh Ekyc lifecycle now satisfies its exit gate.
 
-- central command comment: `5936121301`;
-- Control Plane run `36894608509`: PASS;
-- Ekyc Governed Local Entry run `36894651525`: PASS;
-- Ekyc HEAD unchanged: `4bf80309313f3d34f74ffca183bd540583d2e87f`;
-- Ekyc#1 advanced to revision `46` / `SETUP_APPROVAL`.
+- setup approval: owner `true`, central comment `5936330817`;
+- baseline materialization: Ekyc `3e889a2bdac78312ebcc7e31d1388ead65c9fceb`;
+- repository state: `PROJECT_BASELINE_READY`;
+- first-agent session preserved: `LOCAL-000001-S1`;
+- first work item preserved: `WORK-PROJECT-001` / `READY`;
+- subsequent normal entry: Ekyc#2 / `LOCAL-000002`;
+- mode: `NORMAL_GOVERNED_ENTRY`;
+- final normal-entry state: `LOCAL_HANDOFF_READY`, revision 6;
+- Ekyc HEAD unchanged throughout normal-entry proof;
+- no target-specific repair and no product work executed.
 
-No server, DNS, Plesk/vhost, TLS or domain mutation occurred.
+## Unique next action
 
-## Ekyc exact current state
+Execute **P12-S6 — Close CREATE_NEW_REPOSITORY CASE 1**.
 
-```text
-repository = Patricked-code/Ekyc
-HEAD = 4bf80309313f3d34f74ffca183bd540583d2e87f
-issue = Ekyc#1
-revision = 46
-status = WAITING_FOR_SETUP_APPROVAL
-phase = SETUP_APPROVAL
-production_server_selection = S1
-domain_intent = CREATE_NEW_ROOT_DOMAIN
-domain_root_name_mode = DISCOVER_AVAILABLE_NAMES
-workflow_model = STANDARD_GOVERNED_FLOW
-```
-
-## Owner approval required
-
-The next gate asks whether to approve the prepared repository setup and governed rights matrix for materialization.
-
-Field:
-
-`setup_approved` (boolean)
-
-The prepared plan keeps domain/server operations in `prepared_only` mode and does not grant S1, DNS, Plesk/vhost, TLS or domain execution authority.
+Closure must reconcile PROGRAM/CURRENT_STATE/TASKS/NEXT_ACTION/SUIVI/DECISIONS, record final Template and pilot evidence, preserve external MCP items as intakes only, prove there is no orphan CASE 1 task, and only then release GMC-A.
 
 ## Safety boundary
 
-- Do not replay MCP discovery.
-- Do not patch Ekyc directly.
-- Do not materialize the repository baseline before explicit setup approval.
-- Setup approval does not imply server/domain/DNS/TLS execution authority.
-- P12-S6 and GMC remain downstream of P12-S5.
+- Do not execute `WORK-PROJECT-001` during CASE 1 closure.
+- Do not mutate S1/domain/DNS/Plesk/TLS.
+- Do not modify `Patricked-code/MCP`.
+- Do not start GMC-A before P12-S6 passes.

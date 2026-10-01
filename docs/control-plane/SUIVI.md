@@ -574,3 +574,11 @@ Owner selected `STANDARD_GOVERNED_FLOW` through the governed central command pat
 
 The next unique gate is explicit `setup_approved` approval of the prepared repository setup and governed rights matrix. Domain/server operations remain prepared-only and no S1/DNS/Plesk/TLS execution authority is implied.
 
+## 2026-10-01 — P12-S5 second fresh E2E PASS
+
+Owner setup approval was dispatched through central comment `5936330817`. Control Plane run `36895996929` and Ekyc target run `36896033996` passed. The approved first-agent baseline materialized as Ekyc commit `3e889a2bdac78312ebcc7e31d1388ead65c9fceb`, with `LOCAL-000001-S1` as the first-agent session and `WORK-PROJECT-001` still `READY`.
+
+The required subsequent-agent proof then ran through Ekyc#2 / `LOCAL-000002` in `NORMAL_GOVERNED_ENTRY` mode. Start run `36896607275` and final command run `36896992524` passed. Final state is `LOCAL_HANDOFF_READY`, revision 6. Ekyc HEAD did not change during the normal-entry proof, the first-agent session remained unique, and the project work item was neither modified nor executed.
+
+P12-S5 therefore satisfies its exit gate without target-specific repair. No S1/domain/DNS/Plesk/TLS mutation occurred. P12-S6 is now the unique chronological next task; GMC-A remains blocked behind CASE 1 closure.
+

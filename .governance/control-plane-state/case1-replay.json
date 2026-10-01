@@ -5,9 +5,9 @@
   "issue_mirror": 12,
   "historical_pilot": "Patricked-code/Gouvern",
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
-  "current_phase": "C1-13",
+  "current_phase": "C1-14",
   "current_status": "IN_PROGRESS",
-  "unique_next_action": "C1_13_I_B_F_APPROVE_EKYC_SETUP",
+  "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
   "phases": [
     {
       "id": "C1-00",
@@ -154,17 +154,17 @@
     {
       "id": "C1-13",
       "name": "second fresh repository E2E",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-12"
       ],
-      "next_action": "APPROVE_EKYC_SETUP",
+      "next_action": null,
       "live_state": {
         "repository": "Patricked-code/Ekyc",
         "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
         "local_entry_issue": "Patricked-code/Ekyc#1",
-        "expected_head": "4bf80309313f3d34f74ffca183bd540583d2e87f",
-        "status": "WAITING_FOR_SETUP_APPROVAL",
+        "expected_head": "3e889a2bdac78312ebcc7e31d1388ead65c9fceb",
+        "status": "SECOND_FRESH_E2E_PASS",
         "completed_corrective_tasks": [
           "C1-13-A",
           "C1-13-B",
@@ -306,7 +306,7 @@
           "selected_server": "S1",
           "execution_authority_granted": false
         },
-        "active_dependency_task": "C1-13-I-B-F",
+        "active_dependency_task": "P12-S6",
         "existing_host_path_binding_extension": {
           "status": "DONE",
           "template_pr": 92,
@@ -341,12 +341,32 @@
           "execution_authority_granted": false
         },
         "setup_approval_gate": {
-          "phase": "SETUP_APPROVAL",
-          "owner_decision_required": true,
-          "field": "setup_approved",
-          "response_type": "boolean",
-          "materialization_scope": "REPOSITORY_BASELINE_AND_RIGHTS_MATRIX",
+          "phase": "DONE",
+          "approved": true,
+          "command_comment": 5936330817,
+          "control_plane_run": 36895996929,
+          "target_run": 36896033996,
           "server_or_domain_mutation_authorized": false
+        },
+        "baseline_materialization": {
+          "status": "PASS",
+          "commit": "3e889a2bdac78312ebcc7e31d1388ead65c9fceb",
+          "first_agent_session": "LOCAL-000001-S1",
+          "work_item": "WORK-PROJECT-001",
+          "work_item_status": "READY"
+        },
+        "normal_entry_proof": {
+          "status": "PASS",
+          "issue": "Patricked-code/Ekyc#2",
+          "request_id": "LOCAL-000002",
+          "final_status": "LOCAL_HANDOFF_READY",
+          "revision": 6,
+          "head": "3e889a2bdac78312ebcc7e31d1388ead65c9fceb",
+          "start_run": 36896607275,
+          "final_run": 36896992524,
+          "first_agent_session_preserved": "LOCAL-000001-S1",
+          "work_item_preserved": "WORK-PROJECT-001",
+          "no_target_git_mutation": true
         }
       },
       "owner_feedback": {
@@ -358,10 +378,11 @@
     {
       "id": "C1-14",
       "name": "case closure",
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "depends_on": [
         "C1-13"
-      ]
+      ],
+      "next_action": "CLOSE_CREATE_NEW_REPOSITORY_CASE"
     }
   ],
   "change_protocol": {

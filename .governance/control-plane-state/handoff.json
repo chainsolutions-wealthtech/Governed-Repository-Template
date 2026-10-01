@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "handoff_id": "CP-HANDOFF-20261001-007",
+  "handoff_id": "CP-HANDOFF-20261001-008",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "canonical_branch": "main",
-  "baseline_subject_head": "5db9a6ec96ff924afec8be74655675ed81fca3d2",
-  "active_branch": "governance/checkpoint-ekyc-setup-approval-ready",
+  "baseline_subject_head": "5172f8b9cf5ce560a1d55af65e7b7916a77df86b",
+  "active_branch": "governance/checkpoint-ekyc-second-fresh-e2e-pass",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "current_task": "C1-13-I-B-F_APPROVE_EKYC_SETUP",
-  "unique_next_action": "C1_13_I_B_F_APPROVE_EKYC_SETUP",
+  "current_task": "P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+  "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
   "read_first": [
     "docs/control-plane/CURRENT_STATE.md",
     ".governance/control-plane-state/canonical-architecture.json",
@@ -148,7 +148,10 @@
     "PRESERVE_CURRENT_EKYC_CREATE_NEW_ROOT_DOMAIN_DECISION",
     "SETUP_APPROVAL_IS_EXPLICIT_OWNER_GATE",
     "SETUP_APPROVAL_NE_SERVER_DOMAIN_DNS_TLS_EXECUTION_AUTHORITY",
-    "PRESERVE_STANDARD_GOVERNED_FLOW_SELECTION"
+    "PRESERVE_STANDARD_GOVERNED_FLOW_SELECTION",
+    "P12_S5_SECOND_FRESH_E2E_IS_DONE_ONLY_AFTER_NORMAL_ENTRY_PROOF",
+    "DO_NOT_EXECUTE_EKYC_WORK_PROJECT_001_DURING_CASE1_VALIDATION",
+    "P12_S6_PRECEDES_GMC_A"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",
@@ -162,7 +165,7 @@
   },
   "second_fresh_repository": {
     "repository": "Patricked-code/Ekyc",
-    "head": "4bf80309313f3d34f74ffca183bd540583d2e87f",
+    "head": "3e889a2bdac78312ebcc7e31d1388ead65c9fceb",
     "source_request": 49,
     "local_entry_issue": 1,
     "frozen": true,
@@ -174,7 +177,7 @@
       "C1-13-C",
       "C1-13-D"
     ],
-    "active_dependency": "OWNER_SETUP_APPROVAL_REQUIRED",
+    "active_dependency": "P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
     "external_intake": "Patricked-code/MCP#201",
     "failed_discovery_run": 36644247227,
     "active_corrective_task": null,
@@ -200,9 +203,9 @@
       "simultaneous_execution_required": false,
       "reused_authorized_evidence": true
     },
-    "local_entry_status": "WAITING_FOR_SETUP_APPROVAL",
-    "local_entry_phase": "SETUP_APPROVAL",
-    "local_entry_revision": 46,
+    "local_entry_status": "PROJECT_BASELINE_READY",
+    "local_entry_phase": "POST_BASELINE_NORMAL_ENTRY_PROVEN",
+    "local_entry_revision": 47,
     "domain_binding_observation": {
       "existing_ekyc_project_registration": false,
       "existing_ekyc_domain": false
@@ -289,7 +292,24 @@
     },
     "workflow_model_command_comment": 5936121301,
     "workflow_model_control_plane_run": 36894608509,
-    "workflow_model_target_run": 36894651525
+    "workflow_model_target_run": 36894651525,
+    "baseline_commit": "3e889a2bdac78312ebcc7e31d1388ead65c9fceb",
+    "first_agent_session": "LOCAL-000001-S1",
+    "work_item": "WORK-PROJECT-001",
+    "work_item_status": "READY",
+    "normal_entry_proof": {
+      "issue": 2,
+      "request_id": "LOCAL-000002",
+      "mode": "NORMAL_GOVERNED_ENTRY",
+      "status": "LOCAL_HANDOFF_READY",
+      "revision": 6,
+      "start_run": 36896607275,
+      "final_run": 36896992524,
+      "head_unchanged": true,
+      "duplicate_baseline": false,
+      "duplicate_session": false,
+      "product_work_executed": false
+    }
   },
   "mcp_capability_snapshot": {
     "authority_id": "CP-MCP-CAP-001",

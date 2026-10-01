@@ -532,6 +532,42 @@ The owner may choose different answers from the historical pilot. The framework 
 
 ---
 
+## C1-13 completion — Ekyc second fresh E2E
+
+The second clean repository replay is complete.
+
+```text
+Patricked-code/Ekyc
+baseline commit = 3e889a2bdac78312ebcc7e31d1388ead65c9fceb
+first-agent session = LOCAL-000001-S1
+first work item = WORK-PROJECT-001 / READY
+normal-entry issue = Ekyc#2
+request = LOCAL-000002
+mode = NORMAL_GOVERNED_ENTRY
+final status = LOCAL_HANDOFF_READY
+revision = 6
+```
+
+Evidence:
+
+- setup approval central comment `5936330817`;
+- setup Control Plane run `36895996929`: PASS;
+- baseline target run `36896033996`: PASS;
+- normal-entry start comment `5936415975`;
+- normal-entry start run `36896607275`: PASS;
+- final normal-entry target run `36896992524`: PASS;
+- Ekyc HEAD remained `3e889a2bdac78312ebcc7e31d1388ead65c9fceb` throughout the normal-entry proof;
+- `LOCAL-000001-S1` remained the single first-agent session;
+- `WORK-PROJECT-001` remained `READY` and was not executed;
+- no target-specific repair and no target Git mutation occurred during normal-entry proof;
+- domain/server operation authority remained false.
+
+Checkpoint: `SECOND_FRESH_E2E_PASS`.
+
+Next chronological phase: `C1-14 / P12-S6 CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+
+---
+
 ## PHASE C1-14 — CASE 1 closure
 
 ### Objective
