@@ -73,7 +73,7 @@ Exit gate:
 - no pilot Git mutation during proof.
 
 ### STEP 5 — Fresh repository E2E proof from zero
-State: `IN_PROGRESS`
+State: `DONE`
 
 Goal:
 - create a second clean disposable repository from the current template;
@@ -153,8 +153,22 @@ This is not a Template defect:
 
 External intake `Patricked-code/MCP#201` records the blocker. C1-13 resumes only after MCP-side governed remediation and fresh TLS evidence.
 
+### STEP 5 completion evidence — Ekyc second fresh E2E
+
+- Fresh repository: `Patricked-code/Ekyc`.
+- Approved baseline materialization: `3e889a2bdac78312ebcc7e31d1388ead65c9fceb`.
+- First-agent session: `LOCAL-000001-S1`.
+- First project work item: `WORK-PROJECT-001` remains `READY`.
+- Subsequent normal-entry issue: `Ekyc#2`, request `LOCAL-000002`.
+- Normal-entry mode: `NORMAL_GOVERNED_ENTRY`.
+- Final state: `LOCAL_HANDOFF_READY`, revision 6.
+- Normal-entry proof preserved Ekyc HEAD and created no target Git mutation.
+- Generic defects discovered during replay were corrected in the Template first; no target-specific repair was used.
+- No product work and no S1/domain/DNS/Plesk/TLS mutation was executed.
+- Exit gate: `PASS`.
+
 ### STEP 6 — Close CREATE_NEW_REPOSITORY and release next macro case
-State: `PENDING_STEP_5`
+State: `READY`
 
 Goal:
 - reconcile documentation, manifest/version, tests and durable evidence;
