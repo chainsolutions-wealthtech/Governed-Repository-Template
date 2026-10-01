@@ -884,3 +884,30 @@ Implemented surface:
 - unit/E2E regression test.
 
 The broader IDN/RTE tasks remain at their existing statuses until their full contracts are satisfied. Current programme priority remains unchanged.
+
+### GACR R2 — connection telemetry, correlation and dispatch
+
+Status: **IMPLEMENTED_GENERIC_RUNTIME / CI_PENDING**.
+
+This is additive implementation evidence for existing backlog items, not a new programme:
+
+- `IDN-002` safe GitHub actor/context capture;
+- `IDN-004` connection-event telemetry;
+- `IDN-005` stronger session identity/resume;
+- `IDN-006` automatic session correlation support;
+- `IDN-008` identity/context kept separate from execution authority;
+- `IDN-010` persisted connection/session evidence;
+- `RTE-008` persisted routing/continuity events;
+- `RTE-012` deterministic resume context.
+
+Implemented:
+- Beacon connection envelope;
+- Correlator with fail-closed ambiguity;
+- Dispatcher and wake channels;
+- safe agent-context aggregation;
+- optional external bridge wake contract;
+- source/client telemetry separation;
+- client-upgrade state preservation;
+- unit/E2E tests.
+
+Broader IDN/RTE items keep their prior status until their complete acceptance criteria are met.

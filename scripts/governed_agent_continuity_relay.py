@@ -11,6 +11,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 
+from gacr_agent_telemetry import record_beacon, correlate_all, dispatch_open_takeovers
+
 ROOT = Path(os.environ.get("GACR_ROOT") or Path(__file__).resolve().parents[1]).resolve()
 GOV = ROOT / ".governance"
 TEMPLATE_SOURCE = (ROOT / ".template-source").exists()
@@ -194,6 +196,11 @@ def register_docs(
     task_id: str | None,
     pull_request: int | None,
     standby: bool,
+    client_instance_id: str | None = None,
+    agent_role: str | None = None,
+    capabilities: list[str] | None = None,
+    wake_channels: list[str] | None = None,
+    bridge_registration_ref: str | None = None,
     timestamp: datetime,
 ) -> tuple[dict, str]:
     if provider not in PROVIDERS:
@@ -252,6 +259,11 @@ def register_docs(
             "status": "STANDBY" if standby else "ACTIVE",
             "created_at": iso(timestamp),
             "last_seen_at": iso(timestamp),
+            "client_instance_id": client_instance_id,
+            "agent_role": agent_role,
+            "capabilities": sorted(set(capabilities or [])),
+            "wake_channels": sorted(set(wake_channels or [])),
+            "bridge_registration_ref": bridge_registration_ref,
         }
         sessions.append(session)
         resolution = "CREATE"
@@ -265,6 +277,16 @@ def register_docs(
     if ref:
         session["provider_conversation_ref"] = ref
         session["provider_conversation_ref_provenance"] = provenance
+    if client_instance_id:
+        session["client_instance_id"] = client_instance_id
+    if agent_role:
+        session["agent_role"] = agent_role
+    if capabilities:
+        session["capabilities"] = sorted(set((session.get("capabilities") or []) + capabilities))
+    if wake_channels:
+        session["wake_channels"] = sorted(set((session.get("wake_channels") or []) + wake_channels))
+    if bridge_registration_ref:
+        session["bridge_registration_ref"] = bridge_registration_ref
     if provider_url and config.get("external_conversation_reference", {}).get("persist_full_url") is True:
         session["provider_conversation_url"] = provider_url
     elif "provider_conversation_url" in session and config.get("external_conversation_reference", {}).get("persist_full_url") is not True:
@@ -521,9 +543,19 @@ def command_register(a: argparse.Namespace) -> None:
         task_id=a.task_id,
         pull_request=a.pull_request,
         standby=a.standby,
+        client_instance_id=a.client_instance_id,
+        agent_role=a.agent_role,
+        capabilities=a.capability or [],
+        wake_channels=a.wake_channel or [],
+        bridge_registration_ref=a.bridge_registration_ref,
         timestamp=timestamp,
     )
+    github_actor = os.environ.get("GITHUB_ACTOR")
+    if github_actor:
+        session["github_actor"] = github_actor
     save(sessions, claims, takeovers)
+    record_beacon(session=session, event_type="REGISTER" if resolution == "CREATE" else "RESUME")
+    correlate_all()
     ref = session.get("provider_conversation_ref")
     print(json.dumps({
         "status": resolution,
@@ -544,6 +576,8 @@ def command_heartbeat(a: argparse.Namespace) -> None:
         timestamp=now_utc(),
     )
     save(sessions, claims, takeovers)
+    record_beacon(session=session, event_type="HEARTBEAT")
+    correlate_all()
     print(json.dumps({"status": "HEARTBEAT_RECORDED", "session": session}, indent=2, ensure_ascii=False))
 
 
@@ -551,7 +585,14 @@ def command_scan(_: argparse.Namespace) -> None:
     config, sessions, claims, work, takeovers = load_all()
     changes = scan_docs(config, sessions, claims, takeovers, timestamp=now_utc())
     save(sessions, claims, takeovers)
-    print(json.dumps({"status": "SUPERVISOR_SCAN_COMPLETE", "changes": changes}, indent=2, ensure_ascii=False))
+    correlation = correlate_all()
+    dispatch = dispatch_open_takeovers()
+    print(json.dumps({
+        "status": "SUPERVISOR_SCAN_COMPLETE",
+        "changes": changes,
+        "correlation": correlation,
+        "dispatch": dispatch,
+    }, indent=2, ensure_ascii=False))
 
 
 def command_status(_: argparse.Namespace) -> None:
@@ -642,6 +683,9 @@ def command_takeover_accept(a: argparse.Namespace) -> None:
         timestamp=now_utc(),
     )
     save(sessions, claims, takeovers)
+    record_beacon(session=next((x for x in sessions.get("sessions", []) if x.get("session_id") == a.successor_session_id), None), event_type="TAKEOVER_ACCEPTED")
+    correlate_all()
+    dispatch_open_takeovers()
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
 
@@ -661,6 +705,11 @@ def parser() -> argparse.ArgumentParser:
     reg.add_argument("--task-id")
     reg.add_argument("--pull-request", type=int)
     reg.add_argument("--standby", action="store_true")
+    reg.add_argument("--client-instance-id")
+    reg.add_argument("--agent-role")
+    reg.add_argument("--capability", action="append")
+    reg.add_argument("--wake-channel", action="append", choices=["POLL_REPOSITORY","REPOSITORY_DISPATCH","EXTERNAL_BRIDGE"])
+    reg.add_argument("--bridge-registration-ref")
     reg.set_defaults(fn=command_register)
 
     hb = sub.add_parser("heartbeat")

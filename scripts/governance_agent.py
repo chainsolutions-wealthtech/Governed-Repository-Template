@@ -9,6 +9,8 @@ import subprocess
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+from gacr_agent_telemetry import record_beacon
+
 ROOT = Path(__file__).resolve().parents[1]
 GOV = ROOT / ".governance"
 MUTABLE_INTENTS = {"WORK_REQUEST", "CODE_CHANGE", "INFRASTRUCTURE"}
@@ -98,6 +100,7 @@ def gacr_touch(session: dict, action: str, timestamp: str | None = None, state: 
     relay["last_heartbeat_at"] = ts.replace(microsecond=0).isoformat()
     relay["lease_expires_at"] = (ts + timedelta(seconds=int(config.get("stalled_after_seconds", 1800)))).replace(microsecond=0).isoformat()
     relay["last_action"] = action
+    record_beacon(session=session, event_type=action)
 
 
 def command_observe(_: argparse.Namespace) -> None:

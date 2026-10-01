@@ -111,3 +111,17 @@ Un agent de secours peut se déclarer avec `--standby`.
 Les actions `session-start`, `dispatch`, `checkpoint` et `handoff` renouvellent automatiquement le lease GACR lorsqu'elles passent par `governance_agent.py`. Pour une longue opération sans action gouvernée intermédiaire, émettre un heartbeat GACR.
 
 Si une session devient `STALLED / TAKEOVER_READY`, aucun agent ne doit reprendre son claim par simple supposition. La relève exige la lecture du checkpoint, de la branche/PR, puis une réconciliation exact-HEAD avant `takeover-accept`.
+
+### GACR Agent Context
+
+On long-running or multi-agent work, GACR Beacon records safe connection/action telemetry automatically through governed agent actions.
+
+Before resuming offered/stalled work, inspect:
+
+```bash
+python3 scripts/gacr_agent_telemetry.py context --session-id <session-id>
+```
+
+Use a provider conversation reference or URL only when it is actually available from the client/orchestrator. Never infer one from unrelated GitHub evidence.
+
+If a client bridge is available, it may register `client_instance_id`, `bridge_registration_ref` and wake channels. External wake events never bypass claim, authority or exact-HEAD checks.

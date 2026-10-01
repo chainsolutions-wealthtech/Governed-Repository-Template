@@ -155,6 +155,24 @@
       "pattern": "^GACR-T-[0-9a-f]{12}$",
       "kind": "AGENT_CONTINUITY_TAKEOVER_RUNTIME_ID",
       "canonical_source": ".governance/agent-relay/takeovers.json"
+    },
+    {
+      "id": "GACR-BEACON",
+      "pattern": "^GACR-B-[0-9a-f]{12}$",
+      "kind": "AGENT_CONNECTION_BEACON_RUNTIME_ID",
+      "canonical_source": ".governance/agent-relay/beacons.json"
+    },
+    {
+      "id": "GACR-CORRELATION",
+      "pattern": "^GACR-C-[0-9a-f]{12}$",
+      "kind": "AGENT_CORRELATION_RUNTIME_ID",
+      "canonical_source": ".governance/agent-relay/correlations.json"
+    },
+    {
+      "id": "GACR-DISPATCH",
+      "pattern": "^GACR-D-[0-9a-f]{12}$",
+      "kind": "AGENT_WAKE_DISPATCH_RUNTIME_ID",
+      "canonical_source": ".governance/agent-relay/dispatches.json"
     }
   ],
   "canonical_authorities": [
@@ -168,7 +186,8 @@
     "CP-IDENTITY-SECRET-001",
     "CP-EXECUTION-001",
     "CP-NAMESPACE-001",
-    "CP-AGENT-RELAY-001"
+    "CP-AGENT-RELAY-001",
+    "CP-AGENT-RELAY-001-R2"
   ],
   "definition_sources": [
     {

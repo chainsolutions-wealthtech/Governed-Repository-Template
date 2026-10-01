@@ -1,0 +1,89 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsolutions.local/schemas/gacr-bridge-contract.schema.json",
+  "title": "GACR External Bridge Wake Contract",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "event",
+    "dispatch_id",
+    "repository",
+    "target_session_id",
+    "delivery"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "event": {
+      "const": "GACR_TAKEOVER_READY"
+    },
+    "dispatch_id": {
+      "type": "string",
+      "pattern": "^GACR-D-[0-9a-f]{12}$"
+    },
+    "repository": {
+      "type": "string"
+    },
+    "target_session_id": {
+      "type": "string"
+    },
+    "target_client_instance_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "bridge_registration_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "task_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "branch": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "pull_request": {
+      "type": [
+        "integer",
+        "null"
+      ]
+    },
+    "takeover_id": {
+      "type": "string"
+    },
+    "stalled_session_id": {
+      "type": "string"
+    },
+    "delivery": {
+      "type": "object",
+      "required": [
+        "idempotency_key",
+        "requires_context_fetch",
+        "may_write"
+      ],
+      "properties": {
+        "idempotency_key": {
+          "type": "string"
+        },
+        "requires_context_fetch": {
+          "const": true
+        },
+        "may_write": {
+          "const": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

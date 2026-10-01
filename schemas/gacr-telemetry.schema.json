@@ -1,0 +1,165 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsolutions.local/schemas/gacr-telemetry.schema.json",
+  "title": "GACR Beacon Correlation Dispatch State",
+  "type": "object",
+  "properties": {
+    "beacon": {
+      "type": "object",
+      "required": [
+        "beacon_id",
+        "observed_at",
+        "repository",
+        "source",
+        "event_type",
+        "context_digest"
+      ],
+      "properties": {
+        "beacon_id": {
+          "type": "string",
+          "pattern": "^GACR-B-[0-9a-f]{12}$"
+        },
+        "observed_at": {
+          "type": "string"
+        },
+        "repository": {
+          "type": "string"
+        },
+        "source": {
+          "enum": [
+            "GITHUB_ACTIONS",
+            "LOCAL_AGENT",
+            "EXTERNAL_BRIDGE",
+            "UNKNOWN"
+          ]
+        },
+        "event_type": {
+          "type": "string"
+        },
+        "session_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "provider": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "provider_conversation_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "client_instance_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "context_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": true
+    },
+    "correlation": {
+      "type": "object",
+      "required": [
+        "correlation_id",
+        "beacon_id",
+        "level",
+        "reasons",
+        "candidate_session_ids"
+      ],
+      "properties": {
+        "correlation_id": {
+          "type": "string",
+          "pattern": "^GACR-C-[0-9a-f]{12}$"
+        },
+        "beacon_id": {
+          "type": "string"
+        },
+        "level": {
+          "enum": [
+            "EXACT",
+            "STRONG",
+            "PROBABLE",
+            "AMBIGUOUS",
+            "UNKNOWN"
+          ]
+        },
+        "selected_session_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "candidate_session_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reasons": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "dispatch": {
+      "type": "object",
+      "required": [
+        "dispatch_id",
+        "takeover_id",
+        "target_session_id",
+        "status",
+        "delivery_modes",
+        "created_at"
+      ],
+      "properties": {
+        "dispatch_id": {
+          "type": "string",
+          "pattern": "^GACR-D-[0-9a-f]{12}$"
+        },
+        "takeover_id": {
+          "type": "string"
+        },
+        "target_session_id": {
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "READY",
+            "ACKNOWLEDGED",
+            "ACTIVATED",
+            "CANCELLED",
+            "EXPIRED"
+          ]
+        },
+        "delivery_modes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "POLL_REPOSITORY",
+              "REPOSITORY_DISPATCH",
+              "EXTERNAL_BRIDGE"
+            ]
+          }
+        },
+        "created_at": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

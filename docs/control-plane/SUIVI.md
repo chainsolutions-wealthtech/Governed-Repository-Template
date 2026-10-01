@@ -600,3 +600,17 @@ P12-S5 therefore satisfies its exit gate without target-specific repair. No S1/d
 - Client projects keep repository-local GACR runtime stores.
 - Source conversation/session state cannot leak through template initialization or governed client upgrade.
 - No change to CASE 1 / `P12-S6` priority.
+
+## 2026-10-01 — GACR R2 Beacon / Correlator / Dispatcher
+
+- Added Beacon safe connection/action telemetry.
+- Added Correlator with EXACT/STRONG/PROBABLE/AMBIGUOUS/UNKNOWN outcomes.
+- Auto-binding is limited to exact or unique strong evidence.
+- Added Dispatcher with repository polling, repository-dispatch and optional external-bridge delivery modes.
+- Added safe agent-context aggregation for deterministic resume.
+- Added optional outbound bridge notifier using GitHub variable + secret configuration.
+- Added source/client telemetry state isolation and client-upgrade preservation.
+- Added runtime namespaces `GACR-B-*`, `GACR-C-*`, `GACR-D-*`.
+- Template target version: `2.8.31`.
+- Full Governance CI pending.
+- No change to `P12-S6` priority.

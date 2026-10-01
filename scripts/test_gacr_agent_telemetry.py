@@ -1,0 +1,217 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import importlib.util
+import json
+import os
+import tempfile
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+MODULE_PATH = ROOT / "scripts" / "gacr_agent_telemetry.py"
+NOTIFIER_PATH = ROOT / "scripts" / "gacr_bridge_notifier.py"
+
+
+def load_module():
+    spec = importlib.util.spec_from_file_location("gacr_agent_telemetry", MODULE_PATH)
+    if spec is None or spec.loader is None:
+        raise SystemExit("GACR_TELEMETRY_TEST_FAILED: unable to load module")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+
+def load_notifier():
+    spec = importlib.util.spec_from_file_location("gacr_bridge_notifier", NOTIFIER_PATH)
+    if spec is None or spec.loader is None:
+        raise SystemExit("GACR_TELEMETRY_TEST_FAILED: unable to load notifier")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
+def write(path: Path, value: dict):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(value, indent=2) + "\n", encoding="utf-8")
+
+
+def assert_true(value, message):
+    if not value:
+        raise SystemExit("GACR_TELEMETRY_TEST_FAILED: " + message)
+
+
+def main():
+    g = load_module()
+    with tempfile.TemporaryDirectory() as tmp:
+        root = Path(tmp)
+        g.ROOT = root
+        g.GOV = root / ".governance"
+        g.SESSIONS_PATH = g.GOV / "sessions" / "sessions.json"
+        g.CLAIMS_PATH = g.GOV / "work" / "claims.json"
+        g.TAKEOVERS_PATH = g.GOV / "agent-relay" / "takeovers.json"
+        g.BEACONS_PATH = g.GOV / "agent-relay" / "beacons.json"
+        g.CORRELATIONS_PATH = g.GOV / "agent-relay" / "correlations.json"
+        g.DISPATCHES_PATH = g.GOV / "agent-relay" / "dispatches.json"
+
+        session_a = {
+            "session_id": "session-a",
+            "agent_identity": "ChatGPT-A",
+            "provider": "chatgpt",
+            "provider_conversation_ref": "conv-a",
+            "client_instance_id": "client-a",
+            "connection_ref": "conn-a",
+            "repository": "owner/repo",
+            "status": "ACTIVE",
+            "created_at": "2026-10-01T20:00:00+00:00",
+            "last_observed_head_sha": "a" * 40,
+            "github_actor": "actor-a",
+            "relay": {
+                "process": "GACR",
+                "state": "ACTIVE",
+                "task_id": "TASK-1",
+                "branch": "feature/a",
+                "pull_request": 12,
+                "last_heartbeat_at": "2026-10-01T20:00:00+00:00",
+                "lease_expires_at": "2026-10-01T20:30:00+00:00",
+            },
+        }
+        session_b = {
+            "session_id": "session-b",
+            "agent_identity": "ChatGPT-B",
+            "provider": "chatgpt",
+            "provider_conversation_ref": "conv-b",
+            "client_instance_id": "client-b",
+            "repository": "owner/repo",
+            "status": "STANDBY",
+            "created_at": "2026-10-01T20:01:00+00:00",
+            "last_observed_head_sha": "a" * 40,
+            "wake_channels": ["POLL_REPOSITORY", "REPOSITORY_DISPATCH", "EXTERNAL_BRIDGE"],
+            "bridge_registration_ref": "bridge-b",
+            "relay": {
+                "process": "GACR",
+                "state": "STANDBY",
+                "task_id": None,
+                "branch": "main",
+                "pull_request": None,
+                "last_heartbeat_at": "2026-10-01T20:01:00+00:00",
+                "lease_expires_at": "2026-10-01T20:31:00+00:00",
+            },
+        }
+        write(g.SESSIONS_PATH, {"schema_version":"1.0.0","revision":2,"sessions":[session_a,session_b]})
+        write(g.CLAIMS_PATH, {"schema_version":"1.0.0","revision":1,"claims":[{
+            "session_id":"session-a","work_item_id":"WORK-1","status":"ACTIVE",
+            "collision_domains":["domain-a"],"claimed_head_sha":"a"*40
+        }]})
+        write(g.TAKEOVERS_PATH, {"schema_version":"1.0.0","revision":1,"last_scan_at":None,"items":[{
+            "takeover_id":"GACR-T-123456789abc",
+            "stalled_session_id":"session-a",
+            "offered_to_session_id":"session-b",
+            "accepted_by_session_id":None,
+            "status":"OFFERED",
+            "created_at":"2026-10-01T20:40:00+00:00",
+            "task_id":"TASK-1",
+            "branch":"feature/a",
+            "pull_request":12,
+            "last_observed_head_sha":"a"*40
+        }]})
+        for path in [g.BEACONS_PATH,g.CORRELATIONS_PATH,g.DISPATCHES_PATH]:
+            write(path, {"schema_version":"1.0.0","revision":0,"items":[]})
+
+        os.environ["GITHUB_REPOSITORY"] = "owner/repo"
+        os.environ["GITHUB_ACTOR"] = "actor-a"
+        os.environ["GITHUB_SHA"] = "a" * 40
+        os.environ["GITHUB_REF_NAME"] = "feature/a"
+
+        beacon = g.record_beacon(
+            session=session_a,
+            event_type="REGISTER",
+            provider_url="https://chatgpt.com/c/conv-a",
+        )
+        assert_true(beacon["beacon_id"].startswith("GACR-B-"), "beacon id")
+        assert_true(beacon["provider_conversation_ref"] == "conv-a", "provider ref preserved")
+        assert_true("provider_url" not in beacon, "full provider URL must not persist in beacon")
+        assert_true(beacon["github"]["environment"]["GITHUB_ACTOR"] == "actor-a", "safe GitHub actor captured")
+
+        result = g.correlate_all()
+        assert_true(result["changed"] == 1, "first correlation should be written")
+        correlations = json.loads(g.CORRELATIONS_PATH.read_text(encoding="utf-8"))["items"]
+        assert_true(correlations[0]["level"] == "EXACT", "explicit session beacon should correlate EXACT")
+        assert_true(correlations[0]["selected_session_id"] == "session-a", "exact session selected")
+
+        anonymous = g.record_beacon(
+            session=None,
+            event_type="OBSERVED_GITHUB_ACTIVITY",
+            provider="chatgpt",
+            task_id="TASK-1",
+            branch="feature/a",
+            pull_request=12,
+            source="GITHUB_ACTIONS",
+        )
+        result = g.correlate_all()
+        anon_corr = next(x for x in json.loads(g.CORRELATIONS_PATH.read_text(encoding="utf-8"))["items"] if x["beacon_id"] == anonymous["beacon_id"])
+        assert_true(anon_corr["level"] == "STRONG", "branch+PR+task evidence should correlate STRONG")
+        assert_true(anon_corr["selected_session_id"] == "session-a", "strong correlation selects unique candidate")
+
+        dispatch = g.dispatch_open_takeovers()
+        assert_true(dispatch["changed"] == 1, "takeover should produce one dispatch")
+        item = dispatch["items"][0]
+        assert_true(item["target_session_id"] == "session-b", "standby target")
+        assert_true(set(item["delivery_modes"]) == {"POLL_REPOSITORY","REPOSITORY_DISPATCH","EXTERNAL_BRIDGE"}, "all declared delivery modes")
+        assert_true(item["may_write_before_takeover_accept"] is False, "dispatch must not grant write")
+
+        notifier = load_notifier()
+        bridge_payload = notifier.build_payload("owner/repo", item)
+        assert_true(bridge_payload["dispatch_id"] == item["dispatch_id"], "bridge dispatch id")
+        assert_true(bridge_payload["delivery"]["idempotency_key"] == item["dispatch_id"], "bridge idempotency key")
+        assert_true(bridge_payload["delivery"]["may_write"] is False, "bridge wake must not grant write")
+        assert_true(notifier.eligible([item]) == [item], "ready external dispatch should be bridge-eligible")
+
+        context = g.agent_context("session-b")
+        assert_true(context["session"]["session_id"] == "session-b", "context resolves session")
+        assert_true(len(context["dispatches"]) == 1, "context includes dispatch offer")
+
+        assert_true(
+            g.provider_ref_from_url("chatgpt","https://chatgpt.com/c/6abe6ebe-3f98-83ed-b12e-2cf0f5b1e300")
+            == "6abe6ebe-3f98-83ed-b12e-2cf0f5b1e300",
+            "ChatGPT URL should normalize to conversation ref",
+        )
+
+        try:
+            g.assert_secretless({"github_token":"should-never-persist"})
+            raise SystemExit("GACR_TELEMETRY_TEST_FAILED: forbidden telemetry key accepted")
+        except ValueError:
+            pass
+
+        # A second indistinguishable session must make heuristic correlation ambiguous.
+        session_c = json.loads(json.dumps(session_a))
+        session_c["session_id"] = "session-c"
+        session_c["provider_conversation_ref"] = "conv-c"
+        session_c["client_instance_id"] = "client-c"
+        session_c["connection_ref"] = "conn-c"
+        session_c["github_actor"] = None
+        sessions_doc = json.loads(g.SESSIONS_PATH.read_text(encoding="utf-8"))
+        sessions_doc["sessions"].append(session_c)
+        write(g.SESSIONS_PATH, sessions_doc)
+
+        os.environ.pop("GITHUB_ACTOR", None)
+
+        ambiguous = g.record_beacon(
+            session=None,
+            event_type="AMBIGUOUS_ACTIVITY",
+            provider=None,
+            task_id="TASK-1",
+            branch="feature/a",
+            pull_request=12,
+            source="LOCAL_AGENT",
+        )
+        g.correlate_all()
+        amb_corr = next(x for x in json.loads(g.CORRELATIONS_PATH.read_text(encoding="utf-8"))["items"] if x["beacon_id"] == ambiguous["beacon_id"])
+        assert_true(amb_corr["level"] == "AMBIGUOUS", "equal strong candidates must fail closed as AMBIGUOUS")
+        assert_true(amb_corr["selected_session_id"] is None, "ambiguous evidence must not auto-bind")
+
+    print("GACR_AGENT_TELEMETRY_TEST_PASS")
+
+
+if __name__ == "__main__":
+    main()

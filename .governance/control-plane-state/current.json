@@ -325,6 +325,51 @@
       "boundary_merge": "d894d29eca6fcc2a1784c459e9e3ddac672b3515",
       "boundary_post_merge_ci": 36916456136,
       "boundary_post_merge_ci_result": "PASS"
+    },
+    "gacr_agent_continuity_relay_r2": {
+      "authority_id": "CP-AGENT-RELAY-001-R2",
+      "decision_id": "CPD-051",
+      "status": "IMPLEMENTED_GENERIC_RUNTIME_CI_PENDING",
+      "components": [
+        "BEACON",
+        "CORRELATOR",
+        "WATCH",
+        "DISPATCHER",
+        "AGENT_CONTEXT",
+        "OPTIONAL_EXTERNAL_BRIDGE"
+      ],
+      "safe_github_context_allowlist": true,
+      "raw_event_payload_persisted": false,
+      "secrets_persisted": false,
+      "correlation_levels": [
+        "EXACT",
+        "STRONG",
+        "PROBABLE",
+        "AMBIGUOUS",
+        "UNKNOWN"
+      ],
+      "auto_bind_levels": [
+        "EXACT",
+        "STRONG"
+      ],
+      "client_instance_id_supported": true,
+      "provider_conversation_reference_optional": true,
+      "external_bridge_webhook_optional": true,
+      "external_bridge_wake_does_not_grant_write": true,
+      "exact_head_takeover_required": true,
+      "source_client_memory_boundary": "ISOLATED",
+      "contributes_to": [
+        "IDN-002",
+        "IDN-004",
+        "IDN-005",
+        "IDN-006",
+        "IDN-008",
+        "IDN-010",
+        "RTE-008",
+        "RTE-012"
+      ],
+      "current_unique_executable_item_unchanged": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+      "template_version": "2.8.31"
     }
   },
   "framework_product_boundary": {

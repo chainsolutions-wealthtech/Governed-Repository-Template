@@ -814,3 +814,25 @@ GACR is additive to the existing multi-agent architecture:
 - GACR governs liveness, stall detection and safe relay between sessions.
 
 A provider conversation URL is never the canonical session identity. The governed session ID remains canonical, with provider references attached only as observed correlation metadata.
+
+## 32. GACR Beacon, Correlator and Dispatcher
+
+Revision authority `CP-AGENT-RELAY-001-R2` enriches the existing GACR continuity layer:
+
+```text
+AGENT / CLIENT
+→ BEACON
+   → safe GitHub + provider/client correlation metadata
+→ CORRELATOR
+   → EXACT / STRONG / PROBABLE / AMBIGUOUS / UNKNOWN
+→ WATCH
+   → heartbeat / lease / STALLED
+→ DISPATCHER
+   → standby target + delivery mode
+→ exact-HEAD takeover reconciliation
+→ claim transfer
+```
+
+A provider-specific bridge is optional. It may supply a conversation reference/client-instance ID or receive a wake event, but it never owns task state or mutation authority.
+
+The governed repository remains the continuity source of truth.

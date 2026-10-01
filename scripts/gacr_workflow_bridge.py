@@ -9,6 +9,7 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 CORE=ROOT/'scripts'/'governed_agent_continuity_relay.py'
+TELEMETRY=ROOT/'scripts'/'gacr_agent_telemetry.py'
 
 def add(args:list[str], flag:str, value):
     if value is None or value=='':
@@ -36,10 +37,16 @@ def main():
     else:
         raise SystemExit(f'GACR_WORKFLOW_BRIDGE_FAILED: unsupported event {event_name}')
 
-    if command not in {'register','heartbeat','scan','status','takeover-plan','takeover-accept'}:
+    core_commands={'register','heartbeat','scan','status','takeover-plan','takeover-accept'}
+    telemetry_commands={'beacon','correlate','dispatch','context','telemetry-status'}
+    if command not in core_commands | telemetry_commands:
         raise SystemExit(f'GACR_WORKFLOW_BRIDGE_FAILED: unsupported command {command}')
 
-    args=[sys.executable,str(CORE),command]
+    if command in telemetry_commands:
+        telemetry_command='status' if command=='telemetry-status' else command
+        args=[sys.executable,str(TELEMETRY),telemetry_command]
+    else:
+        args=[sys.executable,str(CORE),command]
     if command=='register':
         add(args,'--agent',payload.get('agent') or os.environ.get('GITHUB_ACTOR') or 'github-actions')
         add(args,'--provider',payload.get('provider') or 'github-actions')
@@ -51,6 +58,17 @@ def main():
         add(args,'--branch',payload.get('branch'))
         add(args,'--task-id',payload.get('task_id'))
         add(args,'--pull-request',payload.get('pull_request'))
+        add(args,'--client-instance-id',payload.get('client_instance_id'))
+        add(args,'--agent-role',payload.get('agent_role'))
+        add(args,'--bridge-registration-ref',payload.get('bridge_registration_ref'))
+        for capability in str(payload.get('capabilities') or '').split(','):
+            capability=capability.strip()
+            if capability:
+                add(args,'--capability',capability)
+        for channel in str(payload.get('wake_channels') or '').split(','):
+            channel=channel.strip()
+            if channel:
+                add(args,'--wake-channel',channel)
         if str(payload.get('standby','')).lower() in {'1','true','yes','on'}:
             args.append('--standby')
     elif command=='heartbeat':
@@ -58,6 +76,24 @@ def main():
         add(args,'--observed-head',payload.get('observed_head'))
         add(args,'--action',payload.get('action_label'))
         add(args,'--evidence',payload.get('evidence'))
+    elif command=='beacon':
+        add(args,'--session-id',payload.get('session_id'))
+        add(args,'--event-type',payload.get('event_type') or 'CONNECT')
+        add(args,'--provider',payload.get('provider'))
+        add(args,'--provider-ref',payload.get('provider_ref'))
+        add(args,'--provider-url',payload.get('provider_url'))
+        add(args,'--client-instance-id',payload.get('client_instance_id'))
+        add(args,'--connection-ref',payload.get('connection_ref'))
+        add(args,'--task-id',payload.get('task_id'))
+        add(args,'--branch',payload.get('branch'))
+        add(args,'--pull-request',payload.get('pull_request'))
+        add(args,'--agent-role',payload.get('agent_role'))
+        for capability in str(payload.get('capabilities') or '').split(','):
+            capability=capability.strip()
+            if capability:
+                add(args,'--capability',capability)
+    elif command=='context':
+        add(args,'--session-id',payload.get('session_id'))
     elif command=='takeover-plan':
         add(args,'--stalled-session-id',payload.get('stalled_session_id'))
     elif command=='takeover-accept':
