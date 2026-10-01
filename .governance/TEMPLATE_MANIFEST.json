@@ -395,7 +395,8 @@
     "existing host DNS binding is separated from HTTP deployment path binding",
     "existing domains and subdomains can mount applications at host root or governed HTTP paths",
     "HTTP path creation prepares reverse-proxy capability and authority requirements without granting execution authority",
-    "governed upgrades reopen the existing-host mount question when legacy state skipped path selection"
+    "governed upgrades reopen the existing-host mount question when legacy state skipped path selection",
+    "deployment path binding persists into project context MCP binding and infrastructure intent"
   ],
   "automatic_initialization_supported": true
 }
