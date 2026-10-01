@@ -591,3 +591,12 @@ P12-S5 therefore satisfies its exit gate without target-specific repair. No S1/d
 - PR #98 merged at `0d0c595be7f6833bb36778a0cdac46c82abbd2ab`.
 - Post-merge Governance CI `36915276875`: PASS.
 - No change to programme priority; `P12-S6` remains active.
+
+## 2026-10-01 — GACR source/client boundary v2.8.30
+
+- Corrective PR #100 merged at `d894d29eca6fcc2a1784c459e9e3ddac672b3515`.
+- Post-merge Governance CI `36916456136`: PASS.
+- Template-source GACR sessions/claims/takeovers now live only under source-only `.governance/control-plane-state/gacr-*.json`.
+- Client projects keep repository-local GACR runtime stores.
+- Source conversation/session state cannot leak through template initialization or governed client upgrade.
+- No change to CASE 1 / `P12-S6` priority.

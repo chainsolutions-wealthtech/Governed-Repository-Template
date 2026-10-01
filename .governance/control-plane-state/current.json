@@ -283,7 +283,7 @@
       "authority_id": "CP-AGENT-RELAY-001",
       "decision_id": "CPD-049",
       "process_name": "GACR",
-      "status": "IMPLEMENTED_GENERIC_RUNTIME_SOURCE_BOUNDARY_CI_PENDING",
+      "status": "IMPLEMENTED_GENERIC_RUNTIME_SOURCE_BOUNDARY_CI_PROVEN",
       "reusable_across_projects": true,
       "extends_existing_session_claim_checkpoint_handoff": true,
       "parallel_task_engine": false,
@@ -320,7 +320,11 @@
         ".governance/work/claims.json",
         ".governance/agent-relay/takeovers.json"
       ],
-      "boundary_decision_id": "CPD-050"
+      "boundary_decision_id": "CPD-050",
+      "boundary_pr": 100,
+      "boundary_merge": "d894d29eca6fcc2a1784c459e9e3ddac672b3515",
+      "boundary_post_merge_ci": 36916456136,
+      "boundary_post_merge_ci_result": "PASS"
     }
   },
   "framework_product_boundary": {
