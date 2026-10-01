@@ -329,7 +329,7 @@
     "gacr_agent_continuity_relay_r2": {
       "authority_id": "CP-AGENT-RELAY-001-R2",
       "decision_id": "CPD-051",
-      "status": "IMPLEMENTED_GENERIC_RUNTIME_CI_PENDING",
+      "status": "IMPLEMENTED_GENERIC_RUNTIME_CI_PROVEN",
       "components": [
         "BEACON",
         "CORRELATOR",
@@ -369,7 +369,11 @@
         "RTE-012"
       ],
       "current_unique_executable_item_unchanged": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
-      "template_version": "2.8.31"
+      "template_version": "2.8.31",
+      "merge_pr": 102,
+      "merge_commit": "abefcfccbf822fa2fcf590e592ad51c767e32937",
+      "post_merge_ci": 36921331490,
+      "post_merge_ci_result": "PASS"
     }
   },
   "framework_product_boundary": {

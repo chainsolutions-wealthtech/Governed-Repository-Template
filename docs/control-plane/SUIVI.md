@@ -614,3 +614,12 @@ P12-S5 therefore satisfies its exit gate without target-specific repair. No S1/d
 - Template target version: `2.8.31`.
 - Full Governance CI pending.
 - No change to `P12-S6` priority.
+
+## 2026-10-01 — GACR R2 CI-proven
+
+- PR #102 merged at `abefcfccbf822fa2fcf590e592ad51c767e32937`.
+- Post-merge Governance CI `36921331490`: PASS.
+- Safe connection telemetry, correlation, dispatch, agent-context and optional bridge notifier are now part of Template v2.8.31.
+- No provider conversation identifier is fabricated when unavailable.
+- No wake event bypasses claim/authority/exact-HEAD gates.
+- `P12-S6` remains the active programme priority.
