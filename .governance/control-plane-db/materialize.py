@@ -146,6 +146,12 @@ def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0)
     if run is None:
         raise SystemExit("CONTROL_PLANE_DB_FAILED: CASE1 pilot run missing")
     run_status,current_phase,completed_at = run
+    case_status_row = conn.execute("SELECT status FROM framework_cases WHERE case_id='CREATE_NEW_REPOSITORY'").fetchone()
+    if case_status_row is None:
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: CREATE_NEW_REPOSITORY catalogue entry missing")
+    case_status = case_status_row[0]
+    if case_status != run_status:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: CASE1 catalogue/run lifecycle mismatch: case={case_status!r} run={run_status!r}")
     if run_status == "DONE":
         terminal = conn.execute("SELECT status FROM case_phases WHERE case_id='CREATE_NEW_REPOSITORY' AND phase_id='C1-14'").fetchone()
         if current_phase != "C1-14" or terminal != ("DONE",):
