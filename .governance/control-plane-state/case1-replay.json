@@ -7,7 +7,7 @@
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
   "current_phase": "C1-13",
   "current_status": "IN_PROGRESS",
-  "unique_next_action": "C1_13_I_B_E_SELECT_EKYC_WORKFLOW_MODEL",
+  "unique_next_action": "C1_13_I_B_F_APPROVE_EKYC_SETUP",
   "phases": [
     {
       "id": "C1-00",
@@ -158,13 +158,13 @@
       "depends_on": [
         "C1-12"
       ],
-      "next_action": "SELECT_EKYC_WORKFLOW_MODEL",
+      "next_action": "APPROVE_EKYC_SETUP",
       "live_state": {
         "repository": "Patricked-code/Ekyc",
         "source_request": "chainsolutions-wealthtech/Governed-Repository-Template#49",
         "local_entry_issue": "Patricked-code/Ekyc#1",
         "expected_head": "4bf80309313f3d34f74ffca183bd540583d2e87f",
-        "status": "WAITING_FOR_WORKFLOW_MODEL_DECISION",
+        "status": "WAITING_FOR_SETUP_APPROVAL",
         "completed_corrective_tasks": [
           "C1-13-A",
           "C1-13-B",
@@ -306,7 +306,7 @@
           "selected_server": "S1",
           "execution_authority_granted": false
         },
-        "active_dependency_task": "C1-13-I-B-E",
+        "active_dependency_task": "C1-13-I-B-F",
         "existing_host_path_binding_extension": {
           "status": "DONE",
           "template_pr": 92,
@@ -332,13 +332,21 @@
           "target_local_entry": 36880228405
         },
         "workflow_model_gate": {
-          "phase": "Q_WORKFLOW_MODEL",
-          "owner_decision_required": true,
-          "choices": [
-            "REGULATORY_AFRICAFUNDS_GOVERNED_FLOW",
-            "STANDARD_GOVERNED_FLOW"
-          ],
+          "phase": "DONE",
+          "selected": "STANDARD_GOVERNED_FLOW",
+          "command_comment": 5936121301,
+          "control_plane_run": 36894608509,
+          "target_run": 36894651525,
+          "local_entry_revision": 46,
           "execution_authority_granted": false
+        },
+        "setup_approval_gate": {
+          "phase": "SETUP_APPROVAL",
+          "owner_decision_required": true,
+          "field": "setup_approved",
+          "response_type": "boolean",
+          "materialization_scope": "REPOSITORY_BASELINE_AND_RIGHTS_MATRIX",
+          "server_or_domain_mutation_authorized": false
         }
       },
       "owner_feedback": {
