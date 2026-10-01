@@ -45,7 +45,10 @@
     ".github/workflows/server-identity-secret-refresh.yml",
     "scripts/test_server_identity_secret_refresh_workflow.py",
     "docs/control-plane/NAMESPACE_WORK_REGISTRY.md",
-    ".governance/control-plane-state/namespace-work-registry.json"
+    ".governance/control-plane-state/namespace-work-registry.json",
+    "docs/GACR_AGENT_CONTINUITY_RELAY.md",
+    ".governance/agent-relay/config.json",
+    "docs/MULTI_AGENT_COORDINATION.md"
   ],
   "rules": [
     "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",
