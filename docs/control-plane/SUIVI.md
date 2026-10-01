@@ -543,3 +543,11 @@ The governed v2.8.25 upgrade advanced Ekyc from `9ace9f...` revision 39 / `Q_DOM
 All prior answers and authorized MCP discovery evidence were preserved. No discovery replay, server mutation or domain mutation occurred.
 
 The next unique owner decision is the Ekyc production-server selection among observed `S1` / `S2` or explicit deferral/new-server planning.
+
+## 2026-10-01 — Ekyc selects S1; progressive domain-choice correction
+
+Owner selected S1 through the exact current Ekyc local-entry gate. The governed command advanced Ekyc#1 to revision 41 without moving the Git HEAD or mutating S1.
+
+The resulting legacy `Q_DOMAIN_BINDING` is too coarse for the required adaptive flow. Generic corrective task C1-13-I-B-C splits domain planning into domain intent, observed S1 parent/existing-domain selection, label/name choice, automatic binding derivation and prepared capability requirements.
+
+No target-specific Ekyc patch is permitted.
