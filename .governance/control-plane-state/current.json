@@ -223,6 +223,22 @@
       "secret_values_persisted": false,
       "execution_authority_granted": false,
       "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
+    },
+    "server_identity_secret_facts": {
+      "authority_id": "CP-IDENTITY-SECRET-001",
+      "decision_id": "CPD-044",
+      "status": "IMPLEMENTED_SOURCE_ONLY_LIVE_OBSERVATION_PENDING",
+      "source_state": ".governance/control-plane-state/server-identity-secret-facts.json",
+      "relational_table": "server_identity_secret_facts",
+      "relational_schema_version": "1.4.0",
+      "revision_guard": true,
+      "exact_replay_idempotent": true,
+      "contradiction_fail_closed": true,
+      "raw_remote_payload_persisted": false,
+      "secret_values_persisted": false,
+      "execution_authority_granted": false,
+      "next_slice": "KBI-04O",
+      "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
     }
   },
   "framework_product_boundary": {
