@@ -283,7 +283,7 @@
       "authority_id": "CP-AGENT-RELAY-001",
       "decision_id": "CPD-049",
       "process_name": "GACR",
-      "status": "IMPLEMENTED_GENERIC_RUNTIME_CI_PENDING",
+      "status": "IMPLEMENTED_GENERIC_RUNTIME_CI_PROVEN",
       "reusable_across_projects": true,
       "extends_existing_session_claim_checkpoint_handoff": true,
       "parallel_task_engine": false,
@@ -303,7 +303,12 @@
         "RTE-008",
         "RTE-012"
       ],
-      "current_unique_executable_item_unchanged": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE"
+      "current_unique_executable_item_unchanged": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+      "merge_pr": 98,
+      "merge_commit": "0d0c595be7f6833bb36778a0cdac46c82abbd2ab",
+      "post_merge_ci": 36915276875,
+      "post_merge_ci_result": "PASS",
+      "template_version": "2.8.29"
     }
   },
   "framework_product_boundary": {

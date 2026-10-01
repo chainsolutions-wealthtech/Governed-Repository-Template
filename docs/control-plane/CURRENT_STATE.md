@@ -663,3 +663,14 @@ This strengthens multi-agent safety but does not replace claims, collision domai
 It extends the existing session/claim model with heartbeat, leases, stall detection, standby offers and exact-HEAD guarded takeover.
 
 The implementation does not change the unique CASE 1 programme action and grants no execution authority by itself.
+
+## GACR post-merge attestation
+
+- Process: `GACR — Governed Agent Continuity Relay`.
+- Authority: `CP-AGENT-RELAY-001`.
+- Template version: `2.8.29`.
+- PR #98: MERGED.
+- Merge commit: `0d0c595be7f6833bb36778a0cdac46c82abbd2ab`.
+- Post-merge Governance CI `36915276875`: PASS.
+- GACR regression test: PASS.
+- Existing CASE 1 priority remains unchanged: `P12-S6`.
