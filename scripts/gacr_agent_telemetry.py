@@ -665,7 +665,7 @@ def parser() -> argparse.ArgumentParser:
     b.add_argument("--pull-request",type=int)
     b.add_argument("--agent-role")
     b.add_argument("--capability",action="append")
-    b.add_argument("--source",choices=["GITHUB_ACTIONS","LOCAL_AGENT","EXTERNAL_BRIDGE","UNKNOWN"])
+    b.add_argument("--source",choices=["GITHUB_ACTIONS","LOCAL_AGENT","EXTERNAL_BRIDGE","CLIENT_EMITTER","UNKNOWN"])
     b.add_argument("--action-id"); b.add_argument("--action-label"); b.add_argument("--action-phase",choices=sorted(ACTION_PHASES))
     b.add_argument("--tool-name"); b.add_argument("--tool-call-id"); b.add_argument("--outcome"); b.add_argument("--written-head")
     b.add_argument("--checkpoint-ref"); b.add_argument("--evidence-ref"); b.add_argument("--interruption-code",choices=sorted(INTERRUPTION_CODES))

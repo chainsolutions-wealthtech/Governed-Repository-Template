@@ -939,3 +939,22 @@ Additive GACR contribution under `CP-AGENT-RELAY-001-R4` / `CPD-053`:
 - dedicated E2E regression test.
 
 This does not supersede or execute the global programme task `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+
+### GACR R5 — client liveness and trace emitter
+
+Status: **IMPLEMENTED_ON_GOVERNED_BRANCH / CI_PENDING**.
+
+Additive candidate under `CP-AGENT-RELAY-001-R5` / `CPD-054`:
+
+- generic client emitter SDK/CLI;
+- `CLIENT_EMITTER` telemetry provenance;
+- repository-dispatch heartbeat;
+- action/tool STARTED / COMPLETED / FAILED / CANCELLED traces;
+- explicit interruption signals only;
+- runtime-only transport credential handling;
+- session resolution from repository state;
+- wake polling without automatic takeover;
+- governed-client distribution through the existing upgrader;
+- dedicated regression test.
+
+R5 does not execute `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.

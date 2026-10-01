@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.3.0",
+  "schema_version": "1.4.0",
   "process_name": "GACR",
   "process_title": "Governed Agent Continuity Relay",
   "authority_id": "CP-AGENT-RELAY-001",
@@ -69,14 +69,16 @@
     ]
   },
   "external_bridge": {
-    "contract_only": true,
+    "contract_only": false,
     "can_capture_conversation_ref_when_client_supplies_it": true,
     "can_capture_client_instance_id": true,
     "can_receive_dispatch_offer": true,
     "outbound_browser_wakeup_implemented": false,
-    "note": "Repository-side GACR can prepare and target wake events. A provider/client bridge is still required to wake a browser conversation."
+    "note": "Repository-side GACR can prepare and target wake events. A provider/client bridge is still required to wake a browser conversation.",
+    "client_emitter_implemented": true,
+    "client_emitter_wake_polling": true
   },
-  "revision_authority_id": "CP-AGENT-RELAY-001-R4",
+  "revision_authority_id": "CP-AGENT-RELAY-001-R5",
   "forensics": {
     "enabled": true,
     "projection_only": true,
@@ -110,5 +112,28 @@
     "main_push_auto_attach": true,
     "github_actions_bot_state_push_reentry": false,
     "note": "A governed arrival attaches with the strongest observable anchor. Missing provider conversation metadata never blocks attachment and may enrich the same session later."
+  },
+  "client_emitter": {
+    "enabled": true,
+    "provenance": "CLIENT_EMITTER",
+    "transport": "GITHUB_REPOSITORY_DISPATCH",
+    "heartbeat_interval_seconds": 300,
+    "supports": [
+      "AUTO_ATTACH",
+      "HEARTBEAT",
+      "ACTION_TRACE",
+      "INTERRUPTION_SIGNAL",
+      "WAKE_POLL"
+    ],
+    "runtime_credential_policy": "MEMORY_ONLY_NEVER_PERSIST",
+    "repository_dispatch_events": [
+      "gacr_auto-attach",
+      "gacr_heartbeat",
+      "gacr_beacon"
+    ],
+    "interruption_signal_policy": "EXPLICIT_OBSERVATION_ONLY",
+    "wake_poll_may_accept_takeover": false,
+    "takeover_requires_exact_head_reconciliation": true,
+    "note": "Provider/host adapters may use the client emitter SDK/CLI. The emitter transports safe metadata only and never grants mutation authority."
   }
 }

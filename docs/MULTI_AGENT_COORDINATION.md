@@ -143,3 +143,23 @@ An arbitrary browser conversation cannot be universally awakened by GitHub. GACR
 The central Template's GACR runtime records are source-only control-plane memory. Target repositories maintain their own GACR runtime state.
 
 This prevents a conversation, claim or takeover belonging to framework development from leaking into a project created or upgraded from the Template.
+
+## GACR client liveness
+
+R5 distinguishes repository transport from actual client provenance.
+
+A heartbeat arriving through GitHub Actions may still carry `source=CLIENT_EMITTER` when the originating agent/client sent it.
+
+The client emitter may maintain liveness and publish traces, but it never owns claims and cannot accept takeover automatically.
+
+```text
+CLIENT_EMITTER
+→ heartbeat / trace
+→ repository GACR state
+→ WATCH / FORENSICS
+→ wake poll
+→ human/agent exact-HEAD reconciliation
+→ takeover-accept
+```
+
+If the emitter stops without an explicit interruption signal, WATCH treats the missing heartbeat as absence only; Forensics must not infer a provider or network cause.

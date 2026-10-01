@@ -30,6 +30,7 @@
             "GITHUB_ACTIONS",
             "LOCAL_AGENT",
             "EXTERNAL_BRIDGE",
+            "CLIENT_EMITTER",
             "UNKNOWN"
           ]
         },

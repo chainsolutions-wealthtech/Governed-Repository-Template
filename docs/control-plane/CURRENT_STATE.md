@@ -759,3 +759,19 @@ Cross-cutting status: `LIVE_AUTO_ATTACH_PROVEN / CI_PROVEN`.
 - Persisted runtime main after auto-attach: `7467bbbca0f554df9d43831588ca03a0d1862c9f`.
 - Provider conversation reference remains optional/unavailable; attachment succeeded without invention.
 - No recursive auto-attach was observed from repository-automation state persistence.
+
+## GACR R5 — Client Liveness and Trace Emitter
+
+Cross-cutting candidate status: `IMPLEMENTED_ON_GOVERNED_BRANCH / CI_PENDING`.
+
+- Parent authority: `CP-AGENT-RELAY-001`.
+- Previous proven revision: `CP-AGENT-RELAY-001-R4`.
+- Candidate revision: `CP-AGENT-RELAY-001-R5`.
+- Decision: `CPD-054`.
+- Baseline main: `6d6ba0e23d052d563e014e290ba4b32fc88b87db`.
+- Candidate branch: `governance/gacr-r5-client-liveness-trace`.
+- Generic client emitter transports heartbeat/action/interruption metadata through existing repository-dispatch receivers.
+- Client provenance is `CLIENT_EMITTER`, distinct from GitHub Actions transport.
+- Wake polling cannot accept takeover.
+- Continuous browser/client liveness is not claimed unless the provider host actually invokes or runs the emitter.
+- Global programme action `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` remains unchanged and unexecuted.

@@ -125,3 +125,29 @@ python3 scripts/gacr_agent_telemetry.py context --session-id <session-id>
 Use a provider conversation reference or URL only when it is actually available from the client/orchestrator. Never infer one from unrelated GitHub evidence.
 
 If a client bridge is available, it may register `client_instance_id`, `bridge_registration_ref` and wake channels. External wake events never bypass claim, authority or exact-HEAD checks.
+
+### GACR R5 client liveness
+
+A governed agent/client should keep its GACR session live independently of repository mutations.
+
+When the host/orchestrator can run a client process, use the distributed emitter:
+
+```bash
+python3 scripts/gacr_client_emitter.py daemon \
+  --repository "<owner/repo>" \
+  --session-id "<gacr-session-id>" \
+  --client-instance-id "<client-instance-id>"
+```
+
+The emitter sends heartbeat metadata through the existing GACR repository-dispatch contract. Runtime transport credentials are read from the client environment only and are never written into GACR payloads or repository state.
+
+Hosts should emit action traces around material work:
+
+```bash
+python3 scripts/gacr_client_emitter.py trace --repository "<owner/repo>" --session-id "<id>" --action-phase STARTED --action-id "<id>" --action-label "<label>"
+python3 scripts/gacr_client_emitter.py trace --repository "<owner/repo>" --session-id "<id>" --action-phase COMPLETED --action-id "<id>" --outcome PASS
+```
+
+Only explicitly observed interruption signals may be emitted. Silence alone remains a WATCH/FORENSICS observation, never a fabricated failure cause.
+
+Wake polling can surface a takeover offer but does not accept it. Exact-HEAD reconciliation and the existing claim/authority gates remain mandatory.

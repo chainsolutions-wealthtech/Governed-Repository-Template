@@ -110,6 +110,7 @@ def main():
         add(args,'--observed-head',payload.get('observed_head'))
         add(args,'--action',payload.get('action_label'))
         add(args,'--evidence',payload.get('evidence'))
+        add(args,'--source',payload.get('source'))
     elif command=='beacon':
         add(args,'--session-id',payload.get('session_id'))
         add(args,'--event-type',payload.get('event_type') or 'CONNECT')
