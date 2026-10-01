@@ -594,3 +594,25 @@ Live refresh remains pending until this workflow is merged and invoked from cano
 First canonical-main refresh run `36844233362` proved live read-only MCP collection and safe-fact persistence, then stopped before Git persistence because the persistence unit test incorrectly depended on source revision 0.
 
 Corrective task `KBI-04O-A` is active. No live observation entered canonical state and no server mutation occurred.
+
+## KBI-04O live refresh proven
+
+The first production-like read-only knowledge refresh is now complete and canonical.
+
+Evidence:
+
+- KBI-04O workflow merge #84: `7edffed0594cb0a2f5e54605f21c6348fd60f3fd`;
+- first live run `36844233362`: collection/persistence PASS, validation stopped on a unit-fixture defect before Git persistence;
+- KBI-04O-A fix PR #85 merge: `30b99b1f9cb0c824c90218078d9c2c2d18a4c6e5`;
+- second live run `36844701817`: PASS;
+- generated safe-facts PR #86 at `0504b454a778377421d578e9022c2c103f4abe61`;
+- PR #86 Governance CI `36844736669`: PASS;
+- PR #86 merge: `b665fba88d276b9efb636a894e53d890344b2faa`;
+- post-merge Governance CI `36844997332`: PASS;
+- canonical facts state: revision 1, 17 facts, `PARTIAL_BOUNDED_METADATA`.
+
+Persisted evidence contains no secret values, raw MCP payloads, server connection coordinates or execution authority.
+
+Observed mechanism result remains explicit: ephemeral SSH OIDC minting is implemented; several generic production capabilities remain modelled gaps, including TLS change, secret provisioning, database change, DNS change and runtime mutation. No automatic MCP intake was created.
+
+CASE 1 is unchanged: Ekyc remains at `C1-13-I-B / Q_DOMAIN_BINDING`.
