@@ -744,3 +744,24 @@ These slices do not change the CASE 1 unique action.
   - migrate legacy fresh-project `Q_DOMAIN_BINDING` state through governed upgrade;
   - no discovery replay and no execution authority.
 - Ekyc target remains untouched until Template CI/release passes.
+
+### C1-13-I-B-A completion — server before domain
+
+- Status: `DONE`.
+- Template PR #88 merge: `c41afa4fdeffd5f12d6243b95f5d04083ca514e4`.
+- Pre-merge CI `36869361015`: PASS.
+- Post-merge CI `36869476595`: PASS.
+- Governed Ekyc upgrade `36869574238`: PASS.
+- Ekyc HEAD: `b67a4ec58d837a66f3c3dedb02caadaf044912d5`.
+- Ekyc#1: revision 40 / `Q_PRODUCTION_SERVER_SELECTION`.
+- Ekyc CI `36869667945`: PASS.
+- No MCP discovery replay and no server/domain mutation.
+
+### C1-13-I-B-B — select Ekyc production server
+
+- Status: `IN_PROGRESS`.
+- Depends on: `C1-13-I-B-A`.
+- Observed choices: `S1`, `S2`.
+- Additional owner choices: `PLAN_NEW_SERVER`, `DECIDE_LATER`.
+- Owner answer is configuration/project-model input only; it grants no execution authority.
+- After S1/S2 selection, reuse selected-server domain inventory before domain-type/parent/name planning.
