@@ -2,7 +2,7 @@
 from __future__ import annotations
 import copy
 from pathlib import Path
-from local_governed_entry import answer, both_discovery_needs_refresh, complete_baseline, decode_state, encode_state, mark_credentials_verified, new_request, observed_domains_for_server, reconcile_both_smart_routing, reconcile_legacy_discovery_authority, reconcile_setup_question_order, record_mcp_discovery, record_mcp_discovery_failure, require_mcp_discovery_refresh
+from local_governed_entry import answer, both_discovery_needs_refresh, complete_baseline, decode_state, encode_state, mark_credentials_verified, new_request, observed_domains_for_server, reconcile_both_smart_routing, reconcile_domain_question_order, reconcile_legacy_discovery_authority, reconcile_setup_question_order, record_mcp_discovery, record_mcp_discovery_failure, require_mcp_discovery_refresh
 
 ROOT=Path(__file__).resolve().parents[1]
 
@@ -54,13 +54,35 @@ def main():
     if "S1" not in s["next_request"].get("choices",[]):
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: observed S1 candidate missing")
     s=answer_expected(s,"production_server_selection","S1")
-    if s["next_request"]["field"]!="domain_binding" or s["next_request"].get("selected_server")!="S1":
-        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: domain question must be scoped to selected server")
+    if s["next_request"]["field"]!="domain_intent" or s["next_request"].get("selected_server")!="S1":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: domain intent must be scoped to selected server")
     if "example.com" not in s["next_request"].get("observed_domains",[]):
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: selected-server domain inventory not reused")
-    s=answer_expected(s,"domain_binding",{"mode":"UNRESOLVED"})
+    if "example.com" not in s["next_request"].get("observed_parent_domains",[]):
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: parent-domain choices not derived from S1 inventory")
+
+    domain_start=copy.deepcopy(s)
+
+    # CREATE_SUBDOMAIN path: choice -> observed parent -> suggested label -> derived binding.
+    s=answer_expected(s,"domain_intent","CREATE_SUBDOMAIN")
+    if s["next_request"]["field"]!="domain_parent_selection" or "example.com" not in s["next_request"].get("choices",[]):
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: subdomain parent choice missing")
+    s=answer_expected(s,"domain_parent_selection","example.com")
+    if s["next_request"]["field"]!="domain_label_choice" or "ekyc.example.com" not in s["next_request"].get("suggested_fqdns",[]):
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: subdomain label suggestions missing")
+    s=answer_expected(s,"domain_label_choice","ekyc")
+    binding=s["answers"].get("domain_binding") or {}
+    if binding.get("mode")!="CREATE_NEW" or binding.get("kind")!="SUBDOMAIN" or binding.get("domain")!="ekyc.example.com":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: subdomain binding not derived")
+    if s["next_request"]["field"]!="workflow_model":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: derived subdomain did not advance")
     s=answer_expected(s,"workflow_model","REGULATORY_AFRICAFUNDS_GOVERNED_FLOW")
     if s["next_request"]["field"]!="setup_approved": raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: setup approval")
+    req=((s.get("setup_package") or {}).get("mcp") or {}).get("domain_operation_requirements") or {}
+    if req.get("execution_intent")!="CREATE_SUBDOMAIN" or "WEB_HOSTING_CHANGE" not in req.get("required_capabilities",[]):
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: subdomain operation requirements not prepared")
+    if req.get("execution_authority_granted") is not False:
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: domain choice granted execution authority")
     s=answer_expected(s,"setup_approved",True)
     if s["next_request"]["kind"]!="APPLY_BASELINE": raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: apply missing")
     s=complete_baseline(s,"b"*40,"LOCAL-000001-S1")
@@ -225,7 +247,9 @@ def main():
     if recovered["next_request"]["field"]!="production_server_selection":
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: discovery retry did not resume at production server choice")
     recovered=answer_expected(recovered,"production_server_selection","DECIDE_LATER")
-    recovered=answer_expected(recovered,"domain_binding",{"mode":"UNRESOLVED"})
+    recovered=answer_expected(recovered,"domain_intent","DECIDE_LATER")
+    if (recovered.get("answers") or {}).get("domain_binding",{}).get("mode")!="UNRESOLVED":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: deferred domain intent did not derive unresolved binding")
     recovered=answer_expected(recovered,"workflow_model","STANDARD_GOVERNED_FLOW")
     if recovered["next_request"]["field"]!="setup_approved":
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: expected setup approval after successful smart fallback")
@@ -245,6 +269,34 @@ def main():
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: Ekyc-like legacy domain gate not reordered")
     if reordered["next_request"].get("execution_authority_granted") is not False:
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: production server decision granted execution authority")
+
+    # Legacy state that already has a production server but still points at the old object gate.
+    ekyc_domain_legacy=copy.deepcopy(reordered)
+    ekyc_domain_legacy["answers"]["production_server_selection"]="S1"
+    ekyc_domain_legacy["phase"]="Q_DOMAIN_BINDING"
+    ekyc_domain_legacy["status"]="WAITING_FOR_SETUP_ANSWER"
+    ekyc_domain_legacy["next_request"]={"kind":"QUESTION","id":"Q_DOMAIN_BINDING","field":"domain_binding"}
+    domain_reordered=reconcile_domain_question_order(ekyc_domain_legacy)
+    if domain_reordered["phase"]!="Q_DOMAIN_INTENT" or domain_reordered["next_request"].get("field")!="domain_intent":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: legacy domain object gate not migrated to choice chain")
+    if domain_reordered["answers"].get("production_server_selection")!="S1":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: domain migration lost production server decision")
+
+    # REUSE_EXISTING path uses observed choices and derives an existing binding.
+    reuse=copy.deepcopy(domain_start)
+    reuse=answer_expected(reuse,"domain_intent","REUSE_EXISTING_DOMAIN")
+    if "api.example.com" not in reuse["next_request"].get("choices",[]):
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: observed existing domain choice missing")
+    reuse=answer_expected(reuse,"domain_existing_selection","api.example.com")
+    if reuse["answers"].get("domain_binding",{}).get("domain")!="api.example.com":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: existing domain binding not derived")
+
+    # NO_PUBLIC_DOMAIN path closes domain planning without mutation authority.
+    no_domain=copy.deepcopy(domain_start)
+    no_domain=answer_expected(no_domain,"domain_intent","NO_PUBLIC_DOMAIN")
+    no_binding=no_domain["answers"].get("domain_binding") or {}
+    if no_binding.get("mode")!="UNRESOLVED" or no_binding.get("kind")!="NO_PUBLIC_DOMAIN":
+        raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: no-public-domain binding semantics")
 
     n=new_request("LOCAL-2","owner/repo","c"*40,False,"later agent")
     for field,value in [
