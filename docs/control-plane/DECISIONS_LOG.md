@@ -284,3 +284,19 @@ Append-only durable decisions for the source/control-plane repository.
 - The generic GACR configuration, automation, schemas and documentation remain distributed.
 - Source agent/conversation history must never be copied into a client repository.
 - This is a boundary correction to `CP-AGENT-RELAY-001`, not a new programme or task engine.
+
+### CPD-051 — GACR Beacon, Correlator and Dispatcher make agent activity reconstructable
+
+- Date: 2026-10-01.
+- `CP-AGENT-RELAY-001-R2` extends GACR with three additive components:
+  - **Beacon** captures safe connection/action telemetry from the agent and allowlisted GitHub context;
+  - **Correlator** links beacons to governed sessions using explicit references first, then fail-closed multi-signal correlation;
+  - **Dispatcher** converts a governed takeover offer into a target-specific wake/relay dispatch.
+- Correlation levels are `EXACT / STRONG / PROBABLE / AMBIGUOUS / UNKNOWN`.
+- Only `EXACT` and unique `STRONG` evidence may auto-select a session. Probable/ambiguous evidence never auto-binds.
+- GitHub context is allowlisted; raw event payloads, tokens, secrets, cookies and authorization headers are never persisted.
+- A session may carry an optional `client_instance_id`, agent role, declared capabilities, wake channels and opaque bridge registration reference.
+- `GET agent-context` semantics aggregate session, claim, takeover, dispatch, beacons, correlations and repository HEAD for deterministic resume.
+- An optional external bridge webhook can receive idempotent wake events. A wake event grants no write authority; exact-HEAD takeover acceptance remains mandatory.
+- GitHub cannot infer a provider conversation URL that the provider/client never supplied. A client/browser bridge may submit that reference explicitly without exposing page content or cookies.
+- This extends existing `IDN-002/004/005/006/008/010` and `RTE-008/012`; it is not a parallel programme.
