@@ -568,3 +568,13 @@ Missing MCP production capabilities remain blockers. The current CASE 1 action r
 The Control Plane can now build a safe S1/S2 credential-mechanism matrix from the canonical identity model and MCP capability snapshot, and can execute bounded read-only probes when a current MCP token is supplied.
 
 The live result stores only safe status/shape/digest metadata; raw responses and secret values are discarded. Live S1/S2 observation is still pending and the current CASE 1 action remains unchanged.
+
+## Persistent S1/S2 identity-secret facts
+
+`KBI-04N` is implemented source-only.
+
+Validated KBI-04K server identity/secret observations can now be stored as revisioned canonical facts with provenance and freshness. Mechanism classifications are recomputed from canonical source authorities before persistence, and probe results are reduced to safe metadata/digests only.
+
+The relational Control Plane schema is extended to 1.4.0 with `server_identity_secret_facts`.
+
+The initial state remains `NOT_COLLECTED`; no live S1/S2 secret metadata has been persisted yet. CASE 1 remains at Ekyc domain-binding resolution.

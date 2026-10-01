@@ -128,3 +128,11 @@ exact collector slots, provenance and pre-mutation refresh rules.
 `CP-IDENTITY-SECRET-001` adds reusable knowledge of **how credentials are obtained and managed** across GitHub and production servers.
 
 The persistent knowledge stores references, types, scopes, lifecycle and provenance — never secret values. Runtime operations fetch or mint the credential only when required.
+
+## Persistent server identity-secret facts
+
+`KBI-04N` provides the durable projection for safe S1/S2 identity/secret metadata.
+
+The mapper's mechanism classifications and probe digests are stored with revision, provenance and freshness only after reconciliation against the current identity model and MCP capability snapshot. No raw MCP response or secret value is accepted.
+
+This allows future agents to reuse current knowledge and refresh only when the freshness class or an operation requires it.

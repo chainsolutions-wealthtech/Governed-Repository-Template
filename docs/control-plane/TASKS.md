@@ -688,3 +688,19 @@ The unique CASE 1 action remains `C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING`.
 - `KBI-04M` — bind authorized provisioning/execution recipes to existing Loop Engineering — IMPLEMENTED_SOURCE_ONLY through `governed_loop_execution_adapter.py`.
 
 These slices do not change the CASE 1 unique action.
+
+### KBI-04N — persistent server identity-secret facts
+
+- Status: `IMPLEMENTED_SOURCE_ONLY_LIVE_OBSERVATION_PENDING`.
+- Source state: `.governance/control-plane-state/server-identity-secret-facts.json`.
+- Persistence adapter: `scripts/control_plane_server_identity_secret_facts.py`.
+- Relational projection: `.governance/control-plane-db/005_server_identity_secret_facts.sql`.
+- Replay/revision/contradiction guards: implemented and unit-tested.
+- Secret/raw payload persistence: forbidden.
+- Live S1/S2 KBI-04K observation has not yet been ingested.
+
+### KBI-04O — governed read-only identity-secret refresh
+
+- Status: `PLANNED`.
+- Objective: run KBI-04K read-only observation, persist KBI-04N facts under exact revision, validate, and open a governed PR only when safe metadata changed.
+- No MCP/server mutation authority is part of this slice.
