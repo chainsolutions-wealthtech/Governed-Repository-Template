@@ -160,6 +160,15 @@ jobs:
             echo "SERVER_IDENTITY_SECRET_METADATA_SOURCE_ONLY_SKIP: client repository"
           fi
 
+      - name: Test source-only identity-secret refresh workflow
+        run: |
+          if [ -f .template-source ]; then
+            python3 -m py_compile scripts/test_server_identity_secret_refresh_workflow.py
+            python3 scripts/test_server_identity_secret_refresh_workflow.py
+          else
+            echo "SERVER_IDENTITY_SECRET_REFRESH_SOURCE_ONLY_SKIP: client repository"
+          fi
+
       - name: Test source-only server recipe capability matrix
         run: |
           if [ -f .template-source ]; then

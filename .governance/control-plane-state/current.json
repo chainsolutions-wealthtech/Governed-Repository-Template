@@ -239,6 +239,19 @@
       "execution_authority_granted": false,
       "next_slice": "KBI-04O",
       "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
+    },
+    "server_identity_secret_refresh": {
+      "decision_id": "CPD-045",
+      "slice": "KBI-04O",
+      "status": "IMPLEMENTED_SOURCE_ONLY_LIVE_REFRESH_PENDING",
+      "workflow": ".github/workflows/server-identity-secret-refresh.yml",
+      "trigger_model": "EVENT_AND_NEED_BASED",
+      "exact_revision_guard": true,
+      "mutation_authority_granted": false,
+      "secret_values_persisted": false,
+      "raw_remote_payload_persisted": false,
+      "server_connection_coordinates_persisted": false,
+      "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
     }
   },
   "framework_product_boundary": {

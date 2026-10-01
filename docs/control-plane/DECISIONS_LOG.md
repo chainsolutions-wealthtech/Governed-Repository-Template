@@ -213,3 +213,15 @@ Append-only durable decisions for the source/control-plane repository.
   - read-only server probes → `LIVE_OR_BOUNDED_TTL`.
 - The same validated facts are projected into canonical relational memory through `server_identity_secret_facts`.
 - Persistence grants no execution authority.
+
+### CPD-045 — Server identity-secret facts refresh through read-only observation and governed PR
+
+- Date: 2026-10-01.
+- KBI-04O operationalizes the already implemented KBI-04K collector and KBI-04N persistence adapter.
+- The refresh is event/need based, not scheduled polling.
+- It performs only allowlisted read-only MCP probes.
+- The transient observation is written only to a runner-local restrictive temporary file and is deleted before persistence.
+- Only validated status/shape/digest metadata may enter canonical state.
+- Persistence is guarded by the exact current `server-identity-secret-facts.json` revision.
+- A source-repository GitHub App token is minted only to create the governed branch/PR after validation.
+- No MCP/server mutation, secret readback, raw payload persistence, server connection coordinate persistence or execution authority is introduced.

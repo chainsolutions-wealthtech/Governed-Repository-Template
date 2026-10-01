@@ -41,7 +41,9 @@
     "scripts/governed_loop_execution_adapter.py",
     "scripts/control_plane_server_identity_secret_metadata.py",
     ".governance/control-plane-state/server-identity-secret-facts.json",
-    "scripts/control_plane_server_identity_secret_facts.py"
+    "scripts/control_plane_server_identity_secret_facts.py",
+    ".github/workflows/server-identity-secret-refresh.yml",
+    "scripts/test_server_identity_secret_refresh_workflow.py"
   ],
   "rules": [
     "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",
@@ -131,7 +133,11 @@
     "PERSIST_ONLY_VALIDATED_SERVER_IDENTITY_SECRET_METADATA",
     "RECOMPUTE_CREDENTIAL_MECHANISMS_FROM_CANONICAL_AUTHORITIES_BEFORE_PERSISTENCE",
     "IDENTITY_SECRET_FACT_REPLAY_IS_REVISION_GUARDED_AND_CONTRADICTION_FAILS_CLOSED",
-    "RELATIONAL_IDENTITY_SECRET_FACTS_NE_EXECUTION_AUTHORITY"
+    "RELATIONAL_IDENTITY_SECRET_FACTS_NE_EXECUTION_AUTHORITY",
+    "SERVER_IDENTITY_SECRET_REFRESH_IS_READ_ONLY_EVENT_AND_NEED_BASED",
+    "SERVER_IDENTITY_SECRET_FACT_REFRESH_USES_EXACT_REVISION",
+    "RAW_IDENTITY_SECRET_OBSERVATION_NEVER_PERSISTS",
+    "REFRESH_OUTPUT_ENTERS_CANONICAL_STATE_ONLY_THROUGH_GOVERNED_PR"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",

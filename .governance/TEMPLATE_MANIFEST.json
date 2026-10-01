@@ -172,7 +172,9 @@
       ".governance/control-plane-state/server-identity-secret-facts.json",
       ".governance/control-plane-db/005_server_identity_secret_facts.sql",
       "scripts/control_plane_server_identity_secret_facts.py",
-      "scripts/test_control_plane_server_identity_secret_facts.py"
+      "scripts/test_control_plane_server_identity_secret_facts.py",
+      ".github/workflows/server-identity-secret-refresh.yml",
+      "scripts/test_server_identity_secret_refresh_workflow.py"
     ],
     "local_entry_ui": [
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml"
@@ -187,7 +189,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.23",
+  "template_version": "2.8.24",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -376,7 +378,11 @@
     "server credential mechanisms classified by model and MCP capability exposure",
     "server identity-secret metadata facts persist with revision provenance and freshness",
     "canonical relational memory projects safe identity-secret facts without raw payloads",
-    "same-timestamp contradiction and stale observation fail closed"
+    "same-timestamp contradiction and stale observation fail closed",
+    "event-and-need governed read-only S1 S2 identity-secret fact refresh",
+    "safe metadata persistence uses exact revision and governed PR",
+    "refresh workflow never persists raw MCP payloads or secret values",
+    "server identity-secret refresh remains separate from mutation authority"
   ],
   "automatic_initialization_supported": true
 }
