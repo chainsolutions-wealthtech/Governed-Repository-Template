@@ -64,6 +64,10 @@ def main():
     for sid in ["KBI-04L","KBI-04M"]:
         if slices.get(sid)!="IMPLEMENTED_SOURCE_ONLY":
             raise SystemExit(f"IDENTITY_SECRET_TEST_FAILED: {sid} implementation status")
+    if slices.get("KBI-04N")!="IMPLEMENTED_SOURCE_ONLY_LIVE_OBSERVATION_PENDING":
+        raise SystemExit("IDENTITY_SECRET_TEST_FAILED: KBI-04N implementation status")
+    if slices.get("KBI-04O")!="PLANNED":
+        raise SystemExit("IDENTITY_SECRET_TEST_FAILED: KBI-04O must remain planned")
 
     print("IDENTITY_SECRET_LIFECYCLE_TEST_PASS")
 
