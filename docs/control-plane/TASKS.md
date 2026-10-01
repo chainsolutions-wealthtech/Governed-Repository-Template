@@ -924,7 +924,7 @@ Global programme priority remains `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
 
 ### GACR R4 — automatic continuity attachment
 
-Status: **LIVE_AUTO_ATTACH_PROVEN / ATTESTATION_PENDING**.
+Status: **LIVE_AUTO_ATTACH_PROVEN / CI_PROVEN**.
 
 Additive GACR contribution under `CP-AGENT-RELAY-001-R4` / `CPD-053`:
 
