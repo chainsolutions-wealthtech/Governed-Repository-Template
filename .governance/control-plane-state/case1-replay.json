@@ -378,10 +378,11 @@
     {
       "id": "C1-14",
       "name": "case closure",
-      "status": "PENDING",
+      "status": "IN_PROGRESS",
       "depends_on": [
         "C1-13"
-      ]
+      ],
+      "next_action": "CLOSE_CREATE_NEW_REPOSITORY_CASE"
     }
   ],
   "change_protocol": {
