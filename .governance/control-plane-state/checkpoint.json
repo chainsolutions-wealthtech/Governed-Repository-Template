@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "checkpoint_id": "CP-CHECKPOINT-20261001-003",
+  "checkpoint_id": "CP-CHECKPOINT-20261001-004",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-  "subject_head": "c41afa4fdeffd5f12d6243b95f5d04083ca514e4",
+  "subject_head": "1d5fce83f381549725373fdda68e714364882b71",
   "template_version_before": "2.7.0",
-  "state": "P12_S5_EKYC_PRODUCTION_SERVER_SELECTION",
+  "state": "P12_S5_EKYC_S1_SELECTED_DOMAIN_CHOICE_CORRECTION",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
@@ -194,17 +194,23 @@
     "c1_13_i_b_a_ekyc_revision": 40,
     "c1_13_i_b_a_ekyc_phase": "Q_PRODUCTION_SERVER_SELECTION",
     "c1_13_i_b_a_ekyc_ci": 36869667945,
-    "c1_13_i_b_a_discovery_replay": false
+    "c1_13_i_b_a_discovery_replay": false,
+    "c1_13_i_b_b_owner_choice": "S1",
+    "c1_13_i_b_b_command_comment": 5933064109,
+    "c1_13_i_b_b_control_plane_run": 36873298229,
+    "c1_13_i_b_b_target_run": 36873334194,
+    "c1_13_i_b_b_ekyc_revision": 41,
+    "c1_13_i_b_b_status": "DONE"
   },
-  "next_action": "C1_13_I_B_B_SELECT_EKYC_PRODUCTION_SERVER",
+  "next_action": "C1_13_I_B_C_SPLIT_SERVER_SCOPED_DOMAIN_CHOICES",
   "reconciliation_required_before_write": true,
   "ci_run": 36844997332,
   "ci_result": "PASS",
   "client_source_memory_removal": "PASS",
   "self_governance": "PASS",
-  "reconciliation_reason": "SERVER_BEFORE_DOMAIN_CORRECTION_MERGED_AND_PROPAGATED_TO_EKYC",
+  "reconciliation_reason": "OWNER_SELECTED_S1_AND_LEGACY_DOMAIN_BINDING_OBJECT_REQUIRES_PROGRESSIVE_CHOICES",
   "canonical_memory_database": "PASS",
-  "blocker": "OWNER_PRODUCTION_SERVER_DECISION_REQUIRED",
+  "blocker": "GENERIC_DOMAIN_BINDING_TOO_COARSE_FOR_ADAPTIVE_FLOW",
   "knowledge_enrichment": {
     "canonical_architecture": {
       "authority_id": "CP-ARCH-001",
