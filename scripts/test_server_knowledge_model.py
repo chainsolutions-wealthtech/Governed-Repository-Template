@@ -77,8 +77,8 @@ def main() -> None:
     if slices.get("KBI-04E")!="MAPPING_IMPLEMENTED_SNAPSHOT_NOT_LIVE_ATTESTED":
         raise SystemExit("SERVER_KNOWLEDGE_TEST_FAILED: recipe capability mapping status")
     for sid in ["KBI-04F","KBI-04G"]:
-        if slices.get(sid)!="PLANNED":
-            raise SystemExit(f"SERVER_KNOWLEDGE_TEST_FAILED: {sid} must remain planned")
+        if slices.get(sid)!="IMPLEMENTED_SOURCE_ONLY":
+            raise SystemExit(f"SERVER_KNOWLEDGE_TEST_FAILED: {sid} implementation status")
 
     print("SERVER_KNOWLEDGE_AND_RECIPES_TEST_PASS")
 
