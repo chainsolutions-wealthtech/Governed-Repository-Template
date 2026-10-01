@@ -23,13 +23,13 @@ Objective: V2.7.0 Self-Governed Control Plane.
 | P12-S3 Setup approval + APPLY_BASELINE | DONE | P12-S2 | baseline commit + first-agent handoff |
 | P12-S4 Prove subsequent NORMAL_GOVERNED_ENTRY on external CASE 1 pilot (current pilot: Gouvern) | DONE | P12-S3 | `Gouvern#4` NORMAL_GOVERNED_ENTRY + LOCAL_HANDOFF_READY; no baseline reset |
 | P12-S5 Second fresh repository E2E | DONE | P12-S4 | Ekyc fresh baseline + subsequent NORMAL_GOVERNED_ENTRY `LOCAL_HANDOFF_READY`; no target-specific repair |
-| P12-S6 Close CASE 1 and release next macro case | READY | P12-S5 | reconcile final CASE 1 evidence and release GMC-A |
+| P12-S6 Close CASE 1 and release next macro case | IN_PROGRESS | P12-S5 | reconcile final CASE 1 evidence and release GMC-A |
 
 ## Unique executable task
 
 `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`
 
-`P12-S5` exit gate is PASS. `P12-S6` is the only executable task; GMC remains dependency-bound behind CASE 1 closure.
+`P12-S5` exit gate is PASS. `P12-S6` is the single IN_PROGRESS/executable task; GMC remains dependency-bound behind CASE 1 closure.
 
 ### C1-12 discovered sub-tasks
 
