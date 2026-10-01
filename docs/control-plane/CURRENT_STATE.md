@@ -710,7 +710,7 @@ The current programme priority remains unchanged: `P12-S6`.
 
 ## GACR R3 — Interruption Forensics
 
-Cross-cutting candidate status: `MERGED / WORKFLOW_REGISTRATION_CORRECTION_PENDING`.
+Cross-cutting status: `CI_PROVEN / FINAL_ATTESTATION_IN_PROGRESS`.
 
 - Parent continuity authority: `CP-AGENT-RELAY-001`.
 - Previous proven revision: `CP-AGENT-RELAY-001-R2`.
@@ -718,7 +718,15 @@ Cross-cutting candidate status: `MERGED / WORKFLOW_REGISTRATION_CORRECTION_PENDI
 - Baseline main: `0d4ca9ff007b88f8fee040ff845ea9a0387d1815`.
 - R3 implementation merge: `ada6866efdfe9d2aed2e77171c01ca774a76a885` (PR #104).
 - Governance CI `36927683547`: PASS.
-- Workflow registration run `36927681943`: FAILURE with no jobs; corrective branch `governance/gacr-r3-workflow-registration-fix` restores the proven bounded manual dispatch surface.
+- PR #104 post-merge workflow registration run `36927681943`: FAILURE with no jobs.
+- Corrective PR #105 merged at `05f49a634e1da46f3da5a016e32499236223ff1d`.
+- Corrective candidate CI `36927942003`: PASS.
+- Corrective post-merge Governance CI `36928024260`: PASS.
+- No new workflow-registration failure is present on corrected main.
 - External failure cause is never inferred from missing heartbeat.
 - Every generated resume point still requires exact-HEAD reobservation and normal claim/authority gates.
 - Programme-level unique next action remains `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` and is intentionally not executed by this cross-cutting work.
+
+### GACR owner return gate
+
+GACR cross-cutting finalization does not execute the global programme. The canonical global next action remains `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`, but execution is held until explicit owner OK.

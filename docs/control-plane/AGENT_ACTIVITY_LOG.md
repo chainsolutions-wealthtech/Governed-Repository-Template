@@ -318,3 +318,33 @@
 - KBI-04O and KBI-04O-A: DONE.
 - CASE 1 priority preserved.
 - Unique next action: `C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING`.
+
+## Entry AAL-20261001-GACR-001
+
+- Agent identity: ChatGPT.
+- Workstream: `GACR_CROSS_CUTTING_CONTINUITY_HARDENING`.
+- Source repository: `chainsolutions-wealthtech/Governed-Repository-Template`.
+- R3 starting canonical main observed: `0d4ca9ff007b88f8fee040ff845ea9a0387d1815`.
+- Objective: resume the interrupted GACR design at the already-proven R2 boundary, add interruption forensics without replaying R2, and preserve `P12-S6` as the unchanged global programme priority.
+- Reconstructed prior durable GACR evidence:
+  - PR #98 / merge `0d0c595be7f6833bb36778a0cdac46c82abbd2ab` / CI `36915276875`: core heartbeat, lease, stall and takeover continuity.
+  - PR #100 / merge `d894d29eca6fcc2a1784c459e9e3ddac672b3515` / CI `36916456136`: source/client GACR memory boundary.
+  - PR #102 / merge `abefcfccbf822fa2fcf590e592ad51c767e32937` / CI `36921331490`: Beacon, Correlator, Dispatcher, Agent Context and bridge wake contract.
+  - PR #103 / merge `0d4ca9ff007b88f8fee040ff845ea9a0387d1815` / CI `36921646133`: R2 attestation.
+- R3 implementation:
+  - `CP-AGENT-RELAY-001-R3` / `CPD-052`;
+  - PR #104 merged at `ada6866efdfe9d2aed2e77171c01ca774a76a885`;
+  - candidate CI `36927496576`: PASS;
+  - post-merge Governance CI `36927683547`: PASS;
+  - workflow-registration run `36927681943`: FAILURE with no jobs, so R3 was not accepted as final at that point.
+- R3 corrective validation:
+  - PR #105 restored the bounded manual workflow-dispatch surface while preserving rich trace telemetry through CLI/repository-dispatch/Bridge;
+  - PR #105 merged at `05f49a634e1da46f3da5a016e32499236223ff1d`;
+  - candidate CI `36927942003`: PASS;
+  - post-merge Governance CI `36928024260`: PASS;
+  - no new workflow-registration failure exists on `05f49a634e1da46f3da5a016e32499236223ff1d`.
+- R3 outcome: Interruption Forensics reconstructs observed liveness, action/tool traces, task/branch/PR, claims/collision domains, observed/written HEADs, checkpoint/evidence refs, takeover/dispatch state and a deterministic resume point.
+- Safety: external failure cause remains observed-only; missing heartbeat never fabricates browser/provider/network/tool cause; in-flight actions cannot be replayed before exact-HEAD reconciliation.
+- No independent lock subsystem, parallel task engine, parallel database, CASE 1 execution or target-project mutation was introduced.
+- Global programme priority remains `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+- Owner gate: do not resume the global programme until explicit owner OK after GACR finalization.
