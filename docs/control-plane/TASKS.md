@@ -729,3 +729,18 @@ These slices do not change the CASE 1 unique action.
 - PR #85 merge: `30b99b1f9cb0c824c90218078d9c2c2d18a4c6e5`; post-merge CI `36844628047`: PASS.
 - Second live refresh run `36844701817`: PASS end-to-end.
 - Corrective task is closed; no replay of the failed validation path is needed.
+
+### C1-13-I-B-A — fresh-project server-before-domain sequencing
+
+- Parent: `P12-S5 / C1-13-I-B`.
+- Status: `IN_PROGRESS`.
+- Trigger: owner clarified that Ekyc must choose S1/S2 (or another/deferred server) before domain type/name planning.
+- Generic defect: fresh local-entry runtime and adaptive catalogue skipped production-server selection and advanced directly to domain planning.
+- Required correction:
+  - add a one-choice fresh-project production-server question;
+  - derive choices from authorized discovery evidence;
+  - preserve owner-decision semantics (never auto-select production);
+  - scope subsequent domain inventory to the chosen server;
+  - migrate legacy fresh-project `Q_DOMAIN_BINDING` state through governed upgrade;
+  - no discovery replay and no execution authority.
+- Ekyc target remains untouched until Template CI/release passes.
