@@ -55,7 +55,9 @@
     ".governance/control-plane-state/conversation-chronicles/CHAT-MEM-20261002-001.md",
     ".governance/control-plane-state/gacr-sessions.json",
     ".governance/control-plane-state/gacr-beacons.json",
-    ".governance/control-plane-state/gacr-correlations.json"
+    ".governance/control-plane-state/gacr-correlations.json",
+    "scripts/gacr_client_emitter.py",
+    "scripts/test_gacr_client_emitter.py"
   ],
   "rules": [
     "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",
@@ -188,7 +190,13 @@
     "GACR_PROVIDER_CONVERSATION_REF_NE_ATTACHMENT_PREREQUISITE",
     "GACR_LATE_PROVIDER_BINDING_REUSES_CONNECTION_SESSION",
     "GACR_AUTO_ATTACH_AMBIGUITY_FAILS_CLOSED",
-    "GACR_STATE_PERSISTENCE_NE_RECURSIVE_AUTO_ATTACH"
+    "GACR_STATE_PERSISTENCE_NE_RECURSIVE_AUTO_ATTACH",
+    "GACR_CLIENT_EMITTER_PROVENANCE_NE_TRANSPORT_PROVENANCE",
+    "GACR_CLIENT_TRANSPORT_CREDENTIAL_RUNTIME_ONLY",
+    "GACR_INTERRUPTION_SIGNAL_EXPLICIT_OBSERVATION_ONLY",
+    "GACR_WAKE_POLL_NE_TAKEOVER_AUTHORITY",
+    "GACR_PROVIDER_HOST_LIVENESS_MUST_NOT_BE_CLAIMED_WITHOUT_HOST_EMITTER",
+    "GACR_GENERIC_CORE_R1_R5_COMPLETE"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",

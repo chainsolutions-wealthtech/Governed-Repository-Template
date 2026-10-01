@@ -942,7 +942,7 @@ This does not supersede or execute the global programme task `P12-S6_CLOSE_CREAT
 
 ### GACR R5 — client liveness and trace emitter
 
-Status: **IMPLEMENTED_ON_GOVERNED_BRANCH / CI_PENDING**.
+Status: **CLIENT_PROTOCOL_CI_PROVEN / GENERIC_CORE_COMPLETE**.
 
 Additive candidate under `CP-AGENT-RELAY-001-R5` / `CPD-054`:
 

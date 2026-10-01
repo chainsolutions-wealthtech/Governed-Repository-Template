@@ -368,3 +368,26 @@
 - Runtime persistence advanced main to `7467bbbca0f554df9d43831588ca03a0d1862c9f`.
 - No recursive auto-attach was observed from the persistence commit.
 - Global programme remains parked at `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` until explicit owner OK.
+
+## Entry AAL-20261002-GACR-R5-001
+
+- Agent identity: ChatGPT.
+- Workstream: `GACR_R5_CLIENT_LIVENESS_TRACE_EMITTER`.
+- Source repository: `chainsolutions-wealthtech/Governed-Repository-Template`.
+- Baseline main: `6d6ba0e23d052d563e014e290ba4b32fc88b87db`.
+- Candidate branch: `governance/gacr-r5-client-liveness-trace`.
+- PR #111 candidate commit: `f63b50cf70bc12b6ef9f37a4cb4a3a61e22fe245`.
+- Candidate Governance CI `36941120405`: PASS.
+- PR #111 merge: `9b371b45711a9274a0976fe5015d8b19b0315e6c`.
+- Post-merge Governance CI `36941216248`: PASS.
+- Post-merge GACR run `36941216312`: PASS.
+- Current conversation remained on the single canonical session `session-68c97d4bb1ef71c86444de12`.
+- Third R4/R5 continuity Beacon: `GACR-B-ff8bedbc4bf2`.
+- Third exact correlation: `GACR-C-976bbba3924d`.
+- Runtime persistence main: `34ceb14a140202ad7b57c9db2700241d50e7460c`.
+- R5 added the generic client emitter with `CLIENT_EMITTER` provenance, heartbeat, action/tool trace, explicit interruption, session resolution and wake polling.
+- Runtime transport credentials are not serialized into GACR payloads or repository state.
+- The current ChatGPT host does not expose a persistent client process or direct repository-dispatch action to this assistant; autonomous browser heartbeat is therefore not falsely attested.
+- Generic GACR R1-R5 is complete as repository/runtime/client protocol.
+- Provider-host instrumentation remains an external integration boundary.
+- `P12-S6` remains unchanged and unexecuted pending explicit owner OK.
