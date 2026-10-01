@@ -84,3 +84,22 @@ If a provider/client later supplies `provider_ref`, `provider_url` or `client_in
 The optional external bridge remains useful for richer provider identity and wake delivery, but it is no longer a prerequisite for basic GACR attachment.
 
 R4 attachment requires no secret material and persists only the safe metadata allowed by GACR.
+
+## R5 client emitter transport
+
+The generic R5 client emitter is implemented in `scripts/gacr_client_emitter.py`.
+
+It supports:
+
+- client-side auto-attach emission;
+- recurring heartbeat;
+- action/tool trace emission;
+- explicit interruption signals;
+- session resolution from repository state;
+- wake polling.
+
+The transport credential is runtime-only and is never part of the emitted `client_payload`.
+
+Provider-specific adapters may call the Python API or CLI. They do not need to reimplement GACR semantics.
+
+The emitter cannot make an uninstrumented provider UI expose events that the host does not provide. In that case, unsupported client facts remain unavailable and GACR continues to rely on the observable repository/session evidence.

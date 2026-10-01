@@ -883,3 +883,28 @@ Attachment anchors are ordered by evidentiary strength: explicit client/provider
 Late provider metadata enriches the existing connection-bound session. It does not replace the canonical GACR session ID and must not create a parallel session.
 
 This remains additive to IDN/RTE and introduces no task engine, lock subsystem, business authority or mutation permission.
+
+## 35. GACR Client Liveness and Trace Emitter
+
+Revision authority `CP-AGENT-RELAY-001-R5` completes the generic client-side liveness and trace contract.
+
+```text
+CLIENT / HOST
+→ CLIENT_EMITTER
+   → AUTO_ATTACH
+   → HEARTBEAT
+   → ACTION_TRACE
+   → explicit INTERRUPTION_SIGNAL
+   → WAKE_POLL
+→ repository_dispatch transport
+→ GACR runtime
+→ WATCH / CORRELATOR / FORENSICS / DISPATCHER
+```
+
+Transport provenance and originating-client provenance are distinct. A GitHub Actions workflow may transport an event whose canonical source is `CLIENT_EMITTER`.
+
+The client transport credential is runtime-only and is not part of GACR state. Client payloads carry only allowlisted continuity metadata.
+
+The emitter may surface a wake record but cannot accept takeover or mutate claims. Exact-HEAD reconciliation, claim ownership and authority checks remain mandatory.
+
+If a provider host cannot run or call the emitter, continuous client liveness is not claimed. GACR preserves the weaker observable evidence and lets WATCH classify silence without inventing a cause.

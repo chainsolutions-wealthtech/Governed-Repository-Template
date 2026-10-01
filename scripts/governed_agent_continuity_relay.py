@@ -597,7 +597,7 @@ def command_heartbeat(a: argparse.Namespace) -> None:
         timestamp=now_utc(),
     )
     save(sessions, claims, takeovers)
-    record_beacon(session=session, event_type="HEARTBEAT")
+    record_beacon(session=session, event_type="HEARTBEAT", source=a.source)
     correlate_all()
     print(json.dumps({"status": "HEARTBEAT_RECORDED", "session": session}, indent=2, ensure_ascii=False))
 
@@ -741,6 +741,7 @@ def parser() -> argparse.ArgumentParser:
     hb.add_argument("--observed-head")
     hb.add_argument("--action")
     hb.add_argument("--evidence")
+    hb.add_argument("--source", choices=["GITHUB_ACTIONS","LOCAL_AGENT","EXTERNAL_BRIDGE","CLIENT_EMITTER","UNKNOWN"])
     hb.set_defaults(fn=command_heartbeat)
 
     scan = sub.add_parser("scan")

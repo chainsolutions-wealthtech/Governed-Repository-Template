@@ -147,7 +147,7 @@ jobs:
 
       - name: Validate GACR state
         run: |
-          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py scripts/gacr_bridge_notifier.py scripts/gacr_auto_attach.py
+          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py scripts/gacr_bridge_notifier.py scripts/gacr_auto_attach.py scripts/gacr_client_emitter.py
           python3 scripts/validate_governance.py
 
       - name: Persist changed relay state

@@ -215,3 +215,34 @@ The Chronicle remains conversation continuity memory, not business authority. GA
 On source `main`, normal repository activity invokes auto-attachment. GACR state-persistence pushes performed by the repository automation are excluded from re-entry so state commits cannot create an attachment loop.
 
 Missing metadata is explicit `UNAVAILABLE`; it is never invented. Auto-attachment does not grant mutation authority and does not change claim, collision-domain or exact-HEAD gates.
+
+## Client Liveness and Trace Emitter
+
+Revision authority: `CP-AGENT-RELAY-001-R5`.
+
+R5 completes the generic client-side nerve needed after R4 attachment.
+
+```text
+CLIENT / AGENT HOST
+→ AUTO ATTACH
+→ SESSION RESOLVE
+→ CLIENT_EMITTER HEARTBEAT
+→ ACTION / TOOL TRACE
+→ explicit interruption signal when actually observed
+→ optional wake poll
+→ WATCH / CORRELATOR / FORENSICS / DISPATCHER
+```
+
+The emitter uses the existing GitHub `repository_dispatch` receiver:
+
+- `gacr_auto-attach`;
+- `gacr_heartbeat`;
+- `gacr_beacon`.
+
+Heartbeat and trace provenance is preserved as `CLIENT_EMITTER` even though GitHub Actions transports the event.
+
+The client transport credential exists only in the emitter process environment. It is not placed in the GACR payload or persisted by the repository.
+
+The emitter can poll a dispatch projection for `READY / ACTIVATED` wake records. A wake poll is informational only; it never calls `takeover-accept` and never grants write authority.
+
+A host that cannot run the emitter continuously must not pretend that continuous client liveness is proven. Repository activity and R4 auto-attach remain valid evidence, while absence of client heartbeat remains observable as silence.

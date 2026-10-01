@@ -684,3 +684,18 @@ P12-S5 therefore satisfies its exit gate without target-specific repair. No S1/d
 - Correlation `GACR-C-caffb7cb6efd` is `EXACT`.
 - Runtime state persisted at `7467bbbca0f554df9d43831588ca03a0d1862c9f`.
 - R4 attestation is the remaining GACR step; global `P12-S6` remains waiting for owner OK.
+
+## 2026-10-02 — GACR R5 Client Liveness and Trace Emitter candidate
+
+- Reobserved main: `6d6ba0e23d052d563e014e290ba4b32fc88b87db`.
+- R4 remains `LIVE_AUTO_ATTACH_PROVEN / CI_PROVEN`.
+- Candidate branch: `governance/gacr-r5-client-liveness-trace`.
+- New generic emitter: `scripts/gacr_client_emitter.py`.
+- Added runtime provenance `CLIENT_EMITTER`.
+- Added attach, heartbeat, action trace, explicit interruption, session resolution and wake polling operations.
+- Runtime transport credentials are never serialized into client payloads.
+- Wake polling is read-only with respect to takeover authority.
+- Added `scripts/test_gacr_client_emitter.py` and Governance CI coverage.
+- Candidate Template version: `2.8.35`.
+- This tranche does not claim that the current ChatGPT browser UI runs a persistent emitter unless such a host surface is actually observed.
+- `P12-S6` remains preserved and unexecuted.

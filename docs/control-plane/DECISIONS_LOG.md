@@ -324,3 +324,17 @@ Append-only durable decisions for the source/control-plane repository.
 - Repository automation state-persistence pushes must not recursively auto-attach.
 - Auto-attachment grants no mutation authority and preserves claims, collision domains, exact-HEAD reconciliation and existing takeover gates.
 - This is cross-cutting GACR hardening and does not execute or replace `P12-S6`.
+
+### CPD-054 — GACR client liveness uses a generic safe emitter with explicit provenance
+
+- Date: 2026-10-02.
+- `CP-AGENT-RELAY-001-R5` adds the generic client liveness and trace emitter.
+- The emitter uses existing `repository_dispatch` events rather than introducing a parallel transport or task engine.
+- `CLIENT_EMITTER` identifies the originating client even when GitHub Actions transports the event.
+- Runtime transport credentials are process-environment inputs only and must never be copied into GACR payloads, events or repository state.
+- Supported client operations are auto-attach, heartbeat, action/tool trace, explicit interruption signal, session resolution and wake polling.
+- Interruption codes are emitted only for events actually observed by the client/host; silence alone never creates an interruption cause.
+- Wake polling is informational and never auto-accepts takeover.
+- Exact-HEAD reconciliation, claims, collision domains and authority checks remain unchanged.
+- Hosts that cannot execute or invoke a client emitter remain partially observable; the system must not claim continuous client liveness in that case.
+- This is cross-cutting GACR work and does not execute or replace `P12-S6`.
