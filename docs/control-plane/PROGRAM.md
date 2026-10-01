@@ -168,7 +168,7 @@ External intake `Patricked-code/MCP#201` records the blocker. C1-13 resumes only
 - Exit gate: `PASS`.
 
 ### STEP 6 — Close CREATE_NEW_REPOSITORY and release next macro case
-State: `READY`
+State: `IN_PROGRESS`
 
 Goal:
 - reconcile documentation, manifest/version, tests and durable evidence;
