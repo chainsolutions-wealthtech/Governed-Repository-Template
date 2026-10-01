@@ -120,9 +120,9 @@ def main():
       ".governance/connection-intent-policy.json",".governance/entry-action-policy.json",
       "docs/CONNECTION_INTENT.md","docs/ENTRY_ACTION_ROUTER.md",
       ".governance/mcp-connection-policy.json","schemas/mcp-binding.schema.json","docs/MCP_REPOSITORY_BINDING.md",
-      "docs/MULTI_AGENT_COORDINATION.md","docs/GACR_AGENT_CONTINUITY_RELAY.md",
-      ".governance/agent-relay/config.json","schemas/gacr-state.schema.json","schemas/gacr-telemetry.schema.json","schemas/session.schema.json","schemas/work-claim.schema.json",
-      "scripts/governed_agent_continuity_relay.py","scripts/gacr_workflow_bridge.py","scripts/gacr_agent_telemetry.py","scripts/test_governed_agent_continuity_relay.py","scripts/test_gacr_agent_telemetry.py",".github/workflows/governed-agent-continuity-relay.yml",
+      "docs/MULTI_AGENT_COORDINATION.md","docs/GACR_AGENT_CONTINUITY_RELAY.md","docs/GACR_BRIDGE_CONTRACT.md",
+      ".governance/agent-relay/config.json","schemas/gacr-state.schema.json","schemas/gacr-telemetry.schema.json","schemas/gacr-bridge-contract.schema.json","schemas/session.schema.json","schemas/work-claim.schema.json",
+      "scripts/governed_agent_continuity_relay.py","scripts/gacr_workflow_bridge.py","scripts/gacr_agent_telemetry.py","scripts/gacr_bridge_notifier.py","scripts/test_governed_agent_continuity_relay.py","scripts/test_gacr_agent_telemetry.py",".github/workflows/governed-agent-continuity-relay.yml",
       "scripts/mcp_repository_discovery.py","scripts/control_plane_local_command.py","scripts/control_plane_local_start.py","scripts/control_plane_provision_mcp_credential.py","scripts/test_mcp_credential_provisioning.py","scripts/test_mcp_both_ssh_fallback.py","scripts/control_plane_upgrade_local_entry.py","scripts/test_upgrade_session_head_migration.py"
     ]
     updates={p:(ROOT/p).read_text(encoding="utf-8") for p in static_paths}
