@@ -1,5 +1,43 @@
 {
   "schema_version": "1.0.0",
-  "revision": 0,
-  "sessions": []
+  "revision": 1,
+  "sessions": [
+    {
+      "session_id": "session-68c97d4bb1ef71c86444de12",
+      "agent_identity": "conversation-agent",
+      "provider": "other",
+      "provider_conversation_ref": null,
+      "provider_conversation_ref_provenance": "UNAVAILABLE",
+      "connection_ref": "chronicle:CHAT-MEM-20261002-001:SESSION-000002",
+      "entry_action": "UNKNOWN",
+      "entry_action_provenance": "DEFAULT_UNKNOWN",
+      "connection_intent": "UNKNOWN",
+      "connection_intent_provenance": "DEFAULT_UNKNOWN",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "starting_head_sha": "4c7db9f0e2e782de147ef316c41086ed0863b49e",
+      "last_observed_head_sha": "4c7db9f0e2e782de147ef316c41086ed0863b49e",
+      "status": "ACTIVE",
+      "created_at": "2026-10-01T23:10:28+00:00",
+      "last_seen_at": "2026-10-01T23:10:28+00:00",
+      "client_instance_id": "chronicle:CHAT-MEM-20261002-001",
+      "agent_role": null,
+      "capabilities": [
+        "GACR_AUTO_ATTACH"
+      ],
+      "wake_channels": [
+        "POLL_REPOSITORY"
+      ],
+      "bridge_registration_ref": "CHAT-MEM-20261002-001",
+      "relay": {
+        "process": "GACR",
+        "state": "ACTIVE",
+        "last_heartbeat_at": "2026-10-01T23:10:28+00:00",
+        "lease_expires_at": "2026-10-01T23:40:28+00:00",
+        "last_action": "REGISTER",
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null
+      }
+    }
+  ]
 }

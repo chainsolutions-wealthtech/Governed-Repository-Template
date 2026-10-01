@@ -1,5 +1,21 @@
 {
   "schema_version": "1.0.0",
-  "revision": 0,
-  "items": []
+  "revision": 1,
+  "items": [
+    {
+      "correlation_id": "GACR-C-caffb7cb6efd",
+      "beacon_id": "GACR-B-6e9a2275ea04",
+      "level": "EXACT",
+      "selected_session_id": "session-68c97d4bb1ef71c86444de12",
+      "candidate_session_ids": [
+        "session-68c97d4bb1ef71c86444de12"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "evaluated_at": "2026-10-01T23:10:28+00:00"
+    }
+  ]
 }
