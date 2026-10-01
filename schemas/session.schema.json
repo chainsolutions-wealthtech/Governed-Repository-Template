@@ -191,6 +191,48 @@
         }
       },
       "additionalProperties": true
+    },
+    "client_instance_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "agent_role": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "capabilities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "wake_channels": {
+      "type": "array",
+      "items": {
+        "enum": [
+          "POLL_REPOSITORY",
+          "REPOSITORY_DISPATCH",
+          "EXTERNAL_BRIDGE"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "bridge_registration_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "github_actor": {
+      "type": [
+        "string",
+        "null"
+      ]
     }
   },
   "additionalProperties": false
