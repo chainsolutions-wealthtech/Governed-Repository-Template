@@ -213,6 +213,24 @@ def main():
     except ValueError:
         pass
 
+    upgrader=(ROOT/"scripts"/"control_plane_upgrade_local_entry.py").read_text(encoding="utf-8")
+    for fragment in [
+        "docs/GACR_AGENT_CONTINUITY_RELAY.md",
+        ".governance/agent-relay/config.json",
+        "scripts/governed_agent_continuity_relay.py",
+        ".github/workflows/governed-agent-continuity-relay.yml",
+        "existing_gacr_takeovers=target_text",
+    ]:
+        assert_true(fragment in upgrader, f"client upgrader missing GACR contract: {fragment}")
+
+    workflow=(ROOT/".github"/"workflows"/"governed-agent-continuity-relay.yml").read_text(encoding="utf-8")
+    for fragment in [
+        "Governed Agent Continuity Relay",
+        "cancel-in-progress: false",
+        "GACR_NO_STATE_CHANGE",
+    ]:
+        assert_true(fragment in workflow, f"GACR workflow safety boundary missing: {fragment}")
+
     print("GACR_AGENT_CONTINUITY_RELAY_TEST_PASS")
 
 
