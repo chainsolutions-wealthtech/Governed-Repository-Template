@@ -586,6 +586,11 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
         cases = [x.get("case_id") for x in catalog.get("cases", []) if x.get("kind") == "STRUCTURING_CASE"]
         if cases != ["CREATE_NEW_REPOSITORY","ADOPT_EXISTING_REPOSITORY","MAP_EXISTING_PROJECT","LAB_EVOLUTION"]:
             fail("canonical structuring case order mismatch")
+        create_case = next((x for x in catalog.get("cases", []) if x.get("case_id") == "CREATE_NEW_REPOSITORY"), None)
+        if create_case is None:
+            fail("CREATE_NEW_REPOSITORY catalogue entry missing")
+        if create_case.get("status") != case1_replay.get("current_status"):
+            fail("CASE 1 replay/catalogue lifecycle status mismatch")
         post_modes = [x.get("case_id") for x in catalog.get("cases", []) if x.get("kind") == "POST_CASE_MODE"]
         if post_modes != ["CONTINUE_GOVERNED_WORK"]:
             fail("canonical post-case mode mismatch")
