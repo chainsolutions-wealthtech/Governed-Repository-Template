@@ -12,27 +12,27 @@
   "raw_pre_activation_transcript_completeness": "PARTIAL",
   "counters": {
     "next_user_message": 2,
-    "next_assistant_message": 1,
+    "next_assistant_message": 2,
     "next_tool_event": 4,
     "next_decision_event": 7,
     "next_constraint_event": 7,
     "next_action_event": 4,
     "next_error_event": 1,
     "next_recovery_event": 3,
-    "next_checkpoint": 3,
-    "next_cache": 3,
+    "next_checkpoint": 4,
+    "next_cache": 4,
     "next_open_loop": 4,
     "next_artifact": 2,
     "next_session": 3
   },
   "last_message": {
-    "id": "MSG-U-000001",
-    "sha256": "8b45efbe51e0e9fbf26883ae2a6ee65c7975e7c782bc5c708c4ea06363db5e97",
-    "previous_hash": "GENESIS"
+    "id": "MSG-A-000001",
+    "sha256": "7afec122084b22c439657b880c0ca5baa2390a9fa830db5fafebfc1ebb4d6881",
+    "previous_hash": "8b45efbe51e0e9fbf26883ae2a6ee65c7975e7c782bc5c708c4ea06363db5e97"
   },
   "current_session": "SESSION-000002",
-  "current_checkpoint": "CHK-000002",
-  "current_cache": "CACHE-000002",
+  "current_checkpoint": "CHK-000003",
+  "current_cache": "CACHE-000003",
   "open_loops": [
     "OPEN-000002",
     "OPEN-000003"
@@ -90,5 +90,15 @@
   },
   "resolved_open_loops": [
     "OPEN-000001"
-  ]
+  ],
+  "activation_reply": {
+    "message_id": "MSG-A-000001",
+    "timestamp": {
+      "value": "2026-10-02T00:33+02:00",
+      "timezone": "Europe/Paris",
+      "precision": "minute",
+      "source": "observed_at_processing"
+    },
+    "sha256": "7afec122084b22c439657b880c0ca5baa2390a9fa830db5fafebfc1ebb4d6881"
+  }
 }
