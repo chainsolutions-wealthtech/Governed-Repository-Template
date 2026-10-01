@@ -278,6 +278,32 @@
       "legacy_reconciliation": {
         "duplicate_cpd_041_domain_planning": "CPD-047"
       }
+    },
+    "gacr_agent_continuity_relay": {
+      "authority_id": "CP-AGENT-RELAY-001",
+      "decision_id": "CPD-049",
+      "process_name": "GACR",
+      "status": "IMPLEMENTED_GENERIC_RUNTIME_CI_PENDING",
+      "reusable_across_projects": true,
+      "extends_existing_session_claim_checkpoint_handoff": true,
+      "parallel_task_engine": false,
+      "heartbeat_lease": true,
+      "scheduled_stall_detection": true,
+      "standby_takeover_queue": true,
+      "claim_release_on_stall": false,
+      "exact_head_required_before_claim_transfer": true,
+      "provider_conversation_reference_optional": true,
+      "automatic_browser_url_capture": false,
+      "execution_authority_granted": false,
+      "contributes_to": [
+        "IDN-004",
+        "IDN-005",
+        "IDN-006",
+        "IDN-010",
+        "RTE-008",
+        "RTE-012"
+      ],
+      "current_unique_executable_item_unchanged": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE"
     }
   },
   "framework_product_boundary": {

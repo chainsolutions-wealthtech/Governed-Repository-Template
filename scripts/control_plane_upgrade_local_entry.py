@@ -120,6 +120,9 @@ def main():
       ".governance/connection-intent-policy.json",".governance/entry-action-policy.json",
       "docs/CONNECTION_INTENT.md","docs/ENTRY_ACTION_ROUTER.md",
       ".governance/mcp-connection-policy.json","schemas/mcp-binding.schema.json","docs/MCP_REPOSITORY_BINDING.md",
+      "docs/MULTI_AGENT_COORDINATION.md","docs/GACR_AGENT_CONTINUITY_RELAY.md",
+      ".governance/agent-relay/config.json","schemas/gacr-state.schema.json","schemas/session.schema.json","schemas/work-claim.schema.json",
+      "scripts/governed_agent_continuity_relay.py","scripts/gacr_workflow_bridge.py","scripts/test_governed_agent_continuity_relay.py",".github/workflows/governed-agent-continuity-relay.yml",
       "scripts/mcp_repository_discovery.py","scripts/control_plane_local_command.py","scripts/control_plane_local_start.py","scripts/control_plane_provision_mcp_credential.py","scripts/test_mcp_credential_provisioning.py","scripts/test_mcp_both_ssh_fallback.py","scripts/control_plane_upgrade_local_entry.py","scripts/test_upgrade_session_head_migration.py"
     ]
     updates={p:(ROOT/p).read_text(encoding="utf-8") for p in static_paths}
@@ -157,11 +160,16 @@ def main():
     workflow_model["repository"]=target
     updates[".governance/workflow-model.json"]=json.dumps(workflow_model,ensure_ascii=False,indent=2)+"\n"
 
+    existing_gacr_takeovers=target_text(token,target,".governance/agent-relay/takeovers.json")
+    if existing_gacr_takeovers is None:
+        existing_gacr_takeovers=(ROOT/".governance/agent-relay/takeovers.json").read_text(encoding="utf-8")
+    updates[".governance/agent-relay/takeovers.json"]=existing_gacr_takeovers
+
     version=current_template_version()
 
     docs={
       "00_START_HERE.md":("## Local governed entry","## Local governed entry\n\nDans un repository cible initialisé, le point d'entrée préféré d'un agent est le workflow local décrit dans docs/LOCAL_GOVERNED_ENTRY.md. Le premier agent après bootstrap doit terminer FIRST_AGENT_BOOTSTRAP avant tout travail fonctionnel mutable."),
-      "AGENTS.md":("## Repository-local control plane","## Repository-local control plane\n\nAfter central handoff, start local work through a [Governed Local Entry] issue or repository_dispatch: governed_local_start. The first agent is routed through FIRST_AGENT_BOOTSTRAP; later agents are routed through NORMAL_GOVERNED_ENTRY. Do not bypass a pending first-agent baseline."),
+      "AGENTS.md":("## Repository-local control plane","## Repository-local control plane\n\nAfter central handoff, start local work through a [Governed Local Entry] issue or repository_dispatch: governed_local_start. The first agent is routed through FIRST_AGENT_BOOTSTRAP; later agents are routed through NORMAL_GOVERNED_ENTRY. Do not bypass a pending first-agent baseline.\n\n## GACR agent continuity\n\nLong-running agent work should register with GACR. Governed agent actions renew the lease; standby agents may accept a stalled takeover only after exact-HEAD reconciliation. External conversation references are recorded only when actually supplied."),
       "docs/AUTOMATION.md":("## Repository-local agent entry","## Repository-local agent entry\n\nInitialized target repositories include .github/workflows/governed-local-entry.yml. It accepts a local-entry issue or repository_dispatch: governed_local_start, persists one-question-at-a-time state in the issue, and applies the approved first-agent baseline under an exact-HEAD guard."),
       "SOURCE_OF_TRUTH.md":("## Local entry operational state","## Local entry operational state\n\nA [Governed Local Entry] issue is orchestration state, not canonical project truth. Once the approved first-agent baseline is committed, the versioned repository files and machine projections become authoritative according to the normal hierarchy.")
     }

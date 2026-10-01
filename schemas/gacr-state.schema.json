@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsolutions.local/schemas/gacr-state.schema.json",
+  "title": "Governed Agent Continuity Relay state",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "revision",
+    "items"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "last_scan_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "takeover_id",
+          "stalled_session_id",
+          "status",
+          "created_at"
+        ],
+        "properties": {
+          "takeover_id": {
+            "type": "string",
+            "pattern": "^GACR-T-[0-9a-f]{12}$"
+          },
+          "stalled_session_id": {
+            "type": "string"
+          },
+          "offered_to_session_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "accepted_by_session_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "status": {
+            "enum": [
+              "READY_FOR_RECONCILIATION",
+              "OFFERED",
+              "ACCEPTED",
+              "CANCELLED",
+              "SUPERSEDED"
+            ]
+          },
+          "created_at": {
+            "type": "string"
+          },
+          "accepted_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "work_item_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "task_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "branch": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pull_request": {
+            "type": [
+              "integer",
+              "null"
+            ]
+          },
+          "last_observed_head_sha": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "reconciled_head_sha": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

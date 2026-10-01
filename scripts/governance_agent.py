@@ -6,7 +6,7 @@ import hashlib
 import json
 import re
 import subprocess
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -79,6 +79,25 @@ def stable_session_id(repository: str, agent: str, provider: str, strongest_ref:
         "strongest_ref": strongest_ref,
     }, sort_keys=True)
     return "session-" + hashlib.sha256(raw.encode()).hexdigest()[:24]
+
+
+def gacr_touch(session: dict, action: str, timestamp: str | None = None, state: str | None = None) -> None:
+    config_path = GOV / "agent-relay" / "config.json"
+    if not config_path.exists():
+        return
+    config = read_json(config_path)
+    if config.get("enabled") is not True:
+        return
+    ts = datetime.fromisoformat((timestamp or utcnow()).replace("Z", "+00:00")).astimezone(timezone.utc)
+    relay = session.setdefault("relay", {})
+    current = relay.get("state")
+    if current in {"STALLED", "TAKEOVER_READY", "HANDOFF_STALLED"} and state not in {"CLOSED"}:
+        raise SystemExit("GACR_SESSION_REQUIRES_RECONCILIATION")
+    relay["process"] = "GACR"
+    relay["state"] = state or ("STANDBY" if session.get("status") == "STANDBY" else "ACTIVE")
+    relay["last_heartbeat_at"] = ts.replace(microsecond=0).isoformat()
+    relay["lease_expires_at"] = (ts + timedelta(seconds=int(config.get("stalled_after_seconds", 1800)))).replace(microsecond=0).isoformat()
+    relay["last_action"] = action
 
 
 def command_observe(_: argparse.Namespace) -> None:
@@ -202,6 +221,7 @@ def command_session_start(a: argparse.Namespace) -> None:
         sessions.append(session)
         resolution = "CREATE"
 
+    gacr_touch(session, "SESSION_START", timestamp=timestamp, state="ACTIVE")
     store["revision"] = int(store.get("revision", 0)) + 1
     store["sessions"] = sessions
     write_json(store_path, store)
@@ -239,6 +259,10 @@ def command_dispatch(a: argparse.Namespace) -> None:
     session = next((s for s in sessions.get("sessions", []) if s.get("session_id") == a.session_id and s.get("status") == "ACTIVE"), None)
     if not session:
         raise SystemExit("DISPATCH_FAILED: active session not found")
+
+    gacr_touch(session, "DISPATCH", state="ACTIVE")
+    sessions["revision"] = int(sessions.get("revision", 0)) + 1
+    write_json(GOV / "sessions" / "sessions.json", sessions)
 
     intent = session.get("connection_intent") or "UNKNOWN"
     if intent not in MUTABLE_INTENTS:
@@ -433,6 +457,8 @@ def command_checkpoint(a: argparse.Namespace) -> None:
 
     session["last_seen_at"] = timestamp
     session["last_observed_head_sha"] = head
+    gacr_touch(session, "CHECKPOINT", timestamp=timestamp, state="ACTIVE")
+    sessions["revision"] = int(sessions.get("revision", 0)) + 1
     write_json(sessions_path, sessions)
 
     memory_path = GOV / "canonical-memory" / "current.json"
@@ -467,6 +493,7 @@ def command_handoff(a: argparse.Namespace) -> None:
     session["status"] = "CLOSED"
     session["last_seen_at"] = timestamp
     session["last_observed_head_sha"] = head
+    gacr_touch(session, "HANDOFF", timestamp=timestamp, state="CLOSED")
     sessions["revision"] = int(sessions.get("revision", 0)) + 1
     claims_doc["revision"] = int(claims_doc.get("revision", 0)) + 1
     write_json(sessions_path, sessions)

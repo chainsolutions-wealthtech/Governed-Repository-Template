@@ -45,7 +45,10 @@
     ".github/workflows/server-identity-secret-refresh.yml",
     "scripts/test_server_identity_secret_refresh_workflow.py",
     "docs/control-plane/NAMESPACE_WORK_REGISTRY.md",
-    ".governance/control-plane-state/namespace-work-registry.json"
+    ".governance/control-plane-state/namespace-work-registry.json",
+    "docs/GACR_AGENT_CONTINUITY_RELAY.md",
+    ".governance/agent-relay/config.json",
+    "docs/MULTI_AGENT_COORDINATION.md"
   ],
   "rules": [
     "REOBSERVE_REMOTE_HEAD_BEFORE_WRITE",
@@ -158,7 +161,11 @@
     "DUPLICATE_CANONICAL_DEFINITION_FAILS_CLOSED",
     "NEW_WORK_EXTENDS_EXISTING_PARENT_AND_INTEGRATION_SLOT",
     "MULTI_AGENT_SEMANTIC_COLLISIONS_USE_NAMESPACE_REGISTRY",
-    "MULTI_AGENT_MUTABLE_COLLISIONS_STILL_REQUIRE_CLAIMS_SINGLE_WRITER_AND_EXACT_HEAD"
+    "MULTI_AGENT_MUTABLE_COLLISIONS_STILL_REQUIRE_CLAIMS_SINGLE_WRITER_AND_EXACT_HEAD",
+    "GACR_HEARTBEAT_AND_LEASE",
+    "GACR_EXACT_HEAD_BEFORE_TAKEOVER",
+    "GACR_EXTERNAL_REFERENCE_OBSERVED_ONLY",
+    "GACR_EXTENDS_EXISTING_COORDINATION"
   ],
   "completed_normal_entry_proof": {
     "repository": "Patricked-code/Gouvern",

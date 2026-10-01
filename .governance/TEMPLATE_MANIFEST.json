@@ -66,7 +66,11 @@
       "scripts/control_plane_upgrade_local_entry.py",
       "scripts/test_upgrade_session_head_migration.py",
       "scripts/test_mcp_both_ssh_fallback.py",
-      "scripts/control_plane_local_start.py"
+      "scripts/control_plane_local_start.py",
+      "scripts/governed_agent_continuity_relay.py",
+      "scripts/gacr_workflow_bridge.py",
+      "scripts/test_governed_agent_continuity_relay.py",
+      ".github/workflows/governed-agent-continuity-relay.yml"
     ],
     "machine_governance": [
       ".governance/bootstrap-state.json",
@@ -87,7 +91,9 @@
       ".governance/mcp-connection-policy.json",
       ".governance/mcp-binding.json",
       ".governance/access-plan.json",
-      ".governance/workflow-model.json"
+      ".governance/workflow-model.json",
+      ".governance/agent-relay/config.json",
+      ".governance/agent-relay/takeovers.json"
     ],
     "coordination_docs": [
       "docs/AUTOMATION.md",
@@ -103,7 +109,8 @@
       "docs/REPOSITORY_SCOPES.md",
       "docs/CONTROL_PLANE.md",
       "docs/LOCAL_GOVERNED_ENTRY.md",
-      "docs/MCP_REPOSITORY_BINDING.md"
+      "docs/MCP_REPOSITORY_BINDING.md",
+      "docs/GACR_AGENT_CONTINUITY_RELAY.md"
     ],
     "schemas": [
       "schemas/entry-action.schema.json",
@@ -113,7 +120,8 @@
       "schemas/governed-handoff.schema.json",
       "schemas/local-entry-request.schema.json",
       "schemas/local-entry-receipt.schema.json",
-      "schemas/mcp-binding.schema.json"
+      "schemas/mcp-binding.schema.json",
+      "schemas/gacr-state.schema.json"
     ],
     "control_plane_source_only": [
       ".github/workflows/governed-control-plane.yml",
@@ -192,7 +200,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.28",
+  "template_version": "2.8.29",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -404,7 +412,13 @@
     "derived work index from existing canonical definition sources rather than duplicated task list",
     "CI-fail-closed duplicate canonical identifier detection",
     "multi-agent semantic collision prevention through namespaces plus claims collision domains and exact-head guards",
-    "new work extends existing lineage through parent and integration slot rather than parallel programmes"
+    "new work extends existing lineage through parent and integration slot rather than parallel programmes",
+    "GACR Governed Agent Continuity Relay reusable across projects",
+    "agent heartbeat lease stall detection and takeover queue",
+    "standby agent failover without silent claim release",
+    "external provider conversation reference linked to governed session when explicitly supplied",
+    "exact-head reconciliation required before claim transfer",
+    "scheduled continuity supervisor with no-op scan suppression"
   ],
   "automatic_initialization_supported": true
 }

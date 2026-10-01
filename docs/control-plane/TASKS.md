@@ -856,3 +856,31 @@ These slices do not change the CASE 1 unique action.
 - `WORK-PROJECT-001` remains `READY` and was not executed.
 - No baseline/session/work duplication and no target Git mutation.
 - P12-S5 exit gate: `PASS`.
+
+### GACR — governed agent continuity relay
+
+Cross-cutting implementation status: **IMPLEMENTED_GENERIC_RUNTIME / CI_PENDING**.
+
+GACR is not a new programme. It is an additive implementation contribution to:
+
+- `IDN-004` connection/session event continuity;
+- `IDN-005` stable session resume rules;
+- `IDN-006` create/resume session behavior;
+- `IDN-010` persisted session/connection events;
+- `RTE-008` persisted routing/continuity events;
+- `RTE-012` exact unfinished-step resume.
+
+Implemented surface:
+
+- generic heartbeat + lease;
+- `SUSPECTED_STALL / STALLED / TAKEOVER_READY`;
+- standby pool;
+- takeover queue;
+- claim preservation while stalled;
+- exact-HEAD reconciliation before claim transfer;
+- optional external conversation correlation;
+- scheduled supervisor workflow;
+- governed client-upgrade preservation of mutable takeover state;
+- unit/E2E regression test.
+
+The broader IDN/RTE tasks remain at their existing statuses until their full contracts are satisfied. Current programme priority remains unchanged.

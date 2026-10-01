@@ -655,3 +655,11 @@ It registers the canonical ID namespaces, derives definitions from their existin
 The historical duplicate `CPD-041` has been reconciled additively: the domain-planning decision is now `CPD-047`; `CPD-048` records the registry decision.
 
 This strengthens multi-agent safety but does not replace claims, collision domains, exact-HEAD guards or single-writer execution.
+
+## GACR agent continuity relay
+
+`CP-AGENT-RELAY-001` is implemented as a generic reusable runtime candidate in Template v2.8.29.
+
+It extends the existing session/claim model with heartbeat, leases, stall detection, standby offers and exact-HEAD guarded takeover.
+
+The implementation does not change the unique CASE 1 programme action and grants no execution authority by itself.
