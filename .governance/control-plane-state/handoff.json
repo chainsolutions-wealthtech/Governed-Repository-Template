@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "handoff_id": "CP-HANDOFF-20261001-001",
+  "handoff_id": "CP-HANDOFF-20261001-002",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "canonical_branch": "main",
-  "baseline_subject_head": "b665fba88d276b9efb636a894e53d890344b2faa",
-  "active_branch": "governance/checkpoint-kbi-04o-live-refresh",
+  "baseline_subject_head": "c9266b8f9acb6eff9084f4a989397bae3d997762",
+  "active_branch": "governance/ekyc-server-before-domain",
   "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "current_task": "C1-13-I-B_RESOLVE_EKYC_DOMAIN_BINDING",
-  "unique_next_action": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING",
+  "current_task": "C1-13-I-B-A_FIX_FRESH_PROJECT_SERVER_BEFORE_DOMAIN_ORDER",
+  "unique_next_action": "C1_13_I_B_A_FIX_FRESH_PROJECT_SERVER_BEFORE_DOMAIN_ORDER",
   "read_first": [
     "docs/control-plane/CURRENT_STATE.md",
     ".governance/control-plane-state/canonical-architecture.json",
@@ -163,10 +163,10 @@
       "C1-13-C",
       "C1-13-D"
     ],
-    "active_dependency": "OWNER_DOMAIN_BINDING_DECISION_REQUIRED",
+    "active_dependency": "GENERIC_FRESH_PROJECT_QUESTION_ORDER_FIX",
     "external_intake": "Patricked-code/MCP#201",
     "failed_discovery_run": 36644247227,
-    "active_corrective_task": null,
+    "active_corrective_task": "C1-13-I-B-A",
     "preserved_external_dependency": {
       "code": "MCP_TLS_CERTIFICATE_EXPIRED",
       "intake": "Patricked-code/MCP#201",
@@ -195,6 +195,15 @@
     "domain_binding_observation": {
       "existing_ekyc_project_registration": false,
       "existing_ekyc_domain": false
+    },
+    "question_order_target": {
+      "target_phase_after_governed_upgrade": "Q_PRODUCTION_SERVER_SELECTION",
+      "observed_server_candidates": [
+        "S1",
+        "S2"
+      ],
+      "discovery_replay_required": false,
+      "direct_target_patch": false
     }
   },
   "mcp_capability_snapshot": {
