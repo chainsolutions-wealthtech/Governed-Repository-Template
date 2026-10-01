@@ -695,3 +695,15 @@ It adds safe GitHub connection telemetry, fail-closed session correlation, targe
 No provider conversation identifier is inferred when absent. No raw GitHub event payload, token, cookie or secret is persisted.
 
 The current programme priority remains unchanged: `P12-S6`.
+
+## GACR R2 post-merge attestation
+
+- Revision authority: `CP-AGENT-RELAY-001-R2`.
+- Decision: `CPD-051`.
+- Template version: `2.8.31`.
+- PR #102: MERGED.
+- Merge commit: `abefcfccbf822fa2fcf590e592ad51c767e32937`.
+- Post-merge Governance CI `36921331490`: PASS.
+- Beacon / Correlator / Dispatcher / Agent Context regression test: PASS.
+- Optional external bridge wake contract is installed but remains provider/client dependent.
+- Programme priority remains `P12-S6`.
