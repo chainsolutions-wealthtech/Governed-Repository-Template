@@ -236,3 +236,15 @@ Append-only durable decisions for the source/control-plane repository.
 - The production-server answer is a project decision only; it grants no runtime/server mutation authority.
 - Once a server is selected, domain planning must reuse the already-authorized discovery evidence for that server rather than rediscovering the same inventory.
 - Existing/adopted projects keep observation-first reuse semantics; this correction specifically closes the fresh-project sequencing gap without replacing the adaptive questionnaire or Loop Engineering.
+
+### CPD-041 — Domain planning is a server-scoped choice chain
+
+- Date: 2026-10-01.
+- A fresh project first selects its production server.
+- Domain planning then proceeds one owner choice at a time rather than requesting one free-form domain object.
+- The domain intent is selected before parent/name details.
+- Existing-domain and parent-domain options are populated from the already-authorized inventory of the selected server.
+- Subdomain/child-domain label choices may use deterministic suggestions plus an explicit custom option.
+- The resulting binding is derived automatically and future execution capabilities/authority requirements are prepared.
+- Domain answers never authorize DNS, vhost, TLS or server mutations.
+- Existing projects/states with an already answered `domain_binding` are preserved and must not be re-questioned merely because the questionnaire model evolved.
