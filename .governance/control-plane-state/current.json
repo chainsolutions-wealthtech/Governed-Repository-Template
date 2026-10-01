@@ -197,6 +197,20 @@
       ],
       "speculative_mcp_intake": false,
       "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
+    },
+    "project_execution_dag": {
+      "authority_id": "CP-EXECUTION-001",
+      "decision_id": "CPD-042",
+      "status": "IMPLEMENTED_SOURCE_ONLY",
+      "template_version": "2.8.21",
+      "compiler": "scripts/governed_project_execution_blueprint.py",
+      "loop_adapter": "scripts/governed_loop_execution_adapter.py",
+      "single_writer_selection": true,
+      "exact_head_per_node": true,
+      "monotone_receipt_projection": true,
+      "automatic_mcp_intake": false,
+      "ekyc_s2_subdomain_fixture": "E2E_DRY_RUN_ONLY",
+      "current_unique_executable_item_unchanged": "C1_13_I_B_RESOLVE_EKYC_DOMAIN_BINDING"
     }
   },
   "framework_product_boundary": {
