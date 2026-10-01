@@ -123,6 +123,7 @@ def main() -> None:
             "discovery_observed_at": None,
             "domain_strategy": None,
             "domain_binding": None,
+            "deployment_binding": None,
             "project_registration_status": "UNKNOWN",
             "write_tools_status": "DISABLED_UNTIL_REGISTERED_AND_AUTHORIZED",
         })
