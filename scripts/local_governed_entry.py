@@ -75,9 +75,9 @@ def validate(field,v):
         if not re.fullmatch(r"[A-Za-z0-9_.:-]{1,128}",v):return "invalid production server selection"
     if field=="domain_intent" and v not in DOMAIN_INTENTS:return "invalid domain intent"
     if field=="domain_parent_selection":
-        if not isinstance(v,str) or not re.fullmatch(r"[A-Za-z0-9.-]+\.[A-Za-z]{2,}",v):return "invalid domain parent selection"
+        if v!="DECIDE_LATER" and (not isinstance(v,str) or not re.fullmatch(r"[A-Za-z0-9.-]+\.[A-Za-z]{2,}",v)):return "invalid domain parent selection"
     if field=="domain_existing_selection":
-        if not isinstance(v,str) or not re.fullmatch(r"[A-Za-z0-9.-]+\.[A-Za-z]{2,}",v):return "invalid existing domain selection"
+        if v!="DECIDE_LATER" and (not isinstance(v,str) or not re.fullmatch(r"[A-Za-z0-9.-]+\.[A-Za-z]{2,}",v)):return "invalid existing domain selection"
     if field=="domain_label_choice" and v not in DOMAIN_LABEL_CHOICES:return "invalid domain label choice"
     if field=="domain_label_custom":
         if not isinstance(v,str) or not re.fullmatch(r"[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?",v):return "invalid custom domain label"
@@ -428,7 +428,7 @@ def refresh(s):
         selected=s["answers"].get("production_server_selection")
         domains=observed_domains_for_server(s,selected) if selected in {"S1","S2"} else []
         parents=observed_parent_domains_for_server(s,selected) if selected in {"S1","S2"} else []
-        if "domain_intent" not in s["answers"]:
+        if "domain_binding" not in s["answers"] and "domain_intent" not in s["answers"]:
             s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DOMAIN_INTENT"
             s["next_request"]=q(
               "Q_DOMAIN_INTENT","domain_intent",
@@ -445,7 +445,7 @@ def refresh(s):
             );return s
 
         domain_intent=s["answers"].get("domain_intent")
-        if domain_intent=="REUSE_EXISTING_DOMAIN" and "domain_existing_selection" not in s["answers"]:
+        if "domain_binding" not in s["answers"] and domain_intent=="REUSE_EXISTING_DOMAIN" and "domain_existing_selection" not in s["answers"]:
             choices=domains+["DECIDE_LATER"]
             s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DOMAIN_EXISTING_SELECTION"
             s["next_request"]=q(
@@ -455,7 +455,7 @@ def refresh(s):
               extra={"selected_server":selected,"execution_authority_granted":False}
             );return s
 
-        if domain_intent in {"CREATE_SUBDOMAIN","CREATE_CHILD_DOMAIN"} and "domain_parent_selection" not in s["answers"]:
+        if "domain_binding" not in s["answers"] and domain_intent in {"CREATE_SUBDOMAIN","CREATE_CHILD_DOMAIN"} and "domain_parent_selection" not in s["answers"]:
             choices=parents+["DECIDE_LATER"]
             s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DOMAIN_PARENT_SELECTION"
             s["next_request"]=q(
@@ -465,7 +465,7 @@ def refresh(s):
               extra={"selected_server":selected,"observed_parent_domains":parents,"execution_authority_granted":False}
             );return s
 
-        if domain_intent in {"CREATE_SUBDOMAIN","CREATE_CHILD_DOMAIN"} and s["answers"].get("domain_parent_selection")!="DECIDE_LATER" and "domain_label_choice" not in s["answers"]:
+        if "domain_binding" not in s["answers"] and domain_intent in {"CREATE_SUBDOMAIN","CREATE_CHILD_DOMAIN"} and s["answers"].get("domain_parent_selection")!="DECIDE_LATER" and "domain_label_choice" not in s["answers"]:
             s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DOMAIN_LABEL_CHOICE"
             s["next_request"]=q(
               "Q_DOMAIN_LABEL_CHOICE","domain_label_choice",
@@ -478,7 +478,7 @@ def refresh(s):
               }
             );return s
 
-        if domain_intent in {"CREATE_SUBDOMAIN","CREATE_CHILD_DOMAIN"} and s["answers"].get("domain_label_choice")=="OTHER_CUSTOM" and "domain_label_custom" not in s["answers"]:
+        if "domain_binding" not in s["answers"] and domain_intent in {"CREATE_SUBDOMAIN","CREATE_CHILD_DOMAIN"} and s["answers"].get("domain_label_choice")=="OTHER_CUSTOM" and "domain_label_custom" not in s["answers"]:
             s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DOMAIN_LABEL_CUSTOM"
             s["next_request"]=q(
               "Q_DOMAIN_LABEL_CUSTOM","domain_label_custom",
@@ -487,7 +487,7 @@ def refresh(s):
               extra={"parent_domain":s["answers"].get("domain_parent_selection"),"execution_authority_granted":False}
             );return s
 
-        if domain_intent=="CREATE_NEW_ROOT_DOMAIN" and "domain_root_name_mode" not in s["answers"]:
+        if "domain_binding" not in s["answers"] and domain_intent=="CREATE_NEW_ROOT_DOMAIN" and "domain_root_name_mode" not in s["answers"]:
             s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DOMAIN_ROOT_NAME_MODE"
             s["next_request"]=q(
               "Q_DOMAIN_ROOT_NAME_MODE","domain_root_name_mode",
@@ -496,7 +496,7 @@ def refresh(s):
               extra={"selected_server":selected,"execution_authority_granted":False}
             );return s
 
-        if domain_intent=="CREATE_NEW_ROOT_DOMAIN" and s["answers"].get("domain_root_name_mode")=="CUSTOM_NAME" and "domain_root_name" not in s["answers"]:
+        if "domain_binding" not in s["answers"] and domain_intent=="CREATE_NEW_ROOT_DOMAIN" and s["answers"].get("domain_root_name_mode")=="CUSTOM_NAME" and "domain_root_name" not in s["answers"]:
             s["status"]="WAITING_FOR_SETUP_ANSWER";s["phase"]="Q_DOMAIN_ROOT_NAME"
             s["next_request"]=q(
               "Q_DOMAIN_ROOT_NAME","domain_root_name",
