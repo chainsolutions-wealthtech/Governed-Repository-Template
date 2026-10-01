@@ -392,7 +392,7 @@ def scan_docs(
     if any(changes.values()):
         sessions_doc["revision"] = int(sessions_doc.get("revision", 0)) + 1
         takeovers_doc["revision"] = int(takeovers_doc.get("revision", 0)) + 1
-    takeovers_doc["last_scan_at"] = iso(timestamp)
+        takeovers_doc["last_scan_at"] = iso(timestamp)
     return changes
 
 
