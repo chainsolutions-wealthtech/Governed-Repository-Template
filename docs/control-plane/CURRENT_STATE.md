@@ -762,7 +762,7 @@ Cross-cutting status: `LIVE_AUTO_ATTACH_PROVEN / CI_PROVEN`.
 
 ## GACR R5 — Client Liveness and Trace Emitter
 
-Cross-cutting status: `POST_ATTESTATION_REGRESSION_CORRECTION / CI_PENDING`.
+Cross-cutting status: `GENERIC_CORE_COMPLETE / R5_CORRECTION_LIVE_PROVEN / CI_PROVEN`.
 
 - Parent authority: `CP-AGENT-RELAY-001`.
 - Previous proven revision: `CP-AGENT-RELAY-001-R4`.
@@ -804,3 +804,23 @@ Cross-cutting status: `POST_ATTESTATION_REGRESSION_CORRECTION / CI_PENDING`.
 - Invalid transport session is preserved but will be `CLOSED / SUPERSEDED`, never deleted.
 - R5 cannot return to final-complete status until candidate CI, merge, post-merge GACR no-duplication proof and final attestation pass.
 - `P12-S6` remains unchanged and unexecuted.
+
+### GACR R5-A corrective live proof
+
+- Corrective decision: `CPD-055`.
+- Corrective PR #113 candidate commit: `1758001e052b923dc50b1e467cc28d5eb528b728`.
+- Candidate Governance CI `36942282684`: PASS.
+- PR #113 merge: `bfb7b6fb81244f18f1b2c8c1ea82526af0dc2d62`.
+- Post-merge Governance CI `36942347934`: PASS.
+- Post-merge GACR run `36942347872`: PASS.
+- Derived-state persistence main: `173297fee3c6ac55a03ca3787558b063cb85b668`.
+- Session records: 2 historical records, exactly 1 active conversation session.
+- Canonical active session: `session-68c97d4bb1ef71c86444de12`.
+- Misclassified internal-transport session `session-cb22a4ed0d9e29eba5383f5d`: `CLOSED / SUPERSEDED`.
+- Beacon revision/count remained `4 / 4`: the corrective merge created no new internal auto-attach Beacon.
+- Correlator revision advanced to `5`; terminal session is excluded from live candidates.
+- The historical invalid Beacon/correlation is preserved. Its current projection is `PROBABLE`, selected session `null`, candidate only the canonical live session.
+- This closes the observed internal-transport duplication regression without extending Chronicle freshness or inventing liveness.
+- Generic GACR R1-R5 is complete as repository/runtime/client protocol.
+- Provider-host persistent-emitter activation remains a separate external integration boundary and is not falsely reported as live.
+- `P12-S6` remains unchanged and unexecuted pending explicit owner OK.

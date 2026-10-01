@@ -942,7 +942,7 @@ This does not supersede or execute the global programme task `P12-S6_CLOSE_CREAT
 
 ### GACR R5 — client liveness and trace emitter
 
-Status: **POST_ATTESTATION_REGRESSION_CORRECTION / CI_PENDING**.
+Status: **GENERIC_CORE_COMPLETE / CI_PROVEN**.
 
 Additive candidate under `CP-AGENT-RELAY-001-R5` / `CPD-054`:
 
@@ -961,7 +961,7 @@ R5 does not execute `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
 
 ### GACR R5-A — internal transport identity correction
 
-Status: **IN_PROGRESS / CI_PENDING**.
+Status: **LIVE_PROVEN / CI_PROVEN / DONE**.
 
 Corrective slice under `CP-AGENT-RELAY-001-R5` / `CPD-055`:
 

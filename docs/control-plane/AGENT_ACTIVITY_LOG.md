@@ -391,3 +391,24 @@
 - Generic GACR R1-R5 is complete as repository/runtime/client protocol.
 - Provider-host instrumentation remains an external integration boundary.
 - `P12-S6` remains unchanged and unexecuted pending explicit owner OK.
+
+## Entry AAL-20261002-GACR-R5A-001
+
+- Agent identity: ChatGPT.
+- Workstream: `GACR_R5A_INTERNAL_TRANSPORT_IDENTITY_CORRECTION`.
+- Source repository: `chainsolutions-wealthtech/Governed-Repository-Template`.
+- Defect observed after R5 attestation: internal GACR workflow created `session-cb22a4ed0d9e29eba5383f5d` after the Chronicle freshness window expired.
+- Canonical conversation session preserved: `session-68c97d4bb1ef71c86444de12`.
+- Decision: `CPD-055`.
+- Corrective PR #113 candidate commit: `1758001e052b923dc50b1e467cc28d5eb528b728`.
+- Candidate CI `36942282684`: PASS.
+- Merge: `bfb7b6fb81244f18f1b2c8c1ea82526af0dc2d62`.
+- Post-merge Governance CI `36942347934`: PASS.
+- Post-merge GACR run `36942347872`: PASS.
+- Derived-state persistence main: `173297fee3c6ac55a03ca3787558b063cb85b668`.
+- Internal workflow created no additional session and no additional Beacon after correction.
+- Historical transport session preserved but `CLOSED / SUPERSEDED`.
+- Terminal session removed from live Correlator candidates.
+- GACR R1-R5 generic core is complete.
+- Provider-host continuous emitter activation remains external and must be proven per host.
+- `P12-S6` remains unchanged and unexecuted pending explicit owner OK.

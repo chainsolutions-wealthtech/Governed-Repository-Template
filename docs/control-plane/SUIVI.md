@@ -726,3 +726,19 @@ P12-S5 therefore satisfies its exit gate without target-specific repair. No S1/d
 - Candidate Template version: `2.8.36`.
 - Final acceptance requires post-merge proof of no new internal-transport session.
 - `P12-S6` remains preserved and unexecuted.
+
+## 2026-10-02 — GACR R5-A correction live-proven; generic core complete
+
+- PR #113 candidate Governance CI `36942282684`: PASS.
+- PR #113 merged at `bfb7b6fb81244f18f1b2c8c1ea82526af0dc2d62`.
+- Post-merge Governance CI `36942347934`: PASS.
+- Post-merge GACR run `36942347872`: PASS.
+- No new session or Beacon was created by the internal GACR workflow after the fix.
+- Runtime contains two preserved session records but only one active session: `session-68c97d4bb1ef71c86444de12`.
+- Historical transport session `session-cb22a4ed0d9e29eba5383f5d` is `CLOSED`, superseded by the canonical conversation session, with reconciliation decision `CPD-055`.
+- Correlator live projection excludes the terminal session from candidates.
+- Derived projection persistence advanced main to `173297fee3c6ac55a03ca3787558b063cb85b668`.
+- The historical defective Beacon remains preserved as evidence; no history was deleted or rewritten.
+- Generic GACR R1-R5 is complete and ready for provider-host adapters wherever the host can invoke the emitter.
+- Current ChatGPT host still does not expose a persistent client-emitter process to this assistant; this is an external integration boundary, not silently promoted to PASS.
+- Stop before `P12-S6` and await explicit owner OK.
