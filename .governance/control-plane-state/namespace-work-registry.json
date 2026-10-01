@@ -149,6 +149,12 @@
       "pattern": "^EVREQ-G\\d{2}-[A-Z0-9-]+$",
       "kind": "EVIDENCE_REQUIREMENT",
       "canonical_source": ".governance/control-plane-state/governance-model-execution-blueprint.json"
+    },
+    {
+      "id": "GACR-TAKEOVER",
+      "pattern": "^GACR-T-[0-9a-f]{12}$",
+      "kind": "AGENT_CONTINUITY_TAKEOVER_RUNTIME_ID",
+      "canonical_source": ".governance/agent-relay/takeovers.json"
     }
   ],
   "canonical_authorities": [
@@ -161,7 +167,8 @@
     "CP-SERVER-KNOWLEDGE-001",
     "CP-IDENTITY-SECRET-001",
     "CP-EXECUTION-001",
-    "CP-NAMESPACE-001"
+    "CP-NAMESPACE-001",
+    "CP-AGENT-RELAY-001"
   ],
   "definition_sources": [
     {
@@ -243,7 +250,9 @@
       "single writer per collision domain",
       "exact-head precondition",
       "reconcile on HEAD_MOVED",
-      "structured checkpoint and handoff"
+      "structured checkpoint and handoff",
+      "heartbeat lease for active agents",
+      "stalled claim preserved until reconciled takeover"
     ],
     "id_collision_behavior": "FAIL_CI_AND_HOLD_FOR_REVIEW",
     "concurrent_write_behavior": "CLAIM_OR_HEAD_COLLISION_FAILS_CLOSED",
