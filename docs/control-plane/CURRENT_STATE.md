@@ -616,3 +616,13 @@ Persisted evidence contains no secret values, raw MCP payloads, server connectio
 Observed mechanism result remains explicit: ephemeral SSH OIDC minting is implemented; several generic production capabilities remain modelled gaps, including TLS change, secret provisioning, database change, DNS change and runtime mutation. No automatic MCP intake was created.
 
 CASE 1 is unchanged: Ekyc remains at `C1-13-I-B / Q_DOMAIN_BINDING`.
+
+## C1-13-I-B-A — fresh-project server-before-domain correction
+
+Live Ekyc state and the source implementation were reconciled against the owner's required question order.
+
+Finding: Ekyc is a `NEW_EMPTY_PROJECT` with `UNKNOWN_TO_DISCOVER` infrastructure, successful read-only discovery on both S1/S2 domain inventory tools, no existing project/domain binding, but the legacy runtime currently asks `Q_DOMAIN_BINDING` directly.
+
+Generic correction `C1-13-I-B-A` is active in the Template. The v2.8.25 candidate adds production-server selection before domain planning, reuses selected-server discovery evidence and migrates the open local-entry state through the governed upgrader.
+
+Ekyc itself remains unchanged until Template CI/merge.
