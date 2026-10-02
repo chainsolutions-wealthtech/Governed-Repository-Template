@@ -402,3 +402,20 @@ This does not invalidate R1-R6. Heartbeat/lease, Beacon, Correlator, Forensics, 
 The realignment is incomplete until the live acceptance scenario in the canonical plan proves: fresh agent arrival without explicit GACR registration instruction → automatic observable presence → safe activity/progress observation → stall detection → second-agent exact-HEAD takeover → continuation of the same work.
 
 Registration of this plan does not change the global unique executable task or silently execute `P12-S6`.
+
+## Correlator / Dispatcher / Takeover integration hardening
+
+The additive Correlator / Dispatcher / Takeover contract is defined in
+`docs/control-plane/GACR_CORRELATOR_DISPATCHER_TAKEOVER_INTEGRATION.md`.
+
+The hardened Correlator uses named categorical evidence rules; only `EXACT`
+and unique `STRONG` may select a session. Dispatcher compatibility reuses
+the existing sessions, claims, collision domains, work-item dependencies and
+exact-HEAD gate. Compatibility and wake preparation grant no mutation
+authority.
+
+The prepared Agent A -> stall -> Agent B harness remains
+`SHARED_INTEGRATION_REQUIRED` until separately-owned Presence/Envelope and
+Liveness/Progress worker surfaces are available. It is not the ultimate live
+Steps 13-24 proof.
+
