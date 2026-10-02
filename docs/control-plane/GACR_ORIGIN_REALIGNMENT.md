@@ -280,3 +280,18 @@ preserving GACR claim/exact-HEAD/takeover authority.
 Step 13B may now be executed only with a genuinely fresh provider conversation/agent.
 The G4/G5/G6 remediation agents and this current conversation are invalid Step 13B fixtures.
 Ultimate live acceptance remains **NOT_PASSED**.
+
+
+## 2026-10-02 — G6 final post-merge proof
+
+G6 final validation is complete.
+
+- PR #150 final reauthorized candidate CI `36972111008 = PASS`;
+- merge `d0f66130f135f4aa7363c3e88c1e3f44ced9a828`;
+- post-merge Governance CI `36972158291 = PASS`;
+- post-merge GACR Relay `36972158234 = PASS`;
+- exact current main after GACR auto-attach: `ab3fd3848878e93f929cbd3d89c9d15be43537a7`.
+
+Step 13B remains **NEXT_AUTHORIZED** and **NOT_EXECUTED**. This is authorization to run
+the fresh-provider acceptance fixture, not acceptance evidence itself. Ultimate live
+acceptance remains **NOT_PASSED**.
