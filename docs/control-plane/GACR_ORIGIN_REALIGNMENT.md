@@ -260,3 +260,23 @@ Integration found and corrected two cross-layer contract defects before merge:
 2. replayed liveness challenge responses now preserve control-channel reachability but do not refresh GSE liveness evidence.
 
 This controlled E2E is not the fresh-provider proof. Step 13B must still be executed with a genuinely fresh provider conversation/agent that is not instructed to register with GACR. Ultimate live acceptance remains **NOT_PASSED**.
+
+
+## 2026-10-02 — G6 reconciliation reauthorizes Step 13B
+
+Status: **STEP 13B NEXT_AUTHORIZED / FRESH PROVIDER PROOF NOT EXECUTED**.
+
+Pre-Step-13B remediation is closed:
+
+- G4 / GACR-INT-AUDIT-01: CLOSED_PASS via PR #147;
+- G5 / GACR-INT-AUDIT-02: CLOSED_PASS via PR #149;
+- current main reobserved before G6: `114c5397966a5c6ad7d8770298abd698929ecf8f`;
+- G6 reconciliation PR #150 first full Governance CI `36971795607 = PASS`.
+
+The reconciliation proves the canonical GSCC contract, safe control-response → GSE projection,
+combined controlled E2E, historical GACR suites and governance validation together while
+preserving GACR claim/exact-HEAD/takeover authority.
+
+Step 13B may now be executed only with a genuinely fresh provider conversation/agent.
+The G4/G5/G6 remediation agents and this current conversation are invalid Step 13B fixtures.
+Ultimate live acceptance remains **NOT_PASSED**.
