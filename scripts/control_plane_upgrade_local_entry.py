@@ -160,6 +160,19 @@ def main():
     workflow_model["repository"]=target
     updates[".governance/workflow-model.json"]=json.dumps(workflow_model,ensure_ascii=False,indent=2)+"\n"
 
+    # GACR provider-host inbox identity is repository-local runtime state. Never
+    # distribute the Template source issue number (#115) into a target client.
+    # Until a client-local issue number is explicitly bound, the ingress
+    # validates the canonical configured title instead.
+    gacr_config=json.loads((ROOT/".governance/agent-relay/config.json").read_text(encoding="utf-8"))
+    host_bridge=gacr_config.setdefault("host_issue_bridge",{})
+    host_bridge["issue_number"]=None
+    host_bridge["source_issue_number_distributed"]=False
+    host_bridge["client_issue_strategy"]="TITLE_FALLBACK_UNTIL_LOCAL_NUMBER_BOUND"
+    host_bridge["live_proof_status"]="CLIENT_TITLE_FALLBACK_CI_PROVEN_SOURCE_LIVE_PROOF_SEPARATE"
+    gacr_config.setdefault("external_bridge",{})["chatgpt_issue_bridge_live_proven"]=False
+    updates[".governance/agent-relay/config.json"]=json.dumps(gacr_config,ensure_ascii=False,indent=2)+"\n"
+
     existing_gacr_takeovers=target_text(token,target,".governance/agent-relay/takeovers.json")
     if existing_gacr_takeovers is None:
         existing_gacr_takeovers=(ROOT/".governance/agent-relay/takeovers.json").read_text(encoding="utf-8")
