@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 52,
+  "revision": 53,
   "items": [
     {
       "correlation_id": "GACR-C-caffb7cb6efd",
@@ -1831,6 +1831,56 @@
         "observed_at": "2026-10-02T07:04:33+00:00",
         "activity_class": "AUTO_ATTACH",
         "safe_envelope_digest": "8b5d090d902da9e54dc501d782023af80bb0042b2e16fbd2c506eb293529108f",
+        "candidate_session_ids": [
+          "session-02da2612b250e57ae361a588",
+          "session-255e3c082a24a718c4cf3da6",
+          "session-34e7d19d025442b07a4ad685",
+          "session-418b0b7e0f7348a2c6f16199",
+          "session-4b5c18f24029b172733b09b2",
+          "session-8e5ee7cff3ff8c157a8aee43"
+        ],
+        "correlation_level": "AMBIGUOUS",
+        "reasons": [
+          "CONFLICTING_EXPLICIT_ANCHORS"
+        ],
+        "status": "UNBOUND",
+        "reconciled_session_id": "UNAVAILABLE",
+        "reconciled_at": "UNAVAILABLE"
+      }
+    },
+    {
+      "correlation_id": "GACR-C-4492f0f5a87a",
+      "beacon_id": "GACR-B-3a6e3beaf5a5",
+      "level": "AMBIGUOUS",
+      "selected_session_id": null,
+      "candidate_session_ids": [
+        "session-02da2612b250e57ae361a588",
+        "session-255e3c082a24a718c4cf3da6",
+        "session-34e7d19d025442b07a4ad685",
+        "session-418b0b7e0f7348a2c6f16199",
+        "session-4b5c18f24029b172733b09b2",
+        "session-8e5ee7cff3ff8c157a8aee43"
+      ],
+      "reasons": [
+        "CONFLICTING_EXPLICIT_ANCHORS"
+      ],
+      "confidence": {
+        "rule_id": "AMBIGUOUS_EXPLICIT_ANCHOR_CONFLICT",
+        "class": "AMBIGUOUS",
+        "numeric_score": null,
+        "auto_bind_allowed": false
+      },
+      "binding_status": "UNBOUND_ACTIVITY",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-02T07:04:47+00:00",
+      "unbound_activity": {
+        "observation_id": "GACR-B-3a6e3beaf5a5",
+        "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+        "observed_at": "2026-10-02T07:04:47+00:00",
+        "activity_class": "AUTO_ATTACH",
+        "safe_envelope_digest": "7020f596cdd8f1b03ff739143ac85bd02e1687e6bcf22e0e9a25147349e67f51",
         "candidate_session_ids": [
           "session-02da2612b250e57ae361a588",
           "session-255e3c082a24a718c4cf3da6",
