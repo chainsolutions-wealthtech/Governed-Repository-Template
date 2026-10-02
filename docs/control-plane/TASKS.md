@@ -1035,3 +1035,20 @@ Owner direction is non-destructive: preserve R1-R6 and realign the next GACR evo
 The mandatory 24-operation sequence is frozen in the canonical plan. It begins with exact R6 baseline preservation and original-intent reconstruction, then requires gap mapping and tests-before-code, then Presence Fabric/instrumented access/liveness-vs-progress/unbound-activity work, and ends only after a live fresh-agent → stall → second-agent exact-HEAD takeover → continuation proof.
 
 This queued GACR plan does **not** replace the unique executable Control Plane task `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`. No realignment implementation step is marked DONE merely because the plan is recorded.
+
+
+### GACR autonomous programme checkpoint
+
+GACR programme authority: `docs/control-plane/GACR_PROGRAM.md`.
+Original-intent authority: `docs/control-plane/GACR_ORIGINAL_INTENT.md`.
+
+This is a separate workstream from the global Control Plane programme. The global `P12-S6` task is not a dependency of the GACR programme.
+
+GACR programme state:
+- R1-R6 baseline: PRESERVED.
+- Original historical intent / stop point: CANONICAL / RECORDED.
+- Origin realignment plan: ACCEPTED.
+- GACR own next action: `GACR-OR-01_REOBSERVE_AND_ATTEST_R6_BASELINE`.
+- Ultimate live acceptance: NOT YET PASSED.
+
+The historical owner sequencing remains: finish GACR first; resume the global programme only after explicit owner OK.

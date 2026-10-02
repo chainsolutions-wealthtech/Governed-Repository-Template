@@ -937,3 +937,14 @@ Global programme state is unchanged: `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` r
 - Status: `ACCEPTED_PLAN / NOT_YET_EXECUTED`.
 - Realignment completion requires a live fresh-agent → automatic observable presence → liveness/progress evidence → stall → second-agent exact-HEAD takeover → continuation proof.
 - This registration does not change the current unique executable task `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+
+
+## Autonomous GACR programme
+
+- GACR programme authority: `docs/control-plane/GACR_PROGRAM.md`.
+- Original-intent authority: `docs/control-plane/GACR_ORIGINAL_INTENT.md`.
+- GACR and the global Control Plane programme are distinct workstreams.
+- No global task, including `P12-S6`, is a functional dependency of GACR.
+- GACR own next action: `GACR-OR-01_REOBSERVE_AND_ATTEST_R6_BASELINE`.
+- Original two-limit stop point and BEACON/WATCH/CORRELATOR/DISPATCHER target are now durable canonical memory.
+- Global programme state remains unchanged by this GACR registration.

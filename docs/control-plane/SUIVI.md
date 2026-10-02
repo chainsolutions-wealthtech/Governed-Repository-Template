@@ -836,3 +836,15 @@ R6 is therefore integrated for event-driven host activity. The broader programme
 - Ultimate completion test is explicit: a fresh agent is asked to work on the repo without being told to register with GACR; GACR must observe it through an instrumented path, track safe activity, detect loss of fresh evidence, and enable another governed agent to continue the same work after exact-HEAD reconciliation.
 - Silent provider capabilities that are not exposed remain `UNAVAILABLE`; no provider ID, crash cause or continuous liveness is invented.
 - Global Control Plane unique task remains `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`; this change records future GACR work and does not execute it.
+
+
+## 2026-10-02 — GACR original intent and historical stop point canonized
+
+- Added `docs/control-plane/GACR_ORIGINAL_INTENT.md` as authority `CP-AGENT-RELAY-001-ORIGIN`.
+- Added `docs/control-plane/GACR_PROGRAM.md` as the autonomous GACR programme authority.
+- Added machine projections `gacr-original-intent.json` and `gacr-program.json`.
+- Preserved the historical baseline, the two external limits, BEACON/WATCH/CORRELATOR/DISPATCHER target, full Connection Envelope, connection fingerprint, correlation-confidence model, Dispatcher compatibility/activation flow, optional Bridge boundary and Agent Context philosophy.
+- Historical version `2.8.30` is retained only as remembered context for that stop point; later R1-R6 implementation is the current preserved baseline.
+- Clarified that GACR and the global Control Plane programme are separate workstreams. There is no `P12-S6 → GACR` dependency.
+- GACR own next action is `GACR-OR-01_REOBSERVE_AND_ATTEST_R6_BASELINE`.
+- Owner sequencing remains: finish GACR first; return to the global programme only after explicit owner OK.

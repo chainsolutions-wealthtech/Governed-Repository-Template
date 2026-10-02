@@ -1,0 +1,15 @@
+{
+  "schema": "gacr-program/v1",
+  "programme": "GACR",
+  "authority": "CP-AGENT-RELAY-001",
+  "distinct_from_global_control_plane_programme": true,
+  "global_dependency_edges": [],
+  "current_state": {
+    "original_intent": "CANONICAL_RECORDED",
+    "baseline_r1_r6": "PRESERVED",
+    "origin_realignment_plan": "ACCEPTED",
+    "realignment_execution": "NOT_COMPLETE",
+    "ultimate_live_acceptance": "NOT_PASSED"
+  },
+  "next_action": "GACR-OR-01_REOBSERVE_AND_ATTEST_R6_BASELINE"
+}

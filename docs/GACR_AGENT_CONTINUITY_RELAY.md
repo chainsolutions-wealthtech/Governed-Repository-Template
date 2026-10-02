@@ -374,6 +374,16 @@ The integration proves automatic processing of emitted host events, not an alway
 
 The live proof preserves the core invariants: one canonical active session, no invented provider conversation ID, exact correlation, idempotent replay, exact-HEAD persistence guards, no claim/takeover bypass, and source/client runtime isolation.
 
+## Original intent and autonomous GACR programme
+
+Canonical historical intent: `docs/control-plane/GACR_ORIGINAL_INTENT.md`.
+
+Canonical GACR programme: `docs/control-plane/GACR_PROGRAM.md`.
+
+The original-intent authority preserves the two external limits, Connection Envelope, connection fingerprint, correlation confidence model, Dispatcher activation target, optional Bridge boundary, Agent Context philosophy and the historical point where the additive BEACON + WATCH + CORRELATOR + DISPATCHER evolution was ready to proceed.
+
+GACR is distinct from the global Control Plane programme. It may progress on explicit owner direction while the global programme remains parked, and no global task such as `P12-S6` is a functional prerequisite for GACR.
+
 ## Origin realignment — Presence-First planning authority
 
 Owner clarification after R6: R1-R6 are preserved, but future GACR evolution must return to the original presence-first objective.
