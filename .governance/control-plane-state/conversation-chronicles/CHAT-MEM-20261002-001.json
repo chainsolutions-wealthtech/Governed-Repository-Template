@@ -13,14 +13,14 @@
   "counters": {
     "next_user_message": 2,
     "next_assistant_message": 3,
-    "next_tool_event": 9,
+    "next_tool_event": 10,
     "next_decision_event": 9,
     "next_constraint_event": 7,
-    "next_action_event": 8,
+    "next_action_event": 9,
     "next_error_event": 1,
     "next_recovery_event": 6,
-    "next_checkpoint": 10,
-    "next_cache": 10,
+    "next_checkpoint": 11,
+    "next_cache": 11,
     "next_open_loop": 4,
     "next_artifact": 3,
     "next_session": 3
@@ -31,26 +31,28 @@
     "previous_hash": "8b45efbe51e0e9fbf26883ae2a6ee65c7975e7c782bc5c708c4ea06363db5e97"
   },
   "current_session": "SESSION-000002",
-  "current_checkpoint": "CHK-000009",
-  "current_cache": "CACHE-000009",
+  "current_checkpoint": "CHK-000010",
+  "current_cache": "CACHE-000010",
   "open_loops": [
     "OPEN-000002",
     "OPEN-000003"
   ],
-  "current_topic": "GACR pre-Step-13B remediation with G2 source-contract memory preserved",
-  "point_of_stop": "The Chronicle now preserves the actual G2 integration history plus the shared contract/safety/ownership/integration invariants from the consolidated three-agent prompt source. Step 13B remains blocked pending G4, G5 and G6.",
-  "next_safe_action": "Execute G4 against canonical scripts/gscc/protocol.py while preserving the recovered G2 contract semantics, then G5 control-response→GSE proof, then G6 reauthorization.",
+  "current_topic": "GACR G5 control-response to canonical GSE projection remediation",
+  "point_of_stop": "GACR-INT-AUDIT-01 is CLOSED_PASS on canonical main; GACR-INT-AUDIT-02 is the only remaining blocking integration finding before G6.",
+  "next_safe_action": "Execute G5: map safe STATUS/PROGRESS/CONTEXT/CHECKPOINT control responses into canonical GSE projections without manufacturing liveness or progress; integrate after full regression, then run G6.",
   "external_state_observed": {
     "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
     "branch": "main",
-    "head": "3245703569dc2cd90aa33b6f0b2f6ed3c698556d",
-    "observed_at": "2026-10-02T07:30:22+02:00",
+    "head": "b7d0e3540747af21db9705fc333baeca1d74adef",
+    "observed_at": "2026-10-02T07:49:42+02:00",
     "precision": "second",
     "freshness": "OBSERVED_AT",
-    "gscc_gse_control_integration": "PASS_WITH_POST_ATTESTATION_REMEDIATION_REQUIRED",
-    "canonical_audit_pr": 144,
-    "canonical_audit_merge": "5ef0cd15d4721b38246222837e8b30dd5e84d02c",
-    "canonical_audit_ci": 36969164244,
+    "gacr_int_audit_01": "CLOSED_PASS",
+    "gacr_int_audit_02": "OPEN_BLOCKING_PRE_13B",
+    "remediation_pr": 147,
+    "corrected_candidate_ci": 36970569867,
+    "postmerge_ci": 36970611124,
+    "postmerge_relay": 36970611145,
     "step_13b": "BLOCKED_PENDING_INTEGRATION_REMEDIATION",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
@@ -148,7 +150,7 @@
     "premerge_ci_result": "PASS"
   },
   "supervision_state": {
-    "status": "PRE_STEP_13B_INTEGRATION_REMEDIATION",
+    "status": "PRE_STEP_13B_G5_REMEDIATION",
     "programme": "GACR",
     "global_programme_progression": "UNCHANGED",
     "workers": [
@@ -226,7 +228,7 @@
     ],
     "final_main": "3245703569dc2cd90aa33b6f0b2f6ed3c698556d",
     "controlled_e2e": "PASS",
-    "step_13b": "BLOCKED_PENDING_INTEGRATION_REMEDIATION",
+    "step_13b": "BLOCKED_PENDING_G5_G6",
     "canonical_audit": {
       "pr": 144,
       "merge": "5ef0cd15d4721b38246222837e8b30dd5e84d02c",
@@ -326,6 +328,16 @@
         "NO_SECRET_COOKIE_TOKEN_TRANSCRIPT_OR_PRIVATE_REASONING_CAPTURE",
         "SHARED_PROTOCOL_HAS_ONE_CANONICAL_AUTHORITY"
       ]
+    },
+    "g4": {
+      "status": "CLOSED_PASS",
+      "finding": "GACR-INT-AUDIT-01",
+      "pr": 147,
+      "merge": "cbc87ef5f31c6c8190be3add44f446fdc316b6f2",
+      "candidate_ci": 36970569867,
+      "postmerge_ci": 36970611124,
+      "postmerge_relay": 36970611145,
+      "observed_main": "b7d0e3540747af21db9705fc333baeca1d74adef"
     }
   }
 }
