@@ -1063,3 +1063,25 @@ These observations are durable supervision evidence, not new mutation authority 
 - The existing GSCC Function Exposure Gate is also preserved downstream.
 - No runtime implementation was changed by this clarification; PR #158 remains documentation/governance only.
 
+## 2026-10-02 — GSCC Admission / Access Gate implemented tests-first on PR #159
+
+- Owner authorized live implementation after CPD-061 / `GSCC_ADMISSION_ACCESS_GATE.md` became canonical.
+- Work branch created from observed `main = 89fb28e498fde0b4df597da75499990f4deb5269`: `governance/gscc-admission-runtime`.
+- Existing Observable Arrival Gateway, SessionEndpoint, GSE, GACR and canonical Function Exposure Gate were preserved.
+- Admission core RED: Governance CI `37000902994 = FAILURE` on missing `gscc.admission`.
+- Admission core GREEN: `37001048628 = SUCCESS`.
+- Access Grant RED: `37001183473 = FAILURE` on missing qualification API.
+- Access Grant GREEN: `37001289277 = SUCCESS`.
+- Function gate RED: `37001452126 = FAILURE` because the existing evaluator did not accept an Access Grant.
+- Function gate corrected GREEN: `37001737386 = SUCCESS`.
+- Admission workflow RED: `37001911592 = FAILURE` because the admission workflow did not yet exist.
+- Final candidate Governance CI `37002023347 = SUCCESS`.
+- Final candidate GSCC Observable Arrival Gateway `37002023374 = SUCCESS`.
+- Final candidate GSCC Function Exposure Gate `37002023423 = SUCCESS`.
+- New read-only workflow: `.github/workflows/gscc-admission-gate.yml` with `contents: read`.
+- Admission may return only `PREAUTHORIZED`; qualification may issue a bounded `gscc-access-grant/v1`.
+- The existing Function Exposure Gate now rejects absent/expired/mismatched grants before function/authority evaluation.
+- Access Grant still grants neither invocation authority nor mutation authority.
+- Status remains candidate until merge + post-merge attestation. No real provider admission request has yet passed on canonical `main`.
+- Step 13B remains NOT_EXECUTED. Global `P12-S6` remains untouched.
+
