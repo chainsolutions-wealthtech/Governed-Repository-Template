@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 import json
 from pathlib import Path
 
-from gscc.admission import InMemoryAdmissionStore, evaluate_access_grant, evaluate_admission, evaluate_issue_comment_admission, validate_access_grant
+from gscc.admission import InMemoryAdmissionStore, evaluate_access_grant, evaluate_admission, evaluate_issue_comment_admission, resolve_admission_session_binding, validate_access_grant
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -288,6 +288,98 @@ def test_issue_comment_admission_workflow_is_bound_to_dedicated_issue():
     assert "contents: write" not in text, text
 
 
+
+def admission_receipt_for_binding(**overrides):
+    value = {
+        "schema": "gscc-admission-receipt/v1",
+        "status": "PREAUTHORIZED",
+        "admission_id": "GSCC-ADM-" + ("a" * 64),
+        "request_id": "admreq-bind-001",
+        "connection_ref": "declared-connection-001",
+        "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations",
+        "provider": "chatgpt",
+        "requested_branch": "main",
+        "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+        "transport": "GITHUB_ISSUE_COMMENT",
+        "transport_author_login": "Wealthtechinnovations",
+        "repository_access": "NOT_YET_GRANTED",
+        "invocation_authority_granted": False,
+        "mutation_authority_granted": False,
+    }
+    value.update(overrides)
+    return value
+
+
+def gacr_sessions_for_binding(*, duplicate=False):
+    base = {
+        "session_id": "session-canonical-live",
+        "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+        "status": "ACTIVE",
+        "connection_ref": "gscc-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations:ref:main",
+        "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations",
+        "provider": "other",
+        "branch": "main",
+        "surface_class": "GITHUB_EVENT_VISIBLE",
+        "connection_method": "gscc-github-event-gateway",
+        "relay": {"state": "ACTIVE", "branch": "main"},
+    }
+    sessions = [base]
+    if duplicate:
+        sessions.append({**base, "session_id": "session-canonical-second"})
+    return {"sessions": sessions}
+
+
+def test_session_binding_prefers_exact_connection_ref():
+    receipt = admission_receipt_for_binding(
+        connection_ref="gscc-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations:ref:main"
+    )
+    result = resolve_admission_session_binding(receipt, gacr_sessions_for_binding(), now=NOW)
+    assert result["status"] == "BOUND", result
+    assert result["correlation"] == "EXACT", result
+    assert result["session_id"] == "session-canonical-live", result
+    assert result["canonical_connection_ref"].startswith("gscc-observable:"), result
+
+
+def test_session_binding_uses_unique_strong_observable_anchor_without_rewriting_admission():
+    receipt = admission_receipt_for_binding()
+    result = resolve_admission_session_binding(receipt, gacr_sessions_for_binding(), now=NOW)
+    assert result["status"] == "BOUND", result
+    assert result["correlation"] == "STRONG", result
+    assert result["admission_connection_ref"] == "declared-connection-001", result
+    assert result["canonical_connection_ref"] != result["admission_connection_ref"], result
+    assert result["session_id"] == "session-canonical-live", result
+
+
+def test_session_binding_fails_closed_when_ambiguous_or_missing():
+    receipt = admission_receipt_for_binding()
+    ambiguous = resolve_admission_session_binding(receipt, gacr_sessions_for_binding(duplicate=True), now=NOW)
+    assert ambiguous["status"] == "UNBOUND", ambiguous
+    assert ambiguous["reason_code"] == "ADMISSION_SESSION_BIND_AMBIGUOUS", ambiguous
+
+    missing = resolve_admission_session_binding(receipt, {"sessions": []}, now=NOW)
+    assert missing["status"] == "UNBOUND", missing
+    assert missing["reason_code"] == "ADMISSION_SESSION_BIND_NOT_FOUND", missing
+
+
+def test_access_grant_accepts_only_attested_admission_to_canonical_session_binding():
+    admission = admission_receipt_for_binding()
+    binding = resolve_admission_session_binding(admission, gacr_sessions_for_binding(), now=NOW)
+    evidence = qualification(admission)
+    evidence["session"] = {
+        "status": "BOUND",
+        "session_id": binding["session_id"],
+        "connection_ref": binding["canonical_connection_ref"],
+        "admission_connection_ref": binding["admission_connection_ref"],
+        "binding_level": binding["correlation"],
+        "binding_evidence_ref": binding["binding_evidence_ref"],
+    }
+    evidence["repository_baseline"]["observed_head"] = "a" * 40
+    result = evaluate_access_grant(admission, evidence, now=NOW)
+    assert result["status"] == "AUTHORIZED", result
+    assert result["connection_ref"] == binding["canonical_connection_ref"], result
+    assert result["admission_connection_ref"] == "declared-connection-001", result
+
+
 def main():
     test_valid_envelope_is_only_preauthorized()
     test_missing_required_field_is_incomplete()
@@ -302,6 +394,10 @@ def main():
     test_issue_comment_admission_bridge_accepts_only_bounded_safe_ingress()
     test_issue_comment_admission_bridge_fails_closed_on_wrong_issue_or_actor()
     test_issue_comment_admission_workflow_is_bound_to_dedicated_issue()
+    test_session_binding_prefers_exact_connection_ref()
+    test_session_binding_uses_unique_strong_observable_anchor_without_rewriting_admission()
+    test_session_binding_fails_closed_when_ambiguous_or_missing()
+    test_access_grant_accepts_only_attested_admission_to_canonical_session_binding()
     print("GSCC_ADMISSION_TESTS_OK")
 
 
