@@ -224,7 +224,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.38",
+  "template_version": "2.8.39",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -472,7 +472,8 @@
     "unobservable internal auto-attach skips without session or beacon creation",
     "terminal and superseded GACR sessions are excluded from correlation candidates",
     "provider-host GACR telemetry via governed GitHub issue-comment fallback",
-    "GACR issue-comment reruns reconcile to latest default branch before idempotency evaluation"
+    "GACR issue-comment reruns reconcile to latest default branch before idempotency evaluation",
+    "GACR source host issue number is repository-local and clients use canonical-title fallback until locally bound"
   ],
   "automatic_initialization_supported": true
 }
