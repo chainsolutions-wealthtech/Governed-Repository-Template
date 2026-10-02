@@ -2,9 +2,10 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import json
 from pathlib import Path
 
-from gscc.admission import InMemoryAdmissionStore, evaluate_access_grant, evaluate_admission, validate_access_grant
+from gscc.admission import InMemoryAdmissionStore, evaluate_access_grant, evaluate_admission, evaluate_issue_comment_admission, validate_access_grant
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -229,6 +230,64 @@ def test_admission_cli_exists_without_repository_mutation_surface():
     assert "merge_pull_request" not in source, source
 
 
+
+def issue_comment_event(body, *, issue_number=161, association="MEMBER", comment_id=700001):
+    return {
+        "issue": {"number": issue_number},
+        "comment": {
+            "id": comment_id,
+            "body": body,
+            "author_association": association,
+            "user": {"login": "Wealthtechinnovations"},
+        },
+        "repository": {"full_name": "chainsolutions-wealthtech/Governed-Repository-Template"},
+    }
+
+
+def test_issue_comment_admission_bridge_accepts_only_bounded_safe_ingress():
+    payload = json.dumps(envelope(), separators=(",", ":"))
+    result = evaluate_issue_comment_admission(
+        issue_comment_event("/gscc-admission " + payload),
+        expected_issue_number=161,
+        now=NOW,
+    )
+    assert result["status"] == "PREAUTHORIZED", result
+    assert result["repository_access"] == "NOT_YET_GRANTED", result
+    assert result["transport"] == "GITHUB_ISSUE_COMMENT", result
+    assert result["transport_event_ref"] == "issue-comment:700001", result
+    assert result["mutation_authority_granted"] is False, result
+
+
+def test_issue_comment_admission_bridge_fails_closed_on_wrong_issue_or_actor():
+    payload = json.dumps(envelope(), separators=(",", ":"))
+    wrong_issue = evaluate_issue_comment_admission(
+        issue_comment_event("/gscc-admission " + payload, issue_number=999),
+        expected_issue_number=161,
+        now=NOW,
+    )
+    assert wrong_issue["status"] == "ADMISSION_DENIED", wrong_issue
+    assert wrong_issue["reason_code"] == "ADMISSION_INGRESS_ISSUE_MISMATCH", wrong_issue
+
+    wrong_actor = evaluate_issue_comment_admission(
+        issue_comment_event("/gscc-admission " + payload, association="NONE"),
+        expected_issue_number=161,
+        now=NOW,
+    )
+    assert wrong_actor["status"] == "ADMISSION_DENIED", wrong_actor
+    assert wrong_actor["reason_code"] == "ADMISSION_INGRESS_ACTOR_NOT_AUTHORIZED", wrong_actor
+
+
+def test_issue_comment_admission_workflow_is_bound_to_dedicated_issue():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    assert "issue_comment:" in text, text
+    assert "created" in text, text
+    assert "/gscc-admission " in text, text
+    assert "161" in text, text
+    assert "OWNER" in text and "MEMBER" in text and "COLLABORATOR" in text, text
+    assert "python3 scripts/gscc/admission.py issue-comment" in text, text
+    assert "contents: write" not in text, text
+
+
 def main():
     test_valid_envelope_is_only_preauthorized()
     test_missing_required_field_is_incomplete()
@@ -240,6 +299,9 @@ def main():
     test_access_grant_validation_is_binding_and_expiry_sensitive()
     test_admission_workflow_exposes_only_governed_admission_and_qualification()
     test_admission_cli_exists_without_repository_mutation_surface()
+    test_issue_comment_admission_bridge_accepts_only_bounded_safe_ingress()
+    test_issue_comment_admission_bridge_fails_closed_on_wrong_issue_or_actor()
+    test_issue_comment_admission_workflow_is_bound_to_dedicated_issue()
     print("GSCC_ADMISSION_TESTS_OK")
 
 
