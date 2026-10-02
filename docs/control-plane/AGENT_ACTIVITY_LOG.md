@@ -412,3 +412,24 @@
 - GACR R1-R5 generic core is complete.
 - Provider-host continuous emitter activation remains external and must be proven per host.
 - `P12-S6` remains unchanged and unexecuted pending explicit owner OK.
+
+## Entry AAL-20261002-GACR-R6-001
+
+- Agent identity: ChatGPT.
+- Workstream: `GACR_R6_PROVIDER_HOST_INTEGRATION`.
+- Provider-host transport: GitHub issue-comment ingress.
+- Source inbox: issue #115.
+- Candidate/repair PRs: #116, #117, #118, #119.
+- Candidate Governance CI: `36947562102`, `36947919754`, `36948433046`, `36948711458` — all PASS.
+- Live START event: comment `5943461065`, state commit `69ccfc90c14f2fa02a264c765e31c49c64951635`.
+- Live COMPLETED event: comment `5943497457`, state commit `3d258e3c9fdfacd1232fb0a19448594ab452b47f`.
+- Rerun proof: run `36947989601` → already processed / no state change.
+- R6-B heartbeat: comment `5943559595`, state commit `371509ac60d1a63c0be7cee8ec8620346210d824`.
+- R6-C provider enrichment: comment `5943592733`, state commit `46a4a3068f0eb28ec3dc1d141cbcf349542a3348`.
+- Canonical session preserved: `session-68c97d4bb1ef71c86444de12`.
+- Final provider: `chatgpt`.
+- Provider conversation reference: unavailable/not invented.
+- Exactly one active session; no active claim/takeover/dispatch created by integration proof.
+- Event-driven host integration: LIVE_PROVEN.
+- Continuous background heartbeat: HOST_CAPABILITY_NOT_EXPOSED / NOT_CLAIMED.
+- Programme next action remains `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
