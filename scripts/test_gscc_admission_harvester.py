@@ -13,6 +13,7 @@ from gscc.admission_harvester import (
     resolve_gacr_session,
 )
 
+ROOT = Path(__file__).resolve().parents[1]
 NOW = datetime(2026, 10, 2, 12, 0, 0, tzinfo=timezone.utc)
 REPOSITORY = "chainsolutions-wealthtech/Governed-Repository-Template"
 HEAD = "a" * 40
