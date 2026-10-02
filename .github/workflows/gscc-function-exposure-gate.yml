@@ -108,29 +108,24 @@ jobs:
           PREFLIGHT_EVIDENCE_REF: ${{ github.event.client_payload.live_preflight_evidence_ref || inputs.live_preflight_evidence_ref }}
         run: |
           set -euo pipefail
-          args=(
-            evaluate
-            --connection-ref "$CONNECTION_REF"
-            --tool-name "$TOOL_NAME"
-            --observed-head "$OBSERVED_HEAD"
-            --authority-class "$AUTHORITY_CLASS"
-            --authority-evidence-ref "$AUTHORITY_EVIDENCE_REF"
-            --output "$RUNNER_TEMP/gscc-exposure-receipt.json"
+          authority_flag=()
+          [ "$AUTHORITY_GRANTED" = "true" ] && authority_flag+=(--authority-granted)
+
+          preflight_args=()
+          [ -n "$PREFLIGHT_STATUS" ] && preflight_args+=(--live-preflight-status "$PREFLIGHT_STATUS")
+          [ -n "$PREFLIGHT_HEAD" ] && preflight_args+=(--live-preflight-head "$PREFLIGHT_HEAD")
+          [ -n "$PREFLIGHT_EVIDENCE_REF" ] && preflight_args+=(--live-preflight-evidence-ref "$PREFLIGHT_EVIDENCE_REF")
+
+          python3 scripts/gscc_function_exposure_gate.py evaluate \
+            --connection-ref "$CONNECTION_REF" \
+            --tool-name "$TOOL_NAME" \
+            --observed-head "$OBSERVED_HEAD" \
+            --authority-class "$AUTHORITY_CLASS" \
+            --authority-evidence-ref "$AUTHORITY_EVIDENCE_REF" \
+            "${authority_flag[@]}" \
+            "${preflight_args[@]}" \
+            --output "$RUNNER_TEMP/gscc-exposure-receipt.json" \
             --require-validated
-          )
-          if [ "$AUTHORITY_GRANTED" = "true" ]; then
-            args+=(--authority-granted)
-          fi
-          if [ -n "$PREFLIGHT_STATUS" ]; then
-            args+=(--live-preflight-status "$PREFLIGHT_STATUS")
-          fi
-          if [ -n "$PREFLIGHT_HEAD" ]; then
-            args+=(--live-preflight-head "$PREFLIGHT_HEAD")
-          fi
-          if [ -n "$PREFLIGHT_EVIDENCE_REF" ]; then
-            args+=(--live-preflight-evidence-ref "$PREFLIGHT_EVIDENCE_REF")
-          fi
-          python3 scripts/gscc_function_exposure_gate.py "${args[@]}"
 
       - name: Publish validated exposure receipt
         uses: actions/upload-artifact@v4
