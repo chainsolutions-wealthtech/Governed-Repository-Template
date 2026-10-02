@@ -201,3 +201,40 @@ A protocol-breaking rename/removal requires a new schema version. An additive tr
 GSCC Core has no dependency on live GACR state files and does not write `.governance/control-plane-state/gacr-*` stores. Tests use `InMemoryTransport`, in-memory idempotency state and deterministic fixtures only.
 
 The channel transports control/evidence. It does not persist or mutate GACR claims, takeover state, Correlator authority or programme chronology.
+
+## Function exposure gate
+
+A governed function catalogue is not a raw implementation catalogue. A function becomes publishable only after GSCC validates the complete safe route for the current connection and exact repository state.
+
+```text
+OBSERVABLE ARRIVAL
+→ GSCC SESSION BIND
+→ CONNECTION ENVELOPE
+→ EXACT HEAD
+→ ENTRY ACTION
+→ CAPABILITY SNAPSHOT
+→ FUNCTION CONTRACT MATCH
+→ AUTHORITY VALIDATION
+→ LIVE PREFLIGHT WHEN REQUIRED
+→ EXPOSURE RECEIPT = VALIDATED
+→ FUNCTION MAY BE EXPOSED
+→ PRE-CALL REVALIDATION
+→ TOOL_STARTED
+→ REAL CALL
+→ TOOL_COMPLETED / TOOL_FAILED
+```
+
+Canonical implementation:
+
+- `scripts/gscc_function_exposure_gate.py`;
+- `.github/workflows/gscc-function-exposure-gate.yml`;
+- `schemas/gscc-function-exposure-receipt.schema.json`;
+- `scripts/gscc/instrumentation.py` for pre-call revalidation.
+
+The raw MCP capability snapshot remains planning/contract evidence and is never itself the exposed function surface. The publishable catalogue is the subset whose current exposure receipt is `VALIDATED`.
+
+Exposure validation requires one active GSCC-bound session, exact HEAD continuity, canonical function contract match and explicit authority evidence. Mutation-capable functions also require fresh live preflight evidence bound to the same HEAD. Unknown functions, stale sessions, authority mismatch and HEAD mismatch fail closed.
+
+The gate reuses existing GSCC event types: `ACTIVITY_STARTED / ACTIVITY_COMPLETED / ACTIVITY_FAILED` carry the safe function-exposure validation lifecycle; `TOOL_STARTED` is emitted only after validation. No new mutation authority is created by the receipt.
+
+The phrase “all information” is bounded by the credential/privacy contract: all safe governance metadata needed to validate routing, capability, authority, exact state and preflight is carried; secrets, raw prompts, transcripts, tool arguments, tool results, provider-private identifiers and private reasoning remain excluded.

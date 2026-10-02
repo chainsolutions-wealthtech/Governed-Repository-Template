@@ -59,7 +59,7 @@ Current GACR programme state:
 
 ## GACR next action
 
-`REALIGNMENT_STEP_13B_RUN_REAL_FRESH_PROVIDER_AGENT_TEST`
+`GSCC_FUNCTION_EXPOSURE_GATE_INTEGRATE_AND_ATTEST`
 
 Step 13B remains the next live acceptance gate, but its execution is temporarily blocked until the two bounded post-integration findings in `docs/control-plane/GACR_GSCC_GSE_INTEGRATION_AUDIT.md` are closed and re-attested from the then-current `main`.
 
@@ -72,7 +72,7 @@ A later canonical audit found two residual integration risks before Step 13B. Bo
 
 A procedural deviation is also recorded: Worker A and Worker B were merged before all three worker PRs remained open for one final integration audit, contrary to the worker prompts. This is non-blocking because the subsequent dependency-ordered integration, full green CI and controlled PR #142 contained the runtime risk, but it remains part of the durable audit record.
 
-No GACR step is rolled back. Step 13B is still `NOT_EXECUTED`. Both bounded remediation findings are closed and G6 reconciliation CI `36971795607` passed, so Step 13B is now `NEXT_AUTHORIZED`. This programme remains independent of `P12-S6`, CASE 1, GMC and the global Control Plane programme.
+No GACR step is rolled back. Step 13B remains `NOT_EXECUTED`. After G6, the owner introduced a stronger pre-exposure invariant: no governed function may be published or invoked before a GSCC exposure route is validated. PR #153 implements that additive gate. Until PR #153 is merged and post-merge live workflow evidence is green, Step 13B is temporarily blocked by this new owner-required hardening. This programme remains independent of `P12-S6`, CASE 1, GMC and the global Control Plane programme.
 
 ## Completion condition
 
@@ -131,3 +131,26 @@ Canonical acceptance remains:
 `Step 13B = NEXT_AUTHORIZED / NOT_EXECUTED`
 
 `ULTIMATE_LIVE_ACCEPTANCE = NOT_PASSED`.
+
+## 2026-10-02 — GSCC mandatory function exposure hardening
+
+Owner rule:
+
+```text
+observable repository arrival or governed function request
+→ GSCC
+→ mandatory Actions workflow
+→ safe context / exact HEAD / entry route / capability contract
+→ explicit authority validation
+→ live preflight when mutation-capable
+→ VALIDATED exposure receipt
+→ function may be exposed
+→ pre-call revalidation
+→ tool lifecycle
+```
+
+PR #153 implements this rule additively over the already-merged observable-arrival gateway. It does not replace GACR, GSE, the MCP capability snapshot or the governed execution engine.
+
+The raw MCP catalogue remains planning evidence and is explicitly **not** the governed exposed function catalogue.
+
+Step 13B remains `NOT_EXECUTED`. It must not resume until PR #153 is integrated and a post-merge `gscc_function_exposure_request` proves the workflow fails closed for invalid requests and produces a `VALIDATED` receipt only for a properly authorized request.

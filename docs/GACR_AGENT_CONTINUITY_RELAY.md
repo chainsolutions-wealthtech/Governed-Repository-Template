@@ -504,3 +504,28 @@ A GitHub-visible event identifies an observable repository surface, not necessar
 `PROPRIETARY_SILENT` remains an explicit external boundary: repository code cannot trigger on a read for which neither GitHub nor a controlled gateway receives an event. Such silence must never be converted into synthetic presence.
 
 This gateway enables the missing Step 13B instrumented path, but its implementation or self-test is **not** fresh-provider acceptance evidence. Step 13B still requires a genuinely fresh agent after canonical integration.
+
+## GSCC mandatory function exposure gate
+
+After observable arrival attachment, function publication/use is separately gated.
+
+```text
+ARRIVAL
+→ GSCC Observable Arrival Gateway
+→ GACR Presence
+→ GSCC Function Exposure Gate
+→ route artifact
+→ explicit function request
+→ active GSCC session + exact HEAD + contract + authority
+→ live preflight when required
+→ VALIDATED exposure receipt
+→ function may be published
+→ pre-call GSCC revalidation
+→ tool lifecycle
+```
+
+The workflow `.github/workflows/gscc-function-exposure-gate.yml` runs an arrival-plan job for the same observable GitHub arrival classes and an evaluate job for `gscc_function_exposure_request` or explicit workflow dispatch. Both fail closed. The resulting route/receipt is an Actions artifact rather than a second canonical state database.
+
+The gate does not infer authority and does not grant mutation authority. It validates evidence that another authority source has actually supplied. A mutation tool without current live preflight remains withheld.
+
+Provider/private surfaces that bypass this governed catalogue/wrapper cannot be made compliant by repository code alone; they must integrate the GSCC exposure API/workflow. Such an unintegrated surface is reported as outside the governed exposure boundary, never silently treated as validated.

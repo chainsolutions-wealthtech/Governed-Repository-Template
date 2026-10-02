@@ -321,5 +321,31 @@
     "github_event_identity_semantics": "OBSERVABLE_SURFACE_IDENTITY_NOT_PROVIDER_CONVERSATION_IDENTITY",
     "step_13b_acceptance_effect": "ENABLES_INSTRUMENTED_PATH_DOES_NOT_BY_ITSELF_PASS_STEP_13B",
     "live_candidate_status": "IMPLEMENTED_AND_EVENT_PATH_OBSERVED_PENDING_FINAL_PR_INTEGRATION"
+  },
+  "gscc_function_exposure_gate": {
+    "enabled": true,
+    "mandatory": true,
+    "workflow": ".github/workflows/gscc-function-exposure-gate.yml",
+    "script": "scripts/gscc_function_exposure_gate.py",
+    "receipt_schema": "gscc-function-exposure-receipt/v1",
+    "raw_capability_catalogue_publishable": false,
+    "exposure_policy": "NOT_EXPOSED_UNTIL_VALIDATED",
+    "invocation_revalidation_required": true,
+    "active_gscc_session_required": true,
+    "exact_head_required": true,
+    "explicit_authority_evidence_required": true,
+    "mutation_live_preflight_required": true,
+    "unknown_function_policy": "DENY",
+    "stale_session_policy": "DENY",
+    "head_mismatch_policy": "DENY",
+    "authority_mismatch_policy": "DENY",
+    "receipt_storage": "GITHUB_ACTIONS_ARTIFACT_NO_PARALLEL_STATE_STORE",
+    "safe_metadata_only": true,
+    "raw_prompt_persisted": false,
+    "raw_tool_arguments_persisted": false,
+    "raw_tool_results_persisted": false,
+    "secret_values_persisted": false,
+    "provider_private_identity_policy": "SUPPLIED_ONLY_NEVER_INVENT",
+    "external_unintegrated_surface_policy": "OUTSIDE_GOVERNED_EXPOSURE_BOUNDARY"
   }
 }
