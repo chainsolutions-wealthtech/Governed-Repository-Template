@@ -3,6 +3,8 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from pathlib import Path
+import hashlib
+import json
 
 from gscc.admission import InMemoryAdmissionStore, evaluate_access_grant, evaluate_admission, validate_access_grant
 
@@ -110,7 +112,9 @@ def test_idempotent_replay_reuses_same_admission():
 
 
 def qualification(admission):
-    return {
+    value = {
+        "schema": "gscc-qualification-evidence/v1",
+        "harvested_by": "GSCC_ADMISSION_HARVESTER",
         "session": {
             "status": "BOUND",
             "session_id": "session-live",
@@ -143,6 +147,20 @@ def qualification(admission):
             "constraints": {"direct_main_write": False, "merge": False},
         },
     }
+    raw = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    value["harvest_digest"] = hashlib.sha256(raw).hexdigest()
+    return value
+
+
+def test_noncanonical_caller_qualification_evidence_is_denied():
+    admission = evaluate_admission(envelope(), store=InMemoryAdmissionStore(), now=NOW)
+    result = evaluate_access_grant(
+        admission,
+        {"session": {"status": "BOUND", "session_id": "fake", "connection_ref": admission["connection_ref"]}},
+        now=NOW,
+    )
+    assert result["status"] == "ADMISSION_DENIED", result
+    assert result["reason_code"] == "QUALIFICATION_EVIDENCE_NOT_CANONICAL", result
 
 
 def test_incomplete_qualification_cannot_issue_access_grant():
@@ -248,6 +266,7 @@ def main():
     test_unavailable_provider_private_reference_is_allowed()
     test_idempotent_replay_reuses_same_admission()
     test_receipt_carries_safe_context_and_field_provenance()
+    test_noncanonical_caller_qualification_evidence_is_denied()
     test_incomplete_qualification_cannot_issue_access_grant()
     test_complete_qualification_issues_bounded_access_grant()
     test_access_grant_validation_is_binding_and_expiry_sensitive()
