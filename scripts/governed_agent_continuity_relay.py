@@ -11,7 +11,16 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urlparse
 
-from gacr_agent_telemetry import record_beacon, correlate_all, build_forensics_all, dispatch_open_takeovers
+from gacr_agent_telemetry import (
+    record_beacon,
+    correlate_all,
+    build_forensics_all,
+    dispatch_open_takeovers,
+    select_compatible_standby,
+    evaluate_standby_candidate,
+    build_connection_fingerprint,
+    safe_github_context,
+)
 
 ROOT = Path(os.environ.get("GACR_ROOT") or Path(__file__).resolve().parents[1]).resolve()
 GOV = ROOT / ".governance"
@@ -166,19 +175,29 @@ def active_claims_for(claims_doc: dict, session_id: str) -> list[dict]:
     ]
 
 
-def find_compatible_standby(sessions_doc: dict, stalled: dict) -> dict | None:
-    candidates = []
-    for s in sessions_doc.get("sessions", []):
-        if s.get("session_id") == stalled.get("session_id"):
-            continue
-        r = s.get("relay") or {}
-        if s.get("status") != "STANDBY" or r.get("state") != "STANDBY":
-            continue
-        if s.get("repository") != stalled.get("repository"):
-            continue
-        candidates.append(s)
-    candidates.sort(key=lambda s: (s.get("created_at") or "", s.get("session_id") or ""))
-    return candidates[0] if candidates else None
+def find_compatible_standby(
+    sessions_doc: dict,
+    stalled: dict,
+    claims_doc: dict | None = None,
+    work_doc: dict | None = None,
+    takeover: dict | None = None,
+) -> dict | None:
+    item = takeover or {
+        "stalled_session_id": stalled.get("session_id"),
+        "task_id": (stalled.get("relay") or {}).get("task_id"),
+        "branch": (stalled.get("relay") or {}).get("branch"),
+        "pull_request": (stalled.get("relay") or {}).get("pull_request"),
+    }
+    decision = select_compatible_standby(
+        sessions_doc,
+        claims_doc or {"claims": []},
+        work_doc or {"items": []},
+        item,
+    )
+    return next((
+        session for session in sessions_doc.get("sessions", [])
+        if session.get("session_id") == decision.get("selected_session_id")
+    ), None)
 
 
 def register_docs(
@@ -202,6 +221,7 @@ def register_docs(
     wake_channels: list[str] | None = None,
     bridge_registration_ref: str | None = None,
     timestamp: datetime,
+    connection_fingerprint: str | None = None,
 ) -> tuple[dict, str]:
     if provider not in PROVIDERS:
         raise ValueError("unsupported provider")
@@ -266,6 +286,7 @@ def register_docs(
             "provider_conversation_ref": ref,
             "provider_conversation_ref_provenance": provenance,
             "connection_ref": connection_ref,
+            "connection_fingerprint": connection_fingerprint,
             "entry_action": "UNKNOWN",
             "entry_action_provenance": "DEFAULT_UNKNOWN",
             "connection_intent": "UNKNOWN",
@@ -312,6 +333,22 @@ def register_docs(
         session["provider_conversation_ref_provenance"] = provenance
     if client_instance_id:
         session["client_instance_id"] = client_instance_id
+    if connection_fingerprint:
+        session["connection_fingerprint"] = connection_fingerprint
+    if not session.get("connection_fingerprint"):
+        session["connection_fingerprint"] = build_connection_fingerprint({
+            "provider": session.get("provider"),
+            "provider_conversation_ref": session.get("provider_conversation_ref"),
+            "repository": repository,
+            "github_actor": session.get("github_actor"),
+            "client_instance_id": session.get("client_instance_id"),
+            "connection_ref": session.get("connection_ref"),
+            "task_id": task_id if task_id is not None else r.get("task_id"),
+            "branch": branch if branch is not None else r.get("branch"),
+            "pull_request": pull_request if pull_request is not None else r.get("pull_request"),
+            "first_observed_head_sha": session.get("starting_head_sha"),
+            "first_touch_at": session.get("created_at"),
+        })
     if agent_role:
         session["agent_role"] = agent_role
     if capabilities:
@@ -383,6 +420,7 @@ def scan_docs(
     takeovers_doc: dict,
     *,
     timestamp: datetime,
+    work_doc: dict | None = None,
 ) -> dict:
     suspect_after = int(config["suspected_stall_after_seconds"])
     stalled_after = int(config["stalled_after_seconds"])
@@ -438,7 +476,13 @@ def scan_docs(
                 changes["takeovers_created"].append(item["takeover_id"])
 
             if config.get("takeover", {}).get("auto_offer_to_compatible_standby") is True and not item.get("offered_to_session_id"):
-                standby = find_compatible_standby(sessions_doc, session)
+                standby = find_compatible_standby(
+                    sessions_doc,
+                    session,
+                    claims_doc=claims_doc,
+                    work_doc=work_doc or {"items": []},
+                    takeover=item,
+                )
                 if standby:
                     item["offered_to_session_id"] = standby["session_id"]
                     item["status"] = "OFFERED"
@@ -473,6 +517,7 @@ def accept_takeover_docs(
     reconciled_head_sha: str,
     actual_work_head_sha: str,
     timestamp: datetime,
+    work_doc: dict | None = None,
 ) -> dict:
     predecessor = next((s for s in sessions_doc.get("sessions", []) if s.get("session_id") == stalled_session_id), None)
     successor = next((s for s in sessions_doc.get("sessions", []) if s.get("session_id") == successor_session_id), None)
@@ -502,6 +547,31 @@ def accept_takeover_docs(
 
     if active_claims_for(claims_doc, successor_session_id):
         raise ValueError("successor already owns an active claim")
+
+    compatibility = evaluate_standby_candidate(
+        successor,
+        target={
+            "predecessor": predecessor,
+            "work_item_id": item.get("work_item_id"),
+            "work_item": next((
+                x for x in (work_doc or {"items": []}).get("items", [])
+                if x.get("work_item_id") == item.get("work_item_id")
+            ), None),
+            "task_id": item.get("task_id") or pr.get("task_id"),
+            "branch": item.get("branch") or pr.get("branch"),
+            "pull_request": item.get("pull_request") if item.get("pull_request") is not None else pr.get("pull_request"),
+            "collision_domains": sorted({
+                domain
+                for claim in active_claims_for(claims_doc, stalled_session_id)
+                for domain in claim.get("collision_domains", [])
+            }),
+        },
+        claims_doc=claims_doc,
+        work_doc=work_doc or {"items": []},
+        takeover=item,
+    )
+    if compatibility.get("status") != "ELIGIBLE":
+        raise ValueError(f"successor compatibility failed: {compatibility.get('status')}")
 
     transferred = []
     for claim in claims_doc.get("claims", []):
@@ -536,6 +606,9 @@ def accept_takeover_docs(
     item["status"] = "ACCEPTED"
     item["accepted_at"] = iso(timestamp)
     item["reconciled_head_sha"] = actual_work_head_sha
+    item["reobserved_head_sha"] = actual_work_head_sha
+    item["head_reconciled_at"] = iso(timestamp)
+    item["exact_head_reconciliation"] = "PASS"
 
     sessions_doc["revision"] = int(sessions_doc.get("revision", 0)) + 1
     claims_doc["revision"] = int(claims_doc.get("revision", 0)) + 1
@@ -582,10 +655,15 @@ def command_register(a: argparse.Namespace) -> None:
         wake_channels=a.wake_channel or [],
         bridge_registration_ref=a.bridge_registration_ref,
         timestamp=timestamp,
+        connection_fingerprint=a.connection_fingerprint,
     )
-    github_actor = os.environ.get("GITHUB_ACTOR")
+    github_context = safe_github_context()
+    github_actor = os.environ.get("GITHUB_ACTOR") or ((github_context.get("event") or {}).get("sender") or {}).get("login")
     if github_actor:
         session["github_actor"] = github_actor
+    installation_id = (github_context.get("event") or {}).get("installation_id")
+    if installation_id is not None:
+        session["github_installation_id"] = installation_id
     save(sessions, claims, takeovers)
     record_beacon(session=session, event_type="REGISTER" if resolution == "CREATE" else "RESUME")
     correlate_all()
@@ -616,7 +694,7 @@ def command_heartbeat(a: argparse.Namespace) -> None:
 
 def command_scan(_: argparse.Namespace) -> None:
     config, sessions, claims, work, takeovers = load_all()
-    changes = scan_docs(config, sessions, claims, takeovers, timestamp=now_utc())
+    changes = scan_docs(config, sessions, claims, takeovers, timestamp=now_utc(), work_doc=work)
     save(sessions, claims, takeovers)
     correlation = correlate_all()
     forensics = build_forensics_all()
@@ -716,6 +794,7 @@ def command_takeover_accept(a: argparse.Namespace) -> None:
         reconciled_head_sha=a.reconciled_head,
         actual_work_head_sha=actual,
         timestamp=now_utc(),
+        work_doc=work,
     )
     save(sessions, claims, takeovers)
     record_beacon(session=next((x for x in sessions.get("sessions", []) if x.get("session_id") == a.successor_session_id), None), event_type="TAKEOVER_ACCEPTED")
@@ -735,6 +814,7 @@ def parser() -> argparse.ArgumentParser:
     reg.add_argument("--provider-ref")
     reg.add_argument("--provider-url")
     reg.add_argument("--connection-ref")
+    reg.add_argument("--connection-fingerprint")
     reg.add_argument("--repository")
     reg.add_argument("--observed-head")
     reg.add_argument("--branch")

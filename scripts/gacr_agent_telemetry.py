@@ -187,6 +187,60 @@ def assert_secretless(value: object) -> None:
     walk(value)
 
 
+
+def _fingerprint_time_bucket(value: str | None) -> str | None:
+    parsed = parse_iso(value)
+    if not parsed:
+        return None
+    minute = (parsed.minute // 15) * 15
+    return parsed.replace(minute=minute, second=0, microsecond=0).isoformat()
+
+
+def build_connection_fingerprint(values: dict) -> str | None:
+    """Build a safe operational correlation key, never a provider conversation ID.
+
+    The fingerprint is intentionally based on frozen first-touch/connection facts.
+    Event-specific current HEAD/timestamps are excluded so ordinary progress does
+    not manufacture a new operational identity.
+    """
+    repository = values.get("repository") or values.get("repository_full_name")
+    client_instance_id = values.get("client_instance_id")
+    connection_ref = values.get("connection_ref")
+    provider_ref = values.get("provider_conversation_ref")
+    actor = values.get("github_actor") or values.get("actor")
+    app = values.get("github_app") or values.get("github_installation_id")
+    first_head = values.get("first_observed_head_sha") or values.get("starting_head_sha")
+    first_touch = values.get("first_touch_at") or values.get("connected_at") or values.get("created_at")
+
+    stable_direct_anchor = any((client_instance_id, connection_ref, provider_ref))
+    bounded_operational_anchor = bool(
+        actor
+        and first_head
+        and first_touch
+        and (values.get("task_id") or values.get("branch") or values.get("pull_request") is not None)
+    )
+    if not repository or not (stable_direct_anchor or bounded_operational_anchor):
+        return None
+
+    payload = {
+        "version": "gacr-connection-fingerprint/v1",
+        "repository_key": values.get("repository_id") or repository,
+        "surface_class": values.get("surface_class"),
+        "provider": values.get("provider"),
+        "actor_or_app_key": app or actor,
+        "client_instance_id": client_instance_id,
+        "connection_ref": connection_ref,
+        "provider_ref_supplied": provider_ref,
+        "task_id": values.get("task_id"),
+        "claim_id": values.get("claim_id"),
+        "branch": values.get("branch"),
+        "pull_request": values.get("pull_request"),
+        "first_observed_head_sha": first_head,
+        "first_touch_time_bucket": _fingerprint_time_bucket(first_touch),
+    }
+    return "GACR-FP1-" + digest(payload)
+
+
 def session_by_id(sessions: dict, session_id: str | None) -> dict | None:
     if not session_id:
         return None
@@ -202,6 +256,8 @@ def record_beacon(
     provider_url: str | None = None,
     client_instance_id: str | None = None,
     connection_ref: str | None = None,
+    connection_fingerprint: str | None = None,
+    claim_id: str | None = None,
     task_id: str | None = None,
     branch: str | None = None,
     pull_request: int | None = None,
@@ -238,6 +294,28 @@ def record_beacon(
     resolved_task = task_id or relay.get("task_id")
     github = safe_github_context()
     detected_source = source or ("GITHUB_ACTIONS" if os.environ.get("GITHUB_ACTIONS") == "true" else "LOCAL_AGENT")
+    github_env = github.get("environment") or {}
+    github_event = github.get("event") or {}
+    resolved_actor = github_env.get("GITHUB_ACTOR") or (github_event.get("sender") or {}).get("login")
+    resolved_installation = github_event.get("installation_id")
+    resolved_fingerprint = connection_fingerprint or (session or {}).get("connection_fingerprint")
+    if not resolved_fingerprint:
+        resolved_fingerprint = build_connection_fingerprint({
+            "provider": resolved_provider,
+            "provider_conversation_ref": resolved_provider_ref,
+            "repository": (session or {}).get("repository") or repository_name(),
+            "repository_id": (github_event.get("repository") or {}).get("id"),
+            "github_actor": resolved_actor,
+            "github_installation_id": resolved_installation,
+            "client_instance_id": client_instance_id or (session or {}).get("client_instance_id"),
+            "connection_ref": connection_ref or (session or {}).get("connection_ref"),
+            "task_id": resolved_task,
+            "claim_id": claim_id,
+            "branch": resolved_branch,
+            "pull_request": resolved_pr,
+            "first_observed_head_sha": (session or {}).get("starting_head_sha"),
+            "first_touch_at": (session or {}).get("created_at"),
+        })
 
     envelope = {
         "observed_at": timestamp,
@@ -249,6 +327,8 @@ def record_beacon(
         "provider_conversation_ref": resolved_provider_ref,
         "client_instance_id": client_instance_id or (session or {}).get("client_instance_id"),
         "connection_ref": connection_ref or (session or {}).get("connection_ref"),
+        "connection_fingerprint": resolved_fingerprint,
+        "claim_id": claim_id,
         "agent_identity": (session or {}).get("agent_identity"),
         "agent_role": agent_role or (session or {}).get("agent_role"),
         "capabilities": sorted(set(capabilities or (session or {}).get("capabilities") or [])),
@@ -266,6 +346,12 @@ def record_beacon(
         "checkpoint_ref": checkpoint_ref,
         "evidence_ref": evidence_ref,
         "interruption_code": interruption_code,
+        "github_actor": resolved_actor,
+        "github_installation_id": resolved_installation,
+        "github_workflow": github_env.get("GITHUB_WORKFLOW"),
+        "github_run_id": github_env.get("GITHUB_RUN_ID"),
+        "github_run_attempt": github_env.get("GITHUB_RUN_ATTEMPT"),
+        "github_job": github_env.get("GITHUB_JOB"),
         "github": github,
     }
     assert_secretless(envelope)
@@ -292,99 +378,315 @@ def record_beacon(
     return item
 
 
-def correlation_score(beacon: dict, session: dict) -> tuple[int, list[str], bool]:
-    if beacon.get("repository") != session.get("repository"):
-        return -1, [], False
+def _terminal_session(session: dict) -> bool:
     relay = session.get("relay") or {}
-    if session.get("status") == "CLOSED" or relay.get("state") in {"CLOSED", "HANDOFF_STALLED"}:
-        return -1, [], False
-    reasons: list[str] = []
-    exact = False
-    if beacon.get("session_id") and beacon.get("session_id") == session.get("session_id"):
-        reasons.append("SESSION_ID_EXACT")
-        exact = True
-    if beacon.get("provider_conversation_ref") and beacon.get("provider_conversation_ref") == session.get("provider_conversation_ref"):
-        reasons.append("PROVIDER_CONVERSATION_REF_EXACT")
-        exact = True
-    if beacon.get("client_instance_id") and beacon.get("client_instance_id") == session.get("client_instance_id"):
-        reasons.append("CLIENT_INSTANCE_ID_EXACT")
-        exact = True
-    if beacon.get("connection_ref") and beacon.get("connection_ref") == session.get("connection_ref"):
-        reasons.append("CONNECTION_REF_EXACT")
-        exact = True
-    if exact:
-        return 100, reasons, True
+    return session.get("status") == "CLOSED" or relay.get("state") in {"CLOSED", "HANDOFF_STALLED"}
 
-    score = 0
+
+def _specific_provider_conflict(provider: str | None, session: dict) -> bool:
+    if not provider or provider in {"other", "unknown"}:
+        return False
+    current = session.get("provider")
+    return bool(current and current not in {"other", "unknown", provider})
+
+
+def _github_signal(beacon: dict, key: str):
+    direct = beacon.get(key)
+    if direct not in (None, ""):
+        return direct
+    github = beacon.get("github") or {}
+    env = github.get("environment") or {}
+    event = github.get("event") or {}
+    mapping = {
+        "github_actor": env.get("GITHUB_ACTOR") or (event.get("sender") or {}).get("login"),
+        "github_installation_id": event.get("installation_id"),
+        "github_workflow": env.get("GITHUB_WORKFLOW"),
+        "github_run_id": env.get("GITHUB_RUN_ID"),
+        "github_run_attempt": env.get("GITHUB_RUN_ATTEMPT"),
+        "github_job": env.get("GITHUB_JOB"),
+    }
+    return mapping.get(key)
+
+
+def _active_claims_by_session(claims_doc: dict, session_id: str) -> list[dict]:
+    return [
+        claim for claim in claims_doc.get("claims", [])
+        if claim.get("session_id") == session_id and claim.get("status") == "ACTIVE"
+    ]
+
+
+def _contextual_evidence(beacon: dict, session: dict, claims_doc: dict) -> list[str]:
+    relay = session.get("relay") or {}
+    reasons: list[str] = []
+
+    if beacon.get("connection_fingerprint") and beacon.get("connection_fingerprint") == session.get("connection_fingerprint"):
+        reasons.append("CONNECTION_FINGERPRINT_MATCH")
+    if beacon.get("provider") and beacon.get("provider") == session.get("provider"):
+        reasons.append("PROVIDER_MATCH")
+    if beacon.get("task_id") and beacon.get("task_id") == relay.get("task_id"):
+        reasons.append("TASK_MATCH")
     if beacon.get("branch") and beacon.get("branch") == relay.get("branch"):
-        score += 4
         reasons.append("BRANCH_MATCH")
     if beacon.get("pull_request") is not None and beacon.get("pull_request") == relay.get("pull_request"):
-        score += 4
         reasons.append("PULL_REQUEST_MATCH")
-    if beacon.get("task_id") and beacon.get("task_id") == relay.get("task_id"):
-        score += 4
-        reasons.append("TASK_MATCH")
-    if beacon.get("observed_head_sha") and beacon.get("observed_head_sha") == session.get("last_observed_head_sha"):
-        score += 3
-        reasons.append("HEAD_MATCH")
-    github_actor = ((beacon.get("github") or {}).get("environment") or {}).get("GITHUB_ACTOR")
-    if github_actor and github_actor == session.get("github_actor"):
-        score += 2
-        reasons.append("GITHUB_ACTOR_MATCH")
-    return score, reasons, False
+
+    observed_head = beacon.get("observed_head_sha")
+    written_head = beacon.get("written_head_sha")
+    session_heads = {
+        session.get("last_observed_head_sha"),
+        session.get("starting_head_sha"),
+    }
+    session_heads.discard(None)
+    for claim in _active_claims_by_session(claims_doc, session.get("session_id")):
+        if claim.get("claimed_head_sha"):
+            session_heads.add(claim.get("claimed_head_sha"))
+    if observed_head and observed_head in session_heads:
+        reasons.append("OBSERVED_HEAD_MATCH")
+    if written_head and written_head in session_heads:
+        reasons.append("WRITTEN_HEAD_MATCH")
+
+    claim_id = beacon.get("claim_id")
+    if claim_id:
+        if any(
+            claim_id in {claim.get("claim_id"), claim.get("work_item_id")}
+            for claim in _active_claims_by_session(claims_doc, session.get("session_id"))
+        ):
+            reasons.append("CLAIM_MATCH")
+
+    for key, reason in (
+        ("github_actor", "GITHUB_ACTOR_MATCH"),
+        ("github_installation_id", "GITHUB_INSTALLATION_MATCH"),
+        ("github_workflow", "GITHUB_WORKFLOW_MATCH"),
+        ("github_run_id", "GITHUB_RUN_MATCH"),
+        ("github_run_attempt", "GITHUB_RUN_ATTEMPT_MATCH"),
+        ("github_job", "GITHUB_JOB_MATCH"),
+    ):
+        value = _github_signal(beacon, key)
+        session_value = session.get(key)
+        if value not in (None, "") and session_value not in (None, "") and str(value) == str(session_value):
+            reasons.append(reason)
+
+    observed = parse_iso(beacon.get("observed_at"))
+    created = parse_iso(session.get("created_at"))
+    last_seen = parse_iso(session.get("last_seen_at"))
+    if observed and created:
+        upper = (last_seen or created)
+        if created.timestamp() - 900 <= observed.timestamp() <= upper.timestamp() + 86400:
+            reasons.append("TEMPORAL_WINDOW_COMPATIBLE")
+    return reasons
+
+
+def _evidence_tier(reasons: list[str]) -> str:
+    values = set(reasons)
+    if "CONNECTION_FINGERPRINT_MATCH" in values and values.intersection({
+        "TASK_MATCH", "BRANCH_MATCH", "PULL_REQUEST_MATCH", "GITHUB_ACTOR_MATCH",
+        "GITHUB_INSTALLATION_MATCH", "CLAIM_MATCH",
+    }):
+        return "STRONG"
+    if {"TASK_MATCH", "BRANCH_MATCH", "PULL_REQUEST_MATCH"}.issubset(values):
+        return "STRONG"
+    if {"GITHUB_ACTOR_MATCH", "GITHUB_INSTALLATION_MATCH", "BRANCH_MATCH"}.issubset(values):
+        return "STRONG"
+    if {"GITHUB_RUN_MATCH", "GITHUB_JOB_MATCH", "BRANCH_MATCH"}.issubset(values):
+        return "STRONG"
+    if {"CLAIM_MATCH", "BRANCH_MATCH"}.issubset(values):
+        return "STRONG"
+
+    meaningful = values.difference({"TEMPORAL_WINDOW_COMPATIBLE", "PROVIDER_MATCH"})
+    if meaningful:
+        return "PROBABLE"
+    return "UNKNOWN"
+
+
+def _correlation_result(
+    beacon: dict,
+    *,
+    level: str,
+    selected_session_id: str | None,
+    candidates: list[str],
+    reasons: list[str],
+    rule_id: str,
+    evaluated: list[dict] | None = None,
+) -> dict:
+    return {
+        "level": level,
+        "selected_session_id": selected_session_id,
+        "candidate_session_ids": candidates[:10],
+        "reasons": reasons,
+        "confidence": {
+            "rule_id": rule_id,
+            "class": level,
+            "numeric_score": None,
+            "auto_bind_allowed": level in {"EXACT", "STRONG"} and selected_session_id is not None,
+        },
+        "binding_status": "BOUND" if selected_session_id and level in {"EXACT", "STRONG"} else "UNBOUND_ACTIVITY",
+        "provider_identity_inferred": False,
+        "provider_conversation_ref": beacon.get("provider_conversation_ref"),
+        "evaluations": evaluated or [],
+    }
+
+
+def correlate_beacon(beacon: dict, sessions_doc: dict, claims_doc: dict | None = None) -> dict:
+    """Categorical, fail-closed Correlator.
+
+    Classification is based on named evidence rules rather than an arbitrary
+    numeric score. A connection fingerprint is only operational evidence; it
+    never becomes provider identity.
+    """
+    claims_doc = claims_doc or {"claims": []}
+    live = [
+        session for session in sessions_doc.get("sessions", [])
+        if session.get("repository") == beacon.get("repository") and not _terminal_session(session)
+    ]
+    if not live:
+        return _correlation_result(
+            beacon, level="UNKNOWN", selected_session_id=None, candidates=[],
+            reasons=[], rule_id="UNKNOWN_NO_LIVE_REPOSITORY_SESSION",
+        )
+
+    direct_specs = (
+        ("session_id", "session_id", "SESSION_ID_EXACT"),
+        ("provider_conversation_ref", "provider_conversation_ref", "PROVIDER_CONVERSATION_REF_EXACT"),
+        ("client_instance_id", "client_instance_id", "CLIENT_INSTANCE_ID_EXACT"),
+        ("connection_ref", "connection_ref", "CONNECTION_REF_EXACT"),
+    )
+    direct_targets: dict[str, set[str]] = {}
+    direct_reasons: dict[str, list[str]] = {}
+    supplied_direct = []
+    for beacon_key, session_key, reason in direct_specs:
+        value = beacon.get(beacon_key)
+        if value in (None, ""):
+            continue
+        supplied_direct.append((beacon_key, session_key, value, reason))
+        matches = {
+            session.get("session_id") for session in live
+            if session.get(session_key) not in (None, "") and str(session.get(session_key)) == str(value)
+        }
+        matches.discard(None)
+        if matches:
+            direct_targets[beacon_key] = matches
+            for sid in matches:
+                direct_reasons.setdefault(sid, []).append(reason)
+
+    union = set().union(*direct_targets.values()) if direct_targets else set()
+    if len(union) > 1 or any(len(values) > 1 for values in direct_targets.values()):
+        return _correlation_result(
+            beacon, level="AMBIGUOUS", selected_session_id=None, candidates=sorted(union),
+            reasons=["CONFLICTING_EXPLICIT_ANCHORS"], rule_id="AMBIGUOUS_EXPLICIT_ANCHOR_CONFLICT",
+        )
+
+    if len(union) == 1:
+        sid = next(iter(union))
+        target = next(session for session in live if session.get("session_id") == sid)
+        conflicts = []
+        if _specific_provider_conflict(beacon.get("provider"), target):
+            conflicts.append("PROVIDER_CONFLICT")
+        for beacon_key, session_key, value, _ in supplied_direct:
+            target_value = target.get(session_key)
+            if target_value not in (None, "") and str(target_value) != str(value):
+                conflicts.append(f"{beacon_key.upper()}_CONFLICT")
+        if conflicts:
+            candidates = sorted(set([sid] + [
+                x for values in direct_targets.values() for x in values
+            ]))
+            return _correlation_result(
+                beacon, level="AMBIGUOUS", selected_session_id=None, candidates=candidates,
+                reasons=sorted(set(conflicts)), rule_id="AMBIGUOUS_EXPLICIT_FACT_CONFLICT",
+            )
+        return _correlation_result(
+            beacon, level="EXACT", selected_session_id=sid, candidates=[sid],
+            reasons=direct_reasons.get(sid, []), rule_id="EXACT_DIRECT_ANCHOR",
+        )
+
+    evaluations = []
+    for session in live:
+        reasons = _contextual_evidence(beacon, session, claims_doc)
+        tier = _evidence_tier(reasons)
+        evaluations.append({
+            "session_id": session.get("session_id"),
+            "tier": tier,
+            "reasons": reasons,
+        })
+
+    supported = [x for x in evaluations if x["tier"] != "UNKNOWN"]
+    strong = [x for x in supported if x["tier"] == "STRONG"]
+    probable = [x for x in supported if x["tier"] == "PROBABLE"]
+
+    if len(strong) == 1:
+        selected = strong[0]
+        return _correlation_result(
+            beacon, level="STRONG", selected_session_id=selected["session_id"],
+            candidates=[x["session_id"] for x in strong + probable],
+            reasons=selected["reasons"], rule_id="STRONG_UNIQUE_MULTI_SIGNAL",
+            evaluated=evaluations,
+        )
+    if len(strong) > 1:
+        return _correlation_result(
+            beacon, level="AMBIGUOUS", selected_session_id=None,
+            candidates=[x["session_id"] for x in strong],
+            reasons=["MULTIPLE_STRONG_CANDIDATES"], rule_id="AMBIGUOUS_STRONG_TIE",
+            evaluated=evaluations,
+        )
+    if len(probable) > 1:
+        return _correlation_result(
+            beacon, level="AMBIGUOUS", selected_session_id=None,
+            candidates=[x["session_id"] for x in probable],
+            reasons=["MULTIPLE_PROBABLE_CANDIDATES"], rule_id="AMBIGUOUS_PROBABLE_TIE",
+            evaluated=evaluations,
+        )
+    if len(probable) == 1:
+        candidate = probable[0]
+        return _correlation_result(
+            beacon, level="PROBABLE", selected_session_id=None,
+            candidates=[candidate["session_id"]], reasons=candidate["reasons"],
+            rule_id="PROBABLE_CONTEXT_ONLY", evaluated=evaluations,
+        )
+    return _correlation_result(
+        beacon, level="UNKNOWN", selected_session_id=None,
+        candidates=[session.get("session_id") for session in live if session.get("session_id")],
+        reasons=[], rule_id="UNKNOWN_INSUFFICIENT_EVIDENCE", evaluated=evaluations,
+    )
+
+
+def correlation_score(beacon: dict, session: dict) -> tuple[int, list[str], bool]:
+    """Legacy compatibility wrapper.
+
+    Numeric values are not Correlator authority and are not used by correlate_all.
+    They remain only so existing callers can recognize excluded terminal sessions.
+    """
+    if beacon.get("repository") != session.get("repository") or _terminal_session(session):
+        return -1, [], False
+    result = correlate_beacon(beacon, {"sessions": [session]}, {"claims": []})
+    level = result.get("level")
+    compatibility = {"EXACT": 100, "STRONG": 7, "PROBABLE": 4, "AMBIGUOUS": 4, "UNKNOWN": 0}
+    return compatibility.get(level, 0), result.get("reasons") or [], level == "EXACT"
 
 
 def correlate_all() -> dict:
     sessions = read_json(SESSIONS_PATH, {"sessions": []})
+    claims = read_json(CLAIMS_PATH, {"claims": []})
     beacons = read_json(BEACONS_PATH, {"items": []})
     store = read_json(CORRELATIONS_PATH, {"schema_version": "1.0.0", "revision": 0, "items": []})
     known = {x.get("beacon_id"): x for x in store.get("items", [])}
     changes = []
 
     for beacon in beacons.get("items", []):
-        scored = []
-        for session in sessions.get("sessions", []):
-            score, reasons, exact = correlation_score(beacon, session)
-            if score >= 0:
-                scored.append((score, exact, session.get("session_id"), reasons))
-        scored.sort(key=lambda x: (-x[0], x[2] or ""))
-        level = "UNKNOWN"
-        selected = None
-        candidates = [x[2] for x in scored if x[2]]
-        reasons: list[str] = []
-        if scored:
-            top = scored[0]
-            ties = [x for x in scored if x[0] == top[0]]
-            reasons = top[3]
-            if top[1] and len(ties) == 1:
-                level = "EXACT"
-                selected = top[2]
-            elif len(ties) > 1 and top[0] >= 4:
-                level = "AMBIGUOUS"
-            elif top[0] >= 7:
-                level = "STRONG"
-                selected = top[2]
-            elif top[0] >= 4:
-                level = "PROBABLE"
-            else:
-                level = "UNKNOWN"
-
+        result = correlate_beacon(beacon, sessions, claims)
         value = {
             "correlation_id": runtime_id("GACR-C-", {"beacon_id": beacon.get("beacon_id")}),
             "beacon_id": beacon.get("beacon_id"),
-            "level": level,
-            "selected_session_id": selected,
-            "candidate_session_ids": candidates[:10],
-            "reasons": reasons,
+            **result,
             "evaluated_at": now_iso(),
         }
         previous = known.get(beacon.get("beacon_id"))
+        stable_keys = (
+            "level", "selected_session_id", "candidate_session_ids", "reasons",
+            "confidence", "binding_status", "provider_identity_inferred", "provider_conversation_ref",
+        )
         if previous:
-            if {k: previous.get(k) for k in ("level","selected_session_id","candidate_session_ids","reasons")} == {k: value.get(k) for k in ("level","selected_session_id","candidate_session_ids","reasons")}:
+            if {k: previous.get(k) for k in stable_keys} == {k: value.get(k) for k in stable_keys}:
                 continue
-            index = store["items"].index(previous)
-            store["items"][index] = value
+            store["items"][store["items"].index(previous)] = value
         else:
             store.setdefault("items", []).append(value)
         changes.append(value)
@@ -395,47 +697,402 @@ def correlate_all() -> dict:
     return {"changed": len(changes), "items": changes}
 
 
-def compatible_standby(sessions: dict, stalled_session_id: str) -> dict | None:
+def _work_item(work_doc: dict, work_item_id: str | None) -> dict | None:
+    if not work_item_id:
+        return None
+    return next((item for item in work_doc.get("items", []) if item.get("work_item_id") == work_item_id), None)
+
+
+def _takeover_target_context(
+    sessions_doc: dict,
+    claims_doc: dict,
+    work_doc: dict,
+    takeover: dict,
+) -> dict:
+    predecessor = session_by_id(sessions_doc, takeover.get("stalled_session_id"))
+    predecessor_claims = _active_claims_by_session(claims_doc, takeover.get("stalled_session_id"))
+    work_item_id = takeover.get("work_item_id")
+    if not work_item_id and len(predecessor_claims) == 1:
+        work_item_id = predecessor_claims[0].get("work_item_id")
+    item = _work_item(work_doc, work_item_id)
+    collision_domains = set(item.get("collision_domains") or [] if item else [])
+    for claim in predecessor_claims:
+        collision_domains.update(claim.get("collision_domains") or [])
+    return {
+        "predecessor": predecessor,
+        "predecessor_claims": predecessor_claims,
+        "work_item_id": work_item_id,
+        "work_item": item,
+        "task_id": takeover.get("task_id") or ((predecessor or {}).get("relay") or {}).get("task_id"),
+        "branch": takeover.get("branch") or ((predecessor or {}).get("relay") or {}).get("branch"),
+        "pull_request": takeover.get("pull_request") if takeover.get("pull_request") is not None else ((predecessor or {}).get("relay") or {}).get("pull_request"),
+        "collision_domains": sorted(collision_domains),
+    }
+
+
+def evaluate_standby_candidate(
+    candidate: dict,
+    *,
+    target: dict,
+    claims_doc: dict,
+    work_doc: dict,
+    takeover: dict,
+) -> dict:
+    predecessor = target.get("predecessor") or {}
+    relay = candidate.get("relay") or {}
+    reasons: list[str] = []
+    blockers: list[str] = []
+
+    def result(status: str) -> dict:
+        return {
+            "session_id": candidate.get("session_id"),
+            "status": status,
+            "reasons": reasons,
+            "blockers": blockers,
+            "task_binding": relay.get("task_id"),
+            "branch_binding": relay.get("branch"),
+            "authority_grants_observed": candidate.get("authority_grants"),
+            "capabilities": sorted(set(candidate.get("capabilities") or [])),
+            "wake_channels": sorted(set(candidate.get("wake_channels") or [])),
+        }
+
+    if candidate.get("session_id") == predecessor.get("session_id"):
+        reasons.append("PREDECESSOR_CANNOT_SUCCEED_ITSELF")
+        return result("INELIGIBLE")
+    if candidate.get("repository") != predecessor.get("repository"):
+        reasons.append("REPOSITORY_MISMATCH")
+        return result("INELIGIBLE")
+    if candidate.get("status") != "STANDBY" or relay.get("state") != "STANDBY":
+        reasons.append("SESSION_NOT_STANDBY")
+        return result("INELIGIBLE")
+
+    target_task = target.get("task_id")
+    if relay.get("task_id") and target_task and relay.get("task_id") != target_task:
+        reasons.append("BOUND_TO_DIFFERENT_TASK")
+        return result("INELIGIBLE")
+
+    scope = candidate.get("work_scope") or {}
+    allowed_work = set(scope.get("work_item_ids") or [])
+    if allowed_work and target.get("work_item_id") not in allowed_work:
+        reasons.append("WORK_SCOPE_MISMATCH")
+        return result("INELIGIBLE")
+    allowed_branches = set(scope.get("branches") or [])
+    if allowed_branches and target.get("branch") not in allowed_branches:
+        reasons.append("BRANCH_SCOPE_MISMATCH")
+        return result("INELIGIBLE")
+
+    candidate_claims = _active_claims_by_session(claims_doc, candidate.get("session_id"))
+    if candidate_claims:
+        blockers.append("CANDIDATE_ALREADY_OWNS_ACTIVE_CLAIM")
+        return result("BLOCKED")
+
+    item = target.get("work_item") or {}
+    by_id = {x.get("work_item_id"): x for x in work_doc.get("items", []) if x.get("work_item_id")}
+    unmet = [
+        dep for dep in item.get("dependencies") or []
+        if (by_id.get(dep) or {}).get("status") != "DONE"
+    ]
+    if unmet:
+        blockers.extend([f"DEPENDENCY_NOT_DONE:{dep}" for dep in unmet])
+        return result("BLOCKED")
+
+    target_domains = set(target.get("collision_domains") or [])
+    occupied = set()
+    for claim in claims_doc.get("claims", []):
+        if claim.get("status") != "ACTIVE":
+            continue
+        if claim.get("session_id") in {predecessor.get("session_id"), candidate.get("session_id")}:
+            continue
+        occupied.update(claim.get("collision_domains") or [])
+    collisions = sorted(target_domains.intersection(occupied))
+    if collisions:
+        blockers.extend([f"COLLISION_DOMAIN_OCCUPIED:{domain}" for domain in collisions])
+        return result("BLOCKED")
+
+    required_capabilities = set(item.get("required_capabilities") or takeover.get("required_capabilities") or [])
+    capabilities = set(candidate.get("capabilities") or [])
+    missing_capabilities = sorted(required_capabilities - capabilities)
+    if missing_capabilities:
+        reasons.extend([f"MISSING_CAPABILITY:{capability}" for capability in missing_capabilities])
+        return result("INELIGIBLE")
+
+    required_authorities = set(item.get("required_authorities") or takeover.get("required_authorities") or [])
+    observed_authorities = candidate.get("authority_grants")
+    if required_authorities and observed_authorities is None:
+        reasons.append("AUTHORITY_EVIDENCE_UNAVAILABLE")
+        return result("AMBIGUOUS")
+    missing_authorities = sorted(required_authorities - set(observed_authorities or []))
+    if missing_authorities:
+        reasons.extend([f"MISSING_AUTHORITY:{authority}" for authority in missing_authorities])
+        return result("INELIGIBLE")
+
+    allowed_roles = set(item.get("allowed_agent_roles") or takeover.get("allowed_agent_roles") or [])
+    role = candidate.get("agent_role")
+    if allowed_roles and not role:
+        reasons.append("AGENT_ROLE_UNAVAILABLE")
+        return result("AMBIGUOUS")
+    if allowed_roles and role not in allowed_roles:
+        reasons.append("AGENT_ROLE_NOT_ALLOWED")
+        return result("INELIGIBLE")
+
+    if target_task and relay.get("task_id") == target_task:
+        reasons.append("TASK_BOUND_MATCH")
+    else:
+        reasons.append("TASK_UNBOUND_COMPATIBLE")
+    if target.get("branch") and relay.get("branch") == target.get("branch"):
+        reasons.append("BRANCH_BOUND_MATCH")
+    else:
+        reasons.append("BRANCH_REQUIRES_RECONCILIATION")
+    if target.get("pull_request") is not None and relay.get("pull_request") == target.get("pull_request"):
+        reasons.append("PULL_REQUEST_BOUND_MATCH")
+    if required_capabilities:
+        reasons.append("REQUIRED_CAPABILITIES_PRESENT")
+    if required_authorities:
+        reasons.append("REQUIRED_AUTHORITY_EVIDENCE_PRESENT")
+    if target_domains:
+        reasons.append("COLLISION_DOMAINS_AVAILABLE")
+    reasons.append("EXACT_HEAD_STILL_REQUIRED")
+    return result("ELIGIBLE")
+
+
+def select_compatible_standby(
+    sessions_doc: dict,
+    claims_doc: dict,
+    work_doc: dict,
+    takeover: dict,
+) -> dict:
+    target = _takeover_target_context(sessions_doc, claims_doc, work_doc, takeover)
+    predecessor = target.get("predecessor")
+    if not predecessor:
+        return {
+            "selected_session_id": None,
+            "evaluations": [],
+            "selection_method": "DETERMINISTIC_CATEGORICAL_ORDER",
+            "grants_write_authority": False,
+            "reason": "PREDECESSOR_NOT_FOUND",
+        }
+
+    evaluations = [
+        evaluate_standby_candidate(
+            candidate, target=target, claims_doc=claims_doc, work_doc=work_doc, takeover=takeover
+        )
+        for candidate in sessions_doc.get("sessions", [])
+        if candidate.get("session_id") != predecessor.get("session_id")
+    ]
+    by_id = {s.get("session_id"): s for s in sessions_doc.get("sessions", [])}
+
+    def eligibility_key(evaluation: dict):
+        session = by_id.get(evaluation.get("session_id")) or {}
+        relay = session.get("relay") or {}
+        return (
+            0 if relay.get("task_id") == target.get("task_id") and target.get("task_id") else 1,
+            0 if relay.get("branch") == target.get("branch") and target.get("branch") else 1,
+            0 if relay.get("pull_request") == target.get("pull_request") and target.get("pull_request") is not None else 1,
+            session.get("created_at") or "",
+            session.get("session_id") or "",
+        )
+
+    eligible = sorted(
+        [x for x in evaluations if x.get("status") == "ELIGIBLE"],
+        key=eligibility_key,
+    )
+    selected = eligible[0].get("session_id") if eligible else None
+    for index, evaluation in enumerate(eligible, start=1):
+        evaluation["eligible_rank"] = index
+    return {
+        "selected_session_id": selected,
+        "evaluations": evaluations,
+        "selection_method": "DETERMINISTIC_CATEGORICAL_ORDER",
+        "grants_write_authority": False,
+        "target": {
+            "work_item_id": target.get("work_item_id"),
+            "task_id": target.get("task_id"),
+            "branch": target.get("branch"),
+            "pull_request": target.get("pull_request"),
+            "collision_domains": target.get("collision_domains"),
+        },
+    }
+
+
+def compatible_standby(
+    sessions: dict,
+    stalled_session_id: str,
+    claims_doc: dict | None = None,
+    work_doc: dict | None = None,
+    takeover: dict | None = None,
+) -> dict | None:
     predecessor = session_by_id(sessions, stalled_session_id)
     if not predecessor:
         return None
-    values = []
-    for session in sessions.get("sessions", []):
-        relay = session.get("relay") or {}
-        if session.get("session_id") == stalled_session_id:
-            continue
-        if session.get("repository") != predecessor.get("repository"):
-            continue
-        if session.get("status") != "STANDBY" or relay.get("state") != "STANDBY":
-            continue
-        values.append(session)
-    values.sort(key=lambda s: (s.get("created_at") or "", s.get("session_id") or ""))
-    return values[0] if values else None
+    takeover = takeover or {
+        "stalled_session_id": stalled_session_id,
+        "task_id": (predecessor.get("relay") or {}).get("task_id"),
+        "branch": (predecessor.get("relay") or {}).get("branch"),
+        "pull_request": (predecessor.get("relay") or {}).get("pull_request"),
+    }
+    decision = select_compatible_standby(
+        sessions,
+        claims_doc or {"claims": []},
+        work_doc or {"items": []},
+        takeover,
+    )
+    return session_by_id(sessions, decision.get("selected_session_id"))
+
+
+def build_takeover_package(
+    stalled_session_id: str,
+    successor_candidate_session_id: str,
+    *,
+    sessions_doc: dict | None = None,
+    claims_doc: dict | None = None,
+    work_doc: dict | None = None,
+    takeovers_doc: dict | None = None,
+    forensics_doc: dict | None = None,
+) -> dict:
+    sessions_doc = sessions_doc or read_json(SESSIONS_PATH, {"sessions": []})
+    claims_doc = claims_doc or read_json(CLAIMS_PATH, {"claims": []})
+    work_doc = work_doc or read_json(GOV / "work" / "work-items.json", {"items": []})
+    takeovers_doc = takeovers_doc or read_json(TAKEOVERS_PATH, {"items": []})
+    forensics_doc = forensics_doc or read_json(FORENSICS_PATH, {"items": []})
+
+    predecessor = session_by_id(sessions_doc, stalled_session_id)
+    successor = session_by_id(sessions_doc, successor_candidate_session_id)
+    if not predecessor or not successor:
+        raise ValueError("takeover package requires predecessor and successor candidate")
+
+    takeover = next((
+        item for item in takeovers_doc.get("items", [])
+        if item.get("stalled_session_id") == stalled_session_id
+        and item.get("status") in {"READY_FOR_RECONCILIATION", "OFFERED", "ACCEPTED"}
+    ), None) or {
+        "stalled_session_id": stalled_session_id,
+        "task_id": (predecessor.get("relay") or {}).get("task_id"),
+        "branch": (predecessor.get("relay") or {}).get("branch"),
+        "pull_request": (predecessor.get("relay") or {}).get("pull_request"),
+    }
+    target = _takeover_target_context(sessions_doc, claims_doc, work_doc, takeover)
+    forensic = next((x for x in forensics_doc.get("items", []) if x.get("session_id") == stalled_session_id), None) or {}
+    resume = forensic.get("resume_point") or {}
+    actions = forensic.get("actions") or {}
+    predecessor_relay = predecessor.get("relay") or {}
+    work_item = target.get("work_item") or {}
+
+    provider_ref = successor.get("provider_conversation_ref")
+    provenance = successor.get("provider_conversation_ref_provenance")
+    if provenance not in {"PROVIDED_BY_CLIENT", "EXTRACTED_FROM_EXPLICIT_URL"}:
+        provider_ref = None
+
+    evidence_refs = []
+    for value in (
+        forensic.get("last_evidence_ref"),
+        resume.get("evidence_ref"),
+        predecessor_relay.get("last_evidence"),
+    ):
+        if value and value not in evidence_refs:
+            evidence_refs.append(value)
+
+    known_unknowns = []
+    if provider_ref is None:
+        known_unknowns.append("PROVIDER_CONVERSATION_REF_UNAVAILABLE")
+    if not resume.get("last_written_head_sha"):
+        known_unknowns.append("LAST_WRITTEN_HEAD_UNAVAILABLE")
+    if not forensic.get("generated_at"):
+        known_unknowns.append("FORENSICS_GENERATION_TIME_UNAVAILABLE")
+    if actions.get("in_flight_action"):
+        known_unknowns.append("IN_FLIGHT_ACTION_OUTCOME_UNRESOLVED")
+
+    package = {
+        "schema": "gacr-takeover-package/v1",
+        "predecessor_session_id": stalled_session_id,
+        "successor_candidate_session_id": successor_candidate_session_id,
+        "repository": predecessor.get("repository"),
+        "task_id": target.get("task_id"),
+        "work_item_id": target.get("work_item_id"),
+        "active_claims": target.get("predecessor_claims"),
+        "branch": target.get("branch"),
+        "pull_request": target.get("pull_request"),
+        "observed_head_sha": resume.get("last_observed_head_sha") or predecessor.get("last_observed_head_sha"),
+        "written_head_sha": resume.get("last_written_head_sha"),
+        "last_activity_at": predecessor.get("last_seen_at") or predecessor_relay.get("last_heartbeat_at"),
+        "last_progress_at": (actions.get("last_action_completed") or {}).get("observed_at"),
+        "action_in_flight": actions.get("in_flight_action"),
+        "last_completed_action": actions.get("last_action_completed"),
+        "checkpoint_ref": forensic.get("last_checkpoint_ref") or resume.get("checkpoint_ref"),
+        "evidence_refs": evidence_refs,
+        "forensics_resume_point": resume or None,
+        "collision_domains": target.get("collision_domains"),
+        "dependencies": [
+            {
+                "work_item_id": dep,
+                "status": (_work_item(work_doc, dep) or {}).get("status", "UNKNOWN"),
+            }
+            for dep in work_item.get("dependencies") or []
+        ],
+        "exact_head_required": True,
+        "replay_policy": "RECONCILE_BEFORE_REPLAY",
+        "known_unknowns": known_unknowns,
+        "provider_conversation_ref": provider_ref,
+        "wake_channels": successor.get("wake_channels") or ["POLL_REPOSITORY"],
+        "bridge_registration_ref": successor.get("bridge_registration_ref"),
+        "may_write_before_takeover_accept": False,
+        "claim_transfer_before_accept": False,
+        "generated_at": now_iso(),
+    }
+    assert_secretless(package)
+    return package
 
 
 def dispatch_open_takeovers() -> dict:
     sessions = read_json(SESSIONS_PATH, {"sessions": []})
+    claims = read_json(CLAIMS_PATH, {"claims": []})
+    work = read_json(GOV / "work" / "work-items.json", {"items": []})
     takeovers = read_json(TAKEOVERS_PATH, {"items": []})
     store = read_json(DISPATCHES_PATH, {"schema_version": "1.0.0", "revision": 0, "items": []})
     changes = []
+    takeover_changed = False
 
     for takeover in takeovers.get("items", []):
         if takeover.get("status") not in {"READY_FOR_RECONCILIATION", "OFFERED", "ACCEPTED"}:
             continue
-        target_id = takeover.get("offered_to_session_id")
-        if not target_id and takeover.get("status") != "ACCEPTED":
-            standby = compatible_standby(sessions, takeover.get("stalled_session_id"))
-            target_id = standby.get("session_id") if standby else None
+
+        target_id = takeover.get("accepted_by_session_id") if takeover.get("status") == "ACCEPTED" else takeover.get("offered_to_session_id")
+        decision = None
+        if takeover.get("status") != "ACCEPTED":
+            decision = select_compatible_standby(sessions, claims, work, takeover)
+            selected = decision.get("selected_session_id")
+            if target_id:
+                evaluation = next((x for x in decision.get("evaluations", []) if x.get("session_id") == target_id), None)
+                if not evaluation or evaluation.get("status") != "ELIGIBLE":
+                    continue
+            elif selected:
+                target_id = selected
+                takeover["offered_to_session_id"] = selected
+                takeover["status"] = "OFFERED"
+                takeover["compatibility_selection"] = {
+                    "selected_session_id": selected,
+                    "selection_method": decision.get("selection_method"),
+                    "evaluations": decision.get("evaluations"),
+                    "grants_write_authority": False,
+                }
+                takeover_changed = True
+
         if not target_id:
             continue
         target = session_by_id(sessions, target_id)
         if not target:
             continue
-        existing = next((x for x in store.get("items", []) if x.get("takeover_id") == takeover.get("takeover_id") and x.get("target_session_id") == target_id and x.get("status") not in {"CANCELLED","EXPIRED"}), None)
+
+        existing = next((
+            x for x in store.get("items", [])
+            if x.get("takeover_id") == takeover.get("takeover_id")
+            and x.get("target_session_id") == target_id
+            and x.get("status") not in {"CANCELLED", "EXPIRED"}
+        ), None)
         if existing:
             if takeover.get("status") == "ACCEPTED" and existing.get("status") != "ACTIVATED":
                 existing["status"] = "ACTIVATED"
                 existing["activated_at"] = now_iso()
+                existing["claim_transfer_confirmed_after_accept"] = True
                 changes.append(existing)
             continue
 
@@ -446,6 +1103,14 @@ def dispatch_open_takeovers() -> dict:
         if "EXTERNAL_BRIDGE" in wake_channels and target.get("bridge_registration_ref"):
             delivery.append("EXTERNAL_BRIDGE")
 
+        package = build_takeover_package(
+            takeover.get("stalled_session_id"),
+            target_id,
+            sessions_doc=sessions,
+            claims_doc=claims,
+            work_doc=work,
+            takeovers_doc=takeovers,
+        )
         item = {
             "dispatch_id": runtime_id("GACR-D-", {"takeover_id": takeover.get("takeover_id"), "target_session_id": target_id}),
             "takeover_id": takeover.get("takeover_id"),
@@ -462,10 +1127,15 @@ def dispatch_open_takeovers() -> dict:
             "last_observed_head_sha": takeover.get("last_observed_head_sha"),
             "requires_exact_head_reconciliation": True,
             "may_write_before_takeover_accept": False,
+            "compatibility": decision,
+            "takeover_package": package,
         }
         store.setdefault("items", []).append(item)
         changes.append(item)
 
+    if takeover_changed:
+        takeovers["revision"] = int(takeovers.get("revision", 0)) + 1
+        write_json(TAKEOVERS_PATH, takeovers)
     if changes:
         store["revision"] = int(store.get("revision", 0)) + 1
         write_json(DISPATCHES_PATH, store)
@@ -602,6 +1272,8 @@ def command_beacon(a: argparse.Namespace) -> None:
         provider_url=a.provider_url,
         client_instance_id=a.client_instance_id,
         connection_ref=a.connection_ref,
+        connection_fingerprint=a.connection_fingerprint,
+        claim_id=a.claim_id,
         task_id=a.task_id,
         branch=a.branch,
         pull_request=a.pull_request,
@@ -662,6 +1334,8 @@ def parser() -> argparse.ArgumentParser:
     b.add_argument("--provider-url")
     b.add_argument("--client-instance-id")
     b.add_argument("--connection-ref")
+    b.add_argument("--connection-fingerprint")
+    b.add_argument("--claim-id")
     b.add_argument("--task-id")
     b.add_argument("--branch")
     b.add_argument("--pull-request",type=int)
