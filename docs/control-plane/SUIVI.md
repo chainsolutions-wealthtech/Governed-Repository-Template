@@ -848,3 +848,50 @@ R6 is therefore integrated for event-driven host activity. The broader programme
 - Clarified that GACR and the global Control Plane programme are separate workstreams. There is no `P12-S6 → GACR` dependency.
 - GACR own next action is `GACR-OR-01_REOBSERVE_AND_ATTEST_R6_BASELINE`.
 - Owner sequencing remains: finish GACR first; return to the global programme only after explicit owner OK.
+
+
+## 2026-10-02 — GACR multi-agent implementation supervision observations
+
+Scope: GACR only. The global Control Plane programme remains parked; `P12-S6`, CASE 1 and GMC are not advanced by this observation record.
+
+Live supervision baseline reobserved before this entry:
+
+- canonical `main`: `652d7e3385c7efa05ee7b085adf22e4574485db5`;
+- Worker A branch: `governance/gacr-presence-envelope-runtime`;
+- Worker B branch: `governance/gacr-liveness-progress-context`;
+- Worker C branch: `governance/gacr-correlator-dispatcher-integration`.
+
+Observed worker state:
+
+- Worker A / PR #128 — Presence / ConnectionEnvelope / fingerprint. Latest observed head during this supervision slice: `0cac225524d1cdd0f405cf9371fb3d1a8d2a74f6`.
+- Worker B / PR #127 — Liveness / Progress / Session Context. Latest observed head: `84ee4998f4ec8d38db89a3c1c974505523d404cd`.
+- Worker C / PR #129 — Correlator / Dispatcher / Takeover integration. Latest observed head: `ead8953c3b1d5706b79675a983905e166d855d73`.
+
+Supervisor findings preserved under existing CPD-012 / CPD-019 rules:
+
+1. Three independently launched conversations became distinguishable at repository level through three dedicated branches, but the current GACR state did not automatically materialize three distinct governed GACR sessions at first repository touch.
+2. Repository-level observability is therefore currently stronger than session-level GACR observability for these live workers; this is direct evidence for the Presence-First corrective tranche rather than a theoretical gap.
+3. Branch creation is evidence of presence/entry but is not evidence of useful progress. During live observation, one worker initially had a branch identical to `main` while others already had commits; later it began advancing. This validates the required separation `PRESENCE != LIVENESS != PROGRESS`.
+4. A shared GitHub actor/account can represent multiple concurrent agent conversations. `github_actor` alone is therefore insufficient as a unique session key; correlation must combine independent safe signals and fail closed on ambiguity.
+5. All three workers modified `.github/workflows/governance-ci.yml`. This is a real shared integration surface and must be reconciled deliberately before merge; no worker may silently overwrite another worker's CI registration.
+6. The worker-specific acceptance-test files are separate:
+   - A: `scripts/test_gacr_presence_first.py`;
+   - B: `scripts/test_gacr_liveness_progress_context.py`;
+   - C: `scripts/test_gacr_correlator_dispatcher_takeover_integration.py`.
+7. The first CI failures were acceptance-contract failures, while the previously existing GACR regression tests observed in those runs remained green up to the new gates. These RED results are implementation evidence, not by themselves regressions:
+   - A exposed missing Presence/ConnectionEnvelope CLI/runtime inputs;
+   - B exposed missing `session_signal_projection`;
+   - C exposed a missing/unsatisfied Correlator integration API contract.
+8. Git commits and PRs provide durable result evidence but are insufficient to answer whether an agent is currently thinking, testing, blocked, idle or gone between repository events. GACR therefore still requires automatic activity/liveness/progress/checkpoint evidence on supported instrumentable surfaces.
+9. The current live three-worker run must not be used as the ultimate Presence-First acceptance proof because the workers were explicitly launched with GACR-aware implementation prompts and predefined branches. The final Steps 13–24 proof still requires fresh agents not instructed to register with GACR.
+
+Integration supervision rule for this tranche:
+
+- do not merge workers merely in completion order;
+- stabilize/reconcile Worker A contracts first where B/C depend on Presence/Envelope primitives;
+- reobserve current `main` and each PR head before every merge;
+- reconcile `governance-ci.yml` changes explicitly;
+- preserve all R1–R6 tests and exact-HEAD/claim/collision-domain safety;
+- do not declare GACR complete until the fresh-agent → stall → second-agent exact-HEAD takeover → continuation live scenario passes.
+
+These observations are durable supervision evidence, not new mutation authority and not a replacement for GACR sessions, claims, checkpoints, handoffs or canonical programme authorities.
