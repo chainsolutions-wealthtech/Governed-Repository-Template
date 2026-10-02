@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 16,
+  "revision": 17,
   "items": [
     {
       "correlation_id": "GACR-C-caffb7cb6efd",
@@ -59,7 +59,25 @@
         "BRANCH_MATCH",
         "GITHUB_ACTOR_MATCH"
       ],
-      "evaluated_at": "2026-10-02T03:39:33+00:00"
+      "evaluated_at": "2026-10-02T03:45:01+00:00",
+      "unbound_activity": {
+        "observation_id": "GACR-B-127716e672d9",
+        "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+        "observed_at": "2026-10-01T23:35:46+00:00",
+        "activity_class": "AUTO_ATTACH",
+        "safe_envelope_digest": "7adff6909eb7033608e1ab6e8b36d519c9caa6b11b9c406c6d974e204f3d0642",
+        "candidate_session_ids": [
+          "session-68c97d4bb1ef71c86444de12"
+        ],
+        "correlation_level": "PROBABLE",
+        "reasons": [
+          "BRANCH_MATCH",
+          "GITHUB_ACTOR_MATCH"
+        ],
+        "status": "UNBOUND",
+        "reconciled_session_id": "UNAVAILABLE",
+        "reconciled_at": "UNAVAILABLE"
+      }
     },
     {
       "correlation_id": "GACR-C-a39298b3d9b4",
@@ -226,6 +244,22 @@
         "CONNECTION_FINGERPRINT_EXACT"
       ],
       "evaluated_at": "2026-10-02T03:39:33+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-0b329873f39b",
+      "beacon_id": "GACR-B-5f0e201f3e02",
+      "level": "EXACT",
+      "selected_session_id": "session-68c97d4bb1ef71c86444de12",
+      "candidate_session_ids": [
+        "session-68c97d4bb1ef71c86444de12"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT",
+        "CONNECTION_FINGERPRINT_EXACT"
+      ],
+      "evaluated_at": "2026-10-02T03:45:01+00:00"
     }
   ]
 }
