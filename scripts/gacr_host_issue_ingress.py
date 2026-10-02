@@ -136,6 +136,13 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
         raise ValueError("host action requires a supported action_phase")
     if kind == "interrupt" and payload.get("interruption_code") not in INTERRUPTION_CODES:
         raise ValueError("host interrupt requires a supported interruption_code")
+    for list_field in ("capabilities", "wake_channels"):
+        if list_field in payload and not isinstance(payload.get(list_field), list):
+            raise ValueError(f"{list_field} must be a JSON array")
+    if isinstance(payload.get("capabilities"), list) and len(payload["capabilities"]) > 32:
+        raise ValueError("too many host-event capabilities")
+    if isinstance(payload.get("wake_channels"), list) and len(payload["wake_channels"]) > 8:
+        raise ValueError("too many host-event wake channels")
 
     comment_id = comment.get("id")
     if not comment_id:
