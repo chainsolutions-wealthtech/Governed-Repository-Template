@@ -193,10 +193,10 @@ def evaluate_function_exposure(
     tool_name: str,
     connection_ref: str,
     requested_head: str | None,
-    access_grant: dict[str, Any] | None,
     authority_evidence: dict[str, Any] | None,
     snapshot: dict[str, Any],
     sessions: dict[str, Any],
+    access_grant: dict[str, Any] | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
     now = (now or _now()).astimezone(timezone.utc)
