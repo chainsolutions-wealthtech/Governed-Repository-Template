@@ -198,3 +198,32 @@ Exit gate:
 10. Canonical programme state re-authorizes Step 13B as `NEXT_AUTHORIZED`.
 
 Only then run a genuinely fresh provider agent for Step 13B. The remediation agent itself must never be reused as the fresh-provider acceptance subject.
+
+
+## Final G6 post-merge attestation
+
+G6 is now **CLOSED / PASS**.
+
+Final evidence:
+
+- first reconciliation CI while Step 13B remained blocked: `36971795607 = PASS`;
+- final PR #150 head with Step 13B reauthorized: Governance CI `36972111008 = PASS`;
+- PR #150 merge: `d0f66130f135f4aa7363c3e88c1e3f44ced9a828`;
+- post-merge Governance CI: `36972158291 = PASS`;
+- post-merge GACR Relay: `36972158234 = PASS`;
+- post-auto-attach canonical main reobserved at `ab3fd3848878e93f929cbd3d89c9d15be43537a7`.
+
+Therefore:
+
+```text
+GACR-INT-AUDIT-01 = CLOSED_PASS
+GACR-INT-AUDIT-02 = CLOSED_PASS
+G6 = PASS_CLOSED
+STEP 13B = NEXT_AUTHORIZED
+FRESH_PROVIDER_AGENT = NOT_EXECUTED
+ULTIMATE_LIVE_ACCEPTANCE = NOT_PASSED
+```
+
+The current/remediation conversations remain invalid Step 13B fixtures. The next live
+operation must use a genuinely fresh provider conversation/agent and must not instruct it
+to register with GACR, GSCC, Presence or Beacon.
