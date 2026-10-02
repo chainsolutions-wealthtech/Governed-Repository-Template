@@ -423,6 +423,7 @@ Append-only durable decisions for the source/control-plane repository.
 - Owner rule: an authenticated GitHub identity is no longer sufficient, by itself, to expose governed repository functions to an agent.
 - Canonical specification: `docs/control-plane/GSCC_ADMISSION_ACCESS_GATE.md`.
 - The admission path is additive to the existing GSCC/GSE/GACR architecture and must not introduce a second session store, correlator, claim store, takeover engine or function-exposure authority.
+- The existing GSCC Observable Arrival Gateway (`.github/workflows/gscc-observable-arrival.yml` + `scripts/gscc_observable_arrival.py`) is explicitly preserved. The admission/access layer sits above governed repository access and reuses the existing controlled arrival/SessionEndpoint/auto-attach chain rather than replacing it. GitHub-event-visible arrivals may still be observed first, but such observation is presence evidence only and never constitutes preauthorization or access authority.
 - The canonical state distinction is `IDENTITY != ADMISSION != PREAUTHORIZATION != ACCESS AUTHORIZATION != FUNCTION EXPOSURE != MUTATION AUTHORITY`.
 - A safe `gscc-admission-envelope/v1` must provide the required identity/client/session/connection/target/intent/continuity/capability facts, with explicit provenance and `UNAVAILABLE` for provider-private facts that are not exposed.
 - Tokens, cookies, passwords, authorization headers, private keys, raw prompts, transcripts, raw tool arguments/results and private reasoning are forbidden from the admission plane.
@@ -435,4 +436,3 @@ Append-only durable decisions for the source/control-plane repository.
 - This requirement is `SPECIFIED / NOT_IMPLEMENTED`. Recording it grants no repository, mutation or production authority.
 - Because this owner rule is stronger than the previously queued live function-exposure proof, Step 13B and the live `gscc_function_exposure_request` remain blocked until the admission/access gate is implemented tests-first and attested on current main.
 - The global Control Plane programme is untouched: `P12-S6` remains its own unique global next action and is not advanced by this decision.
-
