@@ -927,3 +927,13 @@ Automation boundary:
 - when a governed host action occurs, AGENTS/R6 require emission through the configured bridge without a human reminder.
 
 Global programme state is unchanged: `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` remains parked pending explicit owner OK.
+
+## GACR origin realignment registered
+
+- GACR R1-R6 remain preserved as the current implemented baseline.
+- Owner has accepted a non-destructive Presence-First realignment plan for the next GACR evolution.
+- Human authority: `docs/control-plane/GACR_ORIGIN_REALIGNMENT.md`.
+- Machine projection: `.governance/control-plane-state/gacr-origin-realignment.json`.
+- Status: `ACCEPTED_PLAN / NOT_YET_EXECUTED`.
+- Realignment completion requires a live fresh-agent → automatic observable presence → liveness/progress evidence → stall → second-agent exact-HEAD takeover → continuation proof.
+- This registration does not change the current unique executable task `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.

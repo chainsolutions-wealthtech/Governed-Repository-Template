@@ -823,3 +823,16 @@ Final result:
 Canonical active session: `session-68c97d4bb1ef71c86444de12`.
 
 R6 is therefore integrated for event-driven host activity. The broader programme remains stopped before `P12-S6` until explicit owner approval.
+
+## 2026-10-02 — GACR origin realignment plan accepted and durably registered
+
+- Owner clarified that GACR evolved usefully but not fully in the original intended direction.
+- Existing R1-R6 capabilities and evidence are preserved; no destructive rollback is authorized.
+- New canonical planning authority: `docs/control-plane/GACR_ORIGIN_REALIGNMENT.md`.
+- New machine-readable projection: `.governance/control-plane-state/gacr-origin-realignment.json`.
+- Decision: `CPD-057`.
+- Primary invariant restored: instrumentable repository use itself should make an agent/conversation observable to GACR; explicit self-registration/event emission must not remain the conceptual prerequisite.
+- Mandatory sequence of 24 operations is recorded in exact order, including original-intent reconstruction, intent/current/gap matrix, tests-before-code, Presence Fabric, controlled-access instrumentation, liveness/progress separation, unbound-activity reconciliation, real fresh-agent proof, controlled stall, second-agent exact-HEAD takeover and continuation.
+- Ultimate completion test is explicit: a fresh agent is asked to work on the repo without being told to register with GACR; GACR must observe it through an instrumented path, track safe activity, detect loss of fresh evidence, and enable another governed agent to continue the same work after exact-HEAD reconciliation.
+- Silent provider capabilities that are not exposed remain `UNAVAILABLE`; no provider ID, crash cause or continuous liveness is invented.
+- Global Control Plane unique task remains `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`; this change records future GACR work and does not execute it.

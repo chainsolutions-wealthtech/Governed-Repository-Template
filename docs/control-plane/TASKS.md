@@ -1022,3 +1022,16 @@ Status: **DONE / LIVE_PROVEN / CI_PROVEN / INTEGRATED**.
 - Event-driven ChatGPT host telemetry is live.
 - Persistent background heartbeat remains host-capability dependent and is not falsely marked complete.
 - No effect on `P12-S6` execution state.
+
+### GACR origin realignment — Presence-First
+
+Status: **ACCEPTED_PLAN / NOT_YET_EXECUTED**.
+
+Canonical plan: `docs/control-plane/GACR_ORIGIN_REALIGNMENT.md`.
+Machine projection: `.governance/control-plane-state/gacr-origin-realignment.json`.
+
+Owner direction is non-destructive: preserve R1-R6 and realign the next GACR evolution around automatic observable presence rather than requiring explicit GACR event emission as the primary entry path.
+
+The mandatory 24-operation sequence is frozen in the canonical plan. It begins with exact R6 baseline preservation and original-intent reconstruction, then requires gap mapping and tests-before-code, then Presence Fabric/instrumented access/liveness-vs-progress/unbound-activity work, and ends only after a live fresh-agent → stall → second-agent exact-HEAD takeover → continuation proof.
+
+This queued GACR plan does **not** replace the unique executable Control Plane task `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`. No realignment implementation step is marked DONE merely because the plan is recorded.

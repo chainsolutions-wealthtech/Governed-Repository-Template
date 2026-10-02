@@ -366,3 +366,17 @@ Append-only durable decisions for the source/control-plane repository.
 - It must never revive a genuinely `STALLED / TAKEOVER_READY` predecessor by bypassing exact-HEAD takeover reconciliation.
 - Host telemetry never grants code, infrastructure or production mutation authority.
 - Source runtime history remains isolated from distributed clients.
+
+### CPD-057 — GACR future evolution is governed by the non-destructive Presence-First origin realignment plan
+
+- Date: 2026-10-02.
+- Owner correction: GACR R1-R6 contain useful continuity mechanisms, but the evolution drifted away from the original center of gravity.
+- R1-R6 are preserved; no rollback, deletion or replacement is authorized by this decision.
+- The primary future invariant is presence-first: a governed agent/conversation using an instrumentable repository-access surface must become observable to GACR from that interaction without needing to remember to explicitly invoke GACR.
+- The canonical ordered plan is `docs/control-plane/GACR_ORIGIN_REALIGNMENT.md`, with machine projection `.governance/control-plane-state/gacr-origin-realignment.json`.
+- The plan freezes a 24-operation order: preserve/reobserve R6; reconstruct original intent; map current implementation and gaps; identify drift; write acceptance tests before correction; introduce Presence Fabric; instrument controlled access; derive presence/activity; separate liveness from progress; add session interrogation/liveness challenge; reconcile unbound activity; reuse existing GACR components; then prove the fresh-agent/stall/second-agent exact-HEAD takeover/continuation scenario live.
+- Liveness and progress are distinct. Heartbeat alone must never be promoted to proof of progress.
+- Proprietary silent access that exposes no event or hook remains explicitly unobservable rather than being fabricated as observable.
+- Safe GACR observability excludes cookies, tokens, secrets, raw transcript bodies and private reasoning.
+- GACR origin realignment may not be declared complete until the live ultimate acceptance scenario passes.
+- Registering this decision does not advance or replace `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
