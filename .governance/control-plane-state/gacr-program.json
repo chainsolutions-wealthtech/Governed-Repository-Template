@@ -8,7 +8,7 @@
     "original_intent": "CANONICAL_RECORDED",
     "baseline_r1_r6": "PRESERVED_REOBSERVED_ATTESTED_OR01_PASS",
     "origin_realignment_plan": "ACCEPTED",
-    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13_IN_PROGRESS_PARTIAL_EXTERNAL_WORKER_PASS",
+    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13B_NEXT_INTEGRATION_PREREQUISITES_GREEN",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
   "next_action": "REALIGNMENT_STEP_13B_RUN_REAL_FRESH_PROVIDER_AGENT_TEST",
@@ -106,6 +106,37 @@
     "fresh_provider_agent": {
       "result": "NOT_EXECUTED",
       "requirement": "A genuinely fresh provider conversation/agent must enter through an instrumented client/gateway path or produce later independently observable repository evidence."
+    },
+    "integration_prerequisites": {
+      "status": "PASS",
+      "gscc_core": {
+        "source_pr": 140,
+        "source_head": "b4cfec2e5dabfd28ab557e4ef740f0c44fa44457",
+        "merge": "a07e8211ff182b17948b6001bd8622a7252069ca",
+        "postmerge_ci": 36967370835,
+        "postmerge_relay": 36967370863
+      },
+      "gse": {
+        "source_pr": 138,
+        "integration_pr": 141,
+        "source_head": "c1913ddbcc9563f9ba532bf2a550a510524b9587",
+        "merge": "1d8215f527b38ac4aead40d699387b23b2021499",
+        "postmerge_ci": 36967581229,
+        "postmerge_relay": 36967581241
+      },
+      "gscc_gacr_control": {
+        "source_pr": 139,
+        "integration_pr": 142,
+        "source_head": "185f00795811093432eccfa7e1b1cec0312377f1",
+        "merge": "feea5dfc9055c96c9a589889d96708b3fba353e2",
+        "candidate_ci": 36968154806,
+        "postmerge_ci": 36968203836,
+        "postmerge_relay": 36968203882
+      },
+      "controlled_e2e": "PASS",
+      "replay_safe_liveness": "PASS",
+      "real_session_endpoint_control_bridge": "PASS",
+      "fresh_provider_proof": "NOT_EXECUTED"
     }
   },
   "integration_attestation": {
@@ -123,5 +154,9 @@
     "live_current_session_presence_first": "PASS",
     "ultimate_fresh_agent_acceptance": "NOT_EXECUTED"
   },
-  "relational_projection": "PENDING_PROJECTION_NO_DEDICATED_GACR_REALIGNMENT_STEP_TABLE"
+  "relational_projection": "PENDING_PROJECTION_NO_DEDICATED_GACR_REALIGNMENT_STEP_TABLE",
+  "step_13b": {
+    "status": "NEXT_AUTHORIZED",
+    "requirement": "Run a genuinely fresh provider conversation/agent through the integrated GSCC/GSE/GACR path without telling it to register with GACR. Observe first-touch, SessionTwin, control challenge/wake capability and provider-bound evidence without inventing unavailable provider-private fields."
+  }
 }
