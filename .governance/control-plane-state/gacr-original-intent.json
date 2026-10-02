@@ -1,0 +1,93 @@
+{
+  "schema": "gacr-original-intent/v1",
+  "authority": "CP-AGENT-RELAY-001-ORIGIN",
+  "status": "CANONICAL_HISTORICAL_INTENT",
+  "programme": "GACR",
+  "distinct_from_global_programme": true,
+  "foundational_invariant": "Provider conversations are temporary clients; governed work continuity must remain recoverable independently of the original chat.",
+  "historical_stop_point": {
+    "baseline_operational": true,
+    "remembered_version_context": "2.8.30",
+    "version_note": "Historical context only; later R1-R6 implementation superseded the baseline version.",
+    "two_external_limits": [
+      "Automatically identify/correlate an arriving agent/conversation and recover richer safe connection metadata.",
+      "Wake/activate or relay to a compatible standby after stall/takeover readiness."
+    ],
+    "next_evolution": "Additive BEACON + WATCH + CORRELATOR + DISPATCHER enrichment without regression."
+  },
+  "architecture": [
+    "BEACON",
+    "WATCH",
+    "CORRELATOR",
+    "DISPATCHER"
+  ],
+  "connection_envelope_fields": [
+    "gacr_session_id",
+    "client_instance_id",
+    "provider",
+    "agent_identity",
+    "agent_type_or_model_if_supplied",
+    "repository",
+    "repository_id",
+    "organization",
+    "git_provider",
+    "github_actor",
+    "github_app_or_installation_if_observable",
+    "connection_method",
+    "permissions_or_capabilities_if_observable",
+    "entry_action",
+    "connection_intent",
+    "task_id",
+    "claim_id",
+    "branch",
+    "base_branch",
+    "observed_HEAD",
+    "pull_request",
+    "workflow_run_id",
+    "job_id",
+    "run_attempt",
+    "event_type",
+    "delivery_or_correlation_ids_if_available",
+    "connected_at",
+    "last_seen_at",
+    "heartbeat_seq",
+    "lease_expires_at",
+    "provider_conversation_ref_if_supplied",
+    "provider_conversation_url_if_supplied",
+    "checkpoint",
+    "last_action",
+    "last_evidence"
+  ],
+  "fingerprint_inputs": [
+    "provider",
+    "repository",
+    "actor_or_github_app",
+    "task",
+    "branch",
+    "pull_request",
+    "first_observed_HEAD",
+    "connection_method",
+    "client_instance_id",
+    "bounded_timestamp_context"
+  ],
+  "correlation_levels": [
+    "EXACT",
+    "STRONG",
+    "PROBABLE",
+    "AMBIGUOUS",
+    "UNKNOWN"
+  ],
+  "bridge_optional": true,
+  "bridge_not_required_for_continuity": true,
+  "forbidden_capture": [
+    "tokens",
+    "cookies",
+    "passwords",
+    "authorization_headers",
+    "secret_values",
+    "raw_transcript_bodies",
+    "private_reasoning"
+  ],
+  "global_programme_dependency": false,
+  "historical_owner_sequence": "Finish GACR first; return to the global programme only after explicit owner OK."
+}
