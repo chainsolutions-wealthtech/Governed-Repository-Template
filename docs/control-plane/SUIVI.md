@@ -1034,3 +1034,20 @@ These observations are durable supervision evidence, not new mutation authority 
 - G6 = PASS_CLOSED.
 - Step 13B = NEXT_AUTHORIZED / NOT_EXECUTED.
 - Fresh-provider acceptance has not yet occurred; ultimate live acceptance remains NOT_PASSED.
+
+## 2026-10-02 — GSCC admission/access gate inserted before live function exposure
+
+- Owner clarified the repository-entry invariant: GitHub identity/authentication alone is insufficient for governed agent access.
+- A governed agent must first submit a safe admission dossier, have it validated and stored with provenance, receive only `PREAUTHORIZED`, complete a mandatory qualification path, and receive an Access Grant before becoming eligible for governed function exposure.
+- Canonical specification added at `docs/control-plane/GSCC_ADMISSION_ACCESS_GATE.md`.
+- The design explicitly separates identity, admission, preauthorization, access authorization, function exposure and mutation authority.
+- Existing GSCC, GSE, GACR and the PR #153/#156 Function Exposure Gate remain authoritative and are extended rather than duplicated.
+- The Access Grant is not mutation authority; each function still requires the existing exact-HEAD, function-contract, authority, live-preflight and pre-call revalidation controls.
+- Safe admission metadata only: provider-private values remain supplied-only/UNAVAILABLE; secrets, cookies, tokens, prompts, transcripts, raw tool payloads and private reasoning remain prohibited.
+- Decision recorded as `CPD-061`.
+- Current main was reobserved immediately before this documentation change at `016442b00dab345ffa79fc2bf8026a9f96b73339`.
+- Work branch: `governance/gscc-admission-access-gate`.
+- No runtime, workflow, repository-access enforcement or function gate implementation has been changed in this documentation tranche.
+- Step 13B / the real live function-exposure request is now chronologically blocked behind tests-first implementation and attestation of this stronger admission/access invariant.
+- The global programme remains unchanged: `P12-S6` is neither executed nor advanced.
+
