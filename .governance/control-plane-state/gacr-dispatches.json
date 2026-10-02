@@ -1,12 +1,12 @@
 {
   "schema_version": "1.0.0",
-  "revision": 1,
+  "revision": 3,
   "items": [
     {
       "schema": "gscc-control-dispatch/v1",
       "dispatch_id": "GSCC-CTRL-70c13730deda92b3c87c14f7",
       "kind": "CONTROL_CHALLENGE",
-      "status": "READY",
+      "status": "EXPIRED",
       "target_session_id": "session-c8ef6dd58556afc9fcfa1cb4",
       "target_connection_ref": "gscc-live:chatgpt:20261002:q1q12",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -38,6 +38,45 @@
       "response": null,
       "invocation_authority_granted": false,
       "mutation_authority_granted": false
+    },
+    {
+      "schema": "gscc-control-dispatch/v1",
+      "dispatch_id": "GSCC-CTRL-8f8c7ee3130055dfffa93b68",
+      "kind": "CONTROL_CHALLENGE",
+      "status": "DISPATCHED",
+      "target_session_id": "session-c8ef6dd58556afc9fcfa1cb4",
+      "target_connection_ref": "gscc-live:chatgpt:20261002:q1q12",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "branch": "main",
+      "issue_number": 115,
+      "delivery_modes": [
+        "GITHUB_ISSUE_COMMENT"
+      ],
+      "created_at": "2026-10-02T14:50:20+00:00",
+      "expires_at": "2026-10-02T14:55:20+00:00",
+      "command": {
+        "schema": "gscc-control-command/v1",
+        "message_id": "GSCC-MSG-36e3d85949ca87f518d6083a",
+        "command_id": "GSCC-CMD-548b941e63f5ca4f932ebd5b",
+        "correlation_id": "GSCC-CORR-1efc7c026e6470487cd3e57a",
+        "command_type": "LIVENESS_CHALLENGE",
+        "target_session_id": "session-c8ef6dd58556afc9fcfa1cb4",
+        "issued_at": "2026-10-02T14:50:20+00:00",
+        "expires_at": "2026-10-02T14:55:20+00:00",
+        "requires_ack": true,
+        "payload": {
+          "challenge_id": "GSCC-CH-fec2e607058cebb8824a33e3",
+          "nonce": "lS2yFf8lgNTuO0W2H33hGcfaxXDh6msI",
+          "issued_at": "2026-10-02T14:50:20+00:00",
+          "expires_at": "2026-10-02T14:55:20+00:00"
+        }
+      },
+      "ack": null,
+      "response": null,
+      "invocation_authority_granted": false,
+      "mutation_authority_granted": false,
+      "delivered_at": "2026-10-02T14:50:20+00:00",
+      "delivery_evidence_ref": "github-issue-comment:5955000858"
     }
   ]
 }
