@@ -11,6 +11,7 @@ from gscc_observable_arrival import (
     emit_github_arrival,
     should_skip_github_arrival,
 )
+from gacr_workflow_bridge import expand_auto_attach_payload
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github" / "workflows" / "gscc-observable-arrival.yml"
@@ -90,12 +91,18 @@ def main() -> None:
     assert_true(call["token_present"], "runtime transport credential is required but never persisted")
     assert_true(call["body"]["event_type"] == "gacr_auto-attach", "GSCC compatibility path must reuse canonical GACR auto-attach")
     payload = call["body"]["client_payload"]
+    assert_true(len(payload) <= 10, "GitHub repository_dispatch allows at most 10 top-level client_payload properties")
     assert_true(payload["source"] == "CLIENT_EMITTER", "GACR compatibility provenance")
     assert_true(payload["surface_class"] == "GITHUB_EVENT_VISIBLE", "surface class forwarded")
     assert_true(payload["connection_method"] == "gscc-github-event-gateway", "GSCC connection method forwarded")
-    assert_true(payload["github_actor"] == "fresh-provider-actor", "observable actor forwarded")
-    assert_true(payload["event_type"] == "GSCC_OBSERVABLE_PULL_REQUEST", "safe event class forwarded")
-    assert_true(payload["last_action"] == "GSCC_OBSERVABLE_ARRIVAL", "arrival action marker")
+    assert_true(payload["connection_ref"].startswith("gscc-observable:"), "stable connection forwarded")
+    assert_true(isinstance(payload["arrival_context"], dict), "extended arrival metadata must be nested")
+    expanded = expand_auto_attach_payload(payload)
+    assert_true(expanded["github_actor"] == "fresh-provider-actor", "observable actor restored by allowlisted bridge expansion")
+    assert_true(expanded["event_type"] == "GSCC_OBSERVABLE_PULL_REQUEST", "safe event class restored")
+    assert_true(expanded["last_action"] == "GSCC_OBSERVABLE_ARRIVAL", "arrival action marker restored")
+    assert_true(expanded["observed_head"] == "a" * 40, "observed head restored")
+    assert_true(expanded["pull_request"] == 777, "PR identity restored")
     assert_true("mutation_authority_granted" not in payload, "presence transport must not grant write authority")
     serialized = json.dumps(call["body"])
     assert_true("runtime-only-token" not in serialized, "transport credential must never enter payload")
