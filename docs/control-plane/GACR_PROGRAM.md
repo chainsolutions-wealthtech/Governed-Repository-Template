@@ -59,7 +59,7 @@ Current GACR programme state:
 
 ## GACR next action
 
-`GSCC_ADMISSION_ACCESS_GATE_MERGE_AND_POSTMERGE_ATTEST`
+`GSCC_ADMISSION_GATE_RUN_LIVE_REQUEST`
 
 Step 13B remains the next live acceptance gate, but its execution is temporarily blocked until the two bounded post-integration findings in `docs/control-plane/GACR_GSCC_GSE_INTEGRATION_AUDIT.md` are closed and re-attested from the then-current `main`.
 
@@ -298,3 +298,21 @@ Next GACR action: `GSCC_ADMISSION_ACCESS_GATE_MERGE_AND_POSTMERGE_ATTEST`.
 
 No real provider admission request has yet been executed through canonical `main`; Step 13B and ultimate live acceptance remain NOT_PASSED. The global `P12-S6` programme remains untouched.
 
+## 2026-10-02 — GSCC admission/access post-merge attestation PASS
+
+PR #159 merged at `56c48aafbe00a50b47ad2189f4ab3645b937c82f`.
+
+Exact-merge post-merge evidence:
+
+- Governance CI `37002783058 = PASS`;
+- Observable Arrival Gateway `37002783052 = PASS`;
+- Function Exposure Gate `37002783152 = PASS`;
+- Function Route Selftest `37002783428 = PASS`;
+- GACR Relay push `37002783111 = PASS`;
+- GACR Relay dispatch `37002796444 = PASS`.
+
+The admission/access prerequisite is now integrated on canonical main. Existing arrival and function-exposure authorities remain preserved.
+
+Next GACR action: `GSCC_ADMISSION_GATE_RUN_LIVE_REQUEST`.
+
+A real provider admission has not yet been executed. Step 13B remains NOT_EXECUTED; ultimate live acceptance remains NOT_PASSED. Global `P12-S6` remains untouched.
