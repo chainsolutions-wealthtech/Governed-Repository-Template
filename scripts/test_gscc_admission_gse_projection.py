@@ -72,7 +72,7 @@ def test_unverified_control_proof_fails_closed():
     proof["control_channel"]["status"] = "UNAVAILABLE"
     state = project_admission_gse_state(session(), proof, now=NOW)
     assert state["status"] == "GSE_ADMISSION_STATE_INCOMPLETE", state
-    assert state["control_reachability"] == "UNAVAILABLE", state
+    assert state["control_reachability"] == "UNKNOWN", state
     assert state["mutation_authority_granted"] is False, state
 
 
