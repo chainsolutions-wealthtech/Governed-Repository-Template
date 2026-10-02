@@ -568,7 +568,7 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
             fail("canonical architecture status mismatch")
         if canonical_arch.get("revision", {}).get("approval_eligible_from_imported_memory") is not False:
             fail("imported architecture memory must never satisfy live approval")
-        if mcp_capability.get("schema_version") != "1.1.0":
+        if mcp_capability.get("schema_version") != "1.2.0":
             fail("MCP capability snapshot schema version mismatch")
         if mcp_capability.get("capability_model_version") != "1.0.0":
             fail("MCP capability model version mismatch")
@@ -604,6 +604,21 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
             fail("MCP capability snapshot refresh mode mismatch")
         if refresh_policy.get("pre_mutation_live_refresh_required") is not True:
             fail("MCP capability snapshot must require live preflight before mutation")
+        tools = ((mcp_capability.get("catalogue") or {}).get("tools") or [])
+        if not tools:
+            fail("MCP capability snapshot tool catalogue missing")
+        for item in tools:
+            if item.get("governed_exposure_gate") != "GSCC_REQUIRED":
+                fail("MCP catalogue tool missing mandatory GSCC exposure gate")
+            if item.get("governed_exposure_status") != "REQUIRES_RUNTIME_VALIDATION":
+                fail("MCP catalogue tool governed exposure status mismatch")
+        operation_contract = mcp_capability.get("operation_planning_contract") or {}
+        if operation_contract.get("gscc_function_gate_required_before_governed_exposure") is not True:
+            fail("MCP operation contract must require GSCC before governed exposure")
+        if operation_contract.get("gscc_function_gate_required_before_every_governed_invocation") is not True:
+            fail("MCP operation contract must require GSCC before every governed invocation")
+        if operation_contract.get("catalogue_presence_is_not_governed_exposure_authority") is not True:
+            fail("MCP catalogue presence must not imply governed exposure authority")
         if (mcp_capability.get("relational_projection") or {}).get("status") != "PENDING_PROJECTION_GMC_INTEGRATION":
             fail("MCP capability snapshot relational projection status mismatch")
         cases = [x.get("case_id") for x in catalog.get("cases", []) if x.get("kind") == "STRUCTURING_CASE"]
