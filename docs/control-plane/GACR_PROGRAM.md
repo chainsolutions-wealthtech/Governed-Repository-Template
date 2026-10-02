@@ -59,7 +59,7 @@ Current GACR programme state:
 
 ## GACR next action
 
-`GACR_G6_FULL_RECONCILIATION_AND_REAUTHORIZE_STEP_13B`
+`REALIGNMENT_STEP_13B_RUN_REAL_FRESH_PROVIDER_AGENT_TEST`
 
 Step 13B remains the next live acceptance gate, but its execution is temporarily blocked until the two bounded post-integration findings in `docs/control-plane/GACR_GSCC_GSE_INTEGRATION_AUDIT.md` are closed and re-attested from the then-current `main`.
 
@@ -72,7 +72,7 @@ A later canonical audit found two residual integration risks before Step 13B. Bo
 
 A procedural deviation is also recorded: Worker A and Worker B were merged before all three worker PRs remained open for one final integration audit, contrary to the worker prompts. This is non-blocking because the subsequent dependency-ordered integration, full green CI and controlled PR #142 contained the runtime risk, but it remains part of the durable audit record.
 
-No GACR step is rolled back. Step 13B is still `NOT_EXECUTED`; both bounded remediation findings are closed, but it remains blocked until G6 reconciliation itself passes full CI and explicitly reauthorizes it. This programme remains independent of `P12-S6`, CASE 1, GMC and the global Control Plane programme.
+No GACR step is rolled back. Step 13B is still `NOT_EXECUTED`. Both bounded remediation findings are closed and G6 reconciliation CI `36971795607` passed, so Step 13B is now `NEXT_AUTHORIZED`. This programme remains independent of `P12-S6`, CASE 1, GMC and the global Control Plane programme.
 
 ## Completion condition
 
@@ -91,3 +91,14 @@ fresh agent not explicitly told to register with GACR
 → continuation of the same work.
 
 Until then, the programme status remains partial regardless of green unit tests.
+
+### G6 reconciliation
+
+- Current main reobserved before G6: `114c5397966a5c6ad7d8770298abd698929ecf8f`.
+- GACR-INT-AUDIT-01: `CLOSED_PASS`.
+- GACR-INT-AUDIT-02: `CLOSED_PASS`.
+- G6 reconciliation PR #150 first full Governance CI: `36971795607 = PASS`.
+- Shared protocol, GSE projection, combined E2E, historical GACR, governance integrity and authority boundaries all pass together.
+- Step 13B is reauthorized as `NEXT_AUTHORIZED`.
+- Fresh provider agent remains `NOT_EXECUTED`.
+- Ultimate live acceptance remains `NOT_PASSED`.
