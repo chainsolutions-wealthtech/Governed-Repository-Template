@@ -473,6 +473,10 @@ def takeover_contract_tests():
     assert_true(package["exact_head_required"] is True, "package requires exact HEAD")
     assert_true(package["replay_policy"] == "RECONCILE_BEFORE_REPLAY", "unresolved in-flight action is never blindly replayed")
     assert_true(package["provider_conversation_ref"] is None, "provider conversation ref omitted/unavailable when not supplied")
+    assert_true(
+        "LIVENESS_PROGRESS_CONTEXT_SHARED_INTEGRATION_REQUIRED" in package["known_unknowns"],
+        "package must expose missing Worker B context instead of recreating liveness/progress",
+    )
 
     try:
         relay.accept_takeover_docs(
@@ -529,6 +533,10 @@ def harness_contract_tests():
     assert_true(spec["live_proof_status"] == "NOT_EXECUTED", "prepared harness must not claim ultimate live proof")
     assert_true(spec["shared_integration_required"] is True, "Workers A/B adapters remain an explicit shared integration")
     assert_true(spec["worker_api_contract"] == "GACR_WORKER_ADAPTER_V1", "future Worker A/B API contract is explicit")
+    assert_true(spec["shared_worker_contracts"]["worker_a"]["source_pr"] == 128, "Worker A adapter must target PR #128")
+    assert_true("observe_presence" in spec["shared_worker_contracts"]["worker_a"]["apis"], "Worker A Presence API must be reused")
+    assert_true(spec["shared_worker_contracts"]["worker_b"]["source_pr"] == 127, "Worker B adapter must target PR #127")
+    assert_true("worker_c_integration_projection" in spec["shared_worker_contracts"]["worker_b"]["apis"], "Worker B C-projection API must be reused")
     required = [
         "AGENT_A_FIRST_TOUCH",
         "AGENT_A_WORK",
