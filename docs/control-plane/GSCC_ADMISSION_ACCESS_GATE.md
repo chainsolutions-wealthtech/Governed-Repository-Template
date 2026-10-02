@@ -657,3 +657,56 @@ Recording it:
 - does not grant repository, mutation or production authority.
 
 The currently authorized executable next actions remain governed by their existing programme authorities until explicitly changed.
+
+## 2026-10-02 — Canonical qualification evidence harvester candidate
+
+PR #163 implements the missing canonical-evidence layer after the post-merge audit of PR #159.
+
+The reconciled path is:
+
+```text
+AdmissionEnvelope
+→ PREAUTHORIZED
+→ existing admission→GACR session binding
+→ GSCC Admission Harvester
+   → GitHub GET repository metadata
+   → GitHub GET requested/default branch exact HEAD
+   → canonical GACR session + existing ConnectionEnvelope
+   → controlled governance document digests
+   → canonical task/claim reconciliation
+   → capability/control/GSE/access-policy evidence only when canonically proven
+→ qualification validator
+→ Access Grant only when every required evidence class is complete
+→ existing Function Exposure Gate
+```
+
+The harvester does not implement a second correlator. It consumes the canonical session binding introduced concurrently on main and enriches the selected GACR session with the existing ConnectionEnvelope.
+
+Canonical qualification no longer trusts caller-provided `qualification_evidence_json`. That workflow input remains only as a deprecated compatibility surface and is not injected into the canonical qualification evaluator.
+
+Fail-closed rules:
+
+- a GACR/session HEAD differing from the current GitHub GET HEAD yields stale-session evidence and blocks qualification;
+- declared capabilities are not promoted to `VERIFIED` without challenge evidence;
+- control reachability is not promoted to `VERIFIED` without canonical control evidence;
+- GSE state is not invented when no canonical GSE admission projection exists;
+- access policy remains pending unless canonical policy evidence is supplied;
+- provider-private facts that are not exposed remain explicitly unavailable;
+- no Admission Receipt, Access Grant or harvested bundle grants invocation or mutation authority.
+
+Tests-first / reconciliation evidence:
+
+- RED contract commit: `c7ade40b7af024bb3a31d1b563e631ffceda40ab`;
+- RED Governance CI: `37003462162 = FAILURE` exactly at the missing harvester test;
+- first runtime candidate: `5934bd56d41d0ae63f33174fc79deab1e257fabb`;
+- exact-main reconciliation merge: `9fd0f8435da7da517659034b3fa05207e9470ae9`, preserving the concurrent provider issue ingress and canonical admission→GACR session binding;
+- reconciled green head before restoring the temporary CI trigger: `d6315b890fdd28c4d162abd02678aa3c4ee43154`;
+- PR Governance CI: `37005600659 = SUCCESS`;
+- PR Function Exposure Gate: `37005600581 = SUCCESS`;
+- PR Observable Arrival Gateway: `37005600560 = SUCCESS`;
+- final no-temporary-trigger head: `eb92101a2f6fa5d855380d4f2ac9820552f19b53`;
+- final PR Governance CI: `37005672855 = SUCCESS`;
+- final PR Function Exposure Gate: `37005672883 = SUCCESS`;
+- final PR Observable Arrival Gateway: `37005673101 = SUCCESS`.
+
+This candidate does not execute Step 13B, does not grant production/server authority and does not advance P12-S6, CASE 1 or GMC.

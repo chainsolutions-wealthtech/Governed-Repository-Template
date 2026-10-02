@@ -436,3 +436,20 @@ Append-only durable decisions for the source/control-plane repository.
 - This requirement is `SPECIFIED / NOT_IMPLEMENTED`. Recording it grants no repository, mutation or production authority.
 - Because this owner rule is stronger than the previously queued live function-exposure proof, Step 13B and the live `gscc_function_exposure_request` remain blocked until the admission/access gate is implemented tests-first and attested on current main.
 - The global Control Plane programme is untouched: `P12-S6` remains its own unique global next action and is not advanced by this decision.
+
+
+### CPD-062 — Canonical qualification evidence must be harvested, not trusted from the caller
+
+- Date: 2026-10-02.
+- The GSCC Admission Gate may accept safe host/provider facts at admission, but facts that GSCC can independently verify or resolve must be harvested from canonical authorities before an Access Grant is eligible.
+- Repository identity, repository metadata, requested/default branch and exact HEAD are re-observed from GitHub.
+- Session selection reuses the existing canonical admission→GACR session binding and existing GACR ConnectionEnvelope; no parallel correlator or session store is authorized.
+- Governance reading is represented by bounded document-path/digest evidence tied to the observed repository state.
+- Task and claim references are reconciled against canonical stores when present.
+- Declared capabilities, control reachability, GSE state and access policy are not promoted to verified/allow states without canonical evidence. Missing evidence remains explicit and keeps qualification incomplete.
+- Caller-provided `qualification_evidence_json` is not an authority source for the canonical qualification path.
+- The canonical qualification bundle is identified as `gscc-qualification-evidence/v1`, records `GSCC_ADMISSION_HARVESTER` as its producer and carries an integrity digest. This digest is integrity evidence, not a credential and not a substitute for canonical-source observation.
+- Provider-private identity remains supplied-only; unavailable values are not inferred.
+- Admission, harvesting and Access Grant issuance continue to grant neither invocation nor mutation authority.
+- PR #163 carries the tests-first implementation. Step 13B remains blocked until integration/post-merge proof and a real canonical admission flow are observed.
+- The global Control Plane programme remains independent; P12-S6, CASE 1 and GMC are not advanced by this decision.

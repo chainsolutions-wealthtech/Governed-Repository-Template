@@ -1100,3 +1100,17 @@ These observations are durable supervision evidence, not new mutation authority 
 - Unique GACR next action becomes `GSCC_ADMISSION_GATE_RUN_LIVE_REQUEST`.
 - Step 13B remains NOT_EXECUTED and ultimate live acceptance remains NOT_PASSED.
 - Global `P12-S6` remains untouched.
+
+
+### 2026-10-02 — PR #163 GSCC canonical admission harvester
+
+- Owner-authorized branch: `governance/gscc-admission-harvester`.
+- Initial exact main at branch creation: `3b0f72c7c6425d6e634e14f96cc927a5a5b670c4`.
+- Tests-first RED: commit `c7ade40b7af024bb3a31d1b563e631ffceda40ab`; Governance CI `37003462162 = FAILURE` only on the intentionally missing harvester.
+- Runtime adds GitHub repository/branch GET observation, exact HEAD, GACR canonical session resolution, ConnectionEnvelope reuse, governance digests, task/claim reconciliation, structured unavailable evidence, provenance matrix and `gscc_entry_request`.
+- Concurrent main work added provider issue ingress on issue #161 and canonical admission→GACR session binding. #163 was reconciled additively rather than overwriting it.
+- Exact-main reconciliation merge: `9fd0f8435da7da517659034b3fa05207e9470ae9`.
+- Caller-provided qualification evidence is deprecated and ignored by the canonical workflow; `evaluate_access_grant` requires a canonical harvester bundle and matching integrity digest.
+- Reconciled PR validation: Governance CI `37005672855 = SUCCESS`; Function Exposure `37005672883 = SUCCESS`; Observable Arrival `37005673101 = SUCCESS`.
+- Candidate final functional head before this documentation-only attestation: `eb92101a2f6fa5d855380d4f2ac9820552f19b53`.
+- No merge performed by this agent. Step 13B remains NOT_EXECUTED. P12-S6 / CASE 1 / GMC untouched.

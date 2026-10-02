@@ -316,3 +316,22 @@ The admission/access prerequisite is now integrated on canonical main. Existing 
 Next GACR action: `GSCC_ADMISSION_GATE_RUN_LIVE_REQUEST`.
 
 A real provider admission has not yet been executed. Step 13B remains NOT_EXECUTED; ultimate live acceptance remains NOT_PASSED. Global `P12-S6` remains untouched.
+
+
+## 2026-10-02 — Admission harvester reconciled with canonical session binding
+
+PR #163 is GREEN as an additive GSCC/GACR/GSE hardening tranche.
+
+The implementation reuses the canonical admission→GACR session binding that landed on main while #163 was in progress. It does not introduce a second session matcher. Repository metadata and exact HEAD are re-observed through GitHub GET; the existing GACR ConnectionEnvelope supplies correlated identity/provenance; missing control/GSE/access-policy evidence remains fail-closed.
+
+Reconciliation merge: `9fd0f8435da7da517659034b3fa05207e9470ae9`.
+
+Final no-temporary-trigger candidate head: `eb92101a2f6fa5d855380d4f2ac9820552f19b53`.
+
+Final candidate proof:
+
+- Governance CI `37005672855 = SUCCESS`;
+- GSCC Function Exposure Gate `37005672883 = SUCCESS`;
+- GSCC Observable Arrival Gateway `37005673101 = SUCCESS`.
+
+Step 13B remains NOT_EXECUTED. The next GACR-side gate is integration/post-merge attestation of #163 followed by a real admission/qualification request on canonical main; any absent canonical GSE/control/access-policy evidence must keep access withheld.
