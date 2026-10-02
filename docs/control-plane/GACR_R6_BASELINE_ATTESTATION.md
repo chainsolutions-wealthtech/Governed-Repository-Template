@@ -435,11 +435,22 @@ No R1-R6 history is deleted, rewritten or rolled back.
 | No step 3+ marked DONE | PASS |
 | Canonical baseline attestation created | PASS |
 | Machine projection created | PASS |
-| Candidate CI | PENDING UNTIL PR |
-| PR merge | PENDING UNTIL PR |
-| Post-merge revalidation | PENDING UNTIL MERGE |
+| Candidate CI | PASS — run `36954021583` |
+| PR merge | PASS — PR #123 → `3ebf1e962b7c176a7b9e2eaf44d0842feda8345d` |
+| Post-merge revalidation | PASS — Governance CI `36954073273`; GACR run `36954073285` |
 
-The operation may be promoted to final **`GACR-OR-01 = PASS`** only after the remaining repository gates above are green and the merged `main` is reobserved.
+The remaining repository gates were observed green on merged `main@3ebf1e962b7c176a7b9e2eaf44d0842feda8345d`. Therefore **`GACR-OR-01 = PASS`**. The post-merge runtime projections remained unchanged: sessions rev. 10, Beacons rev. 13, Correlator rev. 14, Forensics rev. 4.
+
+## OR-01 closure evidence
+
+- candidate Governance CI: `36954021583` — PASS;
+- attestation PR: #123 — merged;
+- merge SHA: `3ebf1e962b7c176a7b9e2eaf44d0842feda8345d`;
+- post-merge Governance CI: `36954073273` — PASS;
+- post-merge GACR run: `36954073285` — PASS;
+- PR #123 changed files: exactly the human attestation and its machine projection;
+- post-merge operational GACR projections: unchanged from the reobserved baseline;
+- global programme / `P12-S6`: untouched.
 
 ## Authoritative stopping point for the two successor agents
 
