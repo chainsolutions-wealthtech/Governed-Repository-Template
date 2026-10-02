@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from gscc_observable_arrival import build_github_arrival_facts, should_skip_github_arrival
+from gscc.entry_gate import validate_entry_context_receipt\nfrom gscc_observable_arrival import build_github_arrival_facts, should_skip_github_arrival
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SNAPSHOT = ROOT / ".governance" / "control-plane-state" / "mcp-capability-snapshot.json"
