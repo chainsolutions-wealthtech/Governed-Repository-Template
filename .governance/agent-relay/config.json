@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.5.0",
+  "schema_version": "1.6.0",
   "process_name": "GACR",
   "process_title": "Governed Agent Continuity Relay",
   "authority_id": "CP-AGENT-RELAY-001",
@@ -223,5 +223,71 @@
     "parallel_claim_store": false,
     "parallel_takeover_engine": false,
     "parallel_correlator": false
+  },
+  "progress_recency_seconds": 1800,
+  "liveness_progress": {
+    "projection_version": "1.0.0",
+    "independent_dimensions": true,
+    "heartbeat_implies_progress": false,
+    "liveness_states": [
+      "ACTIVE",
+      "QUIET",
+      "SUSPECTED_STALL",
+      "STALLED",
+      "UNKNOWN",
+      "TERMINAL"
+    ],
+    "progress_states": [
+      "ADVANCING",
+      "NO_RECENT_PROGRESS_EVIDENCE",
+      "BLOCKED_IF_EXPLICITLY_OBSERVED",
+      "UNKNOWN"
+    ],
+    "timestamps": [
+      "last_activity_at",
+      "last_liveness_evidence_at",
+      "last_progress_at"
+    ],
+    "qualifying_progress_evidence": [
+      "ACTION_COMPLETED",
+      "WRITTEN_HEAD_MOVEMENT",
+      "REPOSITORY_WRITE_ACTIVITY",
+      "COMMIT_MUTATION",
+      "PULL_REQUEST_MUTATION",
+      "CHECKPOINT_ADVANCED",
+      "WORK_ITEM_ADVANCED"
+    ],
+    "liveness_challenge": {
+      "optional": true,
+      "responses": [
+        "ACK",
+        "BUSY",
+        "IDLE",
+        "CHECKPOINTING",
+        "TERMINATING"
+      ],
+      "timeout_status": "LIVENESS_CHALLENGE_TIMEOUT",
+      "timeout_external_cause": "UNAVAILABLE",
+      "delivery_requires_external_bidirectional_hook": true
+    },
+    "unbound_activity": {
+      "storage_model": "CORRELATOR_PROJECTION_NO_SECOND_STORE",
+      "statuses": [
+        "UNBOUND",
+        "RECONCILED",
+        "SUPERSEDED"
+      ],
+      "ambiguous_or_unknown_auto_select": false,
+      "renews_candidate_lease": false,
+      "creates_candidate_progress": false,
+      "reconciliation": "IDEMPOTENT_AUDITABLE"
+    },
+    "agent_context": {
+      "aggregate_existing_stores": true,
+      "parallel_context_store": false,
+      "unknown_value": "UNAVAILABLE",
+      "worker_c_projection": true
+    },
+    "shared_integration_required": true
   }
 }
