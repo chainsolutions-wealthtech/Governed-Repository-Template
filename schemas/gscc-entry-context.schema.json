@@ -1,0 +1,78 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsolutions.example/schemas/gscc-entry-context.schema.json",
+  "title": "GSCC Entry Context v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "status",
+    "reason_code",
+    "entry_open",
+    "repository_entry_allowed",
+    "required_post_fields",
+    "required_get_fields",
+    "missing_required",
+    "fields",
+    "unavailable",
+    "observed_at",
+    "source_summary",
+    "invocation_authority_granted",
+    "mutation_authority_granted",
+    "entry_receipt",
+    "context_digest"
+  ],
+  "properties": {
+    "schema": {"const": "gscc-entry-context/v1"},
+    "status": {"enum": ["ENTRY_CONTEXT_OPEN", "ENTRY_CONTEXT_CLOSED"]},
+    "reason_code": {"type": "string", "minLength": 1},
+    "entry_open": {"type": "boolean"},
+    "repository_entry_allowed": {"type": "boolean"},
+    "required_post_fields": {"type": "array", "items": {"type": "string"}},
+    "required_get_fields": {"type": "array", "items": {"type": "string"}},
+    "missing_required": {"type": "array", "items": {"type": "string"}},
+    "fields": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["value", "status", "source_method", "provenance", "observed_at"],
+        "properties": {
+          "value": {},
+          "status": {"const": "OBSERVED"},
+          "source_method": {"enum": ["POST", "GET"]},
+          "provenance": {"enum": ["HOST_POST", "VERIFIED_GET"]},
+          "observed_at": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "unavailable": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["status", "reason", "source_method", "observed_at"],
+        "properties": {
+          "status": {"const": "UNAVAILABLE"},
+          "reason": {"type": "string", "minLength": 1},
+          "source_method": {"const": "POST"},
+          "observed_at": {"type": "string"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "observed_at": {"type": "string"},
+    "source_summary": {
+      "type": "object",
+      "required": ["post_field_count", "get_field_count"],
+      "properties": {
+        "post_field_count": {"type": "integer", "minimum": 0},
+        "get_field_count": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "invocation_authority_granted": {"const": false},
+    "mutation_authority_granted": {"const": false},
+    "entry_receipt": {"type": ["string", "null"]},
+    "context_digest": {"type": "string", "minLength": 64, "maxLength": 64}
+  }
+}

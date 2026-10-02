@@ -13,7 +13,7 @@ from gscc_function_exposure_gate import (
     evaluate_function_exposure,
     exposed_function_catalogue,
 )
-from gscc import InMemoryTransport, SessionEndpoint, instrument_tool
+from gscc import InMemoryTransport, SessionEndpoint, complete_entry_context, instrument_tool
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github" / "workflows" / "gscc-function-exposure-gate.yml"
@@ -69,6 +69,31 @@ class ExposureGateTests(unittest.TestCase):
             ]
         }
 
+        self.entry_context = complete_entry_context(
+            post_data={
+                "provider": "chatgpt",
+                "agent_identity": "conversation-agent",
+                "client_instance_id": "client-a",
+                "connection_ref": self.connection_ref,
+                "connection_method": "gscc-controlled-host-gateway",
+                "surface_class": "CONTROLLED_INSTRUMENTABLE",
+                "function_surface": ["github"],
+                "capabilities": {
+                    "functions": ["read_tool", "write_tool"],
+                    "control": ["COMMAND_RECEIVE", "COMMAND_ACK"],
+                },
+            },
+            get_data={
+                "repository": "owner/repo",
+                "repository_owner": "owner",
+                "repository_name": "repo",
+                "default_branch": "main",
+                "requested_ref": "main",
+                "observed_head_sha": self.head,
+            },
+            observed_at=self.now,
+        )
+
     def evidence(self, authority_class, *, preflight=None):
         value = {
             "authority_class": authority_class,
@@ -79,15 +104,28 @@ class ExposureGateTests(unittest.TestCase):
             value["live_preflight"] = preflight
         return value
 
-    def test_arrival_route_is_locked_until_function_validation(self):
-        route = build_arrival_route(
+    def test_arrival_route_stays_closed_until_entry_context_then_function_validation(self):
+        closed = build_arrival_route(
             repository="owner/repo",
             connection_ref=self.connection_ref,
             surface_class="GITHUB_EVENT_VISIBLE",
             observed_head=self.head,
         )
+        self.assertEqual(closed["status"], "LOCKED_PENDING_ENTRY_CONTEXT")
+        self.assertEqual(closed["first_stage"], "GSCC_ENTRY_CONTEXT")
+        self.assertFalse(closed["invocation_authority_granted"])
+
+        route = build_arrival_route(
+            repository="owner/repo",
+            connection_ref=self.connection_ref,
+            surface_class="GITHUB_EVENT_VISIBLE",
+            observed_head=self.head,
+            entry_context=self.entry_context,
+        )
         self.assertEqual(route["status"], "LOCKED_PENDING_FUNCTION_REQUEST")
         self.assertEqual(route["first_stage"], "GSCC_SESSION_BIND")
+        self.assertEqual(route["entry_context_status"], "VALIDATED")
+        self.assertIn("GSCC_ENTRY_CONTEXT", route["required_stages"])
         self.assertIn("FUNCTION_CONTRACT_MATCH", route["required_stages"])
         self.assertIn("AUTHORITY_VALIDATION", route["required_stages"])
         self.assertIn("EXPOSURE_RECEIPT", route["required_stages"])
@@ -100,6 +138,7 @@ class ExposureGateTests(unittest.TestCase):
             authority_evidence=None,
             snapshot=self.snapshot,
             sessions=self.sessions,
+            entry_context=self.entry_context,
             now=self.now,
         )
         self.assertEqual(denied["status"], "WITHHELD")
@@ -112,11 +151,27 @@ class ExposureGateTests(unittest.TestCase):
             authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
             snapshot=self.snapshot,
             sessions=self.sessions,
+            entry_context=self.entry_context,
             now=self.now,
         )
         self.assertEqual(allowed["status"], "VALIDATED")
         self.assertTrue(allowed["exposable"])
         self.assertTrue(allowed["exposure_receipt"].startswith("GSCC-EXPOSURE-"))
+
+    def test_function_exposure_is_withheld_without_open_entry_context(self):
+        denied = evaluate_function_exposure(
+            tool_name="read_tool",
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
+            snapshot=self.snapshot,
+            sessions=self.sessions,
+            entry_context=None,
+            now=self.now,
+        )
+        self.assertEqual(denied["status"], "WITHHELD")
+        self.assertEqual(denied["reason_code"], "GSCC_ENTRY_CONTEXT_REQUIRED")
+        self.assertFalse(denied["exposable"])
 
     def test_mutation_function_requires_authority_and_live_preflight(self):
         no_preflight = evaluate_function_exposure(
@@ -126,6 +181,7 @@ class ExposureGateTests(unittest.TestCase):
             authority_evidence=self.evidence("EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED"),
             snapshot=self.snapshot,
             sessions=self.sessions,
+            entry_context=self.entry_context,
             now=self.now,
         )
         self.assertEqual(no_preflight["status"], "WITHHELD")
@@ -141,6 +197,7 @@ class ExposureGateTests(unittest.TestCase):
             ),
             snapshot=self.snapshot,
             sessions=self.sessions,
+            entry_context=self.entry_context,
             now=self.now,
         )
         self.assertEqual(allowed["status"], "VALIDATED")
@@ -154,6 +211,7 @@ class ExposureGateTests(unittest.TestCase):
             authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
             snapshot=self.snapshot,
             sessions=self.sessions,
+            entry_context=self.entry_context,
             now=self.now,
         )
         self.assertEqual(wrong["status"], "DENIED")
@@ -166,6 +224,7 @@ class ExposureGateTests(unittest.TestCase):
             authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
             snapshot=self.snapshot,
             sessions=self.sessions,
+            entry_context=self.entry_context,
             now=self.now,
         )
         self.assertEqual(unknown["status"], "DENIED")
@@ -181,6 +240,7 @@ class ExposureGateTests(unittest.TestCase):
             authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
             snapshot=self.snapshot,
             sessions=bad,
+            entry_context=self.entry_context,
             now=self.now,
         )
         self.assertEqual(denied["reason_code"], "GSCC_BOUND_ACTIVE_SESSION_REQUIRED")
@@ -196,6 +256,7 @@ class ExposureGateTests(unittest.TestCase):
             authority_evidence_by_tool=evidence,
             snapshot=self.snapshot,
             sessions=self.sessions,
+            entry_context=self.entry_context,
             now=self.now,
         )
         self.assertEqual([x["name"] for x in result["functions"]], ["read_tool"])

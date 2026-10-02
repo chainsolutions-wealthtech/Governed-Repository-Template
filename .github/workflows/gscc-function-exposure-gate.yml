@@ -39,6 +39,15 @@ on:
         description: Stable GSCC connection reference
         required: true
         type: string
+      entry_post_json:
+        description: Safe host/provider POST JSON used to complete the GSCC entry schema
+        required: true
+        type: string
+      requested_ref:
+        description: Repository ref requested for governed entry
+        required: true
+        default: main
+        type: string
       tool_name:
         description: Canonical function/tool name requested for exposure
         required: true
@@ -158,11 +167,64 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.event.client_payload.observed_head || inputs.observed_head }}
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Verify the exact requested repository HEAD
+        shell: bash
+        env:
+          EXPECTED_HEAD: ${{ github.event.client_payload.observed_head || inputs.observed_head }}
+        run: |
+          set -euo pipefail
+          actual_head="$(git rev-parse HEAD)"
+          test "$actual_head" = "$EXPECTED_HEAD" || {
+            echo "::error::GSCC_ENTRY_HEAD_MISMATCH expected=$EXPECTED_HEAD actual=$actual_head"
+            exit 2
+          }
+
+      - name: Complete entry context from host POST plus verified repository GET facts
+        id: entry
+        shell: bash
+        env:
+          DISPATCH_POST_JSON: ${{ toJSON(github.event.client_payload.entry_post) }}
+          INPUT_POST_JSON: ${{ inputs.entry_post_json }}
+          REQUESTED_REF: ${{ github.event.client_payload.requested_ref || inputs.requested_ref || github.event.repository.default_branch }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          post_json="$INPUT_POST_JSON"
+          if [ "${{ github.event_name }}" = "repository_dispatch" ]; then
+            post_json="$DISPATCH_POST_JSON"
+          fi
+          actual_head="$(git rev-parse HEAD)"
+          python3 scripts/gscc_entry_context_gate.py \
+            --post-json "$post_json" \
+            --repository "${{ github.repository }}" \
+            --default-branch "$DEFAULT_BRANCH" \
+            --requested-ref "$REQUESTED_REF" \
+            --observed-head "$actual_head" \
+            --output "$RUNNER_TEMP/gscc-entry-context.json"
+
+      - name: Persist entry context evidence
+        if: ${{ always() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-function-entry-context-${{ github.run_id }}
+          path: ${{ runner.temp }}/gscc-entry-context.json
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Refuse function exposure while repository entry is closed
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ steps.entry.outputs.entry_open }}" = "true" || {
+            echo "::error::GSCC_ENTRY_CONTEXT_CLOSED missing=${{ steps.entry.outputs.missing_required }}"
+            exit 3
+          }
 
       - name: Evaluate exposure request through mandatory GSCC gate
         env:
@@ -193,6 +255,7 @@ jobs:
             --authority-evidence-ref "$AUTHORITY_EVIDENCE_REF" \
             "${authority_flag[@]}" \
             "${preflight_args[@]}" \
+            --entry-context "$RUNNER_TEMP/gscc-entry-context.json" \
             --output "$RUNNER_TEMP/gscc-exposure-receipt.json" \
             --require-validated
 
