@@ -472,3 +472,35 @@ The prepared Agent A -> stall -> Agent B harness remains
 Liveness/Progress worker surfaces are available. It is not the ultimate live
 Steps 13-24 proof.
 
+
+## GSCC Observable Arrival Gateway
+
+Canonical entry rule:
+
+```text
+OBSERVABLE GOVERNED REPOSITORY ARRIVAL
+→ GSCC
+→ SESSION_ATTACH / SESSION_RESUME semantics
+→ existing GACR auto-attach / Presence Fabric
+→ GSE / Correlator / WATCH / Forensics / Dispatcher
+```
+
+The additive gateway is implemented by:
+
+- `scripts/gscc_observable_arrival.py`;
+- `.github/workflows/gscc-observable-arrival.yml`;
+- canonical `scripts/gscc/session_endpoint.py`;
+- existing `GACRClientEmitterAdapter`;
+- existing `gacr_auto-attach` repository-dispatch path.
+
+The agent does not need to call GACR or know a GACR session ID. On a controlled host, the host supplies a stable `connection_ref` / `client_instance_id` at first touch. On GitHub-event-visible surfaces, the gateway derives only safe observable surface identity and emits a GSCC `SESSION_ATTACH`.
+
+GitHub `repository_dispatch` limits `client_payload` to ten top-level properties. The gateway therefore preserves extended safe arrival metadata inside one `arrival_context` object. `gacr_workflow_bridge.py` expands only an explicit allowlist before invoking the existing Presence Fabric. Secrets, raw prompts, transcripts, private reasoning and provider-private identifiers remain excluded.
+
+Loop guards prevent GACR state-persistence pushes, GACR/GSCC repository-dispatch traffic and `/gacr-host` transport comments from becoming new agent arrivals.
+
+A GitHub-visible event identifies an observable repository surface, not necessarily a provider conversation. Provider identity/reference remains unavailable unless a controlled provider host actually supplies it.
+
+`PROPRIETARY_SILENT` remains an explicit external boundary: repository code cannot trigger on a read for which neither GitHub nor a controlled gateway receives an event. Such silence must never be converted into synthetic presence.
+
+This gateway enables the missing Step 13B instrumented path, but its implementation or self-test is **not** fresh-provider acceptance evidence. Step 13B still requires a genuinely fresh agent after canonical integration.
