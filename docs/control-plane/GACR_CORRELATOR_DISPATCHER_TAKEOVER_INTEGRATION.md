@@ -26,28 +26,30 @@ Presence/Envelope and Liveness/Progress remain separately owned surfaces.
 Their future Worker APIs are integration dependencies, not implementations
 owned by this tranche.
 
-## Connection fingerprint
+## Connection fingerprint and ConnectionEnvelope integration
 
-The operational namespace is:
+Canonical ConnectionEnvelope construction and canonical fingerprint generation
+belong to Worker A / PR #128, not to this Correlator/Dispatcher tranche.
 
-    GACR-FP1-<sha256>
+Worker C consumes the following safe values when Worker A supplies them:
 
-The fingerprint is a versioned correlation key. It is not a provider
-conversation identifier and it never populates provider_conversation_ref.
+- connection_fingerprint;
+- connection_envelope_digest;
+- surface_class;
+- presence_event;
+- client_instance_id;
+- connection_ref;
+- the remaining safe envelope facts already projected through Beacon/session
+  state.
 
-The fingerprint builder uses allowlisted, frozen first-touch / connection
-facts: repository key, safe actor or installation key, client_instance_id,
-connection_ref, genuinely supplied provider ref when available, task/claim,
-branch/PR, first observed HEAD and a bounded first-touch time bucket.
+The fingerprint namespace is GACR-FP1, but Worker C treats the value as an
+opaque operational correlation key. It does not independently calculate a
+second fingerprint and never promotes the fingerprint into
+provider_conversation_ref.
 
-Current event HEAD and current observation timestamp are excluded so ordinary
-work progress does not manufacture a new operational identity. Insufficient
-stable entropy returns no fingerprint.
-
-Canonical exhaustive ConnectionEnvelope production remains owned by the
-Presence/Envelope tranche. This integration consumes a supplied fingerprint
-or derives one only from safe facts already available to the existing GACR
-session/Beacon path.
+Until Worker A is merged/reconciled, these values remain optional inputs.
+Their absence cannot be fabricated and correlation must fall back to other
+available evidence.
 
 ## Correlation rules
 
@@ -246,6 +248,30 @@ Correlator fixtures cover EXACT, STRONG, PROBABLE, AMBIGUOUS, UNKNOWN,
 multi-session same actor, same repository with different branches, different
 client_instance_id, missing provider ref, fingerprint match, conflicting
 provider evidence, terminal exclusion and unbound activity.
+
+## Shared Worker contracts
+
+Worker A / PR #128 owns Presence and ConnectionEnvelope APIs:
+
+- gacr_auto_attach.observe_presence();
+- gacr_auto_attach.build_connection_envelope();
+- gacr_auto_attach.bind_presence().
+
+Worker B / PR #127 owns Liveness/Progress/Session Context APIs:
+
+- gacr_agent_telemetry.worker_c_integration_projection();
+- gacr_agent_telemetry.interrogate_session();
+- gacr_agent_telemetry.session_signal_projection().
+
+The takeover package consumes Worker B's projection when that API exists and
+otherwise records LIVENESS_PROGRESS_CONTEXT_SHARED_INTEGRATION_REQUIRED.
+No duplicate liveness/progress computation is introduced here.
+
+Shared merge surfaces currently observed across PR #127/#128/#129 include
+scripts/gacr_agent_telemetry.py, schemas/gacr-telemetry.schema.json,
+schemas/session.schema.json, docs/GACR_AGENT_CONTINUITY_RELAY.md and
+.github/workflows/governance-ci.yml. These require deliberate post-Worker-A
+reconciliation rather than completion-order merging.
 
 ## Prepared E2E harness
 
