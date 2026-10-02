@@ -52,6 +52,34 @@ class GSESessionStateEngineTests(unittest.TestCase):
         self.assertEqual(twin["control_channel"]["state"], "REACHABLE")
         self.assertEqual(twin["timestamps"]["last_challenge_response_at"], "2026-10-02T04:01:00Z")
 
+    def test_replayed_challenge_does_not_refresh_liveness(self):
+        twin = self.attach()
+        twin = reduce_event(
+            twin,
+            ev(
+                "challenge-fresh",
+                "CHALLENGE_RESPONSE",
+                "2026-10-02T04:01:00Z",
+                delivery_state="ACKNOWLEDGED",
+                replay=False,
+                fresh_liveness=True,
+            ),
+        )
+        self.assertEqual(twin["timestamps"]["last_liveness_evidence_at"], "2026-10-02T04:01:00Z")
+        twin = reduce_event(
+            twin,
+            ev(
+                "challenge-replay",
+                "CHALLENGE_RESPONSE",
+                "2026-10-02T04:02:00Z",
+                delivery_state="ACKNOWLEDGED",
+                replay=True,
+                fresh_liveness=False,
+            ),
+        )
+        self.assertEqual(twin["timestamps"]["last_liveness_evidence_at"], "2026-10-02T04:01:00Z")
+        self.assertEqual(twin["control_channel"]["state"], "REACHABLE")
+
     def test_challenge_unsupported_is_not_unreachable(self):
         twin = reduce_event(self.attach(), ev("e-uns", "CHALLENGE_RESPONSE", "2026-10-02T04:01:00Z", delivery_state="UNSUPPORTED"))
         self.assertEqual(twin["control_channel"]["state"], "UNSUPPORTED")
