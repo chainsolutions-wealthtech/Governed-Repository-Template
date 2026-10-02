@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 65,
+  "revision": 66,
   "items": [
     {
       "correlation_id": "GACR-C-caffb7cb6efd",
@@ -91,7 +91,8 @@
         "session-8e5ee7cff3ff8c157a8aee43",
         "session-4b5c18f24029b172733b09b2",
         "session-418b0b7e0f7348a2c6f16199",
-        "session-e00ebd9473851afe1491889d"
+        "session-e00ebd9473851afe1491889d",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "MULTIPLE_PROBABLE_CANDIDATES"
@@ -178,9 +179,16 @@
           "reasons": [
             "BRANCH_MATCH"
           ]
+        },
+        {
+          "session_id": "session-eb7721a3624dcbe969419a9c",
+          "tier": "PROBABLE",
+          "reasons": [
+            "GITHUB_ACTOR_MATCH"
+          ]
         }
       ],
-      "evaluated_at": "2026-10-02T07:09:49+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-127716e672d9",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -196,7 +204,8 @@
           "session-8e5ee7cff3ff8c157a8aee43",
           "session-4b5c18f24029b172733b09b2",
           "session-418b0b7e0f7348a2c6f16199",
-          "session-e00ebd9473851afe1491889d"
+          "session-e00ebd9473851afe1491889d",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -868,7 +877,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -883,7 +893,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:03:14+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-db3ffdea8025",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -896,7 +906,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -918,7 +929,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -933,7 +945,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:03:14+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-503079ff3995",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -946,7 +958,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -968,7 +981,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -983,7 +997,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:03:14+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-00fdc16627ae",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -996,7 +1010,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1018,7 +1033,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1033,7 +1049,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:03:14+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-3c9acde53efe",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1046,7 +1062,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1068,7 +1085,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1083,7 +1101,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:03:14+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-8684747fafaa",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1096,7 +1114,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1118,7 +1137,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1133,7 +1153,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:03:14+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-6e481d10fed8",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1146,7 +1166,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1168,7 +1189,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1183,7 +1205,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:03:14+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-114b0abe6948",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1196,7 +1218,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1218,7 +1241,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1233,7 +1257,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:03:14+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-ba7261d1ddd0",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1246,7 +1270,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1268,7 +1293,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1283,7 +1309,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:03:14+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-27f10c1f781f",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1296,7 +1322,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1343,7 +1370,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1358,7 +1386,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:03:14+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-f84e1103b07b",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1371,7 +1399,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1393,7 +1422,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1408,7 +1438,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:03:14+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-5712cb804175",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1421,7 +1451,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1443,7 +1474,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1458,7 +1490,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:03:14+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-f448eda1ab07",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1471,7 +1503,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1535,7 +1568,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1550,7 +1584,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:03:14+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-d6079b2f5802",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1563,7 +1597,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1585,7 +1620,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1600,7 +1636,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:03:14+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-d4626a78c48b",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1613,7 +1649,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1635,7 +1672,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1650,7 +1688,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:03:14+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-51385b55ea38",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1663,7 +1701,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1685,7 +1724,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1700,7 +1740,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:03:14+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-c565d225ba90",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1713,7 +1753,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1735,7 +1776,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1750,7 +1792,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:03:50+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-7195cd01df2d",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1763,7 +1805,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1785,7 +1828,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1800,7 +1844,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:04:14+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-ded395826ad3",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1813,7 +1857,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1835,7 +1880,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1850,7 +1896,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:04:33+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-de7da4f8c70f",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1863,7 +1909,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1885,7 +1932,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1900,7 +1948,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:04:47+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-3a6e3beaf5a5",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1913,7 +1961,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1935,7 +1984,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -1950,7 +2000,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:05:10+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-73e210b4753b",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -1963,7 +2013,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -1985,7 +2036,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -2000,7 +2052,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:05:47+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-55f6a07be4d5",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -2013,7 +2065,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -2035,7 +2088,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -2050,7 +2104,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:06:06+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-bcfffc4cad1f",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -2063,7 +2117,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -2085,7 +2140,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -2100,7 +2156,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:06:32+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-c3f2069bfb24",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -2113,7 +2169,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -2135,7 +2192,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -2150,7 +2208,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:07:03+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-736fb2fc70a1",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -2163,7 +2221,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -2185,7 +2244,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -2200,7 +2260,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:07:58+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-5bbf61eb5ab7",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -2213,7 +2273,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -2235,7 +2296,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -2250,7 +2312,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:08:15+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-da7907ee5a15",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -2263,7 +2325,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -2285,7 +2348,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -2300,7 +2364,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:09:12+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-da1abf99dc38",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -2313,7 +2377,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -2335,7 +2400,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -2350,7 +2416,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:09:38+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-c2bf6461b6d9",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -2363,7 +2429,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -2427,7 +2494,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -2442,7 +2510,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:10:21+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-02bcda945937",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -2455,7 +2523,8 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -2477,7 +2546,8 @@
         "session-34e7d19d025442b07a4ad685",
         "session-418b0b7e0f7348a2c6f16199",
         "session-4b5c18f24029b172733b09b2",
-        "session-8e5ee7cff3ff8c157a8aee43"
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
       ],
       "reasons": [
         "CONFLICTING_EXPLICIT_ANCHORS"
@@ -2492,7 +2562,7 @@
       "provider_identity_inferred": false,
       "provider_conversation_ref": null,
       "evaluations": [],
-      "evaluated_at": "2026-10-02T07:12:01+00:00",
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-9766f70ca481",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -2505,7 +2575,60 @@
           "session-34e7d19d025442b07a4ad685",
           "session-418b0b7e0f7348a2c6f16199",
           "session-4b5c18f24029b172733b09b2",
-          "session-8e5ee7cff3ff8c157a8aee43"
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
+        ],
+        "correlation_level": "AMBIGUOUS",
+        "reasons": [
+          "CONFLICTING_EXPLICIT_ANCHORS"
+        ],
+        "status": "UNBOUND",
+        "reconciled_session_id": "UNAVAILABLE",
+        "reconciled_at": "UNAVAILABLE"
+      }
+    },
+    {
+      "correlation_id": "GACR-C-3d475b51c34f",
+      "beacon_id": "GACR-B-2369a4356dd8",
+      "level": "AMBIGUOUS",
+      "selected_session_id": null,
+      "candidate_session_ids": [
+        "session-02da2612b250e57ae361a588",
+        "session-255e3c082a24a718c4cf3da6",
+        "session-34e7d19d025442b07a4ad685",
+        "session-418b0b7e0f7348a2c6f16199",
+        "session-4b5c18f24029b172733b09b2",
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-eb7721a3624dcbe969419a9c"
+      ],
+      "reasons": [
+        "CONFLICTING_EXPLICIT_ANCHORS"
+      ],
+      "confidence": {
+        "rule_id": "AMBIGUOUS_EXPLICIT_ANCHOR_CONFLICT",
+        "class": "AMBIGUOUS",
+        "numeric_score": null,
+        "auto_bind_allowed": false
+      },
+      "binding_status": "UNBOUND_ACTIVITY",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-02T07:12:22+00:00",
+      "unbound_activity": {
+        "observation_id": "GACR-B-2369a4356dd8",
+        "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+        "observed_at": "2026-10-02T07:12:22+00:00",
+        "activity_class": "AUTO_ATTACH",
+        "safe_envelope_digest": "1e2c8cb7cb506f3cccc2cbf0094735e1a9133a3b8bbfba243403938a96228d9a",
+        "candidate_session_ids": [
+          "session-02da2612b250e57ae361a588",
+          "session-255e3c082a24a718c4cf3da6",
+          "session-34e7d19d025442b07a4ad685",
+          "session-418b0b7e0f7348a2c6f16199",
+          "session-4b5c18f24029b172733b09b2",
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-eb7721a3624dcbe969419a9c"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
