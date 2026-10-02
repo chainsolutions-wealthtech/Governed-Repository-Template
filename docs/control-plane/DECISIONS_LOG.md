@@ -380,3 +380,17 @@ Append-only durable decisions for the source/control-plane repository.
 - Safe GACR observability excludes cookies, tokens, secrets, raw transcript bodies and private reasoning.
 - GACR origin realignment may not be declared complete until the live ultimate acceptance scenario passes.
 - Registering this decision does not advance or replace `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+
+
+### CPD-058 — GACR has its own programme authority and preserves the original two-limit stop point
+
+- Date: 2026-10-02.
+- GACR is a distinct technical programme inside the repository; it is not a chronological sub-step of the global Control Plane programme.
+- Canonical GACR programme authority is `docs/control-plane/GACR_PROGRAM.md`.
+- Canonical historical-intent authority is `docs/control-plane/GACR_ORIGINAL_INTENT.md`.
+- The historical stop point records an operational GACR baseline followed by two external limits: richer automatic connection/session identification and actual relay/activation of compatible standby capacity.
+- The intended additive architecture is `BEACON → WATCH → CORRELATOR → DISPATCHER`, preserving the existing GACR core.
+- The original Connection Envelope, connection fingerprint, correlation confidence levels, optional Bridge/provider adapter, Agent Context and Dispatcher activation semantics are durable GACR requirements.
+- Provider conversation identity is never invented. Missing provider-private data remains unknown while repository/task/branch/PR/HEAD/claim/action/evidence continuity may still be known.
+- A global task such as `P12-S6` is not a functional dependency of GACR.
+- Owner sequencing remains explicit: finish GACR first; return to the global programme only after owner OK.
