@@ -2,7 +2,7 @@
   "schema": "gacr-origin-realignment-plan/v1",
   "authority": "CP-AGENT-RELAY-001",
   "plan_revision": "ORIGIN-REALIGNMENT-R1",
-  "status": "EXECUTION_IN_PROGRESS_G6_RECONCILIATION",
+  "status": "EXECUTION_IN_PROGRESS_STEP_13B_NEXT",
   "baseline": {
     "preserved_revisions": [
       "R1",
@@ -150,7 +150,7 @@
       "current_session_presence_first_live_proof": "PASS",
       "ultimate_live_acceptance": "NOT_PASSED",
       "post_attestation_audit": {
-        "status": "FINDINGS_CLOSED_G6_REAUTHORIZATION_PENDING",
+        "status": "CLOSED_PASS_PRE_STEP_13B",
         "observed_main_head": "8936a0f734d12cf5dbcd916c4d98fe4fef895aec",
         "evidence": "docs/control-plane/GACR_GSCC_GSE_INTEGRATION_AUDIT.md",
         "procedural_merge_deviation": "RECORDED_NON_BLOCKING",
@@ -159,7 +159,7 @@
       }
     },
     "step_13b": {
-      "status": "BLOCKED_PENDING_G6_REAUTHORIZATION",
+      "status": "NEXT_AUTHORIZED",
       "prerequisites": {
         "gscc_core": "PASS",
         "gse_session_state_engine": "PASS",
@@ -171,13 +171,12 @@
         "canonical_shared_contract": "PASS_PR147",
         "control_response_gse_projection": "PASS_PR149",
         "full_regression": "PASS",
-        "current_main_reobserved": "114c5397966a5c6ad7d8770298abd698929ecf8f"
+        "current_main_reobserved": "114c5397966a5c6ad7d8770298abd698929ecf8f",
+        "g6_reconciliation_ci": 36971795607
       },
       "fresh_provider_agent": "NOT_EXECUTED",
       "ultimate_live_acceptance": "NOT_PASSED",
-      "remediation_required": [
-        "REAUTHORIZE_STEP_13B_FROM_CURRENT_MAIN"
-      ]
+      "remediation_required": []
     },
     "g4": {
       "status": "CLOSED_PASS",
@@ -200,10 +199,13 @@
       "observed_main": "114c5397966a5c6ad7d8770298abd698929ecf8f"
     },
     "g6": {
-      "status": "IN_PROGRESS_RECONCILIATION",
+      "status": "PASS_REAUTHORIZED",
+      "pr": 150,
+      "observed_main": "114c5397966a5c6ad7d8770298abd698929ecf8f",
+      "reconciliation_ci": 36971795607,
       "audit_01": "CLOSED_PASS",
       "audit_02": "CLOSED_PASS",
-      "fresh_provider_agent": "NOT_EXECUTED"
+      "step_13b": "NEXT_AUTHORIZED"
     }
   }
 }
