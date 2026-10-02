@@ -742,3 +742,18 @@ P12-S5 therefore satisfies its exit gate without target-specific repair. No S1/d
 - Generic GACR R1-R5 is complete and ready for provider-host adapters wherever the host can invoke the emitter.
 - Current ChatGPT host still does not expose a persistent client-emitter process to this assistant; this is an external integration boundary, not silently promoted to PASS.
 - Stop before `P12-S6` and await explicit owner OK.
+
+## 2026-10-02 — GACR R6 provider-host issue bridge candidate
+
+- Owner requested automatic, real, proved provider-host integration from the current ChatGPT conversation.
+- Existing R5 limitation was revalidated: this host can write GitHub issues/comments but does not expose a persistent local client process or direct repository-dispatch action.
+- Dedicated source ingress issue `#115` created.
+- R6 uses GitHub `issue_comment` as a governed host transport into the existing GACR runtime.
+- New adapter: `scripts/gacr_host_issue_ingress.py`.
+- Supported events: attach, heartbeat, action trace, explicit interruption.
+- The adapter auto-resolves/attaches sessions, renews liveness, records safe telemetry, refreshes correlation/forensics and uses comment ID as idempotency evidence.
+- No transcript body, cookie, token, authorization header, password, private key or secret value is accepted.
+- No execution authority is granted.
+- Candidate branch: `governance/gacr-r6-host-issue-bridge`.
+- Required acceptance sequence: candidate CI → merge → real ChatGPT comment event → persisted state proof → no-duplication proof → final attestation.
+- `P12-S6` remains parked and unexecuted.

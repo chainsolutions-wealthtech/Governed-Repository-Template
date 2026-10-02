@@ -824,3 +824,19 @@ Cross-cutting status: `GENERIC_CORE_COMPLETE / R5_CORRECTION_LIVE_PROVEN / CI_PR
 - Generic GACR R1-R5 is complete as repository/runtime/client protocol.
 - Provider-host persistent-emitter activation remains a separate external integration boundary and is not falsely reported as live.
 - `P12-S6` remains unchanged and unexecuted pending explicit owner OK.
+
+## GACR R6 — provider-host issue bridge candidate
+
+Cross-cutting status: `IMPLEMENTED_PENDING_CI_AND_POST_MERGE_LIVE_PROOF`.
+
+- Authority: `CP-AGENT-RELAY-001-R6`.
+- Decision: `CPD-056`.
+- Baseline main: `6be9df3f614d178dde6811a66a18c933bf5e6198`.
+- Source ingress issue: `#115`.
+- Transport: GitHub `issue_comment` with exact `/gacr-host ` prefix.
+- Adapter: `scripts/gacr_host_issue_ingress.py`.
+- Safety: allowlisted fields/actors/issue only; no transcripts or secrets; comment-ID idempotency; no execution authority.
+- Existing GACR R1-R5 semantics remain authoritative.
+- Client distribution is included through the governed upgrader.
+- Acceptance requires Governance CI PASS, merge, then a real event emitted from the current ChatGPT conversation proving lease renewal + ACTION_TRACE + EXACT correlation + forensics without session duplication.
+- Global programme action `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` remains unchanged and is not executed by this integration slice.

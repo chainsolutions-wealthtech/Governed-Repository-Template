@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.4.1",
+  "schema_version": "1.5.0",
   "process_name": "GACR",
   "process_title": "Governed Agent Continuity Relay",
   "authority_id": "CP-AGENT-RELAY-001",
@@ -74,11 +74,13 @@
     "can_capture_client_instance_id": true,
     "can_receive_dispatch_offer": true,
     "outbound_browser_wakeup_implemented": false,
-    "note": "Repository-side GACR can prepare and target wake events. A provider/client bridge is still required to wake a browser conversation.",
+    "note": "Repository-side GACR can prepare and target wake events. R6 adds a GitHub issue-comment ingress for provider hosts that cannot call repository_dispatch directly; provider browser wake remains a separate capability.",
     "client_emitter_implemented": true,
-    "client_emitter_wake_polling": true
+    "client_emitter_wake_polling": true,
+    "chatgpt_issue_bridge_implemented": true,
+    "chatgpt_issue_bridge_live_proven": false
   },
-  "revision_authority_id": "CP-AGENT-RELAY-001-R5",
+  "revision_authority_id": "CP-AGENT-RELAY-001-R6",
   "forensics": {
     "enabled": true,
     "projection_only": true,
@@ -141,5 +143,35 @@
     "wake_poll_may_accept_takeover": false,
     "takeover_requires_exact_head_reconciliation": true,
     "note": "Provider/host adapters may use the client emitter SDK/CLI. The emitter transports safe metadata only and never grants mutation authority."
+  },
+  "host_issue_bridge": {
+    "enabled": true,
+    "authority_id": "CP-AGENT-RELAY-001-R6",
+    "decision_id": "CPD-056",
+    "transport": "GITHUB_ISSUE_COMMENT",
+    "issue_number": 115,
+    "issue_title": "[GACR Host Bridge] Provider event ingress",
+    "comment_prefix": "/gacr-host ",
+    "event_schema": "gacr-host-event/v1",
+    "allowed_author_associations": [
+      "OWNER",
+      "MEMBER",
+      "COLLABORATOR"
+    ],
+    "max_payload_chars": 8192,
+    "supported_events": [
+      "attach",
+      "heartbeat",
+      "action",
+      "interrupt"
+    ],
+    "auto_attach_before_event": true,
+    "auto_resolve_session": true,
+    "idempotency_key": "GITHUB_ISSUE_COMMENT_ID",
+    "provenance": "CLIENT_EMITTER",
+    "raw_transcript_persisted": false,
+    "secret_values_persisted": false,
+    "execution_authority_granted": false,
+    "live_proof_status": "PENDING_POST_MERGE"
   }
 }

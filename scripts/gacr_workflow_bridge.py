@@ -11,6 +11,7 @@ ROOT=Path(__file__).resolve().parents[1]
 CORE=ROOT/'scripts'/'governed_agent_continuity_relay.py'
 TELEMETRY=ROOT/'scripts'/'gacr_agent_telemetry.py'
 AUTO_ATTACH=ROOT/'scripts'/'gacr_auto_attach.py'
+HOST_INGRESS=ROOT/'scripts'/'gacr_host_issue_ingress.py'
 
 def add(args:list[str], flag:str, value):
     if value is None or value=='':
@@ -26,6 +27,19 @@ def main():
 
     payload={}
     command=None
+    if event_name=='issue_comment':
+        cp=subprocess.run([sys.executable,str(HOST_INGRESS)],cwd=ROOT,text=True,capture_output=True)
+        if cp.stdout:
+            print(cp.stdout,end='')
+        if cp.stderr:
+            print(cp.stderr,file=sys.stderr,end='')
+        if cp.returncode!=0:
+            raise SystemExit(cp.returncode)
+        output=os.environ.get('GITHUB_OUTPUT')
+        if output:
+            with open(output,'a',encoding='utf-8') as fh:
+                fh.write('command=host-issue-event\\n')
+        return
     if event_name=='schedule':
         command='scan'
     elif event_name=='push':

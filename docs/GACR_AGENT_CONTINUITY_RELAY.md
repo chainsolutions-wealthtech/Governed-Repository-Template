@@ -303,3 +303,39 @@ internal GACR workflow
 The erroneous historical transport session and Beacon remain preserved for auditability. The session is terminal/superseded and cannot participate in live correlation.
 
 GACR R1-R5 is therefore complete at the generic repository/runtime/client-protocol layer. Provider-host instrumentation is separately attested only when an actual host invokes the R5 emitter or an equivalent adapter.
+
+## R6 — Provider-host issue ingress
+
+Revision authority: `CP-AGENT-RELAY-001-R6`. Decision: `CPD-056`.
+
+R6 integrates provider hosts that cannot call `repository_dispatch` directly but can create GitHub issue comments. It does not replace the R5 client emitter; it is a transport adapter into the same GACR core.
+
+```text
+ChatGPT / Claude / provider host
+→ configured GitHub issue
+→ /gacr-host { safe JSON envelope }
+→ issue_comment workflow
+→ host ingress validator
+→ existing auto-attach / heartbeat / Beacon
+→ Correlator
+→ Interruption Forensics
+→ existing exact-HEAD / claim / takeover rules
+```
+
+The adapter is fail-closed:
+
+- only the configured issue is accepted;
+- only `OWNER / MEMBER / COLLABORATOR` comment associations are accepted;
+- only schema `gacr-host-event/v1` and allowlisted fields are accepted;
+- secret-like keys and transcript-like fields are rejected;
+- comment ID becomes the ingress evidence/idempotency key;
+- duplicate workflow delivery of the same comment is a no-op;
+- host telemetry grants no mutation authority.
+
+Supported events are `attach`, `heartbeat`, `action`, and explicitly observed `interrupt`.
+
+For `heartbeat` and `action`, the adapter renews the existing GACR lease. For `action`, it records the R5 `ACTION_TRACE` fields. Every accepted event refreshes correlation and forensics. If no active session matches, the adapter may auto-attach only when a stable client/provider/connection anchor is supplied.
+
+The dedicated source ingress issue is `#115`. Generated/adopted clients receive the adapter and configuration through the existing Template/upgrader path; each repository may configure its own ingress issue rather than inheriting source-project runtime history.
+
+Candidate status on this branch: `IMPLEMENTED_PENDING_CI_AND_POST_MERGE_LIVE_PROOF`.
