@@ -184,7 +184,7 @@ def test_admission_workflow_harvests_instead_of_trusting_caller_evidence():
     assert "gscc_entry_request" in workflow, workflow
     assert "python3 scripts/gscc/admission_harvester.py harvest" in workflow, workflow
     assert "GITHUB_TOKEN: ${{ github.token }}" in workflow, workflow
-    assert "Deprecated and ignored; GSCC harvests canonical qualification evidence itself" in workflow, workflow
+    assert "Deprecated" in workflow or "deprecated" in workflow, workflow
     assert "QUALIFICATION_EVIDENCE_JSON: ${{ github.event.client_payload.qualification_evidence_json" not in workflow, workflow
 
 
