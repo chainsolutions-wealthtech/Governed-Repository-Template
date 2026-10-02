@@ -20,11 +20,16 @@ from scripts.gscc_gacr.real_session_endpoint_adapter import GSCCSessionControlEn
 SESSION_ID = "session-e2e"
 REPOSITORY = "chainsolutions-wealthtech/Governed-Repository-Template"
 HEAD = "a" * 40
-T0 = "2026-10-02T05:00:00Z"
-T1 = "2026-10-02T05:01:00Z"
-T2 = "2026-10-02T05:02:00Z"
-T3 = "2026-10-02T05:03:00Z"
-T4 = "2026-10-02T05:04:00Z"
+BASE_NOW = datetime.now(timezone.utc).replace(microsecond=0)
+
+def _z(value: datetime) -> str:
+    return value.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+
+T0 = _z(BASE_NOW - timedelta(minutes=3))
+T1 = _z(BASE_NOW - timedelta(minutes=2))
+T2 = _z(BASE_NOW - timedelta(minutes=1))
+T3 = _z(BASE_NOW)
+T4 = _z(BASE_NOW + timedelta(seconds=1))
 
 
 class ManualClock:
