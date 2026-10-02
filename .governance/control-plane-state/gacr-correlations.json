@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 108,
+  "revision": 109,
   "items": [
     {
       "correlation_id": "GACR-C-caffb7cb6efd",
@@ -5085,6 +5085,62 @@
         "observed_at": "2026-10-02T08:01:56+00:00",
         "activity_class": "AUTO_ATTACH",
         "safe_envelope_digest": "c9bd909acac4100ae39702f68001bc6975c7bf0c16e2d7d2444155af82cbd16f",
+        "candidate_session_ids": [
+          "session-02da2612b250e57ae361a588",
+          "session-255e3c082a24a718c4cf3da6",
+          "session-34e7d19d025442b07a4ad685",
+          "session-418b0b7e0f7348a2c6f16199",
+          "session-4b5c18f24029b172733b09b2",
+          "session-8e5ee7cff3ff8c157a8aee43",
+          "session-9e8a4d0c1a166f860b59ae36",
+          "session-cd76928899c1f94723609799",
+          "session-eb7721a3624dcbe969419a9c"
+        ],
+        "correlation_level": "AMBIGUOUS",
+        "reasons": [
+          "CONFLICTING_EXPLICIT_ANCHORS"
+        ],
+        "status": "UNBOUND",
+        "reconciled_session_id": "UNAVAILABLE",
+        "reconciled_at": "UNAVAILABLE"
+      }
+    },
+    {
+      "correlation_id": "GACR-C-1392d3ad875a",
+      "beacon_id": "GACR-B-e313352afc6f",
+      "level": "AMBIGUOUS",
+      "selected_session_id": null,
+      "candidate_session_ids": [
+        "session-02da2612b250e57ae361a588",
+        "session-255e3c082a24a718c4cf3da6",
+        "session-34e7d19d025442b07a4ad685",
+        "session-418b0b7e0f7348a2c6f16199",
+        "session-4b5c18f24029b172733b09b2",
+        "session-8e5ee7cff3ff8c157a8aee43",
+        "session-9e8a4d0c1a166f860b59ae36",
+        "session-cd76928899c1f94723609799",
+        "session-eb7721a3624dcbe969419a9c"
+      ],
+      "reasons": [
+        "CONFLICTING_EXPLICIT_ANCHORS"
+      ],
+      "confidence": {
+        "rule_id": "AMBIGUOUS_EXPLICIT_ANCHOR_CONFLICT",
+        "class": "AMBIGUOUS",
+        "numeric_score": null,
+        "auto_bind_allowed": false
+      },
+      "binding_status": "UNBOUND_ACTIVITY",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-02T08:02:26+00:00",
+      "unbound_activity": {
+        "observation_id": "GACR-B-e313352afc6f",
+        "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+        "observed_at": "2026-10-02T08:02:26+00:00",
+        "activity_class": "AUTO_ATTACH",
+        "safe_envelope_digest": "7d802f8a71be615b53ca34f3b6cc16e74630d0c8e97a71fdf22c0efc2c976eda",
         "candidate_session_ids": [
           "session-02da2612b250e57ae361a588",
           "session-255e3c082a24a718c4cf3da6",
