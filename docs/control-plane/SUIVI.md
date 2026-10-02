@@ -1085,3 +1085,18 @@ These observations are durable supervision evidence, not new mutation authority 
 - Status remains candidate until merge + post-merge attestation. No real provider admission request has yet passed on canonical `main`.
 - Step 13B remains NOT_EXECUTED. Global `P12-S6` remains untouched.
 
+## 2026-10-02 — GSCC Admission / Access Gate post-merge integration attested
+
+- PR #159 merged at `56c48aafbe00a50b47ad2189f4ab3645b937c82f`.
+- Post-merge Governance CI `37002783058 = SUCCESS`.
+- Post-merge GSCC Observable Arrival Gateway `37002783052 = SUCCESS`.
+- Post-merge GSCC Function Exposure Gate `37002783152 = SUCCESS`.
+- Post-merge GSCC Function Route Selftest `37002783428 = SUCCESS`.
+- Post-merge GACR Relay push `37002783111 = SUCCESS`.
+- Post-merge GACR Relay repository-dispatch `37002796444 = SUCCESS`.
+- Admission/access gate is now integrated and regression-green on canonical main.
+- Existing Observable Arrival Gateway and existing Function Exposure Gate remain preserved.
+- No real provider admission request has yet been executed through the new gate.
+- Unique GACR next action becomes `GSCC_ADMISSION_GATE_RUN_LIVE_REQUEST`.
+- Step 13B remains NOT_EXECUTED and ultimate live acceptance remains NOT_PASSED.
+- Global `P12-S6` remains untouched.
