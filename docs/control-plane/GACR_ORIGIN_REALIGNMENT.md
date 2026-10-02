@@ -224,3 +224,19 @@ Rules:
 - all GACR mutation still follows repository governance, exact-HEAD and CI requirements;
 - the presence-first invariants in this document must be read before any further GACR revision is designed.
 
+
+
+## 2026-10-02 — Execution attestation through Step 12
+
+Status: **STEPS 4–12 CLOSED / STEP 13 NEXT / ULTIMATE LIVE ACCEPTANCE NOT YET PASSED**.
+
+Integrated evidence:
+
+- Worker A / Presence Fabric / ConnectionEnvelope / fingerprint: PR #128 merged at `657281ecbcc2d9fd542be464755a1fd42cb16933`; post-merge Governance CI `36961123649 = PASS`; Relay `36961123642 = PASS`.
+- Worker B / Liveness / Progress / Agent Context / UNBOUND_ACTIVITY: integration PR #132 merged at `678d67851ba0021b9ceee27b29d8d2cac4a5c715`; post-merge Governance CI `36961513517 = PASS`; Relay `36961513436 = PASS`.
+- Worker C / categorical Correlator / Dispatcher / Takeover package: integration PR #133 merged at `94c7baeefa76ce9e909d76a62fd27b3af0c00fd9`; post-merge Governance CI `36961935777 = PASS`; Relay `36961935794 = PASS`.
+- Post-merge runtime-state head: `a27893681c8e90e5d225dae23d15df5cc4b93d29`.
+- Live integrated session evidence: the canonical conversation session now carries `GACR_PRESENCE_FIRST`, a stable `GACR-FP1-...` fingerprint, `surface_class = CONTROLLED_INSTRUMENTABLE`, and `gacr-connection-envelope/v1` with field-by-field provenance.
+- Historical R1–R6 regression suites plus Tests A/B/C, D/E/F/G and the Correlator/Dispatcher/Takeover integration suite all pass together.
+
+The current live session cannot satisfy Step 13 because it is not a fresh GACR-unaware agent. No claim of ultimate acceptance is made. The next authorized operation is Step 13: run a real fresh conversation/agent without instructing it to register with GACR.
