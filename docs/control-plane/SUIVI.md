@@ -895,3 +895,21 @@ Integration supervision rule for this tranche:
 - do not declare GACR complete until the fresh-agent → stall → second-agent exact-HEAD takeover → continuation live scenario passes.
 
 These observations are durable supervision evidence, not new mutation authority and not a replacement for GACR sessions, claims, checkpoints, handoffs or canonical programme authorities.
+
+
+## 2026-10-02 — GACR Presence/Liveness/Dispatcher integration complete through Step 12
+
+- Parallel implementation workers A/B/C completed their local tranches with GREEN CI.
+- Worker A PR #128 was integrated first; post-merge Governance CI and Relay PASS.
+- Worker B could not be merged directly after A because shared files conflicted; a controlled A+B integration branch preserved both Presence and Liveness/Progress contracts. PR #132 merged GREEN.
+- Worker C was then reconciled over canonical A+B. The merged runtime preserves B session-signal/Agent Context/UNBOUND semantics while adding C categorical correlation, standby compatibility, takeover package and Dispatcher behavior. PR #133 merged GREEN.
+- Final post-merge Governance CI `36961935777`: PASS.
+- Final post-merge GACR Relay `36961935794`: PASS.
+- Runtime-state commit `a27893681c8e90e5d225dae23d15df5cc4b93d29` proves live Presence-First enrichment of the canonical current session.
+- Session now includes `GACR_PRESENCE_FIRST`, `connection_fingerprint`, `presence_anchor`, `surface_class`, `connection_method`, `github_actor` and full provenance-bearing `ConnectionEnvelope`.
+- Existing provider conversation reference remains `UNAVAILABLE`; it was not invented.
+- Old parallel PRs #127 and #129 plus intermediate PR #131 were closed as superseded after canonical integration.
+- The earlier PR-comment soft-wake experiment proved that a durable GitHub signal does not itself wake a browser/provider conversation; addressable wake still requires a session-bound client/provider/bridge channel.
+- GACR origin realignment is not complete. Steps 4–12 are closed; Step 13 fresh-agent live proof is next.
+- `P12-S6`, CASE 1 and GMC remain unchanged.
+- Relational projection for the detailed GACR step ledger remains `PENDING_PROJECTION_NO_DEDICATED_GACR_REALIGNMENT_STEP_TABLE`.

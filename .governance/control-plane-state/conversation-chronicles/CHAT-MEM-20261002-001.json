@@ -13,14 +13,14 @@
   "counters": {
     "next_user_message": 2,
     "next_assistant_message": 3,
-    "next_tool_event": 6,
+    "next_tool_event": 7,
     "next_decision_event": 7,
     "next_constraint_event": 7,
-    "next_action_event": 5,
+    "next_action_event": 6,
     "next_error_event": 1,
     "next_recovery_event": 5,
-    "next_checkpoint": 6,
-    "next_cache": 6,
+    "next_checkpoint": 7,
+    "next_cache": 7,
     "next_open_loop": 4,
     "next_artifact": 2,
     "next_session": 3
@@ -31,42 +31,25 @@
     "previous_hash": "8b45efbe51e0e9fbf26883ae2a6ee65c7975e7c782bc5c708c4ea06363db5e97"
   },
   "current_session": "SESSION-000002",
-  "current_checkpoint": "CHK-000005",
-  "current_cache": "CACHE-000005",
+  "current_checkpoint": "CHK-000006",
+  "current_cache": "CACHE-000006",
   "open_loops": [
     "OPEN-000002",
     "OPEN-000003"
   ],
-  "current_topic": "GACR three-worker implementation supervision",
-  "point_of_stop": "Three GACR implementation PRs are active. Repository activity is observable, while automatic per-worker GACR Presence/Liveness/Progress session tracking remains under implementation.",
-  "next_safe_action": "Reobserve PRs 127/128/129 and their CI; reconcile shared governance-ci.yml changes and dependent runtime contracts before integration. Keep P12-S6/CASE/GMC unchanged.",
+  "current_topic": "GACR realignment Step 13 fresh-agent live proof",
+  "point_of_stop": "Steps 4-12 are integrated and green; the current GACR-aware session is live-enriched but is not a valid fresh-agent fixture.",
+  "next_safe_action": "Run Step 13 with a genuinely fresh agent/conversation that is not told to register with GACR; observe first-touch Presence automatically, then continue Steps 14-24.",
   "external_state_observed": {
     "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
     "branch": "main",
-    "head": "652d7e3385c7efa05ee7b085adf22e4574485db5",
-    "observed_at": "2026-10-02T05:12:50+02:00",
+    "head": "a27893681c8e90e5d225dae23d15df5cc4b93d29",
+    "observed_at": "2026-10-02T05:54:06+02:00",
     "precision": "second",
     "freshness": "OBSERVED_AT",
-    "workers": [
-      {
-        "role": "PRESENCE_CONNECTION_ENVELOPE",
-        "branch": "governance/gacr-presence-envelope-runtime",
-        "pull_request": 128,
-        "head": "0cac225524d1cdd0f405cf9371fb3d1a8d2a74f6"
-      },
-      {
-        "role": "LIVENESS_PROGRESS_SESSION_CONTEXT",
-        "branch": "governance/gacr-liveness-progress-context",
-        "pull_request": 127,
-        "head": "84ee4998f4ec8d38db89a3c1c974505523d404cd"
-      },
-      {
-        "role": "CORRELATOR_DISPATCHER_TAKEOVER",
-        "branch": "governance/gacr-correlator-dispatcher-integration",
-        "pull_request": 129,
-        "head": "ead8953c3b1d5706b79675a983905e166d855d73"
-      }
-    ]
+    "gacr_steps_closed": "1-12",
+    "gacr_next_step": 13,
+    "ultimate_live_acceptance": "NOT_PASSED"
   },
   "attachment_artifacts": [
     {
@@ -145,7 +128,7 @@
     "premerge_ci_result": "PASS"
   },
   "supervision_state": {
-    "status": "ACTIVE",
+    "status": "INTEGRATION_COMPLETE_STEP_13_NEXT",
     "programme": "GACR",
     "global_programme_progression": "UNCHANGED",
     "workers": [
@@ -176,6 +159,20 @@
       "github_actor alone is not a unique session identity",
       "Git/PR evidence is insufficient for continuous liveness between events",
       "GACR-aware implementation workers are not the final fresh-agent acceptance proof"
-    ]
+    ],
+    "integrated_prs": [
+      128,
+      132,
+      133
+    ],
+    "superseded_closed_prs": [
+      127,
+      129,
+      131
+    ],
+    "final_governance_ci": 36961935777,
+    "final_relay_run": 36961935794,
+    "current_session_presence_first": "PASS",
+    "ultimate_fresh_agent_acceptance": "NOT_EXECUTED"
   }
 }

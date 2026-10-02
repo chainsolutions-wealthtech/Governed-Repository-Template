@@ -2,7 +2,7 @@
   "schema": "gacr-origin-realignment-plan/v1",
   "authority": "CP-AGENT-RELAY-001",
   "plan_revision": "ORIGIN-REALIGNMENT-R1",
-  "status": "EXECUTION_IN_PROGRESS",
+  "status": "EXECUTION_IN_PROGRESS_STEP_13_NEXT",
   "baseline": {
     "preserved_revisions": [
       "R1",
@@ -84,7 +84,60 @@
       }
     },
     "step_4": {
-      "status": "NEXT_AUTHORIZED"
+      "status": "CLOSED",
+      "evidence": "docs/control-plane/GACR_PRESENCE_ACCEPTANCE_ARCHITECTURE.md",
+      "result": "PASS"
+    },
+    "step_5": {
+      "status": "CLOSED",
+      "evidence": "tests-first evidence in PRs 127/128/129",
+      "result": "PASS"
+    },
+    "step_6": {
+      "status": "CLOSED",
+      "evidence": "PR#128",
+      "result": "PASS"
+    },
+    "step_7": {
+      "status": "CLOSED",
+      "evidence": "PR#128 controlled access bridge",
+      "result": "PASS"
+    },
+    "step_8": {
+      "status": "CLOSED",
+      "evidence": "PR#128 Presence/ConnectionEnvelope evidence",
+      "result": "PASS"
+    },
+    "step_9": {
+      "status": "CLOSED",
+      "evidence": "PR#132",
+      "result": "PASS"
+    },
+    "step_10": {
+      "status": "CLOSED",
+      "evidence": "PR#132",
+      "result": "PASS"
+    },
+    "step_11": {
+      "status": "CLOSED",
+      "evidence": "PR#132",
+      "result": "PASS"
+    },
+    "step_12": {
+      "status": "CLOSED",
+      "evidence": "PR#133",
+      "result": "PASS"
+    },
+    "step_13": {
+      "status": "NEXT_AUTHORIZED",
+      "result": "NOT_EXECUTED"
+    },
+    "integration": {
+      "final_main_runtime_state_head": "a27893681c8e90e5d225dae23d15df5cc4b93d29",
+      "governance_ci": "PASS",
+      "relay": "PASS",
+      "current_session_presence_first_live_proof": "PASS",
+      "ultimate_live_acceptance": "NOT_PASSED"
     }
   }
 }
