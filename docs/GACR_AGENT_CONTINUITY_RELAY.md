@@ -365,3 +365,11 @@ Rules:
 - no provider conversation reference is invented;
 - a conflicting specific provider fails closed;
 - the provider-host adapter uses the existing auto-attach/register path rather than editing session state through a parallel mechanism.
+
+## R6 final live attestation
+
+R6 is live-proven with the current ChatGPT host using the governed issue-comment transport.
+
+The integration proves automatic processing of emitted host events, not an always-running browser daemon. When the host is actively handling governed work, it can emit safe events through the GitHub connector and GACR persists liveness/action context automatically. When no host process is running, no synthetic heartbeat is generated.
+
+The live proof preserves the core invariants: one canonical active session, no invented provider conversation ID, exact correlation, idempotent replay, exact-HEAD persistence guards, no claim/takeover bypass, and source/client runtime isolation.

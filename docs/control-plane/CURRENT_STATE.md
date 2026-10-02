@@ -883,3 +883,47 @@ R6-C corrects only this attribution gap:
 - host adapter reuses auto-attach/register semantics.
 
 Candidate Template version: `2.8.40`. Acceptance requires CI, merge, then a real ChatGPT-host event proving the canonical session changes from `other` to `chatgpt` with no new session.
+
+## GACR R6 final provider-host integration attestation
+
+Status: `LIVE_PROVEN / CI_PROVEN / INTEGRATED`.
+
+Authority: `CP-AGENT-RELAY-001-R6`. Decision: `CPD-056`. Template version: `2.8.40`.
+
+Validated live chain from the current ChatGPT conversation:
+
+```text
+ChatGPT host
+→ issue #115 /gacr-host event
+→ issue_comment workflow
+→ host ingress validator
+→ existing canonical GACR session
+→ heartbeat / ACTION_TRACE
+→ EXACT correlation
+→ Interruption Forensics
+→ exact-HEAD guarded state persistence
+```
+
+Evidence:
+- PR #116 / Governance CI `36947562102`: PASS.
+- START comment `5943461065` → state commit `69ccfc90c14f2fa02a264c765e31c49c64951635`.
+- START Beacon `GACR-B-ddc264dcf74e`; correlation `GACR-C-ea0f04b97de7 / EXACT`.
+- PR #117 / Governance CI `36947919754`: PASS.
+- COMPLETED comment `5943497457` → state commit `3d258e3c9fdfacd1232fb0a19448594ab452b47f`.
+- COMPLETED Beacon `GACR-B-e3e2cf52542f`; forensics shows no in-flight action and outcome PASS.
+- Exact rerun of run `36947989601`: `GACR_HOST_EVENT_ALREADY_PROCESSED` + `GACR_NO_STATE_CHANGE`; main unchanged; exactly one Beacon for that comment.
+- PR #118 / Governance CI `36948433046`: PASS; source issue number is no longer distributed to clients.
+- Portability heartbeat `5943559595` → state commit `371509ac60d1a63c0be7cee8ec8620346210d824`; EXACT correlation preserved.
+- PR #119 / Governance CI `36948711458`: PASS.
+- Provider enrichment heartbeat `5943592733` → state commit `46a4a3068f0eb28ec3dc1d141cbcf349542a3348`.
+- Canonical session remains `session-68c97d4bb1ef71c86444de12`, now `provider = chatgpt`.
+- Provider conversation reference remains `null / UNAVAILABLE`; no identifier was invented.
+- Total historical sessions remain 2 with exactly 1 active session.
+- Correlation remains `EXACT`; no active claim/takeover/dispatch was fabricated.
+
+Automation boundary:
+- event-driven provider-host integration is live-proven;
+- continuous background heartbeat while no host turn/process exists is **not** claimed because this ChatGPT host exposes no persistent daemon execution surface;
+- when a governed host action occurs, AGENTS/R6 require emission through the configured bridge without a human reminder.
+
+Global programme state is unchanged: `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` remains parked pending explicit owner OK.

@@ -650,6 +650,49 @@
       ],
       "proposals": [],
       "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE"
+    },
+    {
+      "activity_id": "AAL-20261002-GACR-R6-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "GACR_R6_PROVIDER_HOST_INTEGRATION",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "46a4a3068f0eb28ec3dc1d141cbcf349542a3348",
+      "objective": "Integrate this ChatGPT host into GACR through an automatic event-driven governed GitHub issue-comment transport and prove it live without duplicating the canonical session.",
+      "evidence_refs": [
+        "Template issue #115",
+        "Template PR #116",
+        "Governance CI 36947562102 PASS",
+        "R6 START comment 5943461065",
+        "R6 state commit 69ccfc90c14f2fa02a264c765e31c49c64951635",
+        "Beacon GACR-B-ddc264dcf74e",
+        "Correlation GACR-C-ea0f04b97de7 EXACT",
+        "Template PR #117",
+        "Governance CI 36947919754 PASS",
+        "R6 COMPLETED comment 5943497457",
+        "R6 completed state commit 3d258e3c9fdfacd1232fb0a19448594ab452b47f",
+        "Rerun 36947989601: GACR_HOST_EVENT_ALREADY_PROCESSED / GACR_NO_STATE_CHANGE",
+        "Template PR #118",
+        "Governance CI 36948433046 PASS",
+        "R6-B heartbeat comment 5943559595",
+        "R6-B state commit 371509ac60d1a63c0be7cee8ec8620346210d824",
+        "Template PR #119",
+        "Governance CI 36948711458 PASS",
+        "R6-C heartbeat comment 5943592733",
+        "R6-C state commit 46a4a3068f0eb28ec3dc1d141cbcf349542a3348",
+        "session-68c97d4bb1ef71c86444de12"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "Provider-host integration is live and event-driven through issue_comment.",
+        "Canonical session is preserved and now attributed to provider chatgpt.",
+        "Provider conversation reference remains unavailable because the host did not expose one.",
+        "Issue-comment reruns are idempotent against latest main and create no duplicate Beacon/state commit.",
+        "Template source issue #115 is repository-local and not distributed to clients.",
+        "Continuous background heartbeat is not claimed because this host exposes no persistent daemon surface.",
+        "P12-S6 remains unchanged and unexecuted pending explicit owner OK."
+      ],
+      "proposals": [],
+      "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE"
     }
   ]
 }

@@ -174,9 +174,25 @@
     "raw_transcript_persisted": false,
     "secret_values_persisted": false,
     "execution_authority_granted": false,
-    "live_proof_status": "PENDING_POST_MERGE",
+    "live_proof_status": "PASS_CHATGPT_EVENT_DRIVEN",
     "source_issue_number_distributed": false,
     "client_issue_strategy": "TITLE_FALLBACK_UNTIL_LOCAL_NUMBER_BOUND",
-    "repository_local_issue_identity": true
+    "repository_local_issue_identity": true,
+    "live_proof": {
+      "source_issue_number": 115,
+      "start_comment_id": 5943461065,
+      "start_state_commit": "69ccfc90c14f2fa02a264c765e31c49c64951635",
+      "completed_comment_id": 5943497457,
+      "completed_state_commit": "3d258e3c9fdfacd1232fb0a19448594ab452b47f",
+      "rerun_run_id": 36947989601,
+      "rerun_result": "GACR_HOST_EVENT_ALREADY_PROCESSED_GACR_NO_STATE_CHANGE",
+      "portability_comment_id": 5943559595,
+      "portability_state_commit": "371509ac60d1a63c0be7cee8ec8620346210d824",
+      "provider_enrichment_comment_id": 5943592733,
+      "provider_enrichment_state_commit": "46a4a3068f0eb28ec3dc1d141cbcf349542a3348",
+      "canonical_session_id": "session-68c97d4bb1ef71c86444de12",
+      "correlation": "EXACT",
+      "duplicate_active_session": false
+    }
   }
 }
