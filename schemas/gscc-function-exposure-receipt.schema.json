@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsolutions.example/schemas/gscc-function-exposure-receipt.schema.json",
+  "title": "GSCC Function Exposure Receipt",
+  "type": "object",
+  "required": [
+    "schema",
+    "tool_name",
+    "connection_ref",
+    "requested_head",
+    "status",
+    "exposable",
+    "mutation_authority_granted",
+    "route"
+  ],
+  "properties": {
+    "schema": {
+      "const": "gscc-function-exposure-receipt/v1"
+    },
+    "tool_name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "connection_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "requested_head": {
+      "type": ["string", "null"]
+    },
+    "session_id": {
+      "type": ["string", "null"]
+    },
+    "surface_class": {
+      "type": ["string", "null"]
+    },
+    "connection_method": {
+      "type": ["string", "null"]
+    },
+    "contract_digest": {
+      "type": ["string", "null"]
+    },
+    "surface": {
+      "type": ["string", "null"]
+    },
+    "authority_required": {
+      "type": ["string", "null"]
+    },
+    "status": {
+      "enum": ["VALIDATED", "WITHHELD", "DENIED"]
+    },
+    "reason_code": {
+      "type": "string"
+    },
+    "exposable": {
+      "type": "boolean"
+    },
+    "mutation_authority_granted": {
+      "const": false
+    },
+    "exposure_receipt": {
+      "type": "string",
+      "pattern": "^GSCC-EXPOSURE-[0-9a-f]{64}$"
+    },
+    "authority_evidence_ref": {
+      "type": "string"
+    },
+    "live_preflight_evidence_ref": {
+      "type": ["string", "null"]
+    },
+    "route": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      }
+    },
+    "evaluated_at": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}
