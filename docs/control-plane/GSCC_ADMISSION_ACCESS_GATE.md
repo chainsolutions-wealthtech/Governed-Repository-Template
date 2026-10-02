@@ -662,6 +662,8 @@ The currently authorized executable next actions remain governed by their existi
 
 Status: **CANDIDATE IMPLEMENTED / TESTS-FIRST / PENDING FULL CI AND INTEGRATION**.
 
+PR #163 is now ready for review; merge remains prohibited until the full branch CI and exact-main reconciliation are green.
+
 The post-merge review of PR #159 found that the admission specification was stronger than the qualification runtime: the workflow still accepted caller-supplied `qualification_evidence_json` for repository baseline, GACR session, capabilities, control state, GSE state and access policy.
 
 PR #163 adds one additive harvester rather than a second authority:
