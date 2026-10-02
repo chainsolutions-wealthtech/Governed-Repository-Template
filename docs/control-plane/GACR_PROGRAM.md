@@ -74,6 +74,32 @@ A procedural deviation is also recorded: Worker A and Worker B were merged befor
 
 No GACR step is rolled back. Step 13B remains `NOT_EXECUTED`. After G6, the owner introduced a stronger pre-exposure invariant: no governed function may be published or invoked before a GSCC exposure route is validated. PR #153 implements that additive gate. PR #153 is now merged and its post-merge CI, arrival-route workflow, observable-arrival gateway and GACR relay are green. Step 13B remains blocked only until one real governed function exposure request traverses the new evaluator and yields the expected fail-closed/VALIDATED behavior. This programme remains independent of `P12-S6`, CASE 1, GMC and the global Control Plane programme.
 
+
+
+### Existing arrival gateway preservation
+
+The owner clarified that the already-integrated GSCC Observable Arrival Gateway is part of the preserved baseline and must remain in place.
+
+The admission/access gate is layered around it as follows:
+
+```text
+controlled client/provider
+→ admission
+→ qualification / Access Grant
+→ existing controlled GSCC arrival
+→ SessionEndpoint / GACR auto-attach
+→ existing function exposure gate
+
+GitHub-event-visible arrival
+→ existing observable-arrival gateway
+→ presence/session evidence only
+→ admission still required
+→ qualification / Access Grant
+→ existing function exposure gate
+```
+
+Observable arrival never equals access authority. No admission implementation may remove or duplicate the existing arrival gateway.
+
 ## Completion condition
 
 GACR may be declared origin-realigned only after the live acceptance scenario proves:
@@ -239,4 +265,3 @@ Current GACR next action:
 Step 13B remains `NOT_EXECUTED` and blocked until the admission/access gate is implemented, regression-tested and attested from then-current `main`. After that, the real function-exposure request remains a required downstream live proof.
 
 This is GACR/GSCC cross-cutting hardening only. It does not execute or replace `P12-S6`, CASE 1, GMC or the global Control Plane programme.
-
