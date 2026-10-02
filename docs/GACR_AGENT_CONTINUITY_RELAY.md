@@ -455,3 +455,20 @@ reconciled_at
 This tranche does not own Presence Fabric / ConnectionEnvelope creation and does not expand Dispatcher routing. Until the parallel Presence/ConnectionEnvelope API is merged, the integration state is `SHARED_INTEGRATION_REQUIRED`.
 
 For downstream Correlator/Dispatcher work, `worker_c_integration_projection()` exposes liveness, progress, the three timestamps, UNBOUND_ACTIVITY, Agent Context, and takeover-eligibility inputs while leaving Dispatcher authority unchanged.
+
+## Correlator / Dispatcher / Takeover integration hardening
+
+The additive Correlator / Dispatcher / Takeover contract is defined in
+`docs/control-plane/GACR_CORRELATOR_DISPATCHER_TAKEOVER_INTEGRATION.md`.
+
+The hardened Correlator uses named categorical evidence rules; only `EXACT`
+and unique `STRONG` may select a session. Dispatcher compatibility reuses
+the existing sessions, claims, collision domains, work-item dependencies and
+exact-HEAD gate. Compatibility and wake preparation grant no mutation
+authority.
+
+The prepared Agent A -> stall -> Agent B harness remains
+`SHARED_INTEGRATION_REQUIRED` until separately-owned Presence/Envelope and
+Liveness/Progress worker surfaces are available. It is not the ultimate live
+Steps 13-24 proof.
+

@@ -183,6 +183,55 @@
             "UNBOUND_ACTIVITY",
             null
           ]
+        },
+        "connection_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "claim_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "github_actor": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "github_installation_id": {
+          "type": [
+            "integer",
+            "string",
+            "null"
+          ]
+        },
+        "github_workflow": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "github_run_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "github_run_attempt": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "github_job": {
+          "type": [
+            "string",
+            "null"
+          ]
         }
       },
       "additionalProperties": true
@@ -305,6 +354,62 @@
             }
           },
           "additionalProperties": true
+        },
+        "confidence": {
+          "type": "object",
+          "required": [
+            "rule_id",
+            "class",
+            "numeric_score",
+            "auto_bind_allowed"
+          ],
+          "properties": {
+            "rule_id": {
+              "type": "string"
+            },
+            "class": {
+              "enum": [
+                "EXACT",
+                "STRONG",
+                "PROBABLE",
+                "AMBIGUOUS",
+                "UNKNOWN"
+              ]
+            },
+            "numeric_score": {
+              "type": [
+                "number",
+                "null"
+              ],
+              "const": null
+            },
+            "auto_bind_allowed": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": true
+        },
+        "binding_status": {
+          "enum": [
+            "BOUND",
+            "UNBOUND_ACTIVITY"
+          ]
+        },
+        "provider_identity_inferred": {
+          "type": "boolean",
+          "const": false
+        },
+        "provider_conversation_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "evaluations": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
         }
       },
       "additionalProperties": true
@@ -351,6 +456,18 @@
         },
         "created_at": {
           "type": "string"
+        },
+        "compatibility": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "takeover_package": {
+          "type": [
+            "object",
+            "null"
+          ]
         }
       },
       "additionalProperties": true

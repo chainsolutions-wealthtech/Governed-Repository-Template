@@ -239,7 +239,8 @@
         "string",
         "null"
       ],
-      "pattern": "^GACR-FP1-[0-9a-f]{64}$"
+      "pattern": "^GACR-FP1-[0-9a-f]{64}$",
+      "description": "Versioned operational correlation key; never a provider conversation identifier."
     },
     "connection_fingerprint_version": {
       "type": [
@@ -338,6 +339,13 @@
         }
       },
       "additionalProperties": false
+    },
+    "github_installation_id": {
+      "type": [
+        "integer",
+        "string",
+        "null"
+      ]
     }
   },
   "additionalProperties": false
