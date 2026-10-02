@@ -178,7 +178,10 @@ def reduce_event(previous,event,reference_time=None,policy=None):
             n=t["control_channel"].get("consecutive_no_response",0)+1; t["control_channel"]=_dim("UNREACHABLE" if n>=p.control_unreachable_after_no_response else "DEGRADED","OBSERVED",at,consecutive_no_response=n)
         elif state in {"ACKNOWLEDGED","EXECUTING","COMPLETED","DELIVERED"}:
             t["control_channel"]=_dim("REACHABLE","OBSERVED",at,consecutive_no_response=0); ts["last_control_ack_at"]=_newer(ts["last_control_ack_at"],at)
-            if typ=="CHALLENGE_RESPONSE":ts["last_challenge_response_at"]=_newer(ts["last_challenge_response_at"],at); ts["last_liveness_evidence_at"]=_newer(ts["last_liveness_evidence_at"],at)
+            if typ=="CHALLENGE_RESPONSE":
+                ts["last_challenge_response_at"]=_newer(ts["last_challenge_response_at"],at)
+                if payload.get("replay") is not True and payload.get("fresh_liveness") is not False:
+                    ts["last_liveness_evidence_at"]=_newer(ts["last_liveness_evidence_at"],at)
     return evaluate_at(t,reference_time or at,p)
 
 def project(events,reference_time=None,session_id=None,policy=None):
