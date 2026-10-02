@@ -151,3 +151,28 @@ python3 scripts/gacr_client_emitter.py trace --repository "<owner/repo>" --sessi
 Only explicitly observed interruption signals may be emitted. Silence alone remains a WATCH/FORENSICS observation, never a fabricated failure cause.
 
 Wake polling can surface a takeover offer but does not accept it. Exact-HEAD reconciliation and the existing claim/authority gates remain mandatory.
+
+## GACR R6 provider-host issue bridge
+
+When a provider host cannot invoke GitHub `repository_dispatch` directly but can create GitHub issue comments, the configured GACR host issue is the governed fallback transport.
+
+For this Template source, the configured ingress is issue `#115`. Read `.governance/agent-relay/config.json` rather than hard-coding that number in reusable client logic.
+
+A host event uses one JSON object after the exact prefix `/gacr-host `:
+
+```text
+/gacr-host {"schema":"gacr-host-event/v1","event":"action","connection_ref":"<stable-connection-ref>","client_instance_id":"<stable-client-instance>","provider":"chatgpt","action_id":"<opaque-id>","action_label":"<safe-label>","action_phase":"STARTED","tool_name":"<safe-tool-name>","tool_call_id":"<opaque-call-id>","observed_head":"<sha>"}
+```
+
+Required behavior for hosts using this fallback:
+
+- emit an `attach`, `heartbeat`, `action`, or explicitly observed `interrupt` event without waiting for a human reminder;
+- reuse the same `connection_ref` / `client_instance_id` for the same conversation/client instance;
+- use provider references only when actually available;
+- never include transcript bodies, prompts, responses, cookies, authorization headers, tokens, passwords, private keys or secret values;
+- treat the GitHub comment ID as the immutable ingress evidence/idempotency key;
+- do not infer interruption causes from silence;
+- do not treat host telemetry as execution authority;
+- after a stalled/takeover state, obey the existing exact-HEAD reconciliation path instead of using the bridge to bypass takeover safety.
+
+The bridge auto-attaches or resolves the GACR session, renews the lease for heartbeat/action events, records a safe Beacon, refreshes Correlator and Interruption Forensics, and persists state through the existing GACR workflow.
