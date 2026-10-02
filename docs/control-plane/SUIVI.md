@@ -757,3 +757,18 @@ P12-S5 therefore satisfies its exit gate without target-specific repair. No S1/d
 - Candidate branch: `governance/gacr-r6-host-issue-bridge`.
 - Required acceptance sequence: candidate CI → merge → real ChatGPT comment event → persisted state proof → no-duplication proof → final attestation.
 - `P12-S6` remains parked and unexecuted.
+
+## 2026-10-02 — GACR R6 first live proof and R6-A rerun hardening
+
+First live ChatGPT-host event:
+- issue #115 comment `5943461065`;
+- source event: `issue_comment`;
+- state commit: `69ccfc90c14f2fa02a264c765e31c49c64951635`;
+- existing session resolved automatically: `session-68c97d4bb1ef71c86444de12`;
+- lease renewed to `2026-10-02T01:16:41+00:00`;
+- ACTION_TRACE Beacon: `GACR-B-ddc264dcf74e`;
+- correlation: `EXACT`;
+- forensics: current session active, action in-flight, exact-head reobservation still required before replay;
+- total historical sessions remained 2 with exactly 1 active session.
+
+Before final attestation, rerun semantics were hardened: issue-comment reruns now reconcile to latest default-branch state before idempotency evaluation. Candidate R6-A branch: `governance/gacr-r6a-rerun-idempotence`.
