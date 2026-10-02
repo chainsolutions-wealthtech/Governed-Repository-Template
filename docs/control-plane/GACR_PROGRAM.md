@@ -54,16 +54,25 @@ Current GACR programme state:
 - `ORIGINAL_INTENT`: CANONICAL / RECORDED.
 - `R1-R6_BASELINE`: PRESERVED / REOBSERVED / ATTESTED (`GACR-OR-01 = PASS`).
 - `ORIGIN_REALIGNMENT_PLAN`: ACCEPTED.
-- `REALIGNMENT_EXECUTION`: STEPS 1-12 CLOSED; STEP 13 NEXT; overall realignment NOT COMPLETE.
+- `REALIGNMENT_EXECUTION`: STEPS 1-12 CLOSED; STEP 13 IN PROGRESS; PRE-13B INTEGRATION REMEDIATION REQUIRED.
 - `ULTIMATE_LIVE_ACCEPTANCE`: NOT YET PASSED.
 
 ## GACR next action
 
-`REALIGNMENT_STEP_13_RUN_REAL_FRESH_AGENT_TEST`
+`GACR_PRE_13B_CLOSE_INTEGRATION_AUDIT_FINDINGS`
 
-This is the GACR programme next gate only. It does not replace or modify the global programme next action and has no dependency on `P12-S6`.
+Step 13B remains the next live acceptance gate, but its execution is temporarily blocked until the two bounded post-integration findings in `docs/control-plane/GACR_GSCC_GSE_INTEGRATION_AUDIT.md` are closed and re-attested from the then-current `main`.
 
-Steps 1-3 remain closed by the baseline, original-intent revalidation and gap-matrix authorities. Steps 4-12 are now implemented and integrated through the tests-first Presence/Liveness/Correlator tranches: Worker A PR #128, Worker B integration PR #132 and Worker C integration PR #133. Candidate and post-merge Governance CI are GREEN, and the post-merge GACR Relay is GREEN. The integrated runtime has live-enriched the current canonical session with `GACR_PRESENCE_FIRST`, a stable `connection_fingerprint` and a provenance-bearing `ConnectionEnvelope`. This live proof is not the ultimate fresh-agent acceptance because the current conversation is GACR-aware. Step 13 is therefore the next gate.
+The GSCC Core, GSE Session State Engine and GSCC↔GACR bidirectional-control integration are functionally integrated and green. PR #142 post-merge Governance CI `36968203836` passed the GSCC, GSE, control-harness, combined E2E and historical GACR regression suites; Relay run `36968203882` also passed. PR #143 durably attested these prerequisites without claiming fresh-provider acceptance.
+
+A later canonical audit found two residual integration risks that must be closed before executing Step 13B:
+
+1. `scripts/gscc_gacr/contract.py` still duplicates shared GSCC protocol constants already canonical in `scripts/gscc/protocol.py`; the integration layer must consume the canonical GSCC authority rather than maintain a second evolving copy.
+2. The combined E2E proves `COMMAND_ACK` and `CHALLENGE_RESPONSE` projection into GSE, but the STATUS / PROGRESS / CONTEXT / CHECKPOINT control-response paths are not yet proven end-to-end through the canonical GSE input model.
+
+A procedural deviation is also recorded: Worker A and Worker B were merged before all three worker PRs remained open for one final integration audit, contrary to the worker prompts. This is non-blocking because the subsequent dependency-ordered integration, full green CI and controlled PR #142 contained the runtime risk, but it remains part of the durable audit record.
+
+No GACR step is rolled back. Step 13B is still `NOT_EXECUTED`; after the bounded remediation and full regression revalidation it may return to `NEXT_AUTHORIZED`. This programme remains independent of `P12-S6`, CASE 1, GMC and the global Control Plane programme.
 
 ## Completion condition
 
