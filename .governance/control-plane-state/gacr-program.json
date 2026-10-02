@@ -8,10 +8,10 @@
     "original_intent": "CANONICAL_RECORDED",
     "baseline_r1_r6": "PRESERVED_REOBSERVED_ATTESTED_OR01_PASS",
     "origin_realignment_plan": "ACCEPTED",
-    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13B_BLOCKED_PENDING_GSCC_ADMISSION_ACCESS_GATE",
+    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13B_BLOCKED_PENDING_GSCC_ADMISSION_ACCESS_GATE_POSTMERGE_ATTESTATION",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
-  "next_action": "GSCC_ADMISSION_ACCESS_GATE_IMPLEMENT_TESTS_FIRST",
+  "next_action": "GSCC_ADMISSION_ACCESS_GATE_MERGE_AND_POSTMERGE_ATTEST",
   "or01": {
     "status": "PASS",
     "attestation": "docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md",
@@ -160,12 +160,13 @@
   },
   "relational_projection": "PENDING_PROJECTION_NO_DEDICATED_GACR_REALIGNMENT_STEP_TABLE",
   "step_13b": {
-    "status": "BLOCKED_PENDING_GSCC_ADMISSION_ACCESS_GATE",
+    "status": "BLOCKED_PENDING_GSCC_ADMISSION_ACCESS_GATE_POSTMERGE_ATTESTATION",
     "requirement": "After the pre-Step-13B remediation is closed, run a genuinely fresh provider conversation/agent through the integrated GSCC/GSE/GACR path without telling it to register with GACR. Observe first-touch, SessionTwin, control challenge/wake capability and provider-bound evidence without inventing unavailable provider-private fields.",
     "fresh_provider_agent": "NOT_EXECUTED",
     "ultimate_live_acceptance": "NOT_PASSED",
     "remediation_required": [
-      "GSCC_ADMISSION_ACCESS_GATE_IMPLEMENT_AND_ATTEST",
+      "GSCC_ADMISSION_ACCESS_GATE_MERGE_AND_POSTMERGE_ATTEST",
+      "GSCC_ADMISSION_GATE_LIVE_REQUEST",
       "GSCC_FUNCTION_EXPOSURE_GATE_LIVE_FUNCTION_REQUEST"
     ]
   },
@@ -288,7 +289,7 @@
     "live_function_request_blocked_by": "GSCC_ADMISSION_ACCESS_GATE"
   },
   "gscc_admission_access_gate": {
-    "status": "SPECIFIED_NOT_IMPLEMENTED",
+    "status": "CANDIDATE_IMPLEMENTED_TESTED_PENDING_MERGE",
     "authority": "docs/control-plane/GSCC_ADMISSION_ACCESS_GATE.md",
     "decision": "CPD-061",
     "invariant": "IDENTITY_NE_ADMISSION_NE_PREAUTHORIZATION_NE_ACCESS_AUTHORIZATION_NE_FUNCTION_EXPOSURE_NE_MUTATION_AUTHORITY",
@@ -300,6 +301,32 @@
     "parallel_gate_authority_allowed": false,
     "blocks_live_function_exposure_request": true,
     "implementation_required": "TESTS_FIRST",
-    "global_programme_advanced": false
+    "global_programme_advanced": false,
+    "pr": 159,
+    "branch": "governance/gscc-admission-runtime",
+    "candidate_head": "3510d8118b22255e5b04f75c7547c8aab1246c68",
+    "script": "scripts/gscc/admission.py",
+    "workflow": ".github/workflows/gscc-admission-gate.yml",
+    "schemas": [
+      "schemas/gscc-admission-envelope.schema.json",
+      "schemas/gscc-admission-receipt.schema.json",
+      "schemas/gscc-access-grant.schema.json"
+    ],
+    "preserves_observable_arrival_gateway": true,
+    "admission_workflow_contents_permission": "read",
+    "tests_first": {
+      "admission_core_red": 37000902994,
+      "admission_core_green": 37001048628,
+      "access_grant_red": 37001183473,
+      "access_grant_green": 37001289277,
+      "function_gate_red": 37001452126,
+      "function_gate_green": 37001737386,
+      "workflow_red": 37001911592,
+      "final_candidate_governance_ci": 37002023347,
+      "final_candidate_arrival_gateway": 37002023374,
+      "final_candidate_function_gate": 37002023423
+    },
+    "postmerge_attestation": "PENDING",
+    "live_admission_request": "NOT_EXECUTED"
   }
 }
