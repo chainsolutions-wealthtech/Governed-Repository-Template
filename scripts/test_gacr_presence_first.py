@@ -94,6 +94,9 @@ def assert_true(value, message: str) -> None:
 
 
 def load_module():
+    scripts_dir = str(ROOT / "scripts")
+    if scripts_dir not in sys.path:
+        sys.path.insert(0, scripts_dir)
     spec = importlib.util.spec_from_file_location("gacr_auto_attach_presence_test", MODULE)
     if spec is None or spec.loader is None:
         raise AssertionError("unable to load gacr_auto_attach")
