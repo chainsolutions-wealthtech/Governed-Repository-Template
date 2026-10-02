@@ -111,6 +111,11 @@ def test_idempotent_replay_reuses_same_admission():
 
 
 
+def seal_qualification(value):
+    value.pop("harvest_digest", None)
+    return seal_qualification(value)
+
+
 def qualification(admission):
     value = {
         "schema": "gscc-qualification-evidence/v1",
@@ -167,6 +172,7 @@ def test_incomplete_qualification_cannot_issue_access_grant():
     admission = evaluate_admission(envelope(), store=InMemoryAdmissionStore(), now=NOW)
     evidence = qualification(admission)
     evidence["governance_read"] = {"status": "PENDING", "documents": []}
+    seal_qualification(evidence)
     result = evaluate_access_grant(admission, evidence, now=NOW)
     assert result["status"] == "QUALIFICATION_IN_PROGRESS", result
     assert "governance_read" in result["missing_qualification"], result
