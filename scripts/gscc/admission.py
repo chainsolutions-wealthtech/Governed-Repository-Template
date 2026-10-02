@@ -296,6 +296,26 @@ def evaluate_access_grant(
             "missing_qualification": sorted(QUALIFICATION_REQUIREMENTS),
         }
 
+    if (
+        qualification_evidence.get("schema") != "gscc-qualification-evidence/v1"
+        or qualification_evidence.get("harvested_by") != "GSCC_ADMISSION_HARVESTER"
+    ):
+        return {
+            **base,
+            "status": "ADMISSION_DENIED",
+            "reason_code": "QUALIFICATION_EVIDENCE_NOT_CANONICAL",
+        }
+
+    supplied_digest = qualification_evidence.get("harvest_digest")
+    digest_material = copy.deepcopy(qualification_evidence)
+    digest_material.pop("harvest_digest", None)
+    if not isinstance(supplied_digest, str) or supplied_digest != _canonical_digest(digest_material):
+        return {
+            **base,
+            "status": "ADMISSION_DENIED",
+            "reason_code": "QUALIFICATION_EVIDENCE_DIGEST_MISMATCH",
+        }
+
     forbidden = _forbidden_path(qualification_evidence)
     if forbidden:
         return {
