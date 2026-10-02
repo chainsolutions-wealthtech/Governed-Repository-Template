@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 29,
+  "revision": 30,
   "items": [
     {
       "beacon_id": "GACR-B-6e9a2275ea04",
@@ -2372,6 +2372,94 @@
       },
       "context_digest": "c2330072564240e135352399e0a279876e5e776ee908baade4cc20dc30a28e38",
       "dedupe_key": "eb663f30c98d35885f076a51f128cb14acea28f4af2104689f7899d8527ccf81"
+    },
+    {
+      "beacon_id": "GACR-B-79bc8355224f",
+      "observed_at": "2026-10-02T06:12:45+00:00",
+      "source": "CONVERSATION_CHRONICLE",
+      "event_type": "AUTO_ATTACH",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "session_id": "session-68c97d4bb1ef71c86444de12",
+      "provider": "chatgpt",
+      "provider_conversation_ref": null,
+      "client_instance_id": "chronicle:CHAT-MEM-20261002-001",
+      "connection_ref": "chronicle:CHAT-MEM-20261002-001:SESSION-000002",
+      "connection_fingerprint": "GACR-FP1-6953d84cbb38d4e568d303c99fbd9466bc10828dd03901b233c2dd1864e1dd0d",
+      "claim_id": null,
+      "connection_envelope_digest": "623e6db6d62fc804d7e0d25e93eb3001c25a96ccd1e8e5dba450d15cbba48e38",
+      "surface_class": "CONTROLLED_INSTRUMENTABLE",
+      "presence_event": "PRESENCE_RESUME",
+      "agent_identity": "conversation-agent",
+      "agent_role": null,
+      "capabilities": [
+        "GACR_AUTO_ATTACH",
+        "GACR_PRESENCE_FIRST"
+      ],
+      "task_id": null,
+      "branch": "main",
+      "pull_request": null,
+      "observed_head_sha": "889b34f64e32bc88ea6389ded2ac0fe302513c0d",
+      "action_id": null,
+      "action_label": null,
+      "action_phase": null,
+      "tool_name": null,
+      "tool_call_id": null,
+      "outcome": null,
+      "written_head_sha": null,
+      "checkpoint_ref": null,
+      "evidence_ref": null,
+      "interruption_code": null,
+      "github_actor": "Wealthtechinnovations",
+      "github_installation_id": null,
+      "github_workflow": "Governed Agent Continuity Relay",
+      "github_run_id": "36972462971",
+      "github_run_attempt": "1",
+      "github_job": "relay",
+      "github": {
+        "environment": {
+          "GITHUB_REPOSITORY": "chainsolutions-wealthtech/Governed-Repository-Template",
+          "GITHUB_REPOSITORY_ID": "1386478935",
+          "GITHUB_REPOSITORY_OWNER": "chainsolutions-wealthtech",
+          "GITHUB_REPOSITORY_OWNER_ID": "299685687",
+          "GITHUB_ACTOR": "Wealthtechinnovations",
+          "GITHUB_ACTOR_ID": "94637590",
+          "GITHUB_TRIGGERING_ACTOR": "Wealthtechinnovations",
+          "GITHUB_EVENT_NAME": "push",
+          "GITHUB_REF": "refs/heads/main",
+          "GITHUB_REF_NAME": "main",
+          "GITHUB_REF_TYPE": "branch",
+          "GITHUB_SHA": "889b34f64e32bc88ea6389ded2ac0fe302513c0d",
+          "GITHUB_WORKFLOW": "Governed Agent Continuity Relay",
+          "GITHUB_WORKFLOW_REF": "chainsolutions-wealthtech/Governed-Repository-Template/.github/workflows/governed-agent-continuity-relay.yml@refs/heads/main",
+          "GITHUB_RUN_ID": "36972462971",
+          "GITHUB_RUN_NUMBER": "68",
+          "GITHUB_RUN_ATTEMPT": "1",
+          "GITHUB_JOB": "relay",
+          "GITHUB_ACTION": "relay",
+          "GITHUB_SERVER_URL": "https://github.com",
+          "GITHUB_API_URL": "https://api.github.com",
+          "GITHUB_GRAPHQL_URL": "https://api.github.com/graphql"
+        },
+        "event": {
+          "sender": {
+            "login": "Wealthtechinnovations",
+            "id": 94637590,
+            "type": "User"
+          },
+          "installation_id": null,
+          "repository": {
+            "id": 1386478935,
+            "full_name": "chainsolutions-wealthtech/Governed-Repository-Template",
+            "owner_login": "chainsolutions-wealthtech",
+            "owner_id": 299685687,
+            "default_branch": "main"
+          },
+          "pull_request": null,
+          "issue_number": null
+        }
+      },
+      "context_digest": "4f40420caf190595e27fbb6e9bd72fee839b517675a918590da85024589e0f23",
+      "dedupe_key": "d8af2d7b31e3af772b57b4846696a6cb5e49f1259d610ae6ea9bfb7a8cbb2223"
     }
   ]
 }
