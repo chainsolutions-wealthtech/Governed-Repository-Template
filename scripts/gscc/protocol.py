@@ -41,12 +41,13 @@ TERMINAL_DELIVERY_STATES = frozenset({
 
 FORBIDDEN_KEY_FRAGMENTS = (
     "password", "secret", "private_key", "authorization", "access_token", "refresh_token",
-    "cookie", "session_cookie", "browser_cookie", "transcript", "raw_prompt", "prompt_text",
+    "cookie", "session_cookie", "browser_cookie", "browser_session", "transcript", "raw_prompt", "prompt_text",
     "private_reasoning", "chain_of_thought", "raw_assistant_response", "assistant_response_body",
 )
 FORBIDDEN_EXACT_KEYS = {
     "token", "cookies", "messages", "transcript", "prompt", "private_reasoning",
     "chain-of-thought", "chain_of_thought", "raw_response", "response_body",
+    "conversation_text", "page_content",
 }
 SECRET_VALUE_PATTERNS = (
     re.compile(r"^gh[pousr]_[A-Za-z0-9_\-]{12,}$"),
