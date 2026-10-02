@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsolutions.example/schemas/gscc-access-grant.schema.json",
+  "title": "GSCC Access Grant",
+  "description": "Contract reserved for the later qualification tranche. This schema does not itself grant authority.",
+  "type": "object",
+  "required": [
+    "schema",
+    "grant_id",
+    "admission_id",
+    "session_id",
+    "connection_ref",
+    "repository",
+    "status",
+    "access_class",
+    "bound_head",
+    "issued_at",
+    "expires_at",
+    "invocation_authority_granted",
+    "mutation_authority_granted"
+  ],
+  "properties": {
+    "schema": {
+      "const": "gscc-access-grant/v1"
+    },
+    "grant_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "admission_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "connection_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "repository": {
+      "type": "string",
+      "pattern": "^[^/]+/[^/]+$"
+    },
+    "status": {
+      "const": "AUTHORIZED"
+    },
+    "bound_head": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "claim_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "allowed_authority_classes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "constraints": {
+      "type": "object"
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "invocation_authority_granted": {
+      "const": false
+    },
+    "mutation_authority_granted": {
+      "const": false
+    },
+    "access_class": {
+      "const": "GOVERNED_FUNCTION_EXPOSURE_ELIGIBLE"
+    },
+    "qualification_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    }
+  },
+  "additionalProperties": true
+}

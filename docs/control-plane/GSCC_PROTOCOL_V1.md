@@ -202,6 +202,50 @@ GSCC Core has no dependency on live GACR state files and does not write `.govern
 
 The channel transports control/evidence. It does not persist or mutate GACR claims, takeover state, Correlator authority or programme chronology.
 
+
+
+## Admission and access qualification
+
+Governed function exposure is preceded by an additive admission layer. This layer does not replace the Observable Arrival Gateway, GSE or GACR.
+
+Canonical contracts:
+
+- `gscc-admission-envelope/v1`;
+- `gscc-admission-receipt/v1`;
+- `gscc-access-grant/v1`.
+
+Canonical candidate implementation:
+
+- `scripts/gscc/admission.py`;
+- `.github/workflows/gscc-admission-gate.yml`.
+
+The admission workflow accepts two distinct control-plane requests:
+
+- `gscc_admission_request` — validates the safe admission envelope and may return `PREAUTHORIZED`;
+- `gscc_access_qualification_request` — validates bounded qualification evidence and may return an `AUTHORIZED` Access Grant.
+
+`PREAUTHORIZED` never means repository access, function exposure, invocation authority or mutation authority.
+
+A valid Access Grant is bound to admission ID, session ID, connection reference, repository, exact HEAD and expiry. It is only eligibility evidence for the existing canonical Function Exposure Gate.
+
+The Function Exposure Gate therefore starts with:
+
+```text
+ADMISSION_RECEIPT_VALIDATION
+→ ACCESS_GRANT_VALIDATION
+→ GSCC_SESSION_BIND
+→ ...
+```
+
+An absent, expired, mismatched or malformed Access Grant fails closed. The grant also constrains which authority classes may subsequently be proven. The grant itself still has:
+
+```text
+invocation_authority_granted = false
+mutation_authority_granted = false
+```
+
+The admission workflow has repository permission `contents: read` only and persists bounded results as Actions artifacts. It does not contain repository mutation operations.
+
 ## Function exposure gate
 
 A governed function catalogue is not a raw implementation catalogue. A function becomes publishable only after GSCC validates the complete safe route for the current connection and exact repository state.

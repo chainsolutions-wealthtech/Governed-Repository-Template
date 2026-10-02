@@ -1,0 +1,229 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsolutions.example/schemas/gscc-admission-envelope.schema.json",
+  "title": "GSCC Admission Envelope",
+  "type": "object",
+  "required": [
+    "schema",
+    "request",
+    "agent",
+    "client",
+    "session",
+    "connection",
+    "target",
+    "intent",
+    "continuity",
+    "control_capabilities"
+  ],
+  "properties": {
+    "schema": {
+      "const": "gscc-admission-envelope/v1"
+    },
+    "request": {
+      "type": "object",
+      "required": [
+        "request_id",
+        "correlation_id",
+        "idempotency_key",
+        "issued_at",
+        "observed_at"
+      ],
+      "properties": {
+        "request_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "correlation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "idempotency_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "issued_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": true
+    },
+    "agent": {
+      "type": "object",
+      "required": [
+        "agent_type",
+        "provider",
+        "requested_role"
+      ],
+      "properties": {
+        "agent_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "agent_identity": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "agent_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "provider": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model_runtime": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "requested_role": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "client": {
+      "type": "object",
+      "required": [
+        "client_instance_id",
+        "client_type"
+      ],
+      "properties": {
+        "client_instance_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "client_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "client_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "host_instance_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "session": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "connection": {
+      "type": "object",
+      "required": [
+        "connection_ref",
+        "connection_method",
+        "surface_class"
+      ],
+      "properties": {
+        "connection_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "connection_method": {
+          "type": "string",
+          "minLength": 1
+        },
+        "surface_class": {
+          "type": "string",
+          "minLength": 1
+        },
+        "bridge_registration_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "wake_channels": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": true
+    },
+    "target": {
+      "type": "object",
+      "required": [
+        "repository"
+      ],
+      "properties": {
+        "repository": {
+          "type": "string",
+          "pattern": "^[^/]+/[^/]+$"
+        },
+        "requested_branch": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "intent": {
+      "type": "object",
+      "required": [
+        "entry_action",
+        "connection_intent",
+        "requested_capabilities"
+      ],
+      "properties": {
+        "entry_action": {
+          "type": "string",
+          "minLength": 1
+        },
+        "connection_intent": {
+          "type": "string",
+          "minLength": 1
+        },
+        "task_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "requested_capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "continuity": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "control_capabilities": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {
+        "type": "boolean"
+      }
+    }
+  },
+  "additionalProperties": false
+}

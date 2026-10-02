@@ -1,6 +1,6 @@
 # GSCC Admission & Repository Access Gate
 
-> Status: `SPECIFIED / NOT_IMPLEMENTED`  
+> Status: `IMPLEMENTED / TESTED_CANDIDATE / PENDING_MERGE_AND_POSTMERGE_LIVE_PROOF`  
 > Date: 2026-10-02  
 > Scope: additive extension of the existing GSCC/GSE/GACR function-exposure architecture.  
 > This authority does not advance `P12-S6`, CASE 1, GMC, or the global Control Plane programme.
@@ -594,6 +594,37 @@ docs/control-plane/GSCC_PROTOCOL_V1.md
 ```
 
 No second function-exposure workflow/engine should be created.
+
+
+
+## Candidate implementation evidence — PR #159
+
+The owner-authorized live implementation is carried by PR #159 on branch `governance/gscc-admission-runtime`.
+
+Implemented candidate surfaces:
+
+- `scripts/gscc/admission.py` — fail-closed admission validation, in-process idempotence, qualification and bounded Access Grant validation;
+- `schemas/gscc-admission-envelope.schema.json`;
+- `schemas/gscc-admission-receipt.schema.json`;
+- `schemas/gscc-access-grant.schema.json`;
+- `.github/workflows/gscc-admission-gate.yml` — read-only admission/qualification workflow;
+- the existing `scripts/gscc_function_exposure_gate.py` now requires a valid Access Grant before function-contract/authority/preflight evaluation;
+- the existing `.github/workflows/gscc-function-exposure-gate.yml` carries the serialized safe Access Grant into the canonical evaluator.
+
+Tests-first evidence:
+
+- RED admission core: Governance CI `37000902994 = FAILURE` on missing `gscc.admission`;
+- GREEN admission core: `37001048628 = SUCCESS`;
+- RED Access Grant qualification: `37001183473 = FAILURE` on missing `evaluate_access_grant`;
+- GREEN qualification: `37001289277 = SUCCESS`;
+- RED function-gate binding: `37001452126 = FAILURE` because the existing gate did not accept `access_grant`;
+- corrected full gate GREEN: `37001737386 = SUCCESS`;
+- RED admission workflow: `37001911592 = FAILURE` because `.github/workflows/gscc-admission-gate.yml` did not exist;
+- final candidate Governance CI: `37002023347 = SUCCESS`;
+- final candidate Observable Arrival Gateway: `37002023374 = SUCCESS`;
+- final candidate Function Exposure Gate: `37002023423 = SUCCESS`.
+
+This evidence proves implementation and regression safety on the PR candidate only. It does **not** prove post-merge activation, a real provider admission request, Step 13B, or ultimate GACR live acceptance.
 
 ## Programme boundary
 

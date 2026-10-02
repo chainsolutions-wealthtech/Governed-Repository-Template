@@ -1,0 +1,118 @@
+name: GSCC Admission Gate
+
+on:
+  repository_dispatch:
+    types:
+      - gscc_admission_request
+      - gscc_access_qualification_request
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Admission or qualification
+        required: true
+        type: choice
+        options:
+          - admission
+          - qualification
+      admission_envelope_json:
+        description: Safe serialized gscc-admission-envelope/v1 JSON
+        required: false
+        type: string
+      admission_receipt_json:
+        description: Safe serialized gscc-admission-receipt/v1 JSON
+        required: false
+        type: string
+      qualification_evidence_json:
+        description: Safe serialized qualification evidence JSON
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  admission:
+    if: ${{ github.event.action == 'gscc_admission_request' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'admission') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      status: ${{ steps.evaluate.outputs.status }}
+      admission_id: ${{ steps.evaluate.outputs.admission_id }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Evaluate admission envelope
+        id: evaluate
+        env:
+          ADMISSION_ENVELOPE_JSON: ${{ github.event.client_payload.admission_envelope_json || inputs.admission_envelope_json }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$ADMISSION_ENVELOPE_JSON" || {
+            echo "::error::ADMISSION_ENVELOPE_REQUIRED"
+            exit 2
+          }
+          python3 scripts/gscc/admission.py evaluate \
+            --envelope-json "$ADMISSION_ENVELOPE_JSON" \
+            --output "$RUNNER_TEMP/gscc-admission-receipt.json"
+
+      - name: Persist bounded admission receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-admission-receipt-${{ github.run_id }}
+          path: ${{ runner.temp }}/gscc-admission-receipt.json
+          if-no-files-found: error
+          retention-days: 14
+
+  qualification:
+    if: ${{ github.event.action == 'gscc_access_qualification_request' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'qualification') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      status: ${{ steps.qualify.outputs.status }}
+      grant_id: ${{ steps.qualify.outputs.grant_id }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Evaluate qualification evidence
+        id: qualify
+        env:
+          ADMISSION_RECEIPT_JSON: ${{ github.event.client_payload.admission_receipt_json || inputs.admission_receipt_json }}
+          QUALIFICATION_EVIDENCE_JSON: ${{ github.event.client_payload.qualification_evidence_json || inputs.qualification_evidence_json }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$ADMISSION_RECEIPT_JSON" || {
+            echo "::error::ADMISSION_RECEIPT_REQUIRED"
+            exit 2
+          }
+          test -n "$QUALIFICATION_EVIDENCE_JSON" || {
+            echo "::error::QUALIFICATION_EVIDENCE_REQUIRED"
+            exit 2
+          }
+          python3 scripts/gscc/admission.py qualify \
+            --admission-receipt-json "$ADMISSION_RECEIPT_JSON" \
+            --qualification-evidence-json "$QUALIFICATION_EVIDENCE_JSON" \
+            --output "$RUNNER_TEMP/gscc-access-decision.json"
+
+      - name: Persist bounded qualification decision
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-access-decision-${{ github.run_id }}
+          path: ${{ runner.temp }}/gscc-access-decision.json
+          if-no-files-found: error
+          retention-days: 14

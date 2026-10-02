@@ -47,6 +47,10 @@ on:
         description: Exact observed repository HEAD
         required: true
         type: string
+      access_grant_json:
+        description: Serialized safe gscc-access-grant/v1 JSON
+        required: true
+        type: string
       authority_class:
         description: Exact authority class satisfied by evidence
         required: true
@@ -169,6 +173,7 @@ jobs:
           CONNECTION_REF: ${{ github.event.client_payload.connection_ref || inputs.connection_ref }}
           TOOL_NAME: ${{ github.event.client_payload.tool_name || inputs.tool_name }}
           OBSERVED_HEAD: ${{ github.event.client_payload.observed_head || inputs.observed_head }}
+          ACCESS_GRANT_JSON: ${{ github.event.client_payload.access_grant_json || inputs.access_grant_json }}
           AUTHORITY_CLASS: ${{ github.event.client_payload.authority_class || inputs.authority_class }}
           AUTHORITY_EVIDENCE_REF: ${{ github.event.client_payload.authority_evidence_ref || inputs.authority_evidence_ref }}
           AUTHORITY_GRANTED: ${{ github.event.client_payload.authority_granted || inputs.authority_granted }}
@@ -189,6 +194,7 @@ jobs:
             --connection-ref "$CONNECTION_REF" \
             --tool-name "$TOOL_NAME" \
             --observed-head "$OBSERVED_HEAD" \
+            --access-grant-json "$ACCESS_GRANT_JSON" \
             --authority-class "$AUTHORITY_CLASS" \
             --authority-evidence-ref "$AUTHORITY_EVIDENCE_REF" \
             "${authority_flag[@]}" \

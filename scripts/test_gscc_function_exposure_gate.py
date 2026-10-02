@@ -26,6 +26,7 @@ class ExposureGateTests(unittest.TestCase):
     def setUp(self):
         self.now = datetime(2026, 10, 2, 7, 0, tzinfo=timezone.utc)
         self.connection_ref = "gscc-observable:repo:actor:ref:main"
+        self.repository = "owner/repo"
         self.head = "a" * 40
         self.snapshot = {
             "status": "CURRENT",
@@ -56,6 +57,7 @@ class ExposureGateTests(unittest.TestCase):
             "sessions": [
                 {
                     "session_id": "session-live",
+                    "repository": self.repository,
                     "status": "ACTIVE",
                     "connection_ref": self.connection_ref,
                     "connection_method": "gscc-github-event-gateway",
@@ -79,6 +81,31 @@ class ExposureGateTests(unittest.TestCase):
             value["live_preflight"] = preflight
         return value
 
+    def access_grant(self, **overrides):
+        value = {
+            "schema": "gscc-access-grant/v1",
+            "grant_id": "GSCC-GRANT-" + ("f" * 64),
+            "admission_id": "GSCC-ADM-" + ("e" * 64),
+            "session_id": "session-live",
+            "connection_ref": self.connection_ref,
+            "repository": self.repository,
+            "status": "AUTHORIZED",
+            "access_class": "GOVERNED_FUNCTION_EXPOSURE_ELIGIBLE",
+            "bound_head": self.head,
+            "allowed_authority_classes": [
+                "READ_ONLY_DISCOVERY_AUTHORITY",
+                "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED",
+            ],
+            "constraints": {"direct_main_write": False, "merge": False},
+            "issued_at": self.now.isoformat(),
+            "expires_at": (self.now + timedelta(minutes=15)).isoformat(),
+            "invocation_authority_granted": False,
+            "mutation_authority_granted": False,
+        }
+        value.update(overrides)
+        return value
+
+
     def test_arrival_route_is_locked_until_function_validation(self):
         route = build_arrival_route(
             repository="owner/repo",
@@ -87,16 +114,34 @@ class ExposureGateTests(unittest.TestCase):
             observed_head=self.head,
         )
         self.assertEqual(route["status"], "LOCKED_PENDING_FUNCTION_REQUEST")
-        self.assertEqual(route["first_stage"], "GSCC_SESSION_BIND")
+        self.assertEqual(route["first_stage"], "ADMISSION_RECEIPT_VALIDATION")
+        self.assertIn("ACCESS_GRANT_VALIDATION", route["required_stages"])
+        self.assertIn("GSCC_SESSION_BIND", route["required_stages"])
         self.assertIn("FUNCTION_CONTRACT_MATCH", route["required_stages"])
         self.assertIn("AUTHORITY_VALIDATION", route["required_stages"])
         self.assertIn("EXPOSURE_RECEIPT", route["required_stages"])
+
+
+    def test_access_grant_is_required_before_any_function_exposure(self):
+        denied = evaluate_function_exposure(
+            tool_name="read_tool",
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
+            snapshot=self.snapshot,
+            sessions=self.sessions,
+            now=self.now,
+        )
+        self.assertEqual(denied["status"], "WITHHELD")
+        self.assertEqual(denied["reason_code"], "ACCESS_GRANT_REQUIRED")
+        self.assertFalse(denied["exposable"])
 
     def test_read_function_requires_explicit_authority_evidence(self):
         denied = evaluate_function_exposure(
             tool_name="read_tool",
             connection_ref=self.connection_ref,
             requested_head=self.head,
+            access_grant=self.access_grant(),
             authority_evidence=None,
             snapshot=self.snapshot,
             sessions=self.sessions,
@@ -109,6 +154,7 @@ class ExposureGateTests(unittest.TestCase):
             tool_name="read_tool",
             connection_ref=self.connection_ref,
             requested_head=self.head,
+            access_grant=self.access_grant(),
             authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
             snapshot=self.snapshot,
             sessions=self.sessions,
@@ -123,6 +169,7 @@ class ExposureGateTests(unittest.TestCase):
             tool_name="write_tool",
             connection_ref=self.connection_ref,
             requested_head=self.head,
+            access_grant=self.access_grant(),
             authority_evidence=self.evidence("EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED"),
             snapshot=self.snapshot,
             sessions=self.sessions,
@@ -135,6 +182,7 @@ class ExposureGateTests(unittest.TestCase):
             tool_name="write_tool",
             connection_ref=self.connection_ref,
             requested_head=self.head,
+            access_grant=self.access_grant(),
             authority_evidence=self.evidence(
                 "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED",
                 preflight={"status": "PASSED", "observed_head": self.head, "evidence_ref": "preflight:fixture"},
@@ -151,18 +199,20 @@ class ExposureGateTests(unittest.TestCase):
             tool_name="read_tool",
             connection_ref=self.connection_ref,
             requested_head="b" * 40,
+            access_grant=self.access_grant(),
             authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
             snapshot=self.snapshot,
             sessions=self.sessions,
             now=self.now,
         )
         self.assertEqual(wrong["status"], "DENIED")
-        self.assertEqual(wrong["reason_code"], "EXACT_HEAD_MISMATCH")
+        self.assertEqual(wrong["reason_code"], "ACCESS_GRANT_HEAD_MISMATCH")
 
         unknown = evaluate_function_exposure(
             tool_name="missing_tool",
             connection_ref=self.connection_ref,
             requested_head=self.head,
+            access_grant=self.access_grant(),
             authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
             snapshot=self.snapshot,
             sessions=self.sessions,
@@ -171,6 +221,22 @@ class ExposureGateTests(unittest.TestCase):
         self.assertEqual(unknown["status"], "DENIED")
         self.assertEqual(unknown["reason_code"], "FUNCTION_NOT_IN_CANONICAL_CATALOGUE")
 
+
+    def test_expired_access_grant_fails_closed(self):
+        expired = self.access_grant(expires_at=(self.now - timedelta(seconds=1)).isoformat())
+        result = evaluate_function_exposure(
+            tool_name="read_tool",
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            access_grant=expired,
+            authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
+            snapshot=self.snapshot,
+            sessions=self.sessions,
+            now=self.now,
+        )
+        self.assertEqual(result["status"], "DENIED")
+        self.assertEqual(result["reason_code"], "ACCESS_GRANT_EXPIRED")
+
     def test_non_gscc_or_expired_session_fails_closed(self):
         bad = json.loads(json.dumps(self.sessions))
         bad["sessions"][0]["connection_method"] = "direct-provider-connector"
@@ -178,6 +244,7 @@ class ExposureGateTests(unittest.TestCase):
             tool_name="read_tool",
             connection_ref=self.connection_ref,
             requested_head=self.head,
+            access_grant=self.access_grant(),
             authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
             snapshot=self.snapshot,
             sessions=bad,
@@ -193,6 +260,7 @@ class ExposureGateTests(unittest.TestCase):
         result = exposed_function_catalogue(
             connection_ref=self.connection_ref,
             requested_head=self.head,
+            access_grant=self.access_grant(),
             authority_evidence_by_tool=evidence,
             snapshot=self.snapshot,
             sessions=self.sessions,
@@ -311,6 +379,8 @@ class ExposureGateTests(unittest.TestCase):
         self.assertIn("gscc_function_exposure_request", text)
         self.assertIn("workflow_dispatch:", text)
         self.assertIn("python3 scripts/gscc_function_exposure_gate.py evaluate", text)
+        self.assertIn("access_grant_json", text)
+        self.assertIn("ACCESS_GRANT_JSON", text)
         self.assertIn("python3 scripts/gscc_function_exposure_gate.py arrival-plan", text)
         self.assertIn("actions/upload-artifact@v4", text)
         self.assertNotIn("continue-on-error: true", text)
