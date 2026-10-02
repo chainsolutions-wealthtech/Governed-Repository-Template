@@ -2,7 +2,7 @@
   "schema": "gacr-origin-realignment-plan/v1",
   "authority": "CP-AGENT-RELAY-001",
   "plan_revision": "ORIGIN-REALIGNMENT-R1",
-  "status": "EXECUTION_IN_PROGRESS_STEP_13_NEXT",
+  "status": "EXECUTION_IN_PROGRESS_STEP_13_PARTIAL",
   "baseline": {
     "preserved_revisions": [
       "R1",
@@ -129,8 +129,19 @@
       "result": "PASS"
     },
     "step_13": {
-      "status": "NEXT_AUTHORIZED",
-      "result": "NOT_EXECUTED"
+      "status": "IN_PROGRESS_PARTIAL_PASS",
+      "result": "EXTERNAL_WORKER_FIRST_TOUCH_PASS_PROVIDER_AGENT_PENDING",
+      "evidence": {
+        "issue": 136,
+        "workflow_run": 36963595777,
+        "session_id": "session-c7c1466e55afb2e4da868944",
+        "first_touch": "PASS",
+        "envelope": "PASS",
+        "fingerprint": "PASS",
+        "exact_correlation": "PASS",
+        "direct_connector_read_observability": "FAIL_SILENT_READ_BOUNDARY",
+        "fresh_provider_conversation": "NOT_EXECUTED"
+      }
     },
     "integration": {
       "final_main_runtime_state_head": "a27893681c8e90e5d225dae23d15df5cc4b93d29",
