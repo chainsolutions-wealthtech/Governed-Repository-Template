@@ -211,7 +211,7 @@ def validate_exposure(
         "workflow_required": True,
         "mutation_authority_granted": False,
         "invocation_authority_granted": False,
-        "secrets_persisted": False,
+        "sensitive_values_persisted": False,
     }
     base["validation_digest"] = _digest(base)
     return base
@@ -287,7 +287,7 @@ def validate_package(
         "gscc_required_for_every_invocation": True,
         "mutation_authority_granted": False,
         "invocation_authority_granted": False,
-        "secrets_persisted": False,
+        "sensitive_values_persisted": False,
     }
     receipt["validation_digest"] = _digest(receipt)
     return receipt
