@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 5,
+  "revision": 7,
   "items": [
     {
       "correlation_id": "GACR-C-caffb7cb6efd",
@@ -59,6 +59,36 @@
         "BRANCH_MATCH"
       ],
       "evaluated_at": "2026-10-01T23:44:07+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-a39298b3d9b4",
+      "beacon_id": "GACR-B-63f7387856ac",
+      "level": "EXACT",
+      "selected_session_id": "session-68c97d4bb1ef71c86444de12",
+      "candidate_session_ids": [
+        "session-68c97d4bb1ef71c86444de12"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "evaluated_at": "2026-10-02T00:46:41+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-ea0f04b97de7",
+      "beacon_id": "GACR-B-ddc264dcf74e",
+      "level": "EXACT",
+      "selected_session_id": "session-68c97d4bb1ef71c86444de12",
+      "candidate_session_ids": [
+        "session-68c97d4bb1ef71c86444de12"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "evaluated_at": "2026-10-02T00:46:42+00:00"
     }
   ]
 }
