@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 20,
+  "revision": 21,
   "items": [
     {
       "correlation_id": "GACR-C-caffb7cb6efd",
@@ -80,19 +80,18 @@
     {
       "correlation_id": "GACR-C-ff890996cea5",
       "beacon_id": "GACR-B-127716e672d9",
-      "level": "PROBABLE",
+      "level": "AMBIGUOUS",
       "selected_session_id": null,
       "candidate_session_ids": [
-        "session-68c97d4bb1ef71c86444de12"
+        "session-68c97d4bb1ef71c86444de12",
+        "session-c7c1466e55afb2e4da868944"
       ],
       "reasons": [
-        "BRANCH_MATCH",
-        "GITHUB_ACTOR_MATCH",
-        "TEMPORAL_WINDOW_COMPATIBLE"
+        "MULTIPLE_PROBABLE_CANDIDATES"
       ],
       "confidence": {
-        "rule_id": "PROBABLE_CONTEXT_ONLY",
-        "class": "PROBABLE",
+        "rule_id": "AMBIGUOUS_PROBABLE_TIE",
+        "class": "AMBIGUOUS",
         "numeric_score": null,
         "auto_bind_allowed": false
       },
@@ -108,9 +107,18 @@
             "GITHUB_ACTOR_MATCH",
             "TEMPORAL_WINDOW_COMPATIBLE"
           ]
+        },
+        {
+          "session_id": "session-c7c1466e55afb2e4da868944",
+          "tier": "PROBABLE",
+          "reasons": [
+            "PROVIDER_MATCH",
+            "BRANCH_MATCH",
+            "GITHUB_ACTOR_MATCH"
+          ]
         }
       ],
-      "evaluated_at": "2026-10-02T03:50:46+00:00",
+      "evaluated_at": "2026-10-02T04:13:32+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-127716e672d9",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -118,13 +126,12 @@
         "activity_class": "AUTO_ATTACH",
         "safe_envelope_digest": "7adff6909eb7033608e1ab6e8b36d519c9caa6b11b9c406c6d974e204f3d0642",
         "candidate_session_ids": [
-          "session-68c97d4bb1ef71c86444de12"
+          "session-68c97d4bb1ef71c86444de12",
+          "session-c7c1466e55afb2e4da868944"
         ],
-        "correlation_level": "PROBABLE",
+        "correlation_level": "AMBIGUOUS",
         "reasons": [
-          "BRANCH_MATCH",
-          "GITHUB_ACTOR_MATCH",
-          "TEMPORAL_WINDOW_COMPATIBLE"
+          "MULTIPLE_PROBABLE_CANDIDATES"
         ],
         "status": "UNBOUND",
         "reconciled_session_id": "UNAVAILABLE",
@@ -505,6 +512,31 @@
       "provider_conversation_ref": null,
       "evaluations": [],
       "evaluated_at": "2026-10-02T04:13:17+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-05e320b4275e",
+      "beacon_id": "GACR-B-5e51c03275eb",
+      "level": "EXACT",
+      "selected_session_id": "session-c7c1466e55afb2e4da868944",
+      "candidate_session_ids": [
+        "session-c7c1466e55afb2e4da868944"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-02T04:13:32+00:00"
     }
   ]
 }

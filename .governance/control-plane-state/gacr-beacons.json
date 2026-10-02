@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 19,
+  "revision": 20,
   "items": [
     {
       "beacon_id": "GACR-B-6e9a2275ea04",
@@ -1491,6 +1491,95 @@
       },
       "context_digest": "ea5f6669dd014d24aeb2d0078eaf6c85a8a2d5b72101c22d41a32729d17b896d",
       "dedupe_key": "c1b33ecf9b9aaeb0f761e3f5c8a5dd1f16a2962e5075ed118640430f18c1d3bd"
+    },
+    {
+      "beacon_id": "GACR-B-5e51c03275eb",
+      "observed_at": "2026-10-02T04:13:32+00:00",
+      "source": "PRESENCE_FABRIC",
+      "event_type": "AUTO_ATTACH",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "session_id": "session-c7c1466e55afb2e4da868944",
+      "provider": "github-actions",
+      "provider_conversation_ref": null,
+      "client_instance_id": "github-run:36963595777:1",
+      "connection_ref": "github-actions:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations:36963595777:1:854cc929b6d5d1b4fcd175c5c2c632c677da3ef7",
+      "connection_fingerprint": "GACR-FP1-30eed83027210717042c4ffad8ea222e977ec71d075c5ec2f439eff3907d6d9a",
+      "claim_id": null,
+      "connection_envelope_digest": "bab58a63657046e02d826c8358c2473cc87562a267ed23c753ec7d3978e9eda7",
+      "surface_class": "CONTROLLED_INSTRUMENTABLE",
+      "presence_event": "PRESENCE_FIRST_TOUCH",
+      "agent_identity": "external-repository-worker",
+      "agent_role": null,
+      "capabilities": [
+        "GACR_AUTO_ATTACH",
+        "GACR_PRESENCE_FIRST",
+        "READ_REPOSITORY"
+      ],
+      "task_id": null,
+      "branch": "main",
+      "pull_request": null,
+      "observed_head_sha": "854cc929b6d5d1b4fcd175c5c2c632c677da3ef7",
+      "action_id": null,
+      "action_label": null,
+      "action_phase": null,
+      "tool_name": null,
+      "tool_call_id": null,
+      "outcome": null,
+      "written_head_sha": null,
+      "checkpoint_ref": null,
+      "evidence_ref": null,
+      "interruption_code": null,
+      "github_actor": "Wealthtechinnovations",
+      "github_installation_id": null,
+      "github_workflow": "Repository Presence Probe",
+      "github_run_id": "36963595777",
+      "github_run_attempt": "1",
+      "github_job": "first-touch",
+      "github": {
+        "environment": {
+          "GITHUB_REPOSITORY": "chainsolutions-wealthtech/Governed-Repository-Template",
+          "GITHUB_REPOSITORY_ID": "1386478935",
+          "GITHUB_REPOSITORY_OWNER": "chainsolutions-wealthtech",
+          "GITHUB_REPOSITORY_OWNER_ID": "299685687",
+          "GITHUB_ACTOR": "Wealthtechinnovations",
+          "GITHUB_ACTOR_ID": "94637590",
+          "GITHUB_TRIGGERING_ACTOR": "Wealthtechinnovations",
+          "GITHUB_EVENT_NAME": "issues",
+          "GITHUB_REF": "refs/heads/main",
+          "GITHUB_REF_NAME": "main",
+          "GITHUB_REF_TYPE": "branch",
+          "GITHUB_SHA": "854cc929b6d5d1b4fcd175c5c2c632c677da3ef7",
+          "GITHUB_WORKFLOW": "Repository Presence Probe",
+          "GITHUB_WORKFLOW_REF": "chainsolutions-wealthtech/Governed-Repository-Template/.github/workflows/repository-presence-probe.yml@refs/heads/main",
+          "GITHUB_RUN_ID": "36963595777",
+          "GITHUB_RUN_NUMBER": "1",
+          "GITHUB_RUN_ATTEMPT": "1",
+          "GITHUB_JOB": "first-touch",
+          "GITHUB_ACTION": "presence",
+          "GITHUB_SERVER_URL": "https://github.com",
+          "GITHUB_API_URL": "https://api.github.com",
+          "GITHUB_GRAPHQL_URL": "https://api.github.com/graphql"
+        },
+        "event": {
+          "sender": {
+            "login": "Wealthtechinnovations",
+            "id": 94637590,
+            "type": "User"
+          },
+          "installation_id": null,
+          "repository": {
+            "id": 1386478935,
+            "full_name": "chainsolutions-wealthtech/Governed-Repository-Template",
+            "owner_login": "chainsolutions-wealthtech",
+            "owner_id": 299685687,
+            "default_branch": "main"
+          },
+          "pull_request": null,
+          "issue_number": 136
+        }
+      },
+      "context_digest": "934225e44952baccb208475665f322d741882ace566ae2ae11c83c8aadac0e5a",
+      "dedupe_key": "6f58b5b9e72200f95bcec1da9557cda067c01add48bbd11377d42aa9a634bff7"
     }
   ]
 }
