@@ -7,14 +7,20 @@ import hashlib
 import json
 import os
 import subprocess
+import sys
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Callable
 
-from .admission import QUALIFICATION_REQUIREMENTS
-from .protocol import assert_secretless
+if __package__:
+    from .admission import QUALIFICATION_REQUIREMENTS
+    from .protocol import assert_secretless
+else:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from gscc.admission import QUALIFICATION_REQUIREMENTS
+    from gscc.protocol import assert_secretless
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_SESSIONS = ROOT / ".governance" / "control-plane-state" / "gacr-sessions.json"
