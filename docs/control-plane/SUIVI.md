@@ -1051,3 +1051,15 @@ These observations are durable supervision evidence, not new mutation authority 
 - Step 13B / the real live function-exposure request is now chronologically blocked behind tests-first implementation and attestation of this stronger admission/access invariant.
 - The global programme remains unchanged: `P12-S6` is neither executed nor advanced.
 
+## 2026-10-02 — Existing GSCC arrival gateway explicitly preserved under the admission layer
+
+- Reobserved canonical `main = 6a25ba59688c92c89a21872e312b195e9cc36b8b`.
+- Confirmed the repository already has `.github/workflows/gscc-observable-arrival.yml` and `scripts/gscc_observable_arrival.py`.
+- Existing route is preserved: observable/controlled arrival → GSCC SessionEndpoint → SESSION_ATTACH → GACR client-emitter compatibility → `gacr_auto-attach` → Presence/canonical session.
+- Owner clarification: do not delete, replace or bypass this existing arrival layer.
+- New admission/access logic is an additive higher-order prerequisite for governed access/function exposure.
+- On controlled client/provider surfaces, admission precedes use of the existing controlled-arrival path.
+- On GitHub-event-visible surfaces, the existing arrival observer may fire first because the event already exists; that observation remains presence evidence only and grants no preauthorization, access, invocation or mutation authority.
+- The existing GSCC Function Exposure Gate is also preserved downstream.
+- No runtime implementation was changed by this clarification; PR #158 remains documentation/governance only.
+
