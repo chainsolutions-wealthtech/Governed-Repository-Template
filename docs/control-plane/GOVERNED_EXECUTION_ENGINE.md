@@ -281,3 +281,13 @@ Current deterministic bindings include:
 - S1/S2 production attestation → bounded read-only disk/runtime/domain probes.
 
 For an unregistered project such as the current fresh Ekyc case, deployment remains blocked with `PROJECT_NOT_IN_CURRENT_MCP_DEPLOY_REGISTRY` until a governed registration capability exists or is explicitly provided.
+
+## Mandatory GSCC function gate
+
+Before a real MCP-backed execution, `.github/workflows/governed-execution.yml` invokes the reusable `.github/workflows/gscc-function-gate.yml`.
+
+The gate enumerates every MCP function in the package, builds its secretless GSCC FunctionEnvelope, validates contract digest/surface/authority classification, assigns the end-to-end GSCC route, and returns a validation digest.
+
+The execution job is blocked unless the gate returns `validated=true`. The CLI then independently recomputes the digest before executing MCP calls. Missing attestation or digest mismatch fails closed.
+
+This gate is exposure/invocation governance only. Existing execution-package authority, claims, exact-HEAD checks, capability/project scope checks, runtime credentials, verification and rollback remain independently required.
