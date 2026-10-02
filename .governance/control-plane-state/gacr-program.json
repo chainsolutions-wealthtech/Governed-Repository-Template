@@ -6,10 +6,29 @@
   "global_dependency_edges": [],
   "current_state": {
     "original_intent": "CANONICAL_RECORDED",
-    "baseline_r1_r6": "PRESERVED",
+    "baseline_r1_r6": "PRESERVED_REOBSERVED_ATTESTED_OR01_PASS",
     "origin_realignment_plan": "ACCEPTED",
-    "realignment_execution": "NOT_COMPLETE",
+    "realignment_execution": "STEP_1_CLOSED_STEP_2_FORMAL_GATE_NEXT_OVERALL_NOT_COMPLETE",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
-  "next_action": "GACR-OR-01_REOBSERVE_AND_ATTEST_R6_BASELINE"
+  "next_action": "REALIGNMENT_STEP_2_FORMAL_GATE_REVALIDATE_EXISTING_GACR_ORIGINAL_INTENT",
+  "or01": {
+    "status": "PASS",
+    "attestation": "docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md",
+    "projection": ".governance/control-plane-state/gacr-r6-baseline-attestation.json",
+    "attested_source_head": "afda467be7cb9194696b91963af3a4cf5cf0e7d5",
+    "attestation_pr": 123,
+    "attestation_merge": "3ebf1e962b7c176a7b9e2eaf44d0842feda8345d",
+    "candidate_ci": 36954021583,
+    "post_merge_governance_ci": 36954073273,
+    "post_merge_gacr_run": 36954073285
+  },
+  "step_2": {
+    "source_already_canonical": true,
+    "source": "docs/control-plane/GACR_ORIGINAL_INTENT.md",
+    "status": "FORMAL_GATE_NOT_YET_EXECUTED"
+  },
+  "step_3": {
+    "status": "BLOCKED_UNTIL_STEP_2_FORMAL_GATE_CLOSED"
+  }
 }
