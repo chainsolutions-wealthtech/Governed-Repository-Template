@@ -1007,3 +1007,15 @@ These observations are durable supervision evidence, not new mutation authority 
 - `GACR-INT-AUDIT-02 = CLOSED_PASS`.
 - Both blocking audit findings are now closed.
 - Step 13B remains `BLOCKED_PENDING_G6_REAUTHORIZATION` until G6 reconciliation itself passes.
+
+
+## 2026-10-02 — GACR G6 reconciliation PASS / Step 13B reauthorized
+
+- G4 / AUDIT-01 = CLOSED_PASS.
+- G5 / AUDIT-02 = CLOSED_PASS.
+- Current main reobserved before G6: `114c5397966a5c6ad7d8770298abd698929ecf8f`.
+- G6 reconciliation PR #150 first full Governance CI `36971795607 = PASS`.
+- All GSCC/GSE/control/projection/E2E/historical GACR/governance gates pass together.
+- GACR authority boundaries remain unchanged.
+- Step 13B transitions from `BLOCKED_PENDING_G6_REAUTHORIZATION` to `NEXT_AUTHORIZED`.
+- Fresh provider agent remains NOT_EXECUTED; ultimate live acceptance remains NOT_PASSED.
