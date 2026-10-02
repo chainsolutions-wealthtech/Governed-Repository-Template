@@ -974,3 +974,21 @@ Corrective slice under `CP-AGENT-RELAY-001-R5` / `CPD-055`:
 - prove post-merge GACR push creates no new session/Beacon when only internal transport is observable.
 
 Global programme priority remains `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+
+### GACR R6 — provider-host issue bridge
+
+Status: **IMPLEMENTED / CI_PENDING / LIVE_PROOF_PENDING**.
+
+Cross-cutting integration under `CP-AGENT-RELAY-001-R6` / `CPD-056`:
+
+- dedicated issue-comment host ingress;
+- schema/actor/issue allowlisting;
+- secret/transcript rejection;
+- comment-ID idempotency;
+- automatic session resolution/attach when a stable anchor exists;
+- heartbeat renewal for host heartbeat/action events;
+- R5 ACTION_TRACE / explicit interruption telemetry;
+- Correlator + Forensics refresh;
+- distribution through existing governed client upgrader.
+
+This integration does not execute or supersede `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
