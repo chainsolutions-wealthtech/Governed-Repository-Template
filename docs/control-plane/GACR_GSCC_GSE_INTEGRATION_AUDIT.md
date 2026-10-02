@@ -146,6 +146,22 @@ Status:
 CLOSED_PASS
 ```
 
+## G6 reconciliation gate
+
+Both blocking findings were reobserved CLOSED on current main `114c5397966a5c6ad7d8770298abd698929ecf8f`.
+
+G6 reconciliation candidate PR #150 ran the complete Governance CI suite from that authority state:
+
+- reconciliation CI `36971795607 = PASS`;
+- canonical shared-contract gate = PASS;
+- control-response → GSE projection gate = PASS;
+- combined controlled E2E = PASS;
+- historical GACR regressions = PASS;
+- Governance validation = PASS;
+- no claim, exact-HEAD, takeover or mutation authority moved out of GACR.
+
+This satisfies the pre-authorization reconciliation gate. A fresh-provider test is still not evidence until it is executed separately.
+
 ## Step 13B decision
 
 The prior integration attestation proved the infrastructure prerequisites functionally green, but this later canonical audit found two bounded integration risks.
@@ -154,7 +170,7 @@ Therefore:
 
 ```text
 STEP 13B = NOT_EXECUTED
-STEP 13B EXECUTION = BLOCKED_PENDING_G6_REAUTHORIZATION
+STEP 13B EXECUTION = NEXT_AUTHORIZED
 ULTIMATE_LIVE_ACCEPTANCE = NOT_PASSED
 ```
 
@@ -165,7 +181,7 @@ Step 13B remains the next live acceptance gate.
 ## Mandatory next action
 
 ```text
-GACR_G6_FULL_RECONCILIATION_AND_REAUTHORIZE_STEP_13B
+REALIGNMENT_STEP_13B_RUN_REAL_FRESH_PROVIDER_AGENT_TEST
 ```
 
 Exit gate:
