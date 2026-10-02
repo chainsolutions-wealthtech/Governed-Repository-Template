@@ -2,6 +2,9 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from pathlib import Path
+import subprocess
+import sys
 
 from gscc.admission_harvester import (
     harvest_qualification_evidence,
@@ -201,6 +204,18 @@ def test_gacr_head_mismatch_fails_closed():
     assert "session" in result["missing_canonical_evidence"], result
     assert result["status"] == "QUALIFICATION_EVIDENCE_PARTIAL", result
 
+
+def test_harvester_direct_cli_import_path_is_valid():
+    script = Path(__file__).resolve().parent / "gscc" / "admission_harvester.py"
+    result = subprocess.run(
+        [sys.executable, str(script), "--help"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    assert result.returncode == 0, (result.stdout, result.stderr)
+    assert "GSCC canonical admission qualification evidence harvester" in result.stdout, result.stdout
+
 def main():
     test_repository_facts_are_get_observed()
     test_gacr_session_is_bound_from_canonical_store()
@@ -209,6 +224,7 @@ def main():
     test_caller_repository_claim_cannot_override_get_observation()
     test_admission_workflow_harvests_instead_of_trusting_caller_evidence()
     test_gacr_head_mismatch_fails_closed()
+    test_harvester_direct_cli_import_path_is_valid()
     print("GSCC_ADMISSION_HARVESTER_TESTS_OK")
 
 
