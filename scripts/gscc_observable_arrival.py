@@ -23,6 +23,8 @@ SUPPORTED_GITHUB_EVENTS = frozenset({
 
 INTERNAL_DISPATCH_PREFIXES = ("gacr_", "gscc_")
 HOST_INGRESS_PREFIX = "/gacr-host "
+CONTROL_REQUEST_PREFIX = "/gscc-control "
+CONTROL_COMMAND_PREFIX = "/gscc-control-command "
 
 
 def _nonempty(value: Any) -> Any:
@@ -114,6 +116,8 @@ def should_skip_github_arrival(event: dict[str, Any], env: dict[str, str]) -> st
         body = str(comment.get("body") or "")
         if body.startswith(HOST_INGRESS_PREFIX):
             return "INTERNAL_GACR_HOST_INGRESS"
+        if body.startswith(CONTROL_REQUEST_PREFIX) or body.startswith(CONTROL_COMMAND_PREFIX):
+            return "INTERNAL_GSCC_CONTROL_ISSUE_BRIDGE"
 
     return None
 

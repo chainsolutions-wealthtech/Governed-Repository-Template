@@ -17,15 +17,18 @@ from typing import Any, Callable
 if __package__:
     from .admission import QUALIFICATION_REQUIREMENTS, resolve_admission_session_binding
     from .protocol import assert_secretless
+from gscc_gacr.issue_control_bridge import canonical_control_evidence
 else:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from gscc.admission import QUALIFICATION_REQUIREMENTS, resolve_admission_session_binding
     from gscc.protocol import assert_secretless
+    from gscc_gacr.issue_control_bridge import canonical_control_evidence
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_SESSIONS = ROOT / ".governance" / "control-plane-state" / "gacr-sessions.json"
 DEFAULT_CLAIMS = ROOT / ".governance" / "control-plane-state" / "gacr-claims.json"
 DEFAULT_TASKS = ROOT / ".governance" / "control-plane-state" / "tasks.json"
+DEFAULT_DISPATCHES = ROOT / ".governance" / "control-plane-state" / "gacr-dispatches.json"
 
 REQUIRED_GOVERNANCE_DOCUMENTS = (
     "00_START_HERE.md",
@@ -330,6 +333,7 @@ def harvest_qualification_evidence(
     claims: dict[str, Any],
     tasks: dict[str, Any],
     governance_documents: dict[str, str],
+    dispatches: dict[str, Any] | None = None,
     target_repository: str | None = None,
     requested_branch: str | None = None,
     capability_evidence: dict[str, Any] | None = None,
@@ -385,6 +389,20 @@ def harvest_qualification_evidence(
     claim = _reconcile_reference("claim", session.get("claim_id") if session.get("status") in {"BOUND", "STALE_HEAD"} else None, claims, now)
 
     declared_capabilities = session.get("capabilities") if session.get("status") in {"BOUND", "STALE_HEAD"} else []
+    canonical_control = (
+        canonical_control_evidence(
+            dispatches or {"items": []},
+            session_id=str(session.get("session_id") or ""),
+            now=now,
+        )
+        if session.get("status") == "BOUND" and session.get("session_id")
+        else {"capabilities": {}, "control_channel": {}}
+    )
+    if capability_evidence is None and (canonical_control.get("capabilities") or {}).get("status") == "VERIFIED":
+        capability_evidence = canonical_control["capabilities"]
+    if control_evidence is None and (canonical_control.get("control_channel") or {}).get("status") == "VERIFIED":
+        control_evidence = canonical_control["control_channel"]
+
     if isinstance(capability_evidence, dict) and capability_evidence.get("status") == "VERIFIED" and capability_evidence.get("evidence_ref"):
         capabilities = copy.deepcopy(capability_evidence)
         capabilities.setdefault("declared", copy.deepcopy(declared_capabilities or []))
@@ -526,6 +544,7 @@ def main() -> None:
     harvest.add_argument("--sessions", default=str(DEFAULT_SESSIONS))
     harvest.add_argument("--claims", default=str(DEFAULT_CLAIMS))
     harvest.add_argument("--tasks", default=str(DEFAULT_TASKS))
+    harvest.add_argument("--dispatches", default=str(DEFAULT_DISPATCHES))
     harvest.add_argument("--output")
     args = parser.parse_args()
 
@@ -545,6 +564,7 @@ def main() -> None:
         sessions=_load_json(args.sessions),
         claims=_load_json(args.claims),
         tasks=_load_json(args.tasks),
+        dispatches=_load_json(args.dispatches),
         governance_documents=_load_governance_documents(),
     )
     _write_output(result, args.output)

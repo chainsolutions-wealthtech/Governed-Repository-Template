@@ -12,6 +12,8 @@ CORE=ROOT/'scripts'/'governed_agent_continuity_relay.py'
 TELEMETRY=ROOT/'scripts'/'gacr_agent_telemetry.py'
 AUTO_ATTACH=ROOT/'scripts'/'gacr_auto_attach.py'
 HOST_INGRESS=ROOT/'scripts'/'gacr_host_issue_ingress.py'
+CONTROL_INGRESS=ROOT/'scripts'/'gscc_control_issue_ingress.py'
+CONTROL_BRIDGE=ROOT/'scripts'/'gscc_gacr'/'issue_control_bridge.py'
 
 def add(args:list[str], flag:str, value):
     if value is None or value=='':
@@ -48,7 +50,9 @@ def main():
     payload={}
     command=None
     if event_name=='issue_comment':
-        cp=subprocess.run([sys.executable,str(HOST_INGRESS)],cwd=ROOT,text=True,capture_output=True)
+        body=str(((event.get('comment') or {}).get('body') or ''))
+        ingress=CONTROL_INGRESS if body.startswith('/gscc-control ') else HOST_INGRESS
+        cp=subprocess.run([sys.executable,str(ingress)],cwd=ROOT,text=True,capture_output=True)
         if cp.stdout:
             print(cp.stdout,end='')
         if cp.stderr:
@@ -78,17 +82,23 @@ def main():
     core_commands={'register','heartbeat','scan','status','takeover-plan','takeover-accept'}
     telemetry_commands={'beacon','correlate','dispatch','context','forensics','telemetry-status'}
     auto_attach_commands={'auto-attach'}
-    if command not in core_commands | telemetry_commands | auto_attach_commands:
+    control_commands={'control-challenge'}
+    if command not in core_commands | telemetry_commands | auto_attach_commands | control_commands:
         raise SystemExit(f'GACR_WORKFLOW_BRIDGE_FAILED: unsupported command {command}')
 
-    if command in telemetry_commands:
+    if command in control_commands:
+        args=[sys.executable,str(CONTROL_BRIDGE),'challenge']
+    elif command in telemetry_commands:
         telemetry_command='status' if command=='telemetry-status' else command
         args=[sys.executable,str(TELEMETRY),telemetry_command]
     elif command in auto_attach_commands:
         args=[sys.executable,str(AUTO_ATTACH)]
     else:
         args=[sys.executable,str(CORE),command]
-    if command=='auto-attach':
+    if command=='control-challenge':
+        add(args,'--session-id',payload.get('session_id'))
+        add(args,'--ttl-seconds',payload.get('ttl_seconds'))
+    elif command=='auto-attach':
         payload=expand_auto_attach_payload(payload)
         add(args,'--agent',payload.get('agent'))
         add(args,'--provider',payload.get('provider'))

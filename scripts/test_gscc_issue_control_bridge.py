@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
+from gscc_observable_arrival import should_skip_github_arrival
 from gscc_gacr.issue_control_bridge import (
     apply_host_control_event,
     build_liveness_challenge_dispatch,
@@ -217,12 +218,22 @@ def test_expired_session_or_challenge_cannot_be_verified():
         raise AssertionError("expired challenge must fail")
 
 
+
+def test_control_issue_comments_do_not_create_observable_arrival_sessions():
+    env = {"GITHUB_EVENT_NAME": "issue_comment", "GITHUB_ACTOR": "github-actions[bot]"}
+    request = {"comment": {"body": "/gscc-control {\"schema\":\"gscc-control-request/v1\"}"}}
+    command = {"comment": {"body": "/gscc-control-command {\"schema\":\"gscc-control-command/v1\"}"}}
+    assert should_skip_github_arrival(request, env) == "INTERNAL_GSCC_CONTROL_ISSUE_BRIDGE"
+    assert should_skip_github_arrival(command, env) == "INTERNAL_GSCC_CONTROL_ISSUE_BRIDGE"
+
+
 def main():
     test_build_challenge_is_safe_bounded_and_non_authorizing()
     test_issue_comment_is_bounded_and_contains_no_authority()
     test_ack_then_challenge_response_produces_canonical_control_proof()
     test_mismatch_and_response_without_ack_fail_closed()
     test_expired_session_or_challenge_cannot_be_verified()
+    test_control_issue_comments_do_not_create_observable_arrival_sessions()
     print("GSCC_ISSUE_CONTROL_BRIDGE_TESTS_OK")
 
 
