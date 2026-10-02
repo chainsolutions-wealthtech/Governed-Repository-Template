@@ -21,6 +21,7 @@ from gscc_gacr import (
 
 LIVE_STORE_NAMES = (
     "gacr-sessions.json",
+    "gacr-claims.json",
     "gacr-beacons.json",
     "gacr-correlations.json",
     "gacr-dispatches.json",
@@ -129,6 +130,16 @@ def assert_lifecycle(record, required):
 def test_ping_and_identity():
     _, adapter, endpoint = adapter_fixture()
     cmd = command(adapter, "PING")
+    required_identity = {
+        "message_id",
+        "correlation_id",
+        "command_id",
+        "target_session_id",
+        "issued_at",
+        "expires_at",
+        "requires_ack",
+    }
+    assert_true(required_identity <= set(cmd), "PING command identity contract")
     result = adapter.dispatch_command(cmd, endpoint)
     assert_true(result["state"] == "COMPLETED", "PING must complete")
     assert_lifecycle(result, ["CREATED", "QUEUED", "DISPATCHED", "DELIVERED", "ACKNOWLEDGED", "COMPLETED"])
@@ -210,6 +221,7 @@ def test_expiry_duplicates_and_correlation():
         raise AssertionError("wrong target accepted")
     except ControlValidationError:
         pass
+    assert_true(endpoint.receive() is None, "wrong target command must not be consumed")
 
     _, adapter, endpoint = adapter_fixture()
     cmd = command(adapter, "PING", correlation_id="corr-a")
@@ -242,6 +254,11 @@ def test_query_commands():
     assert_true(checkpoint["response"]["checkpoint_ref"] == "CHK-GSCC-GACR-2", "CHECKPOINT_REQUEST response")
     assert_lifecycle(checkpoint, ["DELIVERED", "ACKNOWLEDGED", "EXECUTING", "COMPLETED"])
 
+    for scenario, expected in [("FAILED", "FAILED"), ("DECLINED", "DECLINED"), ("EXPIRED", "EXPIRED")]:
+        _, cp_adapter, cp_endpoint = adapter_fixture(scenarios={"CHECKPOINT_REQUEST": scenario})
+        cp_result = cp_adapter.dispatch_command(command(cp_adapter, "CHECKPOINT_REQUEST"), cp_endpoint)
+        assert_true(cp_result["state"] == expected, f"CHECKPOINT_REQUEST {scenario}")
+
     head = adapter.dispatch_command(command(adapter, "REOBSERVE_HEAD"), endpoint)
     assert_true(head["response"]["observed_head"] == "a" * 40, "REOBSERVE_HEAD response")
     assert_true(head["response"]["mutation_authority_granted"] is False, "REOBSERVE_HEAD grants no authority")
@@ -249,6 +266,11 @@ def test_query_commands():
     blocker = adapter.dispatch_command(command(adapter, "REPORT_BLOCKER"), endpoint)
     assert_true(blocker["response"]["blocked"] is True, "REPORT_BLOCKER explicit blocked")
     assert_true(blocker["response"]["blocker_class"] == "TOOL_FAILURE", "REPORT_BLOCKER class")
+
+    _, unknown_adapter, unknown_endpoint = adapter_fixture()
+    unknown_endpoint.blocker_payload = {}
+    unknown = unknown_adapter.dispatch_command(command(unknown_adapter, "REPORT_BLOCKER"), unknown_endpoint)
+    assert_true(unknown["response"]["blocked"] == "UNAVAILABLE", "REPORT_BLOCKER must not fabricate unknown blocker")
 
 
 def test_supervisor_instruction_matrix():
