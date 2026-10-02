@@ -197,6 +197,22 @@ def main() -> None:
             envelope["fields"]["provider_conversation_ref"]["provenance"] == "PROVIDER_PRIVATE_UNAVAILABLE",
             "TEST B: unavailable provider identity is explicitly private/unavailable",
         )
+        assert_true(
+            envelope["fields"]["repository_id"]["provenance"] == "OBSERVABLE_BY_PLATFORM",
+            "TEST B: repository identity is platform-observed",
+        )
+        assert_true(
+            envelope["fields"]["client_instance_id"]["provenance"] == "DECLARED_BY_AGENT_OR_CLIENT",
+            "TEST B: supplied client instance preserves declared provenance",
+        )
+        assert_true(
+            envelope["fields"]["gacr_session_id"]["provenance"] == "CORRELATED",
+            "TEST B: session binding provenance is correlated",
+        )
+        assert_true(
+            envelope["fields"]["connection_fingerprint"]["provenance"] == "DERIVED_SAFE",
+            "TEST B: fingerprint provenance is safe-derived",
+        )
 
         mod = load_module()
         for forbidden in [
@@ -232,6 +248,24 @@ def main() -> None:
         ).stdout)
         assert_true(distinct["status"] == "CREATE", "TEST C: distinct stable instance creates")
         assert_true(distinct["connection_fingerprint"] != fp, "TEST C: distinct instance fingerprint differs")
+
+        same_client_new_connection = json.loads(run(
+            env,
+            *controlled_args(
+                connection_ref="gateway:instance-3",
+                client_instance_id="gateway-client-1",
+                head="b" * 40,
+                observed_at="2026-10-02T02:07:00+00:00",
+            ),
+        ).stdout)
+        assert_true(
+            same_client_new_connection["status"] == "CREATE",
+            "TEST C: a shared client_instance_id must not collapse an explicitly distinct connection",
+        )
+        assert_true(
+            same_client_new_connection["connection_fingerprint"] != fp,
+            "TEST C: distinct connection under same client has distinct fingerprint",
+        )
 
         with_provider = json.loads(run(
             env,
