@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsolutions.example/schemas/gscc-message.schema.json",
+  "title": "GSCC Message Envelope v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema",
+    "message_id",
+    "correlation_id",
+    "idempotency_key",
+    "kind",
+    "type",
+    "issued_at",
+    "source",
+    "target",
+    "scope",
+    "payload",
+    "delivery"
+  ],
+  "properties": {
+    "schema": {"const": "gscc-message/v1"},
+    "message_id": {"type": "string", "minLength": 1},
+    "correlation_id": {"type": "string", "minLength": 1},
+    "idempotency_key": {"type": "string", "minLength": 1},
+    "kind": {"enum": ["EVENT", "COMMAND", "ACK", "CAPABILITIES"]},
+    "type": {"type": "string", "minLength": 1},
+    "issued_at": {"type": "string", "format": "date-time"},
+    "source": {"type": "object"},
+    "target": {"type": "object"},
+    "scope": {"type": "object"},
+    "payload": {"type": "object"},
+    "delivery": {
+      "type": "object",
+      "required": ["requires_ack", "expires_at", "state"],
+      "properties": {
+        "requires_ack": {"type": "boolean"},
+        "expires_at": {"type": ["string", "null"], "format": "date-time"},
+        "state": {
+          "enum": [
+            "CREATED",
+            "QUEUED",
+            "DISPATCHED",
+            "DELIVERED",
+            "ACKNOWLEDGED",
+            "EXECUTING",
+            "COMPLETED",
+            "FAILED",
+            "DECLINED",
+            "EXPIRED",
+            "CANCELLED",
+            "NO_RESPONSE",
+            "UNSUPPORTED"
+          ]
+        }
+      },
+      "additionalProperties": true
+    }
+  }
+}
