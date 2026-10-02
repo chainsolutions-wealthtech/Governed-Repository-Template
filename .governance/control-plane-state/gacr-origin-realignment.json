@@ -1,0 +1,63 @@
+{
+  "schema": "gacr-origin-realignment-plan/v1",
+  "authority": "CP-AGENT-RELAY-001",
+  "plan_revision": "ORIGIN-REALIGNMENT-R1",
+  "status": "ACCEPTED_PLAN_NOT_YET_EXECUTED",
+  "baseline": {
+    "preserved_revisions": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R5-A",
+      "R6",
+      "R6-A",
+      "R6-B",
+      "R6-C"
+    ],
+    "source_main_at_registration": "bd6c0c869f66ab3cb138db82945320bc1753fc05",
+    "destructive_rollback_forbidden": true
+  },
+  "primary_invariant": "An agent/conversation using a governed repository through an instrumentable access surface must become observable to GACR from the repository interaction without needing to explicitly invoke GACR.",
+  "completion_gate": "LIVE_ULTIMATE_ACCEPTANCE_SCENARIO_REQUIRED",
+  "global_unique_task_unchanged": "P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+  "steps": [
+    "Freeze and attest current R6 baseline",
+    "Reconstruct original GACR intention",
+    "Build ORIGINAL_INTENT ↔ CURRENT_IMPLEMENTATION ↔ GAP matrix",
+    "Identify R4-R6 center-of-gravity drift",
+    "Write acceptance tests before corrective implementation",
+    "Introduce GACR Presence Fabric before existing GACR core",
+    "Instrument controlled repository access paths",
+    "Convert observable access/activity into Presence/Activity evidence",
+    "Separate LIVENESS from PROGRESS",
+    "Add session interrogation and supported liveness challenge",
+    "Add UNBOUND_ACTIVITY reconciliation",
+    "Reuse Beacon/Correlator/Forensics/Dispatcher behind presence layer",
+    "Run real test with fresh conversation/agent",
+    "Prove appearance without explicit GACR registration instruction",
+    "Perform real governed repository work",
+    "Observe liveness/progress evolution",
+    "Interrupt or allow controlled stop",
+    "Observe SUSPECTED_STALL to STALLED",
+    "Connect second governed agent",
+    "Reconstruct predecessor stopping point",
+    "Reobserve exact branch/HEAD",
+    "Accept takeover through existing authority gates",
+    "Continue same governed work",
+    "Declare complete only after live ultimate acceptance passes"
+  ],
+  "invariants": {
+    "preserve_r1_r6": true,
+    "no_parallel_task_engine": true,
+    "no_parallel_claim_or_lock_store": true,
+    "exact_head_required": true,
+    "claims_and_collision_domains_preserved": true,
+    "unknown_metadata_remains_unavailable": true,
+    "internal_transport_is_not_agent": true,
+    "liveness_and_progress_separate": true,
+    "silence_does_not_prove_external_cause": true,
+    "no_secret_cookie_token_transcript_or_private_reasoning_capture": true
+  }
+}
