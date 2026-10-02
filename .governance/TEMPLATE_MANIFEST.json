@@ -90,7 +90,10 @@
       "scripts/gscc/gacr_compat.py",
       "scripts/gscc_observable_arrival.py",
       "scripts/test_gscc_observable_arrival.py",
-      ".github/workflows/gscc-observable-arrival.yml"
+      ".github/workflows/gscc-observable-arrival.yml",
+      "scripts/gscc/admission.py",
+      "scripts/test_gscc_admission.py",
+      ".github/workflows/gscc-admission-gate.yml"
     ],
     "machine_governance": [
       ".governance/bootstrap-state.json",
@@ -148,7 +151,10 @@
       "schemas/mcp-binding.schema.json",
       "schemas/gacr-state.schema.json",
       "schemas/gacr-telemetry.schema.json",
-      "schemas/gacr-bridge-contract.schema.json"
+      "schemas/gacr-bridge-contract.schema.json",
+      "schemas/gscc-admission-envelope.schema.json",
+      "schemas/gscc-admission-receipt.schema.json",
+      "schemas/gscc-access-grant.schema.json"
     ],
     "control_plane_source_only": [
       ".github/workflows/governed-control-plane.yml",
@@ -497,7 +503,12 @@
     "observable repository arrival routed through canonical GSCC before GACR",
     "raw MCP catalogue is planning evidence not governed exposed-function authority",
     "same canonical GSCC function exposure workflow gates governed execution packages",
-    "every MCP invocation in a governed package is covered by an exact-head GSCC route digest"
+    "every MCP invocation in a governed package is covered by an exact-head GSCC route digest",
+    "GSCC admission envelope required before governed function exposure",
+    "PREAUTHORIZED admission is qualification-only and not repository access",
+    "bounded Access Grant required before canonical function exposure",
+    "Access Grant grants neither invocation authority nor mutation authority",
+    "existing GSCC observable-arrival and function-exposure gates preserved under additive admission layer"
   ],
   "automatic_initialization_supported": true
 }
