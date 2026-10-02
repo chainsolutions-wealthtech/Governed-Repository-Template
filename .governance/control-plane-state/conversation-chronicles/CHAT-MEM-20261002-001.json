@@ -14,15 +14,15 @@
     "next_user_message": 2,
     "next_assistant_message": 3,
     "next_tool_event": 9,
-    "next_decision_event": 8,
+    "next_decision_event": 9,
     "next_constraint_event": 7,
     "next_action_event": 8,
     "next_error_event": 1,
-    "next_recovery_event": 5,
-    "next_checkpoint": 9,
-    "next_cache": 9,
+    "next_recovery_event": 6,
+    "next_checkpoint": 10,
+    "next_cache": 10,
     "next_open_loop": 4,
-    "next_artifact": 2,
+    "next_artifact": 3,
     "next_session": 3
   },
   "last_message": {
@@ -31,15 +31,15 @@
     "previous_hash": "8b45efbe51e0e9fbf26883ae2a6ee65c7975e7c782bc5c708c4ea06363db5e97"
   },
   "current_session": "SESSION-000002",
-  "current_checkpoint": "CHK-000008",
-  "current_cache": "CACHE-000008",
+  "current_checkpoint": "CHK-000009",
+  "current_cache": "CACHE-000009",
   "open_loops": [
     "OPEN-000002",
     "OPEN-000003"
   ],
-  "current_topic": "GACR pre-Step-13B remediation and chronological evolution",
-  "point_of_stop": "Canonical GSCC/GSE/GACR integration is functionally green; PR #144 canonized two blocking pre-Step-13B remediation findings. Step 13B remains NOT_EXECUTED and blocked.",
-  "next_safe_action": "Execute G4 / GACR-INT-AUDIT-01 first, integrate after full regression, then G5 / GACR-INT-AUDIT-02, then G6 reauthorization before any fresh-provider Step 13B run.",
+  "current_topic": "GACR pre-Step-13B remediation with G2 source-contract memory preserved",
+  "point_of_stop": "The Chronicle now preserves the actual G2 integration history plus the shared contract/safety/ownership/integration invariants from the consolidated three-agent prompt source. Step 13B remains blocked pending G4, G5 and G6.",
+  "next_safe_action": "Execute G4 against canonical scripts/gscc/protocol.py while preserving the recovered G2 contract semantics, then G5 control-response→GSE proof, then G6 reauthorization.",
   "external_state_observed": {
     "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
     "branch": "main",
@@ -59,6 +59,12 @@
       "artifact_id": "ART-000001",
       "name": "Texte collé(20261001-222403).txt",
       "sha256": "02927d6bdef2c6eac836b1500d419bc091fbe6c4558a0fa7f86881f0a6541f6d",
+      "durability": "CURRENT_CONVERSATION_UPLOAD_NOT_ASSUMED_CROSS_CHAT"
+    },
+    {
+      "artifact_id": "ART-000002",
+      "name": "Texte collé(20261002-053543).txt",
+      "sha256": "e537532054df2df935654fe7d4f3d96718578ef39505af59f4e64ff7640f9b56",
       "durability": "CURRENT_CONVERSATION_UPLOAD_NOT_ASSUMED_CROSS_CHAT"
     }
   ],
@@ -97,6 +103,17 @@
         "github-pr:128",
         "github-pr:129",
         "main:652d7e3385c7efa05ee7b085adf22e4574485db5"
+      ]
+    },
+    {
+      "event_id": "EVT-R-000005",
+      "kind": "HISTORICAL_RECOVERY",
+      "finding": "Recovered the shared G2 parallel-wave contract and execution invariants from the owner-supplied consolidated GSCC/GSE/GSCC↔GACR prompt bundle so future remediation preserves the original contract semantics.",
+      "evidence": [
+        "ART-000002",
+        "docs/control-plane/GSCC_PROTOCOL_V1.md",
+        "docs/control-plane/GSE_SESSION_STATE_ENGINE.md",
+        "docs/control-plane/GSCC_GACR_CONTROL_INTEGRATION.md"
       ]
     }
   ],
@@ -238,6 +255,77 @@
       "G16_STEP_22_ACCEPT_TAKEOVER",
       "G17_STEP_23_CONTINUE_SAME_WORK",
       "G18_STEP_24_DECLARE_COMPLETE_ONLY_AFTER_LIVE_PASS"
-    ]
+    ],
+    "g2_contract_memory": {
+      "status": "RECOVERED_AND_PRESERVED",
+      "source_artifact": "ART-000002",
+      "shared_kinds": [
+        "EVENT",
+        "COMMAND",
+        "ACK",
+        "CAPABILITIES"
+      ],
+      "events": [
+        "SESSION_ATTACH",
+        "SESSION_RESUME",
+        "HEARTBEAT",
+        "ACTIVITY_STARTED",
+        "ACTIVITY_COMPLETED",
+        "ACTIVITY_FAILED",
+        "TOOL_STARTED",
+        "TOOL_COMPLETED",
+        "TOOL_FAILED",
+        "PROGRESS",
+        "BLOCKED",
+        "CHECKPOINT",
+        "CONTEXT_UPDATE",
+        "INTERRUPTION",
+        "CHALLENGE_RESPONSE",
+        "COMMAND_ACK"
+      ],
+      "commands": [
+        "PING",
+        "LIVENESS_CHALLENGE",
+        "STATUS_REQUEST",
+        "PROGRESS_REQUEST",
+        "CONTEXT_REQUEST",
+        "CHECKPOINT_REQUEST",
+        "REOBSERVE_HEAD",
+        "REPORT_BLOCKER",
+        "PAUSE",
+        "RESUME",
+        "SUPERVISOR_INSTRUCTION",
+        "HANDOFF_PREPARE",
+        "TAKEOVER_OFFER"
+      ],
+      "delivery_states": [
+        "CREATED",
+        "QUEUED",
+        "DISPATCHED",
+        "DELIVERED",
+        "ACKNOWLEDGED",
+        "EXECUTING",
+        "COMPLETED",
+        "FAILED",
+        "DECLINED",
+        "EXPIRED",
+        "CANCELLED",
+        "NO_RESPONSE",
+        "UNSUPPORTED"
+      ],
+      "permanent_invariants": [
+        "GSCC_TRANSPORTS_GSE_INTERPRETS_GACR_GOVERNS_CONTINUITY",
+        "LIVENESS_NE_PROGRESS",
+        "ACTIVITY_NE_PROGRESS",
+        "COMMAND_DELIVERY_NE_MUTATION_AUTHORITY",
+        "TAKEOVER_OFFER_NE_TAKEOVER_ACCEPT",
+        "RESUME_NE_WRITE_AUTHORITY",
+        "REOBSERVE_HEAD_NE_CLAIM_TRANSFER",
+        "NO_RESPONSE_NE_PROOF_OF_CRASH",
+        "TEST_STATE_ISOLATED_FROM_LIVE_GACR_STORES",
+        "NO_SECRET_COOKIE_TOKEN_TRANSCRIPT_OR_PRIVATE_REASONING_CAPTURE",
+        "SHARED_PROTOCOL_HAS_ONE_CANONICAL_AUTHORITY"
+      ]
+    }
   }
 }
