@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 15,
+  "revision": 16,
   "items": [
     {
       "correlation_id": "GACR-C-caffb7cb6efd",
@@ -56,9 +56,10 @@
         "session-68c97d4bb1ef71c86444de12"
       ],
       "reasons": [
-        "BRANCH_MATCH"
+        "BRANCH_MATCH",
+        "GITHUB_ACTOR_MATCH"
       ],
-      "evaluated_at": "2026-10-01T23:44:07+00:00"
+      "evaluated_at": "2026-10-02T03:39:33+00:00"
     },
     {
       "correlation_id": "GACR-C-a39298b3d9b4",
@@ -209,6 +210,22 @@
         "CONNECTION_REF_EXACT"
       ],
       "evaluated_at": "2026-10-02T03:16:26+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-2002b7b6cfae",
+      "beacon_id": "GACR-B-9126109c7889",
+      "level": "EXACT",
+      "selected_session_id": "session-68c97d4bb1ef71c86444de12",
+      "candidate_session_ids": [
+        "session-68c97d4bb1ef71c86444de12"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT",
+        "CONNECTION_FINGERPRINT_EXACT"
+      ],
+      "evaluated_at": "2026-10-02T03:39:33+00:00"
     }
   ]
 }
