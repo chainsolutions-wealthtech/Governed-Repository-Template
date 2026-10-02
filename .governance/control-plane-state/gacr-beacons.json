@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 6,
+  "revision": 8,
   "items": [
     {
       "beacon_id": "GACR-B-6e9a2275ea04",
@@ -457,6 +457,158 @@
       },
       "context_digest": "5fb52f0350a48b4c5c07e579c9dc38e56be9f7ed5c27b081582dec68f5e9e989",
       "dedupe_key": "61b162e902c43945a7a56bce61dd895a321b5b0755b33d4148b2caef05acc7d5"
+    },
+    {
+      "beacon_id": "GACR-B-3b3d2802ac46",
+      "observed_at": "2026-10-02T00:50:28+00:00",
+      "source": "CLIENT_EMITTER",
+      "event_type": "HEARTBEAT",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "session_id": "session-68c97d4bb1ef71c86444de12",
+      "provider": "other",
+      "provider_conversation_ref": null,
+      "client_instance_id": "chronicle:CHAT-MEM-20261002-001",
+      "connection_ref": "chronicle:CHAT-MEM-20261002-001:SESSION-000002",
+      "agent_identity": "conversation-agent",
+      "agent_role": null,
+      "capabilities": [
+        "GACR_AUTO_ATTACH"
+      ],
+      "task_id": null,
+      "branch": "main",
+      "pull_request": null,
+      "observed_head_sha": "22c0f6f1a17a6478221436de3e638b3efc643b56",
+      "action_id": null,
+      "action_label": null,
+      "action_phase": null,
+      "tool_name": null,
+      "tool_call_id": null,
+      "outcome": null,
+      "written_head_sha": null,
+      "checkpoint_ref": null,
+      "evidence_ref": null,
+      "interruption_code": null,
+      "github": {
+        "environment": {
+          "GITHUB_REPOSITORY": "chainsolutions-wealthtech/Governed-Repository-Template",
+          "GITHUB_REPOSITORY_ID": "1386478935",
+          "GITHUB_REPOSITORY_OWNER": "chainsolutions-wealthtech",
+          "GITHUB_REPOSITORY_OWNER_ID": "299685687",
+          "GITHUB_ACTOR": "Wealthtechinnovations",
+          "GITHUB_ACTOR_ID": "94637590",
+          "GITHUB_TRIGGERING_ACTOR": "Wealthtechinnovations",
+          "GITHUB_EVENT_NAME": "issue_comment",
+          "GITHUB_REF": "refs/heads/main",
+          "GITHUB_REF_NAME": "main",
+          "GITHUB_REF_TYPE": "branch",
+          "GITHUB_SHA": "22c0f6f1a17a6478221436de3e638b3efc643b56",
+          "GITHUB_WORKFLOW": "Governed Agent Continuity Relay",
+          "GITHUB_WORKFLOW_REF": "chainsolutions-wealthtech/Governed-Repository-Template/.github/workflows/governed-agent-continuity-relay.yml@refs/heads/main",
+          "GITHUB_RUN_ID": "36947989601",
+          "GITHUB_RUN_NUMBER": "13",
+          "GITHUB_RUN_ATTEMPT": "1",
+          "GITHUB_JOB": "relay",
+          "GITHUB_ACTION": "relay",
+          "GITHUB_SERVER_URL": "https://github.com",
+          "GITHUB_API_URL": "https://api.github.com",
+          "GITHUB_GRAPHQL_URL": "https://api.github.com/graphql"
+        },
+        "event": {
+          "sender": {
+            "login": "Wealthtechinnovations",
+            "id": 94637590,
+            "type": "User"
+          },
+          "installation_id": null,
+          "repository": {
+            "id": 1386478935,
+            "full_name": "chainsolutions-wealthtech/Governed-Repository-Template",
+            "owner_login": "chainsolutions-wealthtech",
+            "owner_id": 299685687,
+            "default_branch": "main"
+          },
+          "pull_request": null,
+          "issue_number": 115
+        }
+      },
+      "context_digest": "99620daa9978ed9b308607793fac78a1204d68514b68a56a5d2df41a1a543299",
+      "dedupe_key": "9a252a122b594c7f5219790caecc07c5a4a5c22720606b865fe11e4e2dda9481"
+    },
+    {
+      "beacon_id": "GACR-B-e3e2cf52542f",
+      "observed_at": "2026-10-02T00:50:28+00:00",
+      "source": "CLIENT_EMITTER",
+      "event_type": "ACTION_TRACE",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "session_id": "session-68c97d4bb1ef71c86444de12",
+      "provider": "other",
+      "provider_conversation_ref": null,
+      "client_instance_id": "chronicle:CHAT-MEM-20261002-001",
+      "connection_ref": "chronicle:CHAT-MEM-20261002-001:SESSION-000002",
+      "agent_identity": "conversation-agent",
+      "agent_role": null,
+      "capabilities": [
+        "GACR_AUTO_ATTACH"
+      ],
+      "task_id": null,
+      "branch": "main",
+      "pull_request": null,
+      "observed_head_sha": "22c0f6f1a17a6478221436de3e638b3efc643b56",
+      "action_id": "CHATGPT-GACR-R6-LIVE-001",
+      "action_label": "R6 live provider-host integration proof",
+      "action_phase": "COMPLETED",
+      "tool_name": "github-connector",
+      "tool_call_id": "r6-live-complete-001",
+      "outcome": "PASS",
+      "written_head_sha": null,
+      "checkpoint_ref": "CHK-R6-LIVE-001",
+      "evidence_ref": "github-issue-comment:5943497457",
+      "interruption_code": null,
+      "github": {
+        "environment": {
+          "GITHUB_REPOSITORY": "chainsolutions-wealthtech/Governed-Repository-Template",
+          "GITHUB_REPOSITORY_ID": "1386478935",
+          "GITHUB_REPOSITORY_OWNER": "chainsolutions-wealthtech",
+          "GITHUB_REPOSITORY_OWNER_ID": "299685687",
+          "GITHUB_ACTOR": "Wealthtechinnovations",
+          "GITHUB_ACTOR_ID": "94637590",
+          "GITHUB_TRIGGERING_ACTOR": "Wealthtechinnovations",
+          "GITHUB_EVENT_NAME": "issue_comment",
+          "GITHUB_REF": "refs/heads/main",
+          "GITHUB_REF_NAME": "main",
+          "GITHUB_REF_TYPE": "branch",
+          "GITHUB_SHA": "22c0f6f1a17a6478221436de3e638b3efc643b56",
+          "GITHUB_WORKFLOW": "Governed Agent Continuity Relay",
+          "GITHUB_WORKFLOW_REF": "chainsolutions-wealthtech/Governed-Repository-Template/.github/workflows/governed-agent-continuity-relay.yml@refs/heads/main",
+          "GITHUB_RUN_ID": "36947989601",
+          "GITHUB_RUN_NUMBER": "13",
+          "GITHUB_RUN_ATTEMPT": "1",
+          "GITHUB_JOB": "relay",
+          "GITHUB_ACTION": "relay",
+          "GITHUB_SERVER_URL": "https://github.com",
+          "GITHUB_API_URL": "https://api.github.com",
+          "GITHUB_GRAPHQL_URL": "https://api.github.com/graphql"
+        },
+        "event": {
+          "sender": {
+            "login": "Wealthtechinnovations",
+            "id": 94637590,
+            "type": "User"
+          },
+          "installation_id": null,
+          "repository": {
+            "id": 1386478935,
+            "full_name": "chainsolutions-wealthtech/Governed-Repository-Template",
+            "owner_login": "chainsolutions-wealthtech",
+            "owner_id": 299685687,
+            "default_branch": "main"
+          },
+          "pull_request": null,
+          "issue_number": 115
+        }
+      },
+      "context_digest": "4a8e0224350a599644f2ccb1c94cd635c9403e55178c3375422c75e8d37d84d4",
+      "dedupe_key": "4122923fcad6212ef14e010162e8a77fdf278efb37ebb542c1af0a4b866edd1c"
     }
   ]
 }
