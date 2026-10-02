@@ -1,10 +1,12 @@
 from __future__ import annotations
 
+import argparse
 import copy
 import hashlib
 import json
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from typing import Any
 
 
@@ -216,6 +218,15 @@ def evaluate_access_grant(
             "missing_qualification": sorted(QUALIFICATION_REQUIREMENTS),
         }
 
+    forbidden = _forbidden_path(qualification_evidence)
+    if forbidden:
+        return {
+            **base,
+            "status": "ADMISSION_DENIED",
+            "reason_code": "FORBIDDEN_MATERIAL",
+            "forbidden_path": forbidden,
+        }
+
     missing = [
         name
         for name, validator in QUALIFICATION_REQUIREMENTS.items()
@@ -393,3 +404,68 @@ def evaluate_admission(
     )
     store.put(idempotency_key, receipt)
     return receipt
+
+def _json_object(raw: str, label: str) -> dict[str, Any]:
+    try:
+        value = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise SystemExit(f"{label}_JSON_INVALID:{exc}") from exc
+    if not isinstance(value, dict):
+        raise SystemExit(f"{label}_JSON_OBJECT_REQUIRED")
+    return value
+
+
+def _write_cli_output(value: dict[str, Any], output: str | None) -> None:
+    rendered = json.dumps(value, indent=2, sort_keys=True, ensure_ascii=False) + "\n"
+    if output:
+        Path(output).write_text(rendered, encoding="utf-8")
+    print(rendered, end="")
+
+
+def _github_output(name: str, value: Any) -> None:
+    path = __import__("os").environ.get("GITHUB_OUTPUT")
+    if not path:
+        return
+    with open(path, "a", encoding="utf-8") as handle:
+        handle.write(f"{name}={value}\n")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="GSCC admission and access qualification gate")
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    evaluate = sub.add_parser("evaluate")
+    evaluate.add_argument("--envelope-json", required=True)
+    evaluate.add_argument("--output")
+    evaluate.add_argument("--require-preauthorized", action="store_true")
+
+    qualify = sub.add_parser("qualify")
+    qualify.add_argument("--admission-receipt-json", required=True)
+    qualify.add_argument("--qualification-evidence-json", required=True)
+    qualify.add_argument("--output")
+    qualify.add_argument("--require-authorized", action="store_true")
+
+    args = parser.parse_args()
+
+    if args.command == "evaluate":
+        result = evaluate_admission(_json_object(args.envelope_json, "ADMISSION_ENVELOPE"))
+        _write_cli_output(result, args.output)
+        _github_output("status", result.get("status"))
+        _github_output("admission_id", result.get("admission_id"))
+        if args.require_preauthorized and result.get("status") != "PREAUTHORIZED":
+            raise SystemExit(3)
+        return
+
+    result = evaluate_access_grant(
+        _json_object(args.admission_receipt_json, "ADMISSION_RECEIPT"),
+        _json_object(args.qualification_evidence_json, "QUALIFICATION_EVIDENCE"),
+    )
+    _write_cli_output(result, args.output)
+    _github_output("status", result.get("status"))
+    _github_output("grant_id", result.get("grant_id"))
+    if args.require_authorized and result.get("status") != "AUTHORIZED":
+        raise SystemExit(3)
+
+
+if __name__ == "__main__":
+    main()
