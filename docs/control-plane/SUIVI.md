@@ -986,3 +986,24 @@ These observations are durable supervision evidence, not new mutation authority 
 - `GACR-INT-AUDIT-01 = CLOSED_PASS`.
 - `GACR-INT-AUDIT-02` remains `OPEN_BLOCKING_PRE_13B`; Step 13B remains blocked.
 - Next remediation: G5 control-response → canonical GSE projection proof.
+
+
+## 2026-10-02 — GACR G5 / AUDIT-02 closed; G6 reconciliation
+
+- G5 branch baseline: `0d3b259105f57e523e257134c7d939ecc63de34b`.
+- PR #149 added `scripts/gscc_gacr/gse_projection.py` as the single additive control-response → canonical GSE mapper.
+- The real `GSCCSessionControlEndpoint` now executes STATUS / PROGRESS / CONTEXT / CHECKPOINT through `SessionEndpoint.receive_commands()`.
+- Mapping semantics:
+  - STATUS → CONTEXT_UPDATE;
+  - CONTEXT → CONTEXT_UPDATE;
+  - CHECKPOINT → CHECKPOINT without `checkpoint_advanced`;
+  - PROGRESS → PROGRESS with `qualifying_progress=false`.
+- Unit and extended E2E prove no false liveness or progress is manufactured.
+- Candidate Governance CI `36971442096 = PASS`.
+- PR #149 merge: `d831c29ea0943bd5015a757e303187fa505b5f1c`.
+- Post-merge Governance CI `36971501671 = PASS`.
+- Post-merge GACR Relay `36971501664 = PASS`.
+- Post-auto-attach main observed at `114c5397966a5c6ad7d8770298abd698929ecf8f`.
+- `GACR-INT-AUDIT-02 = CLOSED_PASS`.
+- Both blocking audit findings are now closed.
+- Step 13B remains `BLOCKED_PENDING_G6_REAUTHORIZATION` until G6 reconciliation itself passes.
