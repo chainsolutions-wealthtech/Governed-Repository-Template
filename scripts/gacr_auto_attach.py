@@ -191,43 +191,139 @@ def build_presence_observation(args: argparse.Namespace, anchor: dict, config: d
     observed_at = args.observed_at or now_utc().replace(microsecond=0).isoformat()
     repository = args.repository or event.get("repository") or repository_name()
     repository_id = args.repository_id or os.environ.get("GITHUB_REPOSITORY_ID") or event.get("repository_id")
+
     organization = args.organization or event.get("organization")
+    organization_provenance = "OBSERVABLE_BY_PLATFORM"
     if not organization and repository and repository != "UNKNOWN_REPOSITORY" and "/" in repository:
         organization = repository.split("/", 1)[0]
+        organization_provenance = "DERIVED_SAFE"
 
     surface_class = _surface_class(args, anchor)
+
     git_provider = args.git_provider
+    git_provider_provenance = "OBSERVABLE_BY_PLATFORM"
     if not git_provider and (
         str(os.environ.get("GITHUB_SERVER_URL") or "").startswith("https://github")
         or os.environ.get("GITHUB_REPOSITORY")
         or event.get("repository")
     ):
         git_provider = "github"
+        git_provider_provenance = "DERIVED_SAFE"
 
-    provider = args.provider or anchor.get("provider") or os.environ.get("GACR_PROVIDER")
+    github_actor = args.github_actor or event.get("github_actor") or os.environ.get("GITHUB_ACTOR")
+    github_app_or_installation = args.github_app_installation or event.get("github_app_or_installation")
+
+    connection_method = _connection_method(args, anchor, surface_class)
+    connection_method_provenance = "OBSERVABLE_BY_PLATFORM" if args.connection_method else "DERIVED_SAFE"
+
+    if args.agent:
+        agent_identity = args.agent
+        agent_identity_provenance = "DECLARED_BY_AGENT_OR_CLIENT"
+    elif anchor.get("source") == "GITHUB_ACTIONS" and anchor.get("agent"):
+        agent_identity = anchor.get("agent")
+        agent_identity_provenance = "OBSERVABLE_BY_PLATFORM"
+    elif anchor.get("agent"):
+        agent_identity = anchor.get("agent")
+        agent_identity_provenance = "DERIVED_SAFE"
+    elif os.environ.get("GACR_AGENT_IDENTITY"):
+        agent_identity = os.environ.get("GACR_AGENT_IDENTITY")
+        agent_identity_provenance = "DECLARED_BY_AGENT_OR_CLIENT"
+    else:
+        agent_identity = github_actor
+        agent_identity_provenance = "OBSERVABLE_BY_PLATFORM"
+
+    if args.provider or os.environ.get("GACR_PROVIDER"):
+        provider = args.provider or os.environ.get("GACR_PROVIDER")
+        provider_provenance = "DECLARED_BY_AGENT_OR_CLIENT"
+    elif anchor.get("provider"):
+        provider = anchor.get("provider")
+        provider_provenance = "OBSERVABLE_BY_PLATFORM" if anchor.get("source") == "GITHUB_ACTIONS" else "DERIVED_SAFE"
+    else:
+        provider = None
+        provider_provenance = "PROVIDER_PRIVATE_UNAVAILABLE"
+
     provider_ref = _provider_ref(provider, args.provider_ref, args.provider_url)
+    provider_ref_provenance = (
+        "DECLARED_BY_AGENT_OR_CLIENT" if provider_ref else "PROVIDER_PRIVATE_UNAVAILABLE"
+    )
+
+    client_instance_id = args.client_instance_id or anchor.get("client_instance_id")
+    client_instance_provenance = (
+        "DECLARED_BY_AGENT_OR_CLIENT"
+        if args.client_instance_id
+        else "OBSERVABLE_BY_PLATFORM"
+        if anchor.get("source") == "GITHUB_ACTIONS"
+        else "DERIVED_SAFE"
+    )
+    connection_ref = args.connection_ref or anchor.get("connection_ref")
+    connection_ref_provenance = (
+        "DECLARED_BY_AGENT_OR_CLIENT"
+        if args.connection_ref
+        else "OBSERVABLE_BY_PLATFORM"
+        if anchor.get("source") == "GITHUB_ACTIONS"
+        else "DERIVED_SAFE"
+    )
+
     permissions = _parse_permissions(args.permissions_json)
+    capabilities = sorted(set(args.capability or [])) if args.capability else None
+
+    field_provenance = {
+        "client_instance_id": client_instance_provenance,
+        "provider": provider_provenance,
+        "agent_identity": agent_identity_provenance,
+        "agent_type_or_model": "DECLARED_BY_AGENT_OR_CLIENT" if args.agent_type_model else "PROVIDER_PRIVATE_UNAVAILABLE",
+        "repository": "OBSERVABLE_BY_PLATFORM",
+        "repository_id": "OBSERVABLE_BY_PLATFORM",
+        "organization": organization_provenance,
+        "git_provider": git_provider_provenance,
+        "github_actor": "OBSERVABLE_BY_PLATFORM",
+        "github_app_or_installation": "OBSERVABLE_BY_PLATFORM",
+        "connection_method": connection_method_provenance,
+        "permissions": "DECLARED_BY_AGENT_OR_CLIENT" if permissions is not None else "OBSERVABLE_BY_PLATFORM",
+        "capabilities": "DECLARED_BY_AGENT_OR_CLIENT",
+        "entry_action": "DECLARED_BY_AGENT_OR_CLIENT",
+        "connection_intent": "DECLARED_BY_AGENT_OR_CLIENT",
+        "task_id": "DECLARED_BY_AGENT_OR_CLIENT",
+        "claim_id": "DECLARED_BY_AGENT_OR_CLIENT",
+        "branch": "OBSERVABLE_BY_PLATFORM",
+        "base_branch": "OBSERVABLE_BY_PLATFORM",
+        "HEAD": "OBSERVABLE_BY_PLATFORM",
+        "PR": "OBSERVABLE_BY_PLATFORM",
+        "workflow_run_id": "OBSERVABLE_BY_PLATFORM",
+        "job_id": "OBSERVABLE_BY_PLATFORM",
+        "run_attempt": "OBSERVABLE_BY_PLATFORM",
+        "event_type": "OBSERVABLE_BY_PLATFORM",
+        "delivery_or_correlation_id": "OBSERVABLE_BY_PLATFORM",
+        "heartbeat_seq": "DECLARED_BY_AGENT_OR_CLIENT",
+        "provider_conversation_ref": provider_ref_provenance,
+        "provider_conversation_url": "PROVIDER_PRIVATE_UNAVAILABLE",
+        "checkpoint": "DECLARED_BY_AGENT_OR_CLIENT",
+        "last_action": "DECLARED_BY_AGENT_OR_CLIENT",
+        "last_evidence": "DECLARED_BY_AGENT_OR_CLIENT",
+        "connection_ref": connection_ref_provenance,
+    }
 
     observation = {
         "observed_at": observed_at,
         "surface_class": surface_class,
         "source": args.source or anchor.get("source") or "PRESENCE_FABRIC",
+        "field_provenance": field_provenance,
         "repository": repository,
         "repository_id": repository_id,
         "organization": organization,
         "git_provider": git_provider,
-        "github_actor": args.github_actor or event.get("github_actor") or os.environ.get("GITHUB_ACTOR"),
-        "github_app_or_installation": args.github_app_installation or event.get("github_app_or_installation"),
-        "connection_method": _connection_method(args, anchor, surface_class),
-        "agent_identity": args.agent or anchor.get("agent") or os.environ.get("GACR_AGENT_IDENTITY") or os.environ.get("GITHUB_ACTOR"),
+        "github_actor": github_actor,
+        "github_app_or_installation": github_app_or_installation,
+        "connection_method": connection_method,
+        "agent_identity": agent_identity,
         "agent_type_or_model": args.agent_type_model,
         "provider": provider,
         "provider_ref": provider_ref,
         "provider_url_supplied": bool(args.provider_url),
-        "client_instance_id": args.client_instance_id or anchor.get("client_instance_id"),
-        "connection_ref": args.connection_ref or anchor.get("connection_ref"),
+        "client_instance_id": client_instance_id,
+        "connection_ref": connection_ref,
         "permissions": permissions,
-        "capabilities": sorted(set(args.capability or [])),
+        "capabilities": capabilities,
         "entry_action": args.entry_action,
         "connection_intent": args.connection_intent,
         "task_id": args.task_id,
@@ -252,8 +348,6 @@ def build_presence_observation(args: argparse.Namespace, anchor: dict, config: d
     }
     validate_presence_observation(observation)
     return observation
-
-
 def _fingerprint_payload(observation: dict, config: dict, *, first_head=None, first_observed_at=None) -> dict:
     bucket_seconds = int((config.get("presence_fabric") or {}).get("first_touch_time_bucket_seconds", 300))
     observed_at = first_observed_at or observation["observed_at"]
@@ -293,20 +387,30 @@ def _live_sessions(sessions_doc: dict, repository: str) -> list[dict]:
 
 def _candidate_sessions(sessions_doc: dict, observation: dict) -> list[dict]:
     provider_ref = observation.get("provider_ref")
-    anchors = [
-        ("connection_ref", observation.get("connection_ref")),
-        ("client_instance_id", observation.get("client_instance_id")),
-        ("provider_conversation_ref", provider_ref),
-    ]
+    connection_ref = observation.get("connection_ref")
+    client_instance_id = observation.get("client_instance_id")
     candidates: dict[str, dict] = {}
+
     for session in _live_sessions(sessions_doc, observation["repository"]):
-        for key, value in anchors:
-            if value and session.get(key) == value:
-                candidates[session["session_id"]] = session
-                break
+        matched = False
+        if provider_ref and session.get("provider_conversation_ref") == provider_ref:
+            matched = True
+        if connection_ref and session.get("connection_ref") == connection_ref:
+            matched = True
+
+        # A client instance may host multiple concurrent connections. It is an
+        # exact anchor only when no conflicting, more-specific connection_ref
+        # is present. Never collapse a new connection into an old session merely
+        # because they share the same client process/browser integration.
+        if client_instance_id and session.get("client_instance_id") == client_instance_id:
+            session_connection_ref = session.get("connection_ref")
+            if not connection_ref or session_connection_ref in {None, "", connection_ref}:
+                matched = True
+
+        if matched:
+            candidates[session["session_id"]] = session
+
     return sorted(candidates.values(), key=lambda x: x.get("session_id") or "")
-
-
 def _stable_anchor_present(observation: dict) -> bool:
     return any(
         observation.get(key)
@@ -426,6 +530,11 @@ def build_connection_envelope(
     config: dict,
 ) -> dict:
     relay = (session or {}).get("relay") or {}
+    provenance = observation.get("field_provenance") or {}
+
+    def p(name: str, fallback: str) -> str:
+        return provenance.get(name) or fallback
+
     claim = _claim_for_session(claims_doc, (session or {}).get("session_id"))
     explicit_claim_id = observation.get("claim_id")
     correlated_claim_id = (claim or {}).get("claim_id") or (claim or {}).get("work_item_id")
@@ -439,85 +548,86 @@ def build_connection_envelope(
         "gacr_session_id": _field((session or {}).get("session_id"), "CORRELATED", "PRESENCE_BINDER"),
         "client_instance_id": _field(
             observation.get("client_instance_id") or (session or {}).get("client_instance_id"),
-            "DECLARED_BY_AGENT_OR_CLIENT",
-            "CLIENT_OR_ADAPTER",
+            p("client_instance_id", "CORRELATED") if observation.get("client_instance_id") else "CORRELATED",
+            "CLIENT_OR_ADAPTER_OR_SESSION",
         ),
         "provider": _field(
-            observation.get("provider") or (session or {}).get("provider"),
-            "DECLARED_BY_AGENT_OR_CLIENT" if observation.get("provider") else "DERIVED_SAFE",
+            observation.get("provider")
+            or ((session or {}).get("provider") if (session or {}).get("provider") not in {None, "", "other"} else None),
+            p("provider", "CORRELATED") if observation.get("provider") else "CORRELATED",
             "CLIENT_OR_SESSION",
         ),
         "agent_identity": _field(
             observation.get("agent_identity") or (session or {}).get("agent_identity"),
-            "DECLARED_BY_AGENT_OR_CLIENT" if observation.get("agent_identity") else "CORRELATED",
+            p("agent_identity", "CORRELATED") if observation.get("agent_identity") else "CORRELATED",
             "CLIENT_OR_SESSION",
         ),
         "agent_type_or_model": _field(
             observation.get("agent_type_or_model"),
-            "DECLARED_BY_AGENT_OR_CLIENT" if observation.get("agent_type_or_model") else "PROVIDER_PRIVATE_UNAVAILABLE",
+            p("agent_type_or_model", "PROVIDER_PRIVATE_UNAVAILABLE"),
             "CLIENT_OR_PROVIDER_PRIVATE",
         ),
-        "repository": _field(observation.get("repository"), "OBSERVABLE_BY_PLATFORM", "REPOSITORY_SURFACE"),
-        "repository_id": _field(observation.get("repository_id"), "OBSERVABLE_BY_PLATFORM", "REPOSITORY_SURFACE"),
+        "repository": _field(observation.get("repository"), p("repository", "OBSERVABLE_BY_PLATFORM"), "REPOSITORY_SURFACE"),
+        "repository_id": _field(observation.get("repository_id"), p("repository_id", "OBSERVABLE_BY_PLATFORM"), "REPOSITORY_SURFACE"),
         "organization": _field(
             observation.get("organization"),
-            "DERIVED_SAFE" if observation.get("organization") else "OBSERVABLE_BY_PLATFORM",
+            p("organization", "OBSERVABLE_BY_PLATFORM"),
             "REPOSITORY_IDENTITY",
         ),
-        "git_provider": _field(observation.get("git_provider"), "DERIVED_SAFE", "REPOSITORY_SURFACE"),
-        "github_actor": _field(observation.get("github_actor"), "OBSERVABLE_BY_PLATFORM", "GITHUB_EVENT_OR_GATEWAY"),
+        "git_provider": _field(observation.get("git_provider"), p("git_provider", "DERIVED_SAFE"), "REPOSITORY_SURFACE"),
+        "github_actor": _field(observation.get("github_actor"), p("github_actor", "OBSERVABLE_BY_PLATFORM"), "GITHUB_EVENT_OR_GATEWAY"),
         "github_app_or_installation": _field(
             observation.get("github_app_or_installation"),
-            "OBSERVABLE_BY_PLATFORM",
+            p("github_app_or_installation", "OBSERVABLE_BY_PLATFORM"),
             "GITHUB_EVENT_OR_GATEWAY",
         ),
-        "connection_method": _field(observation.get("connection_method"), "DERIVED_SAFE", "PRESENCE_OBSERVER"),
+        "connection_method": _field(observation.get("connection_method"), p("connection_method", "DERIVED_SAFE"), "PRESENCE_OBSERVER"),
         "permissions": _field(
             observation.get("permissions"),
-            "DECLARED_BY_AGENT_OR_CLIENT" if observation.get("permissions") is not None else "OBSERVABLE_BY_PLATFORM",
+            p("permissions", "OBSERVABLE_BY_PLATFORM"),
             "EXPLICIT_ADAPTER_ONLY",
         ),
         "capabilities": _field(
             observation.get("capabilities") or (session or {}).get("capabilities"),
-            "DECLARED_BY_AGENT_OR_CLIENT",
-            "CLIENT_OR_ADAPTER",
+            p("capabilities", "DECLARED_BY_AGENT_OR_CLIENT") if observation.get("capabilities") else "CORRELATED",
+            "CLIENT_OR_ADAPTER_OR_SESSION",
         ),
-        "entry_action": _field(observation.get("entry_action"), "DECLARED_BY_AGENT_OR_CLIENT", "CLIENT_OR_ADAPTER"),
-        "connection_intent": _field(observation.get("connection_intent"), "DECLARED_BY_AGENT_OR_CLIENT", "CLIENT_OR_ADAPTER"),
+        "entry_action": _field(observation.get("entry_action"), p("entry_action", "DECLARED_BY_AGENT_OR_CLIENT"), "CLIENT_OR_ADAPTER"),
+        "connection_intent": _field(observation.get("connection_intent"), p("connection_intent", "DECLARED_BY_AGENT_OR_CLIENT"), "CLIENT_OR_ADAPTER"),
         "task_id": _field(
             observation.get("task_id") or relay.get("task_id"),
-            "DECLARED_BY_AGENT_OR_CLIENT" if observation.get("task_id") else "CORRELATED",
+            p("task_id", "DECLARED_BY_AGENT_OR_CLIENT") if observation.get("task_id") else "CORRELATED",
             "CLIENT_OR_SESSION",
         ),
         "claim_id": _field(
             claim_id,
-            "DECLARED_BY_AGENT_OR_CLIENT" if explicit_claim_id else "CORRELATED",
+            p("claim_id", "DECLARED_BY_AGENT_OR_CLIENT") if explicit_claim_id else "CORRELATED",
             "CLIENT_OR_CANONICAL_CLAIMS",
         ),
-        "branch": _field(observation.get("branch") or relay.get("branch"), "OBSERVABLE_BY_PLATFORM", "REPOSITORY_SURFACE"),
-        "base_branch": _field(observation.get("base_branch"), "OBSERVABLE_BY_PLATFORM", "REPOSITORY_SURFACE"),
-        "HEAD": _field(observation.get("head"), "OBSERVABLE_BY_PLATFORM", "REPOSITORY_SURFACE"),
+        "branch": _field(observation.get("branch") or relay.get("branch"), p("branch", "OBSERVABLE_BY_PLATFORM"), "REPOSITORY_SURFACE"),
+        "base_branch": _field(observation.get("base_branch"), p("base_branch", "OBSERVABLE_BY_PLATFORM"), "REPOSITORY_SURFACE"),
+        "HEAD": _field(observation.get("head"), p("HEAD", "OBSERVABLE_BY_PLATFORM"), "REPOSITORY_SURFACE"),
         "PR": _field(
             observation.get("pull_request") if observation.get("pull_request") is not None else relay.get("pull_request"),
-            "OBSERVABLE_BY_PLATFORM",
+            p("PR", "OBSERVABLE_BY_PLATFORM"),
             "REPOSITORY_SURFACE",
         ),
-        "workflow_run_id": _field(observation.get("workflow_run_id"), "OBSERVABLE_BY_PLATFORM", "GITHUB_EVENT"),
-        "job_id": _field(observation.get("job_id"), "OBSERVABLE_BY_PLATFORM", "GITHUB_EVENT"),
-        "run_attempt": _field(observation.get("run_attempt"), "OBSERVABLE_BY_PLATFORM", "GITHUB_EVENT"),
-        "event_type": _field(observation.get("event_type"), "OBSERVABLE_BY_PLATFORM", "REPOSITORY_SURFACE"),
+        "workflow_run_id": _field(observation.get("workflow_run_id"), p("workflow_run_id", "OBSERVABLE_BY_PLATFORM"), "GITHUB_EVENT"),
+        "job_id": _field(observation.get("job_id"), p("job_id", "OBSERVABLE_BY_PLATFORM"), "GITHUB_EVENT"),
+        "run_attempt": _field(observation.get("run_attempt"), p("run_attempt", "OBSERVABLE_BY_PLATFORM"), "GITHUB_EVENT"),
+        "event_type": _field(observation.get("event_type"), p("event_type", "OBSERVABLE_BY_PLATFORM"), "REPOSITORY_SURFACE"),
         "delivery_or_correlation_id": _field(
             observation.get("delivery_or_correlation_id"),
-            "OBSERVABLE_BY_PLATFORM",
+            p("delivery_or_correlation_id", "OBSERVABLE_BY_PLATFORM"),
             "CONTROLLED_SURFACE",
         ),
         "connected_at": _field((session or {}).get("created_at"), "CORRELATED", "GACR_SESSION"),
         "last_seen_at": _field((session or {}).get("last_seen_at") or observation.get("observed_at"), "CORRELATED", "GACR_SESSION"),
-        "heartbeat_seq": _field(observation.get("heartbeat_seq"), "DECLARED_BY_AGENT_OR_CLIENT", "CLIENT_OR_ADAPTER"),
+        "heartbeat_seq": _field(observation.get("heartbeat_seq"), p("heartbeat_seq", "DECLARED_BY_AGENT_OR_CLIENT"), "CLIENT_OR_ADAPTER"),
         "lease_expires_at": _field(relay.get("lease_expires_at"), "CORRELATED", "GACR_WATCH"),
         "provider_conversation_ref": _field(
             provider_ref,
-            "DECLARED_BY_AGENT_OR_CLIENT" if provider_ref else "PROVIDER_PRIVATE_UNAVAILABLE",
+            p("provider_conversation_ref", "PROVIDER_PRIVATE_UNAVAILABLE") if provider_ref else "PROVIDER_PRIVATE_UNAVAILABLE",
             "CLIENT_OR_PROVIDER_PRIVATE",
         ),
         "provider_conversation_url": _field(
@@ -525,9 +635,17 @@ def build_connection_envelope(
             "DECLARED_BY_AGENT_OR_CLIENT" if provider_url else "PROVIDER_PRIVATE_UNAVAILABLE",
             "NOT_PERSISTED_UNLESS_POLICY_ALLOWS",
         ),
-        "checkpoint": _field(observation.get("checkpoint"), "DECLARED_BY_AGENT_OR_CLIENT", "CLIENT_OR_ADAPTER"),
-        "last_action": _field(observation.get("last_action") or relay.get("last_action"), "CORRELATED", "GACR_SESSION"),
-        "last_evidence": _field(observation.get("last_evidence") or relay.get("last_evidence"), "CORRELATED", "GACR_SESSION"),
+        "checkpoint": _field(observation.get("checkpoint"), p("checkpoint", "DECLARED_BY_AGENT_OR_CLIENT"), "CLIENT_OR_ADAPTER"),
+        "last_action": _field(
+            observation.get("last_action") or relay.get("last_action"),
+            p("last_action", "DECLARED_BY_AGENT_OR_CLIENT") if observation.get("last_action") else "CORRELATED",
+            "CLIENT_OR_GACR_SESSION",
+        ),
+        "last_evidence": _field(
+            observation.get("last_evidence") or relay.get("last_evidence"),
+            p("last_evidence", "DECLARED_BY_AGENT_OR_CLIENT") if observation.get("last_evidence") else "CORRELATED",
+            "CLIENT_OR_GACR_SESSION",
+        ),
         "connection_fingerprint": _field(connection_fingerprint, "DERIVED_SAFE", FINGERPRINT_VERSION),
     }
     envelope = {
