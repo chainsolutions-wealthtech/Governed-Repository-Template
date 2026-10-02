@@ -113,7 +113,9 @@ def test_idempotent_replay_reuses_same_admission():
 
 def seal_qualification(value):
     value.pop("harvest_digest", None)
-    return seal_qualification(value)
+    raw = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    value["harvest_digest"] = hashlib.sha256(raw).hexdigest()
+    return value
 
 
 def qualification(admission):
