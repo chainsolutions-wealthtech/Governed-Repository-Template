@@ -913,3 +913,28 @@ These observations are durable supervision evidence, not new mutation authority 
 - GACR origin realignment is not complete. Steps 4–12 are closed; Step 13 fresh-agent live proof is next.
 - `P12-S6`, CASE 1 and GMC remain unchanged.
 - Relational projection for the detailed GACR step ledger remains `PENDING_PROJECTION_NO_DEDICATED_GACR_REALIGNMENT_STEP_TABLE`.
+
+
+## 2026-10-02 — GACR Step 13 external-worker live probe
+
+- Added bounded workflow `.github/workflows/repository-presence-probe.yml` via PR #135; Governance CI `36963534713 = PASS`.
+- Opened neutral issue #136. The issue text contained no GACR registration, Beacon, heartbeat, host-ingress or telemetry instruction.
+- Workflow run `36963595777` executed as a distinct external repository worker and returned:
+  - `status = CREATE`;
+  - `presence_event = PRESENCE_FIRST_TOUCH`;
+  - `binding.state = BOUND`;
+  - `binding.reason = NEW_STABLE_ANCHOR`;
+  - session `session-c7c1466e55afb2e4da868944`;
+  - fingerprint `GACR-FP1-30eed83027210717042c4ffad8ea222e977ec71d075c5ec2f439eff3907d6d9a`;
+  - `surface_class = CONTROLLED_INSTRUMENTABLE`;
+  - provider conversation reference remained `UNAVAILABLE`.
+- Canonical Correlator bound the new Beacon to the new session at `EXACT` using session/client/connection anchors.
+- Older ambiguous activity remained `AMBIGUOUS / UNBOUND_ACTIVITY`; it was not arbitrarily reassigned.
+- At 06:14:34 Europe/Paris the fresh worker had recent liveness evidence but no qualifying progress evidence. By the canonical signal rules this is `LIVENESS=ACTIVE / PROGRESS=NO_RECENT_PROGRESS_EVIDENCE`.
+- A separate negative live observation also succeeded: repeated direct GitHub connector reads from the current ChatGPT conversation did not change `last_seen_at`. These reads remain provider/connector-side silent to repository code unless the connector/client/gateway emits Presence metadata.
+- Therefore Step 13 is PARTIAL, not closed:
+  - external instrumented worker first-touch = PASS;
+  - direct connector-read automatic observation = NOT AVAILABLE on the current surface;
+  - genuinely fresh provider conversation/agent = NOT YET EXECUTED.
+- Ultimate live acceptance remains NOT_PASSED.
+- No P12-S6 / CASE 1 / GMC progression occurred.
