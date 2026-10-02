@@ -2,7 +2,7 @@
   "schema": "gacr-r6-baseline-attestation/v1",
   "authority": "CP-AGENT-RELAY-001",
   "operation": "GACR-OR-01_REOBSERVE_AND_ATTEST_R6_BASELINE",
-  "status": "CANDIDATE_ATTESTATION_PENDING_CI_MERGE_POST_MERGE_REVALIDATION",
+  "status": "PASS",
   "programme": "GACR",
   "distinct_from_global_programme": true,
   "p12_s6_dependency": false,
@@ -110,7 +110,35 @@
       5943497457,
       5943559595,
       5943592733
-    ]
+    ],
+    "or01": {
+      "candidate_governance_ci": {
+        "run_id": 36954021583,
+        "result": "PASS",
+        "head": "f150a9406792877a027242fc8d231b52a7d5c121"
+      },
+      "attestation_pr": 123,
+      "merge_head": "3ebf1e962b7c176a7b9e2eaf44d0842feda8345d",
+      "post_merge_governance_ci": {
+        "run_id": 36954073273,
+        "result": "PASS"
+      },
+      "post_merge_gacr_run": {
+        "run_id": 36954073285,
+        "result": "PASS"
+      },
+      "changed_files": [
+        ".governance/control-plane-state/gacr-r6-baseline-attestation.json",
+        "docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md"
+      ],
+      "runtime_projection_revalidation": {
+        "sessions_revision": 10,
+        "beacons_revision": 13,
+        "correlations_revision": 14,
+        "forensics_revision": 4,
+        "operational_state_changed_by_attestation": false
+      }
+    }
   },
   "limitations": [
     "PRESENCE_FIRST_REALIGNMENT_NOT_COMPLETE",
@@ -135,14 +163,14 @@
     "tests_linked": true,
     "live_evidence_linked": true,
     "no_runtime_regression": true,
-    "attestation_versioned": false,
-    "candidate_ci": "PENDING",
-    "pr_merged": false,
-    "post_merge_revalidation": false,
-    "final_result": "PENDING_REPOSITORY_GATES"
+    "attestation_versioned": true,
+    "candidate_ci": "PASS_36954021583",
+    "pr_merged": true,
+    "post_merge_revalidation": true,
+    "final_result": "PASS"
   },
   "handoff": {
-    "next_gate": "REALIGNMENT_STEP_2_FORMAL_GATE_USING_EXISTING_GACR_ORIGINAL_INTENT",
+    "next_gate": "REALIGNMENT_STEP_2_FORMAL_GATE_REVALIDATE_EXISTING_GACR_ORIGINAL_INTENT",
     "step_2_source_already_captured": true,
     "step_3_authorized_by_this_attestation": false,
     "presence_first_corrections_authorized_by_this_attestation": false,
