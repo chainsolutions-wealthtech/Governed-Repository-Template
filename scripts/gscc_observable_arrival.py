@@ -86,14 +86,14 @@ def _subject(
     branch: str | None,
     event: dict[str, Any],
 ) -> str:
+    if branch:
+        return f"ref:{branch}"
     if pull_request is not None:
         return f"pr:{pull_request}"
     if issue_number is not None:
         return f"issue:{issue_number}"
     if event_name == "create":
-        return f"{event.get('ref_type') or 'ref'}:{event.get('ref') or branch or 'unknown'}"
-    if branch:
-        return f"ref:{branch}"
+        return f"{event.get('ref_type') or 'ref'}:{event.get('ref') or 'unknown'}"
     return event_name
 
 
@@ -163,7 +163,7 @@ def build_github_arrival_facts(event: dict[str, Any], env: dict[str, str]) -> di
         "github_app_installation": _nonempty(installation.get("id")),
         "agent": actor,
         "provider": None,
-        "connection_ref": f"gscc-observable:{repository}:{actor}:{event_name}:{subject}",
+        "connection_ref": f"gscc-observable:{repository}:{actor}:{subject}",
         "client_instance_id": f"github-observable:{repository}:{actor}",
         "connection_method": "gscc-github-event-gateway",
         "surface_class": "GITHUB_EVENT_VISIBLE",
