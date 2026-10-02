@@ -8,10 +8,10 @@
     "original_intent": "CANONICAL_RECORDED",
     "baseline_r1_r6": "PRESERVED_REOBSERVED_ATTESTED_OR01_PASS",
     "origin_realignment_plan": "ACCEPTED",
-    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13B_NEXT_G6_CLOSED",
+    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13B_BLOCKED_PENDING_GSCC_FUNCTION_EXPOSURE_GATE",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
-  "next_action": "REALIGNMENT_STEP_13B_RUN_REAL_FRESH_PROVIDER_AGENT_TEST",
+  "next_action": "GSCC_FUNCTION_EXPOSURE_GATE_INTEGRATE_AND_ATTEST",
   "or01": {
     "status": "PASS",
     "attestation": "docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md",
@@ -160,11 +160,13 @@
   },
   "relational_projection": "PENDING_PROJECTION_NO_DEDICATED_GACR_REALIGNMENT_STEP_TABLE",
   "step_13b": {
-    "status": "NEXT_AUTHORIZED",
+    "status": "BLOCKED_PENDING_FUNCTION_EXPOSURE_GATE",
     "requirement": "After the pre-Step-13B remediation is closed, run a genuinely fresh provider conversation/agent through the integrated GSCC/GSE/GACR path without telling it to register with GACR. Observe first-touch, SessionTwin, control challenge/wake capability and provider-bound evidence without inventing unavailable provider-private fields.",
     "fresh_provider_agent": "NOT_EXECUTED",
     "ultimate_live_acceptance": "NOT_PASSED",
-    "remediation_required": []
+    "remediation_required": [
+      "GSCC_FUNCTION_EXPOSURE_GATE_POST_MERGE_LIVE_PROOF"
+    ]
   },
   "integration_post_attestation_audit": {
     "status": "CLOSED_PASS_PRE_STEP_13B",
@@ -236,6 +238,22 @@
     "postmerge_ci": 36972158291,
     "postmerge_relay": 36972158234,
     "final_main_observed": "ab3fd3848878e93f929cbd3d89c9d15be43537a7",
+    "ultimate_live_acceptance": "NOT_PASSED"
+  },
+  "gscc_function_exposure_gate": {
+    "status": "IMPLEMENTED_PENDING_INTEGRATION",
+    "pr": 153,
+    "invariant": "NO_GOVERNED_FUNCTION_EXPOSURE_OR_USE_WITHOUT_VALIDATED_GSCC_EXPOSURE_RECEIPT",
+    "workflow": ".github/workflows/gscc-function-exposure-gate.yml",
+    "script": "scripts/gscc_function_exposure_gate.py",
+    "schema": "schemas/gscc-function-exposure-receipt.schema.json",
+    "raw_mcp_catalogue_publishable": false,
+    "exact_head_required": true,
+    "explicit_authority_evidence_required": true,
+    "mutation_live_preflight_required": true,
+    "pre_call_revalidation_required": true,
+    "postmerge_live_proof": "PENDING",
+    "fresh_provider_agent": "NOT_EXECUTED",
     "ultimate_live_acceptance": "NOT_PASSED"
   }
 }
