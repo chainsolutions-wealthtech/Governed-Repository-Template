@@ -1,6 +1,23 @@
 name: GSCC Function Exposure Gate
 
 on:
+  workflow_call:
+    inputs:
+      package_path:
+        required: true
+        type: string
+      expected_source_head:
+        required: true
+        type: string
+    outputs:
+      route_validated:
+        value: ${{ jobs.package-evaluate.outputs.route_validated }}
+      validation_digest:
+        value: ${{ jobs.package-evaluate.outputs.validation_digest }}
+      function_count:
+        value: ${{ jobs.package-evaluate.outputs.function_count }}
+      invocation_count:
+        value: ${{ jobs.package-evaluate.outputs.invocation_count }}
   push:
   create:
   pull_request:
@@ -61,7 +78,7 @@ permissions:
 
 jobs:
   arrival-plan:
-    if: ${{ github.actor != 'github-actions[bot]' && github.event_name != 'repository_dispatch' && github.event_name != 'workflow_dispatch' }}
+    if: ${{ github.actor != 'github-actions[bot]' && github.event_name != 'repository_dispatch' && github.event_name != 'workflow_dispatch' && github.event_name != 'workflow_call' }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -81,6 +98,58 @@ jobs:
           path: ${{ runner.temp }}/gscc-arrival-route.json
           if-no-files-found: error
           retention-days: 14
+
+  package-evaluate:
+    if: ${{ github.event_name == 'workflow_call' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      route_validated: ${{ steps.build-package-route.outputs.route_validated }}
+      validation_digest: ${{ steps.build-package-route.outputs.validation_digest }}
+      function_count: ${{ steps.build-package-route.outputs.function_count }}
+      invocation_count: ${{ steps.build-package-route.outputs.invocation_count }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Verify canonical source before package route validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ github.ref }}" = "refs/heads/main" || {
+            echo "::error::GSCC_FUNCTION_GATE_REQUIRES_CANONICAL_MAIN"
+            exit 1
+          }
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "${{ inputs.expected_source_head }}" || {
+            echo "::error::GSCC_FUNCTION_ROUTE_HEAD_MOVED expected=${{ inputs.expected_source_head }} actual=$actual"
+            exit 1
+          }
+
+      - name: Build GSCC route for every MCP invocation
+        id: build-package-route
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/gscc-function-route"
+          python3 scripts/gscc_function_exposure_gate.py package-evaluate \
+            --package "${{ inputs.package_path }}" \
+            --repository "${{ github.repository }}" \
+            --expected-source-head "${{ inputs.expected_source_head }}" \
+            --output "$RUNNER_TEMP/gscc-function-route/receipt.json"
+
+      - name: Publish package route validation receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-package-function-route-${{ github.run_id }}
+          path: ${{ runner.temp }}/gscc-function-route/receipt.json
+          if-no-files-found: error
+          retention-days: 30
 
   evaluate:
     if: ${{ github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch' }}
