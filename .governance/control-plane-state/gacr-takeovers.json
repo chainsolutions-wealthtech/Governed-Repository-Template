@@ -1,6 +1,23 @@
 {
   "schema_version": "1.0.0",
-  "revision": 0,
-  "last_scan_at": null,
-  "items": []
+  "revision": 1,
+  "last_scan_at": "2026-10-02T06:56:10+00:00",
+  "items": [
+    {
+      "takeover_id": "GACR-T-84209d225086",
+      "stalled_session_id": "session-c7c1466e55afb2e4da868944",
+      "offered_to_session_id": null,
+      "accepted_by_session_id": null,
+      "status": "READY_FOR_RECONCILIATION",
+      "created_at": "2026-10-02T06:56:10+00:00",
+      "accepted_at": null,
+      "work_item_id": null,
+      "task_id": null,
+      "branch": "main",
+      "pull_request": null,
+      "last_observed_head_sha": "854cc929b6d5d1b4fcd175c5c2c632c677da3ef7",
+      "reconciled_head_sha": null,
+      "active_claim_count": 0
+    }
+  ]
 }

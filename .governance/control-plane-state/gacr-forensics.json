@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "revision": 4,
+  "revision": 10,
   "items": [
     {
       "forensic_id": "GACR-F-9e71238bc954",
-      "generated_at": "2026-10-02T00:59:54+00:00",
+      "generated_at": "2026-10-02T06:56:10+00:00",
       "process": "GACR",
       "authority": "CP-AGENT-RELAY-001-R3",
       "session_id": "session-68c97d4bb1ef71c86444de12",
@@ -20,9 +20,9 @@
       "liveness": {
         "session_status": "ACTIVE",
         "relay_state": "ACTIVE",
-        "last_seen_at": "2026-10-02T00:59:54+00:00",
-        "last_heartbeat_at": "2026-10-02T00:59:54+00:00",
-        "lease_expires_at": "2026-10-02T01:29:54+00:00",
+        "last_seen_at": "2026-10-02T06:55:59+00:00",
+        "last_heartbeat_at": "2026-10-02T06:55:59+00:00",
+        "lease_expires_at": "2026-10-02T07:25:59+00:00",
         "lease_expired_at_analysis": false,
         "stalled_at": null
       },
@@ -31,7 +31,7 @@
         "branch": "main",
         "pull_request": null,
         "starting_head_sha": "4c7db9f0e2e782de147ef316c41086ed0863b49e",
-        "last_observed_head_sha": "914b251e9d01063fe38d8684271267b43f81d7e0",
+        "last_observed_head_sha": "bb4ca1bb34bd14ac9f7e67f79bd78d4c2889a0dd",
         "last_written_head_sha": null,
         "active_claims": [],
         "lock_observation": "NO_INDEPENDENT_LOCK_STORE; CLAIMS_AND_COLLISION_DOMAINS_ARE_CANONICAL"
@@ -76,7 +76,7 @@
         "task_id": null,
         "branch": "main",
         "pull_request": null,
-        "last_observed_head_sha": "914b251e9d01063fe38d8684271267b43f81d7e0",
+        "last_observed_head_sha": "bb4ca1bb34bd14ac9f7e67f79bd78d4c2889a0dd",
         "last_written_head_sha": null,
         "checkpoint_ref": "CHK-R6C-LIVE-001",
         "evidence_ref": "github-issue-comment:5943592733",
@@ -98,12 +98,362 @@
         "may_replay_in_flight_action_without_reconciliation": false
       },
       "evidence_counts": {
-        "beacons": 12,
+        "beacons": 29,
         "takeovers": 0,
         "dispatches": 0,
         "active_claims": 0
       },
-      "analysis_digest": "ac5a456d59fee87181f2104897f3876aa48ce5e602660b1e116ef48e1ec961d0"
+      "analysis_digest": "093d07df1e3578f923780948d44175a5662126c1e88fa7e3004d8f03a2c963d4"
+    },
+    {
+      "forensic_id": "GACR-F-83a56902c73e",
+      "generated_at": "2026-10-02T06:56:10+00:00",
+      "process": "GACR",
+      "authority": "CP-AGENT-RELAY-001-R3",
+      "session_id": "session-cb22a4ed0d9e29eba5383f5d",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "classification": "SESSION_CLOSED",
+      "recoverability": "TERMINAL",
+      "cause": {
+        "status": "UNOBSERVED",
+        "code": "UNOBSERVED_EXTERNAL_CAUSE",
+        "confidence": "NONE",
+        "note": "GACR never infers browser crash, provider timeout, network loss or tool failure from missing heartbeat alone."
+      },
+      "liveness": {
+        "session_status": "CLOSED",
+        "relay_state": "CLOSED",
+        "last_seen_at": "2026-10-01T23:35:46+00:00",
+        "last_heartbeat_at": "2026-10-01T23:35:46+00:00",
+        "lease_expires_at": "2026-10-02T00:05:46+00:00",
+        "lease_expired_at_analysis": true,
+        "stalled_at": null
+      },
+      "work": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "starting_head_sha": "ac7767823869725643bd8a8cce0d8a0757cb9c95",
+        "last_observed_head_sha": "ac7767823869725643bd8a8cce0d8a0757cb9c95",
+        "last_written_head_sha": null,
+        "active_claims": [],
+        "lock_observation": "NO_INDEPENDENT_LOCK_STORE; CLAIMS_AND_COLLISION_DOMAINS_ARE_CANONICAL"
+      },
+      "actions": {
+        "last_action_started": null,
+        "last_action_completed": null,
+        "last_tool_call": null,
+        "in_flight_action": null
+      },
+      "last_checkpoint_ref": null,
+      "last_evidence_ref": null,
+      "last_takeover": null,
+      "last_dispatch": null,
+      "resume_point": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "ac7767823869725643bd8a8cce0d8a0757cb9c95",
+        "last_written_head_sha": null,
+        "checkpoint_ref": null,
+        "evidence_ref": null,
+        "active_claim_work_items": [],
+        "collision_domains": [],
+        "in_flight_action": null,
+        "last_completed_action": null,
+        "requires_exact_head_reobservation": true,
+        "may_replay_in_flight_action_without_reconciliation": false
+      },
+      "evidence_counts": {
+        "beacons": 1,
+        "takeovers": 0,
+        "dispatches": 0,
+        "active_claims": 0
+      },
+      "analysis_digest": "ba0377f238c1281ee3202bf945c7dd0dd61e88a4193609da23a3f77927bf745b"
+    },
+    {
+      "forensic_id": "GACR-F-4cbf04566557",
+      "generated_at": "2026-10-02T06:56:10+00:00",
+      "process": "GACR",
+      "authority": "CP-AGENT-RELAY-001-R3",
+      "session_id": "session-c7c1466e55afb2e4da868944",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "classification": "LEASE_EXPIRED_STALL",
+      "recoverability": "TAKEOVER_RECONCILIATION_REQUIRED",
+      "cause": {
+        "status": "UNOBSERVED",
+        "code": "UNOBSERVED_EXTERNAL_CAUSE",
+        "confidence": "NONE",
+        "note": "GACR never infers browser crash, provider timeout, network loss or tool failure from missing heartbeat alone."
+      },
+      "liveness": {
+        "session_status": "STALLED",
+        "relay_state": "TAKEOVER_READY",
+        "last_seen_at": "2026-10-02T04:13:32+00:00",
+        "last_heartbeat_at": "2026-10-02T04:13:32+00:00",
+        "lease_expires_at": "2026-10-02T04:43:32+00:00",
+        "lease_expired_at_analysis": true,
+        "stalled_at": "2026-10-02T06:56:10+00:00"
+      },
+      "work": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "starting_head_sha": "854cc929b6d5d1b4fcd175c5c2c632c677da3ef7",
+        "last_observed_head_sha": "854cc929b6d5d1b4fcd175c5c2c632c677da3ef7",
+        "last_written_head_sha": null,
+        "active_claims": [],
+        "lock_observation": "NO_INDEPENDENT_LOCK_STORE; CLAIMS_AND_COLLISION_DOMAINS_ARE_CANONICAL"
+      },
+      "actions": {
+        "last_action_started": null,
+        "last_action_completed": null,
+        "last_tool_call": null,
+        "in_flight_action": null
+      },
+      "last_checkpoint_ref": null,
+      "last_evidence_ref": null,
+      "last_takeover": {
+        "takeover_id": "GACR-T-84209d225086",
+        "stalled_session_id": "session-c7c1466e55afb2e4da868944",
+        "offered_to_session_id": null,
+        "accepted_by_session_id": null,
+        "status": "READY_FOR_RECONCILIATION",
+        "created_at": "2026-10-02T06:56:10+00:00",
+        "accepted_at": null,
+        "work_item_id": null,
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "854cc929b6d5d1b4fcd175c5c2c632c677da3ef7",
+        "reconciled_head_sha": null,
+        "active_claim_count": 0
+      },
+      "last_dispatch": null,
+      "resume_point": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "854cc929b6d5d1b4fcd175c5c2c632c677da3ef7",
+        "last_written_head_sha": null,
+        "checkpoint_ref": null,
+        "evidence_ref": null,
+        "active_claim_work_items": [],
+        "collision_domains": [],
+        "in_flight_action": null,
+        "last_completed_action": null,
+        "requires_exact_head_reobservation": true,
+        "may_replay_in_flight_action_without_reconciliation": false
+      },
+      "evidence_counts": {
+        "beacons": 1,
+        "takeovers": 1,
+        "dispatches": 0,
+        "active_claims": 0
+      },
+      "analysis_digest": "d61620156bcf8fe8d896139c2a143f844eb1acef30a260bd7b8976aed9c43b6a"
+    },
+    {
+      "forensic_id": "GACR-F-e07bc2702d87",
+      "generated_at": "2026-10-02T06:56:10+00:00",
+      "process": "GACR",
+      "authority": "CP-AGENT-RELAY-001-R3",
+      "session_id": "session-02da2612b250e57ae361a588",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "classification": "NO_INTERRUPTION_OBSERVED",
+      "recoverability": "CONTINUE_CURRENT_SESSION",
+      "cause": {
+        "status": "UNOBSERVED",
+        "code": "UNOBSERVED_EXTERNAL_CAUSE",
+        "confidence": "NONE",
+        "note": "GACR never infers browser crash, provider timeout, network loss or tool failure from missing heartbeat alone."
+      },
+      "liveness": {
+        "session_status": "ACTIVE",
+        "relay_state": "ACTIVE",
+        "last_seen_at": "2026-10-02T06:48:59+00:00",
+        "last_heartbeat_at": "2026-10-02T06:48:59+00:00",
+        "lease_expires_at": "2026-10-02T07:18:59+00:00",
+        "lease_expired_at_analysis": false,
+        "stalled_at": null
+      },
+      "work": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "starting_head_sha": "64b1688bfcc7cedb65edbf88d7d8788a9bc21030",
+        "last_observed_head_sha": "5ef6dd2be14b0748854c3b9c2df915a35959eb95",
+        "last_written_head_sha": null,
+        "active_claims": [],
+        "lock_observation": "NO_INDEPENDENT_LOCK_STORE; CLAIMS_AND_COLLISION_DOMAINS_ARE_CANONICAL"
+      },
+      "actions": {
+        "last_action_started": null,
+        "last_action_completed": null,
+        "last_tool_call": null,
+        "in_flight_action": null
+      },
+      "last_checkpoint_ref": null,
+      "last_evidence_ref": null,
+      "last_takeover": null,
+      "last_dispatch": null,
+      "resume_point": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "5ef6dd2be14b0748854c3b9c2df915a35959eb95",
+        "last_written_head_sha": null,
+        "checkpoint_ref": null,
+        "evidence_ref": null,
+        "active_claim_work_items": [],
+        "collision_domains": [],
+        "in_flight_action": null,
+        "last_completed_action": null,
+        "requires_exact_head_reobservation": true,
+        "may_replay_in_flight_action_without_reconciliation": false
+      },
+      "evidence_counts": {
+        "beacons": 2,
+        "takeovers": 0,
+        "dispatches": 0,
+        "active_claims": 0
+      },
+      "analysis_digest": "59aa1bd3c767d49b8ed05255ee0377d7b9e29c28a0b0df1e3a591a655370ccf6"
+    },
+    {
+      "forensic_id": "GACR-F-2157415d68e5",
+      "generated_at": "2026-10-02T06:56:10+00:00",
+      "process": "GACR",
+      "authority": "CP-AGENT-RELAY-001-R3",
+      "session_id": "session-34e7d19d025442b07a4ad685",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "classification": "NO_INTERRUPTION_OBSERVED",
+      "recoverability": "CONTINUE_CURRENT_SESSION",
+      "cause": {
+        "status": "UNOBSERVED",
+        "code": "UNOBSERVED_EXTERNAL_CAUSE",
+        "confidence": "NONE",
+        "note": "GACR never infers browser crash, provider timeout, network loss or tool failure from missing heartbeat alone."
+      },
+      "liveness": {
+        "session_status": "ACTIVE",
+        "relay_state": "ACTIVE",
+        "last_seen_at": "2026-10-02T06:49:10+00:00",
+        "last_heartbeat_at": "2026-10-02T06:49:10+00:00",
+        "lease_expires_at": "2026-10-02T07:19:10+00:00",
+        "lease_expired_at_analysis": false,
+        "stalled_at": null
+      },
+      "work": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "starting_head_sha": "b2ed4af455877993769978a5531c56831f17333e",
+        "last_observed_head_sha": "11f74caa476d56175dfd71676d9bdcab7c9bf1ed",
+        "last_written_head_sha": null,
+        "active_claims": [],
+        "lock_observation": "NO_INDEPENDENT_LOCK_STORE; CLAIMS_AND_COLLISION_DOMAINS_ARE_CANONICAL"
+      },
+      "actions": {
+        "last_action_started": null,
+        "last_action_completed": null,
+        "last_tool_call": null,
+        "in_flight_action": null
+      },
+      "last_checkpoint_ref": null,
+      "last_evidence_ref": null,
+      "last_takeover": null,
+      "last_dispatch": null,
+      "resume_point": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "11f74caa476d56175dfd71676d9bdcab7c9bf1ed",
+        "last_written_head_sha": null,
+        "checkpoint_ref": null,
+        "evidence_ref": null,
+        "active_claim_work_items": [],
+        "collision_domains": [],
+        "in_flight_action": null,
+        "last_completed_action": null,
+        "requires_exact_head_reobservation": true,
+        "may_replay_in_flight_action_without_reconciliation": false
+      },
+      "evidence_counts": {
+        "beacons": 2,
+        "takeovers": 0,
+        "dispatches": 0,
+        "active_claims": 0
+      },
+      "analysis_digest": "495c3cfca7c8a4586ac7fa50067337f1e7e797b992020a0afca82bb50180d356"
+    },
+    {
+      "forensic_id": "GACR-F-fe936a05b357",
+      "generated_at": "2026-10-02T06:56:10+00:00",
+      "process": "GACR",
+      "authority": "CP-AGENT-RELAY-001-R3",
+      "session_id": "session-255e3c082a24a718c4cf3da6",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "classification": "NO_INTERRUPTION_OBSERVED",
+      "recoverability": "CONTINUE_CURRENT_SESSION",
+      "cause": {
+        "status": "UNOBSERVED",
+        "code": "UNOBSERVED_EXTERNAL_CAUSE",
+        "confidence": "NONE",
+        "note": "GACR never infers browser crash, provider timeout, network loss or tool failure from missing heartbeat alone."
+      },
+      "liveness": {
+        "session_status": "ACTIVE",
+        "relay_state": "ACTIVE",
+        "last_seen_at": "2026-10-02T06:53:42+00:00",
+        "last_heartbeat_at": "2026-10-02T06:53:42+00:00",
+        "lease_expires_at": "2026-10-02T07:23:42+00:00",
+        "lease_expired_at_analysis": false,
+        "stalled_at": null
+      },
+      "work": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "starting_head_sha": "eeed3fc9ee41642ae0b259c42ba582b2b80b0926",
+        "last_observed_head_sha": "7ad31377cab29b85be4fbf2145592fea398f0d05",
+        "last_written_head_sha": null,
+        "active_claims": [],
+        "lock_observation": "NO_INDEPENDENT_LOCK_STORE; CLAIMS_AND_COLLISION_DOMAINS_ARE_CANONICAL"
+      },
+      "actions": {
+        "last_action_started": null,
+        "last_action_completed": null,
+        "last_tool_call": null,
+        "in_flight_action": null
+      },
+      "last_checkpoint_ref": null,
+      "last_evidence_ref": null,
+      "last_takeover": null,
+      "last_dispatch": null,
+      "resume_point": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "7ad31377cab29b85be4fbf2145592fea398f0d05",
+        "last_written_head_sha": null,
+        "checkpoint_ref": null,
+        "evidence_ref": null,
+        "active_claim_work_items": [],
+        "collision_domains": [],
+        "in_flight_action": null,
+        "last_completed_action": null,
+        "requires_exact_head_reobservation": true,
+        "may_replay_in_flight_action_without_reconciliation": false
+      },
+      "evidence_counts": {
+        "beacons": 5,
+        "takeovers": 0,
+        "dispatches": 0,
+        "active_claims": 0
+      },
+      "analysis_digest": "3c99a332afc5f66f2611d30e80de5804541b2fb3e97aea25ea4b45ab2786b67e"
     }
   ]
 }
