@@ -60,6 +60,7 @@ def sample_sessions() -> dict:
             "repository": REPOSITORY,
             "status": "ACTIVE",
             "last_observed_head_sha": HEAD,
+            "capabilities": ["COMMAND_RECEIVE", "COMMAND_ACK"],
             "relay": {
                 "state": "ACTIVE",
                 "lease_expires_at": "2026-10-02T12:15:00+00:00",
