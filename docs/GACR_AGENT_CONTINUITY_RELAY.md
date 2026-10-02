@@ -402,3 +402,56 @@ This does not invalidate R1-R6. Heartbeat/lease, Beacon, Correlator, Forensics, 
 The realignment is incomplete until the live acceptance scenario in the canonical plan proves: fresh agent arrival without explicit GACR registration instruction → automatic observable presence → safe activity/progress observation → stall detection → second-agent exact-HEAD takeover → continuation of the same work.
 
 Registration of this plan does not change the global unique executable task or silently execute `P12-S6`.
+
+
+## Independent Liveness, Progress and Session Interrogation
+
+Presence-First realignment keeps two independent runtime questions:
+
+```text
+LIVENESS = is there fresh evidence that the governed session is present/reachable/active?
+PROGRESS = is there fresh qualifying evidence that governed work actually advanced?
+```
+
+A heartbeat is liveness/activity evidence only. It never makes `PROGRESS=ADVANCING` by itself.
+
+The canonical projection keeps three distinct timestamps:
+
+- `last_activity_at` — latest activity bound to the session;
+- `last_liveness_evidence_at` — latest evidence usable for liveness;
+- `last_progress_at` — latest allowlisted progress evidence.
+
+Liveness states are `ACTIVE / QUIET / SUSPECTED_STALL / STALLED / UNKNOWN / TERMINAL`.
+Progress states are `ADVANCING / NO_RECENT_PROGRESS_EVIDENCE / BLOCKED_IF_EXPLICITLY_OBSERVED / UNKNOWN`.
+
+Qualifying progress evidence is allowlisted: completed action evidence, explicitly reported written-HEAD movement, repository-write/commit/PR mutation evidence, checkpoint advancement, or governed work-item advancement. Missing evidence never becomes progress.
+
+`agent_context()` remains the single Agent Context mechanism. It now aggregates the existing session, claims, Beacon, Correlator, Forensics, takeover and dispatch stores and exposes explicit `UNAVAILABLE` values for unknown facts. No second Agent Context database is created. The same aggregate exposes takeover eligibility inputs and the exact-HEAD reobservation requirement without accepting a takeover or transferring a claim.
+
+The generic liveness-challenge hook supports only `ACK / BUSY / IDLE / CHECKPOINTING / TERMINATING`. A missing response yields `LIVENESS_CHALLENGE_TIMEOUT`; it never becomes a claim that a browser crashed, a provider timed out, or a network was lost. Actual challenge delivery remains optional and requires a bidirectional provider/client/gateway integration.
+
+### UNBOUND_ACTIVITY
+
+Repository activity that cannot be deterministically attributed is retained as an `UNBOUND_ACTIVITY` projection attached to the existing Correlator record. This deliberately avoids a second telemetry or continuity store.
+
+```text
+observation_id
+repository
+observed_at
+activity_class
+safe_envelope_digest
+candidate_session_ids
+correlation_level
+reasons
+status = UNBOUND | RECONCILED | SUPERSEDED
+reconciled_session_id
+reconciled_at
+```
+
+`AMBIGUOUS` and `UNKNOWN` never select a session. Unbound activity does not renew a candidate lease and does not create candidate progress. Later deterministic correlation may reconcile the same observation idempotently.
+
+### Parallel-worker integration boundary
+
+This tranche does not own Presence Fabric / ConnectionEnvelope creation and does not expand Dispatcher routing. Until the parallel Presence/ConnectionEnvelope API is merged, the integration state is `SHARED_INTEGRATION_REQUIRED`.
+
+For downstream Correlator/Dispatcher work, `worker_c_integration_projection()` exposes liveness, progress, the three timestamps, UNBOUND_ACTIVITY, Agent Context, and takeover-eligibility inputs while leaving Dispatcher authority unchanged.

@@ -32,6 +32,8 @@ else:
     DISPATCHES_PATH = GOV / "agent-relay" / "dispatches.json"
     FORENSICS_PATH = GOV / "agent-relay" / "forensics.json"
 
+CONFIG_PATH = GOV / "agent-relay" / "config.json"
+
 SAFE_GITHUB_ENV = (
     "GITHUB_REPOSITORY",
     "GITHUB_REPOSITORY_ID",
@@ -61,6 +63,19 @@ SAFE_GITHUB_ENV = (
 FORBIDDEN_KEY_FRAGMENTS = ("token", "secret", "password", "private_key", "cookie", "authorization", "transcript", "prompt", "private_reasoning", "chain_of_thought", "raw_response", "response_body", "page_content")
 ACTION_PHASES = {"STARTED", "COMPLETED", "FAILED", "CANCELLED"}
 INTERRUPTION_CODES = {"CLIENT_DISCONNECTED","PROVIDER_TIMEOUT","TOOL_FAILURE","AGENT_ERROR","USER_CANCELLED","NETWORK_LOSS","PROCESS_EXITED","UNKNOWN"}
+UNAVAILABLE = "UNAVAILABLE"
+LIVENESS_STATES = {"ACTIVE", "QUIET", "SUSPECTED_STALL", "STALLED", "UNKNOWN", "TERMINAL"}
+PROGRESS_STATES = {"ADVANCING", "NO_RECENT_PROGRESS_EVIDENCE", "BLOCKED_IF_EXPLICITLY_OBSERVED", "UNKNOWN"}
+LIVENESS_CHALLENGE_RESPONSES = {"ACK", "BUSY", "IDLE", "CHECKPOINTING", "TERMINATING"}
+PROGRESS_EVENT_CLASSES = {
+    "REPOSITORY_WRITE_ACTIVITY": "REPOSITORY_WRITE_ACTIVITY",
+    "COMMIT_MUTATION": "COMMIT_MUTATION",
+    "PULL_REQUEST_MUTATION": "PULL_REQUEST_MUTATION",
+    "CHECKPOINT_ADVANCED": "CHECKPOINT_ADVANCED",
+    "WORK_ITEM_ADVANCED": "WORK_ITEM_ADVANCED",
+}
+BLOCKED_EVENT_TYPES = {"WORK_BLOCKED", "BLOCKED"}
+SHARED_INTEGRATION_REQUIRED = True
 
 
 def now_iso() -> str:
@@ -85,6 +100,29 @@ def read_json(path: Path, default: dict | None = None) -> dict:
 def write_json(path: Path, value: dict) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
+def available(value):
+    return value if value not in (None, "") else UNAVAILABLE
+
+
+def runtime_config() -> dict:
+    config = read_json(CONFIG_PATH, {})
+    return {
+        "heartbeat_interval_seconds": int(config.get("heartbeat_interval_seconds", 300)),
+        "suspected_stall_after_seconds": int(config.get("suspected_stall_after_seconds", 900)),
+        "stalled_after_seconds": int(config.get("stalled_after_seconds", 1800)),
+        "progress_recency_seconds": int(config.get("progress_recency_seconds", config.get("stalled_after_seconds", 1800))),
+    }
+
+
+def latest_iso(values: list[str | None]) -> str | None:
+    parsed = [(parse_iso(value), value) for value in values if value]
+    parsed = [(dt, value) for dt, value in parsed if dt is not None]
+    if not parsed:
+        return None
+    parsed.sort(key=lambda pair: pair[0])
+    return parsed[-1][1]
 
 
 def digest(value: object) -> str:
@@ -381,6 +419,44 @@ def correlate_all() -> dict:
             else:
                 level = "UNKNOWN"
 
+        previous = known.get(beacon.get("beacon_id"))
+        previous_unbound = (previous or {}).get("unbound_activity")
+        unbound_activity = None
+        if selected is None:
+            unbound_activity = {
+                "observation_id": beacon.get("beacon_id"),
+                "repository": beacon.get("repository"),
+                "observed_at": available(beacon.get("observed_at")),
+                "activity_class": available(beacon.get("event_type")),
+                "safe_envelope_digest": available(beacon.get("context_digest")),
+                "candidate_session_ids": candidates[:10],
+                "correlation_level": level,
+                "reasons": reasons,
+                "status": "UNBOUND",
+                "reconciled_session_id": UNAVAILABLE,
+                "reconciled_at": UNAVAILABLE,
+            }
+        elif previous_unbound and previous_unbound.get("status") == "UNBOUND":
+            unbound_activity = {
+                **previous_unbound,
+                "candidate_session_ids": candidates[:10],
+                "correlation_level": level,
+                "reasons": reasons,
+                "status": "RECONCILED",
+                "reconciled_session_id": selected,
+                "reconciled_at": now_iso(),
+            }
+        elif previous_unbound and previous_unbound.get("status") == "RECONCILED":
+            if previous_unbound.get("reconciled_session_id") == selected:
+                unbound_activity = previous_unbound
+            else:
+                unbound_activity = {
+                    **previous_unbound,
+                    "status": "SUPERSEDED",
+                    "superseded_by_session_id": selected,
+                    "superseded_at": now_iso(),
+                }
+
         value = {
             "correlation_id": runtime_id("GACR-C-", {"beacon_id": beacon.get("beacon_id")}),
             "beacon_id": beacon.get("beacon_id"),
@@ -390,9 +466,11 @@ def correlate_all() -> dict:
             "reasons": reasons,
             "evaluated_at": now_iso(),
         }
-        previous = known.get(beacon.get("beacon_id"))
+        if unbound_activity is not None:
+            value["unbound_activity"] = unbound_activity
         if previous:
-            if {k: previous.get(k) for k in ("level","selected_session_id","candidate_session_ids","reasons")} == {k: value.get(k) for k in ("level","selected_session_id","candidate_session_ids","reasons")}:
+            stable_fields = ("level","selected_session_id","candidate_session_ids","reasons","unbound_activity")
+            if {k: previous.get(k) for k in stable_fields} == {k: value.get(k) for k in stable_fields}:
                 continue
             index = store["items"].index(previous)
             store["items"][index] = value
@@ -404,6 +482,22 @@ def correlate_all() -> dict:
         store["revision"] = int(store.get("revision", 0)) + 1
         write_json(CORRELATIONS_PATH, store)
     return {"changed": len(changes), "items": changes}
+
+
+def unbound_activity_projection() -> dict:
+    correlations = read_json(CORRELATIONS_PATH, {"items": []})
+    items = []
+    for correlation in correlations.get("items", []):
+        activity = correlation.get("unbound_activity")
+        if activity:
+            items.append(activity)
+    items.sort(key=lambda item: (str(item.get("observed_at") or ""), str(item.get("observation_id") or "")))
+    return {
+        "process": "GACR",
+        "model": "UNBOUND_ACTIVITY",
+        "derived_from": "EXISTING_BEACON_AND_CORRELATOR_STORES",
+        "items": items,
+    }
 
 
 def compatible_standby(sessions: dict, stalled_session_id: str) -> dict | None:
@@ -491,6 +585,158 @@ def _session_beacons(session_id: str, beacons: dict, correlations: dict) -> list
     return values
 
 
+def _progress_evidence(items: list[dict]) -> list[dict]:
+    evidence = []
+    for item in items:
+        event_type = item.get("event_type")
+        phase = item.get("action_phase")
+        evidence_class = None
+        if event_type in BLOCKED_EVENT_TYPES:
+            evidence_class = "EXPLICIT_BLOCKED"
+        elif phase == "COMPLETED":
+            evidence_class = "ACTION_COMPLETED"
+        elif event_type in PROGRESS_EVENT_CLASSES:
+            evidence_class = PROGRESS_EVENT_CLASSES[event_type]
+        elif item.get("written_head_sha"):
+            evidence_class = "WRITTEN_HEAD_MOVEMENT"
+        elif event_type == "CHECKPOINT_ADVANCED" and item.get("checkpoint_ref"):
+            evidence_class = "CHECKPOINT_ADVANCED"
+        if not evidence_class:
+            continue
+        evidence.append({
+            "class": evidence_class,
+            "beacon_id": item.get("beacon_id"),
+            "observed_at": item.get("observed_at"),
+            "event_type": event_type,
+            "action_id": item.get("action_id"),
+            "action_phase": phase,
+            "outcome": item.get("outcome"),
+            "written_head_sha": item.get("written_head_sha"),
+            "checkpoint_ref": item.get("checkpoint_ref"),
+            "evidence_ref": item.get("evidence_ref"),
+        })
+    evidence.sort(key=lambda item: (item.get("observed_at") or "", item.get("beacon_id") or ""))
+    return evidence
+
+
+def session_signal_projection(session_id: str, *, generated_at: str | None = None) -> dict:
+    sessions = read_json(SESSIONS_PATH, {"sessions": []})
+    beacons = read_json(BEACONS_PATH, {"items": []})
+    correlations = read_json(CORRELATIONS_PATH, {"items": []})
+    session = session_by_id(sessions, session_id)
+    if not session:
+        raise ValueError("session not found")
+    timestamp = generated_at or now_iso()
+    generated = parse_iso(timestamp)
+    config = runtime_config()
+    relay = session.get("relay") or {}
+    related = _session_beacons(session_id, beacons, correlations)
+
+    beacon_times = [item.get("observed_at") for item in related]
+    last_activity = latest_iso([session.get("last_seen_at"), *beacon_times])
+    last_liveness = latest_iso([
+        relay.get("last_heartbeat_at"),
+        session.get("last_seen_at"),
+        *beacon_times,
+    ])
+
+    relay_state = relay.get("state")
+    if session.get("status") == "CLOSED" or relay_state in {"CLOSED", "HANDOFF_STALLED"}:
+        liveness_state = "TERMINAL"
+    elif relay_state in {"STALLED", "TAKEOVER_READY"}:
+        liveness_state = "STALLED"
+    elif relay_state == "SUSPECTED_STALL":
+        liveness_state = "SUSPECTED_STALL"
+    elif not last_liveness or not generated:
+        liveness_state = "UNKNOWN"
+    else:
+        last_liveness_dt = parse_iso(last_liveness)
+        if not last_liveness_dt:
+            liveness_state = "UNKNOWN"
+        else:
+            age = max(0.0, (generated - last_liveness_dt).total_seconds())
+            if age <= config["heartbeat_interval_seconds"]:
+                liveness_state = "ACTIVE"
+            elif age < config["suspected_stall_after_seconds"]:
+                liveness_state = "QUIET"
+            elif age < config["stalled_after_seconds"]:
+                liveness_state = "SUSPECTED_STALL"
+            else:
+                liveness_state = "STALLED"
+
+    progress_items = _progress_evidence(related)
+    last_progress_evidence = progress_items[-1] if progress_items else None
+    last_progress = last_progress_evidence.get("observed_at") if last_progress_evidence else None
+    if last_progress_evidence and last_progress_evidence.get("class") == "EXPLICIT_BLOCKED":
+        progress_state = "BLOCKED_IF_EXPLICITLY_OBSERVED"
+    elif last_progress_evidence and generated and parse_iso(last_progress):
+        progress_age = max(0.0, (generated - parse_iso(last_progress)).total_seconds())
+        progress_state = "ADVANCING" if progress_age <= config["progress_recency_seconds"] else "NO_RECENT_PROGRESS_EVIDENCE"
+    elif related or last_liveness:
+        progress_state = "NO_RECENT_PROGRESS_EVIDENCE"
+    else:
+        progress_state = "UNKNOWN"
+
+    result = {
+        "session_id": session_id,
+        "generated_at": timestamp,
+        "last_activity_at": available(last_activity),
+        "last_liveness_evidence_at": available(last_liveness),
+        "last_progress_at": available(last_progress),
+        "liveness": {
+            "state": liveness_state,
+            "last_evidence_at": available(last_liveness),
+            "lease_expires_at": available(relay.get("lease_expires_at")),
+            "watch_relay_state": available(relay_state),
+        },
+        "progress": {
+            "state": progress_state,
+            "last_progress_at": available(last_progress),
+            "last_progress_evidence": available(last_progress_evidence),
+        },
+    }
+    assert_secretless(result)
+    return result
+
+
+def evaluate_liveness_challenge(
+    *,
+    session_id: str,
+    challenge_id: str,
+    response: str | None,
+    observed_at: str | None = None,
+) -> dict:
+    sessions = read_json(SESSIONS_PATH, {"sessions": []})
+    if not session_by_id(sessions, session_id):
+        raise ValueError("session not found")
+    timestamp = observed_at or now_iso()
+    if response is None:
+        result = {
+            "challenge_id": challenge_id,
+            "session_id": session_id,
+            "status": "LIVENESS_CHALLENGE_TIMEOUT",
+            "response": UNAVAILABLE,
+            "observed_at": timestamp,
+            "cause": UNAVAILABLE,
+            "optional": True,
+        }
+    else:
+        normalized = response.strip().upper()
+        if normalized not in LIVENESS_CHALLENGE_RESPONSES:
+            raise ValueError("unsupported liveness challenge response")
+        result = {
+            "challenge_id": challenge_id,
+            "session_id": session_id,
+            "status": "LIVENESS_CHALLENGE_ACK",
+            "response": normalized,
+            "observed_at": timestamp,
+            "cause": UNAVAILABLE,
+            "optional": True,
+        }
+    assert_secretless(result)
+    return result
+
+
 def _last_value(items: list[dict], key: str):
     for item in reversed(items):
         value=item.get(key)
@@ -573,31 +819,125 @@ def build_forensics_all() -> dict:
     return {"changed":changed,"items":reports}
 
 
-def agent_context(session_id: str) -> dict:
+def agent_context(session_id: str, *, generated_at: str | None = None) -> dict:
     sessions = read_json(SESSIONS_PATH, {"sessions": []})
     claims = read_json(CLAIMS_PATH, {"claims": []})
     takeovers = read_json(TAKEOVERS_PATH, {"items": []})
     beacons = read_json(BEACONS_PATH, {"items": []})
     correlations = read_json(CORRELATIONS_PATH, {"items": []})
     dispatches = read_json(DISPATCHES_PATH, {"items": []})
-    forensics = read_json(FORENSICS_PATH, {"items": []})
     session = session_by_id(sessions, session_id)
     if not session:
         raise ValueError("session not found")
-    beacon_ids = [x.get("beacon_id") for x in beacons.get("items", []) if x.get("session_id") == session_id]
-    related_correlations = [x for x in correlations.get("items", []) if x.get("selected_session_id") == session_id or x.get("beacon_id") in beacon_ids]
-    return {
+
+    timestamp = generated_at or now_iso()
+    relay = session.get("relay") or {}
+    related = _session_beacons(session_id, beacons, correlations)
+    actions = _action_projection(related)
+    signals = session_signal_projection(session_id, generated_at=timestamp)
+    active_claims = [x for x in claims.get("claims", []) if x.get("session_id") == session_id and x.get("status") == "ACTIVE"]
+    related_takeovers = [x for x in takeovers.get("items", []) if x.get("stalled_session_id") == session_id or x.get("offered_to_session_id") == session_id or x.get("accepted_by_session_id") == session_id]
+    related_dispatches = [x for x in dispatches.get("items", []) if x.get("target_session_id") == session_id or x.get("stalled_session_id") == session_id]
+    open_takeover = next((
+        x for x in reversed(related_takeovers)
+        if x.get("stalled_session_id") == session_id and x.get("status") in {"READY_FOR_RECONCILIATION", "OFFERED"}
+    ), None)
+    forensics = build_interruption_forensics(session_id, persist=False, generated_at=timestamp)
+    beacon_ids = [x.get("beacon_id") for x in related]
+    related_correlations = [
+        x for x in correlations.get("items", [])
+        if x.get("selected_session_id") == session_id or x.get("beacon_id") in beacon_ids
+    ]
+    present_sessions = []
+    for peer in sessions.get("sessions", []):
+        peer_relay = peer.get("relay") or {}
+        if peer.get("repository") != session.get("repository"):
+            continue
+        if peer.get("status") == "CLOSED" or peer_relay.get("state") in {"CLOSED", "HANDOFF_STALLED"}:
+            continue
+        present_sessions.append({
+            "session_id": peer.get("session_id"),
+            "agent_identity": available(peer.get("agent_identity")),
+            "session_status": available(peer.get("status")),
+            "relay_state": available(peer_relay.get("state")),
+        })
+
+    context = {
         "process": "GACR",
+        "contract": "GACR_AGENT_CONTEXT_V2",
+        "session_id": session_id,
+        "session_identity": available(session.get("agent_identity")),
+        "presence": present_sessions,
+        "repository": available(session.get("repository")),
+        "task_id": available(relay.get("task_id")),
+        "claim": available(active_claims[0] if len(active_claims) == 1 else active_claims if active_claims else None),
+        "claims": active_claims,
+        "branch": available(relay.get("branch")),
+        "pull_request": available(relay.get("pull_request")),
+        "observed_head": available(forensics.get("work", {}).get("last_observed_head_sha")),
+        "written_head": available(forensics.get("work", {}).get("last_written_head_sha")),
+        "last_activity_at": signals["last_activity_at"],
+        "last_liveness_evidence_at": signals["last_liveness_evidence_at"],
+        "last_progress_at": signals["last_progress_at"],
+        "liveness": signals["liveness"],
+        "progress": signals["progress"],
+        "progress_evidence": signals["progress"]["last_progress_evidence"],
+        "action_started": available(actions.get("last_action_started")),
+        "action_completed": available(actions.get("last_action_completed")),
+        "action_in_flight": available(actions.get("in_flight_action")),
+        "checkpoint": available(forensics.get("last_checkpoint_ref")),
+        "predecessor": available(relay.get("predecessor_session_id")),
+        "takeover": {
+            "eligible": bool(relay.get("state") == "TAKEOVER_READY" and open_takeover),
+            "relay_state": available(relay.get("state")),
+            "takeover_id": available((open_takeover or {}).get("takeover_id")),
+            "status": available((open_takeover or {}).get("status")),
+            "claim_preserved_until_accept": True,
+        },
+        "exact_head_reobservation_requirement": bool(
+            forensics.get("resume_point", {}).get("requires_exact_head_reobservation", True)
+        ),
+        "provider_conversation_ref": available(session.get("provider_conversation_ref")),
+        "known_limitations": [
+            "Provider-private conversation metadata remains UNAVAILABLE unless explicitly supplied.",
+            "A liveness challenge is optional and requires a real bidirectional client/gateway integration to send and receive it.",
+            "Proprietary silent repository reads remain unobservable without an instrumented provider/client/gateway surface.",
+            "SHARED_INTEGRATION_REQUIRED: Presence/ConnectionEnvelope binding is owned by the parallel Presence Fabric tranche.",
+        ],
+        "shared_integration_required": SHARED_INTEGRATION_REQUIRED,
         "session": session,
-        "active_claims": [x for x in claims.get("claims", []) if x.get("session_id") == session_id and x.get("status") == "ACTIVE"],
-        "takeovers": [x for x in takeovers.get("items", []) if x.get("stalled_session_id") == session_id or x.get("offered_to_session_id") == session_id or x.get("accepted_by_session_id") == session_id],
-        "dispatches": [x for x in dispatches.get("items", []) if x.get("target_session_id") == session_id or x.get("stalled_session_id") == session_id],
-        "recent_beacons": [x for x in beacons.get("items", []) if x.get("session_id") == session_id][-10:],
+        "active_claims": active_claims,
+        "takeovers": related_takeovers,
+        "dispatches": related_dispatches,
+        "recent_beacons": related[-10:],
         "recent_correlations": related_correlations[-10:],
-        "interruption_forensics": next((x for x in forensics.get("items", []) if x.get("session_id") == session_id), None),
-        "repository_head": git_value("rev-parse", "HEAD"),
-        "repository_branch": git_value("branch", "--show-current"),
-        "generated_at": now_iso(),
+        "unbound_activity": unbound_activity_projection(),
+        "interruption_forensics": forensics,
+        "repository_head": available(git_value("rev-parse", "HEAD")),
+        "repository_branch": available(git_value("branch", "--show-current")),
+        "generated_at": timestamp,
+    }
+    assert_secretless(context)
+    return context
+
+
+def interrogate_session(session_id: str, *, generated_at: str | None = None) -> dict:
+    return agent_context(session_id, generated_at=generated_at)
+
+
+def worker_c_integration_projection(session_id: str, *, generated_at: str | None = None) -> dict:
+    context = agent_context(session_id, generated_at=generated_at)
+    return {
+        "session_id": session_id,
+        "liveness": context["liveness"],
+        "progress": context["progress"],
+        "last_activity_at": context["last_activity_at"],
+        "last_liveness_evidence_at": context["last_liveness_evidence_at"],
+        "last_progress_at": context["last_progress_at"],
+        "unbound_activity": context["unbound_activity"],
+        "agent_context": context,
+        "takeover_eligibility_inputs": context["takeover"],
+        "shared_integration_required": context["shared_integration_required"],
     }
 
 
@@ -658,6 +998,7 @@ def command_status(_: argparse.Namespace) -> None:
         "correlations": read_json(CORRELATIONS_PATH, {"items":[]}),
         "dispatches": read_json(DISPATCHES_PATH, {"items":[]}),
         "forensics": read_json(FORENSICS_PATH, {"items":[]}),
+        "unbound_activity": unbound_activity_projection(),
     },indent=2,ensure_ascii=False))
 
 
