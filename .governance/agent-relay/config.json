@@ -194,5 +194,34 @@
       "correlation": "EXACT",
       "duplicate_active_session": false
     }
+  },
+  "presence_fabric": {
+    "enabled": true,
+    "additive_to_existing_gacr": true,
+    "envelope_schema": "gacr-connection-envelope/v1",
+    "fingerprint_version": "gacr-connection-fingerprint/v1",
+    "first_touch_time_bucket_seconds": 300,
+    "surface_classes": [
+      "CONTROLLED_INSTRUMENTABLE",
+      "GITHUB_EVENT_VISIBLE",
+      "PROPRIETARY_SILENT"
+    ],
+    "provenance_classes": [
+      "OBSERVABLE_BY_PLATFORM",
+      "DECLARED_BY_AGENT_OR_CLIENT",
+      "DERIVED_SAFE",
+      "CORRELATED",
+      "PROVIDER_PRIVATE_UNAVAILABLE"
+    ],
+    "unavailable_value": "UNAVAILABLE",
+    "first_touch_behavior": "OBSERVE_FROM_CONTROLLED_REPOSITORY_USE_WITHOUT_AGENT_GACR_CALL",
+    "resume_identity_policy": "FREEZE_FIRST_TOUCH_FINGERPRINT_INPUTS_AFTER_BIND",
+    "ambiguous_binding_policy": "UNBOUND_ACTIVITY_FAIL_CLOSED",
+    "provider_private_identity_policy": "SUPPLIED_ONLY_NEVER_INVENT",
+    "parallel_session_store": false,
+    "parallel_beacon_store": false,
+    "parallel_claim_store": false,
+    "parallel_takeover_engine": false,
+    "parallel_correlator": false
   }
 }
