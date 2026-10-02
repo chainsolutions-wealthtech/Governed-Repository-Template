@@ -8,10 +8,10 @@
     "original_intent": "CANONICAL_RECORDED",
     "baseline_r1_r6": "PRESERVED_REOBSERVED_ATTESTED_OR01_PASS",
     "origin_realignment_plan": "ACCEPTED",
-    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13B_BLOCKED_PENDING_GSCC_ADMISSION_ACCESS_GATE_POSTMERGE_ATTESTATION",
+    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13B_BLOCKED_PENDING_GSCC_ADMISSION_GATE_LIVE_REQUEST",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
-  "next_action": "GSCC_ADMISSION_ACCESS_GATE_MERGE_AND_POSTMERGE_ATTEST",
+  "next_action": "GSCC_ADMISSION_GATE_RUN_LIVE_REQUEST",
   "or01": {
     "status": "PASS",
     "attestation": "docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md",
@@ -160,12 +160,11 @@
   },
   "relational_projection": "PENDING_PROJECTION_NO_DEDICATED_GACR_REALIGNMENT_STEP_TABLE",
   "step_13b": {
-    "status": "BLOCKED_PENDING_GSCC_ADMISSION_ACCESS_GATE_POSTMERGE_ATTESTATION",
+    "status": "BLOCKED_PENDING_GSCC_ADMISSION_GATE_LIVE_REQUEST",
     "requirement": "After the pre-Step-13B remediation is closed, run a genuinely fresh provider conversation/agent through the integrated GSCC/GSE/GACR path without telling it to register with GACR. Observe first-touch, SessionTwin, control challenge/wake capability and provider-bound evidence without inventing unavailable provider-private fields.",
     "fresh_provider_agent": "NOT_EXECUTED",
     "ultimate_live_acceptance": "NOT_PASSED",
     "remediation_required": [
-      "GSCC_ADMISSION_ACCESS_GATE_MERGE_AND_POSTMERGE_ATTEST",
       "GSCC_ADMISSION_GATE_LIVE_REQUEST",
       "GSCC_FUNCTION_EXPOSURE_GATE_LIVE_FUNCTION_REQUEST"
     ]
@@ -289,7 +288,7 @@
     "live_function_request_blocked_by": "GSCC_ADMISSION_ACCESS_GATE"
   },
   "gscc_admission_access_gate": {
-    "status": "CANDIDATE_IMPLEMENTED_TESTED_PENDING_MERGE",
+    "status": "INTEGRATED_POSTMERGE_GREEN_PENDING_LIVE_ADMISSION_REQUEST",
     "authority": "docs/control-plane/GSCC_ADMISSION_ACCESS_GATE.md",
     "decision": "CPD-061",
     "invariant": "IDENTITY_NE_ADMISSION_NE_PREAUTHORIZATION_NE_ACCESS_AUTHORIZATION_NE_FUNCTION_EXPOSURE_NE_MUTATION_AUTHORITY",
@@ -304,7 +303,7 @@
     "global_programme_advanced": false,
     "pr": 159,
     "branch": "governance/gscc-admission-runtime",
-    "candidate_head": "3510d8118b22255e5b04f75c7547c8aab1246c68",
+    "candidate_head": "fc3352732dad175acc3504754f10bf84ba5ea253",
     "script": "scripts/gscc/admission.py",
     "workflow": ".github/workflows/gscc-admission-gate.yml",
     "schemas": [
@@ -326,7 +325,14 @@
       "final_candidate_arrival_gateway": 37002023374,
       "final_candidate_function_gate": 37002023423
     },
-    "postmerge_attestation": "PENDING",
-    "live_admission_request": "NOT_EXECUTED"
+    "postmerge_attestation": "PASS",
+    "live_admission_request": "NOT_EXECUTED",
+    "merge": "56c48aafbe00a50b47ad2189f4ab3645b937c82f",
+    "postmerge_governance_ci": 37002783058,
+    "postmerge_arrival_gateway": 37002783052,
+    "postmerge_function_exposure_gate": 37002783152,
+    "postmerge_function_route_selftest": 37002783428,
+    "postmerge_relay_push": 37002783111,
+    "postmerge_relay_dispatch": 37002796444
   }
 }
