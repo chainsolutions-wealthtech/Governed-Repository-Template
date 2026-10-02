@@ -786,3 +786,16 @@ R6-B therefore:
 - adds regression tests for number mode, title fallback mode and upgrader non-distribution.
 
 Candidate version: `2.8.39`. No target client repository was mutated to prove this source-only correction.
+
+## 2026-10-02 — GACR R6-C provider attribution correction
+
+Post-R6-B live heartbeat `5943559595` succeeded and persisted through commit `371509ac60d1a63c0be7cee8ec8620346210d824`, but semantic review found the canonical session still carried historical `provider = other`.
+
+R6-C adds safe late provider enrichment:
+- stable connection remains the identity anchor;
+- explicit host provider may upgrade generic `other` to `chatgpt`;
+- native ChatGPT conversation ID remains unavailable/not invented;
+- same session ID must be reused;
+- conflicting specific provider fails closed.
+
+Candidate version: `2.8.40`. Final acceptance requires a live event from this conversation after merge.
