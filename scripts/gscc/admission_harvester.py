@@ -382,12 +382,23 @@ def harvest_qualification_evidence(
     if session.get("status") == "BOUND":
         session_head = session.get("last_observed_head")
         current_head = repository_baseline.get("observed_head")
-        if session_head and current_head and session_head != current_head:
+        if current_head and session_head != current_head:
             session = {
                 **session,
-                "status": "STALE_HEAD",
-                "reason": "GACR_SESSION_HEAD_DIFFERS_FROM_GITHUB_OBSERVATION",
+                "previous_observed_head": session_head,
+                "last_observed_head": current_head,
                 "current_observed_head": current_head,
+                "head_reconciliation": {
+                    "status": "REOBSERVED_CURRENT_HEAD",
+                    "reason": "QUALIFICATION_REQUIRES_CURRENT_GITHUB_HEAD",
+                    "previous_observed_head": session_head,
+                    "current_observed_head": current_head,
+                    "evidence_ref": repository_baseline.get("evidence_ref"),
+                    "source": "GITHUB_API",
+                    "provenance": "OBSERVABLE_BY_PLATFORM",
+                    "observed_at": repository_baseline.get("observed_at") or _iso(now),
+                    "canonical_session_store_mutated": False,
+                },
             }
 
     governance_read = observe_governance(

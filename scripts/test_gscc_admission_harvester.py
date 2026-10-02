@@ -188,9 +188,10 @@ def test_admission_workflow_harvests_instead_of_trusting_caller_evidence():
     assert "QUALIFICATION_EVIDENCE_JSON: ${{ github.event.client_payload.qualification_evidence_json" not in workflow, workflow
 
 
-def test_gacr_head_mismatch_fails_closed():
+def test_gacr_head_mismatch_is_reobserved_for_access_without_rewriting_session_store():
     sessions = sample_sessions()
     sessions["sessions"][0]["last_observed_head_sha"] = "b" * 40
+    original_store_head = sessions["sessions"][0]["last_observed_head_sha"]
     result = harvest_qualification_evidence(
         sample_admission(),
         github_request_fn=fake_github,
@@ -205,9 +206,15 @@ def test_gacr_head_mismatch_fails_closed():
         },
         now=NOW,
     )
-    assert result["session"]["status"] == "STALE_HEAD", result
-    assert "session" in result["missing_canonical_evidence"], result
-    assert result["status"] == "QUALIFICATION_EVIDENCE_PARTIAL", result
+    assert result["session"]["status"] == "BOUND", result
+    assert result["session"]["previous_observed_head"] == "b" * 40, result
+    assert result["session"]["last_observed_head"] == "a" * 40, result
+    reconciliation = result["session"]["head_reconciliation"]
+    assert reconciliation["status"] == "REOBSERVED_CURRENT_HEAD", reconciliation
+    assert reconciliation["source"] == "GITHUB_API", reconciliation
+    assert reconciliation["canonical_session_store_mutated"] is False, reconciliation
+    assert sessions["sessions"][0]["last_observed_head_sha"] == original_store_head, sessions
+    assert "session" not in result["missing_canonical_evidence"], result
 
 
 def test_harvester_direct_cli_import_path_is_valid():
@@ -228,7 +235,7 @@ def main():
     test_harvest_uses_canonical_sources_and_fails_closed_on_missing_gse_control()
     test_caller_repository_claim_cannot_override_get_observation()
     test_admission_workflow_harvests_instead_of_trusting_caller_evidence()
-    test_gacr_head_mismatch_fails_closed()
+    test_gacr_head_mismatch_is_reobserved_for_access_without_rewriting_session_store()
     test_harvester_direct_cli_import_path_is_valid()
     print("GSCC_ADMISSION_HARVESTER_TESTS_OK")
 
