@@ -12,6 +12,7 @@
     "connection_ref",
     "repository",
     "status",
+    "access_class",
     "bound_head",
     "issued_at",
     "expires_at",
@@ -83,6 +84,13 @@
     },
     "mutation_authority_granted": {
       "const": false
+    },
+    "access_class": {
+      "const": "GOVERNED_FUNCTION_EXPOSURE_ELIGIBLE"
+    },
+    "qualification_digest": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
     }
   },
   "additionalProperties": true
