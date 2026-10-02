@@ -131,6 +131,42 @@ def main() -> None:
     finally:
         g.active_sessions = original_active_sessions
 
+    provider_calls = []
+    original_active_sessions_provider = g.active_sessions
+    original_run_provider = g.run_script
+    try:
+        generic_session = {
+            "session_id": "session-provider",
+            "repository": "example/governed",
+            "provider": "other",
+            "provider_conversation_ref": None,
+            "connection_ref": "chronicle:demo:session-provider",
+            "client_instance_id": "chronicle:demo-provider",
+            "agent_identity": "conversation-agent",
+            "status": "ACTIVE",
+            "relay": {"state": "ACTIVE", "branch": "main"},
+        }
+        enriched_session = dict(generic_session)
+        enriched_session["provider"] = "chatgpt"
+        reads = {"count": 0}
+        def provider_sessions():
+            reads["count"] += 1
+            return [generic_session] if reads["count"] == 1 else [enriched_session]
+        g.active_sessions = provider_sessions
+        g.run_script = lambda path, args: provider_calls.append((path.name, list(args))) or ""
+        payload_provider = {
+            "provider": "chatgpt",
+            "connection_ref": "chronicle:demo:session-provider",
+            "client_instance_id": "chronicle:demo-provider",
+            "observed_head": "d" * 40,
+        }
+        resolved_provider = g.ensure_session(payload_provider, "example/governed")
+        assert_true(resolved_provider["provider"] == "chatgpt", "host provider enrichment should return enriched session")
+        assert_true(any(name == "gacr_auto_attach.py" and "--provider" in args and "chatgpt" in args for name, args in provider_calls), "host provider enrichment must reuse auto-attach path")
+    finally:
+        g.active_sessions = original_active_sessions_provider
+        g.run_script = original_run_provider
+
     calls = []
     original_processed = g.evidence_processed
     original_ensure = g.ensure_session

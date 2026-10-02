@@ -868,3 +868,18 @@ Correction:
 - unit/workflow regression tests cover both source-number and client-title modes.
 
 Candidate Template version: `2.8.39`. The previously proven source live event remains valid; R6-B acceptance requires CI and merge, followed by a fresh source heartbeat proving the exact-number source path still works.
+
+### GACR R6-C — explicit host provider enrichment
+
+Status: `IMPLEMENTED / CI_PENDING / LIVE_PROOF_PENDING`.
+
+Live R6/R6-B evidence confirmed that the canonical session was still labelled `provider = other` because it predated provider-host integration, even though host events explicitly declared `provider = chatgpt`.
+
+R6-C corrects only this attribution gap:
+- explicit `chatgpt` may enrich the existing connection-bound generic session without requiring a provider conversation ID;
+- session identity is preserved;
+- provider conversation reference remains `UNAVAILABLE` unless genuinely supplied;
+- conflicting specific providers fail closed;
+- host adapter reuses auto-attach/register semantics.
+
+Candidate Template version: `2.8.40`. Acceptance requires CI, merge, then a real ChatGPT-host event proving the canonical session changes from `other` to `chatgpt` with no new session.
