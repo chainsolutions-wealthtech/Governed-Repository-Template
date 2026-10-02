@@ -18,6 +18,7 @@ if __package__:
     from .admission import QUALIFICATION_REQUIREMENTS, resolve_admission_session_binding
     from .protocol import assert_secretless
     from gscc_gacr.issue_control_bridge import canonical_control_evidence
+    from gscc_gacr.admission_gse_projection import project_admission_gse_state
 else:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from gscc.admission import QUALIFICATION_REQUIREMENTS, resolve_admission_session_binding
@@ -231,6 +232,11 @@ def resolve_gacr_session(
         "binding_evidence_ref": binding.get("binding_evidence_ref"),
         "repository": session.get("repository"),
         "last_observed_head": session.get("last_observed_head_sha"),
+        "created_at": session.get("created_at"),
+        "last_seen_at": session.get("last_seen_at"),
+        "last_heartbeat_at": relay.get("last_heartbeat_at"),
+        "branch": session.get("branch") or relay.get("branch"),
+        "relay": copy.deepcopy(relay),
         "lease_expires_at": relay.get("lease_expires_at"),
         "task_id": relay.get("task_id") or _connection_field(session, "task_id"),
         "claim_id": _connection_field(session, "claim_id"),
@@ -425,6 +431,13 @@ def harvest_qualification_evidence(
         source="GSCC_CONTROL_CHANNEL",
         now=now,
     )
+
+    if (
+        gse_state is None
+        and session.get("status") == "BOUND"
+        and (canonical_control.get("control_channel") or {}).get("status") == "VERIFIED"
+    ):
+        gse_state = project_admission_gse_state(session, canonical_control, now=now)
 
     if (
         isinstance(gse_state, dict)
