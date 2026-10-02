@@ -154,7 +154,7 @@
         "observed_main_head": "8936a0f734d12cf5dbcd916c4d98fe4fef895aec",
         "evidence": "docs/control-plane/GACR_GSCC_GSE_INTEGRATION_AUDIT.md",
         "procedural_merge_deviation": "RECORDED_NON_BLOCKING",
-        "canonical_gscc_contract_drift_risk": "OPEN_BLOCKING",
+        "canonical_gscc_contract_drift_risk": "CLOSED_PASS_PR147",
         "gse_control_response_projection_coverage": "OPEN_BLOCKING"
       }
     },
@@ -172,11 +172,20 @@
       "fresh_provider_agent": "NOT_EXECUTED",
       "ultimate_live_acceptance": "NOT_PASSED",
       "remediation_required": [
-        "CANONICALIZE_GSCC_GACR_SHARED_CONTRACT",
         "PROVE_CONTROL_RESPONSE_TO_GSE_MAPPING",
         "FULL_REGRESSION_GREEN",
         "REAUTHORIZE_STEP_13B_FROM_CURRENT_MAIN"
       ]
+    },
+    "g4": {
+      "status": "CLOSED_PASS",
+      "finding": "GACR-INT-AUDIT-01",
+      "pr": 147,
+      "candidate_ci": 36970569867,
+      "merge": "cbc87ef5f31c6c8190be3add44f446fdc316b6f2",
+      "postmerge_ci": 36970611124,
+      "postmerge_relay": 36970611145,
+      "observed_main": "b7d0e3540747af21db9705fc333baeca1d74adef"
     }
   }
 }
