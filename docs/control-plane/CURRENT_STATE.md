@@ -852,3 +852,19 @@ A live-review of the first R6 event identified a rerun semantics gap before fina
 - The same comment replay can then resolve as `GACR_HOST_EVENT_ALREADY_PROCESSED` with no state diff and no push.
 - Candidate version: `2.8.38`.
 - Final acceptance requires candidate CI, merge, a fresh live host event, then rerun of that exact event with successful no-op proof.
+
+### GACR R6-B — portable host inbox boundary
+
+Status: `IMPLEMENTED / CI_PENDING`.
+
+A pre-attestation portability review found that source issue `#115` is runtime-local and must not be distributed to clients.
+
+Correction:
+- the generic workflow no longer hard-codes issue `#115`;
+- source config retains its exact local issue number;
+- governed client upgrades force `host_issue_bridge.issue_number = null`;
+- client ingress then uses exact canonical-title validation until a local issue number is bound;
+- source issue identity is explicitly non-distributed;
+- unit/workflow regression tests cover both source-number and client-title modes.
+
+Candidate Template version: `2.8.39`. The previously proven source live event remains valid; R6-B acceptance requires CI and merge, followed by a fresh source heartbeat proving the exact-number source path still works.
