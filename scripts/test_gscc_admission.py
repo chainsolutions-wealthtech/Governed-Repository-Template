@@ -330,6 +330,26 @@ def test_issue_comment_admission_workflow_is_bound_to_dedicated_issue():
     assert "contents: write" not in text, text
 
 
+def test_issue_comment_admission_continues_through_canonical_qualification():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    admission_start = text.index("  admission:")
+    qualification_start = text.index("  qualification:")
+    admission_job = text[admission_start:qualification_start]
+
+    assert "Harvest issue-comment canonical qualification evidence" in admission_job, admission_job
+    assert "Evaluate issue-comment harvested qualification" in admission_job, admission_job
+    assert "steps.issue_ingress.outputs.status == 'PREAUTHORIZED'" in admission_job, admission_job
+    assert 'receipt="$(cat "$RUNNER_TEMP/gscc-admission-receipt.json")"' in admission_job, admission_job
+    assert "python3 scripts/gscc/admission_harvester.py harvest" in admission_job, admission_job
+    assert "python3 scripts/gscc/admission.py qualify" in admission_job, admission_job
+    assert "gscc-qualification-evidence.json" in admission_job, admission_job
+    assert "gscc-access-decision.json" in admission_job, admission_job
+    assert "harvest_status:" in admission_job, admission_job
+    assert "access_status:" in admission_job, admission_job
+    assert "grant_id:" in admission_job, admission_job
+    assert "contents: write" not in text, text
+
+
 
 def admission_receipt_for_binding(**overrides):
     value = {
@@ -464,6 +484,7 @@ def main():
     test_issue_comment_admission_bridge_accepts_only_bounded_safe_ingress()
     test_issue_comment_admission_bridge_fails_closed_on_wrong_issue_or_actor()
     test_issue_comment_admission_workflow_is_bound_to_dedicated_issue()
+    test_issue_comment_admission_continues_through_canonical_qualification()
     test_session_binding_prefers_exact_connection_ref()
     test_session_binding_uses_unique_strong_observable_anchor_without_rewriting_admission()
     test_session_binding_fails_closed_when_ambiguous_or_missing()
