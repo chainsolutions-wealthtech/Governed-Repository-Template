@@ -47,14 +47,16 @@ def main() -> None:
             f"duplicate shared protocol declaration remains: {forbidden_declaration}",
         )
 
-    # raw_prompt is rejected by the canonical GSCC policy and was not covered by
-    # the old local control validator. This proves delegation rather than equality
-    # by coincidence.
-    try:
-        contract.validate_safe_payload({"raw_prompt": "must-never-cross-control"})
-        raise AssertionError("canonical-only unsafe payload was accepted")
-    except ControlValidationError:
-        pass
+    # Prove both directions of compatibility:
+    # - raw_prompt existed only in the canonical GSCC policy;
+    # - browser_session / conversation_text / page_content were historical
+    #   control restrictions and must now be enforced by the canonical policy.
+    for forbidden_key in ("raw_prompt", "browser_session", "conversation_text", "page_content"):
+        try:
+            contract.validate_safe_payload({forbidden_key: "must-never-cross-control"})
+            raise AssertionError(f"unsafe payload was accepted: {forbidden_key}")
+        except ControlValidationError:
+            pass
 
     canonical_commands_before = canonical.COMMAND_TYPES
     assert_true(
