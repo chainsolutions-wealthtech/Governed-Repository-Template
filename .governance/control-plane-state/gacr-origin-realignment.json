@@ -172,7 +172,12 @@
         "control_response_gse_projection": "PASS_PR149",
         "full_regression": "PASS",
         "current_main_reobserved": "114c5397966a5c6ad7d8770298abd698929ecf8f",
-        "g6_reconciliation_ci": 36971795607
+        "g6_reconciliation_ci": 36971795607,
+        "g6_final_reauthorized_candidate_ci": 36972111008,
+        "g6_merge": "d0f66130f135f4aa7363c3e88c1e3f44ced9a828",
+        "g6_postmerge_governance_ci": 36972158291,
+        "g6_postmerge_relay": 36972158234,
+        "final_main_reobserved": "ab3fd3848878e93f929cbd3d89c9d15be43537a7"
       },
       "fresh_provider_agent": "NOT_EXECUTED",
       "ultimate_live_acceptance": "NOT_PASSED",
@@ -199,13 +204,19 @@
       "observed_main": "114c5397966a5c6ad7d8770298abd698929ecf8f"
     },
     "g6": {
-      "status": "PASS_REAUTHORIZED",
+      "status": "PASS_CLOSED",
       "pr": 150,
       "observed_main": "114c5397966a5c6ad7d8770298abd698929ecf8f",
       "reconciliation_ci": 36971795607,
       "audit_01": "CLOSED_PASS",
       "audit_02": "CLOSED_PASS",
-      "step_13b": "NEXT_AUTHORIZED"
+      "step_13b": "NEXT_AUTHORIZED",
+      "initial_reconciliation_ci": 36971795607,
+      "final_reauthorized_candidate_ci": 36972111008,
+      "merge": "d0f66130f135f4aa7363c3e88c1e3f44ced9a828",
+      "postmerge_ci": 36972158291,
+      "postmerge_relay": 36972158234,
+      "final_main_observed": "ab3fd3848878e93f929cbd3d89c9d15be43537a7"
     }
   }
 }
