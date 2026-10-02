@@ -179,6 +179,28 @@ def test_admission_workflow_harvests_instead_of_trusting_caller_evidence():
     assert "Deprecated and ignored; GSCC harvests canonical qualification evidence itself" in workflow, workflow
     assert "QUALIFICATION_EVIDENCE_JSON: ${{ github.event.client_payload.qualification_evidence_json" not in workflow, workflow
 
+
+def test_gacr_head_mismatch_fails_closed():
+    sessions = sample_sessions()
+    sessions["sessions"][0]["last_observed_head_sha"] = "b" * 40
+    result = harvest_qualification_evidence(
+        sample_admission(),
+        github_request_fn=fake_github,
+        sessions=sessions,
+        claims={"claims": []},
+        tasks={"tasks": []},
+        governance_documents={
+            "00_START_HERE.md": "start",
+            "GOVERNANCE.md": "governance",
+            "docs/control-plane/GSCC_ADMISSION_ACCESS_GATE.md": "admission",
+            "docs/control-plane/GACR_PROGRAM.md": "gacr",
+        },
+        now=NOW,
+    )
+    assert result["session"]["status"] == "STALE_HEAD", result
+    assert "session" in result["missing_canonical_evidence"], result
+    assert result["status"] == "QUALIFICATION_EVIDENCE_PARTIAL", result
+
 def main():
     test_repository_facts_are_get_observed()
     test_gacr_session_is_bound_from_canonical_store()
@@ -186,6 +208,7 @@ def main():
     test_harvest_uses_canonical_sources_and_fails_closed_on_missing_gse_control()
     test_caller_repository_claim_cannot_override_get_observation()
     test_admission_workflow_harvests_instead_of_trusting_caller_evidence()
+    test_gacr_head_mismatch_fails_closed()
     print("GSCC_ADMISSION_HARVESTER_TESTS_OK")
 
 
