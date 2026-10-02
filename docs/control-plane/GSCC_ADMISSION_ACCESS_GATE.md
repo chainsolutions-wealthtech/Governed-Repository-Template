@@ -63,6 +63,98 @@ This design extends, and does not replace:
 
 No second session store, correlator, claim store, takeover engine or function-exposure authority is authorized.
 
+
+
+## Existing arrival layer preservation and placement
+
+The repository already has a canonical arrival layer and it must not be deleted, bypassed or replaced.
+
+Existing implementation:
+
+```text
+.github/workflows/gscc-observable-arrival.yml
+        ↓
+scripts/gscc_observable_arrival.py
+        ↓
+GSCC SessionEndpoint
+        ↓
+SESSION_ATTACH
+        ↓
+GACRClientEmitterAdapter
+        ↓
+gacr_auto-attach
+        ↓
+GACR Presence / canonical session
+```
+
+It currently observes GitHub-visible arrivals such as push, create, pull request, issue/comment and review events, and it also exposes the controlled-host arrival function for instrumentable provider/client adapters.
+
+The new admission/access layer is therefore a **higher-order prerequisite**, not a replacement for this existing arrival mechanism.
+
+For a controlled provider/client surface, the intended order is:
+
+```text
+AGENT / CONVERSATION
+        ↓
+NEW ADMISSION GATE
+        ↓
+AdmissionEnvelope validation
+        ↓
+PREAUTHORIZED + qualification
+        ↓
+ACCESS GRANT
+        ↓
+EXISTING controlled GSCC arrival path
+        ↓
+SessionEndpoint / SESSION_ATTACH
+        ↓
+GACR canonical session
+        ↓
+existing entry-action / intent / authority gates
+        ↓
+EXISTING Function Exposure Gate
+        ↓
+governed repository function
+```
+
+For a GitHub-event-visible arrival that has already occurred, the existing Observable Arrival Gateway may necessarily observe the event before admission because the GitHub event itself is the observation source. In that case its output is **presence evidence only**:
+
+```text
+GITHUB EVENT
+        ↓
+EXISTING OBSERVABLE ARRIVAL GATEWAY
+        ↓
+presence / session evidence
+        ↓
+NO ACCESS AUTHORITY
+        ↓
+NEW ADMISSION GATE REQUIRED
+        ↓
+qualification
+        ↓
+ACCESS GRANT
+        ↓
+EXISTING Function Exposure Gate
+```
+
+Therefore:
+
+```text
+OBSERVABLE ARRIVAL
+!= PREAUTHORIZED
+!= AUTHORIZED
+```
+
+and:
+
+```text
+EXISTING ARRIVAL GATEWAY = PRESERVED
+NEW ADMISSION GATE = ADDED ABOVE GOVERNED ACCESS
+EXISTING FUNCTION EXPOSURE GATE = PRESERVED
+```
+
+No implementation may delete, rename away, silently supersede or duplicate the existing Observable Arrival Gateway solely to introduce admission.
+
 ## Admission envelope
 
 Canonical target schema:
