@@ -54,16 +54,16 @@ Current GACR programme state:
 - `ORIGINAL_INTENT`: CANONICAL / RECORDED.
 - `R1-R6_BASELINE`: PRESERVED / REOBSERVED / ATTESTED (`GACR-OR-01 = PASS`).
 - `ORIGIN_REALIGNMENT_PLAN`: ACCEPTED.
-- `REALIGNMENT_EXECUTION`: STEPS 1-3 CLOSED; STEP 4 NEXT; overall realignment NOT COMPLETE.
+- `REALIGNMENT_EXECUTION`: STEPS 1-12 CLOSED; STEP 13 NEXT; overall realignment NOT COMPLETE.
 - `ULTIMATE_LIVE_ACCEPTANCE`: NOT YET PASSED.
 
 ## GACR next action
 
-`REALIGNMENT_STEP_4_IDENTIFY_R4_R6_CENTER_OF_GRAVITY_DRIFT`
+`REALIGNMENT_STEP_13_RUN_REAL_FRESH_AGENT_TEST`
 
 This is the GACR programme next gate only. It does not replace or modify the global programme next action and has no dependency on `P12-S6`.
 
-Step 1 is closed by `docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md` and its machine projection. Step 2 is formally closed by `docs/control-plane/GACR_ORIGINAL_INTENT_REVALIDATION.md`: the already-canonical `docs/control-plane/GACR_ORIGINAL_INTENT.md` was revalidated without rewriting historical intent. Step 3 is formally closed by `docs/control-plane/GACR_INTENT_IMPLEMENTATION_GAP_MATRIX.md`, which maps 28 requirements as 14 COMPLETE, 8 PARTIAL, 4 MISSING and 2 EXTERNAL_BOUNDARY. Step 4 — identify R4-R6 center-of-gravity drift — is now the next gate. Presence-First corrective implementation remains unauthorized until the ordered analysis/test gates permit it.
+Steps 1-3 remain closed by the baseline, original-intent revalidation and gap-matrix authorities. Steps 4-12 are now implemented and integrated through the tests-first Presence/Liveness/Correlator tranches: Worker A PR #128, Worker B integration PR #132 and Worker C integration PR #133. Candidate and post-merge Governance CI are GREEN, and the post-merge GACR Relay is GREEN. The integrated runtime has live-enriched the current canonical session with `GACR_PRESENCE_FIRST`, a stable `connection_fingerprint` and a provenance-bearing `ConnectionEnvelope`. This live proof is not the ultimate fresh-agent acceptance because the current conversation is GACR-aware. Step 13 is therefore the next gate.
 
 ## Completion condition
 
