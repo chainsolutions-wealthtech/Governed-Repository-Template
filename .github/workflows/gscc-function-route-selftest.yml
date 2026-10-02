@@ -1,0 +1,17 @@
+name: GSCC Function Route Selftest
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  package-route:
+    if: ${{ github.repository == 'chainsolutions-wealthtech/Governed-Repository-Template' }}
+    uses: ./.github/workflows/gscc-function-exposure-gate.yml
+    with:
+      package_path: tests/fixtures/gscc-function-route-package.json
+      expected_source_head: ${{ github.sha }}
