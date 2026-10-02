@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.1.0",
+  "schema_version": "1.2.0",
   "capability_model_version": "1.0.0",
   "stable_capability_ids": [
     "DATABASE_READ_OBSERVATION",
@@ -130,7 +130,9 @@
         ],
         "tags": [
           "OTHER"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "amf_registry_native_export",
@@ -150,7 +152,9 @@
         ],
         "tags": [
           "DATABASE"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "amf_registry_native_info",
@@ -164,7 +168,9 @@
         "input_fields": [],
         "tags": [
           "OTHER"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "amf_registry_publish_download",
@@ -184,7 +190,9 @@
         ],
         "tags": [
           "DOMAIN_NETWORK"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "brvm_container_logs_s2",
@@ -211,7 +219,9 @@
           "OBSERVABILITY",
           "SECURITY_IDENTITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "brvm_run_sql_readonly_s2",
@@ -233,7 +243,9 @@
           "DATABASE",
           "DISCOVERY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "check_disk_s1",
@@ -247,7 +259,9 @@
         "input_fields": [],
         "tags": [
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "check_disk_s2",
@@ -261,7 +275,9 @@
         "input_fields": [],
         "tags": [
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "curl_domain",
@@ -282,7 +298,9 @@
         "tags": [
           "DOMAIN_NETWORK",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "deploy_brvm_s2",
@@ -298,7 +316,9 @@
           "DEPLOYMENT",
           "OBSERVABILITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "deploy_project_s2",
@@ -327,7 +347,9 @@
           "DEPLOYMENT",
           "OBSERVABILITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "deploy_sadiaaf_s1",
@@ -349,7 +371,9 @@
           "DATABASE",
           "DEPLOYMENT",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "docker_status_s1",
@@ -365,7 +389,9 @@
           "DISCOVERY",
           "OBSERVABILITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "docker_status_s2",
@@ -381,7 +407,9 @@
           "DISCOVERY",
           "OBSERVABILITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "exec_repo_script_s2",
@@ -419,7 +447,9 @@
         "tags": [
           "REPOSITORY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "get_project_context",
@@ -435,7 +465,9 @@
           "DISCOVERY",
           "DOMAIN_NETWORK",
           "GOVERNANCE"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "get_write_tools_context",
@@ -451,7 +483,9 @@
           "DISCOVERY",
           "GOVERNANCE",
           "SECURITY_IDENTITY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "git_pull_project_s2",
@@ -479,7 +513,9 @@
         "tags": [
           "REPOSITORY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "git_status_project_s2",
@@ -509,7 +545,9 @@
           "OBSERVABILITY",
           "REPOSITORY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_account_inventory",
@@ -541,7 +579,9 @@
           "DISCOVERY",
           "REPOSITORY",
           "SECURITY_IDENTITY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_compare_refs",
@@ -576,7 +616,9 @@
         ],
         "tags": [
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_create_branch",
@@ -611,7 +653,9 @@
         ],
         "tags": [
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_create_commit",
@@ -656,7 +700,9 @@
         ],
         "tags": [
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_create_or_update_file",
@@ -706,7 +752,9 @@
         ],
         "tags": [
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_create_pull_request",
@@ -761,7 +809,9 @@
         ],
         "tags": [
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_durable_accounts_inventory",
@@ -782,7 +832,9 @@
         "tags": [
           "DISCOVERY",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_durable_accounts_status",
@@ -798,7 +850,9 @@
           "OBSERVABILITY",
           "REPOSITORY",
           "SECURITY_IDENTITY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_get_branch_state",
@@ -830,7 +884,9 @@
           "DISCOVERY",
           "GOVERNANCE",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_get_commit_checks",
@@ -861,7 +917,9 @@
         "tags": [
           "DISCOVERY",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_get_commit_state",
@@ -893,7 +951,9 @@
           "DISCOVERY",
           "GOVERNANCE",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_get_commits",
@@ -929,7 +989,9 @@
         "tags": [
           "DISCOVERY",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_get_deployments",
@@ -956,7 +1018,9 @@
           "DEPLOYMENT",
           "DISCOVERY",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_get_pull_request_reviews",
@@ -987,7 +1051,9 @@
         "tags": [
           "DISCOVERY",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_get_pull_request_state",
@@ -1019,7 +1085,9 @@
           "DISCOVERY",
           "GOVERNANCE",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_get_releases",
@@ -1046,7 +1114,9 @@
           "DEPLOYMENT",
           "DISCOVERY",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_get_repository_state",
@@ -1073,7 +1143,9 @@
           "DISCOVERY",
           "GOVERNANCE",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_get_required_checks",
@@ -1104,7 +1176,9 @@
         "tags": [
           "DISCOVERY",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_get_review_threads",
@@ -1135,7 +1209,9 @@
         "tags": [
           "DISCOVERY",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_get_rulesets",
@@ -1161,7 +1237,9 @@
         "tags": [
           "DISCOVERY",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_get_tree",
@@ -1202,7 +1280,9 @@
         "tags": [
           "DISCOVERY",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_get_webhooks",
@@ -1228,7 +1308,9 @@
         "tags": [
           "DISCOVERY",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_get_workflow_runs",
@@ -1259,7 +1341,9 @@
         "tags": [
           "DISCOVERY",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_mark_pr_ready",
@@ -1295,7 +1379,9 @@
         "tags": [
           "DISCOVERY",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_merge_pull_request",
@@ -1340,7 +1426,9 @@
         ],
         "tags": [
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_org_inventory",
@@ -1376,7 +1464,9 @@
         "tags": [
           "DISCOVERY",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_pr_authorization_diagnostic",
@@ -1407,7 +1497,9 @@
         "tags": [
           "REPOSITORY",
           "SECURITY_IDENTITY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_registry_v2_dry_run",
@@ -1427,7 +1519,9 @@
         ],
         "tags": [
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_reply_review_thread",
@@ -1473,7 +1567,9 @@
         "tags": [
           "DISCOVERY",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "github_resolve_review_thread",
@@ -1514,7 +1610,9 @@
         "tags": [
           "DISCOVERY",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "inspect_sadiaaf_s1",
@@ -1530,7 +1628,9 @@
           "DISCOVERY",
           "DOMAIN_NETWORK",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "legacy_funds_api_status_s2",
@@ -1545,7 +1645,9 @@
         "tags": [
           "OBSERVABILITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "legacy_funds_api_test_s2",
@@ -1570,7 +1672,9 @@
         ],
         "tags": [
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "legacy_funds_frontend_build_s2",
@@ -1596,7 +1700,9 @@
         "tags": [
           "DEPLOYMENT",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "legacy_funds_frontend_status_s2",
@@ -1611,7 +1717,9 @@
         "tags": [
           "OBSERVABILITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "legacy_vhost_commit_push_s1",
@@ -1657,7 +1765,9 @@
           "DOMAIN_NETWORK",
           "REPOSITORY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "legacy_vhost_delete_path_s1",
@@ -1697,7 +1807,9 @@
         "tags": [
           "DOMAIN_NETWORK",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "legacy_vhost_deploy_s1",
@@ -1738,7 +1850,9 @@
           "DEPLOYMENT",
           "DOMAIN_NETWORK",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "legacy_vhost_git_init_s1",
@@ -1779,7 +1893,9 @@
           "DOMAIN_NETWORK",
           "REPOSITORY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "legacy_vhost_git_status_s1",
@@ -1811,7 +1927,9 @@
           "OBSERVABILITY",
           "REPOSITORY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "legacy_vhost_inventory_s1",
@@ -1843,7 +1961,9 @@
           "DOMAIN_NETWORK",
           "SECURITY_IDENTITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "legacy_vhost_purge_s1",
@@ -1888,7 +2008,9 @@
         "tags": [
           "DOMAIN_NETWORK",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "legacy_vhost_quality_s1",
@@ -1929,7 +2051,9 @@
           "DEPLOYMENT",
           "DOMAIN_NETWORK",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "legacy_vhost_read_file_s1",
@@ -1965,7 +2089,9 @@
           "DISCOVERY",
           "DOMAIN_NETWORK",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "legacy_vhost_search_s1",
@@ -2000,7 +2126,9 @@
         "tags": [
           "DOMAIN_NETWORK",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "legacy_vhost_write_file_s1",
@@ -2045,7 +2173,9 @@
         "tags": [
           "DOMAIN_NETWORK",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "legacy_vhosts_context_s1",
@@ -2062,7 +2192,9 @@
           "DOMAIN_NETWORK",
           "GOVERNANCE",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "list_backups_s1",
@@ -2077,7 +2209,9 @@
         "tags": [
           "DISCOVERY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "list_backups_s2",
@@ -2092,7 +2226,9 @@
         "tags": [
           "DISCOVERY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "list_domains_s1",
@@ -2108,7 +2244,9 @@
           "DISCOVERY",
           "DOMAIN_NETWORK",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "list_domains_s2",
@@ -2124,7 +2262,9 @@
           "DISCOVERY",
           "DOMAIN_NETWORK",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "list_large_files_s1",
@@ -2139,7 +2279,9 @@
         "tags": [
           "DISCOVERY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "list_large_files_s2",
@@ -2154,7 +2296,9 @@
         "tags": [
           "DISCOVERY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "list_mcp_code_files_s1",
@@ -2170,7 +2314,9 @@
           "DISCOVERY",
           "SECURITY_IDENTITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "logs_legacy_funds_api_s2",
@@ -2198,7 +2344,9 @@
           "OBSERVABILITY",
           "SECURITY_IDENTITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "logs_legacy_funds_frontend_s2",
@@ -2226,7 +2374,9 @@
           "OBSERVABILITY",
           "SECURITY_IDENTITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_acknowledge_governed_context",
@@ -2256,7 +2406,9 @@
         ],
         "tags": [
           "GOVERNANCE"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_acquire_governed_lock",
@@ -2296,7 +2448,9 @@
         ],
         "tags": [
           "GOVERNANCE"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_bridge",
@@ -2310,7 +2464,9 @@
         "input_fields": [],
         "tags": [
           "OTHER"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_build_s1",
@@ -2331,7 +2487,9 @@
         "tags": [
           "DEPLOYMENT",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_claim_next_governed_task",
@@ -2371,7 +2529,9 @@
         ],
         "tags": [
           "GOVERNANCE"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_close_governed_session",
@@ -2396,7 +2556,9 @@
         ],
         "tags": [
           "GOVERNANCE"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_container_logs_s1",
@@ -2417,7 +2579,9 @@
         "tags": [
           "OBSERVABILITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_create_governed_checkpoint",
@@ -2477,7 +2641,9 @@
         ],
         "tags": [
           "GOVERNANCE"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_get_current_state_inventory",
@@ -2493,7 +2659,9 @@
           "DISCOVERY",
           "GOVERNANCE",
           "OBSERVABILITY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_get_governed_context",
@@ -2508,7 +2676,9 @@
         "tags": [
           "DISCOVERY",
           "GOVERNANCE"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_get_governed_session",
@@ -2530,7 +2700,9 @@
           "DISCOVERY",
           "GOVERNANCE",
           "SECURITY_IDENTITY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_get_governed_task",
@@ -2551,7 +2723,9 @@
         "tags": [
           "DISCOVERY",
           "GOVERNANCE"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_get_live_state",
@@ -2568,7 +2742,9 @@
           "GOVERNANCE",
           "REPOSITORY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_get_work_queue",
@@ -2582,7 +2758,9 @@
         "input_fields": [],
         "tags": [
           "DISCOVERY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_git_diff_s1",
@@ -2598,7 +2776,9 @@
           "REPOSITORY",
           "SECURITY_IDENTITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_git_status_s1",
@@ -2614,7 +2794,9 @@
           "OBSERVABILITY",
           "REPOSITORY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_governed_session_heartbeat",
@@ -2639,7 +2821,9 @@
         ],
         "tags": [
           "GOVERNANCE"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_list_governed_sessions",
@@ -2654,7 +2838,9 @@
         "tags": [
           "DISCOVERY",
           "GOVERNANCE"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_open_governed_session",
@@ -2699,7 +2885,9 @@
         ],
         "tags": [
           "GOVERNANCE"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_pause_governed_session",
@@ -2724,7 +2912,9 @@
         ],
         "tags": [
           "GOVERNANCE"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_reconcile_agent_intent",
@@ -2799,7 +2989,9 @@
         ],
         "tags": [
           "GOVERNANCE"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_reconcile_governed_context",
@@ -2815,7 +3007,9 @@
           "DISCOVERY",
           "GOVERNANCE",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_reconcile_live_state",
@@ -2832,7 +3026,9 @@
           "GOVERNANCE",
           "REPOSITORY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_release_governed_lock",
@@ -2863,7 +3059,9 @@
         "tags": [
           "DEPLOYMENT",
           "GOVERNANCE"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_resume_governed_session",
@@ -2904,7 +3102,9 @@
         "tags": [
           "GOVERNANCE",
           "REPOSITORY"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_runtime_image_attestation_s1",
@@ -2919,7 +3119,9 @@
         "tags": [
           "OBSERVABILITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_sync_from_github_s1",
@@ -2940,7 +3142,9 @@
         "tags": [
           "REPOSITORY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_transition_governed_task",
@@ -3036,7 +3240,9 @@
         "tags": [
           "DISCOVERY",
           "GOVERNANCE"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "mcp_typecheck_s1",
@@ -3056,7 +3262,9 @@
         ],
         "tags": [
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "nigeria_bootstrap_s2",
@@ -3082,7 +3290,9 @@
         "tags": [
           "REPOSITORY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "nigeria_commit_push_s2",
@@ -3113,7 +3323,9 @@
         "tags": [
           "REPOSITORY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "nigeria_deploy_s2",
@@ -3139,7 +3351,9 @@
         "tags": [
           "DEPLOYMENT",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "nigeria_patch_file_s2",
@@ -3169,7 +3383,9 @@
         ],
         "tags": [
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "nigeria_project_status_s2",
@@ -3185,7 +3401,9 @@
           "DISCOVERY",
           "OBSERVABILITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "patch_mcp_code_file_s1",
@@ -3216,7 +3434,9 @@
         "tags": [
           "SECURITY_IDENTITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "ping",
@@ -3230,7 +3450,9 @@
         "input_fields": [],
         "tags": [
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "pm2_status_s1",
@@ -3246,7 +3468,9 @@
           "DISCOVERY",
           "OBSERVABILITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "pm2_status_s2",
@@ -3262,7 +3486,9 @@
           "DISCOVERY",
           "OBSERVABILITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "read_mcp_code_file_s1",
@@ -3284,7 +3510,9 @@
           "DISCOVERY",
           "SECURITY_IDENTITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "restart_legacy_funds_api_s2",
@@ -3304,7 +3532,9 @@
         ],
         "tags": [
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "restart_legacy_funds_frontend_s2",
@@ -3324,7 +3554,9 @@
         ],
         "tags": [
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "restart_mcp_bridge_s1",
@@ -3344,7 +3576,9 @@
         ],
         "tags": [
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "rollback_sadiaaf_s1",
@@ -3370,7 +3604,9 @@
         "tags": [
           "DEPLOYMENT",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "run_sql_readonly_s2",
@@ -3392,7 +3628,9 @@
           "DATABASE",
           "DISCOVERY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "sadiaaf_commit_push_s1",
@@ -3432,7 +3670,9 @@
         "tags": [
           "REPOSITORY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "sadiaaf_deploy_s1",
@@ -3468,7 +3708,9 @@
           "DEPLOYMENT",
           "DOMAIN_NETWORK",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "sadiaaf_git_diff_s1",
@@ -3494,7 +3736,9 @@
           "REPOSITORY",
           "SECURITY_IDENTITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "sadiaaf_git_status_s1",
@@ -3520,7 +3764,9 @@
           "OBSERVABILITY",
           "REPOSITORY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "sadiaaf_list_files_s1",
@@ -3546,7 +3792,9 @@
           "DISCOVERY",
           "SECURITY_IDENTITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "sadiaaf_patch_file_s1",
@@ -3586,7 +3834,9 @@
         "tags": [
           "DOMAIN_NETWORK",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "sadiaaf_prepare_branch_s1",
@@ -3621,7 +3871,9 @@
         "tags": [
           "REPOSITORY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "sadiaaf_projects_context_s1",
@@ -3637,7 +3889,9 @@
           "GOVERNANCE",
           "SECURITY_IDENTITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "sadiaaf_quality_s1",
@@ -3680,7 +3934,9 @@
         "tags": [
           "DEPLOYMENT",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "sadiaaf_quarantine_contents_s1",
@@ -3715,7 +3971,9 @@
         "tags": [
           "DOMAIN_NETWORK",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "sadiaaf_read_file_s1",
@@ -3746,7 +4004,9 @@
           "DISCOVERY",
           "SECURITY_IDENTITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "sadiaaf_restore_quarantine_s1",
@@ -3785,7 +4045,9 @@
         ],
         "tags": [
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "sadiaaf_search_code_s1",
@@ -3815,7 +4077,9 @@
         "tags": [
           "SECURITY_IDENTITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "sadiaaf_status_s1",
@@ -3831,7 +4095,9 @@
           "DOMAIN_NETWORK",
           "OBSERVABILITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "scan_mcp_secrets_s1",
@@ -3846,7 +4112,9 @@
         "tags": [
           "SECURITY_IDENTITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       },
       {
         "name": "search_mcp_code_s1",
@@ -3867,7 +4135,9 @@
         "tags": [
           "SECURITY_IDENTITY",
           "SERVER_RUNTIME"
-        ]
+        ],
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
       }
     ],
     "resources": [
@@ -3944,7 +4214,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "github_get_branch_state",
@@ -3953,7 +4225,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "github_get_tree",
@@ -3962,7 +4236,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "github_get_workflow_runs",
@@ -3971,7 +4247,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "github_get_rulesets",
@@ -3980,7 +4258,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "github_get_required_checks",
@@ -3989,7 +4269,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "github_get_webhooks",
@@ -3998,7 +4280,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "github_get_deployments",
@@ -4007,7 +4291,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         }
       ],
       "missing_surface_action": "USE_DIRECT_GIT_PROVIDER_BEFORE_MCP_CAPABILITY_REQUEST"
@@ -4037,7 +4323,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "mcp_get_live_state",
@@ -4046,7 +4334,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "mcp_get_work_queue",
@@ -4055,7 +4345,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "mcp_get_governed_context",
@@ -4064,7 +4356,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "mcp_get_governed_session",
@@ -4073,7 +4367,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "mcp_list_governed_sessions",
@@ -4082,7 +4378,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         }
       ],
       "missing_surface_action": "KEEP_REPOSITORY_AUTHORITIES_AS_PRIMARY_SOURCE"
@@ -4110,7 +4408,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "get_write_tools_context",
@@ -4119,7 +4419,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         }
       ],
       "missing_surface_action": "PREPARE_READ_ONLY_CAPABILITY_REQUEST_ONLY_IF_PROJECT_NEEDS_IT"
@@ -4146,7 +4448,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "list_domains_s2",
@@ -4155,7 +4459,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "curl_domain",
@@ -4164,7 +4470,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         }
       ],
       "missing_surface_action": "PREPARE_READ_ONLY_CAPABILITY_REQUEST_ONLY_IF_PROJECT_NEEDS_IT"
@@ -4192,7 +4500,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "docker_status_s2",
@@ -4201,7 +4511,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "pm2_status_s1",
@@ -4210,7 +4522,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "pm2_status_s2",
@@ -4219,7 +4533,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "check_disk_s1",
@@ -4228,7 +4544,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "check_disk_s2",
@@ -4237,7 +4555,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "list_backups_s1",
@@ -4246,7 +4566,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "list_backups_s2",
@@ -4255,7 +4577,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         }
       ],
       "missing_surface_action": "PREPARE_READ_ONLY_CAPABILITY_REQUEST_ONLY_IF_PROJECT_NEEDS_IT"
@@ -4284,7 +4608,9 @@
             "project_ids": [
               "api_opcv"
             ]
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "brvm_run_sql_readonly_s2",
@@ -4293,7 +4619,9 @@
           "scope": {
             "mode": "PROJECT_SPECIFIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         }
       ],
       "missing_surface_action": "PREPARE_PROJECT_SCOPED_READ_CAPABILITY_REQUEST_IF_NEEDED"
@@ -4321,7 +4649,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "github_create_commit",
@@ -4330,7 +4660,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "github_create_or_update_file",
@@ -4339,7 +4671,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "github_create_pull_request",
@@ -4348,7 +4682,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "github_mark_pr_ready",
@@ -4357,7 +4693,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "github_merge_pull_request",
@@ -4366,7 +4704,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         }
       ],
       "missing_surface_action": "PREPARE_SCOPED_CAPABILITY_REQUEST_ONLY_WHEN_OPERATION_IS_REQUIRED"
@@ -4393,7 +4733,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "mcp_reconcile_agent_intent",
@@ -4402,7 +4744,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "mcp_claim_next_governed_task",
@@ -4411,7 +4755,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "mcp_transition_governed_task",
@@ -4420,7 +4766,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "mcp_acquire_governed_lock",
@@ -4429,7 +4777,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "mcp_release_governed_lock",
@@ -4438,7 +4788,9 @@
           "scope": {
             "mode": "GENERIC",
             "project_ids": []
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         }
       ],
       "missing_surface_action": "USE_REPOSITORY_LOCAL_LOOP_ENGINEERING_IF_MCP_COORDINATION_NOT_REQUIRED"
@@ -4472,7 +4824,9 @@
               "brvmchainsolution",
               "stablecoin_frontend"
             ]
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "git_pull_project_s2",
@@ -4487,7 +4841,9 @@
               "legacy_funds_api",
               "brvmchainsolution"
             ]
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         },
         {
           "tool": "exec_repo_script_s2",
@@ -4502,7 +4858,9 @@
               "legacy_funds_api",
               "brvmchainsolution"
             ]
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         }
       ],
       "missing_surface_action": "PREPARE_SCOPED_CAPABILITY_REQUEST_ONLY_WHEN_OPERATION_IS_REQUIRED"
@@ -4595,7 +4953,9 @@
               "legacy_funds_api",
               "brvmchainsolution"
             ]
-          }
+          },
+          "governed_exposure_gate": "GSCC_REQUIRED",
+          "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION"
         }
       ],
       "missing_surface_action": "PREPARE_SCOPED_CAPABILITY_REQUEST_ONLY_WHEN_OPERATION_IS_REQUIRED"
@@ -6031,7 +6391,10 @@
     "snapshot_is_execution_authority": false,
     "write_tool_presence_implies_write_authority": false,
     "tool_selection_must_recheck_live_authority_before_mutation": true,
-    "parallel_engine": false
+    "parallel_engine": false,
+    "gscc_function_gate_required_before_governed_exposure": true,
+    "gscc_function_gate_required_before_every_governed_invocation": true,
+    "catalogue_presence_is_not_governed_exposure_authority": true
   },
   "relational_projection": {
     "status": "PENDING_PROJECTION_GMC_INTEGRATION",
