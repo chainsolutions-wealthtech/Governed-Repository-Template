@@ -6,87 +6,31 @@ from typing import Any, Callable
 import itertools
 import uuid
 
-EVENTS = (
-    "SESSION_ATTACH",
-    "SESSION_RESUME",
-    "HEARTBEAT",
-    "ACTIVITY_STARTED",
-    "ACTIVITY_COMPLETED",
-    "ACTIVITY_FAILED",
-    "TOOL_STARTED",
-    "TOOL_COMPLETED",
-    "TOOL_FAILED",
-    "PROGRESS",
-    "BLOCKED",
-    "CHECKPOINT",
-    "CONTEXT_UPDATE",
-    "INTERRUPTION",
-    "CHALLENGE_RESPONSE",
-    "COMMAND_ACK",
-)
+try:
+    from scripts.gscc.protocol import (
+        COMMAND_TYPES,
+        DELIVERY_STATES as GSCC_DELIVERY_STATES,
+        EVENT_TYPES,
+        TERMINAL_DELIVERY_STATES,
+        UnsafePayloadError,
+        assert_secretless,
+    )
+except ModuleNotFoundError:
+    from gscc.protocol import (
+        COMMAND_TYPES,
+        DELIVERY_STATES as GSCC_DELIVERY_STATES,
+        EVENT_TYPES,
+        TERMINAL_DELIVERY_STATES,
+        UnsafePayloadError,
+        assert_secretless,
+    )
 
-COMMANDS = (
-    "PING",
-    "LIVENESS_CHALLENGE",
-    "STATUS_REQUEST",
-    "PROGRESS_REQUEST",
-    "CONTEXT_REQUEST",
-    "CHECKPOINT_REQUEST",
-    "REOBSERVE_HEAD",
-    "REPORT_BLOCKER",
-    "PAUSE",
-    "RESUME",
-    "SUPERVISOR_INSTRUCTION",
-    "HANDOFF_PREPARE",
-    "TAKEOVER_OFFER",
-)
-
-DELIVERY_STATES = (
-    "CREATED",
-    "QUEUED",
-    "DISPATCHED",
-    "DELIVERED",
-    "ACKNOWLEDGED",
-    "EXECUTING",
-    "COMPLETED",
-    "FAILED",
-    "DECLINED",
-    "EXPIRED",
-    "CANCELLED",
-    "NO_RESPONSE",
-    "UNSUPPORTED",
-)
-
-TERMINAL_STATES = {
-    "COMPLETED",
-    "FAILED",
-    "DECLINED",
-    "EXPIRED",
-    "CANCELLED",
-    "NO_RESPONSE",
-    "UNSUPPORTED",
-}
-
-FORBIDDEN_KEY_FRAGMENTS = (
-    "token",
-    "secret",
-    "authorization",
-    "cookie",
-    "password",
-    "private_key",
-    "browser_session",
-)
-
-FORBIDDEN_EXACT_KEYS = {
-    "raw_transcript",
-    "transcript",
-    "conversation_text",
-    "prompt",
-    "private_reasoning",
-    "chain_of_thought",
-    "raw_response",
-    "page_content",
-}
+# Shared protocol authority lives exclusively in scripts.gscc.protocol.
+# These aliases intentionally preserve the historical gscc_gacr contract API.
+EVENTS = EVENT_TYPES
+COMMANDS = COMMAND_TYPES
+DELIVERY_STATES = GSCC_DELIVERY_STATES
+TERMINAL_STATES = TERMINAL_DELIVERY_STATES
 
 UNAVAILABLE = "UNAVAILABLE"
 
@@ -116,22 +60,11 @@ def parse_iso(value: str) -> datetime:
 
 
 def validate_safe_payload(value: Any, path: str = "payload") -> None:
-    if isinstance(value, dict):
-        for key, child in value.items():
-            lowered = str(key).lower()
-            if lowered in FORBIDDEN_EXACT_KEYS:
-                raise ControlValidationError(f"forbidden control payload key: {path}.{key}")
-            if any(fragment in lowered for fragment in FORBIDDEN_KEY_FRAGMENTS):
-                raise ControlValidationError(f"forbidden control payload key: {path}.{key}")
-            validate_safe_payload(child, f"{path}.{key}")
-    elif isinstance(value, list):
-        for index, child in enumerate(value):
-            validate_safe_payload(child, f"{path}[{index}]")
-    elif isinstance(value, str):
-        if "-----BEGIN PRIVATE KEY-----" in value:
-            raise ControlValidationError(f"secret-like control payload value: {path}")
-        if value.startswith(("ghp_", "github_pat_", "sk-")):
-            raise ControlValidationError(f"secret-like control payload value: {path}")
+    """Preserve the control-layer API while delegating safety authority to GSCC."""
+    try:
+        assert_secretless(value, path)
+    except UnsafePayloadError as exc:
+        raise ControlValidationError(str(exc)) from exc
 
 
 class DeterministicIdSource:
