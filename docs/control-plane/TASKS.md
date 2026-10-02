@@ -1004,3 +1004,9 @@ The provider-host issue bridge must evaluate idempotency against the latest defa
 Status: **IMPLEMENTED / CI_PENDING**.
 
 The source host issue number is repository-local runtime state. Client distribution clears the number and activates exact canonical-title fallback until a client-local issue number is explicitly bound. Generic workflow code may not hard-code the source issue number.
+
+### GACR R6-C — provider attribution enrichment
+
+Status: **IMPLEMENTED / CI_PENDING / LIVE_PROOF_PENDING**.
+
+An explicit provider observed later on the same stable connection may enrich a generic `other` session without a provider conversation reference. Session duplication and conflicting provider overwrite remain forbidden.
