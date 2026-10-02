@@ -76,6 +76,7 @@
       "scripts/test_gacr_agent_telemetry.py",
       "scripts/gacr_auto_attach.py",
       "scripts/test_gacr_auto_attach.py",
+      "scripts/test_gacr_presence_first.py",
       "scripts/gacr_client_emitter.py",
       "scripts/test_gacr_client_emitter.py",
       "scripts/gacr_host_issue_ingress.py",
@@ -474,7 +475,11 @@
     "provider-host GACR telemetry via governed GitHub issue-comment fallback",
     "GACR issue-comment reruns reconcile to latest default branch before idempotency evaluation",
     "GACR source host issue number is repository-local and clients use canonical-title fallback until locally bound",
-    "late explicit provider identity enriches the same GACR connection-bound session without requiring a provider conversation reference"
+    "late explicit provider identity enriches the same GACR connection-bound session without requiring a provider conversation reference",
+    "GACR Presence Fabric observes controlled first-touch repository use without agent self-registration",
+    "GACR ConnectionEnvelope v1 preserves field-by-field provenance and explicit UNAVAILABLE values",
+    "GACR connection fingerprint v1 freezes first-touch identity inputs so later HEAD movement does not change instance identity",
+    "GACR ambiguous Presence binding fails closed as UNBOUND_ACTIVITY without arbitrary session selection"
   ],
   "automatic_initialization_supported": true
 }
