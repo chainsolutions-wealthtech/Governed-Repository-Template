@@ -13,14 +13,14 @@
   "counters": {
     "next_user_message": 2,
     "next_assistant_message": 3,
-    "next_tool_event": 11,
+    "next_tool_event": 12,
     "next_decision_event": 9,
     "next_constraint_event": 7,
-    "next_action_event": 10,
+    "next_action_event": 11,
     "next_error_event": 1,
     "next_recovery_event": 6,
-    "next_checkpoint": 12,
-    "next_cache": 12,
+    "next_checkpoint": 13,
+    "next_cache": 13,
     "next_open_loop": 4,
     "next_artifact": 3,
     "next_session": 3
@@ -31,30 +31,28 @@
     "previous_hash": "8b45efbe51e0e9fbf26883ae2a6ee65c7975e7c782bc5c708c4ea06363db5e97"
   },
   "current_session": "SESSION-000002",
-  "current_checkpoint": "CHK-000011",
-  "current_cache": "CACHE-000011",
+  "current_checkpoint": "CHK-000012",
+  "current_cache": "CACHE-000012",
   "open_loops": [
     "OPEN-000002",
     "OPEN-000003"
   ],
-  "current_topic": "GACR G6 full reconciliation before Step 13B",
-  "point_of_stop": "Both blocking integration audit findings are CLOSED_PASS on current main; G6 reconciliation must still pass before Step 13B is reauthorized.",
-  "next_safe_action": "Run full G6 CI from the reconciled authority state. If GREEN, explicitly set Step 13B to NEXT_AUTHORIZED, rerun CI, then merge.",
+  "current_topic": "GACR Step 13B fresh provider agent acceptance",
+  "point_of_stop": "G4/G5 are closed and G6 first reconciliation CI passed. Canonical source state now reauthorizes Step 13B, pending final PR #150 CI, merge and post-merge proof.",
+  "next_safe_action": "Run full CI on final PR #150 reauthorized head, merge only PASS, verify post-merge Governance CI and Relay, then persist final G6 attestation before any fresh-provider Step 13B run.",
   "external_state_observed": {
     "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
     "branch": "main",
     "head": "114c5397966a5c6ad7d8770298abd698929ecf8f",
-    "observed_at": "2026-10-02T08:01:47+02:00",
+    "observed_at": "2026-10-02T08:04:49+02:00",
     "precision": "second",
     "freshness": "OBSERVED_AT",
     "gacr_int_audit_01": "CLOSED_PASS",
     "gacr_int_audit_02": "CLOSED_PASS",
-    "g5_pr": 149,
-    "g5_candidate_ci": 36971442096,
-    "g5_postmerge_ci": 36971501671,
-    "g5_postmerge_relay": 36971501664,
-    "g6": "IN_PROGRESS_RECONCILIATION",
-    "step_13b": "BLOCKED_PENDING_G6_REAUTHORIZATION",
+    "g6_first_reconciliation_ci": 36971795607,
+    "g6_first_reconciliation_result": "PASS",
+    "step_13b": "NEXT_AUTHORIZED_PENDING_FINAL_G6_POSTMERGE",
+    "fresh_provider_agent": "NOT_EXECUTED",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
   "attachment_artifacts": [
@@ -151,7 +149,7 @@
     "premerge_ci_result": "PASS"
   },
   "supervision_state": {
-    "status": "PRE_STEP_13B_G6_RECONCILIATION",
+    "status": "G6_REAUTHORIZED_PENDING_FINAL_CI_MERGE",
     "programme": "GACR",
     "global_programme_progression": "UNCHANGED",
     "workers": [
@@ -351,10 +349,14 @@
       "observed_main": "114c5397966a5c6ad7d8770298abd698929ecf8f"
     },
     "g6": {
-      "status": "IN_PROGRESS_RECONCILIATION",
+      "status": "PASS_REAUTHORIZED_PENDING_FINAL_CI_MERGE",
+      "pr": 150,
+      "observed_main": "114c5397966a5c6ad7d8770298abd698929ecf8f",
+      "reconciliation_ci": 36971795607,
       "audit_01": "CLOSED_PASS",
       "audit_02": "CLOSED_PASS",
-      "step_13b": "BLOCKED_PENDING_G6_REAUTHORIZATION"
+      "step_13b": "NEXT_AUTHORIZED_PENDING_FINAL_G6_POSTMERGE",
+      "fresh_provider_agent": "NOT_EXECUTED"
     }
   }
 }
