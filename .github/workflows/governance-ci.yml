@@ -42,6 +42,9 @@ jobs:
       - name: Test GSCC issue control challenge bridge
         run: python3 scripts/test_gscc_issue_control_bridge.py
 
+      - name: Test GSCC admission GSE projection
+        run: python3 scripts/test_gscc_admission_gse_projection.py
+
       - name: Test source-only GSCC mandatory function exposure gate
         run: |
           if [ -f .template-source ]; then
