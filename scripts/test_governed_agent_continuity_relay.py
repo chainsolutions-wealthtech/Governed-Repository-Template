@@ -86,6 +86,68 @@ def main():
         "ChatGPT URL should be reconstructable",
     )
 
+    provider_sessions = empty_sessions()
+    generic, generic_resolution = gacr.register_docs(
+        config,
+        provider_sessions,
+        repository="owner/provider-test",
+        agent="conversation-agent",
+        provider="other",
+        provider_ref=None,
+        provider_url=None,
+        connection_ref="chronicle:test:session",
+        observed_head="a" * 40,
+        branch="main",
+        task_id=None,
+        pull_request=None,
+        standby=False,
+        timestamp=t0,
+    )
+    assert_true(generic_resolution == "CREATE", "generic provider session should be created")
+    assert_true(generic["provider"] == "other", "generic provider starts as other")
+
+    enriched, enriched_resolution = gacr.register_docs(
+        config,
+        provider_sessions,
+        repository="owner/provider-test",
+        agent="conversation-agent",
+        provider="chatgpt",
+        provider_ref=None,
+        provider_url=None,
+        connection_ref="chronicle:test:session",
+        observed_head="b" * 40,
+        branch="main",
+        task_id=None,
+        pull_request=None,
+        standby=False,
+        timestamp=t0 + timedelta(seconds=1),
+    )
+    assert_true(enriched_resolution == "RESUME", "provider enrichment must resume existing session")
+    assert_true(enriched["session_id"] == generic["session_id"], "provider enrichment must not duplicate session")
+    assert_true(enriched["provider"] == "chatgpt", "explicit provider should enrich generic session")
+    assert_true(enriched["provider_conversation_ref"] is None, "provider ref remains unavailable when host did not supply it")
+
+    try:
+        gacr.register_docs(
+            config,
+            provider_sessions,
+            repository="owner/provider-test",
+            agent="conversation-agent",
+            provider="claude",
+            provider_ref=None,
+            provider_url=None,
+            connection_ref="chronicle:test:session",
+            observed_head="c" * 40,
+            branch="main",
+            task_id=None,
+            pull_request=None,
+            standby=False,
+            timestamp=t0 + timedelta(seconds=2),
+        )
+        raise SystemExit("GACR_TEST_FAILED: conflicting explicit provider should fail")
+    except ValueError:
+        pass
+
     agent_b, _ = gacr.register_docs(
         config,
         sessions,
