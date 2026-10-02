@@ -195,6 +195,17 @@ def validate_entry_context_receipt(
     if not isinstance(fields, Mapping):
         return False, "GSCC_ENTRY_FIELDS_REQUIRED"
 
+    claimed_context_digest = receipt.get("context_digest")
+    if not isinstance(claimed_context_digest, str) or len(claimed_context_digest) != 64:
+        return False, "GSCC_ENTRY_CONTEXT_DIGEST_REQUIRED"
+    context_material = {
+        key: value
+        for key, value in dict(receipt).items()
+        if key not in {"entry_receipt", "context_digest"}
+    }
+    if _digest(context_material) != claimed_context_digest:
+        return False, "GSCC_ENTRY_CONTEXT_DIGEST_MISMATCH"
+
     def value(name: str) -> Any:
         item = fields.get(name)
         return item.get("value") if isinstance(item, Mapping) else None
@@ -205,4 +216,16 @@ def validate_entry_context_receipt(
         return False, "GSCC_ENTRY_HEAD_MISMATCH"
     if repository is not None and value("repository") != repository:
         return False, "GSCC_ENTRY_REPOSITORY_MISMATCH"
+
+    expected_receipt = "GSCC-ENTRY-" + _digest({
+        "schema": ENTRY_SCHEMA,
+        "connection_ref": value("connection_ref"),
+        "repository": value("repository"),
+        "requested_ref": value("requested_ref"),
+        "observed_head_sha": value("observed_head_sha"),
+        "context_digest": claimed_context_digest,
+        "observed_at": receipt.get("observed_at"),
+    })
+    if token != expected_receipt:
+        return False, "GSCC_ENTRY_RECEIPT_DIGEST_MISMATCH"
     return True, "GSCC_ENTRY_CONTEXT_VALIDATED"
