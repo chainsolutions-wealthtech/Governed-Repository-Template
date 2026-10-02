@@ -8,9 +8,11 @@
 >
 > OR-01 authority: PASS
 >
-> Artifact status: PREPARED_ANALYSIS / FORMAL_STEP_3_GATE_BLOCKED_UNTIL_STEP_2_FORMAL_GATE_CLOSE
+> Step 2 original-intent revalidation: PASS / CLOSED
 >
-> This artifact is intentionally analysis-only. It does not modify runtime, workflows, scripts, schemas, state stores, claims, locks, or the global Control Plane programme. It MUST NOT be read as GACR-OR-02 DONE or GACR-OR-03 DONE while docs/control-plane/GACR_PROGRAM.md still names REALIGNMENT_STEP_2_FORMAL_GATE_REVALIDATE_EXISTING_GACR_ORIGINAL_INTENT as the next GACR gate.
+> Artifact status: FORMAL_STEP_3_PASS / CANONICAL_GAP_MATRIX
+>
+> This artifact formally closes realignment Step 3. It remains analysis-only: it does not modify runtime, workflows, scripts, schemas, runtime state stores, claims, locks, deployments, production, or the global Control Plane programme. Corrective implementation is not authorized by this artifact; Step 4 drift identification is the next GACR gate.
 
 ## 1. Scope and evidence boundary
 
@@ -31,8 +33,9 @@ Current authoritative stopping point:
 
 - GACR-OR-01 = PASS.
 - R1-R6 / R5-A / R6-A / R6-B / R6-C are preserved.
-- Step 2 formal revalidation of the already-canonical original intent remains open.
-- This document prepares step 3 material but does not close step 3.
+- Step 2 formal revalidation of the already-canonical original intent is PASS / CLOSED via `docs/control-plane/GACR_ORIGINAL_INTENT_REVALIDATION.md`.
+- This document is the canonical Step 3 `ORIGINAL_INTENT ↔ CURRENT_IMPLEMENTATION ↔ GAP` artifact and Step 3 is PASS / CLOSED.
+- Step 4 — identify R4-R6 center-of-gravity drift — is next.
 - Presence-First corrective implementation is not authorized by this artifact.
 - P12-S6 and the global programme are out of scope.
 
@@ -266,7 +269,7 @@ Missing:
 
 ## 8. Drift-relevant observations for the next formal step
 
-This section records observations only. It MUST NOT be interpreted as formal completion of realignment step 4 while step 2/step 3 gates remain open.
+This section records observations only. Step 2 and Step 3 are now closed, but these observations MUST NOT be interpreted as formal completion of realignment Step 4.
 
 1. R4-R6 successfully improved auto-attachment, client emission and provider-host ingress.
 2. Those additions still depend on explicit events/anchors supplied by Chronicle, repository_dispatch, issue_comment, workflow execution, or explicit client metadata.
@@ -379,18 +382,21 @@ Baseline facts reobserved or inherited from the authoritative OR-01 attestation:
 
 This document answers the analytical question ORIGINAL_INTENT ↔ CURRENT_IMPLEMENTATION ↔ GAP and is designed so a successor can identify real corrections without redoing the R1-R6 audit.
 
-However, as of main@6a32debcc96d7c33b421dc901c514f79a4d05104:
+Formal gate state:
 
-- GACR-OR-01 is PASS.
-- docs/control-plane/GACR_PROGRAM.md still names the step-2 formal revalidation gate as the next action.
-- .governance/control-plane-state/gacr-program.json still marks step_2 = FORMAL_GATE_NOT_YET_EXECUTED.
-- step_3 remains formally BLOCKED_UNTIL_STEP_2_FORMAL_GATE_CLOSED.
+- GACR-OR-01 / realignment Step 1: PASS / CLOSED.
+- realignment Step 2: PASS / CLOSED by `docs/control-plane/GACR_ORIGINAL_INTENT_REVALIDATION.md`; historical intent was revalidated without rewrite.
+- realignment Step 3: PASS / CLOSED by this canonical matrix.
+- requirement rows: 28.
+- status distribution: 14 COMPLETE, 8 PARTIAL, 4 MISSING, 2 EXTERNAL_BOUNDARY.
+- next gate: Step 4 — identify R4-R6 center-of-gravity drift.
+- ultimate live acceptance remains NOT PASSED.
 
 Therefore:
 
-- this artifact is PREPARED;
-- GACR-OR-02 is NOT marked DONE here;
-- GACR-OR-03 is NOT marked DONE here;
+- this artifact is CANONICAL for Step 3;
+- the gap map and correction queue are authorized as analysis inputs for successor gates;
 - no corrective implementation is started here;
-- no runtime/workflow/script/schema/state is changed here;
-- no global programme or P12-S6 state is changed here.
+- no runtime/workflow/script/schema/runtime-state/claim/lock change is made here;
+- no global programme or `P12-S6` state is changed here;
+- GACR origin realignment remains incomplete until the ordered later gates and the ultimate live E2E acceptance pass.

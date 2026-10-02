@@ -54,16 +54,16 @@ Current GACR programme state:
 - `ORIGINAL_INTENT`: CANONICAL / RECORDED.
 - `R1-R6_BASELINE`: PRESERVED / REOBSERVED / ATTESTED (`GACR-OR-01 = PASS`).
 - `ORIGIN_REALIGNMENT_PLAN`: ACCEPTED.
-- `REALIGNMENT_EXECUTION`: STEP 1 CLOSED; STEP 2 FORMALLY REVALIDATED / CLOSED; STEP 3 NEXT; overall realignment NOT COMPLETE.
+- `REALIGNMENT_EXECUTION`: STEPS 1-3 CLOSED; STEP 4 NEXT; overall realignment NOT COMPLETE.
 - `ULTIMATE_LIVE_ACCEPTANCE`: NOT YET PASSED.
 
 ## GACR next action
 
-`REALIGNMENT_STEP_3_BUILD_ORIGINAL_INTENT_CURRENT_IMPLEMENTATION_GAP_MATRIX`
+`REALIGNMENT_STEP_4_IDENTIFY_R4_R6_CENTER_OF_GRAVITY_DRIFT`
 
 This is the GACR programme next gate only. It does not replace or modify the global programme next action and has no dependency on `P12-S6`.
 
-Step 1 is closed by `docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md` and its machine projection. Step 2 is formally closed by `docs/control-plane/GACR_ORIGINAL_INTENT_REVALIDATION.md`: the already-canonical `docs/control-plane/GACR_ORIGINAL_INTENT.md` was revalidated without rewriting historical intent. Step 3 (`ORIGINAL_INTENT ↔ CURRENT_IMPLEMENTATION ↔ GAP`) is now the authorized next gate. Presence-First corrective implementation remains unauthorized until the ordered analysis/test gates permit it.
+Step 1 is closed by `docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md` and its machine projection. Step 2 is formally closed by `docs/control-plane/GACR_ORIGINAL_INTENT_REVALIDATION.md`: the already-canonical `docs/control-plane/GACR_ORIGINAL_INTENT.md` was revalidated without rewriting historical intent. Step 3 is formally closed by `docs/control-plane/GACR_INTENT_IMPLEMENTATION_GAP_MATRIX.md`, which maps 28 requirements as 14 COMPLETE, 8 PARTIAL, 4 MISSING and 2 EXTERNAL_BOUNDARY. Step 4 — identify R4-R6 center-of-gravity drift — is now the next gate. Presence-First corrective implementation remains unauthorized until the ordered analysis/test gates permit it.
 
 ## Completion condition
 

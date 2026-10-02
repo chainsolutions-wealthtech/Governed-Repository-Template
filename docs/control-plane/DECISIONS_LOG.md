@@ -405,3 +405,14 @@ Append-only durable decisions for the source/control-plane repository.
 - R1-R6 family behavior is preserved and no runtime/workflow/script/schema change is authorized by this gate.
 - GACR remains distinct from the global programme; `P12-S6` is untouched and is not a dependency.
 - Step 2 is closed; Step 3 gap-matrix formalization becomes the next authorized gate.
+
+
+### CPD-060 — GACR Step 3 canonizes the original-intent gap matrix
+
+- Date: 2026-10-02.
+- After formal Step 2 revalidation, `docs/control-plane/GACR_INTENT_IMPLEMENTATION_GAP_MATRIX.md` becomes the canonical Step 3 `ORIGINAL_INTENT ↔ CURRENT_IMPLEMENTATION ↔ GAP` artifact.
+- The matrix contains 28 requirement rows: 14 `COMPLETE`, 8 `PARTIAL`, 4 `MISSING`, and 2 `EXTERNAL_BOUNDARY`.
+- The four missing requirements are the versioned `connection_fingerprint`, supported active liveness challenge, canonical `UNBOUND_ACTIVITY` lifecycle, and the ultimate live fresh-agent/stall/second-agent/exact-HEAD takeover/continuation acceptance chain.
+- Partial areas include Presence-First, Correlator signal completeness, Dispatcher compatibility, optional Bridge execution, deterministic Agent Context, canonical Connection Envelope, independent LIVENESS/PROGRESS semantics, and unified session interrogation.
+- This decision authorizes the matrix as analysis input only; it does not authorize corrective runtime implementation.
+- Step 4 — R4-R6 center-of-gravity drift identification — is next. `P12-S6` and the global programme remain untouched.

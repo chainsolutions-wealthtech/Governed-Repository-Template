@@ -72,6 +72,18 @@
       "result": "FORMAL_REVALIDATION_PASS"
     },
     "step_3": {
+      "status": "CLOSED",
+      "evidence": "docs/control-plane/GACR_INTENT_IMPLEMENTATION_GAP_MATRIX.md",
+      "result": "FORMAL_GAP_MATRIX_PASS",
+      "requirements": 28,
+      "distribution": {
+        "complete": 14,
+        "partial": 8,
+        "missing": 4,
+        "external_boundary": 2
+      }
+    },
+    "step_4": {
       "status": "NEXT_AUTHORIZED"
     }
   }
