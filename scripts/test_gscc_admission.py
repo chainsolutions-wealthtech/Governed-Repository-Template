@@ -2,9 +2,13 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+from pathlib import Path
 
 from gscc.admission import InMemoryAdmissionStore, evaluate_access_grant, evaluate_admission, validate_access_grant
 
+
+ROOT = Path(__file__).resolve().parents[1]
+WORKFLOW = ROOT / ".github" / "workflows" / "gscc-admission-gate.yml"
 
 NOW = datetime(2026, 10, 2, 12, 0, 0, tzinfo=timezone.utc)
 
@@ -203,6 +207,28 @@ def test_access_grant_validation_is_binding_and_expiry_sensitive():
     assert expired["reason_code"] == "ACCESS_GRANT_EXPIRED", expired
 
 
+
+def test_admission_workflow_exposes_only_governed_admission_and_qualification():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    assert "gscc_admission_request" in text, text
+    assert "gscc_access_qualification_request" in text, text
+    assert "admission_envelope_json" in text, text
+    assert "qualification_evidence_json" in text, text
+    assert "python3 scripts/gscc/admission.py evaluate" in text, text
+    assert "python3 scripts/gscc/admission.py qualify" in text, text
+    assert "contents: read" in text, text
+    assert "contents: write" not in text, text
+
+
+def test_admission_cli_exists_without_repository_mutation_surface():
+    source = (ROOT / "scripts" / "gscc" / "admission.py").read_text(encoding="utf-8")
+    assert 'sub.add_parser("evaluate")' in source, source
+    assert 'sub.add_parser("qualify")' in source, source
+    assert "update_file" not in source, source
+    assert "create_branch" not in source, source
+    assert "merge_pull_request" not in source, source
+
+
 def main():
     test_valid_envelope_is_only_preauthorized()
     test_missing_required_field_is_incomplete()
@@ -212,6 +238,8 @@ def main():
     test_incomplete_qualification_cannot_issue_access_grant()
     test_complete_qualification_issues_bounded_access_grant()
     test_access_grant_validation_is_binding_and_expiry_sensitive()
+    test_admission_workflow_exposes_only_governed_admission_and_qualification()
+    test_admission_cli_exists_without_repository_mutation_surface()
     print("GSCC_ADMISSION_TESTS_OK")
 
 
