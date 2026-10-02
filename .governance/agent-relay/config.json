@@ -78,7 +78,9 @@
     "client_emitter_implemented": true,
     "client_emitter_wake_polling": true,
     "chatgpt_issue_bridge_implemented": true,
-    "chatgpt_issue_bridge_live_proven": false
+    "chatgpt_issue_bridge_live_proven": true,
+    "provider_host_live_mode": "EVENT_DRIVEN_GITHUB_ISSUE_COMMENT",
+    "continuous_background_heartbeat_proven": false
   },
   "revision_authority_id": "CP-AGENT-RELAY-001-R6",
   "forensics": {
@@ -172,6 +174,9 @@
     "raw_transcript_persisted": false,
     "secret_values_persisted": false,
     "execution_authority_granted": false,
-    "live_proof_status": "PENDING_POST_MERGE"
+    "live_proof_status": "PENDING_POST_MERGE",
+    "source_issue_number_distributed": false,
+    "client_issue_strategy": "TITLE_FALLBACK_UNTIL_LOCAL_NUMBER_BOUND",
+    "repository_local_issue_identity": true
   }
 }
