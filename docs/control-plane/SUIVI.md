@@ -968,3 +968,21 @@ These observations are durable supervision evidence, not new mutation authority 
 - Step 13B has not been executed. It is now the next authorized gate: real fresh provider agent/conversation on the integrated GSCC/GSE/GACR path.
 - Ultimate live acceptance remains `NOT_PASSED`.
 - `P12-S6`, CASE 1 and GMC remain unchanged.
+
+
+## 2026-10-02 — GACR G4 / AUDIT-01 closed
+
+- Baseline before G4: `a35d0aa85f7ddbf3181e5c1a198efc585ed05ab9`.
+- PR #147 canonicalized the shared GSCC protocol authority.
+- `scripts/gscc_gacr/contract.py` no longer redeclares shared EVENTS / COMMANDS / DELIVERY_STATES / terminal states / secretless restrictions.
+- Shared control aliases now reference canonical objects from `scripts/gscc/protocol.py`.
+- Historical control restrictions were preserved by strengthening the canonical GSCC secretless policy.
+- First candidate CI exposed missing canonical rejection of `browser_session`; the fix was made in canonical GSCC policy, not through a local control exception.
+- Corrected candidate Governance CI `36970569867 = PASS`.
+- PR #147 merge: `cbc87ef5f31c6c8190be3add44f446fdc316b6f2`.
+- Post-merge Governance CI `36970611124 = PASS`.
+- Post-merge GACR Relay `36970611145 = PASS`.
+- Post-auto-attach main observed at `b7d0e3540747af21db9705fc333baeca1d74adef`.
+- `GACR-INT-AUDIT-01 = CLOSED_PASS`.
+- `GACR-INT-AUDIT-02` remains `OPEN_BLOCKING_PRE_13B`; Step 13B remains blocked.
+- Next remediation: G5 control-response → canonical GSE projection proof.
