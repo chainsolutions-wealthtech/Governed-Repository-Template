@@ -1,0 +1,101 @@
+name: Repository Presence Probe
+
+on:
+  issues:
+    types:
+      - opened
+
+permissions:
+  contents: write
+
+concurrency:
+  group: repository-presence-probe-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  first-touch:
+    if: ${{ github.event.issue.title == '[LIVE-PRESENCE-PROBE] Repository access fixture' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Capture exact base HEAD
+        id: base
+        shell: bash
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Observe repository first touch
+        id: presence
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/gacr_auto_attach.py \
+            --agent "external-repository-worker" \
+            --provider "github-actions" \
+            --connection-ref "github-actions:${GITHUB_REPOSITORY}:${GITHUB_ACTOR}:${GITHUB_RUN_ID}:${GITHUB_RUN_ATTEMPT}:${GITHUB_SHA}" \
+            --client-instance-id "github-run:${GITHUB_RUN_ID}:${GITHUB_RUN_ATTEMPT}" \
+            --repository "${GITHUB_REPOSITORY}" \
+            --repository-id "${GITHUB_REPOSITORY_ID}" \
+            --organization "${GITHUB_REPOSITORY_OWNER}" \
+            --git-provider "github" \
+            --github-actor "${GITHUB_ACTOR}" \
+            --connection-method "repository-presence-probe" \
+            --surface-class "CONTROLLED_INSTRUMENTABLE" \
+            --observed-head "${GITHUB_SHA}" \
+            --branch "${GITHUB_REF_NAME}" \
+            --workflow-run-id "${GITHUB_RUN_ID}" \
+            --run-attempt "${GITHUB_RUN_ATTEMPT}" \
+            --event-type "REPOSITORY_READ_ACTIVITY" \
+            --entry-action "CONTINUE_GOVERNED_WORK" \
+            --connection-intent "OBSERVE" \
+            --capability "READ_REPOSITORY" \
+            --wake-channel "POLL_REPOSITORY" \
+            --source "PRESENCE_FABRIC"
+
+      - name: Validate state
+        run: |
+          python3 -m py_compile scripts/gacr_auto_attach.py scripts/gacr_agent_telemetry.py scripts/governed_agent_continuity_relay.py
+          python3 scripts/validate_governance.py
+
+      - name: Persist presence state
+        shell: bash
+        env:
+          BASE_HEAD: ${{ steps.base.outputs.sha }}
+          TARGET_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          set -euo pipefail
+          paths=(
+            .governance/control-plane-state/gacr-sessions.json
+            .governance/control-plane-state/gacr-claims.json
+            .governance/control-plane-state/gacr-takeovers.json
+            .governance/control-plane-state/gacr-beacons.json
+            .governance/control-plane-state/gacr-correlations.json
+            .governance/control-plane-state/gacr-dispatches.json
+            .governance/control-plane-state/gacr-forensics.json
+          )
+
+          if git diff --quiet -- "${paths[@]}"; then
+            echo "PRESENCE_PROBE_NO_STATE_CHANGE"
+            exit 1
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${paths[@]}"
+          git commit -m "governance: persist repository presence probe"
+
+          git fetch origin "$TARGET_BRANCH"
+          remote_head="$(git rev-parse FETCH_HEAD)"
+          if [ "$remote_head" != "$BASE_HEAD" ]; then
+            echo "HEAD_MOVED: expected=$BASE_HEAD remote=$remote_head"
+            exit 3
+          fi
+
+          git push origin "HEAD:$TARGET_BRANCH"
