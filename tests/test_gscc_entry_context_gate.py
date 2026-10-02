@@ -8,6 +8,7 @@ from gscc.entry_gate import (
     ENTRY_REQUIRED_GET_FIELDS,
     ENTRY_REQUIRED_POST_FIELDS,
     complete_entry_context,
+    validate_entry_context_receipt,
 )
 
 
@@ -118,6 +119,32 @@ class EntryContextGateTests(unittest.TestCase):
         )
         self.assertEqual(receipt["fields"]["repository"]["value"], "owner/repo")
         self.assertEqual(receipt["fields"]["repository"]["source_method"], "GET")
+
+    def test_entry_receipt_integrity_is_revalidated(self):
+        receipt = complete_entry_context(
+            post_data=self.post_data,
+            get_data=self.get_data,
+            observed_at=self.now,
+        )
+        valid, reason = validate_entry_context_receipt(
+            receipt,
+            connection_ref=self.post_data["connection_ref"],
+            observed_head_sha=self.get_data["observed_head_sha"],
+            repository=self.get_data["repository"],
+        )
+        self.assertTrue(valid)
+        self.assertEqual(reason, "GSCC_ENTRY_CONTEXT_VALIDATED")
+
+        tampered = dict(receipt)
+        tampered["context_digest"] = "0" * 64
+        valid, reason = validate_entry_context_receipt(
+            tampered,
+            connection_ref=self.post_data["connection_ref"],
+            observed_head_sha=self.get_data["observed_head_sha"],
+            repository=self.get_data["repository"],
+        )
+        self.assertFalse(valid)
+        self.assertEqual(reason, "GSCC_ENTRY_CONTEXT_DIGEST_MISMATCH")
 
     def test_receipt_never_grants_invocation_or_mutation_authority(self):
         receipt = complete_entry_context(
