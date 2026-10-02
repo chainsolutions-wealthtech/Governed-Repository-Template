@@ -10,6 +10,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from gscc.admission import validate_access_grant
 from gscc_observable_arrival import build_github_arrival_facts, should_skip_github_arrival
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -25,6 +26,8 @@ CONTROLLED_SURFACES = {
     "CONTROLLED_INSTRUMENTABLE",
 }
 ROUTE_STAGES = [
+    "ADMISSION_RECEIPT_VALIDATION",
+    "ACCESS_GRANT_VALIDATION",
     "GSCC_SESSION_BIND",
     "CONNECTION_ENVELOPE",
     "EXACT_HEAD_OBSERVATION",
@@ -164,6 +167,7 @@ def _base_receipt(
     requested_head: str | None,
     tool: dict[str, Any] | None,
     session: dict[str, Any] | None,
+    access_grant: dict[str, Any] | None,
 ) -> dict[str, Any]:
     return {
         "schema": "gscc-function-exposure-receipt/v1",
@@ -173,6 +177,8 @@ def _base_receipt(
         "session_id": session.get("session_id") if session else None,
         "surface_class": session.get("surface_class") if session else None,
         "connection_method": session.get("connection_method") if session else None,
+        "access_grant_id": access_grant.get("grant_id") if isinstance(access_grant, dict) else None,
+        "admission_id": access_grant.get("admission_id") if isinstance(access_grant, dict) else None,
         "contract_digest": tool.get("contract_digest") if tool else None,
         "surface": tool.get("surface") if tool else None,
         "authority_required": tool.get("authority_required") if tool else None,
@@ -187,31 +193,80 @@ def evaluate_function_exposure(
     tool_name: str,
     connection_ref: str,
     requested_head: str | None,
+    access_grant: dict[str, Any] | None,
     authority_evidence: dict[str, Any] | None,
     snapshot: dict[str, Any],
     sessions: dict[str, Any],
     now: datetime | None = None,
 ) -> dict[str, Any]:
     now = (now or _now()).astimezone(timezone.utc)
+    _safe_evidence(access_grant)
     _safe_evidence(authority_evidence)
 
     tool = _tool(snapshot, tool_name)
-    session = _active_session(sessions, connection_ref, now=now)
     result = _base_receipt(
         tool_name=tool_name,
         connection_ref=connection_ref,
         requested_head=requested_head,
         tool=tool,
-        session=session,
+        session=None,
+        access_grant=access_grant,
     )
     result["evaluated_at"] = now.isoformat()
 
-    if tool is None:
-        result.update(status="DENIED", reason_code="FUNCTION_NOT_IN_CANONICAL_CATALOGUE")
+    if not isinstance(access_grant, dict):
+        result.update(status="WITHHELD", reason_code="ACCESS_GRANT_REQUIRED")
+        return result
+    if not access_grant.get("admission_id"):
+        result.update(status="DENIED", reason_code="ADMISSION_RECEIPT_REQUIRED")
         return result
 
+    grant_precheck = validate_access_grant(
+        access_grant,
+        connection_ref=connection_ref,
+        repository=str(access_grant.get("repository") or ""),
+        requested_head=str(requested_head or ""),
+        now=now,
+    )
+    if grant_precheck.get("status") != "VALIDATED":
+        result.update(
+            status=grant_precheck.get("status", "DENIED"),
+            reason_code=grant_precheck.get("reason_code", "ACCESS_GRANT_INVALID"),
+        )
+        return result
+
+    session = _active_session(sessions, connection_ref, now=now)
     if session is None:
         result.update(status="DENIED", reason_code="GSCC_BOUND_ACTIVE_SESSION_REQUIRED")
+        return result
+
+    result.update(
+        session_id=session.get("session_id"),
+        surface_class=session.get("surface_class"),
+        connection_method=session.get("connection_method"),
+    )
+    session_repository = session.get("repository")
+    if not session_repository:
+        result.update(status="DENIED", reason_code="SESSION_REPOSITORY_REQUIRED")
+        return result
+
+    grant_binding = validate_access_grant(
+        access_grant,
+        connection_ref=connection_ref,
+        repository=str(session_repository),
+        requested_head=str(requested_head or ""),
+        session_id=session.get("session_id"),
+        now=now,
+    )
+    if grant_binding.get("status") != "VALIDATED":
+        result.update(
+            status=grant_binding.get("status", "DENIED"),
+            reason_code=grant_binding.get("reason_code", "ACCESS_GRANT_INVALID"),
+        )
+        return result
+
+    if tool is None:
+        result.update(status="DENIED", reason_code="FUNCTION_NOT_IN_CANONICAL_CATALOGUE")
         return result
 
     session_head = session.get("last_observed_head_sha")
@@ -223,6 +278,9 @@ def evaluate_function_exposure(
         return result
 
     required = tool.get("authority_required")
+    if required not in set(access_grant.get("allowed_authority_classes") or []):
+        result.update(status="DENIED", reason_code="ACCESS_GRANT_AUTHORITY_CLASS_MISMATCH")
+        return result
     if not authority_evidence:
         result.update(status="WITHHELD", reason_code="AUTHORITY_EVIDENCE_REQUIRED")
         return result
@@ -256,6 +314,8 @@ def evaluate_function_exposure(
         "session_id": session.get("session_id"),
         "requested_head": requested_head,
         "contract_digest": tool.get("contract_digest"),
+        "access_grant_id": access_grant.get("grant_id"),
+        "admission_id": access_grant.get("admission_id"),
         "authority_required": required,
         "authority_evidence_ref": authority_evidence.get("evidence_ref"),
         "live_preflight_evidence_ref": (authority_evidence.get("live_preflight") or {}).get("evidence_ref"),
@@ -276,6 +336,7 @@ def exposed_function_catalogue(
     *,
     connection_ref: str,
     requested_head: str | None,
+    access_grant: dict[str, Any] | None,
     authority_evidence_by_tool: dict[str, dict[str, Any]],
     snapshot: dict[str, Any],
     sessions: dict[str, Any],
@@ -291,6 +352,7 @@ def exposed_function_catalogue(
             tool_name=name,
             connection_ref=connection_ref,
             requested_head=requested_head,
+            access_grant=access_grant,
             authority_evidence=authority_evidence_by_tool.get(name),
             snapshot=snapshot,
             sessions=sessions,
@@ -315,6 +377,7 @@ def exposed_function_catalogue(
         "schema": "gscc-exposed-function-catalogue/v1",
         "connection_ref": connection_ref,
         "requested_head": requested_head,
+        "access_grant_id": access_grant.get("grant_id") if isinstance(access_grant, dict) else None,
         "functions": functions,
         "withheld": withheld,
         "policy": "ONLY_VALIDATED_FUNCTIONS_ARE_PUBLISHABLE",
@@ -463,6 +526,7 @@ def main() -> None:
     evaluate.add_argument("--tool-name", required=True)
     evaluate.add_argument("--connection-ref", required=True)
     evaluate.add_argument("--observed-head", required=True)
+    evaluate.add_argument("--access-grant-json")
     evaluate.add_argument("--authority-class")
     evaluate.add_argument("--authority-evidence-ref")
     evaluate.add_argument("--authority-granted", action="store_true")
@@ -519,6 +583,15 @@ def main() -> None:
         _write_output(route, args.output)
         return
 
+    access_grant = None
+    if args.access_grant_json:
+        try:
+            access_grant = json.loads(args.access_grant_json)
+        except json.JSONDecodeError as exc:
+            raise SystemExit(f"ACCESS_GRANT_JSON_INVALID:{exc}") from exc
+        if not isinstance(access_grant, dict):
+            raise SystemExit("ACCESS_GRANT_JSON_OBJECT_REQUIRED")
+
     evidence = None
     if args.authority_class or args.authority_evidence_ref or args.authority_granted:
         evidence = {
@@ -537,6 +610,7 @@ def main() -> None:
         tool_name=args.tool_name,
         connection_ref=args.connection_ref,
         requested_head=args.observed_head,
+        access_grant=access_grant,
         authority_evidence=evidence,
         snapshot=_load_json(args.snapshot),
         sessions=_load_json(args.sessions),
