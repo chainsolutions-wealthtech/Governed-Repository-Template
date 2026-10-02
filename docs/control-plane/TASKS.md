@@ -992,3 +992,9 @@ Cross-cutting integration under `CP-AGENT-RELAY-001-R6` / `CPD-056`:
 - distribution through existing governed client upgrader.
 
 This integration does not execute or supersede `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+
+### GACR R6-A — rerun-safe idempotency correction
+
+Status: **IMPLEMENTED / CI_PENDING**.
+
+The provider-host issue bridge must evaluate idempotency against the latest default-branch GACR state on GitHub workflow reruns. The issue-comment path now reconciles to current `main` before base-HEAD capture. Acceptance requires an actual event rerun proving no new Beacon/session/state commit.

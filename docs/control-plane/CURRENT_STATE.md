@@ -840,3 +840,15 @@ Cross-cutting status: `IMPLEMENTED_PENDING_CI_AND_POST_MERGE_LIVE_PROOF`.
 - Client distribution is included through the governed upgrader.
 - Acceptance requires Governance CI PASS, merge, then a real event emitted from the current ChatGPT conversation proving lease renewal + ACTION_TRACE + EXACT correlation + forensics without session duplication.
 - Global programme action `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` remains unchanged and is not executed by this integration slice.
+
+### GACR R6-A — issue-comment rerun reconciliation
+
+A live-review of the first R6 event identified a rerun semantics gap before final attestation.
+
+- Original issue-comment workflow executions are anchored to the event SHA.
+- After a successful R6 event, GACR state persistence advances `main`.
+- A GitHub rerun of the original attempt would otherwise reconstruct from the older event SHA and only fail later on the exact-HEAD push guard.
+- R6-A therefore fetches and checks out the latest default-branch HEAD for `issue_comment` events **before** capturing the base HEAD and evaluating comment-ID idempotency.
+- The same comment replay can then resolve as `GACR_HOST_EVENT_ALREADY_PROCESSED` with no state diff and no push.
+- Candidate version: `2.8.38`.
+- Final acceptance requires candidate CI, merge, a fresh live host event, then rerun of that exact event with successful no-op proof.
