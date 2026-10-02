@@ -188,59 +188,6 @@ def assert_secretless(value: object) -> None:
 
 
 
-def _fingerprint_time_bucket(value: str | None) -> str | None:
-    parsed = parse_iso(value)
-    if not parsed:
-        return None
-    minute = (parsed.minute // 15) * 15
-    return parsed.replace(minute=minute, second=0, microsecond=0).isoformat()
-
-
-def build_connection_fingerprint(values: dict) -> str | None:
-    """Build a safe operational correlation key, never a provider conversation ID.
-
-    The fingerprint is intentionally based on frozen first-touch/connection facts.
-    Event-specific current HEAD/timestamps are excluded so ordinary progress does
-    not manufacture a new operational identity.
-    """
-    repository = values.get("repository") or values.get("repository_full_name")
-    client_instance_id = values.get("client_instance_id")
-    connection_ref = values.get("connection_ref")
-    provider_ref = values.get("provider_conversation_ref")
-    actor = values.get("github_actor") or values.get("actor")
-    app = values.get("github_app") or values.get("github_installation_id")
-    first_head = values.get("first_observed_head_sha") or values.get("starting_head_sha")
-    first_touch = values.get("first_touch_at") or values.get("connected_at") or values.get("created_at")
-
-    stable_direct_anchor = any((client_instance_id, connection_ref, provider_ref))
-    bounded_operational_anchor = bool(
-        actor
-        and first_head
-        and first_touch
-        and (values.get("task_id") or values.get("branch") or values.get("pull_request") is not None)
-    )
-    if not repository or not (stable_direct_anchor or bounded_operational_anchor):
-        return None
-
-    payload = {
-        "version": "gacr-connection-fingerprint/v1",
-        "repository_key": values.get("repository_id") or repository,
-        "surface_class": values.get("surface_class"),
-        "provider": values.get("provider"),
-        "actor_or_app_key": app or actor,
-        "client_instance_id": client_instance_id,
-        "connection_ref": connection_ref,
-        "provider_ref_supplied": provider_ref,
-        "task_id": values.get("task_id"),
-        "claim_id": values.get("claim_id"),
-        "branch": values.get("branch"),
-        "pull_request": values.get("pull_request"),
-        "first_observed_head_sha": first_head,
-        "first_touch_time_bucket": _fingerprint_time_bucket(first_touch),
-    }
-    return "GACR-FP1-" + digest(payload)
-
-
 def session_by_id(sessions: dict, session_id: str | None) -> dict | None:
     if not session_id:
         return None
@@ -258,6 +205,9 @@ def record_beacon(
     connection_ref: str | None = None,
     connection_fingerprint: str | None = None,
     claim_id: str | None = None,
+    connection_envelope_digest: str | None = None,
+    surface_class: str | None = None,
+    presence_event: str | None = None,
     task_id: str | None = None,
     branch: str | None = None,
     pull_request: int | None = None,
@@ -299,23 +249,6 @@ def record_beacon(
     resolved_actor = github_env.get("GITHUB_ACTOR") or (github_event.get("sender") or {}).get("login")
     resolved_installation = github_event.get("installation_id")
     resolved_fingerprint = connection_fingerprint or (session or {}).get("connection_fingerprint")
-    if not resolved_fingerprint:
-        resolved_fingerprint = build_connection_fingerprint({
-            "provider": resolved_provider,
-            "provider_conversation_ref": resolved_provider_ref,
-            "repository": (session or {}).get("repository") or repository_name(),
-            "repository_id": (github_event.get("repository") or {}).get("id"),
-            "github_actor": resolved_actor,
-            "github_installation_id": resolved_installation,
-            "client_instance_id": client_instance_id or (session or {}).get("client_instance_id"),
-            "connection_ref": connection_ref or (session or {}).get("connection_ref"),
-            "task_id": resolved_task,
-            "claim_id": claim_id,
-            "branch": resolved_branch,
-            "pull_request": resolved_pr,
-            "first_observed_head_sha": (session or {}).get("starting_head_sha"),
-            "first_touch_at": (session or {}).get("created_at"),
-        })
 
     envelope = {
         "observed_at": timestamp,
@@ -329,6 +262,9 @@ def record_beacon(
         "connection_ref": connection_ref or (session or {}).get("connection_ref"),
         "connection_fingerprint": resolved_fingerprint,
         "claim_id": claim_id,
+        "connection_envelope_digest": connection_envelope_digest,
+        "surface_class": surface_class or (session or {}).get("surface_class"),
+        "presence_event": presence_event,
         "agent_identity": (session or {}).get("agent_identity"),
         "agent_role": agent_role or (session or {}).get("agent_role"),
         "capabilities": sorted(set(capabilities or (session or {}).get("capabilities") or [])),
@@ -939,6 +875,22 @@ def compatible_standby(
     return session_by_id(sessions, decision.get("selected_session_id"))
 
 
+def _worker_b_projection_if_available(session_id: str) -> dict | None:
+    """Consume Worker B's merged projection when present; never reimplement it here."""
+    projection = globals().get("worker_c_integration_projection")
+    if not callable(projection):
+        return None
+    try:
+        value = projection(session_id)
+    except (ValueError, KeyError):
+        return None
+    return value if isinstance(value, dict) else None
+
+
+def _known_projection_value(value):
+    return None if value in (None, "", "UNAVAILABLE") else value
+
+
 def build_takeover_package(
     stalled_session_id: str,
     successor_candidate_session_id: str,
@@ -976,6 +928,7 @@ def build_takeover_package(
     actions = forensic.get("actions") or {}
     predecessor_relay = predecessor.get("relay") or {}
     work_item = target.get("work_item") or {}
+    worker_b_context = _worker_b_projection_if_available(stalled_session_id)
 
     provider_ref = successor.get("provider_conversation_ref")
     provenance = successor.get("provider_conversation_ref_provenance")
@@ -1000,6 +953,18 @@ def build_takeover_package(
         known_unknowns.append("FORENSICS_GENERATION_TIME_UNAVAILABLE")
     if actions.get("in_flight_action"):
         known_unknowns.append("IN_FLIGHT_ACTION_OUTCOME_UNRESOLVED")
+    if worker_b_context is None:
+        known_unknowns.append("LIVENESS_PROGRESS_CONTEXT_SHARED_INTEGRATION_REQUIRED")
+
+    last_activity_at = (
+        _known_projection_value((worker_b_context or {}).get("last_activity_at"))
+        or predecessor.get("last_seen_at")
+        or predecessor_relay.get("last_heartbeat_at")
+    )
+    last_progress_at = (
+        _known_projection_value((worker_b_context or {}).get("last_progress_at"))
+        or (actions.get("last_action_completed") or {}).get("observed_at")
+    )
 
     package = {
         "schema": "gacr-takeover-package/v1",
@@ -1013,8 +978,10 @@ def build_takeover_package(
         "pull_request": target.get("pull_request"),
         "observed_head_sha": resume.get("last_observed_head_sha") or predecessor.get("last_observed_head_sha"),
         "written_head_sha": resume.get("last_written_head_sha"),
-        "last_activity_at": predecessor.get("last_seen_at") or predecessor_relay.get("last_heartbeat_at"),
-        "last_progress_at": (actions.get("last_action_completed") or {}).get("observed_at"),
+        "last_activity_at": last_activity_at,
+        "last_progress_at": last_progress_at,
+        "liveness": (worker_b_context or {}).get("liveness"),
+        "progress": (worker_b_context or {}).get("progress"),
         "action_in_flight": actions.get("in_flight_action"),
         "last_completed_action": actions.get("last_action_completed"),
         "checkpoint_ref": forensic.get("last_checkpoint_ref") or resume.get("checkpoint_ref"),
@@ -1274,6 +1241,9 @@ def command_beacon(a: argparse.Namespace) -> None:
         connection_ref=a.connection_ref,
         connection_fingerprint=a.connection_fingerprint,
         claim_id=a.claim_id,
+        connection_envelope_digest=a.connection_envelope_digest,
+        surface_class=a.surface_class,
+        presence_event=a.presence_event,
         task_id=a.task_id,
         branch=a.branch,
         pull_request=a.pull_request,
@@ -1336,6 +1306,9 @@ def parser() -> argparse.ArgumentParser:
     b.add_argument("--connection-ref")
     b.add_argument("--connection-fingerprint")
     b.add_argument("--claim-id")
+    b.add_argument("--connection-envelope-digest")
+    b.add_argument("--surface-class")
+    b.add_argument("--presence-event")
     b.add_argument("--task-id")
     b.add_argument("--branch")
     b.add_argument("--pull-request",type=int)

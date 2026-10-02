@@ -102,36 +102,6 @@ def beacon(**overrides):
 
 
 
-def fingerprint_contract_tests():
-    base = {
-        "provider": "chatgpt",
-        "repository": "owner/repo",
-        "github_actor": "actor-a",
-        "client_instance_id": "client-a",
-        "connection_ref": "conn-a",
-        "task_id": "TASK-A",
-        "branch": "feature/a",
-        "pull_request": 31,
-        "first_observed_head_sha": "a" * 40,
-        "first_touch_at": "2026-10-02T02:12:34+00:00",
-    }
-    fp1 = telemetry.build_connection_fingerprint(base)
-    moved = dict(base)
-    moved["observed_head_sha"] = "b" * 40
-    moved["observed_at"] = "2026-10-02T02:29:59+00:00"
-    fp2 = telemetry.build_connection_fingerprint(moved)
-    assert_true(fp1 and fp1.startswith("GACR-FP1-"), "fingerprint must be versioned and namespaced")
-    assert_true(fp1 == fp2, "later HEAD/time movement must not change a frozen operational fingerprint")
-    other = dict(base)
-    other["client_instance_id"] = "client-b"
-    assert_true(telemetry.build_connection_fingerprint(other) != fp1, "different stable client identity must change fingerprint")
-    sparse = {
-        "repository": "owner/repo",
-        "branch": "feature/a",
-    }
-    assert_true(telemetry.build_connection_fingerprint(sparse) is None, "insufficient-entropy fingerprint input must fail closed")
-
-
 def correlation_contract_tests():
     a = session(
         "session-a",
@@ -577,7 +547,6 @@ def harness_contract_tests():
 
 
 def main():
-    fingerprint_contract_tests()
     correlation_contract_tests()
     dispatcher_contract_tests()
     takeover_contract_tests()

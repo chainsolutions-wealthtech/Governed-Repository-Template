@@ -18,7 +18,6 @@ from gacr_agent_telemetry import (
     dispatch_open_takeovers,
     select_compatible_standby,
     evaluate_standby_candidate,
-    build_connection_fingerprint,
     safe_github_context,
 )
 
@@ -335,20 +334,6 @@ def register_docs(
         session["client_instance_id"] = client_instance_id
     if connection_fingerprint:
         session["connection_fingerprint"] = connection_fingerprint
-    if not session.get("connection_fingerprint"):
-        session["connection_fingerprint"] = build_connection_fingerprint({
-            "provider": session.get("provider"),
-            "provider_conversation_ref": session.get("provider_conversation_ref"),
-            "repository": repository,
-            "github_actor": session.get("github_actor"),
-            "client_instance_id": session.get("client_instance_id"),
-            "connection_ref": session.get("connection_ref"),
-            "task_id": task_id if task_id is not None else r.get("task_id"),
-            "branch": branch if branch is not None else r.get("branch"),
-            "pull_request": pull_request if pull_request is not None else r.get("pull_request"),
-            "first_observed_head_sha": session.get("starting_head_sha"),
-            "first_touch_at": session.get("created_at"),
-        })
     if agent_role:
         session["agent_role"] = agent_role
     if capabilities:
