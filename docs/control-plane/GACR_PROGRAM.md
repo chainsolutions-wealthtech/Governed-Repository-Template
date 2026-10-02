@@ -59,7 +59,7 @@ Current GACR programme state:
 
 ## GACR next action
 
-`GSCC_ADMISSION_ACCESS_GATE_IMPLEMENT_TESTS_FIRST`
+`GSCC_ADMISSION_ACCESS_GATE_MERGE_AND_POSTMERGE_ATTEST`
 
 Step 13B remains the next live acceptance gate, but its execution is temporarily blocked until the two bounded post-integration findings in `docs/control-plane/GACR_GSCC_GSE_INTEGRATION_AUDIT.md` are closed and re-attested from the then-current `main`.
 
@@ -265,3 +265,36 @@ Current GACR next action:
 Step 13B remains `NOT_EXECUTED` and blocked until the admission/access gate is implemented, regression-tested and attested from then-current `main`. After that, the real function-exposure request remains a required downstream live proof.
 
 This is GACR/GSCC cross-cutting hardening only. It does not execute or replace `P12-S6`, CASE 1, GMC or the global Control Plane programme.
+
+## 2026-10-02 — GSCC admission/access candidate implemented tests-first
+
+PR #159 implements the admission/access prerequisite without removing the existing Observable Arrival Gateway or creating a second function-exposure authority.
+
+Candidate flow:
+
+```text
+AdmissionEnvelope
+→ PREAUTHORIZED
+→ qualification evidence
+→ bounded Access Grant
+→ existing GSCC Function Exposure Gate
+→ existing exact-HEAD / function-contract / authority / preflight controls
+```
+
+The candidate adds one read-only admission workflow, `.github/workflows/gscc-admission-gate.yml`, and extends the existing canonical function gate so no governed function can become exposable without an Access Grant that matches connection, session, repository, exact HEAD and expiry.
+
+RED→GREEN evidence:
+
+- `37000902994 FAIL → 37001048628 PASS` — admission core;
+- `37001183473 FAIL → 37001289277 PASS` — qualification / Access Grant;
+- `37001452126 FAIL → 37001737386 PASS` — Access Grant required by existing function gate;
+- `37001911592 FAIL → 37002023347 PASS` — live admission workflow contract;
+- final candidate Observable Arrival Gateway `37002023374 = PASS`;
+- final candidate Function Exposure Gate `37002023423 = PASS`.
+
+Status: `CANDIDATE_IMPLEMENTED_TESTED_PENDING_MERGE`.
+
+Next GACR action: `GSCC_ADMISSION_ACCESS_GATE_MERGE_AND_POSTMERGE_ATTEST`.
+
+No real provider admission request has yet been executed through canonical `main`; Step 13B and ultimate live acceptance remain NOT_PASSED. The global `P12-S6` programme remains untouched.
+
