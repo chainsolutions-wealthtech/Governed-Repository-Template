@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 11,
+  "revision": 14,
   "items": [
     {
       "correlation_id": "GACR-C-caffb7cb6efd",
@@ -149,6 +149,51 @@
         "CONNECTION_REF_EXACT"
       ],
       "evaluated_at": "2026-10-02T00:56:30+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-b20dafa27c9a",
+      "beacon_id": "GACR-B-7a758d447161",
+      "level": "EXACT",
+      "selected_session_id": "session-68c97d4bb1ef71c86444de12",
+      "candidate_session_ids": [
+        "session-68c97d4bb1ef71c86444de12"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "evaluated_at": "2026-10-02T00:59:54+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-7c9fc19e19c3",
+      "beacon_id": "GACR-B-acfbecd5d18b",
+      "level": "EXACT",
+      "selected_session_id": "session-68c97d4bb1ef71c86444de12",
+      "candidate_session_ids": [
+        "session-68c97d4bb1ef71c86444de12"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "evaluated_at": "2026-10-02T00:59:54+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-11932193106f",
+      "beacon_id": "GACR-B-6e9378da51fe",
+      "level": "EXACT",
+      "selected_session_id": "session-68c97d4bb1ef71c86444de12",
+      "candidate_session_ids": [
+        "session-68c97d4bb1ef71c86444de12"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "evaluated_at": "2026-10-02T00:59:54+00:00"
     }
   ]
 }
