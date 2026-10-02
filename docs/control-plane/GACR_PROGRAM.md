@@ -59,20 +59,20 @@ Current GACR programme state:
 
 ## GACR next action
 
-`GACR_PRE_13B_CLOSE_INTEGRATION_AUDIT_02`
+`GACR_G6_FULL_RECONCILIATION_AND_REAUTHORIZE_STEP_13B`
 
 Step 13B remains the next live acceptance gate, but its execution is temporarily blocked until the two bounded post-integration findings in `docs/control-plane/GACR_GSCC_GSE_INTEGRATION_AUDIT.md` are closed and re-attested from the then-current `main`.
 
 The GSCC Core, GSE Session State Engine and GSCC↔GACR bidirectional-control integration are functionally integrated and green. PR #142 post-merge Governance CI `36968203836` passed the GSCC, GSE, control-harness, combined E2E and historical GACR regression suites; Relay run `36968203882` also passed. PR #143 durably attested these prerequisites without claiming fresh-provider acceptance.
 
-A later canonical audit found two residual integration risks before Step 13B. GACR-INT-AUDIT-01 is now CLOSED/PASS; GACR-INT-AUDIT-02 remains OPEN/BLOCKING:
+A later canonical audit found two residual integration risks before Step 13B. Both are now CLOSED/PASS; G6 reconciliation is the remaining gate:
 
 1. **CLOSED/PASS** — PR #147 removed the second shared protocol authority: `scripts/gscc_gacr/contract.py` now consumes canonical `scripts/gscc/protocol.py`; candidate and post-merge CI plus Relay are green.
-2. **OPEN/BLOCKING** — The combined E2E proves `COMMAND_ACK` and `CHALLENGE_RESPONSE` projection into GSE, but the STATUS / PROGRESS / CONTEXT / CHECKPOINT control-response paths are not yet proven end-to-end through the canonical GSE input model.
+2. **CLOSED/PASS** — PR #149 extends the real SessionEndpoint E2E so the combined path proves `COMMAND_ACK` and `CHALLENGE_RESPONSE` projection into GSE, but the STATUS / PROGRESS / CONTEXT / CHECKPOINT control-response paths are not yet proven end-to-end through the canonical GSE input model.
 
 A procedural deviation is also recorded: Worker A and Worker B were merged before all three worker PRs remained open for one final integration audit, contrary to the worker prompts. This is non-blocking because the subsequent dependency-ordered integration, full green CI and controlled PR #142 contained the runtime risk, but it remains part of the durable audit record.
 
-No GACR step is rolled back. Step 13B is still `NOT_EXECUTED`; after the bounded remediation and full regression revalidation it may return to `NEXT_AUTHORIZED`. This programme remains independent of `P12-S6`, CASE 1, GMC and the global Control Plane programme.
+No GACR step is rolled back. Step 13B is still `NOT_EXECUTED`; both bounded remediation findings are closed, but it remains blocked until G6 reconciliation itself passes full CI and explicitly reauthorizes it. This programme remains independent of `P12-S6`, CASE 1, GMC and the global Control Plane programme.
 
 ## Completion condition
 
