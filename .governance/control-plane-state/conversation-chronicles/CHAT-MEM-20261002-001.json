@@ -13,14 +13,14 @@
   "counters": {
     "next_user_message": 2,
     "next_assistant_message": 3,
-    "next_tool_event": 10,
+    "next_tool_event": 12,
     "next_decision_event": 9,
     "next_constraint_event": 7,
-    "next_action_event": 9,
+    "next_action_event": 11,
     "next_error_event": 1,
     "next_recovery_event": 6,
-    "next_checkpoint": 11,
-    "next_cache": 11,
+    "next_checkpoint": 13,
+    "next_cache": 13,
     "next_open_loop": 4,
     "next_artifact": 3,
     "next_session": 3
@@ -31,29 +31,28 @@
     "previous_hash": "8b45efbe51e0e9fbf26883ae2a6ee65c7975e7c782bc5c708c4ea06363db5e97"
   },
   "current_session": "SESSION-000002",
-  "current_checkpoint": "CHK-000010",
-  "current_cache": "CACHE-000010",
+  "current_checkpoint": "CHK-000012",
+  "current_cache": "CACHE-000012",
   "open_loops": [
     "OPEN-000002",
     "OPEN-000003"
   ],
-  "current_topic": "GACR G5 control-response to canonical GSE projection remediation",
-  "point_of_stop": "GACR-INT-AUDIT-01 is CLOSED_PASS on canonical main; GACR-INT-AUDIT-02 is the only remaining blocking integration finding before G6.",
-  "next_safe_action": "Execute G5: map safe STATUS/PROGRESS/CONTEXT/CHECKPOINT control responses into canonical GSE projections without manufacturing liveness or progress; integrate after full regression, then run G6.",
+  "current_topic": "GACR Step 13B fresh provider agent acceptance",
+  "point_of_stop": "G4/G5 are closed and G6 first reconciliation CI passed. Canonical source state now reauthorizes Step 13B, pending final PR #150 CI, merge and post-merge proof.",
+  "next_safe_action": "Run full CI on final PR #150 reauthorized head, merge only PASS, verify post-merge Governance CI and Relay, then persist final G6 attestation before any fresh-provider Step 13B run.",
   "external_state_observed": {
     "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
     "branch": "main",
-    "head": "b7d0e3540747af21db9705fc333baeca1d74adef",
-    "observed_at": "2026-10-02T07:49:42+02:00",
+    "head": "114c5397966a5c6ad7d8770298abd698929ecf8f",
+    "observed_at": "2026-10-02T08:04:49+02:00",
     "precision": "second",
     "freshness": "OBSERVED_AT",
     "gacr_int_audit_01": "CLOSED_PASS",
-    "gacr_int_audit_02": "OPEN_BLOCKING_PRE_13B",
-    "remediation_pr": 147,
-    "corrected_candidate_ci": 36970569867,
-    "postmerge_ci": 36970611124,
-    "postmerge_relay": 36970611145,
-    "step_13b": "BLOCKED_PENDING_INTEGRATION_REMEDIATION",
+    "gacr_int_audit_02": "CLOSED_PASS",
+    "g6_first_reconciliation_ci": 36971795607,
+    "g6_first_reconciliation_result": "PASS",
+    "step_13b": "NEXT_AUTHORIZED_PENDING_FINAL_G6_POSTMERGE",
+    "fresh_provider_agent": "NOT_EXECUTED",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
   "attachment_artifacts": [
@@ -150,7 +149,7 @@
     "premerge_ci_result": "PASS"
   },
   "supervision_state": {
-    "status": "PRE_STEP_13B_G5_REMEDIATION",
+    "status": "G6_REAUTHORIZED_PENDING_FINAL_CI_MERGE",
     "programme": "GACR",
     "global_programme_progression": "UNCHANGED",
     "workers": [
@@ -338,6 +337,26 @@
       "postmerge_ci": 36970611124,
       "postmerge_relay": 36970611145,
       "observed_main": "b7d0e3540747af21db9705fc333baeca1d74adef"
+    },
+    "g5": {
+      "status": "CLOSED_PASS",
+      "finding": "GACR-INT-AUDIT-02",
+      "pr": 149,
+      "candidate_ci": 36971442096,
+      "merge": "d831c29ea0943bd5015a757e303187fa505b5f1c",
+      "postmerge_ci": 36971501671,
+      "postmerge_relay": 36971501664,
+      "observed_main": "114c5397966a5c6ad7d8770298abd698929ecf8f"
+    },
+    "g6": {
+      "status": "PASS_REAUTHORIZED_PENDING_FINAL_CI_MERGE",
+      "pr": 150,
+      "observed_main": "114c5397966a5c6ad7d8770298abd698929ecf8f",
+      "reconciliation_ci": 36971795607,
+      "audit_01": "CLOSED_PASS",
+      "audit_02": "CLOSED_PASS",
+      "step_13b": "NEXT_AUTHORIZED_PENDING_FINAL_G6_POSTMERGE",
+      "fresh_provider_agent": "NOT_EXECUTED"
     }
   }
 }
