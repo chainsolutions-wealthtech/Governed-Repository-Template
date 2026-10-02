@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 13,
+  "revision": 14,
   "sessions": [
     {
       "session_id": "session-68c97d4bb1ef71c86444de12",
@@ -15,10 +15,10 @@
       "connection_intent_provenance": "DEFAULT_UNKNOWN",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "4c7db9f0e2e782de147ef316c41086ed0863b49e",
-      "last_observed_head_sha": "678d67851ba0021b9ceee27b29d8d2cac4a5c715",
+      "last_observed_head_sha": "94c7baeefa76ce9e909d76a62fd27b3af0c00fd9",
       "status": "ACTIVE",
       "created_at": "2026-10-01T23:10:28+00:00",
-      "last_seen_at": "2026-10-02T03:45:01+00:00",
+      "last_seen_at": "2026-10-02T03:50:46+00:00",
       "client_instance_id": "chronicle:CHAT-MEM-20261002-001",
       "agent_role": null,
       "capabilities": [
@@ -32,8 +32,8 @@
       "relay": {
         "process": "GACR",
         "state": "ACTIVE",
-        "last_heartbeat_at": "2026-10-02T03:45:01+00:00",
-        "lease_expires_at": "2026-10-02T04:15:01+00:00",
+        "last_heartbeat_at": "2026-10-02T03:50:46+00:00",
+        "lease_expires_at": "2026-10-02T04:20:46+00:00",
         "last_action": "RESUME",
         "task_id": null,
         "branch": "main",
@@ -63,7 +63,7 @@
         "schema": "gacr-connection-envelope/v1",
         "surface_class": "CONTROLLED_INSTRUMENTABLE",
         "presence_event": "PRESENCE_RESUME",
-        "observed_at": "2026-10-02T03:45:01+00:00",
+        "observed_at": "2026-10-02T03:50:46+00:00",
         "fields": {
           "gacr_session_id": {
             "value": "session-68c97d4bb1ef71c86444de12",
@@ -169,7 +169,7 @@
             "source": "REPOSITORY_SURFACE"
           },
           "HEAD": {
-            "value": "678d67851ba0021b9ceee27b29d8d2cac4a5c715",
+            "value": "94c7baeefa76ce9e909d76a62fd27b3af0c00fd9",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "REPOSITORY_SURFACE"
           },
@@ -179,7 +179,7 @@
             "source": "REPOSITORY_SURFACE"
           },
           "workflow_run_id": {
-            "value": "36961513436",
+            "value": "36961935794",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "GITHUB_EVENT"
           },
@@ -209,7 +209,7 @@
             "source": "GACR_SESSION"
           },
           "last_seen_at": {
-            "value": "2026-10-02T03:45:01+00:00",
+            "value": "2026-10-02T03:50:46+00:00",
             "provenance": "CORRELATED",
             "source": "GACR_SESSION"
           },
@@ -219,7 +219,7 @@
             "source": "CLIENT_OR_ADAPTER"
           },
           "lease_expires_at": {
-            "value": "2026-10-02T04:15:01+00:00",
+            "value": "2026-10-02T04:20:46+00:00",
             "provenance": "CORRELATED",
             "source": "GACR_WATCH"
           },
