@@ -303,6 +303,7 @@ def main():
         "docs/GACR_AGENT_CONTINUITY_RELAY.md",
         ".governance/agent-relay/config.json",
         "scripts/governed_agent_continuity_relay.py",
+        "scripts/test_gacr_liveness_progress_context.py",
         ".github/workflows/governed-agent-continuity-relay.yml",
         "existing_gacr_takeovers=target_text",
         '"forensics.json"',
