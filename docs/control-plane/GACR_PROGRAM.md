@@ -165,3 +165,27 @@ Step 13B remains `NOT_EXECUTED`. It must not resume until PR #153 is integrated 
 - downstream auto-attach relay: `36977162025 = PASS`
 
 The remaining proof is deliberately narrow: execute one real governed function exposure request through `gscc_function_exposure_request`. This connector cannot emit repository-dispatch writes, so that specific live request is not fabricated here.
+
+### PR #156 consolidation — one authority, every governed invocation routed
+
+PR #156 consolidates the owner rule into the already-canonical PR #153 function-exposure authority. It deliberately does **not** introduce a second function-gate engine or workflow.
+
+Additive guarantees:
+
+- all 135 functions in the current MCP capability snapshot are marked `GSCC_REQUIRED / REQUIRES_RUNTIME_VALIDATION`;
+- raw catalogue presence remains planning evidence, never exposure or invocation authority;
+- the existing `.github/workflows/gscc-function-exposure-gate.yml` is also the reusable mandatory gate for Governed Execution;
+- every MCP invocation occurrence in an execution package is represented in one exact-HEAD package-route receipt, including contract digest, capability, phase, authority class, argument field names and an opaque argument-value digest;
+- the execution engine independently recomputes the package-route digest before any real MCP call;
+- route validation grants neither invocation authority nor mutation authority;
+- the observable-arrival GSCC gateway is distributed by the governed-client upgrader;
+- the source-only function gate remains source-only so client CI portability is preserved.
+
+Tests-first evidence:
+
+- RED: Governance CI `36977945009` failed because the package-route primitive did not yet exist;
+- candidate Governance CI `36978496025 = PASS`;
+- candidate PR Function Exposure Gate arrival-route workflow `36978495981 = PASS`;
+- candidate PR Observable Arrival Gateway `36978496029 = PASS`.
+
+A source-only post-merge workflow, `.github/workflows/gscc-function-route-selftest.yml`, will exercise the reusable `workflow_call` against canonical `main`. Until that post-merge proof and the already-required real `gscc_function_exposure_request` are observed, Step 13B remains `NOT_EXECUTED`.

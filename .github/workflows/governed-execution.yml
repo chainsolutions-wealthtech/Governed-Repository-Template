@@ -26,7 +26,15 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  function-exposure-gate:
+    uses: ./.github/workflows/gscc-function-exposure-gate.yml
+    with:
+      package_path: ${{ inputs.package_path }}
+      expected_source_head: ${{ inputs.expected_source_head }}
+
   execute:
+    needs: function-exposure-gate
+    if: ${{ needs.function-exposure-gate.outputs.route_validated == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact source
@@ -180,6 +188,8 @@ jobs:
           GOVERNED_MCP_URL: https://mcp.wealthtechinnovations.com/mcp
           GOVERNED_GITHUB_APP_CLIENT_ID: ${{ steps.plan.outputs.needs_app_source == 'true' && vars.GOVERNED_GITHUB_APP_CLIENT_ID || '' }}
           GOVERNED_GITHUB_APP_PRIVATE_KEY: ${{ steps.plan.outputs.needs_app_source == 'true' && secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY || '' }}
+          GSCC_FUNCTION_ROUTE_VALIDATED: ${{ needs.function-exposure-gate.outputs.route_validated }}
+          GSCC_FUNCTION_ROUTE_VALIDATION_DIGEST: ${{ needs.function-exposure-gate.outputs.validation_digest }}
         shell: bash
         run: |
           set -euo pipefail
