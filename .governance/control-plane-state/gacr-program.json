@@ -8,10 +8,10 @@
     "original_intent": "CANONICAL_RECORDED",
     "baseline_r1_r6": "PRESERVED_REOBSERVED_ATTESTED_OR01_PASS",
     "origin_realignment_plan": "ACCEPTED",
-    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13_IN_PROGRESS_G6_RECONCILIATION",
+    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13B_NEXT_REMEDIATION_CLOSED",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
-  "next_action": "GACR_G6_FULL_RECONCILIATION_AND_REAUTHORIZE_STEP_13B",
+  "next_action": "REALIGNMENT_STEP_13B_RUN_REAL_FRESH_PROVIDER_AGENT_TEST",
   "or01": {
     "status": "PASS",
     "attestation": "docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md",
@@ -108,7 +108,7 @@
       "requirement": "A genuinely fresh provider conversation/agent must enter through an instrumented client/gateway path or produce later independently observable repository evidence."
     },
     "integration_prerequisites": {
-      "status": "PASS_PENDING_G6_REAUTHORIZATION",
+      "status": "PASS",
       "gscc_core": {
         "source_pr": 140,
         "source_head": "b4cfec2e5dabfd28ab557e4ef740f0c44fa44457",
@@ -138,7 +138,9 @@
       "real_session_endpoint_control_bridge": "PASS",
       "fresh_provider_proof": "NOT_EXECUTED",
       "control_response_gse_projection": "PASS",
-      "extended_controlled_e2e": "PASS"
+      "extended_controlled_e2e": "PASS",
+      "pre_step_13b_remediation": "PASS",
+      "g6_reconciliation_ci": 36971795607
     }
   },
   "integration_attestation": {
@@ -158,16 +160,14 @@
   },
   "relational_projection": "PENDING_PROJECTION_NO_DEDICATED_GACR_REALIGNMENT_STEP_TABLE",
   "step_13b": {
-    "status": "BLOCKED_PENDING_G6_REAUTHORIZATION",
+    "status": "NEXT_AUTHORIZED",
     "requirement": "After the pre-Step-13B remediation is closed, run a genuinely fresh provider conversation/agent through the integrated GSCC/GSE/GACR path without telling it to register with GACR. Observe first-touch, SessionTwin, control challenge/wake capability and provider-bound evidence without inventing unavailable provider-private fields.",
     "fresh_provider_agent": "NOT_EXECUTED",
     "ultimate_live_acceptance": "NOT_PASSED",
-    "remediation_required": [
-      "REOBSERVE_MAIN_AND_REAUTHORIZE_STEP_13B"
-    ]
+    "remediation_required": []
   },
   "integration_post_attestation_audit": {
-    "status": "FINDINGS_CLOSED_G6_REAUTHORIZATION_PENDING",
+    "status": "CLOSED_PASS_PRE_STEP_13B",
     "observed_main_head": "8936a0f734d12cf5dbcd916c4d98fe4fef895aec",
     "evidence": "docs/control-plane/GACR_GSCC_GSE_INTEGRATION_AUDIT.md",
     "integration_functional_state": "GREEN",
@@ -220,10 +220,15 @@
     "observed_main": "114c5397966a5c6ad7d8770298abd698929ecf8f"
   },
   "g6": {
-    "status": "IN_PROGRESS_RECONCILIATION",
+    "status": "PASS_REAUTHORIZED",
+    "pr": 150,
     "observed_main": "114c5397966a5c6ad7d8770298abd698929ecf8f",
+    "reconciliation_ci": 36971795607,
     "audit_01": "CLOSED_PASS",
     "audit_02": "CLOSED_PASS",
-    "step_13b": "BLOCKED_PENDING_G6_REAUTHORIZATION"
+    "authority_boundaries": "PASS",
+    "full_regression": "PASS",
+    "step_13b": "NEXT_AUTHORIZED",
+    "fresh_provider_agent": "NOT_EXECUTED"
   }
 }
