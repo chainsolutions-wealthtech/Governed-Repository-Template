@@ -239,7 +239,13 @@ SESSION_BINDING_SCHEMA = "gscc-admission-session-binding/v1"
 STRONG_BIND_FRESHNESS_SECONDS = 300
 
 
-def _active_gacr_sessions(sessions: dict[str, Any], repository: str) -> list[dict[str, Any]]:
+def _active_gacr_sessions(
+    sessions: dict[str, Any],
+    repository: str,
+    *,
+    now: datetime | None = None,
+) -> list[dict[str, Any]]:
+    now = (now or datetime.now(timezone.utc)).astimezone(timezone.utc)
     result: list[dict[str, Any]] = []
     for item in (sessions.get("sessions") or []):
         if not isinstance(item, dict):
@@ -250,6 +256,9 @@ def _active_gacr_sessions(sessions: dict[str, Any], repository: str) -> list[dic
             continue
         relay = item.get("relay") if isinstance(item.get("relay"), dict) else {}
         if relay.get("state") != "ACTIVE":
+            continue
+        lease_expires_at = _parse_datetime(relay.get("lease_expires_at"))
+        if lease_expires_at is None or lease_expires_at <= now:
             continue
         if not item.get("session_id") or not item.get("connection_ref"):
             continue
@@ -319,7 +328,7 @@ def resolve_admission_session_binding(
     if not repository:
         return {**base, "reason_code": "ADMISSION_REPOSITORY_REQUIRED"}
 
-    candidates = _active_gacr_sessions(sessions, str(repository))
+    candidates = _active_gacr_sessions(sessions, str(repository), now=now)
     admission_connection_ref = admission_receipt.get("connection_ref")
 
     exact = [s for s in candidates if s.get("connection_ref") == admission_connection_ref]
