@@ -102,3 +102,32 @@ Until then, the programme status remains partial regardless of green unit tests.
 - Step 13B is reauthorized as `NEXT_AUTHORIZED`.
 - Fresh provider agent remains `NOT_EXECUTED`.
 - Ultimate live acceptance remains `NOT_PASSED`.
+
+## 2026-10-02 — GSCC observable-arrival remediation
+
+Status: **IMPLEMENTED ON PR #152 / FINAL INTEGRATION PENDING / STEP 13B NOT EXECUTED**.
+
+The first fresh-provider attempt exposed a real external seam rather than a GACR/GSE semantic failure: direct provider-side GitHub reads can remain `PROPRIETARY_SILENT`, so the repository had no event with which to create the fresh Agent A session.
+
+PR #152 adds one additive entry gateway:
+
+```text
+observable repository arrival
+→ canonical GSCC SessionEndpoint
+→ SESSION_ATTACH
+→ GACRClientEmitterAdapter
+→ gacr_auto-attach
+→ Presence Fabric / canonical GACR session
+```
+
+The gateway covers GitHub-event-visible arrivals and exposes a controlled-host entry for provider adapters. It does not create a second session store, second correlator, second state engine or mutation-authority path.
+
+Tests were introduced before implementation. Initial Governance CI run `36974868172` failed at the missing gateway. A live transport defect then exposed GitHub's ten-property repository-dispatch limit; the gateway now uses bounded top-level metadata plus one allowlisted `arrival_context` projection. Subsequent live gateway runs reached the canonical GACR relay and produced `connection_method = gscc-github-event-gateway` sessions.
+
+This evidence proves the repository-side GSCC entry seam for observable events. It does **not** prove that an arbitrary proprietary provider read is observable, and it does not satisfy the fresh Agent A acceptance by itself.
+
+Canonical acceptance remains:
+
+`Step 13B = NEXT_AUTHORIZED / NOT_EXECUTED`
+
+`ULTIMATE_LIVE_ACCEPTANCE = NOT_PASSED`.

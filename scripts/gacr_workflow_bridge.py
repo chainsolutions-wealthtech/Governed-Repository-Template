@@ -18,6 +18,26 @@ def add(args:list[str], flag:str, value):
         return
     args.extend([flag,str(value)])
 
+AUTO_ATTACH_ARRIVAL_CONTEXT_KEYS={
+    'repository','repository_id','organization','git_provider','github_actor',
+    'github_app_installation','observed_head','branch','base_branch','pull_request',
+    'workflow_run_id','job_id','run_attempt','event_type','delivery_correlation_id',
+    'last_action','last_evidence','entry_action','connection_intent','task_id',
+    'claim_id','heartbeat_seq','checkpoint'
+}
+
+def expand_auto_attach_payload(payload:dict)->dict:
+    result=dict(payload or {})
+    nested=result.pop('arrival_context',None)
+    if nested is None:
+        return result
+    if not isinstance(nested,dict):
+        raise ValueError('arrival_context must be an object')
+    for key in AUTO_ATTACH_ARRIVAL_CONTEXT_KEYS:
+        if key not in result and nested.get(key) not in (None,''):
+            result[key]=nested[key]
+    return result
+
 def main():
     event_path=os.environ.get('GITHUB_EVENT_PATH')
     event_name=os.environ.get('GITHUB_EVENT_NAME','')
@@ -69,6 +89,7 @@ def main():
     else:
         args=[sys.executable,str(CORE),command]
     if command=='auto-attach':
+        payload=expand_auto_attach_payload(payload)
         add(args,'--agent',payload.get('agent'))
         add(args,'--provider',payload.get('provider'))
         add(args,'--provider-ref',payload.get('provider_ref'))

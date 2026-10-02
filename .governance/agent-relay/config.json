@@ -289,5 +289,37 @@
       "worker_c_projection": true
     },
     "shared_integration_required": true
+  },
+  "gscc_arrival_gateway": {
+    "enabled": true,
+    "authority": "GSCC_CANONICAL_PROTOCOL",
+    "workflow": ".github/workflows/gscc-observable-arrival.yml",
+    "script": "scripts/gscc_observable_arrival.py",
+    "mandatory_for_controlled_surfaces": true,
+    "first_touch_event": "SESSION_ATTACH",
+    "downstream_adapter": "GACRClientEmitterAdapter",
+    "downstream_event": "gacr_auto-attach",
+    "github_event_visible_triggers": [
+      "push",
+      "create",
+      "pull_request",
+      "issues",
+      "issue_comment",
+      "pull_request_review",
+      "pull_request_review_comment",
+      "workflow_dispatch"
+    ],
+    "dispatch_payload_top_level_limit": 10,
+    "nested_context_key": "arrival_context",
+    "internal_loop_guards": [
+      "GITHUB_ACTIONS_BOT_STATE_PUSH",
+      "GACR_OR_GSCC_REPOSITORY_DISPATCH",
+      "GACR_HOST_ISSUE_INGRESS"
+    ],
+    "provider_private_identity_policy": "SUPPLIED_ONLY_NEVER_INVENT",
+    "proprietary_silent_policy": "NOT_OBSERVABLE_NO_FALSE_ATTACH",
+    "github_event_identity_semantics": "OBSERVABLE_SURFACE_IDENTITY_NOT_PROVIDER_CONVERSATION_IDENTITY",
+    "step_13b_acceptance_effect": "ENABLES_INSTRUMENTED_PATH_DOES_NOT_BY_ITSELF_PASS_STEP_13B",
+    "live_candidate_status": "IMPLEMENTED_AND_EVENT_PATH_OBSERVED_PENDING_FINAL_PR_INTEGRATION"
   }
 }
