@@ -26,28 +26,53 @@
       "minLength": 1
     },
     "requested_head": {
-      "type": ["string", "null"]
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "session_id": {
-      "type": ["string", "null"]
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "surface_class": {
-      "type": ["string", "null"]
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "connection_method": {
-      "type": ["string", "null"]
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "contract_digest": {
-      "type": ["string", "null"]
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "surface": {
-      "type": ["string", "null"]
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "authority_required": {
-      "type": ["string", "null"]
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "status": {
-      "enum": ["VALIDATED", "WITHHELD", "DENIED"]
+      "enum": [
+        "VALIDATED",
+        "WITHHELD",
+        "DENIED"
+      ]
     },
     "reason_code": {
       "type": "string"
@@ -66,7 +91,10 @@
       "type": "string"
     },
     "live_preflight_evidence_ref": {
-      "type": ["string", "null"]
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "route": {
       "type": "array",
@@ -77,6 +105,18 @@
     },
     "evaluated_at": {
       "type": "string"
+    },
+    "access_grant_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "admission_id": {
+      "type": [
+        "string",
+        "null"
+      ]
     }
   },
   "additionalProperties": true
