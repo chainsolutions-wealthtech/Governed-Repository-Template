@@ -100,17 +100,31 @@ def build_arrival_route(
     connection_ref: str,
     surface_class: str,
     observed_head: str | None,
+    entry_context: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    entry_valid = False
+    entry_reason = "GSCC_ENTRY_CONTEXT_REQUIRED"
+    if observed_head:
+        entry_valid, entry_reason = validate_entry_context_receipt(
+            entry_context,
+            connection_ref=connection_ref,
+            observed_head_sha=observed_head,
+            repository=repository,
+        )
     return {
         "schema": "gscc-function-exposure-route/v1",
-        "status": "LOCKED_PENDING_FUNCTION_REQUEST",
+        "status": "LOCKED_PENDING_FUNCTION_REQUEST" if entry_valid else "LOCKED_PENDING_ENTRY_CONTEXT",
         "repository": repository,
         "connection_ref": connection_ref,
         "surface_class": surface_class,
         "observed_head": observed_head,
-        "first_stage": ROUTE_STAGES[0],
+        "entry_context_status": "VALIDATED" if entry_valid else "REQUIRED",
+        "entry_context_reason": entry_reason,
+        "entry_receipt": entry_context.get("entry_receipt") if entry_valid and isinstance(entry_context, dict) else None,
+        "first_stage": "GSCC_SESSION_BIND" if entry_valid else "GSCC_ENTRY_CONTEXT",
         "required_stages": list(ROUTE_STAGES),
-        "exposure_policy": "NOT_EXPOSED_UNTIL_VALIDATED",
+        "exposure_policy": "NOT_EXPOSED_UNTIL_ENTRY_CONTEXT_AND_FUNCTION_VALIDATED",
+        "invocation_authority_granted": False,
         "mutation_authority_granted": False,
     }
 
@@ -190,6 +204,7 @@ def evaluate_function_exposure(
     authority_evidence: dict[str, Any] | None,
     snapshot: dict[str, Any],
     sessions: dict[str, Any],
+    entry_context: dict[str, Any] | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
     now = (now or _now()).astimezone(timezone.utc)
@@ -221,6 +236,16 @@ def evaluate_function_exposure(
     if not requested_head or not session_head:
         result.update(status="WITHHELD", reason_code="EXACT_HEAD_REQUIRED")
         return result
+
+    entry_valid, entry_reason = validate_entry_context_receipt(
+        entry_context,
+        connection_ref=connection_ref,
+        observed_head_sha=requested_head,
+    )
+    if not entry_valid:
+        result.update(status="WITHHELD", reason_code=entry_reason)
+        return result
+    result["entry_receipt"] = entry_context.get("entry_receipt")
 
     required = tool.get("authority_required")
     if not authority_evidence:
@@ -255,6 +280,7 @@ def evaluate_function_exposure(
         "connection_ref": connection_ref,
         "session_id": session.get("session_id"),
         "requested_head": requested_head,
+        "entry_receipt": entry_context.get("entry_receipt"),
         "contract_digest": tool.get("contract_digest"),
         "authority_required": required,
         "authority_evidence_ref": authority_evidence.get("evidence_ref"),
@@ -279,6 +305,7 @@ def exposed_function_catalogue(
     authority_evidence_by_tool: dict[str, dict[str, Any]],
     snapshot: dict[str, Any],
     sessions: dict[str, Any],
+    entry_context: dict[str, Any] | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
     functions = []
@@ -294,6 +321,7 @@ def exposed_function_catalogue(
             authority_evidence=authority_evidence_by_tool.get(name),
             snapshot=snapshot,
             sessions=sessions,
+            entry_context=entry_context,
             now=now,
         )
         if receipt.get("status") == "VALIDATED":
@@ -471,6 +499,7 @@ def main() -> None:
     evaluate.add_argument("--live-preflight-evidence-ref")
     evaluate.add_argument("--snapshot", default=str(DEFAULT_SNAPSHOT))
     evaluate.add_argument("--sessions", default=str(DEFAULT_SESSIONS))
+    evaluate.add_argument("--entry-context")
     evaluate.add_argument("--output")
     evaluate.add_argument("--require-validated", action="store_true")
 
@@ -540,6 +569,7 @@ def main() -> None:
         authority_evidence=evidence,
         snapshot=_load_json(args.snapshot),
         sessions=_load_json(args.sessions),
+        entry_context=_load_json(args.entry_context) if args.entry_context else None,
     )
     _write_output(result, args.output)
     if args.require_validated and result.get("status") != "VALIDATED":
