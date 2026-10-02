@@ -938,3 +938,33 @@ These observations are durable supervision evidence, not new mutation authority 
   - genuinely fresh provider conversation/agent = NOT YET EXECUTED.
 - Ultimate live acceptance remains NOT_PASSED.
 - No P12-S6 / CASE 1 / GMC progression occurred.
+
+
+## 2026-10-02 — GSCC / GSE / GSCC↔GACR integration complete
+
+- Three parallel implementation tranches completed from the same GACR Step 13 partial baseline:
+  - GSCC Core: branch `governance/gscc-core-v1`, final head `b4cfec2e5dabfd28ab557e4ef740f0c44fa44457`, PR #140, Governance CI `36966935952 = PASS`, local GSCC suite 24/24 PASS.
+  - GSE Session State Engine: branch `governance/gse-session-state-engine-v1`, final head `c1913ddbcc9563f9ba532bf2a550a510524b9587`, PR #138, Governance CI `36966912324 = PASS`, local GSE suite 24/24 PASS.
+  - GSCC↔GACR Control: branch `governance/gscc-gacr-bidirectional-control-v1`, final head `185f00795811093432eccfa7e1b1cec0312377f1`, PR #139, Governance CI `36966930385 = PASS`.
+- Frozen cross-layer contract was verified before integration: 16 EVENTS, 13 COMMANDS and 13 DELIVERY_STATES are identical across GSCC Core, GSE and GSCC↔GACR control.
+- Integration order executed:
+  - PR #140 merged first at `a07e8211ff182b17948b6001bd8622a7252069ca`; post-merge Governance CI `36967370835 = PASS`; Relay `36967370863 = PASS`.
+  - GSE was then integrated over canonical GSCC Core via PR #141, merge `1d8215f527b38ac4aead40d699387b23b2021499`; post-merge Governance CI `36967581229 = PASS`; Relay `36967581241 = PASS`.
+  - Final GSCC↔GACR control integration was performed via PR #142.
+- Two cross-layer defects were found before final merge and corrected on the integration branch:
+  1. control harness expected `send(command)` while the real GSCC `SessionEndpoint` receives commands through `receive_commands()`; added a minimal `GSCCSessionControlEndpoint` adaptation seam without transferring GACR authority.
+  2. GSE refreshed liveness on every `CHALLENGE_RESPONSE`; corrected so `replay=true` / `fresh_liveness=false` never refreshes `last_liveness_evidence_at`.
+- Governance CI now gates all four layers together:
+  - GSCC Core;
+  - GSE SessionTwin;
+  - GSCC↔GACR control harness;
+  - controlled GSCC→GSE→GACR E2E.
+- First combined E2E run `36968072978` failed because the test command used a stale fixed timestamp and was correctly expired by the live GSCC endpoint. The fixture was corrected to runtime-relative time; no runtime semantics were weakened.
+- Corrected candidate run `36968154806 = PASS`, including the controlled E2E.
+- PR #142 merged at `feea5dfc9055c96c9a589889d96708b3fba353e2`.
+- Final post-merge Governance CI `36968203836 = PASS`; final Relay `36968203882 = PASS`.
+- Worker PR #138 is now integrated/superseded; worker PR #139 is closed as superseded. PR #140 was merged canonically.
+- `COMMAND DELIVERY != MUTATION AUTHORITY` remains preserved. No control message transfers claims or bypasses exact-HEAD reconciliation.
+- Step 13B has not been executed. It is now the next authorized gate: real fresh provider agent/conversation on the integrated GSCC/GSE/GACR path.
+- Ultimate live acceptance remains `NOT_PASSED`.
+- `P12-S6`, CASE 1 and GMC remain unchanged.

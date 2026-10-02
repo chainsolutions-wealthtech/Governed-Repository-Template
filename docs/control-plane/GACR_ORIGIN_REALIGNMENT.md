@@ -240,3 +240,23 @@ Integrated evidence:
 - Historical R1–R6 regression suites plus Tests A/B/C, D/E/F/G and the Correlator/Dispatcher/Takeover integration suite all pass together.
 
 The current live session cannot satisfy Step 13 because it is not a fresh GACR-unaware agent. No claim of ultimate acceptance is made. The next authorized operation is Step 13: run a real fresh conversation/agent without instructing it to register with GACR.
+
+
+## 2026-10-02 — Step 13B prerequisites integrated
+
+Status: **STEP 13B NEXT_AUTHORIZED / FRESH PROVIDER PROOF NOT EXECUTED**.
+
+The three prerequisite implementation tranches are now canonically integrated:
+
+- GSCC Core: PR #140, merge `a07e8211ff182b17948b6001bd8622a7252069ca`.
+- GSE Session State Engine: source PR #138, supervised integration PR #141, merge `1d8215f527b38ac4aead40d699387b23b2021499`.
+- GSCC↔GACR bidirectional control: source PR #139, supervised integration PR #142, merge `feea5dfc9055c96c9a589889d96708b3fba353e2`.
+
+The final integration gate executes GSCC Core, GSE, the GSCC↔GACR control harness and a controlled real-`SessionEndpoint` E2E together. Candidate Governance CI `36968154806 = PASS`; post-merge Governance CI `36968203836 = PASS`; post-merge GACR Relay `36968203882 = PASS`.
+
+Integration found and corrected two cross-layer contract defects before merge:
+
+1. the control harness endpoint seam used `send(command)` while the actual GSCC `SessionEndpoint` consumes commands through `receive_commands()`; a narrow transport adapter now bridges those surfaces without granting mutation authority;
+2. replayed liveness challenge responses now preserve control-channel reachability but do not refresh GSE liveness evidence.
+
+This controlled E2E is not the fresh-provider proof. Step 13B must still be executed with a genuinely fresh provider conversation/agent that is not instructed to register with GACR. Ultimate live acceptance remains **NOT_PASSED**.
