@@ -373,3 +373,22 @@ R6 is live-proven with the current ChatGPT host using the governed issue-comment
 The integration proves automatic processing of emitted host events, not an always-running browser daemon. When the host is actively handling governed work, it can emit safe events through the GitHub connector and GACR persists liveness/action context automatically. When no host process is running, no synthetic heartbeat is generated.
 
 The live proof preserves the core invariants: one canonical active session, no invented provider conversation ID, exact correlation, idempotent replay, exact-HEAD persistence guards, no claim/takeover bypass, and source/client runtime isolation.
+
+## Origin realignment — Presence-First planning authority
+
+Owner clarification after R6: R1-R6 are preserved, but future GACR evolution must return to the original presence-first objective.
+
+The canonical plan is:
+
+- human authority: `docs/control-plane/GACR_ORIGIN_REALIGNMENT.md`;
+- machine projection: `.governance/control-plane-state/gacr-origin-realignment.json`.
+
+Primary invariant:
+
+> An agent/conversation using a governed repository through an instrumentable access surface must become observable to GACR from the repository interaction itself, without requiring the agent to remember to explicitly invoke GACR.
+
+This does not invalidate R1-R6. Heartbeat/lease, Beacon, Correlator, Forensics, auto-attach, client emitter, host ingress, Dispatcher, claims and exact-HEAD takeover remain reusable canonical components.
+
+The realignment is incomplete until the live acceptance scenario in the canonical plan proves: fresh agent arrival without explicit GACR registration instruction → automatic observable presence → safe activity/progress observation → stall detection → second-agent exact-HEAD takeover → continuation of the same work.
+
+Registration of this plan does not change the global unique executable task or silently execute `P12-S6`.
