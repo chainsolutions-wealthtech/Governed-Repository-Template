@@ -202,15 +202,11 @@ def _emit_arrival(
     if facts.get("provider"):
         source["provider"] = facts["provider"]
 
-    scope = {
-        key: value
-        for key, value in {
-            "repository": repository,
-            "branch": facts.get("branch"),
-            "observed_head": facts.get("observed_head"),
-        }.items()
-        if value not in (None, "")
-    }
+    # Keep extended repository facts in GSCC, but do not explode the GitHub
+    # repository_dispatch top-level payload. GitHub accepts at most 10 client
+    # payload properties. The GACR bridge expands only an allowlisted nested
+    # arrival_context after transport.
+    scope = {"repository": repository}
 
     adapter = GACRClientEmitterAdapter(
         _emitter(repository, token=token, request_fn=request_fn)
@@ -222,12 +218,47 @@ def _emit_arrival(
         scope=scope,
     )
 
-    payload = {
+    arrival_context_keys = {
+        "repository",
+        "repository_id",
+        "organization",
+        "git_provider",
+        "github_actor",
+        "github_app_installation",
+        "branch",
+        "base_branch",
+        "observed_head",
+        "pull_request",
+        "workflow_run_id",
+        "run_attempt",
+        "delivery_correlation_id",
+        "last_action",
+        "last_evidence",
+    }
+    arrival_context = {
         key: value
         for key, value in facts.items()
-        if key not in {"repository"} and value not in (None, "", [], {})
+        if key in arrival_context_keys and value not in (None, "", [], {})
     }
-    payload["repository"] = repository
+    payload = {
+        key: value
+        for key, value in {
+            "connection_ref": facts.get("connection_ref"),
+            "client_instance_id": facts.get("client_instance_id"),
+            "provider": facts.get("provider"),
+            "provider_ref": facts.get("provider_ref"),
+            "agent": facts.get("agent"),
+            "surface_class": facts.get("surface_class"),
+            "connection_method": facts.get("connection_method"),
+            "event_type": facts.get("event_type"),
+            "arrival_context": arrival_context,
+        }.items()
+        if value not in (None, "", [], {})
+    }
+
+    # ClientEmitter adds source=CLIENT_EMITTER. Keep one slot reserved for it.
+    if len(payload) > 9:
+        raise ValueError("GSCC observable arrival exceeds GitHub dispatch property budget")
 
     emitted = endpoint.attach(**payload)
     message = emitted["message"]
