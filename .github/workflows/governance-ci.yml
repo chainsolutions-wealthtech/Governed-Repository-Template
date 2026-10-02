@@ -48,6 +48,9 @@ jobs:
       - name: Test GSCC admission access policy
         run: python3 scripts/test_gscc_admission_access_policy.py
 
+      - name: Test GSCC full admission qualification
+        run: python3 scripts/test_gscc_full_admission_qualification.py
+
       - name: Test source-only GSCC mandatory function exposure gate
         run: |
           if [ -f .template-source ]; then
