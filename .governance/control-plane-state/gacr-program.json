@@ -8,7 +8,7 @@
     "original_intent": "CANONICAL_RECORDED",
     "baseline_r1_r6": "PRESERVED_REOBSERVED_ATTESTED_OR01_PASS",
     "origin_realignment_plan": "ACCEPTED",
-    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13B_NEXT_REMEDIATION_CLOSED",
+    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13B_NEXT_G6_CLOSED",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
   "next_action": "REALIGNMENT_STEP_13B_RUN_REAL_FRESH_PROVIDER_AGENT_TEST",
@@ -220,7 +220,7 @@
     "observed_main": "114c5397966a5c6ad7d8770298abd698929ecf8f"
   },
   "g6": {
-    "status": "PASS_REAUTHORIZED",
+    "status": "PASS_CLOSED",
     "pr": 150,
     "observed_main": "114c5397966a5c6ad7d8770298abd698929ecf8f",
     "reconciliation_ci": 36971795607,
@@ -229,6 +229,13 @@
     "authority_boundaries": "PASS",
     "full_regression": "PASS",
     "step_13b": "NEXT_AUTHORIZED",
-    "fresh_provider_agent": "NOT_EXECUTED"
+    "fresh_provider_agent": "NOT_EXECUTED",
+    "initial_reconciliation_ci": 36971795607,
+    "final_reauthorized_candidate_ci": 36972111008,
+    "merge": "d0f66130f135f4aa7363c3e88c1e3f44ced9a828",
+    "postmerge_ci": 36972158291,
+    "postmerge_relay": 36972158234,
+    "final_main_observed": "ab3fd3848878e93f929cbd3d89c9d15be43537a7",
+    "ultimate_live_acceptance": "NOT_PASSED"
   }
 }
