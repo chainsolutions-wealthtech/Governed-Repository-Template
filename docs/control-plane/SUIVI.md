@@ -772,3 +772,17 @@ First live ChatGPT-host event:
 - total historical sessions remained 2 with exactly 1 active session.
 
 Before final attestation, rerun semantics were hardened: issue-comment reruns now reconcile to latest default-branch state before idempotency evaluation. Candidate R6-A branch: `governance/gacr-r6a-rerun-idempotence`.
+
+## 2026-10-02 — GACR R6-B portability correction
+
+Before final R6 attestation, a portability review found that Template source issue `#115` must not be copied into generated/adopted clients.
+
+R6-B therefore:
+- removes `#115` from generic workflow conditions;
+- keeps `#115` only in Template source config;
+- clears `issue_number` during governed client upgrade;
+- uses the canonical inbox title as the client fallback discriminator;
+- preserves source/client runtime-memory isolation;
+- adds regression tests for number mode, title fallback mode and upgrader non-distribution.
+
+Candidate version: `2.8.39`. No target client repository was mutated to prove this source-only correction.
