@@ -295,6 +295,9 @@ def validate_access_grant(
         return {"status": "WITHHELD", "reason_code": "ACCESS_GRANT_REQUIRED"}
     if grant.get("schema") != "gscc-access-grant/v1" or grant.get("status") != "AUTHORIZED":
         return {"status": "DENIED", "reason_code": "ACCESS_GRANT_INVALID"}
+    required_fields = ("grant_id", "admission_id", "session_id", "connection_ref", "repository", "bound_head", "expires_at")
+    if any(not grant.get(field) for field in required_fields):
+        return {"status": "DENIED", "reason_code": "ACCESS_GRANT_INVALID"}
     if grant.get("connection_ref") != connection_ref:
         return {"status": "DENIED", "reason_code": "ACCESS_GRANT_CONNECTION_MISMATCH"}
     if grant.get("repository") != repository:
