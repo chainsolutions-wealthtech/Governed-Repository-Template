@@ -89,5 +89,17 @@
     "private_reasoning"
   ],
   "global_programme_dependency": false,
-  "historical_owner_sequence": "Finish GACR first; return to the global programme only after explicit owner OK."
+  "historical_owner_sequence": "Finish GACR first; return to the global programme only after explicit owner OK.",
+  "formal_revalidation": {
+    "gate": "REALIGNMENT_STEP_2",
+    "status": "PASS_CLOSED",
+    "revalidated_on": "2026-10-02",
+    "observed_main_head": "6a32debcc96d7c33b421dc901c514f79a4d05104",
+    "canonical_source": "docs/control-plane/GACR_ORIGINAL_INTENT.md",
+    "canonical_source_blob_sha": "29a4f35bda44132c6113ba2569e9ba70f2945212",
+    "attestation": "docs/control-plane/GACR_ORIGINAL_INTENT_REVALIDATION.md",
+    "historical_intent_rewritten": false,
+    "p12_s6_touched": false,
+    "result": "Original two-limit intent, BEACON/WATCH/CORRELATOR/DISPATCHER target, Connection Envelope, connection fingerprint, confidence levels, optional Bridge, Agent Context, provider-unknown semantics and live ultimate acceptance requirement remain canonical."
+  }
 }

@@ -8,10 +8,10 @@
     "original_intent": "CANONICAL_RECORDED",
     "baseline_r1_r6": "PRESERVED_REOBSERVED_ATTESTED_OR01_PASS",
     "origin_realignment_plan": "ACCEPTED",
-    "realignment_execution": "STEP_1_CLOSED_STEP_2_FORMAL_GATE_NEXT_OVERALL_NOT_COMPLETE",
+    "realignment_execution": "STEPS_1_2_3_CLOSED_STEP_4_NEXT_OVERALL_NOT_COMPLETE",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
-  "next_action": "REALIGNMENT_STEP_2_FORMAL_GATE_REVALIDATE_EXISTING_GACR_ORIGINAL_INTENT",
+  "next_action": "REALIGNMENT_STEP_4_IDENTIFY_R4_R6_CENTER_OF_GRAVITY_DRIFT",
   "or01": {
     "status": "PASS",
     "attestation": "docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md",
@@ -26,9 +26,25 @@
   "step_2": {
     "source_already_canonical": true,
     "source": "docs/control-plane/GACR_ORIGINAL_INTENT.md",
-    "status": "FORMAL_GATE_NOT_YET_EXECUTED"
+    "status": "PASS_CLOSED",
+    "attestation": "docs/control-plane/GACR_ORIGINAL_INTENT_REVALIDATION.md",
+    "observed_main_head": "6a32debcc96d7c33b421dc901c514f79a4d05104",
+    "historical_intent_rewritten": false
   },
   "step_3": {
-    "status": "BLOCKED_UNTIL_STEP_2_FORMAL_GATE_CLOSED"
+    "status": "PASS_CLOSED",
+    "artifact": "docs/control-plane/GACR_INTENT_IMPLEMENTATION_GAP_MATRIX.md",
+    "analysis_baseline_main": "6a32debcc96d7c33b421dc901c514f79a4d05104",
+    "requirements": 28,
+    "distribution": {
+      "complete": 14,
+      "partial": 8,
+      "missing": 4,
+      "external_boundary": 2
+    },
+    "corrective_implementation_started": false
+  },
+  "step_4": {
+    "status": "NEXT_AUTHORIZED"
   }
 }
