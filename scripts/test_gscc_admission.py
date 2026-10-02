@@ -352,7 +352,7 @@ def admission_receipt_for_binding(**overrides):
     return value
 
 
-def gacr_sessions_for_binding(*, duplicate=False):
+def gacr_sessions_for_binding(*, duplicate=False, lease_expires_at="2026-10-02T12:15:00+00:00"):
     base = {
         "session_id": "session-canonical-live",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -363,7 +363,11 @@ def gacr_sessions_for_binding(*, duplicate=False):
         "branch": "main",
         "surface_class": "GITHUB_EVENT_VISIBLE",
         "connection_method": "gscc-github-event-gateway",
-        "relay": {"state": "ACTIVE", "branch": "main"},
+        "relay": {
+            "state": "ACTIVE",
+            "branch": "main",
+            "lease_expires_at": lease_expires_at,
+        },
     }
     sessions = [base]
     if duplicate:
@@ -399,6 +403,27 @@ def test_session_binding_fails_closed_when_ambiguous_or_missing():
     assert ambiguous["reason_code"] == "ADMISSION_SESSION_BIND_AMBIGUOUS", ambiguous
 
     missing = resolve_admission_session_binding(receipt, {"sessions": []}, now=NOW)
+    assert missing["status"] == "UNBOUND", missing
+    assert missing["reason_code"] == "ADMISSION_SESSION_BIND_NOT_FOUND", missing
+
+
+
+def test_session_binding_rejects_expired_or_missing_lease():
+    receipt = admission_receipt_for_binding(
+        connection_ref="gscc-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations:ref:main"
+    )
+
+    expired = resolve_admission_session_binding(
+        receipt,
+        gacr_sessions_for_binding(lease_expires_at="2026-10-02T11:59:59+00:00"),
+        now=NOW,
+    )
+    assert expired["status"] == "UNBOUND", expired
+    assert expired["reason_code"] == "ADMISSION_SESSION_BIND_NOT_FOUND", expired
+
+    missing_store = gacr_sessions_for_binding()
+    missing_store["sessions"][0]["relay"].pop("lease_expires_at", None)
+    missing = resolve_admission_session_binding(receipt, missing_store, now=NOW)
     assert missing["status"] == "UNBOUND", missing
     assert missing["reason_code"] == "ADMISSION_SESSION_BIND_NOT_FOUND", missing
 
@@ -442,6 +467,7 @@ def main():
     test_session_binding_prefers_exact_connection_ref()
     test_session_binding_uses_unique_strong_observable_anchor_without_rewriting_admission()
     test_session_binding_fails_closed_when_ambiguous_or_missing()
+    test_session_binding_rejects_expired_or_missing_lease()
     test_access_grant_accepts_only_attested_admission_to_canonical_session_binding()
     print("GSCC_ADMISSION_TESTS_OK")
 
