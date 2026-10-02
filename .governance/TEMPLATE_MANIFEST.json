@@ -81,7 +81,16 @@
       "scripts/test_gacr_client_emitter.py",
       "scripts/gacr_host_issue_ingress.py",
       "scripts/test_gacr_host_issue_ingress.py",
-      "scripts/test_gacr_host_issue_workflow.py"
+      "scripts/test_gacr_host_issue_workflow.py",
+      "scripts/gscc/__init__.py",
+      "scripts/gscc/protocol.py",
+      "scripts/gscc/transport.py",
+      "scripts/gscc/session_endpoint.py",
+      "scripts/gscc/instrumentation.py",
+      "scripts/gscc/gacr_compat.py",
+      "scripts/gscc_observable_arrival.py",
+      "scripts/test_gscc_observable_arrival.py",
+      ".github/workflows/gscc-observable-arrival.yml"
     ],
     "machine_governance": [
       ".governance/bootstrap-state.json",
@@ -210,7 +219,10 @@
       ".governance/control-plane-state/gacr-beacons.json",
       ".governance/control-plane-state/gacr-correlations.json",
       ".governance/control-plane-state/gacr-dispatches.json",
-      ".governance/control-plane-state/gacr-forensics.json"
+      ".governance/control-plane-state/gacr-forensics.json",
+      "scripts/gscc_function_exposure_gate.py",
+      "scripts/test_gscc_function_exposure_gate.py",
+      ".github/workflows/gscc-function-exposure-gate.yml"
     ],
     "local_entry_ui": [
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml"
@@ -479,7 +491,11 @@
     "GACR Presence Fabric observes controlled first-touch repository use without agent self-registration",
     "GACR ConnectionEnvelope v1 preserves field-by-field provenance and explicit UNAVAILABLE values",
     "GACR connection fingerprint v1 freezes first-touch identity inputs so later HEAD movement does not change instance identity",
-    "GACR ambiguous Presence binding fails closed as UNBOUND_ACTIVITY without arbitrary session selection"
+    "GACR ambiguous Presence binding fails closed as UNBOUND_ACTIVITY without arbitrary session selection",
+    "observable repository arrival routed through canonical GSCC before GACR",
+    "raw MCP catalogue is planning evidence not governed exposed-function authority",
+    "same canonical GSCC function exposure workflow gates governed execution packages",
+    "every MCP invocation in a governed package is covered by an exact-head GSCC route digest"
   ],
   "automatic_initialization_supported": true
 }
