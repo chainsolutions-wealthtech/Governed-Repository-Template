@@ -222,7 +222,8 @@
       ".governance/control-plane-state/gacr-forensics.json",
       "scripts/gscc_function_gate.py",
       "scripts/test_gscc_function_gate.py",
-      ".github/workflows/gscc-function-gate.yml"
+      ".github/workflows/gscc-function-gate.yml",
+      "docs/control-plane/GSCC_FUNCTION_EXPOSURE_GATE.md"
     ],
     "local_entry_ui": [
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml"
