@@ -59,7 +59,7 @@ Current GACR programme state:
 
 ## GACR next action
 
-`GSCC_FUNCTION_EXPOSURE_GATE_INTEGRATE_AND_ATTEST`
+`GSCC_FUNCTION_EXPOSURE_GATE_RUN_LIVE_FUNCTION_REQUEST`
 
 Step 13B remains the next live acceptance gate, but its execution is temporarily blocked until the two bounded post-integration findings in `docs/control-plane/GACR_GSCC_GSE_INTEGRATION_AUDIT.md` are closed and re-attested from the then-current `main`.
 
@@ -72,7 +72,7 @@ A later canonical audit found two residual integration risks before Step 13B. Bo
 
 A procedural deviation is also recorded: Worker A and Worker B were merged before all three worker PRs remained open for one final integration audit, contrary to the worker prompts. This is non-blocking because the subsequent dependency-ordered integration, full green CI and controlled PR #142 contained the runtime risk, but it remains part of the durable audit record.
 
-No GACR step is rolled back. Step 13B remains `NOT_EXECUTED`. After G6, the owner introduced a stronger pre-exposure invariant: no governed function may be published or invoked before a GSCC exposure route is validated. PR #153 implements that additive gate. Until PR #153 is merged and post-merge live workflow evidence is green, Step 13B is temporarily blocked by this new owner-required hardening. This programme remains independent of `P12-S6`, CASE 1, GMC and the global Control Plane programme.
+No GACR step is rolled back. Step 13B remains `NOT_EXECUTED`. After G6, the owner introduced a stronger pre-exposure invariant: no governed function may be published or invoked before a GSCC exposure route is validated. PR #153 implements that additive gate. PR #153 is now merged and its post-merge CI, arrival-route workflow, observable-arrival gateway and GACR relay are green. Step 13B remains blocked only until one real governed function exposure request traverses the new evaluator and yields the expected fail-closed/VALIDATED behavior. This programme remains independent of `P12-S6`, CASE 1, GMC and the global Control Plane programme.
 
 ## Completion condition
 
@@ -154,3 +154,14 @@ PR #153 implements this rule additively over the already-merged observable-arriv
 The raw MCP catalogue remains planning evidence and is explicitly **not** the governed exposed function catalogue.
 
 Step 13B remains `NOT_EXECUTED`. It must not resume until PR #153 is integrated and a post-merge `gscc_function_exposure_request` proves the workflow fails closed for invalid requests and produces a `VALIDATED` receipt only for a properly authorized request.
+
+### PR #153 post-merge attestation
+
+- merge: `14641e4abcf8abf37f7a4975a8311c6253ea9263`
+- post-merge Governance CI: `36977148809 = PASS`
+- GSCC Function Exposure Gate arrival-route workflow: `36977148865 = PASS`
+- GSCC Observable Arrival Gateway: `36977148970 = PASS`
+- GACR Relay: `36977148872 = PASS`
+- downstream auto-attach relay: `36977162025 = PASS`
+
+The remaining proof is deliberately narrow: execute one real governed function exposure request through `gscc_function_exposure_request`. This connector cannot emit repository-dispatch writes, so that specific live request is not fabricated here.
