@@ -59,7 +59,7 @@ Current GACR programme state:
 
 ## GACR next action
 
-`GSCC_FUNCTION_EXPOSURE_GATE_RUN_LIVE_FUNCTION_REQUEST`
+`GSCC_ADMISSION_ACCESS_GATE_IMPLEMENT_TESTS_FIRST`
 
 Step 13B remains the next live acceptance gate, but its execution is temporarily blocked until the two bounded post-integration findings in `docs/control-plane/GACR_GSCC_GSE_INTEGRATION_AUDIT.md` are closed and re-attested from the then-current `main`.
 
@@ -73,6 +73,32 @@ A later canonical audit found two residual integration risks before Step 13B. Bo
 A procedural deviation is also recorded: Worker A and Worker B were merged before all three worker PRs remained open for one final integration audit, contrary to the worker prompts. This is non-blocking because the subsequent dependency-ordered integration, full green CI and controlled PR #142 contained the runtime risk, but it remains part of the durable audit record.
 
 No GACR step is rolled back. Step 13B remains `NOT_EXECUTED`. After G6, the owner introduced a stronger pre-exposure invariant: no governed function may be published or invoked before a GSCC exposure route is validated. PR #153 implements that additive gate. PR #153 is now merged and its post-merge CI, arrival-route workflow, observable-arrival gateway and GACR relay are green. Step 13B remains blocked only until one real governed function exposure request traverses the new evaluator and yields the expected fail-closed/VALIDATED behavior. This programme remains independent of `P12-S6`, CASE 1, GMC and the global Control Plane programme.
+
+
+
+### Existing arrival gateway preservation
+
+The owner clarified that the already-integrated GSCC Observable Arrival Gateway is part of the preserved baseline and must remain in place.
+
+The admission/access gate is layered around it as follows:
+
+```text
+controlled client/provider
+→ admission
+→ qualification / Access Grant
+→ existing controlled GSCC arrival
+→ SessionEndpoint / GACR auto-attach
+→ existing function exposure gate
+
+GitHub-event-visible arrival
+→ existing observable-arrival gateway
+→ presence/session evidence only
+→ admission still required
+→ qualification / Access Grant
+→ existing function exposure gate
+```
+
+Observable arrival never equals access authority. No admission implementation may remove or duplicate the existing arrival gateway.
 
 ## Completion condition
 
@@ -189,3 +215,53 @@ Tests-first evidence:
 - candidate PR Observable Arrival Gateway `36978496029 = PASS`.
 
 A source-only post-merge workflow, `.github/workflows/gscc-function-route-selftest.yml`, will exercise the reusable `workflow_call` against canonical `main`. Until that post-merge proof and the already-required real `gscc_function_exposure_request` are observed, Step 13B remains `NOT_EXECUTED`.
+
+## 2026-10-02 — Owner admission/access invariant supersedes the pending live exposure request
+
+Status: **SPECIFIED / NOT IMPLEMENTED / STEP 13B BLOCKED**.
+
+After integration of the existing GSCC Function Exposure Gate, the owner introduced a stronger prerequisite for governed agent repository access.
+
+Canonical authority:
+
+`docs/control-plane/GSCC_ADMISSION_ACCESS_GATE.md`
+
+The required order is now:
+
+```text
+IDENTITY
+→ ADMISSION ENVELOPE
+→ SAFE VALIDATION + PROVENANCE
+→ CANONICAL SESSION / CORRELATION
+→ PREAUTHORIZED
+→ QUALIFICATION PATH
+→ ACCESS GRANT
+→ EXISTING GSCC FUNCTION EXPOSURE GATE
+→ VALIDATED FUNCTION SURFACE
+→ GOVERNED REPOSITORY
+```
+
+The following remain distinct:
+
+```text
+IDENTITY
+!= ADMISSION
+!= PREAUTHORIZATION
+!= ACCESS AUTHORIZATION
+!= FUNCTION EXPOSURE
+!= MUTATION AUTHORITY
+```
+
+The admission/access layer must extend the existing GSCC/GSE/GACR/function-gate authority. A second gate engine, second session store, second correlator, second claim store or second takeover authority is forbidden.
+
+A valid admission yields only `PREAUTHORIZED`. The agent must then complete governance-read, current repository baseline, exact-HEAD, task/claim/collision, capability/challenge and GSE-initial-state qualification before an Access Grant may be issued. An Access Grant only makes the session eligible to request function exposure; it grants neither invocation nor mutation authority.
+
+Therefore the previously pending real `gscc_function_exposure_request` is no longer the immediate executable GACR action. It must not be used to bypass this newly specified admission prerequisite.
+
+Current GACR next action:
+
+`GSCC_ADMISSION_ACCESS_GATE_IMPLEMENT_TESTS_FIRST`
+
+Step 13B remains `NOT_EXECUTED` and blocked until the admission/access gate is implemented, regression-tested and attested from then-current `main`. After that, the real function-exposure request remains a required downstream live proof.
+
+This is GACR/GSCC cross-cutting hardening only. It does not execute or replace `P12-S6`, CASE 1, GMC or the global Control Plane programme.
