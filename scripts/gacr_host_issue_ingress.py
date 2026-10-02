@@ -102,9 +102,14 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
         return None
 
     issue = event.get("issue") or {}
-    expected_issue = int(bridge.get("issue_number") or 0)
-    if int(issue.get("number") or 0) != expected_issue:
-        return None
+    configured_issue = bridge.get("issue_number")
+    if configured_issue not in (None, "", 0):
+        if int(issue.get("number") or 0) != int(configured_issue):
+            return None
+    else:
+        expected_title = str(bridge.get("issue_title") or "").strip()
+        if not expected_title or str(issue.get("title") or "").strip() != expected_title:
+            return None
 
     comment = event.get("comment") or {}
     body = str(comment.get("body") or "")
