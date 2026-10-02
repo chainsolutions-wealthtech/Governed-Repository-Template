@@ -1019,3 +1019,18 @@ These observations are durable supervision evidence, not new mutation authority 
 - GACR authority boundaries remain unchanged.
 - Step 13B transitions from `BLOCKED_PENDING_G6_REAUTHORIZATION` to `NEXT_AUTHORIZED`.
 - Fresh provider agent remains NOT_EXECUTED; ultimate live acceptance remains NOT_PASSED.
+
+
+## 2026-10-02 — GACR G6 final closure
+
+- G6 first reconciliation CI with Step 13B still blocked: `36971795607 = PASS`.
+- G6 final reauthorized candidate CI: `36972111008 = PASS`.
+- PR #150 merge: `d0f66130f135f4aa7363c3e88c1e3f44ced9a828`.
+- Post-merge Governance CI: `36972158291 = PASS`.
+- Post-merge GACR Relay: `36972158234 = PASS`.
+- Exact post-auto-attach main: `ab3fd3848878e93f929cbd3d89c9d15be43537a7`.
+- G4 / AUDIT-01 = CLOSED_PASS.
+- G5 / AUDIT-02 = CLOSED_PASS.
+- G6 = PASS_CLOSED.
+- Step 13B = NEXT_AUTHORIZED / NOT_EXECUTED.
+- Fresh-provider acceptance has not yet occurred; ultimate live acceptance remains NOT_PASSED.
