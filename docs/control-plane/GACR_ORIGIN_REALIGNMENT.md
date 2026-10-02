@@ -73,7 +73,7 @@ The following order is frozen. A later step may not be treated as executable pro
 | # | Operation | Initial status | Exit evidence |
 |---:|---|---|---|
 | 1 | Freeze and attest the current R6 baseline so nothing already built is lost. | BASELINE_AVAILABLE / REOBSERVE_BEFORE_EXECUTION | Exact current `main`, R1-R6 assets and live evidence reobserved and recorded. |
-| 2 | Reconstruct the original GACR intention from R1 history, owner requirements and existing authorities. | PLANNED | Written original-intent authority with explicit presence-first goal. |
+| 2 | Reconstruct the original GACR intention from R1 history, owner requirements and existing authorities. | SOURCE_CAPTURED / FORMAL_GATE_PENDING_STEP_1 | `docs/control-plane/GACR_ORIGINAL_INTENT.md` now preserves the original intention and historical stop point; ordered execution is not marked DONE before step 1. |
 | 3 | Build `ORIGINAL_INTENT ↔ CURRENT_IMPLEMENTATION ↔ GAP` matrix. | PLANNED | Every original objective mapped to current capability, partial coverage or gap. |
 | 4 | Identify precisely where R4-R6 shifted the center of gravity toward explicit event transport rather than automatic presence observation. | PLANNED | Documented drift analysis; no existing capability deleted. |
 | 5 | Write acceptance tests before corrective implementation. | PLANNED | RED/expected-fail tests for automatic presence, liveness/progress, stall and takeover behavior. |
@@ -210,12 +210,17 @@ If this scenario does not pass, the status must remain partial even if unit/CI t
 
 ## Relationship to the global programme
 
-This plan is accepted durable GACR work, but its registration alone does **not** change the Control Plane's unique executable task.
+GACR is a distinct technical programme with its own chronology and next action. The global Control Plane programme is governed separately by `docs/control-plane/PROGRAM.md`.
 
-At the time this plan is recorded:
+Canonical GACR programme authority: `docs/control-plane/GACR_PROGRAM.md`.
 
-- global unique task remains `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`;
-- this document must not silently execute P12-S6;
-- future GACR implementation must be explicitly activated through the existing programme/task authority and exact-HEAD workflow;
+Rules:
+
+- there is no dependency edge `P12-S6 → GACR`;
+- advancing GACR does not advance the global programme;
+- advancing the global programme does not prove GACR complete;
+- when the owner directs GACR work, GACR may progress while the global programme remains parked;
+- the historical sequencing instruction is: finish GACR first, then return to the global programme only after explicit owner OK;
+- all GACR mutation still follows repository governance, exact-HEAD and CI requirements;
 - the presence-first invariants in this document must be read before any further GACR revision is designed.
 
