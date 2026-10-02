@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "revision": 2,
+  "revision": 3,
   "items": [
     {
       "forensic_id": "GACR-F-9e71238bc954",
-      "generated_at": "2026-10-02T00:50:28+00:00",
+      "generated_at": "2026-10-02T00:56:30+00:00",
       "process": "GACR",
       "authority": "CP-AGENT-RELAY-001-R3",
       "session_id": "session-68c97d4bb1ef71c86444de12",
@@ -20,9 +20,9 @@
       "liveness": {
         "session_status": "ACTIVE",
         "relay_state": "ACTIVE",
-        "last_seen_at": "2026-10-02T00:50:28+00:00",
-        "last_heartbeat_at": "2026-10-02T00:50:28+00:00",
-        "lease_expires_at": "2026-10-02T01:20:28+00:00",
+        "last_seen_at": "2026-10-02T00:56:30+00:00",
+        "last_heartbeat_at": "2026-10-02T00:56:30+00:00",
+        "lease_expires_at": "2026-10-02T01:26:30+00:00",
         "lease_expired_at_analysis": false,
         "stalled_at": null
       },
@@ -31,7 +31,7 @@
         "branch": "main",
         "pull_request": null,
         "starting_head_sha": "4c7db9f0e2e782de147ef316c41086ed0863b49e",
-        "last_observed_head_sha": "22c0f6f1a17a6478221436de3e638b3efc643b56",
+        "last_observed_head_sha": "21e499e5f556df53c3b1105aaa4b4712361287ec",
         "last_written_head_sha": null,
         "active_claims": [],
         "lock_observation": "NO_INDEPENDENT_LOCK_STORE; CLAIMS_AND_COLLISION_DOMAINS_ARE_CANONICAL"
@@ -68,18 +68,18 @@
         },
         "in_flight_action": null
       },
-      "last_checkpoint_ref": "CHK-R6-LIVE-001",
-      "last_evidence_ref": "github-issue-comment:5943497457",
+      "last_checkpoint_ref": "CHK-R6B-LIVE-001",
+      "last_evidence_ref": "github-issue-comment:5943559595",
       "last_takeover": null,
       "last_dispatch": null,
       "resume_point": {
         "task_id": null,
         "branch": "main",
         "pull_request": null,
-        "last_observed_head_sha": "22c0f6f1a17a6478221436de3e638b3efc643b56",
+        "last_observed_head_sha": "21e499e5f556df53c3b1105aaa4b4712361287ec",
         "last_written_head_sha": null,
-        "checkpoint_ref": "CHK-R6-LIVE-001",
-        "evidence_ref": "github-issue-comment:5943497457",
+        "checkpoint_ref": "CHK-R6B-LIVE-001",
+        "evidence_ref": "github-issue-comment:5943559595",
         "active_claim_work_items": [],
         "collision_domains": [],
         "in_flight_action": null,
@@ -98,12 +98,12 @@
         "may_replay_in_flight_action_without_reconciliation": false
       },
       "evidence_counts": {
-        "beacons": 7,
+        "beacons": 9,
         "takeovers": 0,
         "dispatches": 0,
         "active_claims": 0
       },
-      "analysis_digest": "f85c67358d481d21dcf4e547821dea8ba473a968f24784d85a56d5ef5c4dcd4c"
+      "analysis_digest": "1294b3ee17efffc947ae2ca3f0797d2b41083c37a1d564c0d4709c92c06af3ce"
     }
   ]
 }
