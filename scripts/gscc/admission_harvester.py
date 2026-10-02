@@ -15,11 +15,11 @@ from pathlib import Path
 from typing import Any, Callable
 
 if __package__:
-    from .admission import QUALIFICATION_REQUIREMENTS
+    from .admission import QUALIFICATION_REQUIREMENTS, resolve_admission_session_binding
     from .protocol import assert_secretless
 else:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    from gscc.admission import QUALIFICATION_REQUIREMENTS
+    from gscc.admission import QUALIFICATION_REQUIREMENTS, resolve_admission_session_binding
     from gscc.protocol import assert_secretless
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -170,55 +170,73 @@ def _connection_field(session: dict[str, Any], name: str) -> Any:
 def resolve_gacr_session(
     sessions: dict[str, Any],
     *,
-    connection_ref: str,
-    repository: str,
+    admission_receipt: dict[str, Any] | None = None,
+    connection_ref: str | None = None,
+    repository: str | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
     now = (now or _now()).astimezone(timezone.utc)
-    matches: list[dict[str, Any]] = []
-    for item in sessions.get("sessions") or []:
-        if not isinstance(item, dict):
-            continue
-        if item.get("connection_ref") != connection_ref or item.get("repository") != repository:
-            continue
-        if item.get("status") != "ACTIVE":
-            continue
-        relay = item.get("relay") or {}
-        if relay.get("state") != "ACTIVE":
-            continue
-        expiry = _parse_datetime(relay.get("lease_expires_at"))
-        if expiry is None or expiry <= now:
-            continue
-        matches.append(item)
+    receipt = copy.deepcopy(admission_receipt) if isinstance(admission_receipt, dict) else {
+        "schema": "gscc-admission-receipt/v1",
+        "status": "PREAUTHORIZED",
+        "admission_id": "GSCC-ADM-HARVEST-LOOKUP",
+        "connection_ref": connection_ref,
+        "repository": repository,
+        "requested_branch": None,
+        "evaluated_at": _iso(now),
+    }
+    repository = str(repository or receipt.get("repository") or "")
+    if not repository:
+        return normalize_unavailable("ADMISSION_REPOSITORY_REQUIRED", "GACR_CANONICAL_SESSION_STORE", now)
 
-    if not matches:
-        return normalize_unavailable("NO_ACTIVE_CANONICAL_GACR_SESSION", "GACR_CANONICAL_SESSION_STORE", now)
-    if len(matches) != 1:
-        return {
-            "status": "AMBIGUOUS",
-            "reason": "MULTIPLE_ACTIVE_CANONICAL_GACR_SESSIONS",
-            "match_count": len(matches),
-            "provenance": "CORRELATED",
-            "source": "GACR_CANONICAL_SESSION_STORE",
-            "observed_at": _iso(now),
-        }
+    binding = resolve_admission_session_binding(receipt, sessions, now=now)
+    if binding.get("status") != "BOUND":
+        reason = str(binding.get("reason_code") or "NO_ACTIVE_CANONICAL_GACR_SESSION")
+        if reason == "ADMISSION_SESSION_BIND_AMBIGUOUS":
+            return {
+                "status": "AMBIGUOUS",
+                "reason": reason,
+                "candidate_session_ids": binding.get("candidate_session_ids") or [],
+                "provenance": "CORRELATED",
+                "source": "GACR_CANONICAL_SESSION_BINDING",
+                "observed_at": _iso(now),
+            }
+        return normalize_unavailable(reason, "GACR_CANONICAL_SESSION_BINDING", now)
 
-    session = matches[0]
+    session_id = binding.get("session_id")
+    session = next(
+        (
+            item for item in (sessions.get("sessions") or [])
+            if isinstance(item, dict) and item.get("session_id") == session_id
+        ),
+        None,
+    )
+    if not isinstance(session, dict):
+        return normalize_unavailable("BOUND_GACR_SESSION_NOT_FOUND", "GACR_CANONICAL_SESSION_STORE", now)
+
+    relay = session.get("relay") if isinstance(session.get("relay"), dict) else {}
+    expiry = _parse_datetime(relay.get("lease_expires_at"))
+    if expiry is None or expiry <= now:
+        return normalize_unavailable("GACR_SESSION_LEASE_EXPIRED", "GACR_CANONICAL_SESSION_STORE", now)
+
     result = {
         "status": "BOUND",
         "session_id": session.get("session_id"),
-        "connection_ref": session.get("connection_ref"),
+        "connection_ref": binding.get("canonical_connection_ref") or session.get("connection_ref"),
+        "admission_connection_ref": binding.get("admission_connection_ref") or receipt.get("connection_ref"),
+        "binding_level": binding.get("correlation"),
+        "binding_evidence_ref": binding.get("binding_evidence_ref"),
         "repository": session.get("repository"),
         "last_observed_head": session.get("last_observed_head_sha"),
-        "lease_expires_at": (session.get("relay") or {}).get("lease_expires_at"),
-        "task_id": (session.get("relay") or {}).get("task_id") or _connection_field(session, "task_id"),
+        "lease_expires_at": relay.get("lease_expires_at"),
+        "task_id": relay.get("task_id") or _connection_field(session, "task_id"),
         "claim_id": _connection_field(session, "claim_id"),
         "capabilities": copy.deepcopy(session.get("capabilities") or _connection_field(session, "capabilities") or []),
         "connection_envelope": copy.deepcopy(session.get("connection_envelope")),
         "provenance": {
             "source_method": "CORRELATED",
             "provenance": "CORRELATED",
-            "source": "GACR_CANONICAL_SESSION_STORE",
+            "source": "GACR_CANONICAL_SESSION_BINDING",
             "store_revision": sessions.get("revision"),
         },
         "observed_at": _iso(now),
@@ -340,6 +358,7 @@ def harvest_qualification_evidence(
     )
     session = resolve_gacr_session(
         sessions,
+        admission_receipt=admission_receipt,
         connection_ref=str(admission_receipt.get("connection_ref") or ""),
         repository=repository,
         now=now,

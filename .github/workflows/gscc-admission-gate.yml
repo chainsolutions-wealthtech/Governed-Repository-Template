@@ -1,6 +1,9 @@
 name: GSCC Admission Gate
 
 on:
+  issue_comment:
+    types:
+      - created
   repository_dispatch:
     types:
       - gscc_entry_request
@@ -25,11 +28,11 @@ on:
         required: false
         type: string
       qualification_evidence_json:
-        description: Deprecated and ignored; GSCC harvests canonical qualification evidence itself
+        description: Deprecated compatibility input; canonical qualification ignores caller evidence
         required: false
         type: string
       requested_branch:
-        description: Optional requested branch; otherwise the admission context/default branch is used
+        description: Optional requested branch; otherwise admission/default branch is used
         required: false
         type: string
 
@@ -38,12 +41,12 @@ permissions:
 
 jobs:
   admission:
-    if: ${{ github.event.action == 'gscc_admission_request' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'admission') }}
+    if: ${{ github.event.action == 'gscc_admission_request' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'admission') || (github.event_name == 'issue_comment' && github.event.issue.number == 161 && startsWith(github.event.comment.body, '/gscc-admission ') && (github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'COLLABORATOR')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
-      status: ${{ steps.evaluate.outputs.status }}
-      admission_id: ${{ steps.evaluate.outputs.admission_id }}
+      status: ${{ steps.evaluate.outputs.status || steps.issue_ingress.outputs.status }}
+      admission_id: ${{ steps.evaluate.outputs.admission_id || steps.issue_ingress.outputs.admission_id }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -55,6 +58,7 @@ jobs:
           python-version: "3.12"
 
       - name: Evaluate admission envelope
+        if: ${{ github.event_name != 'issue_comment' }}
         id: evaluate
         env:
           ADMISSION_ENVELOPE_JSON: ${{ github.event.client_payload.admission_envelope_json || inputs.admission_envelope_json }}
@@ -68,6 +72,18 @@ jobs:
           python3 scripts/gscc/admission.py evaluate \
             --envelope-json "$ADMISSION_ENVELOPE_JSON" \
             --output "$RUNNER_TEMP/gscc-admission-receipt.json"
+
+      - name: Evaluate bounded provider issue-comment admission
+        if: ${{ github.event_name == 'issue_comment' }}
+        id: issue_ingress
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/gscc/admission.py issue-comment \
+            --event-path "$GITHUB_EVENT_PATH" \
+            --expected-issue-number 161 \
+            --output "$RUNNER_TEMP/gscc-admission-receipt.json" \
+            --require-preauthorized
 
       - name: Persist bounded admission receipt
         uses: actions/upload-artifact@v4
@@ -128,7 +144,7 @@ jobs:
             --qualification-evidence-json "$evidence" \
             --output "$RUNNER_TEMP/gscc-access-decision.json"
 
-      - name: Persist bounded qualification evidence and decision
+      - name: Persist bounded canonical qualification
         uses: actions/upload-artifact@v4
         with:
           name: gscc-access-qualification-${{ github.run_id }}

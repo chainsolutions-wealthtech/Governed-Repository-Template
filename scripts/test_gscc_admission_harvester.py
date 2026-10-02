@@ -104,6 +104,7 @@ def test_repository_facts_are_get_observed():
 def test_gacr_session_is_bound_from_canonical_store():
     session = resolve_gacr_session(
         sample_sessions(),
+        admission_receipt=sample_admission(),
         connection_ref="connection-test-001",
         repository=REPOSITORY,
         now=NOW,
@@ -111,7 +112,9 @@ def test_gacr_session_is_bound_from_canonical_store():
     assert session["status"] == "BOUND", session
     assert session["session_id"] == "session-live", session
     assert session["connection_envelope"]["schema"] == "gacr-connection-envelope/v1", session
-    assert session["provenance"]["source"] == "GACR_CANONICAL_SESSION_STORE", session
+    assert session["provenance"]["source"] == "GACR_CANONICAL_SESSION_BINDING", session
+    assert session["binding_level"] == "EXACT", session
+    assert session["binding_evidence_ref"].startswith("GSCC-BIND-"), session
 
 
 def test_unavailable_is_structured_not_silent():

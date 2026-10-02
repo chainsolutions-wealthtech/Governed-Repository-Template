@@ -2,11 +2,11 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from pathlib import Path
 import hashlib
 import json
+from pathlib import Path
 
-from gscc.admission import InMemoryAdmissionStore, evaluate_access_grant, evaluate_admission, validate_access_grant
+from gscc.admission import InMemoryAdmissionStore, evaluate_access_grant, evaluate_admission, evaluate_issue_comment_admission, resolve_admission_session_binding, validate_access_grant
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -111,17 +111,8 @@ def test_idempotent_replay_reuses_same_admission():
 
 
 
-def seal_qualification(value):
-    value.pop("harvest_digest", None)
-    raw = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
-    value["harvest_digest"] = hashlib.sha256(raw).hexdigest()
-    return value
-
-
 def qualification(admission):
-    value = {
-        "schema": "gscc-qualification-evidence/v1",
-        "harvested_by": "GSCC_ADMISSION_HARVESTER",
+    return {
         "session": {
             "status": "BOUND",
             "session_id": "session-live",
@@ -154,9 +145,23 @@ def qualification(admission):
             "constraints": {"direct_main_write": False, "merge": False},
         },
     }
+
+
+_legacy_qualification_fixture = qualification
+
+
+def seal_qualification(value):
+    value.pop("harvest_digest", None)
     raw = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     value["harvest_digest"] = hashlib.sha256(raw).hexdigest()
     return value
+
+
+def qualification(admission):
+    value = _legacy_qualification_fixture(admission)
+    value["schema"] = "gscc-qualification-evidence/v1"
+    value["harvested_by"] = "GSCC_ADMISSION_HARVESTER"
+    return seal_qualification(value)
 
 
 def test_noncanonical_caller_qualification_evidence_is_denied():
@@ -168,6 +173,18 @@ def test_noncanonical_caller_qualification_evidence_is_denied():
     )
     assert result["status"] == "ADMISSION_DENIED", result
     assert result["reason_code"] == "QUALIFICATION_EVIDENCE_NOT_CANONICAL", result
+
+
+def test_receipt_carries_safe_context_and_field_provenance():
+    result = evaluate_admission(envelope(), store=InMemoryAdmissionStore(), now=NOW)
+    assert result["admission_context"]["agent"]["provider"] == "chatgpt", result
+    provider = result["field_provenance"]["agent.provider"]
+    assert provider["source_method"] == "POST", provider
+    assert provider["provenance"] == "DECLARED_BY_AGENT_OR_CLIENT", provider
+    model = result["field_provenance"]["agent.model_runtime"]
+    assert model["status"] == "UNAVAILABLE", model
+    assert model["reason"] == "NOT_EXPOSED_BY_PROVIDER", model
+    assert model["provenance"] == "PROVIDER_PRIVATE_UNAVAILABLE", model
 
 
 def test_incomplete_qualification_cannot_issue_access_grant():
@@ -256,16 +273,155 @@ def test_admission_cli_exists_without_repository_mutation_surface():
 
 
 
-def test_receipt_carries_safe_context_and_field_provenance():
-    result = evaluate_admission(envelope(), store=InMemoryAdmissionStore(), now=NOW)
-    assert result["admission_context"]["agent"]["provider"] == "chatgpt", result
-    provider = result["field_provenance"]["agent.provider"]
-    assert provider["source_method"] == "POST", provider
-    assert provider["provenance"] == "DECLARED_BY_AGENT_OR_CLIENT", provider
-    model = result["field_provenance"]["agent.model_runtime"]
-    assert model["status"] == "UNAVAILABLE", model
-    assert model["reason"] == "NOT_EXPOSED_BY_PROVIDER", model
-    assert model["provenance"] == "PROVIDER_PRIVATE_UNAVAILABLE", model
+def issue_comment_event(body, *, issue_number=161, association="MEMBER", comment_id=700001):
+    return {
+        "issue": {"number": issue_number},
+        "comment": {
+            "id": comment_id,
+            "body": body,
+            "author_association": association,
+            "user": {"login": "Wealthtechinnovations"},
+        },
+        "repository": {"full_name": "chainsolutions-wealthtech/Governed-Repository-Template"},
+    }
+
+
+def test_issue_comment_admission_bridge_accepts_only_bounded_safe_ingress():
+    payload = json.dumps(envelope(), separators=(",", ":"))
+    result = evaluate_issue_comment_admission(
+        issue_comment_event("/gscc-admission " + payload),
+        expected_issue_number=161,
+        now=NOW,
+    )
+    assert result["status"] == "PREAUTHORIZED", result
+    assert result["repository_access"] == "NOT_YET_GRANTED", result
+    assert result["transport"] == "GITHUB_ISSUE_COMMENT", result
+    assert result["transport_event_ref"] == "issue-comment:700001", result
+    assert result["mutation_authority_granted"] is False, result
+
+
+def test_issue_comment_admission_bridge_fails_closed_on_wrong_issue_or_actor():
+    payload = json.dumps(envelope(), separators=(",", ":"))
+    wrong_issue = evaluate_issue_comment_admission(
+        issue_comment_event("/gscc-admission " + payload, issue_number=999),
+        expected_issue_number=161,
+        now=NOW,
+    )
+    assert wrong_issue["status"] == "ADMISSION_DENIED", wrong_issue
+    assert wrong_issue["reason_code"] == "ADMISSION_INGRESS_ISSUE_MISMATCH", wrong_issue
+
+    wrong_actor = evaluate_issue_comment_admission(
+        issue_comment_event("/gscc-admission " + payload, association="NONE"),
+        expected_issue_number=161,
+        now=NOW,
+    )
+    assert wrong_actor["status"] == "ADMISSION_DENIED", wrong_actor
+    assert wrong_actor["reason_code"] == "ADMISSION_INGRESS_ACTOR_NOT_AUTHORIZED", wrong_actor
+
+
+def test_issue_comment_admission_workflow_is_bound_to_dedicated_issue():
+    text = WORKFLOW.read_text(encoding="utf-8")
+    assert "issue_comment:" in text, text
+    assert "created" in text, text
+    assert "/gscc-admission " in text, text
+    assert "161" in text, text
+    assert "OWNER" in text and "MEMBER" in text and "COLLABORATOR" in text, text
+    assert "python3 scripts/gscc/admission.py issue-comment" in text, text
+    assert "contents: write" not in text, text
+
+
+
+def admission_receipt_for_binding(**overrides):
+    value = {
+        "schema": "gscc-admission-receipt/v1",
+        "status": "PREAUTHORIZED",
+        "admission_id": "GSCC-ADM-" + ("a" * 64),
+        "request_id": "admreq-bind-001",
+        "connection_ref": "declared-connection-001",
+        "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations",
+        "provider": "chatgpt",
+        "requested_branch": "main",
+        "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+        "transport": "GITHUB_ISSUE_COMMENT",
+        "transport_author_login": "Wealthtechinnovations",
+        "repository_access": "NOT_YET_GRANTED",
+        "invocation_authority_granted": False,
+        "mutation_authority_granted": False,
+    }
+    value.update(overrides)
+    return value
+
+
+def gacr_sessions_for_binding(*, duplicate=False):
+    base = {
+        "session_id": "session-canonical-live",
+        "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+        "status": "ACTIVE",
+        "connection_ref": "gscc-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations:ref:main",
+        "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations",
+        "provider": "other",
+        "branch": "main",
+        "surface_class": "GITHUB_EVENT_VISIBLE",
+        "connection_method": "gscc-github-event-gateway",
+        "relay": {"state": "ACTIVE", "branch": "main"},
+    }
+    sessions = [base]
+    if duplicate:
+        sessions.append({**base, "session_id": "session-canonical-second"})
+    return {"sessions": sessions}
+
+
+def test_session_binding_prefers_exact_connection_ref():
+    receipt = admission_receipt_for_binding(
+        connection_ref="gscc-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations:ref:main"
+    )
+    result = resolve_admission_session_binding(receipt, gacr_sessions_for_binding(), now=NOW)
+    assert result["status"] == "BOUND", result
+    assert result["correlation"] == "EXACT", result
+    assert result["session_id"] == "session-canonical-live", result
+    assert result["canonical_connection_ref"].startswith("gscc-observable:"), result
+
+
+def test_session_binding_uses_unique_strong_observable_anchor_without_rewriting_admission():
+    receipt = admission_receipt_for_binding()
+    result = resolve_admission_session_binding(receipt, gacr_sessions_for_binding(), now=NOW)
+    assert result["status"] == "BOUND", result
+    assert result["correlation"] == "STRONG", result
+    assert result["admission_connection_ref"] == "declared-connection-001", result
+    assert result["canonical_connection_ref"] != result["admission_connection_ref"], result
+    assert result["session_id"] == "session-canonical-live", result
+
+
+def test_session_binding_fails_closed_when_ambiguous_or_missing():
+    receipt = admission_receipt_for_binding()
+    ambiguous = resolve_admission_session_binding(receipt, gacr_sessions_for_binding(duplicate=True), now=NOW)
+    assert ambiguous["status"] == "UNBOUND", ambiguous
+    assert ambiguous["reason_code"] == "ADMISSION_SESSION_BIND_AMBIGUOUS", ambiguous
+
+    missing = resolve_admission_session_binding(receipt, {"sessions": []}, now=NOW)
+    assert missing["status"] == "UNBOUND", missing
+    assert missing["reason_code"] == "ADMISSION_SESSION_BIND_NOT_FOUND", missing
+
+
+def test_access_grant_accepts_only_attested_admission_to_canonical_session_binding():
+    admission = admission_receipt_for_binding()
+    binding = resolve_admission_session_binding(admission, gacr_sessions_for_binding(), now=NOW)
+    evidence = qualification(admission)
+    evidence["session"] = {
+        "status": "BOUND",
+        "session_id": binding["session_id"],
+        "connection_ref": binding["canonical_connection_ref"],
+        "admission_connection_ref": binding["admission_connection_ref"],
+        "binding_level": binding["correlation"],
+        "binding_evidence_ref": binding["binding_evidence_ref"],
+    }
+    evidence["repository_baseline"]["observed_head"] = "a" * 40
+    seal_qualification(evidence)
+    result = evaluate_access_grant(admission, evidence, now=NOW)
+    assert result["status"] == "AUTHORIZED", result
+    assert result["connection_ref"] == binding["canonical_connection_ref"], result
+    assert result["admission_connection_ref"] == "declared-connection-001", result
+
 
 def main():
     test_valid_envelope_is_only_preauthorized()
@@ -280,6 +436,13 @@ def main():
     test_access_grant_validation_is_binding_and_expiry_sensitive()
     test_admission_workflow_exposes_only_governed_admission_and_qualification()
     test_admission_cli_exists_without_repository_mutation_surface()
+    test_issue_comment_admission_bridge_accepts_only_bounded_safe_ingress()
+    test_issue_comment_admission_bridge_fails_closed_on_wrong_issue_or_actor()
+    test_issue_comment_admission_workflow_is_bound_to_dedicated_issue()
+    test_session_binding_prefers_exact_connection_ref()
+    test_session_binding_uses_unique_strong_observable_anchor_without_rewriting_admission()
+    test_session_binding_fails_closed_when_ambiguous_or_missing()
+    test_access_grant_accepts_only_attested_admission_to_canonical_session_binding()
     print("GSCC_ADMISSION_TESTS_OK")
 
 
