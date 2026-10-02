@@ -8,10 +8,10 @@
     "original_intent": "CANONICAL_RECORDED",
     "baseline_r1_r6": "PRESERVED_REOBSERVED_ATTESTED_OR01_PASS",
     "origin_realignment_plan": "ACCEPTED",
-    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13B_BLOCKED_PENDING_GSCC_FUNCTION_EXPOSURE_GATE",
+    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13B_BLOCKED_PENDING_GSCC_ADMISSION_ACCESS_GATE",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
-  "next_action": "GSCC_FUNCTION_EXPOSURE_GATE_RUN_LIVE_FUNCTION_REQUEST",
+  "next_action": "GSCC_ADMISSION_ACCESS_GATE_IMPLEMENT_TESTS_FIRST",
   "or01": {
     "status": "PASS",
     "attestation": "docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md",
@@ -160,11 +160,12 @@
   },
   "relational_projection": "PENDING_PROJECTION_NO_DEDICATED_GACR_REALIGNMENT_STEP_TABLE",
   "step_13b": {
-    "status": "BLOCKED_PENDING_LIVE_FUNCTION_EXPOSURE_REQUEST",
+    "status": "BLOCKED_PENDING_GSCC_ADMISSION_ACCESS_GATE",
     "requirement": "After the pre-Step-13B remediation is closed, run a genuinely fresh provider conversation/agent through the integrated GSCC/GSE/GACR path without telling it to register with GACR. Observe first-touch, SessionTwin, control challenge/wake capability and provider-bound evidence without inventing unavailable provider-private fields.",
     "fresh_provider_agent": "NOT_EXECUTED",
     "ultimate_live_acceptance": "NOT_PASSED",
     "remediation_required": [
+      "GSCC_ADMISSION_ACCESS_GATE_IMPLEMENT_AND_ATTEST",
       "GSCC_FUNCTION_EXPOSURE_GATE_LIVE_FUNCTION_REQUEST"
     ]
   },
@@ -283,6 +284,22 @@
       "candidate_arrival_gateway": 36978496029,
       "postmerge_workflow_call": "PENDING",
       "live_function_exposure_request": "NOT_EXECUTED"
-    }
+    },
+    "live_function_request_blocked_by": "GSCC_ADMISSION_ACCESS_GATE"
+  },
+  "gscc_admission_access_gate": {
+    "status": "SPECIFIED_NOT_IMPLEMENTED",
+    "authority": "docs/control-plane/GSCC_ADMISSION_ACCESS_GATE.md",
+    "decision": "CPD-061",
+    "invariant": "IDENTITY_NE_ADMISSION_NE_PREAUTHORIZATION_NE_ACCESS_AUTHORIZATION_NE_FUNCTION_EXPOSURE_NE_MUTATION_AUTHORITY",
+    "identity_alone_sufficient": false,
+    "preauthorization_grants_repository_access": false,
+    "access_grant_grants_invocation_authority": false,
+    "access_grant_grants_mutation_authority": false,
+    "extends_existing_function_exposure_gate": true,
+    "parallel_gate_authority_allowed": false,
+    "blocks_live_function_exposure_request": true,
+    "implementation_required": "TESTS_FIRST",
+    "global_programme_advanced": false
   }
 }
