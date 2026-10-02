@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  issue_comment:
+    types:
+      - created
   schedule:
     - cron: "*/10 * * * *"
   workflow_dispatch:
@@ -124,7 +127,7 @@ concurrency:
 
 jobs:
   relay:
-    if: ${{ github.event_name != 'push' || github.actor != 'github-actions[bot]' }}
+    if: ${{ (github.event_name != 'push' || github.actor != 'github-actions[bot]') && (github.event_name != 'issue_comment' || (github.event.issue.number == 115 && startsWith(github.event.comment.body, '/gacr-host '))) }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -147,7 +150,7 @@ jobs:
 
       - name: Validate GACR state
         run: |
-          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py scripts/gacr_bridge_notifier.py scripts/gacr_auto_attach.py scripts/gacr_client_emitter.py
+          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py scripts/gacr_bridge_notifier.py scripts/gacr_auto_attach.py scripts/gacr_client_emitter.py scripts/gacr_host_issue_ingress.py
           python3 scripts/validate_governance.py
 
       - name: Persist changed relay state
