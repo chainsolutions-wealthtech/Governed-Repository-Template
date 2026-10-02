@@ -8,10 +8,10 @@
     "original_intent": "CANONICAL_RECORDED",
     "baseline_r1_r6": "PRESERVED_REOBSERVED_ATTESTED_OR01_PASS",
     "origin_realignment_plan": "ACCEPTED",
-    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13_IN_PROGRESS_PRE_13B_INTEGRATION_REMEDIATION",
+    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13_IN_PROGRESS_G6_RECONCILIATION",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
-  "next_action": "GACR_PRE_13B_CLOSE_INTEGRATION_AUDIT_02",
+  "next_action": "GACR_G6_FULL_RECONCILIATION_AND_REAUTHORIZE_STEP_13B",
   "or01": {
     "status": "PASS",
     "attestation": "docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md",
@@ -108,7 +108,7 @@
       "requirement": "A genuinely fresh provider conversation/agent must enter through an instrumented client/gateway path or produce later independently observable repository evidence."
     },
     "integration_prerequisites": {
-      "status": "PASS_WITH_POST_ATTESTATION_REMEDIATION_REQUIRED",
+      "status": "PASS_PENDING_G6_REAUTHORIZATION",
       "gscc_core": {
         "source_pr": 140,
         "source_head": "b4cfec2e5dabfd28ab557e4ef740f0c44fa44457",
@@ -136,7 +136,9 @@
       "controlled_e2e": "PASS",
       "replay_safe_liveness": "PASS",
       "real_session_endpoint_control_bridge": "PASS",
-      "fresh_provider_proof": "NOT_EXECUTED"
+      "fresh_provider_proof": "NOT_EXECUTED",
+      "control_response_gse_projection": "PASS",
+      "extended_controlled_e2e": "PASS"
     }
   },
   "integration_attestation": {
@@ -156,18 +158,16 @@
   },
   "relational_projection": "PENDING_PROJECTION_NO_DEDICATED_GACR_REALIGNMENT_STEP_TABLE",
   "step_13b": {
-    "status": "BLOCKED_PENDING_INTEGRATION_REMEDIATION",
+    "status": "BLOCKED_PENDING_G6_REAUTHORIZATION",
     "requirement": "After the pre-Step-13B remediation is closed, run a genuinely fresh provider conversation/agent through the integrated GSCC/GSE/GACR path without telling it to register with GACR. Observe first-touch, SessionTwin, control challenge/wake capability and provider-bound evidence without inventing unavailable provider-private fields.",
     "fresh_provider_agent": "NOT_EXECUTED",
     "ultimate_live_acceptance": "NOT_PASSED",
     "remediation_required": [
-      "PROVE_STATUS_PROGRESS_CONTEXT_CHECKPOINT_RESPONSE_MAPPING_INTO_GSE_WITHOUT_FALSE_LIVENESS_OR_PROGRESS",
-      "RUN_FULL_GSCC_GSE_CONTROL_E2E_GACR_GOVERNANCE_REGRESSION_GREEN",
       "REOBSERVE_MAIN_AND_REAUTHORIZE_STEP_13B"
     ]
   },
   "integration_post_attestation_audit": {
-    "status": "REMEDIATION_REQUIRED_BEFORE_STEP_13B_EXECUTION",
+    "status": "FINDINGS_CLOSED_G6_REAUTHORIZATION_PENDING",
     "observed_main_head": "8936a0f734d12cf5dbcd916c4d98fe4fef895aec",
     "evidence": "docs/control-plane/GACR_GSCC_GSE_INTEGRATION_AUDIT.md",
     "integration_functional_state": "GREEN",
@@ -192,13 +192,38 @@
         }
       },
       "gse_control_response_projection": {
-        "status": "OPEN_BLOCKING_REMEDIATION",
-        "detail": "Controlled E2E proves CHALLENGE_RESPONSE and COMMAND_ACK projection, but STATUS/PROGRESS/CONTEXT/CHECKPOINT control responses are not yet proven end-to-end through the canonical GSE input model."
+        "status": "CLOSED_PASS",
+        "detail": "PR #149 added the canonical control-response→GSE mapper, real SessionEndpoint query paths, unit anti-false-state proof and extended combined E2E. Candidate CI 36971442096 PASS; merge d831c29ea0943bd5015a757e303187fa505b5f1c; post-merge CI 36971501671 PASS; Relay 36971501664 PASS.",
+        "evidence": {
+          "pr": 149,
+          "candidate_ci": 36971442096,
+          "merge": "d831c29ea0943bd5015a757e303187fa505b5f1c",
+          "postmerge_ci": 36971501671,
+          "postmerge_relay": 36971501664,
+          "observed_main": "114c5397966a5c6ad7d8770298abd698929ecf8f"
+        }
       },
       "authority_boundaries": "PASS",
       "live_store_test_isolation": "PASS",
       "secret_boundary": "PASS",
       "historical_gacr_regression": "PASS"
     }
+  },
+  "g5": {
+    "status": "CLOSED_PASS",
+    "finding": "GACR-INT-AUDIT-02",
+    "pr": 149,
+    "candidate_ci": 36971442096,
+    "merge": "d831c29ea0943bd5015a757e303187fa505b5f1c",
+    "postmerge_ci": 36971501671,
+    "postmerge_relay": 36971501664,
+    "observed_main": "114c5397966a5c6ad7d8770298abd698929ecf8f"
+  },
+  "g6": {
+    "status": "IN_PROGRESS_RECONCILIATION",
+    "observed_main": "114c5397966a5c6ad7d8770298abd698929ecf8f",
+    "audit_01": "CLOSED_PASS",
+    "audit_02": "CLOSED_PASS",
+    "step_13b": "BLOCKED_PENDING_G6_REAUTHORIZATION"
   }
 }
