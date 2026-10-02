@@ -33,6 +33,9 @@ jobs:
       - name: Test GSCC observable arrival gateway
         run: python3 scripts/test_gscc_observable_arrival.py
 
+      - name: Test GSCC admission gate contract
+        run: python3 scripts/test_gscc_admission.py
+
       - name: Test source-only GSCC mandatory function exposure gate
         run: |
           if [ -f .template-source ]; then
