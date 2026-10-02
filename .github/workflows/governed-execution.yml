@@ -26,7 +26,15 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  function-gate:
+    uses: ./.github/workflows/gscc-function-gate.yml
+    with:
+      package_path: ${{ inputs.package_path }}
+      expected_source_head: ${{ inputs.expected_source_head }}
+
   execute:
+    needs: function-gate
+    if: ${{ needs.function-gate.outputs.validated == 'true' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout exact source
@@ -180,6 +188,8 @@ jobs:
           GOVERNED_MCP_URL: https://mcp.wealthtechinnovations.com/mcp
           GOVERNED_GITHUB_APP_CLIENT_ID: ${{ steps.plan.outputs.needs_app_source == 'true' && vars.GOVERNED_GITHUB_APP_CLIENT_ID || '' }}
           GOVERNED_GITHUB_APP_PRIVATE_KEY: ${{ steps.plan.outputs.needs_app_source == 'true' && secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY || '' }}
+          GSCC_FUNCTION_GATE_VALIDATION_DIGEST: ${{ needs.function-gate.outputs.validation_digest }}
+          GSCC_FUNCTION_GATE_VALIDATED: ${{ needs.function-gate.outputs.validated }}
         shell: bash
         run: |
           set -euo pipefail
