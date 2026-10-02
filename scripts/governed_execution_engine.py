@@ -1226,6 +1226,45 @@ def main() -> None:
     package = load_json(package_path)
     registry = load_json(REGISTRY_PATH)
     snapshot = load_json(SNAPSHOT_PATH)
+
+    if args.execute:
+        mcp_steps = [
+            step
+            for items in _execution_steps(package).values()
+            for step in items
+            if isinstance(step, dict)
+            and step.get("backend", "MCP_DIRECT") == "MCP_DIRECT"
+            and step.get("tool")
+        ]
+        if mcp_steps:
+            if os.environ.get("GSCC_FUNCTION_ROUTE_VALIDATED") != "true":
+                raise SystemExit("GSCC_FUNCTION_EXPOSURE_WORKFLOW_REQUIRED")
+            supplied_digest = os.environ.get("GSCC_FUNCTION_ROUTE_VALIDATION_DIGEST")
+            if not supplied_digest:
+                raise SystemExit("GSCC_FUNCTION_ROUTE_VALIDATION_DIGEST_REQUIRED")
+
+            from gscc_function_exposure_gate import build_package_route_receipt
+
+            source_head_proc = subprocess.run(
+                ["git", "rev-parse", "HEAD"],
+                cwd=ROOT,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            if source_head_proc.returncode != 0:
+                raise SystemExit("GSCC_FUNCTION_ROUTE_SOURCE_HEAD_UNAVAILABLE")
+            source_head = source_head_proc.stdout.strip()
+            source_repository = os.environ.get("GITHUB_REPOSITORY") or "chainsolutions-wealthtech/Governed-Repository-Template"
+            route_receipt = build_package_route_receipt(
+                snapshot=snapshot,
+                package=package,
+                repository=source_repository,
+                source_head=source_head,
+            )
+            if route_receipt.get("validation_digest") != supplied_digest:
+                raise SystemExit("GSCC_FUNCTION_ROUTE_VALIDATION_DIGEST_MISMATCH")
+
     receipt = execute(package, do_execute=args.execute, registry=registry, snapshot=snapshot)
     output = json.dumps(redact(receipt), indent=2, ensure_ascii=False) + "\n"
     if args.receipt:
