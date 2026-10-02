@@ -261,6 +261,28 @@
     "postmerge_arrival_route": 36977148865,
     "postmerge_arrival_gateway": 36977148970,
     "postmerge_relay": 36977148872,
-    "postmerge_auto_attach": 36977162025
+    "postmerge_auto_attach": 36977162025,
+    "consolidation": {
+      "status": "CANDIDATE_GREEN_PENDING_MERGE_AND_POSTMERGE_WORKFLOW_CALL",
+      "pr": 156,
+      "no_parallel_gate_authority": true,
+      "canonical_workflow": ".github/workflows/gscc-function-exposure-gate.yml",
+      "catalogue_tool_count": 135,
+      "catalogue_gate": "GSCC_REQUIRED",
+      "catalogue_exposure_status": "REQUIRES_RUNTIME_VALIDATION",
+      "governed_execution_requires_same_workflow": true,
+      "package_route_covers_each_mcp_invocation": true,
+      "exact_head_bound": true,
+      "execution_recomputes_validation_digest": true,
+      "route_validation_grants_invocation_authority": false,
+      "route_validation_grants_mutation_authority": false,
+      "observable_arrival_gateway_distributed_to_clients": true,
+      "function_gate_scope": "CONTROL_PLANE_SOURCE_ONLY_PENDING_PROVIDER_RUNTIME_ENFORCEMENT",
+      "candidate_ci": 36978496025,
+      "candidate_function_exposure_workflow": 36978495981,
+      "candidate_arrival_gateway": 36978496029,
+      "postmerge_workflow_call": "PENDING",
+      "live_function_exposure_request": "NOT_EXECUTED"
+    }
   }
 }
