@@ -17,7 +17,7 @@ from typing import Any, Callable
 if __package__:
     from .admission import QUALIFICATION_REQUIREMENTS, resolve_admission_session_binding
     from .protocol import assert_secretless
-from gscc_gacr.issue_control_bridge import canonical_control_evidence
+    from gscc_gacr.issue_control_bridge import canonical_control_evidence
 else:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from gscc.admission import QUALIFICATION_REQUIREMENTS, resolve_admission_session_binding
