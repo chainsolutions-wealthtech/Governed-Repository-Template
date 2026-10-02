@@ -13,14 +13,14 @@
   "counters": {
     "next_user_message": 2,
     "next_assistant_message": 3,
-    "next_tool_event": 7,
+    "next_tool_event": 8,
     "next_decision_event": 7,
     "next_constraint_event": 7,
-    "next_action_event": 6,
+    "next_action_event": 7,
     "next_error_event": 1,
     "next_recovery_event": 5,
-    "next_checkpoint": 7,
-    "next_cache": 7,
+    "next_checkpoint": 8,
+    "next_cache": 8,
     "next_open_loop": 4,
     "next_artifact": 2,
     "next_session": 3
@@ -31,24 +31,24 @@
     "previous_hash": "8b45efbe51e0e9fbf26883ae2a6ee65c7975e7c782bc5c708c4ea06363db5e97"
   },
   "current_session": "SESSION-000002",
-  "current_checkpoint": "CHK-000006",
-  "current_cache": "CACHE-000006",
+  "current_checkpoint": "CHK-000007",
+  "current_cache": "CACHE-000007",
   "open_loops": [
     "OPEN-000002",
     "OPEN-000003"
   ],
-  "current_topic": "GACR realignment Step 13 fresh-agent live proof",
-  "point_of_stop": "Steps 4-12 are integrated and green; the current GACR-aware session is live-enriched but is not a valid fresh-agent fixture.",
-  "next_safe_action": "Run Step 13 with a genuinely fresh agent/conversation that is not told to register with GACR; observe first-touch Presence automatically, then continue Steps 14-24.",
+  "current_topic": "GACR Step 13B fresh provider agent acceptance",
+  "point_of_stop": "GSCC/GSE/GACR control integration is canonical and green; Step 13B fresh-provider live proof is next and not yet executed.",
+  "next_safe_action": "Run a genuinely fresh provider conversation/agent through the integrated path without GACR registration instructions; observe first-touch and bidirectional control before continuing Steps 14-24.",
   "external_state_observed": {
     "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
     "branch": "main",
-    "head": "a27893681c8e90e5d225dae23d15df5cc4b93d29",
-    "observed_at": "2026-10-02T05:54:06+02:00",
+    "head": "feea5dfc9055c96c9a589889d96708b3fba353e2",
+    "observed_at": "2026-10-02T07:17:40+02:00",
     "precision": "second",
     "freshness": "OBSERVED_AT",
-    "gacr_steps_closed": "1-12",
-    "gacr_next_step": 13,
+    "gscc_gse_control_integration": "PASS",
+    "step_13b": "NEXT_AUTHORIZED",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
   "attachment_artifacts": [
@@ -128,7 +128,7 @@
     "premerge_ci_result": "PASS"
   },
   "supervision_state": {
-    "status": "INTEGRATION_COMPLETE_STEP_13_NEXT",
+    "status": "GSCC_GSE_CONTROL_INTEGRATED_STEP_13B_NEXT",
     "programme": "GACR",
     "global_programme_progression": "UNCHANGED",
     "workers": [
@@ -170,9 +170,42 @@
       129,
       131
     ],
-    "final_governance_ci": 36961935777,
-    "final_relay_run": 36961935794,
+    "final_governance_ci": 36968203836,
+    "final_relay_run": 36968203882,
     "current_session_presence_first": "PASS",
-    "ultimate_fresh_agent_acceptance": "NOT_EXECUTED"
+    "ultimate_fresh_agent_acceptance": "NOT_EXECUTED",
+    "second_parallel_wave": [
+      {
+        "role": "GSCC_CORE",
+        "branch": "governance/gscc-core-v1",
+        "head": "b4cfec2e5dabfd28ab557e4ef740f0c44fa44457",
+        "pr": 140,
+        "status": "INTEGRATED"
+      },
+      {
+        "role": "GSE",
+        "branch": "governance/gse-session-state-engine-v1",
+        "head": "c1913ddbcc9563f9ba532bf2a550a510524b9587",
+        "pr": 138,
+        "integration_pr": 141,
+        "status": "INTEGRATED"
+      },
+      {
+        "role": "GSCC_GACR_CONTROL",
+        "branch": "governance/gscc-gacr-bidirectional-control-v1",
+        "head": "185f00795811093432eccfa7e1b1cec0312377f1",
+        "pr": 139,
+        "integration_pr": 142,
+        "status": "INTEGRATED"
+      }
+    ],
+    "integration_findings": [
+      "real GSCC SessionEndpoint receives commands via receive_commands while the control harness endpoint seam used send(command); a narrow adapter was added",
+      "replayed CHALLENGE_RESPONSE must not refresh GSE liveness",
+      "isolated green suites are insufficient without a combined E2E"
+    ],
+    "final_main": "feea5dfc9055c96c9a589889d96708b3fba353e2",
+    "controlled_e2e": "PASS",
+    "step_13b": "NEXT_AUTHORIZED"
   }
 }
