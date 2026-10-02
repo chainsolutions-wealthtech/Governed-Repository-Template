@@ -31,7 +31,7 @@ class GACRClientEmitterAdapter:
         }
         common = {k: v for k, v in common.items() if v not in (None, "", "UNAVAILABLE")}
 
-        if message.type == "SESSION_ATTACH":
+        if message.type in {"SESSION_ATTACH", "SESSION_RESUME"}:
             return self.emitter.attach(**{**p, **common})
         if message.type == "HEARTBEAT":
             if not session_id:
