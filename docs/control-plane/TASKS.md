@@ -1010,3 +1010,15 @@ The source host issue number is repository-local runtime state. Client distribut
 Status: **IMPLEMENTED / CI_PENDING / LIVE_PROOF_PENDING**.
 
 An explicit provider observed later on the same stable connection may enrich a generic `other` session without a provider conversation reference. Session duplication and conflicting provider overwrite remain forbidden.
+
+### GACR R6 / R6-A / R6-B / R6-C final status
+
+Status: **DONE / LIVE_PROVEN / CI_PROVEN / INTEGRATED**.
+
+- R6 provider-host issue ingress: DONE.
+- R6-A latest-main rerun idempotence: DONE and live no-op proven.
+- R6-B repository-local inbox portability: DONE / CI-proven / source live path re-proven.
+- R6-C late provider attribution enrichment: DONE / live-proven with same canonical session.
+- Event-driven ChatGPT host telemetry is live.
+- Persistent background heartbeat remains host-capability dependent and is not falsely marked complete.
+- No effect on `P12-S6` execution state.
