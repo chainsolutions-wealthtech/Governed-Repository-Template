@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from gscc.admission import InMemoryAdmissionStore, evaluate_admission
+from gscc.admission import InMemoryAdmissionStore, evaluate_access_grant, evaluate_admission, validate_access_grant
 
 
 NOW = datetime(2026, 10, 2, 12, 0, 0, tzinfo=timezone.utc)
@@ -104,12 +104,114 @@ def test_idempotent_replay_reuses_same_admission():
     assert len(store.records) == 1, store.records
 
 
+
+def qualification(admission):
+    return {
+        "session": {
+            "status": "BOUND",
+            "session_id": "session-live",
+            "connection_ref": admission["connection_ref"],
+        },
+        "governance_read": {
+            "status": "COMPLETED",
+            "documents": [
+                {"path": "GOVERNANCE.md", "digest": "g" * 64},
+                {"path": "docs/control-plane/GSCC_ADMISSION_ACCESS_GATE.md", "digest": "a" * 64},
+            ],
+        },
+        "repository_baseline": {
+            "status": "OBSERVED",
+            "repository": admission["repository"],
+            "observed_head": "a" * 40,
+        },
+        "task": {"status": "RECONCILED", "task_id": "TASK-TEST-1"},
+        "claim": {"status": "RECONCILED", "claim_id": "CLAIM-TEST-1"},
+        "capabilities": {"status": "VERIFIED"},
+        "control_channel": {"status": "VERIFIED"},
+        "gse_initial_state": {
+            "presence": "PRESENT",
+            "liveness": "VERIFIED",
+            "control_reachability": "REACHABLE",
+        },
+        "access_policy": {
+            "status": "ALLOW",
+            "allowed_authority_classes": ["READ_ONLY_DISCOVERY_AUTHORITY"],
+            "constraints": {"direct_main_write": False, "merge": False},
+        },
+    }
+
+
+def test_incomplete_qualification_cannot_issue_access_grant():
+    admission = evaluate_admission(envelope(), store=InMemoryAdmissionStore(), now=NOW)
+    evidence = qualification(admission)
+    evidence["governance_read"] = {"status": "PENDING", "documents": []}
+    result = evaluate_access_grant(admission, evidence, now=NOW)
+    assert result["status"] == "QUALIFICATION_IN_PROGRESS", result
+    assert "governance_read" in result["missing_qualification"], result
+    assert result["invocation_authority_granted"] is False, result
+    assert result["mutation_authority_granted"] is False, result
+
+
+def test_complete_qualification_issues_bounded_access_grant():
+    admission = evaluate_admission(envelope(), store=InMemoryAdmissionStore(), now=NOW)
+    result = evaluate_access_grant(admission, qualification(admission), now=NOW)
+    assert result["schema"] == "gscc-access-grant/v1", result
+    assert result["status"] == "AUTHORIZED", result
+    assert result["access_class"] == "GOVERNED_FUNCTION_EXPOSURE_ELIGIBLE", result
+    assert result["grant_id"].startswith("GSCC-GRANT-"), result
+    assert result["admission_id"] == admission["admission_id"], result
+    assert result["session_id"] == "session-live", result
+    assert result["connection_ref"] == admission["connection_ref"], result
+    assert result["repository"] == admission["repository"], result
+    assert result["bound_head"] == "a" * 40, result
+    assert result["invocation_authority_granted"] is False, result
+    assert result["mutation_authority_granted"] is False, result
+
+
+def test_access_grant_validation_is_binding_and_expiry_sensitive():
+    admission = evaluate_admission(envelope(), store=InMemoryAdmissionStore(), now=NOW)
+    grant = evaluate_access_grant(admission, qualification(admission), now=NOW)
+
+    valid = validate_access_grant(
+        grant,
+        connection_ref=admission["connection_ref"],
+        repository=admission["repository"],
+        requested_head="a" * 40,
+        session_id="session-live",
+        now=NOW,
+    )
+    assert valid["status"] == "VALIDATED", valid
+
+    wrong_head = validate_access_grant(
+        grant,
+        connection_ref=admission["connection_ref"],
+        repository=admission["repository"],
+        requested_head="b" * 40,
+        session_id="session-live",
+        now=NOW,
+    )
+    assert wrong_head["reason_code"] == "ACCESS_GRANT_HEAD_MISMATCH", wrong_head
+
+    expired = validate_access_grant(
+        grant,
+        connection_ref=admission["connection_ref"],
+        repository=admission["repository"],
+        requested_head="a" * 40,
+        session_id="session-live",
+        now=datetime(2026, 10, 2, 13, 0, 0, tzinfo=timezone.utc),
+    )
+    assert expired["reason_code"] == "ACCESS_GRANT_EXPIRED", expired
+
+
 def main():
     test_valid_envelope_is_only_preauthorized()
     test_missing_required_field_is_incomplete()
     test_secret_material_fails_closed()
     test_unavailable_provider_private_reference_is_allowed()
     test_idempotent_replay_reuses_same_admission()
+    test_incomplete_qualification_cannot_issue_access_grant()
+    test_complete_qualification_issues_bounded_access_grant()
+    test_access_grant_validation_is_binding_and_expiry_sensitive()
     print("GSCC_ADMISSION_TESTS_OK")
 
 
