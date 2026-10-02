@@ -34,6 +34,7 @@ def config() -> dict:
         "host_issue_bridge": {
             "enabled": True,
             "issue_number": 115,
+            "issue_title": "[GACR Host Bridge] Provider event ingress",
             "allowed_author_associations": ["OWNER", "MEMBER", "COLLABORATOR"],
             "max_payload_chars": 8192,
         }
