@@ -350,7 +350,7 @@
   },
   "gscc_admission_gate": {
     "enabled": true,
-    "status": "CANDIDATE_IMPLEMENTED_TESTED_PENDING_MERGE",
+    "status": "INTEGRATED_POSTMERGE_GREEN_PENDING_LIVE_ADMISSION_REQUEST",
     "authority": "docs/control-plane/GSCC_ADMISSION_ACCESS_GATE.md",
     "workflow": ".github/workflows/gscc-admission-gate.yml",
     "script": "scripts/gscc/admission.py",
@@ -365,6 +365,13 @@
     "workflow_contents_permission": "read",
     "artifact_retention_days": 14,
     "secrets_allowed_in_payload": false,
-    "live_provider_proof": "NOT_EXECUTED"
+    "live_provider_proof": "NOT_EXECUTED",
+    "merge": "56c48aafbe00a50b47ad2189f4ab3645b937c82f",
+    "postmerge_governance_ci": 37002783058,
+    "postmerge_arrival_gateway": 37002783052,
+    "postmerge_function_exposure_gate": 37002783152,
+    "postmerge_function_route_selftest": 37002783428,
+    "postmerge_relay_push": 37002783111,
+    "postmerge_relay_dispatch": 37002796444
   }
 }
