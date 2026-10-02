@@ -442,6 +442,8 @@ def normalize_tool(tool: dict, inventory_tool: dict | None = None):
         "destructive_hint": destructive_hint if isinstance(destructive_hint, bool) else inventory_tool.get("destructiveHint"),
         "contract_digest": inventory_tool.get("contractDigest"),
         "input_fields": summarize_input_schema(schema),
+        "governed_exposure_gate": "GSCC_REQUIRED",
+        "governed_exposure_status": "REQUIRES_RUNTIME_VALIDATION",
     }
     normalized["tags"] = classify_tool(normalized)
     return normalized
@@ -489,6 +491,8 @@ def capability_candidates(capability_id: str, tools: list[dict]):
             "tool": name,
             "surface": tool.get("surface"),
             "authority_required": tool.get("authority_required"),
+            "governed_exposure_gate": tool.get("governed_exposure_gate"),
+            "governed_exposure_status": tool.get("governed_exposure_status"),
             "scope": scope,
         })
     generic = [item for item in candidates if item["scope"]["mode"] == "GENERIC"]
@@ -629,7 +633,7 @@ def build_snapshot(
     }
     prior_sequence = int((prior_snapshot or {}).get("refresh_sequence") or 0)
     return {
-        "schema_version": "1.1.0",
+        "schema_version": "1.2.0",
         "capability_model_version": "1.0.0",
         "stable_capability_ids": sorted(CAPABILITY_MODEL),
         "authority_id": AUTHORITY_ID,
@@ -718,6 +722,9 @@ def build_snapshot(
             "snapshot_is_execution_authority": False,
             "write_tool_presence_implies_write_authority": False,
             "tool_selection_must_recheck_live_authority_before_mutation": True,
+            "gscc_function_gate_required_before_governed_exposure": True,
+            "gscc_function_gate_required_before_every_governed_invocation": True,
+            "catalogue_presence_is_not_governed_exposure_authority": True,
             "parallel_engine": False,
         },
         "relational_projection": {
