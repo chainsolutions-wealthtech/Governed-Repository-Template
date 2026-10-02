@@ -96,7 +96,7 @@ Status:
 CLOSED_PASS
 ```
 
-## Open finding GACR-INT-AUDIT-02 — incomplete control-response → GSE proof
+## Closed finding GACR-INT-AUDIT-02 — incomplete control-response → GSE proof
 
 The combined controlled E2E currently proves the real GSCC SessionEndpoint path for:
 
@@ -125,10 +125,25 @@ Required remediation:
 4. do not manufacture progress from status/context traffic;
 5. prove the mapping in the combined E2E.
 
+Closure evidence:
+
+- remediation PR #149;
+- candidate Governance CI `36971442096 = PASS`;
+- merge `d831c29ea0943bd5015a757e303187fa505b5f1c`;
+- post-merge Governance CI `36971501671 = PASS`;
+- post-merge GACR Relay `36971501664 = PASS`;
+- current post-auto-attach main observed at `114c5397966a5c6ad7d8770298abd698929ecf8f`;
+- one canonical mapper `scripts/gscc_gacr/gse_projection.py` converts safe control snapshots into existing GSE events;
+- real `SessionEndpoint.receive_commands()` path is proven for STATUS / PROGRESS / CONTEXT / CHECKPOINT;
+- unit and combined E2E prove non-liveness responses do not refresh liveness;
+- STATUS/CONTEXT/CHECKPOINT snapshots do not manufacture progress;
+- PROGRESS query snapshots preserve reported facts but remain `qualifying_progress=false`;
+- `UNAVAILABLE` values fail closed and do not overwrite known SessionTwin identity/context.
+
 Status:
 
 ```text
-OPEN_BLOCKING_PRE_13B
+CLOSED_PASS
 ```
 
 ## Step 13B decision
@@ -139,7 +154,7 @@ Therefore:
 
 ```text
 STEP 13B = NOT_EXECUTED
-STEP 13B EXECUTION = BLOCKED_PENDING_INTEGRATION_REMEDIATION
+STEP 13B EXECUTION = BLOCKED_PENDING_G6_REAUTHORIZATION
 ULTIMATE_LIVE_ACCEPTANCE = NOT_PASSED
 ```
 
@@ -150,7 +165,7 @@ Step 13B remains the next live acceptance gate.
 ## Mandatory next action
 
 ```text
-GACR_PRE_13B_CLOSE_INTEGRATION_AUDIT_FINDINGS
+GACR_G6_FULL_RECONCILIATION_AND_REAUTHORIZE_STEP_13B
 ```
 
 Exit gate:
