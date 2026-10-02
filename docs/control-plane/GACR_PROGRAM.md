@@ -52,18 +52,18 @@ The mandatory 24-step sequence lives in `GACR_ORIGIN_REALIGNMENT.md`.
 Current GACR programme state:
 
 - `ORIGINAL_INTENT`: CANONICAL / RECORDED.
-- `R1-R6_BASELINE`: PRESERVED.
+- `R1-R6_BASELINE`: PRESERVED / REOBSERVED / ATTESTED (`GACR-OR-01 = PASS`).
 - `ORIGIN_REALIGNMENT_PLAN`: ACCEPTED.
-- `REALIGNMENT_EXECUTION`: NOT YET DECLARED COMPLETE.
+- `REALIGNMENT_EXECUTION`: STEP 1 CLOSED; STEP 2 FORMAL GATE NEXT; overall realignment NOT COMPLETE.
 - `ULTIMATE_LIVE_ACCEPTANCE`: NOT YET PASSED.
 
 ## GACR next action
 
-`GACR-OR-01_REOBSERVE_AND_ATTEST_R6_BASELINE`
+`REALIGNMENT_STEP_2_FORMAL_GATE_REVALIDATE_EXISTING_GACR_ORIGINAL_INTENT`
 
-This is the GACR programme next action only. It does not replace or modify the global programme next action.
+This is the GACR programme next gate only. It does not replace or modify the global programme next action and has no dependency on `P12-S6`.
 
-The original-intent source is already captured, but the ordered realignment execution still starts by reobserving and attesting the exact current baseline before any implementation/gap-closure work is marked complete.
+Step 1 is closed by `docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md` and its machine projection. Step 2 must revalidate the already-canonical `docs/control-plane/GACR_ORIGINAL_INTENT.md` without rewriting historical intent. Step 3 (`ORIGINAL_INTENT ↔ CURRENT_IMPLEMENTATION ↔ GAP`) remains blocked until the step-2 formal gate is explicitly closed. Presence-First corrective implementation is not authorized by the OR-01 attestation.
 
 ## Completion condition
 
