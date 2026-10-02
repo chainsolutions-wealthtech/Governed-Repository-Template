@@ -347,5 +347,24 @@
     "secret_values_persisted": false,
     "provider_private_identity_policy": "SUPPLIED_ONLY_NEVER_INVENT",
     "external_unintegrated_surface_policy": "OUTSIDE_GOVERNED_EXPOSURE_BOUNDARY"
+  },
+  "gscc_admission_gate": {
+    "enabled": true,
+    "status": "CANDIDATE_IMPLEMENTED_TESTED_PENDING_MERGE",
+    "authority": "docs/control-plane/GSCC_ADMISSION_ACCESS_GATE.md",
+    "workflow": ".github/workflows/gscc-admission-gate.yml",
+    "script": "scripts/gscc/admission.py",
+    "admission_event": "gscc_admission_request",
+    "qualification_event": "gscc_access_qualification_request",
+    "mandatory_before_function_exposure": true,
+    "preserves_observable_arrival_gateway": true,
+    "preauthorization_repository_access": "NOT_YET_GRANTED",
+    "access_grant_function_exposure_eligibility_only": true,
+    "access_grant_invocation_authority": false,
+    "access_grant_mutation_authority": false,
+    "workflow_contents_permission": "read",
+    "artifact_retention_days": 14,
+    "secrets_allowed_in_payload": false,
+    "live_provider_proof": "NOT_EXECUTED"
   }
 }
