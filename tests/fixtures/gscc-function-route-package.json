@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0.0",
+  "operation_id": "GSCC-CI-FUNCTION-ROUTE",
+  "intent": "GSCC_FUNCTION_ROUTE_SELFTEST",
+  "bindings": {
+    "steps": {
+      "preflight": [
+        {
+          "backend": "MCP_DIRECT",
+          "capability": "SERVER_RUNTIME_OBSERVATION",
+          "tool": "docker_status_s2",
+          "arguments": {}
+        }
+      ],
+      "execute": [],
+      "verify": [
+        {
+          "backend": "MCP_DIRECT",
+          "capability": "SERVER_RUNTIME_OBSERVATION",
+          "tool": "docker_status_s2",
+          "arguments": {}
+        }
+      ],
+      "rollback": []
+    }
+  }
+}
