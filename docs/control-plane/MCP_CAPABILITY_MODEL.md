@@ -209,3 +209,16 @@ MCP surface classes are distinct:
 Governed operational transitions (claiming or transitioning a governed task, reconciling intent) must not be represented as server/runtime mutation authority.
 
 Tool scope is also explicit. A tool hard-wired to one project or project family is `PROJECT_SPECIFIC`; a tool with an allowlisted project enum is `PROJECT_REGISTRY_SCOPED`; only genuinely reusable tools are `GENERIC`.
+
+## GSCC function exposure gate
+
+Authority: `docs/control-plane/GSCC_FUNCTION_EXPOSURE_GATE.md`.
+
+Every tool in the canonical catalogue is planning evidence only and carries:
+
+- `governed_exposure_gate = GSCC_REQUIRED`;
+- `governed_exposure_status = REQUIRES_RUNTIME_VALIDATION`.
+
+A tool may be a capability candidate without being authorized for governed exposure or invocation. Before every governed MCP invocation, the Control Plane must recompute the GSCC function-gate receipt from the exact tool contract, source HEAD, package and current capability snapshot.
+
+A contract digest change invalidates the prior receipt and requires revalidation. Exposure validation does not grant invocation or mutation authority.
