@@ -170,12 +170,22 @@ def test_caller_repository_claim_cannot_override_get_observation():
     assert result["repository_baseline"]["provenance"]["source_method"] == "GET", result
 
 
+
+def test_admission_workflow_harvests_instead_of_trusting_caller_evidence():
+    workflow = (ROOT / ".github" / "workflows" / "gscc-admission-gate.yml").read_text(encoding="utf-8")
+    assert "gscc_entry_request" in workflow, workflow
+    assert "python3 scripts/gscc/admission_harvester.py harvest" in workflow, workflow
+    assert "GITHUB_TOKEN: ${{ github.token }}" in workflow, workflow
+    assert "Deprecated and ignored; GSCC harvests canonical qualification evidence itself" in workflow, workflow
+    assert "QUALIFICATION_EVIDENCE_JSON: ${{ github.event.client_payload.qualification_evidence_json" not in workflow, workflow
+
 def main():
     test_repository_facts_are_get_observed()
     test_gacr_session_is_bound_from_canonical_store()
     test_unavailable_is_structured_not_silent()
     test_harvest_uses_canonical_sources_and_fails_closed_on_missing_gse_control()
     test_caller_repository_claim_cannot_override_get_observation()
+    test_admission_workflow_harvests_instead_of_trusting_caller_evidence()
     print("GSCC_ADMISSION_HARVESTER_TESTS_OK")
 
 

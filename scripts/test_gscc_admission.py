@@ -229,12 +229,25 @@ def test_admission_cli_exists_without_repository_mutation_surface():
     assert "merge_pull_request" not in source, source
 
 
+
+def test_receipt_carries_safe_context_and_field_provenance():
+    result = evaluate_admission(envelope(), store=InMemoryAdmissionStore(), now=NOW)
+    assert result["admission_context"]["agent"]["provider"] == "chatgpt", result
+    provider = result["field_provenance"]["agent.provider"]
+    assert provider["source_method"] == "POST", provider
+    assert provider["provenance"] == "DECLARED_BY_AGENT_OR_CLIENT", provider
+    model = result["field_provenance"]["agent.model_runtime"]
+    assert model["status"] == "UNAVAILABLE", model
+    assert model["reason"] == "NOT_EXPOSED_BY_PROVIDER", model
+    assert model["provenance"] == "PROVIDER_PRIVATE_UNAVAILABLE", model
+
 def main():
     test_valid_envelope_is_only_preauthorized()
     test_missing_required_field_is_incomplete()
     test_secret_material_fails_closed()
     test_unavailable_provider_private_reference_is_allowed()
     test_idempotent_replay_reuses_same_admission()
+    test_receipt_carries_safe_context_and_field_provenance()
     test_incomplete_qualification_cannot_issue_access_grant()
     test_complete_qualification_issues_bounded_access_grant()
     test_access_grant_validation_is_binding_and_expiry_sensitive()
