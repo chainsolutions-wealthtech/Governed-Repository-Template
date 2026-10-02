@@ -1,6 +1,6 @@
 # GSCC Admission & Repository Access Gate
 
-> Status: `IMPLEMENTED / TESTED_CANDIDATE / PENDING_MERGE_AND_POSTMERGE_LIVE_PROOF`  
+> Status: `INTEGRATED / POSTMERGE_GREEN / PENDING_LIVE_ADMISSION_REQUEST`  
 > Date: 2026-10-02  
 > Scope: additive extension of the existing GSCC/GSE/GACR function-exposure architecture.  
 > This authority does not advance `P12-S6`, CASE 1, GMC, or the global Control Plane programme.
@@ -625,6 +625,24 @@ Tests-first evidence:
 - final candidate Function Exposure Gate: `37002023423 = SUCCESS`.
 
 This evidence proves implementation and regression safety on the PR candidate only. It does **not** prove post-merge activation, a real provider admission request, Step 13B, or ultimate GACR live acceptance.
+
+
+## Post-merge integration attestation — PR #159
+
+PR #159 merged into canonical main at `56c48aafbe00a50b47ad2189f4ab3645b937c82f`.
+
+Post-merge evidence on that exact merge commit:
+
+- Governance CI `37002783058 = SUCCESS`;
+- GSCC Observable Arrival Gateway `37002783052 = SUCCESS`;
+- GSCC Function Exposure Gate `37002783152 = SUCCESS`;
+- GSCC Function Route Selftest `37002783428 = SUCCESS`;
+- GACR Relay push run `37002783111 = SUCCESS`;
+- GACR Relay repository-dispatch run `37002796444 = SUCCESS`.
+
+Therefore the admission/access implementation is integrated and regression-green on canonical main.
+
+This does **not** yet prove a real provider admission request. The next required live proof is `GSCC_ADMISSION_GATE_RUN_LIVE_REQUEST`. Step 13B and ultimate live acceptance remain open.
 
 ## Programme boundary
 
