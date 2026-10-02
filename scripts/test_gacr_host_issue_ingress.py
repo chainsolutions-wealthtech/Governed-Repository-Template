@@ -34,6 +34,7 @@ def config() -> dict:
         "host_issue_bridge": {
             "enabled": True,
             "issue_number": 115,
+            "issue_title": "[GACR Host Bridge] Provider event ingress",
             "allowed_author_associations": ["OWNER", "MEMBER", "COLLABORATOR"],
             "max_payload_chars": 8192,
         }
@@ -43,7 +44,7 @@ def config() -> dict:
 def event(body: str, *, issue_number: int = 115, association: str = "MEMBER", comment_id: int = 9001) -> dict:
     return {
         "action": "created",
-        "issue": {"number": issue_number},
+        "issue": {"number": issue_number, "title": "[GACR Host Bridge] Provider event ingress"},
         "comment": {
             "id": comment_id,
             "body": body,
@@ -81,6 +82,17 @@ def main() -> None:
     assert_true(
         g.parse_issue_comment_event(event(body(valid), issue_number=114), config()) is None,
         "wrong issue ignored",
+    )
+
+    client_config = config()
+    client_config["host_issue_bridge"]["issue_number"] = None
+    parsed_by_title = g.parse_issue_comment_event(event(body(valid), issue_number=777), client_config)
+    assert_true(parsed_by_title is not None, "client title fallback accepts repository-local issue number")
+    wrong_title_event = event(body(valid), issue_number=777)
+    wrong_title_event["issue"]["title"] = "Unrelated issue"
+    assert_true(
+        g.parse_issue_comment_event(wrong_title_event, client_config) is None,
+        "client title fallback rejects unrelated issue title",
     )
     expect_error(
         lambda: g.parse_issue_comment_event(event(body(valid), association="NONE"), config()),

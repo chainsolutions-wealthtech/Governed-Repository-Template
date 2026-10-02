@@ -127,7 +127,7 @@ concurrency:
 
 jobs:
   relay:
-    if: ${{ (github.event_name != 'push' || github.actor != 'github-actions[bot]') && (github.event_name != 'issue_comment' || (github.event.issue.number == 115 && startsWith(github.event.comment.body, '/gacr-host '))) }}
+    if: ${{ (github.event_name != 'push' || github.actor != 'github-actions[bot]') && (github.event_name != 'issue_comment' || startsWith(github.event.comment.body, '/gacr-host ')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:

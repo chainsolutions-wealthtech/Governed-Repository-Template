@@ -339,3 +339,16 @@ For `heartbeat` and `action`, the adapter renews the existing GACR lease. For `a
 The dedicated source ingress issue is `#115`. Generated/adopted clients receive the adapter and configuration through the existing Template/upgrader path; each repository may configure its own ingress issue rather than inheriting source-project runtime history.
 
 Candidate status on this branch: `IMPLEMENTED_PENDING_CI_AND_POST_MERGE_LIVE_PROOF`.
+
+### R6 portability boundary
+
+The Template source issue number is runtime-local state and is never distributed to a governed client.
+
+- Template source currently binds its host ingress to issue `#115`.
+- A distributed/upgraded client receives `host_issue_bridge.issue_number = null`.
+- While no local number is bound, the ingress accepts only an issue whose title exactly matches the configured canonical host-inbox title.
+- Once a repository-local issue number is explicitly bound, exact-number validation takes precedence.
+- Multiple/ambiguous inbox discovery must fail closed at the host/orchestrator layer; the repository workflow does not infer an arbitrary issue.
+- Source conversation/session history and source issue identity never become client runtime state.
+
+This keeps the R6 transport reusable without leaking source-project runtime coordinates.

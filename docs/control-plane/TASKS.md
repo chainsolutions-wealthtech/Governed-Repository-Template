@@ -998,3 +998,9 @@ This integration does not execute or supersede `P12-S6_CLOSE_CREATE_NEW_REPOSITO
 Status: **IMPLEMENTED / CI_PENDING**.
 
 The provider-host issue bridge must evaluate idempotency against the latest default-branch GACR state on GitHub workflow reruns. The issue-comment path now reconciles to current `main` before base-HEAD capture. Acceptance requires an actual event rerun proving no new Beacon/session/state commit.
+
+### GACR R6-B — portable host inbox identity
+
+Status: **IMPLEMENTED / CI_PENDING**.
+
+The source host issue number is repository-local runtime state. Client distribution clears the number and activates exact canonical-title fallback until a client-local issue number is explicitly bound. Generic workflow code may not hard-code the source issue number.
