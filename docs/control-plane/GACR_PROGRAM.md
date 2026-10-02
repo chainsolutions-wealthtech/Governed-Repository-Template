@@ -316,3 +316,42 @@ The admission/access prerequisite is now integrated on canonical main. Existing 
 Next GACR action: `GSCC_ADMISSION_GATE_RUN_LIVE_REQUEST`.
 
 A real provider admission has not yet been executed. Step 13B remains NOT_EXECUTED; ultimate live acceptance remains NOT_PASSED. Global `P12-S6` remains untouched.
+
+
+## 2026-10-02 — Admission harvester reconciled with canonical session binding
+
+PR #163 is GREEN as an additive GSCC/GACR/GSE hardening tranche.
+
+The implementation reuses the canonical admission→GACR session binding that landed on main while #163 was in progress. It does not introduce a second session matcher. Repository metadata and exact HEAD are re-observed through GitHub GET; the existing GACR ConnectionEnvelope supplies correlated identity/provenance; missing control/GSE/access-policy evidence remains fail-closed.
+
+Reconciliation merge: `9fd0f8435da7da517659034b3fa05207e9470ae9`.
+
+Final no-temporary-trigger candidate head: `eb92101a2f6fa5d855380d4f2ac9820552f19b53`.
+
+Final candidate proof:
+
+- Governance CI `37005672855 = SUCCESS`;
+- GSCC Function Exposure Gate `37005672883 = SUCCESS`;
+- GSCC Observable Arrival Gateway `37005673101 = SUCCESS`.
+
+Step 13B remains NOT_EXECUTED. The next GACR-side gate is integration/post-merge attestation of #163 followed by a real admission/qualification request on canonical main; any absent canonical GSE/control/access-policy evidence must keep access withheld.
+
+
+## 2026-10-02 — PR #163 controlled qualification closure through Access Grant
+
+PR #163 now proves the complete controlled admission qualification path through a bounded read-only Access Grant.
+
+The tranche reuses the existing GACR Host Issue Bridge and canonical `gacr-dispatches.json` for a challenge/ACK/response proof; projects GSE admission state through the existing GSE engine without a parallel store; and evaluates a source-only default-DENY admission Access Policy that can allow only `READ_ONLY_DISCOVERY_AUTHORITY`.
+
+Tests-first evidence:
+
+- lease-binding RED `5a9f6040018760aa9de25d0fe693dcf49d2868ab`, CI `37012275291 = FAILURE`; hardened binder `88c73cde9f96823150667ca6a41c649a28198b4b`, CI `37012343498 = SUCCESS`;
+- control challenge RED `81914925ee4a2531f04cee62d5004ca22d930c64`, CI `37013852868 = FAILURE`;
+- GSE projection RED `7399233766803369845d89b0ff4ca3fc6b59f077`, CI `37014621966 = FAILURE`; green `84c2e29b83a1418387711e1c1aa328c6dcb8d473`, CI `37015025085 = SUCCESS`;
+- Access Policy RED `0aa92f27ccef48f15972f47165829340e5b89195`, CI `37015269742 = FAILURE`; green `4cbb1cde354f0dada0cd776e1200812a5331f474`, CI `37015477695 = SUCCESS`;
+- full controlled qualification `0f9b4432a973e507c4a519501f002b3d0b7669a7`, Governance CI `37015716729 = SUCCESS`;
+- latest GACR-state reconciliation `72a9b8d0872a59eed0a45e8d8e78223a072d055b`, Governance CI `37016097906 = SUCCESS`, Function Exposure `37016097994 = SUCCESS`, Observable Arrival `37016098117 = SUCCESS`.
+
+No fresh provider challenge has been claimed. PR #163 remains unmerged. Step 13B remains NOT_EXECUTED and ultimate acceptance remains NOT_PASSED.
+
+Next GACR/GSCC action after owner-authorized integration is one real read-only admission on canonical main, including the issue-control challenge, provider/host ACK and challenge response, GSE projection, Access Policy decision, Access Grant, then the already-required governed read-function exposure request.

@@ -1,0 +1,26 @@
+{
+  "schema": "gscc-admission-access-policy/v1",
+  "authority_id": "GSCC-ADMISSION-ACCESS-POLICY-001",
+  "default_decision": "DENY",
+  "read_only_requested_capabilities": [
+    "READ_REPOSITORY",
+    "READ_GOVERNANCE",
+    "READ_STATUS",
+    "READ_CONTEXT",
+    "READ_CAPABILITIES"
+  ],
+  "read_only_authority_class": "READ_ONLY_DISCOVERY_AUTHORITY",
+  "constraints": {
+    "direct_main_write": false,
+    "mutation": false,
+    "merge": false,
+    "deployment": false,
+    "exact_head_required": true,
+    "active_session_required": true,
+    "control_channel_required": true,
+    "gse_verified_required": true
+  },
+  "operational_or_mutation_authority_policy": "EXPLICIT_SEPARATE_GOVERNANCE_EVIDENCE_REQUIRED",
+  "invocation_authority_granted": false,
+  "mutation_authority_granted": false
+}

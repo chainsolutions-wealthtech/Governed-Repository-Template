@@ -6,15 +6,17 @@ on:
       - created
   repository_dispatch:
     types:
+      - gscc_entry_request
       - gscc_admission_request
       - gscc_access_qualification_request
   workflow_dispatch:
     inputs:
       mode:
-        description: Admission or qualification
+        description: Entry, admission, or qualification
         required: true
         type: choice
         options:
+          - entry
           - admission
           - qualification
       admission_envelope_json:
@@ -26,7 +28,11 @@ on:
         required: false
         type: string
       qualification_evidence_json:
-        description: Safe serialized qualification evidence JSON
+        description: Deprecated compatibility input; canonical qualification ignores caller evidence
+        required: false
+        type: string
+      requested_branch:
+        description: Optional requested branch; otherwise admission/default branch is used
         required: false
         type: string
 
@@ -39,8 +45,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
-      status: ${{ steps.evaluate.outputs.status }}
-      admission_id: ${{ steps.evaluate.outputs.admission_id }}
+      status: ${{ steps.evaluate.outputs.status || steps.issue_ingress.outputs.status }}
+      admission_id: ${{ steps.evaluate.outputs.admission_id || steps.issue_ingress.outputs.admission_id }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -92,6 +98,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     outputs:
+      harvest_status: ${{ steps.harvest.outputs.status }}
       status: ${{ steps.qualify.outputs.status }}
       grant_id: ${{ steps.qualify.outputs.grant_id }}
     steps:
@@ -104,11 +111,12 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Evaluate qualification evidence
-        id: qualify
+      - name: Harvest canonical qualification evidence
+        id: harvest
         env:
           ADMISSION_RECEIPT_JSON: ${{ github.event.client_payload.admission_receipt_json || inputs.admission_receipt_json }}
-          QUALIFICATION_EVIDENCE_JSON: ${{ github.event.client_payload.qualification_evidence_json || inputs.qualification_evidence_json }}
+          REQUESTED_BRANCH: ${{ github.event.client_payload.requested_branch || inputs.requested_branch }}
+          GITHUB_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
@@ -116,19 +124,108 @@ jobs:
             echo "::error::ADMISSION_RECEIPT_REQUIRED"
             exit 2
           }
-          test -n "$QUALIFICATION_EVIDENCE_JSON" || {
-            echo "::error::QUALIFICATION_EVIDENCE_REQUIRED"
-            exit 2
-          }
+          branch_args=()
+          [ -n "$REQUESTED_BRANCH" ] && branch_args+=(--requested-branch "$REQUESTED_BRANCH")
+          python3 scripts/gscc/admission_harvester.py harvest \
+            --admission-receipt-json "$ADMISSION_RECEIPT_JSON" \
+            "${branch_args[@]}" \
+            --output "$RUNNER_TEMP/gscc-qualification-evidence.json"
+
+      - name: Evaluate harvested qualification evidence
+        id: qualify
+        env:
+          ADMISSION_RECEIPT_JSON: ${{ github.event.client_payload.admission_receipt_json || inputs.admission_receipt_json }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          evidence="$(cat "$RUNNER_TEMP/gscc-qualification-evidence.json")"
           python3 scripts/gscc/admission.py qualify \
             --admission-receipt-json "$ADMISSION_RECEIPT_JSON" \
-            --qualification-evidence-json "$QUALIFICATION_EVIDENCE_JSON" \
+            --qualification-evidence-json "$evidence" \
             --output "$RUNNER_TEMP/gscc-access-decision.json"
 
-      - name: Persist bounded qualification decision
+      - name: Persist bounded canonical qualification
         uses: actions/upload-artifact@v4
         with:
-          name: gscc-access-decision-${{ github.run_id }}
-          path: ${{ runner.temp }}/gscc-access-decision.json
+          name: gscc-access-qualification-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/gscc-qualification-evidence.json
+            ${{ runner.temp }}/gscc-access-decision.json
           if-no-files-found: error
+          retention-days: 14
+
+  entry:
+    if: ${{ github.event.action == 'gscc_entry_request' || (github.event_name == 'workflow_dispatch' && inputs.mode == 'entry') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      admission_status: ${{ steps.evaluate.outputs.status }}
+      harvest_status: ${{ steps.harvest.outputs.status }}
+      access_status: ${{ steps.qualify.outputs.status }}
+      grant_id: ${{ steps.qualify.outputs.grant_id }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Evaluate entry admission envelope
+        id: evaluate
+        env:
+          ADMISSION_ENVELOPE_JSON: ${{ github.event.client_payload.admission_envelope_json || inputs.admission_envelope_json }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -n "$ADMISSION_ENVELOPE_JSON" || {
+            echo "::error::ADMISSION_ENVELOPE_REQUIRED"
+            exit 2
+          }
+          python3 scripts/gscc/admission.py evaluate \
+            --envelope-json "$ADMISSION_ENVELOPE_JSON" \
+            --output "$RUNNER_TEMP/gscc-admission-receipt.json"
+
+      - name: Harvest canonical entry evidence
+        if: ${{ steps.evaluate.outputs.status == 'PREAUTHORIZED' }}
+        id: harvest
+        env:
+          REQUESTED_BRANCH: ${{ github.event.client_payload.requested_branch || inputs.requested_branch }}
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          receipt="$(cat "$RUNNER_TEMP/gscc-admission-receipt.json")"
+          branch_args=()
+          [ -n "$REQUESTED_BRANCH" ] && branch_args+=(--requested-branch "$REQUESTED_BRANCH")
+          python3 scripts/gscc/admission_harvester.py harvest \
+            --admission-receipt-json "$receipt" \
+            "${branch_args[@]}" \
+            --output "$RUNNER_TEMP/gscc-qualification-evidence.json"
+
+      - name: Evaluate harvested entry qualification
+        if: ${{ steps.evaluate.outputs.status == 'PREAUTHORIZED' }}
+        id: qualify
+        shell: bash
+        run: |
+          set -euo pipefail
+          receipt="$(cat "$RUNNER_TEMP/gscc-admission-receipt.json")"
+          evidence="$(cat "$RUNNER_TEMP/gscc-qualification-evidence.json")"
+          python3 scripts/gscc/admission.py qualify \
+            --admission-receipt-json "$receipt" \
+            --qualification-evidence-json "$evidence" \
+            --output "$RUNNER_TEMP/gscc-access-decision.json"
+
+      - name: Persist complete entry evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-entry-${{ github.run_id }}
+          path: |
+            ${{ runner.temp }}/gscc-admission-receipt.json
+            ${{ runner.temp }}/gscc-qualification-evidence.json
+            ${{ runner.temp }}/gscc-access-decision.json
+          if-no-files-found: warn
           retention-days: 14

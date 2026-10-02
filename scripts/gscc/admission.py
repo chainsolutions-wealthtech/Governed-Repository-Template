@@ -113,12 +113,85 @@ def _valid_repository(value: Any) -> bool:
     return isinstance(value, str) and value.count("/") == 1 and all(part.strip() for part in value.split("/", 1))
 
 
+ADMISSION_CONTEXT_FIELDS = {
+    "agent": ("agent_id", "agent_identity", "agent_type", "provider", "model_runtime", "requested_role"),
+    "client": ("client_instance_id", "client_type", "client_version", "host_instance_id"),
+    "session": ("provider_session_ref", "provider_conversation_ref", "conversation_ref", "started_at"),
+    "connection": ("connection_ref", "connection_method", "surface_class", "bridge_registration_ref", "wake_channels"),
+    "target": ("repository", "requested_branch"),
+    "intent": ("entry_action", "connection_intent", "task_id", "requested_capabilities"),
+    "continuity": ("claim_id", "checkpoint_ref", "last_action", "last_evidence"),
+}
+PROVIDER_PRIVATE_OPTIONAL = {
+    "agent.agent_id", "agent.agent_identity", "agent.model_runtime",
+    "session.provider_session_ref", "session.provider_conversation_ref", "session.conversation_ref",
+}
+HOST_OPTIONAL = {"client.client_version", "client.host_instance_id", "connection.bridge_registration_ref"}
+
+
+def _safe_admission_context(envelope: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
+    request = envelope.get("request") if isinstance(envelope.get("request"), dict) else {}
+    observed_at = request.get("observed_at")
+    context: dict[str, Any] = {}
+    provenance: dict[str, Any] = {}
+
+    for section, fields in ADMISSION_CONTEXT_FIELDS.items():
+        source = envelope.get(section) if isinstance(envelope.get(section), dict) else {}
+        projected: dict[str, Any] = {}
+        for field_name in fields:
+            path = f"{section}.{field_name}"
+            value = source.get(field_name)
+            if value not in (None, "", [], {}):
+                projected[field_name] = copy.deepcopy(value)
+                provenance[path] = {
+                    "value": copy.deepcopy(value),
+                    "provenance": "DECLARED_BY_AGENT_OR_CLIENT",
+                    "source": "HOST_POST",
+                    "source_method": "POST",
+                    "observed_at": observed_at,
+                }
+            else:
+                reason = (
+                    "NOT_EXPOSED_BY_PROVIDER" if path in PROVIDER_PRIVATE_OPTIONAL
+                    else "NOT_EXPOSED_BY_HOST" if path in HOST_OPTIONAL
+                    else "NOT_YET_DECLARED"
+                )
+                provenance[path] = {
+                    "value": UNAVAILABLE,
+                    "status": UNAVAILABLE,
+                    "reason": reason,
+                    "provenance": (
+                        "PROVIDER_PRIVATE_UNAVAILABLE"
+                        if path in PROVIDER_PRIVATE_OPTIONAL
+                        else "DECLARED_BY_AGENT_OR_CLIENT"
+                    ),
+                    "source": "HOST_POST",
+                    "source_method": "POST",
+                    "observed_at": observed_at,
+                }
+        context[section] = projected
+
+    controls = envelope.get("control_capabilities")
+    context["control_capabilities"] = copy.deepcopy(controls) if isinstance(controls, dict) else {}
+    if isinstance(controls, dict):
+        for name, value in controls.items():
+            provenance[f"control_capabilities.{name}"] = {
+                "value": bool(value),
+                "provenance": "DECLARED_BY_AGENT_OR_CLIENT",
+                "source": "HOST_POST",
+                "source_method": "POST",
+                "observed_at": observed_at,
+            }
+    return context, provenance
+
+
 def _base_receipt(envelope: dict[str, Any], now: datetime) -> dict[str, Any]:
     request = envelope.get("request") if isinstance(envelope.get("request"), dict) else {}
     agent = envelope.get("agent") if isinstance(envelope.get("agent"), dict) else {}
     client = envelope.get("client") if isinstance(envelope.get("client"), dict) else {}
     connection = envelope.get("connection") if isinstance(envelope.get("connection"), dict) else {}
     target = envelope.get("target") if isinstance(envelope.get("target"), dict) else {}
+    context, field_provenance = _safe_admission_context(envelope)
     material = {
         "request_id": request.get("request_id"),
         "idempotency_key": request.get("idempotency_key"),
@@ -137,6 +210,8 @@ def _base_receipt(envelope: dict[str, Any], now: datetime) -> dict[str, Any]:
         "requested_role": agent.get("requested_role"),
         "requested_branch": target.get("requested_branch"),
         "repository": target.get("repository"),
+        "admission_context": context,
+        "field_provenance": field_provenance,
         "evaluated_at": now.astimezone(timezone.utc).isoformat(),
         "repository_access": "NOT_YET_GRANTED",
         "invocation_authority_granted": False,
@@ -164,7 +239,13 @@ SESSION_BINDING_SCHEMA = "gscc-admission-session-binding/v1"
 STRONG_BIND_FRESHNESS_SECONDS = 300
 
 
-def _active_gacr_sessions(sessions: dict[str, Any], repository: str) -> list[dict[str, Any]]:
+def _active_gacr_sessions(
+    sessions: dict[str, Any],
+    repository: str,
+    *,
+    now: datetime | None = None,
+) -> list[dict[str, Any]]:
+    now = (now or datetime.now(timezone.utc)).astimezone(timezone.utc)
     result: list[dict[str, Any]] = []
     for item in (sessions.get("sessions") or []):
         if not isinstance(item, dict):
@@ -175,6 +256,9 @@ def _active_gacr_sessions(sessions: dict[str, Any], repository: str) -> list[dic
             continue
         relay = item.get("relay") if isinstance(item.get("relay"), dict) else {}
         if relay.get("state") != "ACTIVE":
+            continue
+        lease_expires_at = _parse_datetime(relay.get("lease_expires_at"))
+        if lease_expires_at is None or lease_expires_at <= now:
             continue
         if not item.get("session_id") or not item.get("connection_ref"):
             continue
@@ -244,7 +328,7 @@ def resolve_admission_session_binding(
     if not repository:
         return {**base, "reason_code": "ADMISSION_REPOSITORY_REQUIRED"}
 
-    candidates = _active_gacr_sessions(sessions, str(repository))
+    candidates = _active_gacr_sessions(sessions, str(repository), now=now)
     admission_connection_ref = admission_receipt.get("connection_ref")
 
     exact = [s for s in candidates if s.get("connection_ref") == admission_connection_ref]
@@ -390,6 +474,26 @@ def evaluate_access_grant(
             **base,
             "reason_code": "QUALIFICATION_EVIDENCE_REQUIRED",
             "missing_qualification": sorted(QUALIFICATION_REQUIREMENTS),
+        }
+
+    if (
+        qualification_evidence.get("schema") != "gscc-qualification-evidence/v1"
+        or qualification_evidence.get("harvested_by") != "GSCC_ADMISSION_HARVESTER"
+    ):
+        return {
+            **base,
+            "status": "ADMISSION_DENIED",
+            "reason_code": "QUALIFICATION_EVIDENCE_NOT_CANONICAL",
+        }
+
+    supplied_digest = qualification_evidence.get("harvest_digest")
+    digest_material = copy.deepcopy(qualification_evidence)
+    digest_material.pop("harvest_digest", None)
+    if not isinstance(supplied_digest, str) or supplied_digest != _canonical_digest(digest_material):
+        return {
+            **base,
+            "status": "ADMISSION_DENIED",
+            "reason_code": "QUALIFICATION_EVIDENCE_DIGEST_MISMATCH",
         }
 
     forbidden = _forbidden_path(qualification_evidence)

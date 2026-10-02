@@ -101,6 +101,45 @@
     },
     "envelope_digest": {
       "type": "string"
+    },
+    "admission_context": {
+      "type": "object"
+    },
+    "field_provenance": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "value": {},
+          "status": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "provenance": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          },
+          "source_method": {
+            "enum": [
+              "POST",
+              "GET",
+              "DERIVED",
+              "CORRELATED"
+            ]
+          },
+          "observed_at": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
     }
   },
   "additionalProperties": true

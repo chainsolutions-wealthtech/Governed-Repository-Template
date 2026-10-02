@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import hashlib
 import json
 from pathlib import Path
 
@@ -146,10 +147,51 @@ def qualification(admission):
     }
 
 
+_legacy_qualification_fixture = qualification
+
+
+def seal_qualification(value):
+    value.pop("harvest_digest", None)
+    raw = json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    value["harvest_digest"] = hashlib.sha256(raw).hexdigest()
+    return value
+
+
+def qualification(admission):
+    value = _legacy_qualification_fixture(admission)
+    value["schema"] = "gscc-qualification-evidence/v1"
+    value["harvested_by"] = "GSCC_ADMISSION_HARVESTER"
+    return seal_qualification(value)
+
+
+def test_noncanonical_caller_qualification_evidence_is_denied():
+    admission = evaluate_admission(envelope(), store=InMemoryAdmissionStore(), now=NOW)
+    result = evaluate_access_grant(
+        admission,
+        {"session": {"status": "BOUND", "session_id": "fake", "connection_ref": admission["connection_ref"]}},
+        now=NOW,
+    )
+    assert result["status"] == "ADMISSION_DENIED", result
+    assert result["reason_code"] == "QUALIFICATION_EVIDENCE_NOT_CANONICAL", result
+
+
+def test_receipt_carries_safe_context_and_field_provenance():
+    result = evaluate_admission(envelope(), store=InMemoryAdmissionStore(), now=NOW)
+    assert result["admission_context"]["agent"]["provider"] == "chatgpt", result
+    provider = result["field_provenance"]["agent.provider"]
+    assert provider["source_method"] == "POST", provider
+    assert provider["provenance"] == "DECLARED_BY_AGENT_OR_CLIENT", provider
+    model = result["field_provenance"]["agent.model_runtime"]
+    assert model["status"] == "UNAVAILABLE", model
+    assert model["reason"] == "NOT_EXPOSED_BY_PROVIDER", model
+    assert model["provenance"] == "PROVIDER_PRIVATE_UNAVAILABLE", model
+
+
 def test_incomplete_qualification_cannot_issue_access_grant():
     admission = evaluate_admission(envelope(), store=InMemoryAdmissionStore(), now=NOW)
     evidence = qualification(admission)
     evidence["governance_read"] = {"status": "PENDING", "documents": []}
+    seal_qualification(evidence)
     result = evaluate_access_grant(admission, evidence, now=NOW)
     assert result["status"] == "QUALIFICATION_IN_PROGRESS", result
     assert "governance_read" in result["missing_qualification"], result
@@ -310,7 +352,7 @@ def admission_receipt_for_binding(**overrides):
     return value
 
 
-def gacr_sessions_for_binding(*, duplicate=False):
+def gacr_sessions_for_binding(*, duplicate=False, lease_expires_at="2026-10-02T12:15:00+00:00"):
     base = {
         "session_id": "session-canonical-live",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -321,7 +363,11 @@ def gacr_sessions_for_binding(*, duplicate=False):
         "branch": "main",
         "surface_class": "GITHUB_EVENT_VISIBLE",
         "connection_method": "gscc-github-event-gateway",
-        "relay": {"state": "ACTIVE", "branch": "main"},
+        "relay": {
+            "state": "ACTIVE",
+            "branch": "main",
+            "lease_expires_at": lease_expires_at,
+        },
     }
     sessions = [base]
     if duplicate:
@@ -361,6 +407,27 @@ def test_session_binding_fails_closed_when_ambiguous_or_missing():
     assert missing["reason_code"] == "ADMISSION_SESSION_BIND_NOT_FOUND", missing
 
 
+
+def test_session_binding_rejects_expired_or_missing_lease():
+    receipt = admission_receipt_for_binding(
+        connection_ref="gscc-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations:ref:main"
+    )
+
+    expired = resolve_admission_session_binding(
+        receipt,
+        gacr_sessions_for_binding(lease_expires_at="2026-10-02T11:59:59+00:00"),
+        now=NOW,
+    )
+    assert expired["status"] == "UNBOUND", expired
+    assert expired["reason_code"] == "ADMISSION_SESSION_BIND_NOT_FOUND", expired
+
+    missing_store = gacr_sessions_for_binding()
+    missing_store["sessions"][0]["relay"].pop("lease_expires_at", None)
+    missing = resolve_admission_session_binding(receipt, missing_store, now=NOW)
+    assert missing["status"] == "UNBOUND", missing
+    assert missing["reason_code"] == "ADMISSION_SESSION_BIND_NOT_FOUND", missing
+
+
 def test_access_grant_accepts_only_attested_admission_to_canonical_session_binding():
     admission = admission_receipt_for_binding()
     binding = resolve_admission_session_binding(admission, gacr_sessions_for_binding(), now=NOW)
@@ -374,6 +441,7 @@ def test_access_grant_accepts_only_attested_admission_to_canonical_session_bindi
         "binding_evidence_ref": binding["binding_evidence_ref"],
     }
     evidence["repository_baseline"]["observed_head"] = "a" * 40
+    seal_qualification(evidence)
     result = evaluate_access_grant(admission, evidence, now=NOW)
     assert result["status"] == "AUTHORIZED", result
     assert result["connection_ref"] == binding["canonical_connection_ref"], result
@@ -386,6 +454,8 @@ def main():
     test_secret_material_fails_closed()
     test_unavailable_provider_private_reference_is_allowed()
     test_idempotent_replay_reuses_same_admission()
+    test_receipt_carries_safe_context_and_field_provenance()
+    test_noncanonical_caller_qualification_evidence_is_denied()
     test_incomplete_qualification_cannot_issue_access_grant()
     test_complete_qualification_issues_bounded_access_grant()
     test_access_grant_validation_is_binding_and_expiry_sensitive()
@@ -397,6 +467,7 @@ def main():
     test_session_binding_prefers_exact_connection_ref()
     test_session_binding_uses_unique_strong_observable_anchor_without_rewriting_admission()
     test_session_binding_fails_closed_when_ambiguous_or_missing()
+    test_session_binding_rejects_expired_or_missing_lease()
     test_access_grant_accepts_only_attested_admission_to_canonical_session_binding()
     print("GSCC_ADMISSION_TESTS_OK")
 

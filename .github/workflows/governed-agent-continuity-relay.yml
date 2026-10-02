@@ -29,6 +29,7 @@ on:
           - context
           - forensics
           - telemetry-status
+          - control-challenge
       agent:
         required: false
         type: string
@@ -117,9 +118,11 @@ on:
       - gacr_context
       - gacr_forensics
       - gacr_telemetry-status
+      - gacr_control-challenge
 
 permissions:
   contents: write
+  issues: write
 
 concurrency:
   group: gacr-${{ github.repository }}
@@ -127,7 +130,7 @@ concurrency:
 
 jobs:
   relay:
-    if: ${{ (github.event_name != 'push' || github.actor != 'github-actions[bot]') && (github.event_name != 'issue_comment' || startsWith(github.event.comment.body, '/gacr-host ')) }}
+    if: ${{ (github.event_name != 'push' || github.actor != 'github-actions[bot]') && (github.event_name != 'issue_comment' || startsWith(github.event.comment.body, '/gacr-host ') || startsWith(github.event.comment.body, '/gscc-control ')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -158,9 +161,15 @@ jobs:
         id: relay
         run: python3 scripts/gacr_workflow_bridge.py
 
+      - name: Deliver pending GSCC issue control challenges
+        if: ${{ steps.relay.outputs.command == 'control-challenge' }}
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 scripts/gscc_gacr/issue_control_bridge.py deliver
+
       - name: Validate GACR state
         run: |
-          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py scripts/gacr_bridge_notifier.py scripts/gacr_auto_attach.py scripts/gacr_client_emitter.py scripts/gacr_host_issue_ingress.py
+          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py scripts/gacr_bridge_notifier.py scripts/gacr_auto_attach.py scripts/gacr_client_emitter.py scripts/gacr_host_issue_ingress.py scripts/gscc_control_issue_ingress.py scripts/gscc_gacr/issue_control_bridge.py
           python3 scripts/validate_governance.py
 
       - name: Persist changed relay state

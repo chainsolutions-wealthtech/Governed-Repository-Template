@@ -7,6 +7,13 @@ import subprocess
 import sys
 from pathlib import Path
 
+from gscc_gacr.issue_control_bridge import (
+    DISPATCHES_PATH,
+    apply_host_control_event,
+    read_json as read_control_json,
+    write_json as write_control_json,
+)
+
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG_PATH = ROOT / ".governance" / "agent-relay" / "config.json"
 AUTO_ATTACH = ROOT / "scripts" / "gacr_auto_attach.py"
@@ -15,7 +22,7 @@ TELEMETRY = ROOT / "scripts" / "gacr_agent_telemetry.py"
 
 PREFIX = "/gacr-host "
 SCHEMA = "gacr-host-event/v1"
-EVENTS = {"attach", "heartbeat", "action", "interrupt"}
+EVENTS = {"attach", "heartbeat", "action", "interrupt", "command_ack", "challenge_response"}
 ACTION_PHASES = {"STARTED", "COMPLETED", "FAILED", "CANCELLED"}
 INTERRUPTION_CODES = {
     "CLIENT_DISCONNECTED",
@@ -56,6 +63,13 @@ ALLOWED_KEYS = {
     "written_head",
     "checkpoint_ref",
     "interruption_code",
+    "dispatch_id",
+    "command_id",
+    "correlation_id",
+    "delivery_state",
+    "challenge_id",
+    "nonce",
+    "challenge_status",
 }
 
 
@@ -141,6 +155,14 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
         raise ValueError("host action requires a supported action_phase")
     if kind == "interrupt" and payload.get("interruption_code") not in INTERRUPTION_CODES:
         raise ValueError("host interrupt requires a supported interruption_code")
+    if kind == "command_ack":
+        for key in ("session_id", "dispatch_id", "command_id", "correlation_id", "delivery_state"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host command_ack requires {key}")
+    if kind == "challenge_response":
+        for key in ("session_id", "dispatch_id", "command_id", "correlation_id", "challenge_id", "nonce", "challenge_status"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host challenge_response requires {key}")
     for list_field in ("capabilities", "wake_channels"):
         if list_field in payload and not isinstance(payload.get(list_field), list):
             raise ValueError(f"{list_field} must be a JSON array")
@@ -155,6 +177,7 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
     payload["_comment_id"] = str(comment_id)
     payload["_evidence_ref"] = f"github-issue-comment:{comment_id}"
     payload["_actor"] = ((comment.get("user") or {}).get("login") or (event.get("sender") or {}).get("login"))
+    payload["_observed_at"] = comment.get("created_at")
     return payload
 
 
@@ -199,6 +222,14 @@ def evidence_processed(evidence_ref: str) -> bool:
     _, beacons_path = state_paths()
     store = read_json(beacons_path, {"items": []})
     return any(item.get("evidence_ref") == evidence_ref for item in store.get("items", []))
+
+
+def now_iso_from_event(payload: dict) -> str:
+    value = payload.get("_observed_at")
+    if value:
+        return str(value)
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
 def add(args: list[str], flag: str, value) -> None:
@@ -307,9 +338,45 @@ def process(payload: dict, repository: str) -> dict:
             "event": payload.get("event"),
         }
 
+    kind = payload["event"]
+    if kind in {"command_ack", "challenge_response"}:
+        session = resolve_session(payload, repository)
+        if not session:
+            raise ValueError("host control response requires an existing canonical session")
+        session_id = session["session_id"]
+        store = read_control_json(DISPATCHES_PATH, {"schema_version": "1.0.0", "revision": 0, "items": []})
+        control_result = apply_host_control_event(
+            store,
+            payload,
+            evidence_ref=evidence_ref,
+            observed_at=now_iso_from_event(payload),
+        )
+        write_control_json(DISPATCHES_PATH, store)
+        marker_beacon(session_id, payload, "COMMAND_ACK" if kind == "command_ack" else "CHALLENGE_RESPONSE")
+        if kind == "challenge_response" and control_result.get("fresh_liveness") is True:
+            hb = [
+                "heartbeat",
+                "--session-id", session_id,
+                "--source", "CLIENT_EMITTER",
+                "--action", "HOST_CHALLENGE_RESPONSE",
+                "--evidence", evidence_ref,
+            ]
+            add(hb, "--observed-head", payload.get("observed_head"))
+            run_script(CORE, hb)
+        run_script(TELEMETRY, ["correlate"])
+        run_script(TELEMETRY, ["forensics", "--session-id", session_id])
+        return {
+            "status": "GACR_HOST_CONTROL_EVENT_PROCESSED",
+            "event": kind,
+            "session_id": session_id,
+            "evidence_ref": evidence_ref,
+            "control": control_result,
+            "transport": "GITHUB_ISSUE_COMMENT",
+            "provenance": "CLIENT_EMITTER",
+        }
+
     session = ensure_session(payload, repository)
     session_id = session["session_id"]
-    kind = payload["event"]
 
     if kind == "attach":
         marker_beacon(session_id, payload, "HOST_ATTACH_RECEIPT")

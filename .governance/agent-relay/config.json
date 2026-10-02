@@ -80,7 +80,8 @@
     "chatgpt_issue_bridge_implemented": true,
     "chatgpt_issue_bridge_live_proven": true,
     "provider_host_live_mode": "EVENT_DRIVEN_GITHUB_ISSUE_COMMENT",
-    "continuous_background_heartbeat_proven": false
+    "continuous_background_heartbeat_proven": false,
+    "github_issue_control_channel_candidate": true
   },
   "revision_authority_id": "CP-AGENT-RELAY-001-R6",
   "forensics": {
@@ -165,7 +166,9 @@
       "attach",
       "heartbeat",
       "action",
-      "interrupt"
+      "interrupt",
+      "command_ack",
+      "challenge_response"
     ],
     "auto_attach_before_event": true,
     "auto_resolve_session": true,
@@ -193,6 +196,26 @@
       "canonical_session_id": "session-68c97d4bb1ef71c86444de12",
       "correlation": "EXACT",
       "duplicate_active_session": false
+    },
+    "control_channel": {
+      "enabled": true,
+      "controller_request_prefix": "/gscc-control ",
+      "command_delivery_prefix": "/gscc-control-command ",
+      "command_schema": "gscc-control-command/v1",
+      "request_schema": "gscc-control-request/v1",
+      "delivery_mode": "GITHUB_ISSUE_COMMENT",
+      "default_challenge_ttl_seconds": 60,
+      "max_challenge_ttl_seconds": 300,
+      "verified_minimum_capabilities": [
+        "COMMAND_RECEIVE",
+        "COMMAND_ACK",
+        "CHALLENGE_RESPONSE"
+      ],
+      "canonical_store": "GACR_DISPATCHES",
+      "fresh_response_renews_liveness": true,
+      "replay_renews_liveness": false,
+      "invocation_authority_granted": false,
+      "mutation_authority_granted": false
     }
   },
   "presence_fabric": {
@@ -268,7 +291,8 @@
       ],
       "timeout_status": "LIVENESS_CHALLENGE_TIMEOUT",
       "timeout_external_cause": "UNAVAILABLE",
-      "delivery_requires_external_bidirectional_hook": true
+      "delivery_requires_external_bidirectional_hook": true,
+      "issue_comment_bidirectional_hook": "CANDIDATE_IMPLEMENTED_PENDING_LIVE_PROOF"
     },
     "unbound_activity": {
       "storage_model": "CORRELATOR_PROJECTION_NO_SECOND_STORE",
@@ -372,6 +396,16 @@
     "postmerge_function_exposure_gate": 37002783152,
     "postmerge_function_route_selftest": 37002783428,
     "postmerge_relay_push": 37002783111,
-    "postmerge_relay_dispatch": 37002796444
+    "postmerge_relay_dispatch": 37002796444,
+    "access_policy": {
+      "authority_id": "GSCC-ADMISSION-ACCESS-POLICY-001",
+      "path": ".governance/agent-relay/gscc-admission-access-policy.json",
+      "schema": "gscc-admission-access-policy/v1",
+      "default_decision": "DENY",
+      "baseline_authority_class": "READ_ONLY_DISCOVERY_AUTHORITY",
+      "mutation_or_operational_authority": "EXPLICIT_SEPARATE_GOVERNANCE_EVIDENCE_REQUIRED",
+      "invocation_authority_granted": false,
+      "mutation_authority_granted": false
+    }
   }
 }
