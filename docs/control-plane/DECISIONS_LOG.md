@@ -453,3 +453,19 @@ Append-only durable decisions for the source/control-plane repository.
 - Admission, harvesting and Access Grant issuance continue to grant neither invocation nor mutation authority.
 - PR #163 carries the tests-first implementation. Step 13B remains blocked until integration/post-merge proof and a real canonical admission flow are observed.
 - The global Control Plane programme remains independent; P12-S6, CASE 1 and GMC are not advanced by this decision.
+
+
+### CPD-063 — Admission control proof reuses the GACR Host Issue Bridge and baseline access defaults to read-only deny-by-default
+
+- Date: 2026-10-02.
+- GSCC admission capability verification must use an observable bidirectional proof, not client declaration alone.
+- The existing GACR Host Issue Bridge and canonical `gacr-dispatches.json` are reused for the provider/host control proof. No parallel dispatcher, control store, session store or correlator is authorized.
+- A liveness challenge is time bounded, non-authorizing and correlated by dispatch, command, correlation, challenge and nonce identities.
+- A canonical minimum control proof requires an acknowledged command followed by a fresh, correlated challenge response. Replays, expired commands, responses before ACK and identity mismatches fail closed.
+- The proof may verify `COMMAND_RECEIVE`, `COMMAND_ACK` and `CHALLENGE_RESPONSE`; it does not imply support for unrelated report capabilities.
+- GSE admission state is projected on demand by the existing Session State Engine from canonical session/control evidence. No dedicated persistent GSE admission store is created.
+- The canonical baseline admission policy defaults to DENY and may allow only `READ_ONLY_DISCOVERY_AUTHORITY` for the bounded read-only capability set after session, exact-HEAD, capability, control and GSE prerequisites are satisfied.
+- Access Policy ALLOW is only eligibility for a bounded Access Grant. It is not function invocation authority. The existing Function Exposure Gate still requires function-specific authority evidence, and mutation-capable functions still require explicit mutation authority plus live preflight.
+- PR #163 provides the tests-first candidate. Its controlled Q12 path is green, but real provider/host challenge proof on canonical main remains NOT_EXECUTED.
+- Step 13B and ultimate live acceptance remain NOT_EXECUTED / NOT_PASSED.
+- The global Control Plane programme remains independent; P12-S6, CASE 1 and GMC are untouched.

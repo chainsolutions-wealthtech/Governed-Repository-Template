@@ -710,3 +710,155 @@ Tests-first / reconciliation evidence:
 - final PR Observable Arrival Gateway: `37005673101 = SUCCESS`.
 
 This candidate does not execute Step 13B, does not grant production/server authority and does not advance P12-S6, CASE 1 or GMC.
+
+
+## 2026-10-02 — Q8→Q12 candidate closure: real control transport seam, GSE projection and bounded access policy
+
+PR #163 now closes the previously identified controlled-candidate qualification gaps without creating parallel authorities.
+
+Candidate qualification path:
+
+```text
+PREAUTHORIZED
+→ canonical admission→GACR session binding
+→ exact live lease check
+→ GitHub GET repository / branch / exact HEAD
+→ canonical GACR ConnectionEnvelope
+→ GSCC LIVENESS_CHALLENGE over existing GACR Host Issue Bridge (#115)
+→ correlated COMMAND_ACK
+→ correlated CHALLENGE_RESPONSE
+→ canonical control proof in existing gacr-dispatches.json
+→ existing GSE Session State Engine admission projection
+→ canonical baseline Access Policy evaluation
+→ complete gscc-qualification-evidence/v1
+→ bounded gscc-access-grant/v1
+→ existing Function Exposure Gate
+```
+
+### Q8/Q9 — capability and control proof
+
+The candidate extends the already-live GACR Host Issue Bridge rather than creating a second transport authority.
+
+Controller request:
+
+```text
+/gscc-control {"schema":"gscc-control-request/v1","event":"challenge_request","session_id":"..."}
+```
+
+GSCC/GACR command delivery:
+
+```text
+/gscc-control-command {... LIVENESS_CHALLENGE ...}
+```
+
+The host/provider response continues through the canonical `/gacr-host` ingress as two distinct events:
+
+```text
+command_ack
+challenge_response
+```
+
+The evidence is accepted only when session, dispatch, command, correlation, challenge and nonce all match and the challenge is still fresh. A response before ACK, an expired challenge, a mismatched nonce or a replay never becomes fresh liveness.
+
+A successful proof verifies only the bounded minimum:
+
+- `COMMAND_RECEIVE`;
+- `COMMAND_ACK`;
+- `CHALLENGE_RESPONSE`;
+- `control_channel = REACHABLE`.
+
+It grants neither invocation nor mutation authority.
+
+Tests-first proof:
+
+- RED contract commit `81914925ee4a2531f04cee62d5004ca22d930c64`;
+- Governance CI `37013852868 = FAILURE` exactly at **Test GSCC issue control challenge bridge**.
+
+### Q10 — GSE admission projection
+
+No second GSE store is introduced. The candidate projects `gscc-gse-admission-state/v1` on demand through the existing deterministic GSE engine from the canonical GACR session plus canonical challenge evidence.
+
+Independent dimensions remain preserved:
+
+- liveness may become `QUIET` while a still-fresh control channel remains `REACHABLE`;
+- absent challenge proof leaves control `UNKNOWN`, never falsely `REACHABLE`;
+- challenge traffic does not manufacture progress.
+
+Tests-first proof:
+
+- RED contract commit `7399233766803369845d89b0ff4ca3fc6b59f077`;
+- Governance CI `37014621966 = FAILURE` exactly at **Test GSCC admission GSE projection**;
+- corrected GSE-semantics candidate `84c2e29b83a1418387711e1c1aa328c6dcb8d473`;
+- Governance CI `37015025085 = SUCCESS`.
+
+### Q11 — baseline Access Policy
+
+Canonical source-only policy:
+
+`.governance/agent-relay/gscc-admission-access-policy.json`
+
+Authority:
+
+`GSCC-ADMISSION-ACCESS-POLICY-001`
+
+The policy defaults to `DENY` and may allow only `READ_ONLY_DISCOVERY_AUTHORITY` for the bounded read-only request family. Unknown, operational or mutation requests are denied by this baseline policy.
+
+The policy never grants invocation or mutation authority. Function-specific authority evidence remains mandatory at the existing Function Exposure Gate.
+
+Tests-first proof:
+
+- RED contract commit `0aa92f27ccef48f15972f47165829340e5b89195`;
+- Governance CI `37015269742 = FAILURE` exactly at **Test GSCC admission access policy**;
+- policy candidate `4cbb1cde354f0dada0cd776e1200812a5331f474`;
+- Governance CI `37015477695 = SUCCESS`.
+
+### Q12 — complete controlled qualification
+
+The complete candidate flow was exercised as one controlled test:
+
+- read-only admission → `PREAUTHORIZED`;
+- exact session + valid lease;
+- current repository/HEAD observation;
+- correlated control challenge proof;
+- verified GSE admission projection;
+- baseline Access Policy `ALLOW`;
+- `QUALIFICATION_EVIDENCE_COMPLETE`;
+- bounded Access Grant `AUTHORIZED / GOVERNED_FUNCTION_EXPOSURE_ELIGIBLE`;
+- allowed authority class exactly `READ_ONLY_DISCOVERY_AUTHORITY`;
+- invocation authority remains `false`;
+- mutation authority remains `false`;
+- Access Grant binding/HEAD/session/expiry validation passes.
+
+The mutation-request variant remains not authorized.
+
+Q12 commit:
+
+`0f9b4432a973e507c4a519501f002b3d0b7669a7`
+
+Governance CI:
+
+`37015716729 = SUCCESS`
+
+Final exact-main state alignment merge:
+
+`72a9b8d0872a59eed0a45e8d8e78223a072d055b`
+
+Final aligned candidate proof:
+
+- Governance CI `37016097906 = SUCCESS`;
+- GSCC Function Exposure Gate `37016097994 = SUCCESS`;
+- GSCC Observable Arrival Gateway `37016098117 = SUCCESS`.
+
+### Acceptance boundary
+
+This proves the complete controlled candidate path through a bounded read-only Access Grant. It does **not** prove a real provider/host challenge/ACK/response after integration on canonical main.
+
+Therefore:
+
+```text
+PR #163 = CANDIDATE_GREEN / NOT_MERGED
+REAL_PROVIDER_CONTROL_PROOF = NOT_EXECUTED
+POSTMERGE_LIVE_ACCESS_GRANT = NOT_EXECUTED
+STEP_13B = NOT_EXECUTED
+ULTIMATE_LIVE_ACCEPTANCE = NOT_PASSED
+```

@@ -1114,3 +1114,18 @@ These observations are durable supervision evidence, not new mutation authority 
 - Reconciled PR validation: Governance CI `37005672855 = SUCCESS`; Function Exposure `37005672883 = SUCCESS`; Observable Arrival `37005673101 = SUCCESS`.
 - Candidate final functional head before this documentation-only attestation: `eb92101a2f6fa5d855380d4f2ac9820552f19b53`.
 - No merge performed by this agent. Step 13B remains NOT_EXECUTED. P12-S6 / CASE 1 / GMC untouched.
+
+
+### 2026-10-02 — PR #163 Q8→Q12 controlled qualification closure
+
+- Candidate branch: `governance/gscc-admission-harvester`.
+- Added existing-bridge control challenge transport over issue #115; canonical evidence remains in `gacr-dispatches.json`.
+- Added correlated host `command_ack` / `challenge_response` handling with expiry, nonce, correlation and replay checks.
+- Added on-demand GSE admission projection via the existing Session State Engine; no parallel GSE store.
+- Added default-DENY source-only admission Access Policy, bounded to `READ_ONLY_DISCOVERY_AUTHORITY`; no operational or mutation authority is granted.
+- Added full controlled Q12 proof from AdmissionEnvelope to validated bounded Access Grant.
+- Q12 Governance CI `37015716729 = SUCCESS`.
+- Latest exact-main state alignment merge `72a9b8d0872a59eed0a45e8d8e78223a072d055b`.
+- Final aligned candidate: Governance CI `37016097906 = SUCCESS`; Function Exposure `37016097994 = SUCCESS`; Observable Arrival `37016098117 = SUCCESS`.
+- PR remains unmerged. Real provider issue-control challenge/ACK/response on canonical main remains NOT_EXECUTED.
+- No P12-S6 / CASE 1 / GMC advancement. No production/server mutation.
