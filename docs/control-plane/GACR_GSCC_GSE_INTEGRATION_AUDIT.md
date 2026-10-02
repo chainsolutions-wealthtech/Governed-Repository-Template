@@ -56,7 +56,7 @@ PROCEDURAL_DEVIATION_RECORDED_NON_BLOCKING
 
 It does not invalidate the integrated runtime because the repository then performed dependency-ordered reconciliation and PR #142 plus post-merge CI proved the combined state. It must nevertheless remain visible in the durable audit history.
 
-## Open finding GACR-INT-AUDIT-01 — duplicated shared protocol authority
+## Closed finding GACR-INT-AUDIT-01 — duplicated shared protocol authority
 
 `scripts/gscc/protocol.py` is the canonical GSCC protocol implementation.
 
@@ -77,10 +77,23 @@ Required remediation:
 3. preserve backward compatibility;
 4. add a regression proving no second divergent shared protocol authority exists.
 
+Closure evidence:
+
+- remediation PR #147;
+- candidate Governance CI `36970569867 = PASS`;
+- merge `cbc87ef5f31c6c8190be3add44f446fdc316b6f2`;
+- post-merge Governance CI `36970611124 = PASS`;
+- post-merge GACR Relay `36970611145 = PASS`;
+- current post-auto-attach main observed at `b7d0e3540747af21db9705fc333baeca1d74adef`;
+- `scripts/gscc_gacr/contract.py` aliases canonical GSCC events/commands/delivery/terminal authority;
+- control safe-payload validation delegates to canonical GSCC secretless policy;
+- legacy control restrictions `browser_session`, `conversation_text`, and `page_content` were preserved by strengthening the canonical GSCC policy;
+- CI regression proves the control aliases are the same canonical protocol objects and rejects a future duplicate declaration.
+
 Status:
 
 ```text
-OPEN_BLOCKING_PRE_13B
+CLOSED_PASS
 ```
 
 ## Open finding GACR-INT-AUDIT-02 — incomplete control-response → GSE proof
