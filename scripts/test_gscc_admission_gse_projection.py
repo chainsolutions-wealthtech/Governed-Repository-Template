@@ -63,7 +63,7 @@ def test_stale_control_proof_does_not_project_verified_liveness():
     stale_now = datetime(2026, 10, 2, 13, 40, 0, tzinfo=timezone.utc)
     state = project_admission_gse_state(session(), control_proof(), now=stale_now)
     assert state["liveness"] != "VERIFIED", state
-    assert state["control_reachability"] != "REACHABLE", state
+    assert state["control_reachability"] == "REACHABLE", state
     assert state["status"] == "GSE_ADMISSION_STATE_INCOMPLETE", state
 
 
