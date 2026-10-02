@@ -198,6 +198,37 @@
             "string",
             "null"
           ]
+        },
+        "connection_envelope_digest": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "surface_class": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "CONTROLLED_INSTRUMENTABLE",
+            "GITHUB_EVENT_VISIBLE",
+            "PROPRIETARY_SILENT",
+            null
+          ]
+        },
+        "presence_event": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "PRESENCE_FIRST_TOUCH",
+            "PRESENCE_RESUME",
+            "UNBOUND_ACTIVITY",
+            null
+          ]
         }
       },
       "additionalProperties": true
