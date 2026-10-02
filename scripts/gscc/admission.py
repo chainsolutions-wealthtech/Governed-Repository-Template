@@ -4,7 +4,7 @@ import copy
 import hashlib
 import json
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 
@@ -148,6 +148,174 @@ class InMemoryAdmissionStore:
 
     def put(self, idempotency_key: str, receipt: dict[str, Any]) -> None:
         self.records[idempotency_key] = copy.deepcopy(receipt)
+
+
+
+QUALIFICATION_REQUIREMENTS = {
+    "session": lambda x: isinstance(x, dict) and x.get("status") == "BOUND" and bool(x.get("session_id")) and bool(x.get("connection_ref")),
+    "governance_read": lambda x: isinstance(x, dict) and x.get("status") == "COMPLETED" and bool(x.get("documents")),
+    "repository_baseline": lambda x: isinstance(x, dict) and x.get("status") == "OBSERVED" and bool(x.get("repository")) and bool(x.get("observed_head")),
+    "task": lambda x: isinstance(x, dict) and x.get("status") in {"RECONCILED", "NOT_REQUIRED"},
+    "claim": lambda x: isinstance(x, dict) and x.get("status") in {"RECONCILED", "NOT_REQUIRED"},
+    "capabilities": lambda x: isinstance(x, dict) and x.get("status") == "VERIFIED",
+    "control_channel": lambda x: isinstance(x, dict) and x.get("status") == "VERIFIED",
+    "gse_initial_state": lambda x: (
+        isinstance(x, dict)
+        and x.get("presence") == "PRESENT"
+        and x.get("liveness") == "VERIFIED"
+        and x.get("control_reachability") == "REACHABLE"
+    ),
+    "access_policy": lambda x: isinstance(x, dict) and x.get("status") == "ALLOW",
+}
+
+
+def _parse_datetime(value: Any) -> datetime | None:
+    if not isinstance(value, str) or not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def evaluate_access_grant(
+    admission_receipt: dict[str, Any],
+    qualification_evidence: dict[str, Any],
+    *,
+    now: datetime | None = None,
+    ttl_seconds: int = 900,
+) -> dict[str, Any]:
+    now = (now or datetime.now(timezone.utc)).astimezone(timezone.utc)
+
+    base = {
+        "schema": "gscc-access-decision/v1",
+        "status": "QUALIFICATION_IN_PROGRESS",
+        "access_class": "NOT_AUTHORIZED",
+        "admission_id": admission_receipt.get("admission_id") if isinstance(admission_receipt, dict) else None,
+        "connection_ref": admission_receipt.get("connection_ref") if isinstance(admission_receipt, dict) else None,
+        "repository": admission_receipt.get("repository") if isinstance(admission_receipt, dict) else None,
+        "invocation_authority_granted": False,
+        "mutation_authority_granted": False,
+        "evaluated_at": now.isoformat(),
+    }
+
+    if not isinstance(admission_receipt, dict) or admission_receipt.get("status") != "PREAUTHORIZED":
+        return {
+            **base,
+            "status": "ADMISSION_DENIED",
+            "reason_code": "PREAUTHORIZED_ADMISSION_REQUIRED",
+        }
+
+    if not isinstance(qualification_evidence, dict):
+        return {
+            **base,
+            "reason_code": "QUALIFICATION_EVIDENCE_REQUIRED",
+            "missing_qualification": sorted(QUALIFICATION_REQUIREMENTS),
+        }
+
+    missing = [
+        name
+        for name, validator in QUALIFICATION_REQUIREMENTS.items()
+        if not validator(qualification_evidence.get(name))
+    ]
+    if missing:
+        return {
+            **base,
+            "reason_code": "QUALIFICATION_INCOMPLETE",
+            "missing_qualification": missing,
+        }
+
+    session = qualification_evidence["session"]
+    baseline = qualification_evidence["repository_baseline"]
+    policy = qualification_evidence["access_policy"]
+
+    if session.get("connection_ref") != admission_receipt.get("connection_ref"):
+        return {
+            **base,
+            "status": "ADMISSION_DENIED",
+            "reason_code": "QUALIFICATION_CONNECTION_MISMATCH",
+        }
+    if baseline.get("repository") != admission_receipt.get("repository"):
+        return {
+            **base,
+            "status": "ADMISSION_DENIED",
+            "reason_code": "QUALIFICATION_REPOSITORY_MISMATCH",
+        }
+
+    issued_at = now
+    expires_at = now + timedelta(seconds=max(1, int(ttl_seconds)))
+    material = {
+        "admission_id": admission_receipt.get("admission_id"),
+        "session_id": session.get("session_id"),
+        "connection_ref": session.get("connection_ref"),
+        "repository": baseline.get("repository"),
+        "bound_head": baseline.get("observed_head"),
+        "issued_at": issued_at.isoformat(),
+    }
+    task = qualification_evidence.get("task") or {}
+    claim = qualification_evidence.get("claim") or {}
+
+    return {
+        "schema": "gscc-access-grant/v1",
+        "grant_id": f"GSCC-GRANT-{_canonical_digest(material)}",
+        "admission_id": admission_receipt.get("admission_id"),
+        "session_id": session.get("session_id"),
+        "connection_ref": session.get("connection_ref"),
+        "repository": baseline.get("repository"),
+        "status": "AUTHORIZED",
+        "access_class": "GOVERNED_FUNCTION_EXPOSURE_ELIGIBLE",
+        "bound_head": baseline.get("observed_head"),
+        "task_id": task.get("task_id"),
+        "claim_id": claim.get("claim_id"),
+        "allowed_authority_classes": list(policy.get("allowed_authority_classes") or []),
+        "constraints": copy.deepcopy(policy.get("constraints") or {}),
+        "qualification_digest": _canonical_digest(qualification_evidence),
+        "issued_at": issued_at.isoformat(),
+        "expires_at": expires_at.isoformat(),
+        "invocation_authority_granted": False,
+        "mutation_authority_granted": False,
+    }
+
+
+def validate_access_grant(
+    grant: dict[str, Any] | None,
+    *,
+    connection_ref: str,
+    repository: str,
+    requested_head: str,
+    session_id: str | None = None,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    now = (now or datetime.now(timezone.utc)).astimezone(timezone.utc)
+
+    if not isinstance(grant, dict):
+        return {"status": "WITHHELD", "reason_code": "ACCESS_GRANT_REQUIRED"}
+    if grant.get("schema") != "gscc-access-grant/v1" or grant.get("status") != "AUTHORIZED":
+        return {"status": "DENIED", "reason_code": "ACCESS_GRANT_INVALID"}
+    if grant.get("connection_ref") != connection_ref:
+        return {"status": "DENIED", "reason_code": "ACCESS_GRANT_CONNECTION_MISMATCH"}
+    if grant.get("repository") != repository:
+        return {"status": "DENIED", "reason_code": "ACCESS_GRANT_REPOSITORY_MISMATCH"}
+    if grant.get("bound_head") != requested_head:
+        return {"status": "DENIED", "reason_code": "ACCESS_GRANT_HEAD_MISMATCH"}
+    if session_id is not None and grant.get("session_id") != session_id:
+        return {"status": "DENIED", "reason_code": "ACCESS_GRANT_SESSION_MISMATCH"}
+
+    expires_at = _parse_datetime(grant.get("expires_at"))
+    if expires_at is None:
+        return {"status": "DENIED", "reason_code": "ACCESS_GRANT_EXPIRY_INVALID"}
+    if expires_at <= now:
+        return {"status": "DENIED", "reason_code": "ACCESS_GRANT_EXPIRED"}
+
+    return {
+        "status": "VALIDATED",
+        "reason_code": "ACCESS_GRANT_VALID",
+        "grant_id": grant.get("grant_id"),
+        "admission_id": grant.get("admission_id"),
+    }
 
 
 def evaluate_admission(
