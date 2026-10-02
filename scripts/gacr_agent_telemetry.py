@@ -58,7 +58,7 @@ SAFE_GITHUB_ENV = (
     "GITHUB_API_URL",
     "GITHUB_GRAPHQL_URL",
 )
-FORBIDDEN_KEY_FRAGMENTS = ("token", "secret", "password", "private_key", "cookie", "authorization")
+FORBIDDEN_KEY_FRAGMENTS = ("token", "secret", "password", "private_key", "cookie", "authorization", "transcript", "prompt", "private_reasoning", "chain_of_thought", "raw_response", "response_body", "page_content")
 ACTION_PHASES = {"STARTED", "COMPLETED", "FAILED", "CANCELLED"}
 INTERRUPTION_CODES = {"CLIENT_DISCONNECTED","PROVIDER_TIMEOUT","TOOL_FAILURE","AGENT_ERROR","USER_CANCELLED","NETWORK_LOSS","PROCESS_EXITED","UNKNOWN"}
 
@@ -219,6 +219,10 @@ def record_beacon(
     checkpoint_ref: str | None = None,
     evidence_ref: str | None = None,
     interruption_code: str | None = None,
+    connection_fingerprint: str | None = None,
+    connection_envelope_digest: str | None = None,
+    surface_class: str | None = None,
+    presence_event: str | None = None,
 ) -> dict:
     store = read_json(BEACONS_PATH, {"schema_version": "1.0.0", "revision": 0, "items": []})
     timestamp = observed_at or now_iso()
@@ -266,6 +270,10 @@ def record_beacon(
         "checkpoint_ref": checkpoint_ref,
         "evidence_ref": evidence_ref,
         "interruption_code": interruption_code,
+        "connection_fingerprint": connection_fingerprint or (session or {}).get("connection_fingerprint"),
+        "connection_envelope_digest": connection_envelope_digest,
+        "surface_class": surface_class or (session or {}).get("surface_class"),
+        "presence_event": presence_event,
         "github": github,
     }
     assert_secretless(envelope)
@@ -311,6 +319,9 @@ def correlation_score(beacon: dict, session: dict) -> tuple[int, list[str], bool
         exact = True
     if beacon.get("connection_ref") and beacon.get("connection_ref") == session.get("connection_ref"):
         reasons.append("CONNECTION_REF_EXACT")
+        exact = True
+    if beacon.get("connection_fingerprint") and beacon.get("connection_fingerprint") == session.get("connection_fingerprint"):
+        reasons.append("CONNECTION_FINGERPRINT_EXACT")
         exact = True
     if exact:
         return 100, reasons, True
