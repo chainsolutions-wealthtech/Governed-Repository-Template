@@ -405,6 +405,128 @@ def evaluate_admission(
     store.put(idempotency_key, receipt)
     return receipt
 
+
+ISSUE_ADMISSION_PREFIX = "/gscc-admission "
+AUTHORIZED_ISSUE_ASSOCIATIONS = frozenset({"OWNER", "MEMBER", "COLLABORATOR"})
+MAX_ISSUE_ADMISSION_PAYLOAD_CHARS = 8192
+
+
+def _ingress_denial(reason_code: str, now: datetime, **extra: Any) -> dict[str, Any]:
+    result = {
+        "schema": RECEIPT_SCHEMA,
+        "status": "ADMISSION_DENIED",
+        "reason_code": reason_code,
+        "repository_access": "NOT_YET_GRANTED",
+        "invocation_authority_granted": False,
+        "mutation_authority_granted": False,
+        "provider_private_identity_inferred": False,
+        "replay": False,
+        "evaluated_at": now.astimezone(timezone.utc).isoformat(),
+    }
+    result.update(extra)
+    return result
+
+
+def evaluate_issue_comment_admission(
+    event: dict[str, Any],
+    *,
+    expected_issue_number: int,
+    store: InMemoryAdmissionStore | None = None,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    now = (now or datetime.now(timezone.utc)).astimezone(timezone.utc)
+    if not isinstance(event, dict):
+        return _ingress_denial("ADMISSION_INGRESS_EVENT_INVALID", now)
+
+    issue = event.get("issue") if isinstance(event.get("issue"), dict) else {}
+    if issue.get("number") != expected_issue_number:
+        return _ingress_denial(
+            "ADMISSION_INGRESS_ISSUE_MISMATCH",
+            now,
+            transport="GITHUB_ISSUE_COMMENT",
+        )
+
+    comment = event.get("comment") if isinstance(event.get("comment"), dict) else {}
+    association = str(comment.get("author_association") or "")
+    if association not in AUTHORIZED_ISSUE_ASSOCIATIONS:
+        return _ingress_denial(
+            "ADMISSION_INGRESS_ACTOR_NOT_AUTHORIZED",
+            now,
+            transport="GITHUB_ISSUE_COMMENT",
+        )
+
+    comment_id = comment.get("id")
+    if comment_id in (None, ""):
+        return _ingress_denial(
+            "ADMISSION_INGRESS_COMMENT_ID_REQUIRED",
+            now,
+            transport="GITHUB_ISSUE_COMMENT",
+        )
+
+    body = str(comment.get("body") or "")
+    if not body.startswith(ISSUE_ADMISSION_PREFIX):
+        return _ingress_denial(
+            "ADMISSION_INGRESS_PREFIX_REQUIRED",
+            now,
+            transport="GITHUB_ISSUE_COMMENT",
+            transport_event_ref=f"issue-comment:{comment_id}",
+        )
+
+    raw = body[len(ISSUE_ADMISSION_PREFIX):].strip()
+    if not raw:
+        return _ingress_denial(
+            "ADMISSION_INGRESS_PAYLOAD_REQUIRED",
+            now,
+            transport="GITHUB_ISSUE_COMMENT",
+            transport_event_ref=f"issue-comment:{comment_id}",
+        )
+    if len(raw) > MAX_ISSUE_ADMISSION_PAYLOAD_CHARS:
+        return _ingress_denial(
+            "ADMISSION_INGRESS_PAYLOAD_TOO_LARGE",
+            now,
+            transport="GITHUB_ISSUE_COMMENT",
+            transport_event_ref=f"issue-comment:{comment_id}",
+        )
+
+    try:
+        envelope = json.loads(raw)
+    except json.JSONDecodeError:
+        return _ingress_denial(
+            "ADMISSION_INGRESS_JSON_INVALID",
+            now,
+            transport="GITHUB_ISSUE_COMMENT",
+            transport_event_ref=f"issue-comment:{comment_id}",
+        )
+    if not isinstance(envelope, dict):
+        return _ingress_denial(
+            "ADMISSION_INGRESS_JSON_OBJECT_REQUIRED",
+            now,
+            transport="GITHUB_ISSUE_COMMENT",
+            transport_event_ref=f"issue-comment:{comment_id}",
+        )
+
+    repository = event.get("repository") if isinstance(event.get("repository"), dict) else {}
+    event_repository = repository.get("full_name")
+    target = envelope.get("target") if isinstance(envelope.get("target"), dict) else {}
+    if event_repository and target.get("repository") != event_repository:
+        return _ingress_denial(
+            "ADMISSION_INGRESS_REPOSITORY_MISMATCH",
+            now,
+            transport="GITHUB_ISSUE_COMMENT",
+            transport_event_ref=f"issue-comment:{comment_id}",
+        )
+
+    result = evaluate_admission(envelope, store=store, now=now)
+    user = comment.get("user") if isinstance(comment.get("user"), dict) else {}
+    result.update(
+        transport="GITHUB_ISSUE_COMMENT",
+        transport_event_ref=f"issue-comment:{comment_id}",
+        transport_issue_number=expected_issue_number,
+        transport_author_login=user.get("login"),
+        transport_author_association=association,
+    )
+    return result
+
 def _json_object(raw: str, label: str) -> dict[str, Any]:
     try:
         value = json.loads(raw)
@@ -439,6 +561,12 @@ def main() -> None:
     evaluate.add_argument("--output")
     evaluate.add_argument("--require-preauthorized", action="store_true")
 
+    issue_comment = sub.add_parser("issue-comment")
+    issue_comment.add_argument("--event-path", required=True)
+    issue_comment.add_argument("--expected-issue-number", required=True, type=int)
+    issue_comment.add_argument("--output")
+    issue_comment.add_argument("--require-preauthorized", action="store_true")
+
     qualify = sub.add_parser("qualify")
     qualify.add_argument("--admission-receipt-json", required=True)
     qualify.add_argument("--qualification-evidence-json", required=True)
@@ -449,6 +577,19 @@ def main() -> None:
 
     if args.command == "evaluate":
         result = evaluate_admission(_json_object(args.envelope_json, "ADMISSION_ENVELOPE"))
+        _write_cli_output(result, args.output)
+        _github_output("status", result.get("status"))
+        _github_output("admission_id", result.get("admission_id"))
+        if args.require_preauthorized and result.get("status") != "PREAUTHORIZED":
+            raise SystemExit(3)
+        return
+
+    if args.command == "issue-comment":
+        event = json.loads(Path(args.event_path).read_text(encoding="utf-8"))
+        result = evaluate_issue_comment_admission(
+            event,
+            expected_issue_number=args.expected_issue_number,
+        )
         _write_cli_output(result, args.output)
         _github_output("status", result.get("status"))
         _github_output("admission_id", result.get("admission_id"))
