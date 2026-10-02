@@ -799,3 +799,27 @@ R6-C adds safe late provider enrichment:
 - conflicting specific provider fails closed.
 
 Candidate version: `2.8.40`. Final acceptance requires a live event from this conversation after merge.
+
+## 2026-10-02 — GACR R6 provider-host integration complete
+
+Final result:
+
+- dedicated source ingress: issue #115;
+- schema: `gacr-host-event/v1`;
+- transport: GitHub `issue_comment`;
+- source/client issue identity separation: PASS;
+- host event safety validation: PASS;
+- action START/COMPLETED traces: PASS live;
+- heartbeat renewal: PASS live;
+- exact session resolution without supplied session ID: PASS live;
+- provider attribution `other → chatgpt` on the same session: PASS live;
+- native provider conversation ID: remains unavailable and not invented;
+- Correlator: EXACT;
+- Forensics: PASS;
+- duplicate active session: NONE;
+- exact workflow rerun: PASS with `GACR_HOST_EVENT_ALREADY_PROCESSED` and `GACR_NO_STATE_CHANGE`;
+- continuous background daemon heartbeat: not claimed because the ChatGPT host does not expose a persistent process.
+
+Canonical active session: `session-68c97d4bb1ef71c86444de12`.
+
+R6 is therefore integrated for event-driven host activity. The broader programme remains stopped before `P12-S6` until explicit owner approval.
