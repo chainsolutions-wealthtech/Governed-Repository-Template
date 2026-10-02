@@ -2,7 +2,7 @@
   "schema": "gacr-origin-realignment-plan/v1",
   "authority": "CP-AGENT-RELAY-001",
   "plan_revision": "ORIGIN-REALIGNMENT-R1",
-  "status": "ACCEPTED_PLAN_NOT_YET_EXECUTED",
+  "status": "EXECUTION_IN_PROGRESS",
   "baseline": {
     "preserved_revisions": [
       "R1",
@@ -59,5 +59,20 @@
     "liveness_and_progress_separate": true,
     "silence_does_not_prove_external_cause": true,
     "no_secret_cookie_token_transcript_or_private_reasoning_capture": true
+  },
+  "execution": {
+    "step_1": {
+      "status": "CLOSED",
+      "evidence": "docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md",
+      "result": "GACR-OR-01_PASS"
+    },
+    "step_2": {
+      "status": "CLOSED",
+      "evidence": "docs/control-plane/GACR_ORIGINAL_INTENT_REVALIDATION.md",
+      "result": "FORMAL_REVALIDATION_PASS"
+    },
+    "step_3": {
+      "status": "NEXT_AUTHORIZED"
+    }
   }
 }

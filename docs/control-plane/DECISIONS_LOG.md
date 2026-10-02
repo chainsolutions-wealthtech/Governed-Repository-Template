@@ -394,3 +394,14 @@ Append-only durable decisions for the source/control-plane repository.
 - Provider conversation identity is never invented. Missing provider-private data remains unknown while repository/task/branch/PR/HEAD/claim/action/evidence continuity may still be known.
 - A global task such as `P12-S6` is not a functional dependency of GACR.
 - Owner sequencing remains explicit: finish GACR first; return to the global programme only after owner OK.
+
+
+### CPD-059 — GACR Step 2 formally revalidates canonical original intent
+
+- Date: 2026-10-02.
+- The canonical historical intent in `docs/control-plane/GACR_ORIGINAL_INTENT.md` is revalidated without rewrite.
+- The two external limits, `BEACON → WATCH → CORRELATOR → DISPATCHER`, Connection Envelope, connection fingerprint, explicit correlation confidence, optional Bridge/provider adapter and Agent Context remain durable requirements.
+- Provider-private facts remain unavailable when not supplied; no conversation identity may be invented.
+- R1-R6 family behavior is preserved and no runtime/workflow/script/schema change is authorized by this gate.
+- GACR remains distinct from the global programme; `P12-S6` is untouched and is not a dependency.
+- Step 2 is closed; Step 3 gap-matrix formalization becomes the next authorized gate.
