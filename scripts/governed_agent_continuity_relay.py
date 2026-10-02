@@ -291,6 +291,18 @@ def register_docs(
     session["last_seen_at"] = iso(timestamp)
     if observed_head:
         session["last_observed_head_sha"] = observed_head
+
+    # R6-C: an explicit host/provider identity may enrich a connection-bound
+    # session that was originally attached as generic "other", even when the
+    # provider does not expose a native conversation reference. Never downgrade
+    # a specific provider and never overwrite a conflicting specific provider.
+    if provider not in {None, "", "other"}:
+        existing_provider = session.get("provider")
+        if existing_provider in {None, "", "other", provider}:
+            session["provider"] = provider
+        else:
+            raise ValueError("provider conflict on connection-bound session enrichment")
+
     if ref:
         existing_provider = session.get("provider")
         if existing_provider not in {None, "", "other", provider}:
