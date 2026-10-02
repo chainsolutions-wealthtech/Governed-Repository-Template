@@ -127,7 +127,6 @@ class ExposureGateTests(unittest.TestCase):
             tool_name="read_tool",
             connection_ref=self.connection_ref,
             requested_head=self.head,
-            access_grant=self.access_grant(),
             authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
             snapshot=self.snapshot,
             sessions=self.sessions,
