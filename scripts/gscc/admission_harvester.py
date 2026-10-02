@@ -19,17 +19,21 @@ if __package__:
     from .protocol import assert_secretless
     from gscc_gacr.issue_control_bridge import canonical_control_evidence
     from gscc_gacr.admission_gse_projection import project_admission_gse_state
+    from .admission_access_policy import evaluate_access_policy
 else:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
     from gscc.admission import QUALIFICATION_REQUIREMENTS, resolve_admission_session_binding
     from gscc.protocol import assert_secretless
     from gscc_gacr.issue_control_bridge import canonical_control_evidence
+    from gscc_gacr.admission_gse_projection import project_admission_gse_state
+    from gscc.admission_access_policy import evaluate_access_policy
 
 ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_SESSIONS = ROOT / ".governance" / "control-plane-state" / "gacr-sessions.json"
 DEFAULT_CLAIMS = ROOT / ".governance" / "control-plane-state" / "gacr-claims.json"
 DEFAULT_TASKS = ROOT / ".governance" / "control-plane-state" / "tasks.json"
 DEFAULT_DISPATCHES = ROOT / ".governance" / "control-plane-state" / "gacr-dispatches.json"
+DEFAULT_ACCESS_POLICY = ROOT / ".governance" / "agent-relay" / "gscc-admission-access-policy.json"
 
 REQUIRED_GOVERNANCE_DOCUMENTS = (
     "00_START_HERE.md",
@@ -346,6 +350,7 @@ def harvest_qualification_evidence(
     control_evidence: dict[str, Any] | None = None,
     gse_state: dict[str, Any] | None = None,
     access_policy: dict[str, Any] | None = None,
+    access_policy_document: dict[str, Any] | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
     now = (now or _now()).astimezone(timezone.utc)
@@ -458,6 +463,20 @@ def harvest_qualification_evidence(
             now,
         )
 
+    if access_policy is None and isinstance(access_policy_document, dict):
+        access_policy = evaluate_access_policy(
+            admission_receipt,
+            access_policy_document,
+            {
+                "session": session,
+                "repository_baseline": repository_baseline,
+                "capabilities": capabilities,
+                "control_channel": control_channel,
+                "gse_initial_state": gse_initial_state,
+            },
+            now=now,
+        )
+
     if isinstance(access_policy, dict) and access_policy.get("status") == "ALLOW" and access_policy.get("evidence_ref"):
         access_policy_result = copy.deepcopy(access_policy)
         access_policy_result.setdefault("provenance", "OBSERVABLE_BY_PLATFORM")
@@ -558,6 +577,7 @@ def main() -> None:
     harvest.add_argument("--claims", default=str(DEFAULT_CLAIMS))
     harvest.add_argument("--tasks", default=str(DEFAULT_TASKS))
     harvest.add_argument("--dispatches", default=str(DEFAULT_DISPATCHES))
+    harvest.add_argument("--access-policy-document", default=str(DEFAULT_ACCESS_POLICY))
     harvest.add_argument("--output")
     args = parser.parse_args()
 
@@ -578,6 +598,7 @@ def main() -> None:
         claims=_load_json(args.claims),
         tasks=_load_json(args.tasks),
         dispatches=_load_json(args.dispatches),
+        access_policy_document=_load_json(args.access_policy_document),
         governance_documents=_load_governance_documents(),
     )
     _write_output(result, args.output)

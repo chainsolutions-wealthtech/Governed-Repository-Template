@@ -396,6 +396,16 @@
     "postmerge_function_exposure_gate": 37002783152,
     "postmerge_function_route_selftest": 37002783428,
     "postmerge_relay_push": 37002783111,
-    "postmerge_relay_dispatch": 37002796444
+    "postmerge_relay_dispatch": 37002796444,
+    "access_policy": {
+      "authority_id": "GSCC-ADMISSION-ACCESS-POLICY-001",
+      "path": ".governance/agent-relay/gscc-admission-access-policy.json",
+      "schema": "gscc-admission-access-policy/v1",
+      "default_decision": "DENY",
+      "baseline_authority_class": "READ_ONLY_DISCOVERY_AUTHORITY",
+      "mutation_or_operational_authority": "EXPLICIT_SEPARATE_GOVERNANCE_EVIDENCE_REQUIRED",
+      "invocation_authority_granted": false,
+      "mutation_authority_granted": false
+    }
   }
 }
