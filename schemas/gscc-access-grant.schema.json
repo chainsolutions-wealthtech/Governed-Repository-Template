@@ -91,6 +91,27 @@
     "qualification_digest": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
+    },
+    "admission_connection_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "binding_level": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "enum": [
+        "EXACT",
+        "STRONG",
+        null
+      ]
+    },
+    "binding_evidence_ref": {
+      "type": [
+        "string",
+        "null"
+      ]
     }
   },
   "additionalProperties": true
