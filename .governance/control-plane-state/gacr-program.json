@@ -11,7 +11,7 @@
     "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13_IN_PROGRESS_PRE_13B_INTEGRATION_REMEDIATION",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
-  "next_action": "GACR_PRE_13B_CLOSE_INTEGRATION_AUDIT_FINDINGS",
+  "next_action": "GACR_PRE_13B_CLOSE_INTEGRATION_AUDIT_02",
   "or01": {
     "status": "PASS",
     "attestation": "docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md",
@@ -161,7 +161,6 @@
     "fresh_provider_agent": "NOT_EXECUTED",
     "ultimate_live_acceptance": "NOT_PASSED",
     "remediation_required": [
-      "CANONICALIZE_GSCC_GACR_SHARED_CONTRACT_ON_SCRIPTS_GSCC_PROTOCOL",
       "PROVE_STATUS_PROGRESS_CONTEXT_CHECKPOINT_RESPONSE_MAPPING_INTO_GSE_WITHOUT_FALSE_LIVENESS_OR_PROGRESS",
       "RUN_FULL_GSCC_GSE_CONTROL_E2E_GACR_GOVERNANCE_REGRESSION_GREEN",
       "REOBSERVE_MAIN_AND_REAUTHORIZE_STEP_13B"
@@ -181,8 +180,16 @@
         "detail": "Worker A and Worker B were merged before all three worker tranches remained open for a single integration audit. Subsequent controlled integration and green CI contained the risk."
       },
       "canonical_gscc_contract": {
-        "status": "OPEN_BLOCKING_REMEDIATION",
-        "detail": "scripts/gscc_gacr/contract.py still redefines shared GSCC EVENTS, COMMANDS, DELIVERY_STATES and safety constants instead of deriving them from the canonical scripts/gscc/protocol.py authority."
+        "status": "CLOSED_PASS",
+        "detail": "PR #147 canonicalized shared GSCC protocol authority in scripts/gscc/protocol.py. scripts/gscc_gacr/contract.py now aliases/imports shared constants and delegates safe-payload validation. Candidate CI 36970569867 PASS; merge cbc87ef5f31c6c8190be3add44f446fdc316b6f2; post-merge CI 36970611124 PASS; Relay 36970611145 PASS.",
+        "evidence": {
+          "pr": 147,
+          "candidate_ci": 36970569867,
+          "merge": "cbc87ef5f31c6c8190be3add44f446fdc316b6f2",
+          "postmerge_ci": 36970611124,
+          "postmerge_relay": 36970611145,
+          "observed_main": "b7d0e3540747af21db9705fc333baeca1d74adef"
+        }
       },
       "gse_control_response_projection": {
         "status": "OPEN_BLOCKING_REMEDIATION",
