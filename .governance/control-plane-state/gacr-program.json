@@ -8,10 +8,10 @@
     "original_intent": "CANONICAL_RECORDED",
     "baseline_r1_r6": "PRESERVED_REOBSERVED_ATTESTED_OR01_PASS",
     "origin_realignment_plan": "ACCEPTED",
-    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13B_NEXT_INTEGRATION_PREREQUISITES_GREEN",
+    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13_IN_PROGRESS_PRE_13B_INTEGRATION_REMEDIATION",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
-  "next_action": "REALIGNMENT_STEP_13B_RUN_REAL_FRESH_PROVIDER_AGENT_TEST",
+  "next_action": "GACR_PRE_13B_CLOSE_INTEGRATION_AUDIT_FINDINGS",
   "or01": {
     "status": "PASS",
     "attestation": "docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md",
@@ -108,7 +108,7 @@
       "requirement": "A genuinely fresh provider conversation/agent must enter through an instrumented client/gateway path or produce later independently observable repository evidence."
     },
     "integration_prerequisites": {
-      "status": "PASS",
+      "status": "PASS_WITH_POST_ATTESTATION_REMEDIATION_REQUIRED",
       "gscc_core": {
         "source_pr": 140,
         "source_head": "b4cfec2e5dabfd28ab557e4ef740f0c44fa44457",
@@ -156,7 +156,42 @@
   },
   "relational_projection": "PENDING_PROJECTION_NO_DEDICATED_GACR_REALIGNMENT_STEP_TABLE",
   "step_13b": {
-    "status": "NEXT_AUTHORIZED",
-    "requirement": "Run a genuinely fresh provider conversation/agent through the integrated GSCC/GSE/GACR path without telling it to register with GACR. Observe first-touch, SessionTwin, control challenge/wake capability and provider-bound evidence without inventing unavailable provider-private fields."
+    "status": "BLOCKED_PENDING_INTEGRATION_REMEDIATION",
+    "requirement": "After the pre-Step-13B remediation is closed, run a genuinely fresh provider conversation/agent through the integrated GSCC/GSE/GACR path without telling it to register with GACR. Observe first-touch, SessionTwin, control challenge/wake capability and provider-bound evidence without inventing unavailable provider-private fields.",
+    "fresh_provider_agent": "NOT_EXECUTED",
+    "ultimate_live_acceptance": "NOT_PASSED",
+    "remediation_required": [
+      "CANONICALIZE_GSCC_GACR_SHARED_CONTRACT_ON_SCRIPTS_GSCC_PROTOCOL",
+      "PROVE_STATUS_PROGRESS_CONTEXT_CHECKPOINT_RESPONSE_MAPPING_INTO_GSE_WITHOUT_FALSE_LIVENESS_OR_PROGRESS",
+      "RUN_FULL_GSCC_GSE_CONTROL_E2E_GACR_GOVERNANCE_REGRESSION_GREEN",
+      "REOBSERVE_MAIN_AND_REAUTHORIZE_STEP_13B"
+    ]
+  },
+  "integration_post_attestation_audit": {
+    "status": "REMEDIATION_REQUIRED_BEFORE_STEP_13B_EXECUTION",
+    "observed_main_head": "8936a0f734d12cf5dbcd916c4d98fe4fef895aec",
+    "evidence": "docs/control-plane/GACR_GSCC_GSE_INTEGRATION_AUDIT.md",
+    "integration_functional_state": "GREEN",
+    "governance_ci": 36968203836,
+    "relay_run": 36968203882,
+    "attestation_ci": 36968463053,
+    "findings": {
+      "worker_merge_discipline": {
+        "status": "PROCEDURAL_DEVIATION_RECORDED_NON_BLOCKING",
+        "detail": "Worker A and Worker B were merged before all three worker tranches remained open for a single integration audit. Subsequent controlled integration and green CI contained the risk."
+      },
+      "canonical_gscc_contract": {
+        "status": "OPEN_BLOCKING_REMEDIATION",
+        "detail": "scripts/gscc_gacr/contract.py still redefines shared GSCC EVENTS, COMMANDS, DELIVERY_STATES and safety constants instead of deriving them from the canonical scripts/gscc/protocol.py authority."
+      },
+      "gse_control_response_projection": {
+        "status": "OPEN_BLOCKING_REMEDIATION",
+        "detail": "Controlled E2E proves CHALLENGE_RESPONSE and COMMAND_ACK projection, but STATUS/PROGRESS/CONTEXT/CHECKPOINT control responses are not yet proven end-to-end through the canonical GSE input model."
+      },
+      "authority_boundaries": "PASS",
+      "live_store_test_isolation": "PASS",
+      "secret_boundary": "PASS",
+      "historical_gacr_regression": "PASS"
+    }
   }
 }

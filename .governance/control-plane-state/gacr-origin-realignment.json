@@ -2,7 +2,7 @@
   "schema": "gacr-origin-realignment-plan/v1",
   "authority": "CP-AGENT-RELAY-001",
   "plan_revision": "ORIGIN-REALIGNMENT-R1",
-  "status": "EXECUTION_IN_PROGRESS_STEP_13B_NEXT",
+  "status": "EXECUTION_IN_PROGRESS_PRE_STEP_13B_INTEGRATION_REMEDIATION",
   "baseline": {
     "preserved_revisions": [
       "R1",
@@ -148,10 +148,18 @@
       "governance_ci": "PASS",
       "relay": "PASS",
       "current_session_presence_first_live_proof": "PASS",
-      "ultimate_live_acceptance": "NOT_PASSED"
+      "ultimate_live_acceptance": "NOT_PASSED",
+      "post_attestation_audit": {
+        "status": "REMEDIATION_REQUIRED_BEFORE_STEP_13B_EXECUTION",
+        "observed_main_head": "8936a0f734d12cf5dbcd916c4d98fe4fef895aec",
+        "evidence": "docs/control-plane/GACR_GSCC_GSE_INTEGRATION_AUDIT.md",
+        "procedural_merge_deviation": "RECORDED_NON_BLOCKING",
+        "canonical_gscc_contract_drift_risk": "OPEN_BLOCKING",
+        "gse_control_response_projection_coverage": "OPEN_BLOCKING"
+      }
     },
     "step_13b": {
-      "status": "NEXT_AUTHORIZED",
+      "status": "BLOCKED_PENDING_INTEGRATION_REMEDIATION",
       "prerequisites": {
         "gscc_core": "PASS",
         "gse_session_state_engine": "PASS",
@@ -162,7 +170,13 @@
         "canonical_main": "feea5dfc9055c96c9a589889d96708b3fba353e2"
       },
       "fresh_provider_agent": "NOT_EXECUTED",
-      "ultimate_live_acceptance": "NOT_PASSED"
+      "ultimate_live_acceptance": "NOT_PASSED",
+      "remediation_required": [
+        "CANONICALIZE_GSCC_GACR_SHARED_CONTRACT",
+        "PROVE_CONTROL_RESPONSE_TO_GSE_MAPPING",
+        "FULL_REGRESSION_GREEN",
+        "REAUTHORIZE_STEP_13B_FROM_CURRENT_MAIN"
+      ]
     }
   }
 }
