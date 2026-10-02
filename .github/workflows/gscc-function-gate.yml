@@ -1,0 +1,105 @@
+name: GSCC Function Exposure Gate
+
+on:
+  workflow_call:
+    inputs:
+      package_path:
+        required: true
+        type: string
+      expected_source_head:
+        required: true
+        type: string
+    outputs:
+      validated:
+        value: ${{ jobs.gate.outputs.validated }}
+      validation_digest:
+        value: ${{ jobs.gate.outputs.validation_digest }}
+      status:
+        value: ${{ jobs.gate.outputs.status }}
+      function_count:
+        value: ${{ jobs.gate.outputs.function_count }}
+  workflow_dispatch:
+    inputs:
+      package_path:
+        description: Governed execution package to validate
+        required: true
+        type: string
+      expected_source_head:
+        description: Exact canonical main HEAD
+        required: true
+        type: string
+  repository_dispatch:
+    types:
+      - gscc_function_gate
+
+permissions:
+  contents: read
+
+jobs:
+  gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      validated: ${{ steps.gate.outputs.validated }}
+      validation_digest: ${{ steps.gate.outputs.validation_digest }}
+      status: ${{ steps.gate.outputs.status }}
+      function_count: ${{ steps.gate.outputs.function_count }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 1
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve function-gate request
+        id: request
+        shell: bash
+        env:
+          INPUT_PACKAGE: ${{ inputs.package_path }}
+          INPUT_EXPECTED_HEAD: ${{ inputs.expected_source_head }}
+          DISPATCH_PACKAGE: ${{ github.event.client_payload.package_path }}
+          DISPATCH_EXPECTED_HEAD: ${{ github.event.client_payload.expected_source_head }}
+        run: |
+          set -euo pipefail
+          package="${INPUT_PACKAGE:-${DISPATCH_PACKAGE:-}}"
+          expected="${INPUT_EXPECTED_HEAD:-${DISPATCH_EXPECTED_HEAD:-}}"
+          test -n "$package" || { echo "::error::GSCC_FUNCTION_GATE_PACKAGE_REQUIRED"; exit 1; }
+          test -n "$expected" || { echo "::error::GSCC_FUNCTION_GATE_EXPECTED_HEAD_REQUIRED"; exit 1; }
+          echo "package=$package" >> "$GITHUB_OUTPUT"
+          echo "expected=$expected" >> "$GITHUB_OUTPUT"
+
+      - name: Verify canonical main and exact source HEAD
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "${{ github.ref }}" = "refs/heads/main" || {
+            echo "::error::GSCC_FUNCTION_GATE_REQUIRES_CANONICAL_MAIN"
+            exit 1
+          }
+          actual="$(git rev-parse HEAD)"
+          test "$actual" = "${{ steps.request.outputs.expected }}" || {
+            echo "::error::GSCC_FUNCTION_GATE_HEAD_MOVED expected=${{ steps.request.outputs.expected }} actual=$actual"
+            exit 1
+          }
+
+      - name: Validate complete function path through GSCC
+        id: gate
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p .governance/control-plane-state/function-gate-receipts
+          receipt=".governance/control-plane-state/function-gate-receipts/${{ github.run_id }}.json"
+          python3 scripts/gscc_function_gate.py package             --package "${{ steps.request.outputs.package }}"             --repository "$GITHUB_REPOSITORY"             --expected-source-head "${{ steps.request.outputs.expected }}"             --receipt "$receipt"
+
+      - name: Upload GSCC function validation receipt
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-function-gate-${{ github.run_id }}
+          path: .governance/control-plane-state/function-gate-receipts/*.json
+          if-no-files-found: error
+          retention-days: 30
