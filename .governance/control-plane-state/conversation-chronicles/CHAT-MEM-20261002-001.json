@@ -13,14 +13,14 @@
   "counters": {
     "next_user_message": 2,
     "next_assistant_message": 3,
-    "next_tool_event": 8,
-    "next_decision_event": 7,
+    "next_tool_event": 9,
+    "next_decision_event": 8,
     "next_constraint_event": 7,
-    "next_action_event": 7,
+    "next_action_event": 8,
     "next_error_event": 1,
     "next_recovery_event": 5,
-    "next_checkpoint": 8,
-    "next_cache": 8,
+    "next_checkpoint": 9,
+    "next_cache": 9,
     "next_open_loop": 4,
     "next_artifact": 2,
     "next_session": 3
@@ -31,24 +31,27 @@
     "previous_hash": "8b45efbe51e0e9fbf26883ae2a6ee65c7975e7c782bc5c708c4ea06363db5e97"
   },
   "current_session": "SESSION-000002",
-  "current_checkpoint": "CHK-000007",
-  "current_cache": "CACHE-000007",
+  "current_checkpoint": "CHK-000008",
+  "current_cache": "CACHE-000008",
   "open_loops": [
     "OPEN-000002",
     "OPEN-000003"
   ],
-  "current_topic": "GACR Step 13B fresh provider agent acceptance",
-  "point_of_stop": "GSCC/GSE/GACR control integration is canonical and green; Step 13B fresh-provider live proof is next and not yet executed.",
-  "next_safe_action": "Run a genuinely fresh provider conversation/agent through the integrated path without GACR registration instructions; observe first-touch and bidirectional control before continuing Steps 14-24.",
+  "current_topic": "GACR pre-Step-13B remediation and chronological evolution",
+  "point_of_stop": "Canonical GSCC/GSE/GACR integration is functionally green; PR #144 canonized two blocking pre-Step-13B remediation findings. Step 13B remains NOT_EXECUTED and blocked.",
+  "next_safe_action": "Execute G4 / GACR-INT-AUDIT-01 first, integrate after full regression, then G5 / GACR-INT-AUDIT-02, then G6 reauthorization before any fresh-provider Step 13B run.",
   "external_state_observed": {
     "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
     "branch": "main",
-    "head": "feea5dfc9055c96c9a589889d96708b3fba353e2",
-    "observed_at": "2026-10-02T07:17:40+02:00",
+    "head": "3245703569dc2cd90aa33b6f0b2f6ed3c698556d",
+    "observed_at": "2026-10-02T07:30:22+02:00",
     "precision": "second",
     "freshness": "OBSERVED_AT",
-    "gscc_gse_control_integration": "PASS",
-    "step_13b": "NEXT_AUTHORIZED",
+    "gscc_gse_control_integration": "PASS_WITH_POST_ATTESTATION_REMEDIATION_REQUIRED",
+    "canonical_audit_pr": 144,
+    "canonical_audit_merge": "5ef0cd15d4721b38246222837e8b30dd5e84d02c",
+    "canonical_audit_ci": 36969164244,
+    "step_13b": "BLOCKED_PENDING_INTEGRATION_REMEDIATION",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
   "attachment_artifacts": [
@@ -128,7 +131,7 @@
     "premerge_ci_result": "PASS"
   },
   "supervision_state": {
-    "status": "GSCC_GSE_CONTROL_INTEGRATED_STEP_13B_NEXT",
+    "status": "PRE_STEP_13B_INTEGRATION_REMEDIATION",
     "programme": "GACR",
     "global_programme_progression": "UNCHANGED",
     "workers": [
@@ -204,8 +207,37 @@
       "replayed CHALLENGE_RESPONSE must not refresh GSE liveness",
       "isolated green suites are insufficient without a combined E2E"
     ],
-    "final_main": "feea5dfc9055c96c9a589889d96708b3fba353e2",
+    "final_main": "3245703569dc2cd90aa33b6f0b2f6ed3c698556d",
     "controlled_e2e": "PASS",
-    "step_13b": "NEXT_AUTHORIZED"
+    "step_13b": "BLOCKED_PENDING_INTEGRATION_REMEDIATION",
+    "canonical_audit": {
+      "pr": 144,
+      "merge": "5ef0cd15d4721b38246222837e8b30dd5e84d02c",
+      "ci": 36969164244,
+      "result": "PASS",
+      "findings": [
+        "GACR-INT-AUDIT-01_CANONICALIZE_SHARED_GSCC_CONTRACT",
+        "GACR-INT-AUDIT-02_PROVE_CONTROL_RESPONSE_TO_GSE_MAPPING"
+      ]
+    },
+    "chronological_evolution_plan": [
+      "G4_CLOSE_GACR_INT_AUDIT_01_CANONICAL_GSCC_CONTRACT",
+      "G4_INTEGRATE_AND_FULL_REGRESSION",
+      "G5_CLOSE_GACR_INT_AUDIT_02_CONTROL_RESPONSE_TO_GSE_MAPPING",
+      "G5_INTEGRATE_AND_EXTENDED_E2E",
+      "G6_FULL_RECONCILIATION_AND_REAUTHORIZE_STEP_13B",
+      "G7_STEP_13B_FRESH_PROVIDER_TEST",
+      "G8_STEP_14_AUTO_PRESENCE",
+      "G9_STEP_15_REAL_GOVERNED_WORK",
+      "G10_STEP_16_OBSERVE_STATE_EVOLUTION",
+      "G11_STEP_17_CONTROLLED_INTERRUPTION",
+      "G12_STEP_18_SUSPECTED_STALL_TO_STALLED",
+      "G13_STEP_19_SECOND_AGENT",
+      "G14_STEP_20_RECONSTRUCT_STOPPING_POINT",
+      "G15_STEP_21_REOBSERVE_EXACT_HEAD",
+      "G16_STEP_22_ACCEPT_TAKEOVER",
+      "G17_STEP_23_CONTINUE_SAME_WORK",
+      "G18_STEP_24_DECLARE_COMPLETE_ONLY_AFTER_LIVE_PASS"
+    ]
   }
 }
