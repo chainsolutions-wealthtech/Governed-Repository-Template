@@ -10,7 +10,9 @@
 >
 > This document is not evidence that steps 4-12 are DONE. It changes no runtime, workflow, production script, schema, session state, claim state, takeover state, Beacon state, Correlator state, Forensics state or Dispatcher state.
 >
-> Preconditions for implementation: preserve the attested R1-R6 baseline and consume the final `ORIGINAL_INTENT ↔ CURRENT_IMPLEMENTATION ↔ GAP` matrix after it is merged/reobserved.
+> Prerequisites revalidated after parallel-agent completion: `GACR-OR-01` is PASS via `docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md`; original-intent Step 2 is PASS/CLOSED; Step 3 is PASS/CLOSED via `docs/control-plane/GACR_INTENT_IMPLEMENTATION_GAP_MATRIX.md`. Revalidation main observed: `d456d311a34412bc8fe15ed867c03b6987314f73`.
+>
+> This artifact remains **PREPARED / NOT_EXECUTED**: the merged baseline and gap matrix confirm the design assumptions below, but no Presence-First runtime correction is claimed by this document.
 
 ## 0. Scope and invariants
 
