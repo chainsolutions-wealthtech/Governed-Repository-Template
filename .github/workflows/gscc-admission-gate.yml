@@ -47,6 +47,9 @@ jobs:
     outputs:
       status: ${{ steps.evaluate.outputs.status || steps.issue_ingress.outputs.status }}
       admission_id: ${{ steps.evaluate.outputs.admission_id || steps.issue_ingress.outputs.admission_id }}
+      harvest_status: ${{ steps.issue_harvest.outputs.status }}
+      access_status: ${{ steps.issue_qualify.outputs.status }}
+      grant_id: ${{ steps.issue_qualify.outputs.grant_id }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -85,11 +88,40 @@ jobs:
             --output "$RUNNER_TEMP/gscc-admission-receipt.json" \
             --require-preauthorized
 
+      - name: Harvest issue-comment canonical qualification evidence
+        if: ${{ github.event_name == 'issue_comment' && steps.issue_ingress.outputs.status == 'PREAUTHORIZED' }}
+        id: issue_harvest
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          receipt="$(cat "$RUNNER_TEMP/gscc-admission-receipt.json")"
+          python3 scripts/gscc/admission_harvester.py harvest \
+            --admission-receipt-json "$receipt" \
+            --output "$RUNNER_TEMP/gscc-qualification-evidence.json"
+
+      - name: Evaluate issue-comment harvested qualification
+        if: ${{ github.event_name == 'issue_comment' && steps.issue_ingress.outputs.status == 'PREAUTHORIZED' }}
+        id: issue_qualify
+        shell: bash
+        run: |
+          set -euo pipefail
+          receipt="$(cat "$RUNNER_TEMP/gscc-admission-receipt.json")"
+          evidence="$(cat "$RUNNER_TEMP/gscc-qualification-evidence.json")"
+          python3 scripts/gscc/admission.py qualify \
+            --admission-receipt-json "$receipt" \
+            --qualification-evidence-json "$evidence" \
+            --output "$RUNNER_TEMP/gscc-access-decision.json"
+
       - name: Persist bounded admission receipt
         uses: actions/upload-artifact@v4
         with:
           name: gscc-admission-receipt-${{ github.run_id }}
-          path: ${{ runner.temp }}/gscc-admission-receipt.json
+          path: |
+            ${{ runner.temp }}/gscc-admission-receipt.json
+            ${{ runner.temp }}/gscc-qualification-evidence.json
+            ${{ runner.temp }}/gscc-access-decision.json
           if-no-files-found: error
           retention-days: 14
 
