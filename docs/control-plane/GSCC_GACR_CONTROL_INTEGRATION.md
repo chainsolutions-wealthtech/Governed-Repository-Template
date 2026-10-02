@@ -239,3 +239,37 @@ This artifact does not modify:
 - the global programme.
 
 The harness is integration preparation only. It cannot be used as evidence that a fresh provider agent has passed Step 13.
+
+
+## G5 canonical control-response → GSE projection
+
+The integration layer now provides one additive mapper:
+
+`scripts/gscc_gacr/gse_projection.py`
+
+It converts safe control query snapshots into the existing canonical GSE event vocabulary:
+
+| Control response | Canonical GSE event | Semantics |
+|---|---|---|
+| `STATUS_RESPONSE` | `CONTEXT_UPDATE` | enrich current action/head/status snapshot only |
+| `CONTEXT_RESPONSE` | `CONTEXT_UPDATE` | enrich repository/branch/head/action/next action/checkpoint |
+| `CHECKPOINT_RESPONSE` | `CHECKPOINT` | update checkpoint context without `checkpoint_advanced` |
+| `PROGRESS_RESPONSE` | `PROGRESS` | preserve reported progress snapshot with `qualifying_progress=false` |
+
+Hard invariants:
+
+```text
+STATUS RESPONSE != LIVENESS EVIDENCE
+CONTEXT RESPONSE != LIVENESS EVIDENCE
+CHECKPOINT SNAPSHOT != PROGRESS ADVANCEMENT
+PROGRESS QUERY RESPONSE != NEW PROGRESS AT QUERY TIME
+CONTROL RESPONSE MAPPING != SECOND STATE ENGINE
+```
+
+`UNAVAILABLE` fields are omitted rather than overwriting known SessionTwin identity/context.
+The mapper does not introduce any new GSE dimension, claim authority, takeover authority, or mutation authority.
+
+The real `GSCCSessionControlEndpoint` also supports the four query commands through
+the actual `SessionEndpoint.receive_commands()` path. The endpoint handler returns bounded
+safe snapshots; these are correlated by the control adapter and then projected through the
+single mapper above. No new GSCC event names are added.
