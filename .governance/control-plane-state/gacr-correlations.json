@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 31,
+  "revision": 32,
   "items": [
     {
       "correlation_id": "GACR-C-caffb7cb6efd",
@@ -84,7 +84,8 @@
       "selected_session_id": null,
       "candidate_session_ids": [
         "session-68c97d4bb1ef71c86444de12",
-        "session-c7c1466e55afb2e4da868944"
+        "session-c7c1466e55afb2e4da868944",
+        "session-02da2612b250e57ae361a588"
       ],
       "reasons": [
         "MULTIPLE_PROBABLE_CANDIDATES"
@@ -116,9 +117,16 @@
             "BRANCH_MATCH",
             "GITHUB_ACTOR_MATCH"
           ]
+        },
+        {
+          "session_id": "session-02da2612b250e57ae361a588",
+          "tier": "PROBABLE",
+          "reasons": [
+            "BRANCH_MATCH"
+          ]
         }
       ],
-      "evaluated_at": "2026-10-02T04:13:32+00:00",
+      "evaluated_at": "2026-10-02T06:47:14+00:00",
       "unbound_activity": {
         "observation_id": "GACR-B-127716e672d9",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -127,7 +135,8 @@
         "safe_envelope_digest": "7adff6909eb7033608e1ab6e8b36d519c9caa6b11b9c406c6d974e204f3d0642",
         "candidate_session_ids": [
           "session-68c97d4bb1ef71c86444de12",
-          "session-c7c1466e55afb2e4da868944"
+          "session-c7c1466e55afb2e4da868944",
+          "session-02da2612b250e57ae361a588"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
@@ -787,6 +796,31 @@
       "provider_conversation_ref": null,
       "evaluations": [],
       "evaluated_at": "2026-10-02T06:12:45+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-21ced2fae0cf",
+      "beacon_id": "GACR-B-db3ffdea8025",
+      "level": "EXACT",
+      "selected_session_id": "session-02da2612b250e57ae361a588",
+      "candidate_session_ids": [
+        "session-02da2612b250e57ae361a588"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-02T06:47:14+00:00"
     }
   ]
 }
