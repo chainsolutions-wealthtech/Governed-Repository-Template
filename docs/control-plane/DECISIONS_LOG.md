@@ -416,3 +416,23 @@ Append-only durable decisions for the source/control-plane repository.
 - Partial areas include Presence-First, Correlator signal completeness, Dispatcher compatibility, optional Bridge execution, deterministic Agent Context, canonical Connection Envelope, independent LIVENESS/PROGRESS semantics, and unified session interrogation.
 - This decision authorizes the matrix as analysis input only; it does not authorize corrective runtime implementation.
 - Step 4 — R4-R6 center-of-gravity drift identification — is next. `P12-S6` and the global programme remain untouched.
+
+### CPD-061 — Governed repository access requires admission, qualification and an Access Grant before function exposure
+
+- Date: 2026-10-02.
+- Owner rule: an authenticated GitHub identity is no longer sufficient, by itself, to expose governed repository functions to an agent.
+- Canonical specification: `docs/control-plane/GSCC_ADMISSION_ACCESS_GATE.md`.
+- The admission path is additive to the existing GSCC/GSE/GACR architecture and must not introduce a second session store, correlator, claim store, takeover engine or function-exposure authority.
+- The canonical state distinction is `IDENTITY != ADMISSION != PREAUTHORIZATION != ACCESS AUTHORIZATION != FUNCTION EXPOSURE != MUTATION AUTHORITY`.
+- A safe `gscc-admission-envelope/v1` must provide the required identity/client/session/connection/target/intent/continuity/capability facts, with explicit provenance and `UNAVAILABLE` for provider-private facts that are not exposed.
+- Tokens, cookies, passwords, authorization headers, private keys, raw prompts, transcripts, raw tool arguments/results and private reasoning are forbidden from the admission plane.
+- A valid initial dossier may yield only `PREAUTHORIZED`; preauthorization exposes a restricted qualification surface and does not expose arbitrary repository read/write functions.
+- Qualification must establish the canonical session, required governance reads, current repository baseline, exact HEAD, task/claim/collision context, tested control capabilities, challenge/ACK evidence when required, and an initial GSE session state before access policy evaluation.
+- An `Access Grant` makes the session eligible to request governed function exposure. It does not itself grant invocation or mutation authority.
+- The existing `scripts/gscc_function_exposure_gate.py` and `.github/workflows/gscc-function-exposure-gate.yml` remain the sole canonical function-exposure authority. Their future route must require Admission Receipt and Access Grant validation before the existing session/HEAD/contract/authority/preflight/exposure checks.
+- The raw MCP catalogue remains planning evidence only and is never the exposed function surface.
+- A successor/takeover agent must complete its own admission and receive its own Access Grant; predecessor grants are not transferable.
+- This requirement is `SPECIFIED / NOT_IMPLEMENTED`. Recording it grants no repository, mutation or production authority.
+- Because this owner rule is stronger than the previously queued live function-exposure proof, Step 13B and the live `gscc_function_exposure_request` remain blocked until the admission/access gate is implemented tests-first and attested on current main.
+- The global Control Plane programme is untouched: `P12-S6` remains its own unique global next action and is not advanced by this decision.
+
