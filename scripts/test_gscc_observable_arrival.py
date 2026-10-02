@@ -74,6 +74,26 @@ def main() -> None:
     assert_true("raw_prompt" not in json.dumps(facts), "raw prompt must not enter safe projection")
     assert_true("Bearer" not in json.dumps(facts), "authorization data must not enter safe projection")
 
+    same_surface_push = {
+        "repository": event["repository"],
+        "sender": {"login": "fresh-provider-actor"},
+        "ref": "refs/heads/work/fresh-agent",
+        "after": "a" * 40,
+    }
+    push_facts = build_github_arrival_facts(
+        same_surface_push,
+        {
+            "GITHUB_EVENT_NAME": "push",
+            "GITHUB_RUN_ID": "40000000002",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_SHA": "a" * 40,
+        },
+    )
+    assert_true(
+        push_facts["connection_ref"] == facts["connection_ref"],
+        "push and PR observations for the same actor/branch must resume one GSCC surface identity",
+    )
+
     calls: list[dict] = []
     result = emit_github_arrival(
         event,
