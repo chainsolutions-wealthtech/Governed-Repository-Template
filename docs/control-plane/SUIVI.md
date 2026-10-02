@@ -1100,3 +1100,18 @@ These observations are durable supervision evidence, not new mutation authority 
 - Unique GACR next action becomes `GSCC_ADMISSION_GATE_RUN_LIVE_REQUEST`.
 - Step 13B remains NOT_EXECUTED and ultimate live acceptance remains NOT_PASSED.
 - Global `P12-S6` remains untouched.
+
+
+### 2026-10-02 — GSCC admission harvester / PR #163
+
+- Owner requested construction after read-only gap audit.
+- Starting exact main observed before branch creation: `3b0f72c7c6425d6e634e14f96cc927a5a5b670c4`.
+- Branch: `governance/gscc-admission-harvester`.
+- PR: `#163`.
+- Tests-first RED: `c7ade40b7af024bb3a31d1b563e631ffceda40ab`; Governance CI `37003462162 = FAILURE` exactly on missing harvester contract.
+- Runtime commit: `5934bd56d41d0ae63f33174fc79deab1e257fabb`.
+- Additional stale-HEAD fail-closed test: `41d0a41731ef8b02a556e0bbf947b61ed74c1236`.
+- Implemented: GitHub GET repository/branch observation, GACR canonical session resolution, existing ConnectionEnvelope reuse, governance document digest evidence, task/claim reconciliation, structured unavailable evidence, provenance matrix and single `gscc_entry_request` workflow path.
+- Canonical qualification no longer trusts caller-provided raw qualification evidence.
+- Missing GSE/control/access-policy evidence remains explicit and blocks authorization.
+- No P12-S6/CASE1/GMC advancement; no production/server mutation; no merge performed by this tranche.

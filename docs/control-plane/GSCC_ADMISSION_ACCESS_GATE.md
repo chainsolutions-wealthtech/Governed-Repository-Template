@@ -657,3 +657,51 @@ Recording it:
 - does not grant repository, mutation or production authority.
 
 The currently authorized executable next actions remain governed by their existing programme authorities until explicitly changed.
+
+## 2026-10-02 — Canonical qualification evidence harvester (PR #163)
+
+Status: **CANDIDATE IMPLEMENTED / TESTS-FIRST / PENDING FULL CI AND INTEGRATION**.
+
+The post-merge review of PR #159 found that the admission specification was stronger than the qualification runtime: the workflow still accepted caller-supplied `qualification_evidence_json` for repository baseline, GACR session, capabilities, control state, GSE state and access policy.
+
+PR #163 adds one additive harvester rather than a second authority:
+
+```text
+AdmissionEnvelope
+→ PREAUTHORIZED
+→ GSCC Admission Harvester
+   → GitHub GET repository metadata
+   → GitHub GET requested/default branch exact HEAD
+   → canonical GACR session + existing ConnectionEnvelope
+   → controlled governance document digests
+   → canonical task/claim reconciliation when references exist
+   → explicit UNAVAILABLE/PENDING for missing capability challenge, control challenge, GSE state or access policy
+→ qualification validator
+→ Access Grant only when all canonical evidence is complete
+→ existing Function Exposure Gate
+```
+
+New candidate surfaces:
+
+- `scripts/gscc/admission_harvester.py`;
+- `scripts/test_gscc_admission_harvester.py`;
+- existing `scripts/gscc/admission.py` enriched with bounded safe `admission_context` and field-level POST provenance;
+- existing `.github/workflows/gscc-admission-gate.yml` extended with `gscc_entry_request` and canonical harvesting;
+- existing Admission Receipt schema extended additively for `admission_context` / `field_provenance`.
+
+Security/authority invariants:
+
+- caller-supplied `qualification_evidence_json` is retained only as a deprecated compatibility input and is ignored by the canonical qualification job;
+- GitHub repository identity/default branch/permissions/exact HEAD come from GET observations;
+- GACR session evidence comes from the canonical GACR session store and reuses the existing ConnectionEnvelope/provenance engine;
+- GSE/control/access-policy evidence is never invented: absence keeps qualification partial and prevents Access Grant issuance;
+- no repository, invocation or mutation authority is created by harvesting;
+- no second GACR/GSE/session/correlation/function-gate authority is introduced.
+
+Tests-first evidence:
+
+- RED commit `c7ade40b7af024bb3a31d1b563e631ffceda40ab`;
+- Governance CI run `37003462162` failed exactly at **Test GSCC admission qualification harvester** while all preceding gates passed;
+- historical Observable Arrival and Function Exposure workflows remained green on the new branch.
+
+Step 13B remains **NOT_EXECUTED** and must not be claimed until this harvester is integrated and the remaining canonical GSE/control/access-policy evidence path is live-proven.

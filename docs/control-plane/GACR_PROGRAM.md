@@ -316,3 +316,24 @@ The admission/access prerequisite is now integrated on canonical main. Existing 
 Next GACR action: `GSCC_ADMISSION_GATE_RUN_LIVE_REQUEST`.
 
 A real provider admission has not yet been executed. Step 13B remains NOT_EXECUTED; ultimate live acceptance remains NOT_PASSED. Global `P12-S6` remains untouched.
+
+
+## 2026-10-02 — Admission canonical-evidence harvester hardening
+
+After PR #159 merged, a read-only gap audit found that the admission workflow still trusted caller-supplied qualification status objects for facts that should be re-observed or resolved canonically. Owner authorized additive construction.
+
+PR #163 (`governance/gscc-admission-harvester`) implements the next bounded layer tests-first:
+
+```text
+PREAUTHORIZED
+→ GSCC canonical evidence harvest
+→ GitHub exact repository/HEAD observation
+→ GACR canonical session + ConnectionEnvelope reuse
+→ governance/task/claim evidence
+→ fail-closed UNAVAILABLE for unproven GSE/control/access policy
+→ qualification
+```
+
+RED evidence: Governance CI `37003462162` failed exactly on the missing harvester test at commit `c7ade40b7af024bb3a31d1b563e631ffceda40ab`.
+
+This does not execute Step 13B and does not advance the global Control Plane programme.
