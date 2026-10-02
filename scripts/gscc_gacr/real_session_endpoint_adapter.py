@@ -8,15 +8,16 @@ try:
 except ModuleNotFoundError:
     from gscc import InMemoryTransport, MessageEnvelope, SessionEndpoint
 
-from .contract import EndpointExchange
+from .contract import EndpointExchange, UNAVAILABLE
 
 
 class GSCCSessionControlEndpoint:
-    """Adapt a real GSCC SessionEndpoint to the GACR control harness endpoint seam.
+    """Adapt a real GSCC SessionEndpoint to the GACR control endpoint seam.
 
-    This bridge owns no GACR authority and no canonical state. It only translates
-    control commands into GSCC COMMAND envelopes and translates GSCC ACK/challenge
-    events back into the control adapter's exchange shape.
+    This bridge owns no GACR authority and no canonical state. Commands are
+    delivered through the real GSCC SessionEndpoint. Query responses are bounded,
+    safe session snapshots returned by the endpoint handler; they are not new
+    GSCC protocol event types and they do not grant mutation authority.
     """
 
     def __init__(
@@ -25,6 +26,10 @@ class GSCCSessionControlEndpoint:
         transport: InMemoryTransport,
         *,
         challenge_status: str = "ACK",
+        status: dict[str, Any] | None = None,
+        progress: dict[str, Any] | None = None,
+        context: dict[str, Any] | None = None,
+        checkpoint: dict[str, Any] | None = None,
     ) -> None:
         if endpoint.transport is not transport:
             raise ValueError("endpoint and transport must reference the same GSCC transport")
@@ -35,6 +40,10 @@ class GSCCSessionControlEndpoint:
         self.transport = transport
         self.session_id = str(session_id)
         self.challenge_status = challenge_status
+        self.status_payload = dict(status or {})
+        self.progress_payload = dict(progress or {})
+        self.context_payload = dict(context or {})
+        self.checkpoint_payload = dict(checkpoint or {})
         self._seen_challenge_nonces: set[str] = set()
 
     @staticmethod
@@ -67,8 +76,78 @@ class GSCCSessionControlEndpoint:
             **payload,
         }
 
+    @staticmethod
+    def _handler_response(command: dict[str, Any], result: Any) -> dict[str, Any] | None:
+        if not isinstance(result, dict) or not result.get("response_type"):
+            return None
+        payload = deepcopy(result)
+        response_type = str(payload.pop("response_type"))
+        return {
+            "response_type": response_type,
+            "message_id": f"response:{command['message_id']}",
+            "command_id": command["command_id"],
+            "correlation_id": command["correlation_id"],
+            "target_session_id": command["target_session_id"],
+            **payload,
+        }
+
+    def _query_snapshot(self, command: MessageEnvelope) -> dict[str, Any] | None:
+        if command.type == "STATUS_REQUEST":
+            return {
+                "response_type": "STATUS_RESPONSE",
+                "current_state": self.status_payload.get("current_state", UNAVAILABLE),
+                "current_action": self.status_payload.get("current_action", UNAVAILABLE),
+                "current_tool": self.status_payload.get("current_tool", UNAVAILABLE),
+                "observed_head": self.status_payload.get(
+                    "observed_head", self.endpoint.scope.get("observed_head", UNAVAILABLE)
+                ),
+                "last_progress_at": self.status_payload.get("last_progress_at", UNAVAILABLE),
+                "blocker": self.status_payload.get("blocker", UNAVAILABLE),
+            }
+        if command.type == "PROGRESS_REQUEST":
+            return {
+                "response_type": "PROGRESS_RESPONSE",
+                "last_progress_at": self.progress_payload.get("last_progress_at", UNAVAILABLE),
+                "progress_marker": self.progress_payload.get("progress_marker", UNAVAILABLE),
+                "checkpoint_ref": self.progress_payload.get("checkpoint_ref", UNAVAILABLE),
+                "work_item_ref": self.progress_payload.get("work_item_ref", UNAVAILABLE),
+            }
+        if command.type == "CONTEXT_REQUEST":
+            return {
+                "response_type": "CONTEXT_RESPONSE",
+                "objective_ref": self.context_payload.get("objective_ref", UNAVAILABLE),
+                "current_phase": self.context_payload.get("current_phase", UNAVAILABLE),
+                "current_action": self.context_payload.get("current_action", UNAVAILABLE),
+                "last_checkpoint": self.context_payload.get("last_checkpoint", UNAVAILABLE),
+                "next_action": self.context_payload.get("next_action", UNAVAILABLE),
+                "repository": self.context_payload.get(
+                    "repository", self.endpoint.scope.get("repository", UNAVAILABLE)
+                ),
+                "branch": self.context_payload.get(
+                    "branch", self.endpoint.scope.get("branch", UNAVAILABLE)
+                ),
+                "observed_head": self.context_payload.get(
+                    "observed_head", self.endpoint.scope.get("observed_head", UNAVAILABLE)
+                ),
+            }
+        if command.type == "CHECKPOINT_REQUEST":
+            return {
+                "response_type": "CHECKPOINT_RESPONSE",
+                "checkpoint_ref": self.checkpoint_payload.get("checkpoint_ref", UNAVAILABLE),
+                "current_action": self.checkpoint_payload.get("current_action", UNAVAILABLE),
+                "observed_head": self.checkpoint_payload.get(
+                    "observed_head", self.endpoint.scope.get("observed_head", UNAVAILABLE)
+                ),
+            }
+        return None
+
     def _handle(self, command: MessageEnvelope) -> dict[str, Any]:
         self.endpoint.ack_command(command, state="ACKNOWLEDGED")
+
+        query = self._query_snapshot(command)
+        if query is not None:
+            return query
+
         if command.type != "LIVENESS_CHALLENGE":
             return {"status": "ACKNOWLEDGED"}
 
@@ -118,9 +197,13 @@ class GSCCSessionControlEndpoint:
         emitted = self.transport.sent[start:]
 
         ack_message = next((item for item in emitted if item.kind == "ACK" and item.type == "COMMAND_ACK"), None)
-        response_message = next((item for item in emitted if item.kind == "EVENT" and item.type == "CHALLENGE_RESPONSE"), None)
+        response_message = next(
+            (item for item in emitted if item.kind == "EVENT" and item.type == "CHALLENGE_RESPONSE"),
+            None,
+        )
 
-        status = results[0]["status"] if results else "DELIVERED"
+        result = results[0] if results else {}
+        status = result.get("status", "DELIVERED")
         if status == "EXPIRED":
             terminal = "EXPIRED"
         elif status == "UNSUPPORTED":
@@ -128,10 +211,14 @@ class GSCCSessionControlEndpoint:
         else:
             terminal = "COMPLETED"
 
+        response = self._control_response(command, response_message)
+        if response is None:
+            response = self._handler_response(command, result.get("result"))
+
         return EndpointExchange(
             delivered=True,
             ack=self._control_ack(command, ack_message),
-            response=self._control_response(command, response_message),
+            response=response,
             execution_started=(status == "EXECUTED"),
             terminal_state=terminal,
             detail="GSCC_SESSION_ENDPOINT",
