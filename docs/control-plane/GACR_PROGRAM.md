@@ -59,7 +59,7 @@ Current GACR programme state:
 
 ## GACR next action
 
-`GSCC_FUNCTION_EXPOSURE_GATE_RUN_LIVE_FUNCTION_REQUEST`
+`GSCC_ADMISSION_ACCESS_GATE_IMPLEMENT_TESTS_FIRST`
 
 Step 13B remains the next live acceptance gate, but its execution is temporarily blocked until the two bounded post-integration findings in `docs/control-plane/GACR_GSCC_GSE_INTEGRATION_AUDIT.md` are closed and re-attested from the then-current `main`.
 
@@ -189,3 +189,54 @@ Tests-first evidence:
 - candidate PR Observable Arrival Gateway `36978496029 = PASS`.
 
 A source-only post-merge workflow, `.github/workflows/gscc-function-route-selftest.yml`, will exercise the reusable `workflow_call` against canonical `main`. Until that post-merge proof and the already-required real `gscc_function_exposure_request` are observed, Step 13B remains `NOT_EXECUTED`.
+
+## 2026-10-02 — Owner admission/access invariant supersedes the pending live exposure request
+
+Status: **SPECIFIED / NOT IMPLEMENTED / STEP 13B BLOCKED**.
+
+After integration of the existing GSCC Function Exposure Gate, the owner introduced a stronger prerequisite for governed agent repository access.
+
+Canonical authority:
+
+`docs/control-plane/GSCC_ADMISSION_ACCESS_GATE.md`
+
+The required order is now:
+
+```text
+IDENTITY
+→ ADMISSION ENVELOPE
+→ SAFE VALIDATION + PROVENANCE
+→ CANONICAL SESSION / CORRELATION
+→ PREAUTHORIZED
+→ QUALIFICATION PATH
+→ ACCESS GRANT
+→ EXISTING GSCC FUNCTION EXPOSURE GATE
+→ VALIDATED FUNCTION SURFACE
+→ GOVERNED REPOSITORY
+```
+
+The following remain distinct:
+
+```text
+IDENTITY
+!= ADMISSION
+!= PREAUTHORIZATION
+!= ACCESS AUTHORIZATION
+!= FUNCTION EXPOSURE
+!= MUTATION AUTHORITY
+```
+
+The admission/access layer must extend the existing GSCC/GSE/GACR/function-gate authority. A second gate engine, second session store, second correlator, second claim store or second takeover authority is forbidden.
+
+A valid admission yields only `PREAUTHORIZED`. The agent must then complete governance-read, current repository baseline, exact-HEAD, task/claim/collision, capability/challenge and GSE-initial-state qualification before an Access Grant may be issued. An Access Grant only makes the session eligible to request function exposure; it grants neither invocation nor mutation authority.
+
+Therefore the previously pending real `gscc_function_exposure_request` is no longer the immediate executable GACR action. It must not be used to bypass this newly specified admission prerequisite.
+
+Current GACR next action:
+
+`GSCC_ADMISSION_ACCESS_GATE_IMPLEMENT_TESTS_FIRST`
+
+Step 13B remains `NOT_EXECUTED` and blocked until the admission/access gate is implemented, regression-tested and attested from then-current `main`. After that, the real function-exposure request remains a required downstream live proof.
+
+This is GACR/GSCC cross-cutting hardening only. It does not execute or replace `P12-S6`, CASE 1, GMC or the global Control Plane programme.
+
