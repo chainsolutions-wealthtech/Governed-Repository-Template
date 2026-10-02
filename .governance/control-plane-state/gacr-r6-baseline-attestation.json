@@ -1,0 +1,151 @@
+{
+  "schema": "gacr-r6-baseline-attestation/v1",
+  "authority": "CP-AGENT-RELAY-001",
+  "operation": "GACR-OR-01_REOBSERVE_AND_ATTEST_R6_BASELINE",
+  "status": "CANDIDATE_ATTESTATION_PENDING_CI_MERGE_POST_MERGE_REVALIDATION",
+  "programme": "GACR",
+  "distinct_from_global_programme": true,
+  "p12_s6_dependency": false,
+  "p12_s6_executed": false,
+  "baseline": {
+    "main_head": "afda467be7cb9194696b91963af3a4cf5cf0e7d5",
+    "branch": "governance/gacr-or-01-r6-baseline-attestation",
+    "preserved_revisions": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R5-A",
+      "R6",
+      "R6-A",
+      "R6-B",
+      "R6-C"
+    ],
+    "runtime_revision_authority": "CP-AGENT-RELAY-001-R6",
+    "destructive_rollback_forbidden": true
+  },
+  "runtime_snapshot": {
+    "sessions_total": 2,
+    "canonical_session_id": "session-68c97d4bb1ef71c86444de12",
+    "canonical_session_persisted_status": "ACTIVE",
+    "canonical_provider": "chatgpt",
+    "canonical_provider_conversation_ref": null,
+    "provider_conversation_ref_provenance": "UNAVAILABLE",
+    "superseded_internal_transport_session_id": "session-cb22a4ed0d9e29eba5383f5d",
+    "claims": 0,
+    "takeovers": 0,
+    "dispatches": 0,
+    "beacons": 13,
+    "correlations_revision": 14,
+    "forensics_revision": 4,
+    "forensic_classification": "NO_INTERRUPTION_OBSERVED",
+    "external_interruption_cause": "UNOBSERVED_EXTERNAL_CAUSE",
+    "exact_head_reobservation_required": true,
+    "last_persisted_heartbeat_at": "2026-10-02T00:59:54+00:00",
+    "last_persisted_lease_expires_at": "2026-10-02T01:29:54+00:00",
+    "current_liveness_claim": "NOT_INFERRED_FROM_STALE_PERSISTED_STATE"
+  },
+  "projections": [
+    "gacr-beacons.json",
+    "gacr-claims.json",
+    "gacr-correlations.json",
+    "gacr-dispatches.json",
+    "gacr-forensics.json",
+    "gacr-origin-realignment.json",
+    "gacr-original-intent.json",
+    "gacr-program.json",
+    "gacr-sessions.json",
+    "gacr-takeovers.json"
+  ],
+  "implementation_files": [
+    "scripts/governed_agent_continuity_relay.py",
+    "scripts/gacr_agent_telemetry.py",
+    "scripts/gacr_auto_attach.py",
+    "scripts/gacr_bridge_notifier.py",
+    "scripts/gacr_client_emitter.py",
+    "scripts/gacr_host_issue_ingress.py",
+    "scripts/gacr_workflow_bridge.py"
+  ],
+  "schemas": [
+    "schemas/gacr-state.schema.json",
+    "schemas/gacr-telemetry.schema.json",
+    "schemas/gacr-bridge-contract.schema.json"
+  ],
+  "workflow": ".github/workflows/governed-agent-continuity-relay.yml",
+  "tests": [
+    "scripts/test_governed_agent_continuity_relay.py",
+    "scripts/test_gacr_agent_telemetry.py",
+    "scripts/test_gacr_auto_attach.py",
+    "scripts/test_gacr_client_emitter.py",
+    "scripts/test_gacr_host_issue_ingress.py",
+    "scripts/test_gacr_host_issue_workflow.py"
+  ],
+  "latest_evidence": {
+    "main_governance_ci": {
+      "run_id": 36952356766,
+      "result": "PASS",
+      "head": "afda467be7cb9194696b91963af3a4cf5cf0e7d5"
+    },
+    "main_gacr_run": {
+      "run_id": 36952355612,
+      "result": "PASS",
+      "head": "afda467be7cb9194696b91963af3a4cf5cf0e7d5",
+      "state_change": false,
+      "external_agent_anchor": false
+    },
+    "exact_head_fail_closed": {
+      "run_id": 36948763070,
+      "result": "HEAD_MOVED_FAIL_CLOSED",
+      "expected": "914b251e9d01063fe38d8684271267b43f81d7e0",
+      "remote": "46a4a3068f0eb28ec3dc1d141cbcf349542a3348"
+    },
+    "r6_final_attestation_pr": 120,
+    "r6_final_attestation_merge": "bd6c0c869f66ab3cb138db82945320bc1753fc05",
+    "r6_post_merge_governance_ci": 36949110223,
+    "r6_post_merge_gacr_run": 36949110243,
+    "host_issue": 115,
+    "host_comments": [
+      5943461065,
+      5943497457,
+      5943559595,
+      5943592733
+    ]
+  },
+  "limitations": [
+    "PRESENCE_FIRST_REALIGNMENT_NOT_COMPLETE",
+    "FULL_CONNECTION_ENVELOPE_CANONICALIZATION_REMAINS_TO_BE_MAPPED",
+    "CONNECTION_FINGERPRINT_FORMULA_REMAINS_TO_BE_MAPPED",
+    "LIVENESS_PROGRESS_SEPARATION_NOT_DECLARED_COMPLETE",
+    "SESSION_INTERROGATION_LIVENESS_CHALLENGE_NOT_DECLARED_COMPLETE",
+    "UNBOUND_ACTIVITY_NOT_DECLARED_COMPLETE",
+    "CONTINUOUS_CHATGPT_BACKGROUND_HEARTBEAT_NOT_PROVEN",
+    "PROVIDER_PRIVATE_CONVERSATION_ID_UNAVAILABLE_UNLESS_SUPPLIED",
+    "EXTERNAL_CAUSE_NEVER_INFERRED_FROM_SILENCE",
+    "OUTBOUND_BROWSER_WAKE_NOT_IMPLEMENTED",
+    "EXTERNAL_BRIDGE_NOT_CONFIGURED_ON_LATEST_OBSERVED_RUN",
+    "NO_CURRENT_LIVE_CLAIM_TAKEOVER_STANDBY_OR_DISPATCH_ITEM",
+    "ULTIMATE_LIVE_ACCEPTANCE_NOT_RUN_BY_OR_01",
+    "REALIGNMENT_STEPS_3_PLUS_NOT_EXECUTED"
+  ],
+  "exit_gate": {
+    "exact_head_reobserved": true,
+    "r1_r6_inventoried": true,
+    "runtime_identified": true,
+    "tests_linked": true,
+    "live_evidence_linked": true,
+    "no_runtime_regression": true,
+    "attestation_versioned": false,
+    "candidate_ci": "PENDING",
+    "pr_merged": false,
+    "post_merge_revalidation": false,
+    "final_result": "PENDING_REPOSITORY_GATES"
+  },
+  "handoff": {
+    "next_gate": "REALIGNMENT_STEP_2_FORMAL_GATE_USING_EXISTING_GACR_ORIGINAL_INTENT",
+    "step_2_source_already_captured": true,
+    "step_3_authorized_by_this_attestation": false,
+    "presence_first_corrections_authorized_by_this_attestation": false,
+    "global_programme_touch_authorized": false
+  }
+}
