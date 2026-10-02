@@ -9,6 +9,7 @@ from pathlib import Path
 
 from gscc_function_exposure_gate import (
     build_arrival_route,
+    build_package_route_receipt,
     evaluate_function_exposure,
     exposed_function_catalogue,
 )
@@ -16,6 +17,9 @@ from gscc import InMemoryTransport, SessionEndpoint, instrument_tool
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github" / "workflows" / "gscc-function-exposure-gate.yml"
+EXECUTION_WORKFLOW = ROOT / ".github" / "workflows" / "governed-execution.yml"
+SNAPSHOT_PATH = ROOT / ".governance" / "control-plane-state" / "mcp-capability-snapshot.json"
+UPGRADER = ROOT / "scripts" / "control_plane_upgrade_local_entry.py"
 
 
 class ExposureGateTests(unittest.TestCase):
@@ -234,6 +238,73 @@ class ExposureGateTests(unittest.TestCase):
         serialized = "\n".join(m.serialize() for m in transport.sent)
         self.assertIn("FUNCTION_EXPOSURE_GATE", serialized)
         self.assertNotIn("TOOL_STARTED", serialized)
+
+    def test_package_route_covers_every_mcp_invocation_without_granting_authority(self):
+        snapshot = json.loads(SNAPSHOT_PATH.read_text(encoding="utf-8"))
+        package = {
+            "operation_id": "OP-GSCC-PACKAGE-1",
+            "intent": "DEPLOY_APPLICATION",
+            "bindings": {
+                "steps": {
+                    "preflight": [
+                        {"backend": "MCP_DIRECT", "capability": "SERVER_RUNTIME_OBSERVATION", "tool": "docker_status_s2", "arguments": {}},
+                    ],
+                    "execute": [
+                        {"backend": "MCP_DIRECT", "capability": "DEPLOYMENT_RUNTIME_CHANGE", "tool": "deploy_project_s2", "arguments": {"project": "brvmchainsolution"}},
+                    ],
+                    "verify": [
+                        {"backend": "MCP_DIRECT", "capability": "SERVER_RUNTIME_OBSERVATION", "tool": "docker_status_s2", "arguments": {}},
+                    ],
+                    "rollback": [],
+                }
+            },
+        }
+        receipt = build_package_route_receipt(
+            snapshot=snapshot,
+            package=package,
+            repository="chainsolutions-wealthtech/Governed-Repository-Template",
+            source_head="f" * 40,
+        )
+        self.assertEqual(receipt["status"], "GSCC_PACKAGE_ROUTE_VALIDATED")
+        self.assertTrue(receipt["route_validation_only"])
+        self.assertFalse(receipt["mutation_authority_granted"])
+        self.assertFalse(receipt["invocation_authority_granted"])
+        self.assertEqual(receipt["invocation_count"], 3)
+        self.assertEqual([x["tool_name"] for x in receipt["invocations"]], ["docker_status_s2", "deploy_project_s2", "docker_status_s2"])
+        self.assertEqual(receipt["invocations"][1]["argument_keys"], ["project"])
+        self.assertNotIn("arguments", receipt["invocations"][1])
+        self.assertEqual(receipt["invocations"][1]["route"], list(receipt["required_stages"]))
+        self.assertTrue(receipt["validation_digest"])
+
+    def test_live_catalogue_marks_every_function_as_gscc_required(self):
+        snapshot = json.loads(SNAPSHOT_PATH.read_text(encoding="utf-8"))
+        tools = snapshot["catalogue"]["tools"]
+        self.assertGreater(len(tools), 100)
+        self.assertTrue(all(x.get("governed_exposure_gate") == "GSCC_REQUIRED" for x in tools))
+        self.assertTrue(all(x.get("governed_exposure_status") == "REQUIRES_RUNTIME_VALIDATION" for x in tools))
+        contract = snapshot["operation_planning_contract"]
+        self.assertTrue(contract["gscc_function_gate_required_before_governed_exposure"])
+        self.assertTrue(contract["gscc_function_gate_required_before_every_governed_invocation"])
+        self.assertTrue(contract["catalogue_presence_is_not_governed_exposure_authority"])
+
+    def test_governed_execution_must_call_same_exposure_workflow(self):
+        workflow = WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("workflow_call:", workflow)
+        self.assertIn("package-evaluate:", workflow)
+        self.assertIn("build-package-route", workflow)
+        self.assertIn("route_validated", workflow)
+        execution = EXECUTION_WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn("function-exposure-gate:", execution)
+        self.assertIn("uses: ./.github/workflows/gscc-function-exposure-gate.yml", execution)
+        self.assertIn("needs: function-exposure-gate", execution)
+        self.assertIn("GSCC_FUNCTION_ROUTE_VALIDATED", execution)
+        self.assertIn("GSCC_FUNCTION_ROUTE_VALIDATION_DIGEST", execution)
+
+    def test_client_upgrader_distributes_canonical_arrival_gateway(self):
+        text = UPGRADER.read_text(encoding="utf-8")
+        self.assertIn('"scripts/gscc/protocol.py"', text)
+        self.assertIn('"scripts/gscc_observable_arrival.py"', text)
+        self.assertIn('".github/workflows/gscc-observable-arrival.yml"', text)
 
     def test_workflow_is_mandatory_and_fail_closed(self):
         text = WORKFLOW.read_text(encoding="utf-8")
