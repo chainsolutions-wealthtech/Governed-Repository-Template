@@ -131,3 +131,23 @@ Canonical acceptance remains:
 `Step 13B = NEXT_AUTHORIZED / NOT_EXECUTED`
 
 `ULTIMATE_LIVE_ACCEPTANCE = NOT_PASSED`.
+
+## G7-prep — Universal GSCC function gate
+
+After the observable-arrival gateway, the next additive preparation closes the repository-side function-use seam:
+
+```text
+observable arrival
+→ GSCC
+→ Presence / Session
+→ function/tool request
+→ GSCC Function Gate
+→ contract/context/capability/authority/head/preflight route
+→ validation receipt
+→ execution only if separately authorized
+→ verification
+```
+
+This tranche does not itself execute Step 13B and does not count as fresh-provider acceptance. It strengthens the path that the future fresh Agent A will traverse.
+
+The source Control Plane gate is enforceable for governed MCP execution. Absolute interception of direct external MCP `tools/call` remains a separate runtime-provider integration requirement and must not be inferred from repository evidence.
