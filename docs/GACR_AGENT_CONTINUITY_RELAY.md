@@ -352,3 +352,16 @@ The Template source issue number is runtime-local state and is never distributed
 - Source conversation/session history and source issue identity never become client runtime state.
 
 This keeps the R6 transport reusable without leaking source-project runtime coordinates.
+
+### R6-C — late provider identity enrichment without provider conversation ID
+
+An existing connection-bound session may have been created before the provider identity became explicit, for example with `provider = other` and no native conversation reference.
+
+When the same stable `connection_ref` is later accompanied by an explicit provider such as `chatgpt`, GACR may enrich **that same session** even if `provider_conversation_ref` remains unavailable.
+
+Rules:
+- only a generic provider value (`null / empty / other`) may be enriched to a specific provider;
+- the session ID must remain unchanged;
+- no provider conversation reference is invented;
+- a conflicting specific provider fails closed;
+- the provider-host adapter uses the existing auto-attach/register path rather than editing session state through a parallel mechanism.
