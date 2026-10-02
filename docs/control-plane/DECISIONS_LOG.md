@@ -351,3 +351,18 @@ Append-only durable decisions for the source/control-plane repository.
 - Erroneously created transport sessions are preserved in history but closed/superseded; they are never silently deleted.
 - CLOSED / HANDOFF_STALLED sessions are excluded from Correlator candidates.
 - This corrective decision remains within `CP-AGENT-RELAY-001-R5` and does not alter `P12-S6`.
+
+### CPD-056 — Provider hosts may use a governed GitHub issue-comment ingress for GACR telemetry
+
+- Date: 2026-10-02.
+- GACR R1-R5 remains the generic continuity core.
+- When a provider host cannot invoke `repository_dispatch` directly but can create GitHub issue comments, a configured dedicated issue may act as a transport adapter into the existing GACR runtime.
+- The issue channel is telemetry ingress only; it is not a task queue, authority source or replacement execution engine.
+- Accepted comments use schema `gacr-host-event/v1` after prefix `/gacr-host `.
+- Only the configured issue and repository-authorized actor associations are accepted.
+- Secret-like keys, raw transcript/prompt/response fields and oversized/unrecognized payloads fail closed.
+- GitHub issue comment ID is the immutable ingress evidence/idempotency key; rerunning the same event must not duplicate state.
+- The adapter reuses existing auto-attach, heartbeat, Beacon, Correlator and Interruption Forensics surfaces.
+- It must never revive a genuinely `STALLED / TAKEOVER_READY` predecessor by bypassing exact-HEAD takeover reconciliation.
+- Host telemetry never grants code, infrastructure or production mutation authority.
+- Source runtime history remains isolated from distributed clients.
