@@ -5,6 +5,7 @@ import argparse
 import hashlib
 import json
 import os
+import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -320,6 +321,117 @@ def exposed_function_catalogue(
     }
 
 
+def _argument_digest(arguments: dict[str, Any]) -> str:
+    encoded = json.dumps(arguments, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
+
+
+def _package_mcp_invocations(package: dict[str, Any]) -> list[dict[str, Any]]:
+    bindings = package.get("bindings") or {}
+    steps = bindings.get("steps") or {}
+    result: list[dict[str, Any]] = []
+    ordinal = 0
+    for phase in ("preflight", "execute", "verify", "rollback"):
+        items = steps.get(phase) or []
+        if not isinstance(items, list):
+            raise ValueError(f"PACKAGE_STEPS_INVALID:{phase}")
+        for index, step in enumerate(items):
+            if not isinstance(step, dict):
+                raise ValueError(f"PACKAGE_STEP_INVALID:{phase}:{index}")
+            if step.get("backend", "MCP_DIRECT") != "MCP_DIRECT":
+                continue
+            tool_name = step.get("tool")
+            if not tool_name:
+                continue
+            ordinal += 1
+            arguments = step.get("arguments") or {}
+            if not isinstance(arguments, dict):
+                raise ValueError(f"PACKAGE_ARGUMENTS_INVALID:{phase}:{index}")
+            result.append({
+                "ordinal": ordinal,
+                "phase": phase,
+                "phase_index": index,
+                "tool_name": str(tool_name),
+                "capability": step.get("capability"),
+                "argument_keys": sorted(str(key) for key in arguments),
+                "argument_value_digest": _argument_digest(arguments),
+            })
+    return result
+
+
+def build_package_route_receipt(
+    *,
+    snapshot: dict[str, Any],
+    package: dict[str, Any],
+    repository: str,
+    source_head: str,
+) -> dict[str, Any]:
+    invocations = _package_mcp_invocations(package)
+    projected: list[dict[str, Any]] = []
+    for invocation in invocations:
+        tool = _tool(snapshot, invocation["tool_name"])
+        if tool is None:
+            raise ValueError(f"FUNCTION_NOT_IN_CANONICAL_CATALOGUE:{invocation['tool_name']}")
+        if tool.get("governed_exposure_gate") != "GSCC_REQUIRED":
+            raise ValueError(f"FUNCTION_GSCC_GATE_NOT_REQUIRED:{invocation['tool_name']}")
+        if tool.get("governed_exposure_status") != "REQUIRES_RUNTIME_VALIDATION":
+            raise ValueError(f"FUNCTION_EXPOSURE_STATUS_INVALID:{invocation['tool_name']}")
+        if not tool.get("contract_digest"):
+            raise ValueError(f"FUNCTION_CONTRACT_DIGEST_REQUIRED:{invocation['tool_name']}")
+        projected.append({
+            **invocation,
+            "contract_digest": tool.get("contract_digest"),
+            "surface": tool.get("surface"),
+            "authority_required": tool.get("authority_required"),
+            "route": list(ROUTE_STAGES),
+            "exposure_receipt_required": True,
+            "pre_call_revalidation_required": True,
+        })
+
+    receipt: dict[str, Any] = {
+        "schema": "gscc-package-function-route/v1",
+        "status": "GSCC_PACKAGE_ROUTE_VALIDATED",
+        "repository": repository,
+        "source_head": source_head,
+        "operation_id": package.get("operation_id"),
+        "intent": package.get("intent"),
+        "required_stages": list(ROUTE_STAGES),
+        "invocations": projected,
+        "invocation_count": len(projected),
+        "function_count": len({item["tool_name"] for item in projected}),
+        "route_validation_only": True,
+        "exposure_receipt_required_before_external_publication": True,
+        "pre_call_revalidation_required": True,
+        "mutation_authority_granted": False,
+        "invocation_authority_granted": False,
+        "catalogue_presence_is_exposure_authority": False,
+    }
+    _safe_evidence(receipt)
+    receipt["validation_digest"] = _digest(receipt)
+    return receipt
+
+
+def _git_head() -> str:
+    proc = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if proc.returncode != 0:
+        raise RuntimeError("SOURCE_HEAD_UNAVAILABLE")
+    return proc.stdout.strip()
+
+
+def _github_output(name: str, value: Any) -> None:
+    path = os.environ.get("GITHUB_OUTPUT")
+    rendered = str(value).lower() if isinstance(value, bool) else str(value)
+    if path:
+        with open(path, "a", encoding="utf-8") as handle:
+            handle.write(f"{name}={rendered}\n")
+
+
 def _write_output(data: dict[str, Any], output: str | None) -> None:
     raw = json.dumps(data, indent=2, ensure_ascii=False, sort_keys=True) + "\n"
     if output:
@@ -340,6 +452,13 @@ def main() -> None:
     arrival.add_argument("--event-path", default=os.environ.get("GITHUB_EVENT_PATH"))
     arrival.add_argument("--output")
 
+    package = sub.add_parser("package-evaluate")
+    package.add_argument("--package", required=True)
+    package.add_argument("--repository", required=True)
+    package.add_argument("--expected-source-head", required=True)
+    package.add_argument("--snapshot", default=str(DEFAULT_SNAPSHOT))
+    package.add_argument("--output")
+
     evaluate = sub.add_parser("evaluate")
     evaluate.add_argument("--tool-name", required=True)
     evaluate.add_argument("--connection-ref", required=True)
@@ -356,6 +475,25 @@ def main() -> None:
     evaluate.add_argument("--require-validated", action="store_true")
 
     args = parser.parse_args()
+
+    if args.command == "package-evaluate":
+        actual_head = _git_head()
+        if actual_head != args.expected_source_head:
+            raise SystemExit(
+                f"GSCC_FUNCTION_ROUTE_HEAD_MOVED:expected={args.expected_source_head}:actual={actual_head}"
+            )
+        receipt = build_package_route_receipt(
+            snapshot=_load_json(args.snapshot),
+            package=_load_json(args.package),
+            repository=args.repository,
+            source_head=actual_head,
+        )
+        _write_output(receipt, args.output)
+        _github_output("route_validated", True)
+        _github_output("validation_digest", receipt["validation_digest"])
+        _github_output("function_count", receipt["function_count"])
+        _github_output("invocation_count", receipt["invocation_count"])
+        return
 
     if args.command == "arrival-plan":
         if not args.event_path:
