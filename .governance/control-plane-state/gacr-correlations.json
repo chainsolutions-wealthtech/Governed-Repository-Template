@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 37,
+  "revision": 38,
   "items": [
     {
       "correlation_id": "GACR-C-caffb7cb6efd",
@@ -1065,6 +1065,50 @@
         "observed_at": "2026-10-02T06:49:54+00:00",
         "activity_class": "AUTO_ATTACH",
         "safe_envelope_digest": "40bf0e1f4e0eadaba48479deb64ad29b86b955ebc064f30fd829783fe6ba5330",
+        "candidate_session_ids": [
+          "session-02da2612b250e57ae361a588",
+          "session-255e3c082a24a718c4cf3da6",
+          "session-34e7d19d025442b07a4ad685"
+        ],
+        "correlation_level": "AMBIGUOUS",
+        "reasons": [
+          "CONFLICTING_EXPLICIT_ANCHORS"
+        ],
+        "status": "UNBOUND",
+        "reconciled_session_id": "UNAVAILABLE",
+        "reconciled_at": "UNAVAILABLE"
+      }
+    },
+    {
+      "correlation_id": "GACR-C-024ea552d795",
+      "beacon_id": "GACR-B-114b0abe6948",
+      "level": "AMBIGUOUS",
+      "selected_session_id": null,
+      "candidate_session_ids": [
+        "session-02da2612b250e57ae361a588",
+        "session-255e3c082a24a718c4cf3da6",
+        "session-34e7d19d025442b07a4ad685"
+      ],
+      "reasons": [
+        "CONFLICTING_EXPLICIT_ANCHORS"
+      ],
+      "confidence": {
+        "rule_id": "AMBIGUOUS_EXPLICIT_ANCHOR_CONFLICT",
+        "class": "AMBIGUOUS",
+        "numeric_score": null,
+        "auto_bind_allowed": false
+      },
+      "binding_status": "UNBOUND_ACTIVITY",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-02T06:50:25+00:00",
+      "unbound_activity": {
+        "observation_id": "GACR-B-114b0abe6948",
+        "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+        "observed_at": "2026-10-02T06:50:25+00:00",
+        "activity_class": "AUTO_ATTACH",
+        "safe_envelope_digest": "e461cf16e4a295ea37e516a04493f80972e9aa27971f50e009efa74e76e4b65c",
         "candidate_session_ids": [
           "session-02da2612b250e57ae361a588",
           "session-255e3c082a24a718c4cf3da6",
