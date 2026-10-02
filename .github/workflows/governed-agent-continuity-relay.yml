@@ -162,7 +162,7 @@ jobs:
         run: python3 scripts/gacr_workflow_bridge.py
 
       - name: Deliver pending GSCC issue control challenges
-        if: ${{ steps.relay.outputs.command == 'control-challenge' }}
+        if: ${{ steps.relay.outputs.command == 'control-challenge' || (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/gscc-control ')) }}
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python3 scripts/gscc_gacr/issue_control_bridge.py deliver

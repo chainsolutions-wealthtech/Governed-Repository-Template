@@ -2,6 +2,9 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import json
+import re
+from pathlib import Path
 
 from gscc_observable_arrival import should_skip_github_arrival
 from gscc_gacr.issue_control_bridge import (
@@ -14,6 +17,7 @@ from gscc_gacr.issue_control_bridge import (
 NOW = datetime(2026, 10, 2, 13, 30, 0, tzinfo=timezone.utc)
 REPOSITORY = "chainsolutions-wealthtech/Governed-Repository-Template"
 SESSION_ID = "session-control-live"
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def session():
@@ -227,6 +231,22 @@ def test_control_issue_comments_do_not_create_observable_arrival_sessions():
     assert should_skip_github_arrival(command, env) == "INTERNAL_GSCC_CONTROL_ISSUE_BRIDGE"
 
 
+
+def test_control_dispatch_id_is_registered_canonical_namespace():
+    item = build_liveness_challenge_dispatch(
+        session(), now=NOW, ttl_seconds=60, issue_number=115, nonce="nonce-test-namespace"
+    )
+    registry = json.loads(
+        (ROOT / ".governance" / "control-plane-state" / "namespace-work-registry.json").read_text(encoding="utf-8")
+    )
+    matches = [
+        ns["id"]
+        for ns in registry.get("namespaces") or []
+        if re.fullmatch(ns["pattern"], item["dispatch_id"])
+    ]
+    assert matches == ["GSCC-CONTROL-DISPATCH"], (item["dispatch_id"], matches)
+
+
 def main():
     test_build_challenge_is_safe_bounded_and_non_authorizing()
     test_issue_comment_is_bounded_and_contains_no_authority()
@@ -234,6 +254,7 @@ def main():
     test_mismatch_and_response_without_ack_fail_closed()
     test_expired_session_or_challenge_cannot_be_verified()
     test_control_issue_comments_do_not_create_observable_arrival_sessions()
+    test_control_dispatch_id_is_registered_canonical_namespace()
     print("GSCC_ISSUE_CONTROL_BRIDGE_TESTS_OK")
 
 

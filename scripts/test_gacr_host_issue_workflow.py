@@ -26,6 +26,13 @@ def main() -> None:
     assert_true("git checkout --detach FETCH_HEAD" in text, "issue-comment workflow must execute from fetched default-branch head")
     assert_true("scripts/gacr_host_issue_ingress.py" in text, "host ingress adapter compile validation missing")
 
+    control_delivery = "Deliver pending GSCC issue control challenges"
+    assert_true(control_delivery in text, "GSCC control challenge delivery step missing")
+    assert_true(
+        "startsWith(github.event.comment.body, '/gscc-control ')" in text[text.index(control_delivery)-500:text.index(control_delivery)+500],
+        "live GSCC issue control request must directly enable challenge delivery",
+    )
+
     upgrader = UPGRADER.read_text(encoding="utf-8")
     assert_true('host_bridge["issue_number"]=None' in upgrader, "client upgrade must clear source host issue number")
     assert_true('host_bridge["source_issue_number_distributed"]=False' in upgrader, "client upgrade must mark source issue number non-distributed")
