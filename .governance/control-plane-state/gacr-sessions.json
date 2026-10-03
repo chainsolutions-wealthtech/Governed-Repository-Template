@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 236,
+  "revision": 237,
   "sessions": [
     {
       "session_id": "session-68c97d4bb1ef71c86444de12",
@@ -7440,10 +7440,10 @@
       "connection_intent_provenance": "DEFAULT_UNKNOWN",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "d65fbfab307688ea47c8c0af7458ced7a7b5f749",
-      "last_observed_head_sha": "08c3b3abacc17e2a876239ad7b40742311581781",
+      "last_observed_head_sha": "703403b0187a85fa1df2bed395f1788ca19f1086",
       "status": "ACTIVE",
       "created_at": "2026-10-03T15:53:28+00:00",
-      "last_seen_at": "2026-10-03T15:56:02+00:00",
+      "last_seen_at": "2026-10-03T15:57:50+00:00",
       "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations",
       "agent_role": null,
       "capabilities": [
@@ -7457,8 +7457,8 @@
       "relay": {
         "process": "GACR",
         "state": "ACTIVE",
-        "last_heartbeat_at": "2026-10-03T15:56:02+00:00",
-        "lease_expires_at": "2026-10-03T16:26:02+00:00",
+        "last_heartbeat_at": "2026-10-03T15:57:50+00:00",
+        "lease_expires_at": "2026-10-03T16:27:50+00:00",
         "last_action": "RESUME",
         "task_id": null,
         "branch": "governance/gscc-gse-projection-event-order",
@@ -7486,7 +7486,7 @@
         "schema": "gacr-connection-envelope/v1",
         "surface_class": "GITHUB_EVENT_VISIBLE",
         "presence_event": "PRESENCE_RESUME",
-        "observed_at": "2026-10-03T15:56:02+00:00",
+        "observed_at": "2026-10-03T15:57:50+00:00",
         "fields": {
           "gacr_session_id": {
             "value": "session-b350d36feb0b4473915ca068",
@@ -7587,12 +7587,12 @@
             "source": "REPOSITORY_SURFACE"
           },
           "base_branch": {
-            "value": "main",
+            "value": "UNAVAILABLE",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "REPOSITORY_SURFACE"
           },
           "HEAD": {
-            "value": "08c3b3abacc17e2a876239ad7b40742311581781",
+            "value": "703403b0187a85fa1df2bed395f1788ca19f1086",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "REPOSITORY_SURFACE"
           },
@@ -7602,7 +7602,7 @@
             "source": "REPOSITORY_SURFACE"
           },
           "workflow_run_id": {
-            "value": "37134978960",
+            "value": "37135085420",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "GITHUB_EVENT"
           },
@@ -7617,12 +7617,12 @@
             "source": "GITHUB_EVENT"
           },
           "event_type": {
-            "value": "GSCC_OBSERVABLE_PULL_REQUEST",
+            "value": "GSCC_OBSERVABLE_PUSH",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "REPOSITORY_SURFACE"
           },
           "delivery_or_correlation_id": {
-            "value": "37134978960:1",
+            "value": "37135085420:1",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "CONTROLLED_SURFACE"
           },
@@ -7632,7 +7632,7 @@
             "source": "GACR_SESSION"
           },
           "last_seen_at": {
-            "value": "2026-10-03T15:56:02+00:00",
+            "value": "2026-10-03T15:57:50+00:00",
             "provenance": "CORRELATED",
             "source": "GACR_SESSION"
           },
@@ -7642,7 +7642,7 @@
             "source": "CLIENT_OR_ADAPTER"
           },
           "lease_expires_at": {
-            "value": "2026-10-03T16:26:02+00:00",
+            "value": "2026-10-03T16:27:50+00:00",
             "provenance": "CORRELATED",
             "source": "GACR_WATCH"
           },
@@ -7667,7 +7667,7 @@
             "source": "CLIENT_OR_GACR_SESSION"
           },
           "last_evidence": {
-            "value": "github-event:pull_request:37134978960:1",
+            "value": "github-event:push:37135085420:1",
             "provenance": "DECLARED_BY_AGENT_OR_CLIENT",
             "source": "CLIENT_OR_GACR_SESSION"
           },
