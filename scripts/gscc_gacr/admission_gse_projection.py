@@ -114,6 +114,12 @@ def project_admission_gse_state(
             )
         )
 
+    # Canonical sources can be persisted in causal order that differs from
+    # their observation timestamps (for example, a challenge response can
+    # trigger a heartbeat a few seconds later). Feed GSE chronological evidence
+    # so a valid control response is not discarded as out-of-order merely
+    # because the derived heartbeat was appended first.
+    events.sort(key=lambda event: _parse(event.get("observed_at")) or now)
     twin = project(events, reference_time=_iso(now), session_id=session_id)
     presence_state = (twin.get("presence") or {}).get("state") or "UNKNOWN"
     liveness_state = (twin.get("liveness") or {}).get("state") or "UNKNOWN"

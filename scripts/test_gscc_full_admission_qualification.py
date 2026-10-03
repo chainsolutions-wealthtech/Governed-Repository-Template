@@ -84,7 +84,7 @@ def sessions():
             "connection_method": "gscc-controlled-host-gateway",
             "relay": {
                 "state": "ACTIVE",
-                "last_heartbeat_at": "2026-10-02T13:49:50+00:00",
+                "last_heartbeat_at": "2026-10-02T13:50:25+00:00",
                 "lease_expires_at": "2026-10-02T14:20:00+00:00",
                 "branch": "main",
                 "task_id": None,
