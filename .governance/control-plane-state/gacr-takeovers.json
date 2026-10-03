@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "revision": 3,
-  "last_scan_at": "2026-10-03T16:28:26+00:00",
+  "revision": 4,
+  "last_scan_at": "2026-10-03T19:21:01+00:00",
   "items": [
     {
       "takeover_id": "GACR-T-84209d225086",
@@ -474,6 +474,22 @@
       "accepted_by_session_id": null,
       "status": "READY_FOR_RECONCILIATION",
       "created_at": "2026-10-03T16:28:26+00:00",
+      "accepted_at": null,
+      "work_item_id": null,
+      "task_id": null,
+      "branch": "governance/gscc-gse-projection-event-order",
+      "pull_request": 168,
+      "last_observed_head_sha": "97aaa67fa985383365970675db98d4f314f8040a",
+      "reconciled_head_sha": null,
+      "active_claim_count": 0
+    },
+    {
+      "takeover_id": "GACR-T-6e2bdf5f7d38",
+      "stalled_session_id": "session-9743633f26b564625b878d58",
+      "offered_to_session_id": null,
+      "accepted_by_session_id": null,
+      "status": "READY_FOR_RECONCILIATION",
+      "created_at": "2026-10-03T19:21:01+00:00",
       "accepted_at": null,
       "work_item_id": null,
       "task_id": null,
