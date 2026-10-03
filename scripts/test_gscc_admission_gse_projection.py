@@ -76,10 +76,31 @@ def test_unverified_control_proof_fails_closed():
     assert state["mutation_authority_granted"] is False, state
 
 
+
+def test_post_challenge_heartbeat_newer_than_response_preserves_control_proof():
+    live = session()
+    live["last_seen_at"] = "2026-10-02T13:30:29+00:00"
+    live["relay"]["last_heartbeat_at"] = "2026-10-02T13:30:29+00:00"
+    proof = control_proof()
+    proof["control_channel"]["observed_at"] = "2026-10-02T13:30:20+00:00"
+    proof["capabilities"]["observed_at"] = "2026-10-02T13:30:20+00:00"
+
+    state = project_admission_gse_state(
+        live,
+        proof,
+        now=datetime(2026, 10, 2, 13, 30, 40, tzinfo=timezone.utc),
+    )
+    assert state["status"] == "VERIFIED", state
+    assert state["presence"] == "PRESENT", state
+    assert state["liveness"] == "VERIFIED", state
+    assert state["control_reachability"] == "REACHABLE", state
+
+
 def main():
     test_live_control_proof_projects_verified_gse_admission_state()
     test_stale_control_proof_does_not_project_verified_liveness()
     test_unverified_control_proof_fails_closed()
+    test_post_challenge_heartbeat_newer_than_response_preserves_control_proof()
     print("GSCC_ADMISSION_GSE_PROJECTION_TESTS_OK")
 
 
