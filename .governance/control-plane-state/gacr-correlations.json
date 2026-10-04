@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 261,
+  "revision": 262,
   "items": [
     {
       "correlation_id": "GACR-C-caffb7cb6efd",
@@ -13716,6 +13716,64 @@
           "session-c3c45fd72b084f5980fa290b",
           "session-e00ebd9473851afe1491889d",
           "session-f1e5bbceaca79bc8f31502c1"
+        ],
+        "correlation_level": "AMBIGUOUS",
+        "reasons": [
+          "CONFLICTING_EXPLICIT_ANCHORS"
+        ],
+        "status": "UNBOUND",
+        "reconciled_session_id": "UNAVAILABLE",
+        "reconciled_at": "UNAVAILABLE"
+      }
+    },
+    {
+      "correlation_id": "GACR-C-f836acfe1063",
+      "beacon_id": "GACR-B-16b33ff8d830",
+      "level": "AMBIGUOUS",
+      "selected_session_id": null,
+      "candidate_session_ids": [
+        "session-02da2612b250e57ae361a588",
+        "session-1d3690ef4e0581443cb35447",
+        "session-255e3c082a24a718c4cf3da6",
+        "session-33e904cc0e7a814421cbaf2d",
+        "session-34e7d19d025442b07a4ad685",
+        "session-3b5feb8e80a1a27354caff53",
+        "session-4142738b5ed45b66778a9a82",
+        "session-418b0b7e0f7348a2c6f16199",
+        "session-4b5c18f24029b172733b09b2",
+        "session-8938f26e9ebba0bcfcaeffc2"
+      ],
+      "reasons": [
+        "CONFLICTING_EXPLICIT_ANCHORS"
+      ],
+      "confidence": {
+        "rule_id": "AMBIGUOUS_EXPLICIT_ANCHOR_CONFLICT",
+        "class": "AMBIGUOUS",
+        "numeric_score": null,
+        "auto_bind_allowed": false
+      },
+      "binding_status": "UNBOUND_ACTIVITY",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-04T11:14:56+00:00",
+      "unbound_activity": {
+        "observation_id": "GACR-B-16b33ff8d830",
+        "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+        "observed_at": "2026-10-04T11:14:56+00:00",
+        "activity_class": "AUTO_ATTACH",
+        "safe_envelope_digest": "28bd9cff7339014fe8018191b19c9d493f0ae51ed516e00e8b58a8880c000a42",
+        "candidate_session_ids": [
+          "session-02da2612b250e57ae361a588",
+          "session-1d3690ef4e0581443cb35447",
+          "session-255e3c082a24a718c4cf3da6",
+          "session-33e904cc0e7a814421cbaf2d",
+          "session-34e7d19d025442b07a4ad685",
+          "session-3b5feb8e80a1a27354caff53",
+          "session-4142738b5ed45b66778a9a82",
+          "session-418b0b7e0f7348a2c6f16199",
+          "session-4b5c18f24029b172733b09b2",
+          "session-8938f26e9ebba0bcfcaeffc2"
         ],
         "correlation_level": "AMBIGUOUS",
         "reasons": [
