@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 15,
+  "revision": 16,
   "items": [
     {
       "schema": "gscc-control-dispatch/v1",
@@ -196,7 +196,7 @@
       "schema": "gscc-control-dispatch/v1",
       "dispatch_id": "GSCC-CTRL-d48484c88bcd25968b3088b6",
       "kind": "CONTROL_CHALLENGE",
-      "status": "DISPATCHED",
+      "status": "ACKNOWLEDGED",
       "target_session_id": "session-3b9787628a1e065a72ea07b4",
       "target_connection_ref": "gscc-live:chatgpt:20261004:continuation-001",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -224,7 +224,11 @@
           "expires_at": "2026-10-04T11:01:07+00:00"
         }
       },
-      "ack": null,
+      "ack": {
+        "delivery_state": "ACKNOWLEDGED",
+        "evidence_ref": "github-issue-comment:5979229137",
+        "observed_at": "2026-10-04T10:56:26+00:00"
+      },
       "response": null,
       "invocation_authority_granted": false,
       "mutation_authority_granted": false,
