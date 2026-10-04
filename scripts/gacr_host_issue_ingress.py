@@ -296,8 +296,6 @@ def ensure_session(payload: dict, repository: str) -> dict:
             add(args, "--task-id", payload.get("task_id"))
             add(args, "--pull-request", payload.get("pull_request"))
             add(args, "--agent-role", payload.get("agent_role"))
-            add(args, "--entry-action", payload.get("entry_action"))
-            add(args, "--connection-intent", payload.get("connection_intent"))
             add(args, "--source", "EXPLICIT_CLIENT")
             run_script(AUTO_ATTACH, args)
             enriched = resolve_session(payload, repository)
