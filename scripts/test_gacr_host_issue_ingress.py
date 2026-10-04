@@ -220,10 +220,15 @@ def main() -> None:
             "connection_ref": "chronicle:demo:session-provider",
             "client_instance_id": "chronicle:demo-provider",
             "observed_head": "d" * 40,
+            "entry_action": "CONTINUE_GOVERNED_WORK",
+            "connection_intent": "OBSERVE",
         }
         resolved_provider = g.ensure_session(payload_provider, "example/governed")
         assert_true(resolved_provider["provider"] == "chatgpt", "host provider enrichment should return enriched session")
         assert_true(any(name == "gacr_auto_attach.py" and "--provider" in args and "chatgpt" in args for name, args in provider_calls), "host provider enrichment must reuse auto-attach path")
+        provider_auto_args = next(args for name, args in provider_calls if name == "gacr_auto_attach.py")
+        assert_true("--entry-action" not in provider_auto_args, "provider enrichment must not resolve entry action")
+        assert_true("--connection-intent" not in provider_auto_args, "provider enrichment must not resolve connection intent")
     finally:
         g.active_sessions = original_active_sessions_provider
         g.run_script = original_run_provider
