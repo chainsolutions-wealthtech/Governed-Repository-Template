@@ -541,6 +541,11 @@ def evaluate_access_grant(
             "reason_code": "QUALIFICATION_REPOSITORY_MISMATCH",
         }
 
+    admission_context = admission_receipt.get("admission_context") if isinstance(admission_receipt.get("admission_context"), dict) else {}
+    intent_context = admission_context.get("intent") if isinstance(admission_context.get("intent"), dict) else {}
+    entry_action = intent_context.get("entry_action")
+    connection_intent = intent_context.get("connection_intent")
+
     issued_at = now
     expires_at = now + timedelta(seconds=max(1, int(ttl_seconds)))
     material = {
@@ -552,6 +557,8 @@ def evaluate_access_grant(
         "binding_evidence_ref": session.get("binding_evidence_ref"),
         "repository": baseline.get("repository"),
         "bound_head": baseline.get("observed_head"),
+        "entry_action": entry_action,
+        "connection_intent": connection_intent,
         "issued_at": issued_at.isoformat(),
     }
     task = qualification_evidence.get("task") or {}
@@ -570,6 +577,8 @@ def evaluate_access_grant(
         "status": "AUTHORIZED",
         "access_class": "GOVERNED_FUNCTION_EXPOSURE_ELIGIBLE",
         "bound_head": baseline.get("observed_head"),
+        "entry_action": entry_action,
+        "connection_intent": connection_intent,
         "task_id": task.get("task_id"),
         "claim_id": claim.get("claim_id"),
         "allowed_authority_classes": list(policy.get("allowed_authority_classes") or []),

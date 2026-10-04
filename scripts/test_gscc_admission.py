@@ -211,6 +211,8 @@ def test_complete_qualification_issues_bounded_access_grant():
     assert result["connection_ref"] == admission["connection_ref"], result
     assert result["repository"] == admission["repository"], result
     assert result["bound_head"] == "a" * 40, result
+    assert result["entry_action"] == "REPOSITORY_ACCESS", result
+    assert result["connection_intent"] == "IMPLEMENT_TASK", result
     assert result["invocation_authority_granted"] is False, result
     assert result["mutation_authority_granted"] is False, result
 
