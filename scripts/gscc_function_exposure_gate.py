@@ -20,6 +20,7 @@ DEFAULT_SESSIONS = ROOT / ".governance" / "control-plane-state" / "gacr-sessions
 GSCC_CONNECTION_METHODS = {
     "gscc-github-event-gateway",
     "gscc-controlled-host-gateway",
+    "controlled-client-adapter",
 }
 CONTROLLED_SURFACES = {
     "GITHUB_EVENT_VISIBLE",
@@ -201,6 +202,7 @@ def evaluate_function_exposure(
     snapshot: dict[str, Any],
     sessions: dict[str, Any],
     access_grant: dict[str, Any] | None = None,
+    current_repository_head: str | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
     now = (now or _now()).astimezone(timezone.utc)
@@ -274,12 +276,42 @@ def evaluate_function_exposure(
         return result
 
     session_head = session.get("last_observed_head_sha")
-    if requested_head and session_head and requested_head != session_head:
-        result.update(status="DENIED", reason_code="EXACT_HEAD_MISMATCH")
-        return result
     if not requested_head or not session_head:
         result.update(status="WITHHELD", reason_code="EXACT_HEAD_REQUIRED")
         return result
+
+    if current_repository_head is not None and current_repository_head != requested_head:
+        result.update(
+            status="DENIED",
+            reason_code="EXACT_HEAD_MISMATCH",
+            head_reconciliation={
+                "status": "CURRENT_HEAD_MISMATCH",
+                "reason": "FUNCTION_EXPOSURE_REQUIRES_CURRENT_REPOSITORY_HEAD",
+                "previous_observed_head": session_head,
+                "current_observed_head": current_repository_head,
+                "requested_head": requested_head,
+                "source": "CHECKED_OUT_CANONICAL_REPOSITORY",
+                "provenance": "OBSERVABLE_BY_PLATFORM",
+                "canonical_session_store_mutated": False,
+            },
+        )
+        return result
+
+    if session_head != requested_head:
+        if current_repository_head == requested_head:
+            result["head_reconciliation"] = {
+                "status": "REOBSERVED_CURRENT_HEAD",
+                "reason": "FUNCTION_EXPOSURE_REQUIRES_CURRENT_REPOSITORY_HEAD",
+                "previous_observed_head": session_head,
+                "current_observed_head": current_repository_head,
+                "requested_head": requested_head,
+                "source": "CHECKED_OUT_CANONICAL_REPOSITORY",
+                "provenance": "OBSERVABLE_BY_PLATFORM",
+                "canonical_session_store_mutated": False,
+            }
+        else:
+            result.update(status="DENIED", reason_code="EXACT_HEAD_MISMATCH")
+            return result
 
     required = tool.get("authority_required")
     if required not in set(access_grant.get("allowed_authority_classes") or []):
@@ -343,6 +375,7 @@ def evaluate_issue_comment_exposure(
     expected_issue_number: int,
     snapshot: dict[str, Any],
     sessions: dict[str, Any],
+    current_repository_head: str | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
     if event.get("action") != "created":
@@ -412,6 +445,7 @@ def evaluate_issue_comment_exposure(
         authority_evidence=authority,
         snapshot=snapshot,
         sessions=sessions,
+        current_repository_head=current_repository_head,
         now=now,
     )
 
@@ -683,6 +717,7 @@ def main() -> None:
             expected_issue_number=args.expected_issue_number,
             snapshot=_load_json(args.snapshot),
             sessions=_load_json(args.sessions),
+            current_repository_head=_git_head(),
         )
         _write_output(result, args.output)
         if args.require_validated and result.get("status") != "VALIDATED":
@@ -720,6 +755,7 @@ def main() -> None:
         authority_evidence=evidence,
         snapshot=_load_json(args.snapshot),
         sessions=_load_json(args.sessions),
+        current_repository_head=_git_head(),
     )
     _write_output(result, args.output)
     if args.require_validated and result.get("status") != "VALIDATED":
