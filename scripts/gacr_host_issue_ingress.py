@@ -35,6 +35,24 @@ INTERRUPTION_CODES = {
     "UNKNOWN",
 }
 AUTHORIZED_ASSOCIATIONS = {"OWNER", "MEMBER", "COLLABORATOR"}
+ENTRY_ACTIONS = {
+    "CREATE_NEW_REPOSITORY",
+    "ADOPT_EXISTING_REPOSITORY",
+    "MAP_EXISTING_PROJECT",
+    "LAB_EVOLUTION",
+    "CONTINUE_GOVERNED_WORK",
+    "UNKNOWN",
+}
+CONNECTION_INTENTS = {
+    "OBSERVE",
+    "CONTEXT_INTAKE",
+    "INFORMATION_INTAKE",
+    "WORK_REQUEST",
+    "CODE_CHANGE",
+    "REVIEW",
+    "INFRASTRUCTURE",
+    "UNKNOWN",
+}
 FORBIDDEN_KEY_FRAGMENTS = ("token", "secret", "password", "private_key", "cookie", "authorization")
 ALLOWED_KEYS = {
     "schema",
@@ -52,6 +70,8 @@ ALLOWED_KEYS = {
     "task_id",
     "pull_request",
     "agent_role",
+    "entry_action",
+    "connection_intent",
     "capabilities",
     "wake_channels",
     "action_id",
@@ -155,6 +175,13 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
         raise ValueError("host action requires a supported action_phase")
     if kind == "interrupt" and payload.get("interruption_code") not in INTERRUPTION_CODES:
         raise ValueError("host interrupt requires a supported interruption_code")
+    entry_action = payload.get("entry_action")
+    if entry_action is not None and entry_action not in ENTRY_ACTIONS:
+        raise ValueError("unsupported host-event entry_action")
+    connection_intent = payload.get("connection_intent")
+    if connection_intent is not None and connection_intent not in CONNECTION_INTENTS:
+        raise ValueError("unsupported host-event connection_intent")
+
     if kind == "command_ack":
         for key in ("session_id", "dispatch_id", "command_id", "correlation_id", "delivery_state"):
             if payload.get(key) in (None, ""):
@@ -269,6 +296,8 @@ def ensure_session(payload: dict, repository: str) -> dict:
             add(args, "--task-id", payload.get("task_id"))
             add(args, "--pull-request", payload.get("pull_request"))
             add(args, "--agent-role", payload.get("agent_role"))
+            add(args, "--entry-action", payload.get("entry_action"))
+            add(args, "--connection-intent", payload.get("connection_intent"))
             add(args, "--source", "EXPLICIT_CLIENT")
             run_script(AUTO_ATTACH, args)
             enriched = resolve_session(payload, repository)
@@ -296,6 +325,8 @@ def ensure_session(payload: dict, repository: str) -> dict:
     add(args, "--task-id", payload.get("task_id"))
     add(args, "--pull-request", payload.get("pull_request"))
     add(args, "--agent-role", payload.get("agent_role"))
+    add(args, "--entry-action", payload.get("entry_action"))
+    add(args, "--connection-intent", payload.get("connection_intent"))
     add(args, "--source", "EXPLICIT_CLIENT")
     for capability in payload.get("capabilities") or []:
         add(args, "--capability", capability)
