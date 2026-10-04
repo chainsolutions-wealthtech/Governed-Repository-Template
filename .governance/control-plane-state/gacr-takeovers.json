@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "revision": 5,
-  "last_scan_at": "2026-10-04T12:44:40+00:00",
+  "revision": 6,
+  "last_scan_at": "2026-10-04T20:07:45+00:00",
   "items": [
     {
       "takeover_id": "GACR-T-84209d225086",
@@ -576,6 +576,54 @@
       "branch": "governance/gscc-function-exposure-session-reobserve",
       "pull_request": 170,
       "last_observed_head_sha": "5aef52b261f32830582bdae84e0d896292a2670c",
+      "reconciled_head_sha": null,
+      "active_claim_count": 0
+    },
+    {
+      "takeover_id": "GACR-T-7ac9615942ff",
+      "stalled_session_id": "session-4e378c98ce26f3f4a2dbc1db",
+      "offered_to_session_id": null,
+      "accepted_by_session_id": null,
+      "status": "READY_FOR_RECONCILIATION",
+      "created_at": "2026-10-04T20:07:45+00:00",
+      "accepted_at": null,
+      "work_item_id": null,
+      "task_id": null,
+      "branch": "main",
+      "pull_request": null,
+      "last_observed_head_sha": "491af7aca8fce116e3b6be2a0bc4b7bdc8b9d951",
+      "reconciled_head_sha": null,
+      "active_claim_count": 0
+    },
+    {
+      "takeover_id": "GACR-T-e250bbc2b190",
+      "stalled_session_id": "session-82399643a32d96ef6c4fbe59",
+      "offered_to_session_id": null,
+      "accepted_by_session_id": null,
+      "status": "READY_FOR_RECONCILIATION",
+      "created_at": "2026-10-04T20:07:45+00:00",
+      "accepted_at": null,
+      "work_item_id": null,
+      "task_id": null,
+      "branch": "governance/gscc-function-exposure-canonical-route-followup",
+      "pull_request": 171,
+      "last_observed_head_sha": "620f83845c67f58ea3dc675d4ab1ef32c53136e4",
+      "reconciled_head_sha": null,
+      "active_claim_count": 0
+    },
+    {
+      "takeover_id": "GACR-T-294ec19bd5cf",
+      "stalled_session_id": "session-f31f7ead349b7edee3e90161",
+      "offered_to_session_id": null,
+      "accepted_by_session_id": null,
+      "status": "READY_FOR_RECONCILIATION",
+      "created_at": "2026-10-04T20:07:45+00:00",
+      "accepted_at": null,
+      "work_item_id": null,
+      "task_id": null,
+      "branch": "governance/gscc-function-exposure-canonical-route-followup",
+      "pull_request": 171,
+      "last_observed_head_sha": "620f83845c67f58ea3dc675d4ab1ef32c53136e4",
       "reconciled_head_sha": null,
       "active_claim_count": 0
     }
