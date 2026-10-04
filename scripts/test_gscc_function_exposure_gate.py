@@ -6,7 +6,9 @@ import tempfile
 import unittest
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
+from unittest.mock import patch
 
+import gscc_function_exposure_gate as exposure_gate
 from gscc_function_exposure_gate import (
     build_arrival_route,
     build_package_route_receipt,
@@ -204,6 +206,8 @@ class ExposureGateTests(unittest.TestCase):
         sessions = json.loads(json.dumps(self.sessions))
         sessions["sessions"][0]["connection_method"] = "controlled-client-adapter"
         sessions["sessions"][0]["surface_class"] = "CONTROLLED_INSTRUMENTABLE"
+        sessions["sessions"][0]["entry_action"] = "CONTINUE_GOVERNED_WORK"
+        sessions["sessions"][0]["connection_intent"] = "OBSERVE"
 
         result = evaluate_function_exposure(
             tool_name="read_tool",
@@ -221,10 +225,12 @@ class ExposureGateTests(unittest.TestCase):
         self.assertEqual(result["status"], "VALIDATED")
         self.assertTrue(result["exposable"])
 
-    def test_controlled_client_requires_current_head_and_resolved_admission_route(self):
+    def test_controlled_client_requires_current_head_and_canonical_session_route(self):
         sessions = json.loads(json.dumps(self.sessions))
         sessions["sessions"][0]["connection_method"] = "controlled-client-adapter"
         sessions["sessions"][0]["surface_class"] = "CONTROLLED_INSTRUMENTABLE"
+        sessions["sessions"][0]["entry_action"] = "CONTINUE_GOVERNED_WORK"
+        sessions["sessions"][0]["connection_intent"] = "OBSERVE"
 
         missing_head = evaluate_function_exposure(
             tool_name="read_tool",
@@ -239,38 +245,50 @@ class ExposureGateTests(unittest.TestCase):
         self.assertEqual(missing_head["status"], "DENIED")
         self.assertEqual(missing_head["reason_code"], "CURRENT_HEAD_REOBSERVATION_REQUIRED")
 
-        unresolved_entry = evaluate_function_exposure(
-            tool_name="read_tool",
-            connection_ref=self.connection_ref,
-            requested_head=self.head,
-            access_grant=self.access_grant(entry_action="UNKNOWN", allowed_authority_classes=["READ_ONLY_DISCOVERY_AUTHORITY"]),
-            authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
-            snapshot=self.snapshot,
-            sessions=sessions,
-            current_repository_head=self.head,
-            now=self.now,
+        forged_grant = self.access_grant(
+            entry_action="ARBITRARY_CALLER_VALUE",
+            connection_intent="ARBITRARY_CALLER_VALUE",
+            allowed_authority_classes=["READ_ONLY_DISCOVERY_AUTHORITY"],
         )
-        self.assertEqual(unresolved_entry["status"], "DENIED")
-        self.assertEqual(unresolved_entry["reason_code"], "ENTRY_ACTION_RESOLUTION_REQUIRED")
 
-        unresolved_intent = evaluate_function_exposure(
+        unresolved_entry = json.loads(json.dumps(sessions))
+        unresolved_entry["sessions"][0]["entry_action"] = "UNKNOWN"
+        result = evaluate_function_exposure(
             tool_name="read_tool",
             connection_ref=self.connection_ref,
             requested_head=self.head,
-            access_grant=self.access_grant(connection_intent="UNKNOWN", allowed_authority_classes=["READ_ONLY_DISCOVERY_AUTHORITY"]),
+            access_grant=forged_grant,
             authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
             snapshot=self.snapshot,
-            sessions=sessions,
+            sessions=unresolved_entry,
             current_repository_head=self.head,
             now=self.now,
         )
-        self.assertEqual(unresolved_intent["status"], "DENIED")
-        self.assertEqual(unresolved_intent["reason_code"], "CONNECTION_INTENT_RESOLUTION_REQUIRED")
+        self.assertEqual(result["status"], "DENIED")
+        self.assertEqual(result["reason_code"], "ENTRY_ACTION_RESOLUTION_REQUIRED")
+
+        unresolved_intent = json.loads(json.dumps(sessions))
+        unresolved_intent["sessions"][0]["connection_intent"] = "UNKNOWN"
+        result = evaluate_function_exposure(
+            tool_name="read_tool",
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            access_grant=forged_grant,
+            authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
+            snapshot=self.snapshot,
+            sessions=unresolved_intent,
+            current_repository_head=self.head,
+            now=self.now,
+        )
+        self.assertEqual(result["status"], "DENIED")
+        self.assertEqual(result["reason_code"], "CONNECTION_INTENT_RESOLUTION_REQUIRED")
 
     def test_current_head_reobservation_can_reconcile_persisted_session_lag(self):
         sessions = json.loads(json.dumps(self.sessions))
         sessions["sessions"][0]["connection_method"] = "controlled-client-adapter"
         sessions["sessions"][0]["surface_class"] = "CONTROLLED_INSTRUMENTABLE"
+        sessions["sessions"][0]["entry_action"] = "CONTINUE_GOVERNED_WORK"
+        sessions["sessions"][0]["connection_intent"] = "OBSERVE"
         sessions["sessions"][0]["last_observed_head_sha"] = "b" * 40
         before = json.loads(json.dumps(sessions))
 
@@ -309,6 +327,8 @@ class ExposureGateTests(unittest.TestCase):
         sessions = json.loads(json.dumps(self.sessions))
         sessions["sessions"][0]["connection_method"] = "controlled-client-adapter"
         sessions["sessions"][0]["surface_class"] = "CONTROLLED_INSTRUMENTABLE"
+        sessions["sessions"][0]["entry_action"] = "CONTINUE_GOVERNED_WORK"
+        sessions["sessions"][0]["connection_intent"] = "OBSERVE"
         sessions["sessions"][0]["last_observed_head_sha"] = "b" * 40
 
         result = evaluate_function_exposure(
@@ -495,6 +515,8 @@ class ExposureGateTests(unittest.TestCase):
         sessions = json.loads(json.dumps(self.sessions))
         sessions["sessions"][0]["connection_method"] = "controlled-client-adapter"
         sessions["sessions"][0]["surface_class"] = "CONTROLLED_INSTRUMENTABLE"
+        sessions["sessions"][0]["entry_action"] = "CONTINUE_GOVERNED_WORK"
+        sessions["sessions"][0]["connection_intent"] = "OBSERVE"
         evidence = {"read_tool": self.evidence("READ_ONLY_DISCOVERY_AUTHORITY")}
         result = exposed_function_catalogue(
             connection_ref=self.connection_ref,
@@ -614,6 +636,40 @@ class ExposureGateTests(unittest.TestCase):
         self.assertIn('"scripts/gscc_observable_arrival.py"', text)
         self.assertIn('".github/workflows/gscc-observable-arrival.yml"', text)
 
+    def test_remote_head_reobservation_uses_instantiated_canonical_branch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            governance = root / ".governance"
+            governance.mkdir(parents=True)
+            (governance / "profile.json").write_text(
+                json.dumps({
+                    "template_source": False,
+                    "initialized": True,
+                    "canonical_branch": "trunk",
+                }),
+                encoding="utf-8",
+            )
+
+            observed_calls = []
+
+            class Proc:
+                returncode = 0
+                stdout = ("b" * 40) + "\trefs/heads/trunk\n"
+                stderr = ""
+
+            def fake_run(args, **kwargs):
+                observed_calls.append(list(args))
+                return Proc()
+
+            with patch.object(exposure_gate, "ROOT", root), patch.object(exposure_gate.subprocess, "run", fake_run):
+                self.assertEqual(exposure_gate._canonical_branch(), "trunk")
+                self.assertEqual(exposure_gate._git_remote_canonical_head(), "b" * 40)
+
+            self.assertEqual(
+                observed_calls,
+                [["git", "ls-remote", "--exit-code", "origin", "refs/heads/trunk"]],
+            )
+
     def test_workflow_is_mandatory_and_fail_closed(self):
         text = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("gscc_function_exposure_request", text)
@@ -628,7 +684,8 @@ class ExposureGateTests(unittest.TestCase):
         self.assertNotIn("continue-on-error: true", text)
         source = (ROOT / "scripts" / "gscc_function_exposure_gate.py").read_text(encoding="utf-8")
         self.assertIn('"ls-remote"', source)
-        self.assertIn('"refs/heads/main"', source)
+        self.assertIn("def _canonical_branch", source)
+        self.assertIn('"refs/heads/{branch}"', source)
 
 
 if __name__ == "__main__":
