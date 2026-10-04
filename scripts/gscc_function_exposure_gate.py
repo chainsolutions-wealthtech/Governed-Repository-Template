@@ -25,6 +25,10 @@ CONTROLLED_SURFACES = {
     "GITHUB_EVENT_VISIBLE",
     "CONTROLLED_INSTRUMENTABLE",
 }
+FUNCTION_EXPOSURE_ISSUE_PREFIX = "/gscc-function-exposure "
+FUNCTION_EXPOSURE_ISSUE_SCHEMA = "gscc-function-exposure-request/v1"
+AUTHORIZED_ISSUE_ASSOCIATIONS = {"OWNER", "MEMBER", "COLLABORATOR"}
+MAX_FUNCTION_EXPOSURE_ISSUE_CHARS = 16384
 ROUTE_STAGES = [
     "ADMISSION_RECEIPT_VALIDATION",
     "ACCESS_GRANT_VALIDATION",
@@ -332,6 +336,86 @@ def evaluate_function_exposure(
     return result
 
 
+
+def evaluate_issue_comment_exposure(
+    event: dict[str, Any],
+    *,
+    expected_issue_number: int,
+    snapshot: dict[str, Any],
+    sessions: dict[str, Any],
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    if event.get("action") != "created":
+        raise ValueError("FUNCTION_EXPOSURE_ISSUE_COMMENT_CREATED_REQUIRED")
+
+    issue = event.get("issue") or {}
+    if int(issue.get("number") or 0) != int(expected_issue_number):
+        raise ValueError("FUNCTION_EXPOSURE_ISSUE_NUMBER_MISMATCH")
+
+    comment = event.get("comment") or {}
+    association = str(comment.get("author_association") or "").upper()
+    if association not in AUTHORIZED_ISSUE_ASSOCIATIONS:
+        raise ValueError("FUNCTION_EXPOSURE_ISSUE_ACTOR_NOT_AUTHORIZED")
+
+    body = str(comment.get("body") or "")
+    if not body.startswith(FUNCTION_EXPOSURE_ISSUE_PREFIX):
+        raise ValueError("FUNCTION_EXPOSURE_ISSUE_PREFIX_REQUIRED")
+    if len(body) > MAX_FUNCTION_EXPOSURE_ISSUE_CHARS:
+        raise ValueError("FUNCTION_EXPOSURE_ISSUE_PAYLOAD_TOO_LARGE")
+
+    raw = body[len(FUNCTION_EXPOSURE_ISSUE_PREFIX):].strip()
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError("FUNCTION_EXPOSURE_ISSUE_JSON_INVALID") from exc
+    if not isinstance(payload, dict):
+        raise ValueError("FUNCTION_EXPOSURE_ISSUE_OBJECT_REQUIRED")
+    if payload.get("schema") != FUNCTION_EXPOSURE_ISSUE_SCHEMA:
+        raise ValueError("FUNCTION_EXPOSURE_ISSUE_SCHEMA_UNSUPPORTED")
+
+    allowed_keys = {
+        "schema",
+        "connection_ref",
+        "tool_name",
+        "observed_head",
+        "access_grant",
+        "authority",
+    }
+    unexpected = sorted(set(payload) - allowed_keys)
+    if unexpected:
+        raise ValueError(f"FUNCTION_EXPOSURE_ISSUE_UNEXPECTED_FIELDS:{','.join(unexpected)}")
+
+    for key in ("connection_ref", "tool_name", "observed_head", "access_grant", "authority"):
+        if payload.get(key) in (None, "", {}, []):
+            raise ValueError(f"FUNCTION_EXPOSURE_ISSUE_REQUIRED:{key}")
+
+    access_grant = payload.get("access_grant")
+    authority = payload.get("authority")
+    if not isinstance(access_grant, dict):
+        raise ValueError("FUNCTION_EXPOSURE_ISSUE_ACCESS_GRANT_OBJECT_REQUIRED")
+    if not isinstance(authority, dict):
+        raise ValueError("FUNCTION_EXPOSURE_ISSUE_AUTHORITY_OBJECT_REQUIRED")
+
+    allowed_authority_keys = {"authority_class", "evidence_ref", "granted", "live_preflight"}
+    unexpected_authority = sorted(set(authority) - allowed_authority_keys)
+    if unexpected_authority:
+        raise ValueError(
+            f"FUNCTION_EXPOSURE_ISSUE_AUTHORITY_UNEXPECTED_FIELDS:{','.join(unexpected_authority)}"
+        )
+
+    _safe_evidence(payload)
+    return evaluate_function_exposure(
+        tool_name=str(payload["tool_name"]),
+        connection_ref=str(payload["connection_ref"]),
+        requested_head=str(payload["observed_head"]),
+        access_grant=access_grant,
+        authority_evidence=authority,
+        snapshot=snapshot,
+        sessions=sessions,
+        now=now,
+    )
+
+
 def exposed_function_catalogue(
     *,
     connection_ref: str,
@@ -522,6 +606,14 @@ def main() -> None:
     package.add_argument("--snapshot", default=str(DEFAULT_SNAPSHOT))
     package.add_argument("--output")
 
+    issue_comment = sub.add_parser("issue-comment")
+    issue_comment.add_argument("--event-path", default=os.environ.get("GITHUB_EVENT_PATH"))
+    issue_comment.add_argument("--expected-issue-number", type=int, required=True)
+    issue_comment.add_argument("--snapshot", default=str(DEFAULT_SNAPSHOT))
+    issue_comment.add_argument("--sessions", default=str(DEFAULT_SESSIONS))
+    issue_comment.add_argument("--output")
+    issue_comment.add_argument("--require-validated", action="store_true")
+
     evaluate = sub.add_parser("evaluate")
     evaluate.add_argument("--tool-name", required=True)
     evaluate.add_argument("--connection-ref", required=True)
@@ -581,6 +673,20 @@ def main() -> None:
             observed_head=facts.get("observed_head"),
         )
         _write_output(route, args.output)
+        return
+
+    if args.command == "issue-comment":
+        if not args.event_path:
+            raise SystemExit("GITHUB_EVENT_PATH_REQUIRED")
+        result = evaluate_issue_comment_exposure(
+            _event_payload(args.event_path),
+            expected_issue_number=args.expected_issue_number,
+            snapshot=_load_json(args.snapshot),
+            sessions=_load_json(args.sessions),
+        )
+        _write_output(result, args.output)
+        if args.require_validated and result.get("status") != "VALIDATED":
+            raise SystemExit(3)
         return
 
     access_grant = None
