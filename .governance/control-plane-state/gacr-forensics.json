@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 52,
+  "revision": 53,
   "items": [
     {
       "forensic_id": "GACR-F-9e71238bc954",
@@ -2749,7 +2749,7 @@
     },
     {
       "forensic_id": "GACR-F-798216fd4938",
-      "generated_at": "2026-10-04T10:57:09+00:00",
+      "generated_at": "2026-10-04T11:09:39+00:00",
       "process": "GACR",
       "authority": "CP-AGENT-RELAY-001-R3",
       "session_id": "session-3b9787628a1e065a72ea07b4",
@@ -2788,13 +2788,13 @@
         "in_flight_action": null
       },
       "last_checkpoint_ref": null,
-      "last_evidence_ref": "github-issue-comment:5979233081",
+      "last_evidence_ref": "github-issue-comment:5979321377",
       "last_takeover": null,
       "last_dispatch": {
         "schema": "gscc-control-dispatch/v1",
-        "dispatch_id": "GSCC-CTRL-d48484c88bcd25968b3088b6",
+        "dispatch_id": "GSCC-CTRL-a849585ac88293c1c6e33a66",
         "kind": "CONTROL_CHALLENGE",
-        "status": "COMPLETED",
+        "status": "ACKNOWLEDGED",
         "target_session_id": "session-3b9787628a1e065a72ea07b4",
         "target_connection_ref": "gscc-live:chatgpt:20261004:continuation-001",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
@@ -2803,43 +2803,35 @@
         "delivery_modes": [
           "GITHUB_ISSUE_COMMENT"
         ],
-        "created_at": "2026-10-04T10:56:07+00:00",
-        "expires_at": "2026-10-04T11:01:07+00:00",
+        "created_at": "2026-10-04T11:09:13+00:00",
+        "expires_at": "2026-10-04T11:14:13+00:00",
         "command": {
           "schema": "gscc-control-command/v1",
-          "message_id": "GSCC-MSG-594bffad03d1c8991c2e1a90",
-          "command_id": "GSCC-CMD-3bfab1aa580e57b6bbb25019",
-          "correlation_id": "GSCC-CORR-e92721240008895eac807101",
+          "message_id": "GSCC-MSG-fbddde6e42e019ac3989dac3",
+          "command_id": "GSCC-CMD-31d94d7cdb4b52e32789ba13",
+          "correlation_id": "GSCC-CORR-b166aa4910456c367104115c",
           "command_type": "LIVENESS_CHALLENGE",
           "target_session_id": "session-3b9787628a1e065a72ea07b4",
-          "issued_at": "2026-10-04T10:56:07+00:00",
-          "expires_at": "2026-10-04T11:01:07+00:00",
+          "issued_at": "2026-10-04T11:09:13+00:00",
+          "expires_at": "2026-10-04T11:14:13+00:00",
           "requires_ack": true,
           "payload": {
-            "challenge_id": "GSCC-CH-148e7172fdf2a720d712c44b",
-            "nonce": "FwdQBNdyCMh4ZP9nmjiVVsf5iGzn9wti",
-            "issued_at": "2026-10-04T10:56:07+00:00",
-            "expires_at": "2026-10-04T11:01:07+00:00"
+            "challenge_id": "GSCC-CH-a4d212ce08afa3b856c3cc1e",
+            "nonce": "MKxMXX7rKVzGvUIBLQGy7lM5guk_4X8b",
+            "issued_at": "2026-10-04T11:09:13+00:00",
+            "expires_at": "2026-10-04T11:14:13+00:00"
           }
         },
         "ack": {
           "delivery_state": "ACKNOWLEDGED",
-          "evidence_ref": "github-issue-comment:5979229137",
-          "observed_at": "2026-10-04T10:56:26+00:00"
+          "evidence_ref": "github-issue-comment:5979321377",
+          "observed_at": "2026-10-04T11:09:30+00:00"
         },
-        "response": {
-          "challenge_status": "ACK",
-          "challenge_id": "GSCC-CH-148e7172fdf2a720d712c44b",
-          "fresh_liveness": true,
-          "replay": false,
-          "evidence_ref": "github-issue-comment:5979233081",
-          "observed_at": "2026-10-04T10:57:00+00:00"
-        },
+        "response": null,
         "invocation_authority_granted": false,
         "mutation_authority_granted": false,
-        "delivered_at": "2026-10-04T10:56:07+00:00",
-        "delivery_evidence_ref": "github-issue-comment:5979227127",
-        "completed_at": "2026-10-04T10:57:00+00:00"
+        "delivered_at": "2026-10-04T11:09:13+00:00",
+        "delivery_evidence_ref": "github-issue-comment:5979319541"
       },
       "resume_point": {
         "task_id": null,
@@ -2848,7 +2840,7 @@
         "last_observed_head_sha": "773952275fd64ba67bd391c476a09ecc148efbaa",
         "last_written_head_sha": null,
         "checkpoint_ref": null,
-        "evidence_ref": "github-issue-comment:5979233081",
+        "evidence_ref": "github-issue-comment:5979321377",
         "active_claim_work_items": [],
         "collision_domains": [],
         "in_flight_action": null,
@@ -2857,12 +2849,12 @@
         "may_replay_in_flight_action_without_reconciliation": false
       },
       "evidence_counts": {
-        "beacons": 5,
+        "beacons": 6,
         "takeovers": 0,
-        "dispatches": 1,
+        "dispatches": 2,
         "active_claims": 0
       },
-      "analysis_digest": "8c59857f7d0e8f02c30d2700308951995f23efe9bb781dde4b733c8967153fc8"
+      "analysis_digest": "58e0a0cbd93d0f13bbbc51999dcc186ac784d34dcfa26240d3634d4d4979e05e"
     }
   ]
 }
