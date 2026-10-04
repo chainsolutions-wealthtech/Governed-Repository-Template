@@ -197,6 +197,85 @@ class ExposureGateTests(unittest.TestCase):
         )
         self.assertEqual(reason, "INTERNAL_GSCC_FUNCTION_EXPOSURE_INGRESS")
 
+
+    def test_controlled_client_adapter_is_valid_for_gscc_function_exposure(self):
+        sessions = json.loads(json.dumps(self.sessions))
+        sessions["sessions"][0]["connection_method"] = "controlled-client-adapter"
+        sessions["sessions"][0]["surface_class"] = "CONTROLLED_INSTRUMENTABLE"
+
+        result = evaluate_function_exposure(
+            tool_name="read_tool",
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            access_grant=self.access_grant(
+                allowed_authority_classes=["READ_ONLY_DISCOVERY_AUTHORITY"]
+            ),
+            authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
+            snapshot=self.snapshot,
+            sessions=sessions,
+            now=self.now,
+        )
+        self.assertEqual(result["status"], "VALIDATED")
+        self.assertTrue(result["exposable"])
+
+    def test_current_head_reobservation_can_reconcile_persisted_session_lag(self):
+        sessions = json.loads(json.dumps(self.sessions))
+        sessions["sessions"][0]["connection_method"] = "controlled-client-adapter"
+        sessions["sessions"][0]["surface_class"] = "CONTROLLED_INSTRUMENTABLE"
+        sessions["sessions"][0]["last_observed_head_sha"] = "b" * 40
+
+        result = evaluate_function_exposure(
+            tool_name="read_tool",
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            access_grant=self.access_grant(
+                allowed_authority_classes=["READ_ONLY_DISCOVERY_AUTHORITY"]
+            ),
+            authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
+            snapshot=self.snapshot,
+            sessions=sessions,
+            current_repository_head=self.head,
+            now=self.now,
+        )
+        self.assertEqual(result["status"], "VALIDATED")
+        self.assertEqual(
+            result["head_reconciliation"]["status"],
+            "REOBSERVED_CURRENT_HEAD",
+        )
+        self.assertEqual(
+            result["head_reconciliation"]["previous_observed_head"],
+            "b" * 40,
+        )
+        self.assertEqual(
+            result["head_reconciliation"]["current_observed_head"],
+            self.head,
+        )
+        self.assertFalse(
+            result["head_reconciliation"]["canonical_session_store_mutated"]
+        )
+
+    def test_current_head_reobservation_fails_closed_on_real_head_mismatch(self):
+        sessions = json.loads(json.dumps(self.sessions))
+        sessions["sessions"][0]["connection_method"] = "controlled-client-adapter"
+        sessions["sessions"][0]["surface_class"] = "CONTROLLED_INSTRUMENTABLE"
+        sessions["sessions"][0]["last_observed_head_sha"] = "b" * 40
+
+        result = evaluate_function_exposure(
+            tool_name="read_tool",
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            access_grant=self.access_grant(
+                allowed_authority_classes=["READ_ONLY_DISCOVERY_AUTHORITY"]
+            ),
+            authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
+            snapshot=self.snapshot,
+            sessions=sessions,
+            current_repository_head="c" * 40,
+            now=self.now,
+        )
+        self.assertEqual(result["status"], "DENIED")
+        self.assertEqual(result["reason_code"], "EXACT_HEAD_MISMATCH")
+
     def test_arrival_route_is_locked_until_function_validation(self):
         route = build_arrival_route(
             repository="owner/repo",
