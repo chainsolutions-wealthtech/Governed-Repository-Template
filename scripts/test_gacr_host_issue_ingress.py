@@ -73,11 +73,15 @@ def main() -> None:
         "tool_name": "github-connector",
         "tool_call_id": "call-1",
         "observed_head": "a" * 40,
+        "entry_action": "CONTINUE_GOVERNED_WORK",
+        "connection_intent": "OBSERVE",
     }
     parsed = g.parse_issue_comment_event(event(body(valid)), config())
     assert_true(parsed is not None, "valid host event parsed")
     assert_true(parsed["_evidence_ref"] == "github-issue-comment:9001", "comment id becomes evidence id")
     assert_true(parsed["_actor"] == "agent-user", "actor captured")
+    assert_true(parsed["entry_action"] == "CONTINUE_GOVERNED_WORK", "canonical entry action preserved")
+    assert_true(parsed["connection_intent"] == "OBSERVE", "canonical connection intent preserved")
 
     assert_true(
         g.parse_issue_comment_event(event(body(valid), issue_number=114), config()) is None,
@@ -111,6 +115,20 @@ def main() -> None:
     bad_phase["action_phase"] = "RUNNING"
     expect_error(lambda: g.parse_issue_comment_event(event(body(bad_phase)), config()), "supported action_phase")
 
+    invalid_entry = dict(valid)
+    invalid_entry["entry_action"] = "REPOSITORY_ACCESS"
+    expect_error(
+        lambda: g.parse_issue_comment_event(event(body(invalid_entry), comment_id=9002), config()),
+        "entry_action",
+    )
+
+    invalid_intent = dict(valid)
+    invalid_intent["connection_intent"] = "READ_ONLY_DISCOVERY"
+    expect_error(
+        lambda: g.parse_issue_comment_event(event(body(invalid_intent), comment_id=9003), config()),
+        "connection_intent",
+    )
+
     sessions = [
         {
             "session_id": "session-1",
@@ -130,6 +148,49 @@ def main() -> None:
         assert_true(resolved and resolved["session_id"] == "session-1", "connection resolves existing session")
     finally:
         g.active_sessions = original_active_sessions
+
+    route_calls = []
+    original_active_sessions_route = g.active_sessions
+    original_run_route = g.run_script
+    try:
+        attached_route_session = {
+            "session_id": "session-route",
+            "repository": "example/governed",
+            "provider": "chatgpt",
+            "connection_ref": "chronicle:demo:route",
+            "client_instance_id": "chronicle:route",
+            "status": "ACTIVE",
+            "entry_action": "CONTINUE_GOVERNED_WORK",
+            "connection_intent": "OBSERVE",
+            "relay": {"state": "ACTIVE", "branch": "main"},
+        }
+        route_reads = {"count": 0}
+
+        def route_sessions():
+            route_reads["count"] += 1
+            return [] if route_reads["count"] == 1 else [attached_route_session]
+
+        g.active_sessions = route_sessions
+        g.run_script = lambda path, args: route_calls.append((path.name, list(args))) or ""
+        route_payload = {
+            "provider": "chatgpt",
+            "connection_ref": "chronicle:demo:route",
+            "client_instance_id": "chronicle:route",
+            "observed_head": "e" * 40,
+            "branch": "main",
+            "entry_action": "CONTINUE_GOVERNED_WORK",
+            "connection_intent": "OBSERVE",
+        }
+        resolved_route = g.ensure_session(route_payload, "example/governed")
+        assert_true(resolved_route["session_id"] == "session-route", "new host route session attached")
+        auto_attach_calls = [args for name, args in route_calls if name == "gacr_auto_attach.py"]
+        assert_true(len(auto_attach_calls) == 1, "new host session uses one canonical auto-attach")
+        auto_args = auto_attach_calls[0]
+        assert_true("--entry-action" in auto_args and "CONTINUE_GOVERNED_WORK" in auto_args, "entry action forwarded")
+        assert_true("--connection-intent" in auto_args and "OBSERVE" in auto_args, "connection intent forwarded")
+    finally:
+        g.active_sessions = original_active_sessions_route
+        g.run_script = original_run_route
 
     provider_calls = []
     original_active_sessions_provider = g.active_sessions
