@@ -112,6 +112,18 @@
         "string",
         "null"
       ]
+    },
+    "entry_action": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "connection_intent": {
+      "type": [
+        "string",
+        "null"
+      ]
     }
   },
   "additionalProperties": true
