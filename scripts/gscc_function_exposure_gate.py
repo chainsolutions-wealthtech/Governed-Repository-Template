@@ -17,11 +17,13 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SNAPSHOT = ROOT / ".governance" / "control-plane-state" / "mcp-capability-snapshot.json"
 DEFAULT_SESSIONS = ROOT / ".governance" / "control-plane-state" / "gacr-sessions.json"
 
+CONTROLLED_CLIENT_CONNECTION_METHOD = "controlled-client-adapter"
 GSCC_CONNECTION_METHODS = {
     "gscc-github-event-gateway",
     "gscc-controlled-host-gateway",
-    "controlled-client-adapter",
+    CONTROLLED_CLIENT_CONNECTION_METHOD,
 }
+UNRESOLVED_ROUTE_VALUES = {None, "", "UNKNOWN", "UNAVAILABLE"}
 CONTROLLED_SURFACES = {
     "GITHUB_EVENT_VISIBLE",
     "CONTROLLED_INSTRUMENTABLE",
@@ -271,6 +273,21 @@ def evaluate_function_exposure(
         )
         return result
 
+    if session.get("connection_method") == CONTROLLED_CLIENT_CONNECTION_METHOD:
+        if current_repository_head is None:
+            result.update(status="DENIED", reason_code="CURRENT_HEAD_REOBSERVATION_REQUIRED")
+            return result
+        entry_action = access_grant.get("entry_action")
+        connection_intent = access_grant.get("connection_intent")
+        if entry_action in UNRESOLVED_ROUTE_VALUES:
+            result.update(status="DENIED", reason_code="ENTRY_ACTION_RESOLUTION_REQUIRED")
+            return result
+        if connection_intent in UNRESOLVED_ROUTE_VALUES:
+            result.update(status="DENIED", reason_code="CONNECTION_INTENT_RESOLUTION_REQUIRED")
+            return result
+        result["entry_action"] = entry_action
+        result["connection_intent"] = connection_intent
+
     if tool is None:
         result.update(status="DENIED", reason_code="FUNCTION_NOT_IN_CANONICAL_CATALOGUE")
         return result
@@ -290,7 +307,7 @@ def evaluate_function_exposure(
                 "previous_observed_head": session_head,
                 "current_observed_head": current_repository_head,
                 "requested_head": requested_head,
-                "source": "CHECKED_OUT_CANONICAL_REPOSITORY",
+                "source": "CURRENT_CANONICAL_REPOSITORY_HEAD",
                 "provenance": "OBSERVABLE_BY_PLATFORM",
                 "canonical_session_store_mutated": False,
             },
@@ -305,7 +322,7 @@ def evaluate_function_exposure(
                 "previous_observed_head": session_head,
                 "current_observed_head": current_repository_head,
                 "requested_head": requested_head,
-                "source": "CHECKED_OUT_CANONICAL_REPOSITORY",
+                "source": "CURRENT_CANONICAL_REPOSITORY_HEAD",
                 "provenance": "OBSERVABLE_BY_PLATFORM",
                 "canonical_session_store_mutated": False,
             }
@@ -458,6 +475,7 @@ def exposed_function_catalogue(
     authority_evidence_by_tool: dict[str, dict[str, Any]],
     snapshot: dict[str, Any],
     sessions: dict[str, Any],
+    current_repository_head: str | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
     functions = []
@@ -474,6 +492,7 @@ def exposed_function_catalogue(
             authority_evidence=authority_evidence_by_tool.get(name),
             snapshot=snapshot,
             sessions=sessions,
+            current_repository_head=current_repository_head,
             now=now,
         )
         if receipt.get("status") == "VALIDATED":
@@ -605,6 +624,26 @@ def _git_head() -> str:
     return proc.stdout.strip()
 
 
+def _git_remote_main_head() -> str:
+    proc = subprocess.run(
+        ["git", "ls-remote", "--exit-code", "origin", "refs/heads/main"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    if proc.returncode != 0:
+        raise RuntimeError("CANONICAL_REMOTE_HEAD_UNAVAILABLE")
+    lines = [line.strip() for line in proc.stdout.splitlines() if line.strip()]
+    if len(lines) != 1:
+        raise RuntimeError("CANONICAL_REMOTE_HEAD_AMBIGUOUS")
+    parts = lines[0].split()
+    head = parts[0] if parts else ""
+    if len(head) != 40 or any(ch not in "0123456789abcdefABCDEF" for ch in head):
+        raise RuntimeError("CANONICAL_REMOTE_HEAD_INVALID")
+    return head.lower()
+
+
 def _github_output(name: str, value: Any) -> None:
     path = os.environ.get("GITHUB_OUTPUT")
     rendered = str(value).lower() if isinstance(value, bool) else str(value)
@@ -717,7 +756,7 @@ def main() -> None:
             expected_issue_number=args.expected_issue_number,
             snapshot=_load_json(args.snapshot),
             sessions=_load_json(args.sessions),
-            current_repository_head=_git_head(),
+            current_repository_head=_git_remote_main_head(),
         )
         _write_output(result, args.output)
         if args.require_validated and result.get("status") != "VALIDATED":
@@ -755,7 +794,7 @@ def main() -> None:
         authority_evidence=evidence,
         snapshot=_load_json(args.snapshot),
         sessions=_load_json(args.sessions),
-        current_repository_head=_git_head(),
+        current_repository_head=_git_remote_main_head(),
     )
     _write_output(result, args.output)
     if args.require_validated and result.get("status") != "VALIDATED":
