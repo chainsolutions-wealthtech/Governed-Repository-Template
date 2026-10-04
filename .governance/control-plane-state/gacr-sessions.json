@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 247,
+  "revision": 248,
   "sessions": [
     {
       "session_id": "session-68c97d4bb1ef71c86444de12",
@@ -8209,10 +8209,10 @@
       "connection_intent_provenance": "DEFAULT_UNKNOWN",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "75407670b57e49a2d9227b8f40dc2c95b2f31556",
-      "last_observed_head_sha": "a6da6c5fac429ae77194d0bc3d7bfc9c9bd252c4",
+      "last_observed_head_sha": "c840e7d2bdde1a07948a8b3eb3b459a97f833f26",
       "status": "ACTIVE",
       "created_at": "2026-10-04T11:01:57+00:00",
-      "last_seen_at": "2026-10-04T11:03:54+00:00",
+      "last_seen_at": "2026-10-04T11:05:34+00:00",
       "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations",
       "agent_role": null,
       "capabilities": [
@@ -8226,8 +8226,8 @@
       "relay": {
         "process": "GACR",
         "state": "ACTIVE",
-        "last_heartbeat_at": "2026-10-04T11:03:54+00:00",
-        "lease_expires_at": "2026-10-04T11:33:54+00:00",
+        "last_heartbeat_at": "2026-10-04T11:05:34+00:00",
+        "lease_expires_at": "2026-10-04T11:35:34+00:00",
         "last_action": "RESUME",
         "task_id": null,
         "branch": "governance/gscc-function-exposure-issue-ingress",
@@ -8255,7 +8255,7 @@
         "schema": "gacr-connection-envelope/v1",
         "surface_class": "GITHUB_EVENT_VISIBLE",
         "presence_event": "PRESENCE_RESUME",
-        "observed_at": "2026-10-04T11:03:54+00:00",
+        "observed_at": "2026-10-04T11:05:34+00:00",
         "fields": {
           "gacr_session_id": {
             "value": "session-3b5feb8e80a1a27354caff53",
@@ -8356,12 +8356,12 @@
             "source": "REPOSITORY_SURFACE"
           },
           "base_branch": {
-            "value": "main",
+            "value": "UNAVAILABLE",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "REPOSITORY_SURFACE"
           },
           "HEAD": {
-            "value": "a6da6c5fac429ae77194d0bc3d7bfc9c9bd252c4",
+            "value": "c840e7d2bdde1a07948a8b3eb3b459a97f833f26",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "REPOSITORY_SURFACE"
           },
@@ -8371,7 +8371,7 @@
             "source": "REPOSITORY_SURFACE"
           },
           "workflow_run_id": {
-            "value": "37197431838",
+            "value": "37197524956",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "GITHUB_EVENT"
           },
@@ -8386,12 +8386,12 @@
             "source": "GITHUB_EVENT"
           },
           "event_type": {
-            "value": "GSCC_OBSERVABLE_PULL_REQUEST",
+            "value": "GSCC_OBSERVABLE_PUSH",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "REPOSITORY_SURFACE"
           },
           "delivery_or_correlation_id": {
-            "value": "37197431838:1",
+            "value": "37197524956:1",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "CONTROLLED_SURFACE"
           },
@@ -8401,7 +8401,7 @@
             "source": "GACR_SESSION"
           },
           "last_seen_at": {
-            "value": "2026-10-04T11:03:54+00:00",
+            "value": "2026-10-04T11:05:34+00:00",
             "provenance": "CORRELATED",
             "source": "GACR_SESSION"
           },
@@ -8411,7 +8411,7 @@
             "source": "CLIENT_OR_ADAPTER"
           },
           "lease_expires_at": {
-            "value": "2026-10-04T11:33:54+00:00",
+            "value": "2026-10-04T11:35:34+00:00",
             "provenance": "CORRELATED",
             "source": "GACR_WATCH"
           },
@@ -8436,7 +8436,7 @@
             "source": "CLIENT_OR_GACR_SESSION"
           },
           "last_evidence": {
-            "value": "github-event:pull_request:37197431838:1",
+            "value": "github-event:push:37197524956:1",
             "provenance": "DECLARED_BY_AGENT_OR_CLIENT",
             "source": "CLIENT_OR_GACR_SESSION"
           },
