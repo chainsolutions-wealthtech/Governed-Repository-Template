@@ -277,8 +277,8 @@ def evaluate_function_exposure(
         if current_repository_head is None:
             result.update(status="DENIED", reason_code="CURRENT_HEAD_REOBSERVATION_REQUIRED")
             return result
-        entry_action = access_grant.get("entry_action")
-        connection_intent = access_grant.get("connection_intent")
+        entry_action = session.get("entry_action")
+        connection_intent = session.get("connection_intent")
         if entry_action in UNRESOLVED_ROUTE_VALUES:
             result.update(status="DENIED", reason_code="ENTRY_ACTION_RESOLUTION_REQUIRED")
             return result
@@ -287,6 +287,12 @@ def evaluate_function_exposure(
             return result
         result["entry_action"] = entry_action
         result["connection_intent"] = connection_intent
+        result["route_authority"] = {
+            "source": "CANONICAL_GACR_SESSION",
+            "session_id": session.get("session_id"),
+            "entry_action_provenance": session.get("entry_action_provenance"),
+            "connection_intent_provenance": session.get("connection_intent_provenance"),
+        }
 
     if tool is None:
         result.update(status="DENIED", reason_code="FUNCTION_NOT_IN_CANONICAL_CATALOGUE")
@@ -624,9 +630,31 @@ def _git_head() -> str:
     return proc.stdout.strip()
 
 
-def _git_remote_main_head() -> str:
+def _canonical_branch() -> str:
+    profile_path = ROOT / ".governance" / "profile.json"
+    if profile_path.exists():
+        profile = _load_json(profile_path)
+        branch = profile.get("canonical_branch")
+        if isinstance(branch, str):
+            branch = branch.strip()
+            if branch and not branch.startswith("{{"):
+                return branch
+
+    if (ROOT / ".template-source").exists():
+        handoff_path = ROOT / ".governance" / "control-plane-state" / "handoff.json"
+        if handoff_path.exists():
+            handoff = _load_json(handoff_path)
+            branch = handoff.get("canonical_branch")
+            if isinstance(branch, str) and branch.strip():
+                return branch.strip()
+
+    raise RuntimeError("CANONICAL_BRANCH_UNAVAILABLE")
+
+
+def _git_remote_canonical_head() -> str:
+    branch = _canonical_branch()
     proc = subprocess.run(
-        ["git", "ls-remote", "--exit-code", "origin", "refs/heads/main"],
+        ["git", "ls-remote", "--exit-code", "origin", f"refs/heads/{branch}"],
         cwd=ROOT,
         text=True,
         capture_output=True,
@@ -756,7 +784,7 @@ def main() -> None:
             expected_issue_number=args.expected_issue_number,
             snapshot=_load_json(args.snapshot),
             sessions=_load_json(args.sessions),
-            current_repository_head=_git_remote_main_head(),
+            current_repository_head=_git_remote_canonical_head(),
         )
         _write_output(result, args.output)
         if args.require_validated and result.get("status") != "VALIDATED":
@@ -794,7 +822,7 @@ def main() -> None:
         authority_evidence=evidence,
         snapshot=_load_json(args.snapshot),
         sessions=_load_json(args.sessions),
-        current_repository_head=_git_remote_main_head(),
+        current_repository_head=_git_remote_canonical_head(),
     )
     _write_output(result, args.output)
     if args.require_validated and result.get("status") != "VALIDATED":
