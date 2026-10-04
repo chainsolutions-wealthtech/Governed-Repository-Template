@@ -94,6 +94,8 @@ class ExposureGateTests(unittest.TestCase):
             "status": "AUTHORIZED",
             "access_class": "GOVERNED_FUNCTION_EXPOSURE_ELIGIBLE",
             "bound_head": self.head,
+            "entry_action": "REPOSITORY_ACCESS",
+            "connection_intent": "READ_ONLY_DISCOVERY",
             "allowed_authority_classes": [
                 "READ_ONLY_DISCOVERY_AUTHORITY",
                 "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED",
@@ -213,16 +215,64 @@ class ExposureGateTests(unittest.TestCase):
             authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
             snapshot=self.snapshot,
             sessions=sessions,
+            current_repository_head=self.head,
             now=self.now,
         )
         self.assertEqual(result["status"], "VALIDATED")
         self.assertTrue(result["exposable"])
+
+    def test_controlled_client_requires_current_head_and_resolved_admission_route(self):
+        sessions = json.loads(json.dumps(self.sessions))
+        sessions["sessions"][0]["connection_method"] = "controlled-client-adapter"
+        sessions["sessions"][0]["surface_class"] = "CONTROLLED_INSTRUMENTABLE"
+
+        missing_head = evaluate_function_exposure(
+            tool_name="read_tool",
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            access_grant=self.access_grant(allowed_authority_classes=["READ_ONLY_DISCOVERY_AUTHORITY"]),
+            authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
+            snapshot=self.snapshot,
+            sessions=sessions,
+            now=self.now,
+        )
+        self.assertEqual(missing_head["status"], "DENIED")
+        self.assertEqual(missing_head["reason_code"], "CURRENT_HEAD_REOBSERVATION_REQUIRED")
+
+        unresolved_entry = evaluate_function_exposure(
+            tool_name="read_tool",
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            access_grant=self.access_grant(entry_action="UNKNOWN", allowed_authority_classes=["READ_ONLY_DISCOVERY_AUTHORITY"]),
+            authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
+            snapshot=self.snapshot,
+            sessions=sessions,
+            current_repository_head=self.head,
+            now=self.now,
+        )
+        self.assertEqual(unresolved_entry["status"], "DENIED")
+        self.assertEqual(unresolved_entry["reason_code"], "ENTRY_ACTION_RESOLUTION_REQUIRED")
+
+        unresolved_intent = evaluate_function_exposure(
+            tool_name="read_tool",
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            access_grant=self.access_grant(connection_intent="UNKNOWN", allowed_authority_classes=["READ_ONLY_DISCOVERY_AUTHORITY"]),
+            authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
+            snapshot=self.snapshot,
+            sessions=sessions,
+            current_repository_head=self.head,
+            now=self.now,
+        )
+        self.assertEqual(unresolved_intent["status"], "DENIED")
+        self.assertEqual(unresolved_intent["reason_code"], "CONNECTION_INTENT_RESOLUTION_REQUIRED")
 
     def test_current_head_reobservation_can_reconcile_persisted_session_lag(self):
         sessions = json.loads(json.dumps(self.sessions))
         sessions["sessions"][0]["connection_method"] = "controlled-client-adapter"
         sessions["sessions"][0]["surface_class"] = "CONTROLLED_INSTRUMENTABLE"
         sessions["sessions"][0]["last_observed_head_sha"] = "b" * 40
+        before = json.loads(json.dumps(sessions))
 
         result = evaluate_function_exposure(
             tool_name="read_tool",
@@ -253,6 +303,7 @@ class ExposureGateTests(unittest.TestCase):
         self.assertFalse(
             result["head_reconciliation"]["canonical_session_store_mutated"]
         )
+        self.assertEqual(sessions, before)
 
     def test_current_head_reobservation_fails_closed_on_real_head_mismatch(self):
         sessions = json.loads(json.dumps(self.sessions))
@@ -434,10 +485,29 @@ class ExposureGateTests(unittest.TestCase):
             authority_evidence_by_tool=evidence,
             snapshot=self.snapshot,
             sessions=self.sessions,
+            current_repository_head=self.head,
             now=self.now,
         )
         self.assertEqual([x["name"] for x in result["functions"]], ["read_tool"])
         self.assertEqual(result["withheld"][0]["name"], "write_tool")
+
+    def test_controlled_client_catalogue_fails_closed_without_current_head(self):
+        sessions = json.loads(json.dumps(self.sessions))
+        sessions["sessions"][0]["connection_method"] = "controlled-client-adapter"
+        sessions["sessions"][0]["surface_class"] = "CONTROLLED_INSTRUMENTABLE"
+        evidence = {"read_tool": self.evidence("READ_ONLY_DISCOVERY_AUTHORITY")}
+        result = exposed_function_catalogue(
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            access_grant=self.access_grant(allowed_authority_classes=["READ_ONLY_DISCOVERY_AUTHORITY"]),
+            authority_evidence_by_tool=evidence,
+            snapshot=self.snapshot,
+            sessions=sessions,
+            now=self.now,
+        )
+        self.assertEqual(result["functions"], [])
+        read_withheld = next(x for x in result["withheld"] if x["name"] == "read_tool")
+        self.assertEqual(read_withheld["reason_code"], "CURRENT_HEAD_REOBSERVATION_REQUIRED")
 
     def test_instrumented_tool_revalidates_before_real_call(self):
         transport = InMemoryTransport()
@@ -556,6 +626,9 @@ class ExposureGateTests(unittest.TestCase):
         self.assertIn("python3 scripts/gscc_function_exposure_gate.py arrival-plan", text)
         self.assertIn("actions/upload-artifact@v4", text)
         self.assertNotIn("continue-on-error: true", text)
+        source = (ROOT / "scripts" / "gscc_function_exposure_gate.py").read_text(encoding="utf-8")
+        self.assertIn('"ls-remote"', source)
+        self.assertIn('"refs/heads/main"', source)
 
 
 if __name__ == "__main__":
