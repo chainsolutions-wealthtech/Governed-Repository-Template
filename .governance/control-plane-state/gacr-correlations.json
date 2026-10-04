@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 246,
+  "revision": 248,
   "items": [
     {
       "correlation_id": "GACR-C-caffb7cb6efd",
@@ -12971,6 +12971,56 @@
         "reconciled_session_id": "UNAVAILABLE",
         "reconciled_at": "UNAVAILABLE"
       }
+    },
+    {
+      "correlation_id": "GACR-C-e17efd8341f0",
+      "beacon_id": "GACR-B-0ff10892cc49",
+      "level": "EXACT",
+      "selected_session_id": "session-3b9787628a1e065a72ea07b4",
+      "candidate_session_ids": [
+        "session-3b9787628a1e065a72ea07b4"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-04T10:55:31+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-6854cd066cd4",
+      "beacon_id": "GACR-B-4a53f02d2e57",
+      "level": "EXACT",
+      "selected_session_id": "session-3b9787628a1e065a72ea07b4",
+      "candidate_session_ids": [
+        "session-3b9787628a1e065a72ea07b4"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-04T10:55:31+00:00"
     }
   ]
 }
