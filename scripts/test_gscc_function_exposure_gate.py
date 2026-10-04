@@ -11,9 +11,11 @@ from gscc_function_exposure_gate import (
     build_arrival_route,
     build_package_route_receipt,
     evaluate_function_exposure,
+    evaluate_issue_comment_exposure,
     exposed_function_catalogue,
 )
 from gscc import InMemoryTransport, SessionEndpoint, instrument_tool
+from gscc_observable_arrival import should_skip_github_arrival
 
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github" / "workflows" / "gscc-function-exposure-gate.yml"
@@ -105,6 +107,95 @@ class ExposureGateTests(unittest.TestCase):
         value.update(overrides)
         return value
 
+
+
+    def function_issue_payload(self, *, tool_name="read_tool", authority_class="READ_ONLY_DISCOVERY_AUTHORITY"):
+        return {
+            "schema": "gscc-function-exposure-request/v1",
+            "connection_ref": self.connection_ref,
+            "tool_name": tool_name,
+            "observed_head": self.head,
+            "access_grant": self.access_grant(
+                allowed_authority_classes=["READ_ONLY_DISCOVERY_AUTHORITY"]
+            ),
+            "authority": {
+                "authority_class": authority_class,
+                "evidence_ref": "gscc-access-policy:fixture",
+                "granted": True,
+            },
+        }
+
+    def function_issue_event(self, payload, *, issue_number=161, association="OWNER"):
+        return {
+            "action": "created",
+            "issue": {"number": issue_number},
+            "comment": {
+                "body": "/gscc-function-exposure " + json.dumps(payload, separators=(",", ":")),
+                "author_association": association,
+            },
+            "sender": {"login": "owner"},
+        }
+
+    def test_issue_comment_read_exposure_reuses_canonical_gate(self):
+        result = evaluate_issue_comment_exposure(
+            self.function_issue_event(self.function_issue_payload()),
+            expected_issue_number=161,
+            snapshot=self.snapshot,
+            sessions=self.sessions,
+            now=self.now,
+        )
+        self.assertEqual(result["status"], "VALIDATED")
+        self.assertTrue(result["exposable"])
+        self.assertEqual(result["tool_name"], "read_tool")
+        self.assertEqual(result["authority_required"], "READ_ONLY_DISCOVERY_AUTHORITY")
+        self.assertTrue(result["exposure_receipt"].startswith("GSCC-EXPOSURE-"))
+
+    def test_issue_comment_exposure_is_bounded_and_fail_closed(self):
+        wrong_issue = self.function_issue_event(self.function_issue_payload(), issue_number=162)
+        with self.assertRaises(ValueError):
+            evaluate_issue_comment_exposure(
+                wrong_issue,
+                expected_issue_number=161,
+                snapshot=self.snapshot,
+                sessions=self.sessions,
+                now=self.now,
+            )
+
+        unauthorized = self.function_issue_event(
+            self.function_issue_payload(),
+            association="NONE",
+        )
+        with self.assertRaises(ValueError):
+            evaluate_issue_comment_exposure(
+                unauthorized,
+                expected_issue_number=161,
+                snapshot=self.snapshot,
+                sessions=self.sessions,
+                now=self.now,
+            )
+
+        write_result = evaluate_issue_comment_exposure(
+            self.function_issue_event(
+                self.function_issue_payload(
+                    tool_name="write_tool",
+                    authority_class="EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED",
+                )
+            ),
+            expected_issue_number=161,
+            snapshot=self.snapshot,
+            sessions=self.sessions,
+            now=self.now,
+        )
+        self.assertEqual(write_result["status"], "DENIED")
+        self.assertEqual(write_result["reason_code"], "ACCESS_GRANT_AUTHORITY_CLASS_MISMATCH")
+
+    def test_function_exposure_issue_comment_does_not_create_arrival_session(self):
+        event = self.function_issue_event(self.function_issue_payload())
+        reason = should_skip_github_arrival(
+            event,
+            {"GITHUB_EVENT_NAME": "issue_comment", "GITHUB_ACTOR": "owner"},
+        )
+        self.assertEqual(reason, "INTERNAL_GSCC_FUNCTION_EXPOSURE_INGRESS")
 
     def test_arrival_route_is_locked_until_function_validation(self):
         route = build_arrival_route(
@@ -377,6 +468,8 @@ class ExposureGateTests(unittest.TestCase):
     def test_workflow_is_mandatory_and_fail_closed(self):
         text = WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("gscc_function_exposure_request", text)
+        self.assertIn("/gscc-function-exposure ", text)
+        self.assertIn("issue_comment", text)
         self.assertIn("workflow_dispatch:", text)
         self.assertIn("python3 scripts/gscc_function_exposure_gate.py evaluate", text)
         self.assertIn("access_grant_json", text)
