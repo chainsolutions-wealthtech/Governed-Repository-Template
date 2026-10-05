@@ -8,9 +8,16 @@
   "completeness": "COMPLETE_FOR_RECOVERABLE_VISIBLE_CONTEXT",
   "raw_pre_activation_transcript_completeness": "PARTIAL",
   "updated_at": {
-    "value": "0d97fb0fea1499ee22ce0b0084e0d43c680af2ba",
-    "precision": "git_commit",
-    "source": "repository_latest_observed_commit"
+    "value": "2026-10-05T22:59:41Z",
+    "timezone": "UTC",
+    "precision": "second",
+    "source": "github_commit_timestamp"
   },
-  "current_cache": "CACHE-000014"
+  "current_cache": "CACHE-000014",
+  "latest_repository_observation": {
+    "branch": "main",
+    "head": "1ce928f124aff1580c4f7a966c0b7e45c3d0dd41",
+    "observed_via": "github_commits",
+    "freshness": "OBSERVED_AT"
+  }
 }
