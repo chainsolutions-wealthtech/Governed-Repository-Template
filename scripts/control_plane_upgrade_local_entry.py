@@ -177,6 +177,10 @@ def main():
     host_bridge["client_issue_strategy"]="TITLE_FALLBACK_UNTIL_LOCAL_NUMBER_BOUND"
     host_bridge["live_proof_status"]="CLIENT_TITLE_FALLBACK_CI_PROVEN_SOURCE_LIVE_PROOF_SEPARATE"
     gacr_config.setdefault("external_bridge",{})["chatgpt_issue_bridge_live_proven"]=False
+    function_gate=gacr_config.setdefault("gscc_function_exposure_gate",{})
+    function_gate["issue_number"]=None
+    function_gate["source_issue_number_distributed"]=False
+    function_gate["client_issue_strategy"]="DISABLED_UNTIL_LOCAL_NUMBER_BOUND"
     updates[".governance/agent-relay/config.json"]=json.dumps(gacr_config,ensure_ascii=False,indent=2)+"\n"
 
     existing_gacr_takeovers=target_text(token,target,".governance/agent-relay/takeovers.json")
