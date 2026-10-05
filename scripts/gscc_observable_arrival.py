@@ -25,6 +25,7 @@ INTERNAL_DISPATCH_PREFIXES = ("gacr_", "gscc_")
 HOST_INGRESS_PREFIX = "/gacr-host "
 CONTROL_REQUEST_PREFIX = "/gscc-control "
 CONTROL_COMMAND_PREFIX = "/gscc-control-command "
+ADMISSION_REQUEST_PREFIX = "/gscc-admission "
 FUNCTION_EXPOSURE_REQUEST_PREFIX = "/gscc-function-exposure "
 
 
@@ -119,6 +120,8 @@ def should_skip_github_arrival(event: dict[str, Any], env: dict[str, str]) -> st
             return "INTERNAL_GACR_HOST_INGRESS"
         if body.startswith(CONTROL_REQUEST_PREFIX) or body.startswith(CONTROL_COMMAND_PREFIX):
             return "INTERNAL_GSCC_CONTROL_ISSUE_BRIDGE"
+        if body.startswith(ADMISSION_REQUEST_PREFIX):
+            return "INTERNAL_GSCC_ADMISSION_INGRESS"
         if body.startswith(FUNCTION_EXPOSURE_REQUEST_PREFIX):
             return "INTERNAL_GSCC_FUNCTION_EXPOSURE_INGRESS"
 

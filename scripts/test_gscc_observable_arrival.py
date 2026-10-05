@@ -158,6 +158,17 @@ def main() -> None:
         "internal state persistence push must not recursively create GSCC arrival",
     )
 
+    admission_comment = {
+        "repository": event["repository"],
+        "sender": {"login": "Wealthtechinnovations"},
+        "comment": {"body": "/gscc-admission {\"schema\":\"gscc-admission-envelope/v1\"}"},
+    }
+    assert_true(
+        should_skip_github_arrival(admission_comment, {"GITHUB_EVENT_NAME": "issue_comment"})
+        == "INTERNAL_GSCC_ADMISSION_INGRESS",
+        "GSCC admission ingress must not recursively create an observable arrival",
+    )
+
     dispatch = {
         "repository": event["repository"],
         "sender": {"login": "fresh-provider-actor"},
