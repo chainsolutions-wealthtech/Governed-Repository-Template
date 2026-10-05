@@ -151,15 +151,16 @@ def _route_policy_allows_mutation(
     if not required_gates.issubset(satisfied_gates):
         return False, "ENTRY_ACTION_REQUIRED_GATES_INCOMPLETE"
 
+    branch = str(session.get("branch") or "").strip()
+    if not branch:
+        return False, "ENTRY_ACTION_GATE_SESSION_BRANCH_REQUIRED"
+    if route_gate.get("branch") != branch:
+        return False, "ENTRY_ACTION_GATE_EVIDENCE_BRANCH_MISMATCH"
+
     if entry_action == "LAB_EVOLUTION":
-        branch = str(session.get("branch") or "")
-        if not branch:
-            return False, "LAB_EVOLUTION_BRANCH_REQUIRED"
         canonical_branch = _canonical_branch()
         if branch == canonical_branch:
             return False, "LAB_EVOLUTION_CANONICAL_BRANCH_FORBIDDEN"
-        if route_gate.get("branch") != branch:
-            return False, "LAB_EVOLUTION_BRANCH_EVIDENCE_MISMATCH"
 
     return True, None
 
@@ -437,6 +438,16 @@ def evaluate_function_exposure(
         return result
 
     mutation_like = tool.get("surface") != "read"
+    route_gate_binding = None
+    if mutation_like:
+        session_branch = str(session.get("branch") or "").strip()
+        constraints = access_grant.get("constraints") if isinstance(access_grant.get("constraints"), dict) else {}
+        if constraints.get("direct_main_write") is False:
+            canonical_branch = _canonical_branch()
+            if session_branch and session_branch == canonical_branch:
+                result.update(status="DENIED", reason_code="ACCESS_GRANT_DIRECT_MAIN_WRITE_FORBIDDEN")
+                return result
+
     if mutation_like and session.get("surface_class") == "CONTROLLED_INSTRUMENTABLE":
         allowed_by_route, route_reason = _route_policy_allows_mutation(
             str(session.get("entry_action") or ""),
@@ -448,6 +459,21 @@ def evaluate_function_exposure(
         if not allowed_by_route:
             result.update(status="DENIED", reason_code=route_reason)
             return result
+
+        route_gate = authority_evidence.get("route_gate_evidence")
+        if isinstance(route_gate, dict):
+            route_gate_binding = {
+                "evidence_ref": route_gate.get("evidence_ref"),
+                "entry_action": route_gate.get("entry_action"),
+                "branch": route_gate.get("branch"),
+                "digest": _digest(route_gate),
+            }
+            result.update(
+                route_gate_evidence_ref=route_gate_binding["evidence_ref"],
+                route_gate_entry_action=route_gate_binding["entry_action"],
+                route_gate_branch=route_gate_binding["branch"],
+                route_gate_evidence_digest=route_gate_binding["digest"],
+            )
 
     if mutation_like and (snapshot.get("refresh_policy") or {}).get("pre_mutation_live_refresh_required", True):
         preflight = authority_evidence.get("live_preflight")
@@ -473,7 +499,10 @@ def evaluate_function_exposure(
         "authority_required": required,
         "authority_evidence_ref": authority_evidence.get("evidence_ref"),
         "live_preflight_evidence_ref": (authority_evidence.get("live_preflight") or {}).get("evidence_ref"),
-        "route_gate_evidence_ref": (authority_evidence.get("route_gate_evidence") or {}).get("evidence_ref"),
+        "route_gate_evidence_ref": route_gate_binding.get("evidence_ref") if route_gate_binding else None,
+        "route_gate_entry_action": route_gate_binding.get("entry_action") if route_gate_binding else None,
+        "route_gate_branch": route_gate_binding.get("branch") if route_gate_binding else None,
+        "route_gate_evidence_digest": route_gate_binding.get("digest") if route_gate_binding else None,
         "evaluated_at": result["evaluated_at"],
     }
     result.update(
@@ -483,7 +512,10 @@ def evaluate_function_exposure(
         exposure_receipt=f"GSCC-EXPOSURE-{_digest(receipt_material)}",
         authority_evidence_ref=authority_evidence.get("evidence_ref"),
         live_preflight_evidence_ref=(authority_evidence.get("live_preflight") or {}).get("evidence_ref"),
-        route_gate_evidence_ref=(authority_evidence.get("route_gate_evidence") or {}).get("evidence_ref"),
+        route_gate_evidence_ref=route_gate_binding.get("evidence_ref") if route_gate_binding else None,
+        route_gate_entry_action=route_gate_binding.get("entry_action") if route_gate_binding else None,
+        route_gate_branch=route_gate_binding.get("branch") if route_gate_binding else None,
+        route_gate_evidence_digest=route_gate_binding.get("digest") if route_gate_binding else None,
     )
     return result
 
