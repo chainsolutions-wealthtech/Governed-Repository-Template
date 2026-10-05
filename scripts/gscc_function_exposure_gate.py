@@ -754,8 +754,10 @@ def _canonical_branch() -> str:
     raise RuntimeError("CANONICAL_BRANCH_UNAVAILABLE")
 
 
-def _git_remote_canonical_head() -> str:
-    branch = _canonical_branch()
+def _git_remote_branch_head(branch: str) -> str:
+    branch = str(branch or "").strip()
+    if not branch:
+        raise RuntimeError("REMOTE_BRANCH_REQUIRED")
     proc = subprocess.run(
         ["git", "ls-remote", "--exit-code", "origin", f"refs/heads/{branch}"],
         cwd=ROOT,
@@ -764,15 +766,53 @@ def _git_remote_canonical_head() -> str:
         check=False,
     )
     if proc.returncode != 0:
-        raise RuntimeError("CANONICAL_REMOTE_HEAD_UNAVAILABLE")
+        raise RuntimeError("REMOTE_BRANCH_HEAD_UNAVAILABLE")
     lines = [line.strip() for line in proc.stdout.splitlines() if line.strip()]
     if len(lines) != 1:
-        raise RuntimeError("CANONICAL_REMOTE_HEAD_AMBIGUOUS")
+        raise RuntimeError("REMOTE_BRANCH_HEAD_AMBIGUOUS")
     parts = lines[0].split()
     head = parts[0] if parts else ""
     if len(head) != 40 or any(ch not in "0123456789abcdefABCDEF" for ch in head):
-        raise RuntimeError("CANONICAL_REMOTE_HEAD_INVALID")
+        raise RuntimeError("REMOTE_BRANCH_HEAD_INVALID")
     return head.lower()
+
+
+def _git_remote_canonical_head() -> str:
+    return _git_remote_branch_head(_canonical_branch())
+
+
+def _git_remote_session_head(
+    sessions: dict[str, Any],
+    connection_ref: str,
+    *,
+    now: datetime | None = None,
+) -> str | None:
+    session = _active_session(
+        sessions,
+        connection_ref,
+        now=(now or _now()).astimezone(timezone.utc),
+    )
+    if session is None:
+        return None
+    branch = str(session.get("branch") or "").strip() or _canonical_branch()
+    return _git_remote_branch_head(branch)
+
+
+def _issue_comment_connection_ref(event: dict[str, Any]) -> str:
+    body = str((event.get("comment") or {}).get("body") or "")
+    if not body.startswith(FUNCTION_EXPOSURE_ISSUE_PREFIX):
+        raise ValueError("FUNCTION_EXPOSURE_ISSUE_PREFIX_REQUIRED")
+    raw = body[len(FUNCTION_EXPOSURE_ISSUE_PREFIX):].strip()
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError as exc:
+        raise ValueError("FUNCTION_EXPOSURE_ISSUE_JSON_INVALID") from exc
+    if not isinstance(payload, dict):
+        raise ValueError("FUNCTION_EXPOSURE_ISSUE_OBJECT_REQUIRED")
+    connection_ref = payload.get("connection_ref")
+    if not isinstance(connection_ref, str) or not connection_ref.strip():
+        raise ValueError("FUNCTION_EXPOSURE_ISSUE_REQUIRED:connection_ref")
+    return connection_ref.strip()
 
 
 def _github_output(name: str, value: Any) -> None:
@@ -894,12 +934,15 @@ def main() -> None:
             if args.expected_issue_number is not None
             else _configured_function_exposure_issue_number()
         )
+        event = _event_payload(args.event_path)
+        sessions = _load_json(args.sessions)
+        connection_ref = _issue_comment_connection_ref(event)
         result = evaluate_issue_comment_exposure(
-            _event_payload(args.event_path),
+            event,
             expected_issue_number=expected_issue_number,
             snapshot=_load_json(args.snapshot),
-            sessions=_load_json(args.sessions),
-            current_repository_head=_git_remote_canonical_head(),
+            sessions=sessions,
+            current_repository_head=_git_remote_session_head(sessions, connection_ref),
         )
         _write_output(result, args.output)
         if args.require_validated and result.get("status") != "VALIDATED":
@@ -937,6 +980,7 @@ def main() -> None:
                 raise SystemExit("ROUTE_GATE_EVIDENCE_JSON_OBJECT_REQUIRED")
             evidence["route_gate_evidence"] = route_gate
 
+    sessions = _load_json(args.sessions)
     result = evaluate_function_exposure(
         tool_name=args.tool_name,
         connection_ref=args.connection_ref,
@@ -944,8 +988,8 @@ def main() -> None:
         access_grant=access_grant,
         authority_evidence=evidence,
         snapshot=_load_json(args.snapshot),
-        sessions=_load_json(args.sessions),
-        current_repository_head=_git_remote_canonical_head(),
+        sessions=sessions,
+        current_repository_head=_git_remote_session_head(sessions, args.connection_ref),
     )
     _write_output(result, args.output)
     if args.require_validated and result.get("status") != "VALIDATED":
