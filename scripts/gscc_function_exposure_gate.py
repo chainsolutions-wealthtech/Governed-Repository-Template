@@ -14,7 +14,8 @@ from gscc.admission import validate_access_grant
 from gscc_observable_arrival import build_github_arrival_facts, should_skip_github_arrival
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_SNAPSHOT = ROOT / ".governance" / "control-plane-state" / "mcp-capability-snapshot.json"
+SOURCE_SNAPSHOT = ROOT / ".governance" / "control-plane-state" / "mcp-capability-snapshot.json"
+PORTABLE_SNAPSHOT = ROOT / ".governance" / "gscc" / "mcp-capability-snapshot.json"
 CONNECTION_INTENT_POLICY = ROOT / ".governance" / "connection-intent-policy.json"
 ENTRY_ACTION_POLICY = ROOT / ".governance" / "entry-action-policy.json"
 
@@ -80,6 +81,12 @@ def _load_json(path: str | Path) -> dict[str, Any]:
     if not isinstance(data, dict):
         raise ValueError(f"JSON object required: {path}")
     return data
+
+
+def _default_snapshot_path() -> Path:
+    if (ROOT / ".template-source").exists():
+        return SOURCE_SNAPSHOT
+    return PORTABLE_SNAPSHOT
 
 
 def _default_sessions_path() -> Path:
@@ -734,13 +741,13 @@ def main() -> None:
     package.add_argument("--package", required=True)
     package.add_argument("--repository", required=True)
     package.add_argument("--expected-source-head", required=True)
-    package.add_argument("--snapshot", default=str(DEFAULT_SNAPSHOT))
+    package.add_argument("--snapshot", default=str(_default_snapshot_path()))
     package.add_argument("--output")
 
     issue_comment = sub.add_parser("issue-comment")
     issue_comment.add_argument("--event-path", default=os.environ.get("GITHUB_EVENT_PATH"))
     issue_comment.add_argument("--expected-issue-number", type=int, required=True)
-    issue_comment.add_argument("--snapshot", default=str(DEFAULT_SNAPSHOT))
+    issue_comment.add_argument("--snapshot", default=str(_default_snapshot_path()))
     issue_comment.add_argument("--sessions", default=str(_default_sessions_path()))
     issue_comment.add_argument("--output")
     issue_comment.add_argument("--require-validated", action="store_true")
@@ -756,7 +763,7 @@ def main() -> None:
     evaluate.add_argument("--live-preflight-status")
     evaluate.add_argument("--live-preflight-head")
     evaluate.add_argument("--live-preflight-evidence-ref")
-    evaluate.add_argument("--snapshot", default=str(DEFAULT_SNAPSHOT))
+    evaluate.add_argument("--snapshot", default=str(_default_snapshot_path()))
     evaluate.add_argument("--sessions", default=str(_default_sessions_path()))
     evaluate.add_argument("--output")
     evaluate.add_argument("--require-validated", action="store_true")
