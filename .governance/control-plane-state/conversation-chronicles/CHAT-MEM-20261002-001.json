@@ -18,9 +18,9 @@
     "next_constraint_event": 7,
     "next_action_event": 12,
     "next_error_event": 1,
-    "next_recovery_event": 7,
-    "next_checkpoint": 15,
-    "next_cache": 15,
+    "next_recovery_event": 8,
+    "next_checkpoint": 16,
+    "next_cache": 16,
     "next_open_loop": 4,
     "next_artifact": 3,
     "next_session": 3
@@ -31,19 +31,19 @@
     "previous_hash": "8b45efbe51e0e9fbf26883ae2a6ee65c7975e7c782bc5c708c4ea06363db5e97"
   },
   "current_session": "SESSION-000002",
-  "current_checkpoint": "CHK-000014",
-  "current_cache": "CACHE-000014",
+  "current_checkpoint": "CHK-000015",
+  "current_cache": "CACHE-000015",
   "open_loops": [
     "OPEN-000002"
   ],
-  "current_topic": "GSCC/GACR stale-work reconciliation before fresh-agent acceptance",
-  "point_of_stop": "Draft PR #157 is the only observed open non-global PR and is superseded by the canonical Admission/Q1-Q12 architecture. PR #176 records the reconciliation before #157 is closed unmerged.",
-  "next_safe_action": "Merge PR #176 after GREEN CI, close PR #157 unmerged as superseded, then reobserve live non-global work before selecting the next execution gate. Do not advance P12-S6.",
+  "current_topic": "GACR clean pre-Step13B acceptance boundary",
+  "point_of_stop": "No non-global PR remains open. Stale PR #157 and OPEN-000003 are reconciled, PR #177 closed queued repository-dispatch BASE_HEAD staleness, and Step 13B is NEXT_AUTHORIZED / NOT_EXECUTED.",
+  "next_safe_action": "Execute Step 13B only with a genuinely fresh provider conversation/agent that receives ordinary governed repository work and no GACR registration instruction. Keep P12-S6 parked.",
   "external_state_observed": {
     "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
     "branch": "main",
-    "head": "ab3fd3848878e93f929cbd3d89c9d15be43537a7",
-    "observed_at": "2026-10-02T08:09:31+02:00",
+    "head": "b43f31f2c6fe489084a6ac5d1e1a3aec93e32db3",
+    "observed_at": "2026-10-05T23:08:12Z",
     "precision": "second",
     "freshness": "OBSERVED_AT",
     "g4": "CLOSED_PASS",
@@ -132,6 +132,19 @@
         "github-pr:116",
         "github-pr:118",
         "github-pr:120"
+      ]
+    },
+    {
+      "event_id": "EVT-R-000007",
+      "kind": "HISTORICAL_RECOVERY",
+      "finding": "The stale non-global work surface is clean: PR #157 closed unmerged, OPEN-000003 resolved by R6, and PR #177 removed queued repository-dispatch BASE_HEAD staleness while preserving the true HEAD_MOVED fail-closed gate.",
+      "evidence": [
+        "github-pr:176",
+        "github-pr:157:closed-unmerged",
+        "github-pr:177",
+        "github-actions:37386713402",
+        "CPD-064",
+        "CPD-065"
       ]
     }
   ],
