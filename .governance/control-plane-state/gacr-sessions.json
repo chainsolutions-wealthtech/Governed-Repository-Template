@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 337,
+  "revision": 338,
   "sessions": [
     {
       "session_id": "session-68c97d4bb1ef71c86444de12",
@@ -9995,7 +9995,7 @@
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "aabec260346fa639b2861c8fc33a04b1113cc456",
       "last_observed_head_sha": "11e7309f1c40c82a70884ffb68e56beee3b81519",
-      "status": "ACTIVE",
+      "status": "STALLED",
       "created_at": "2026-10-05T21:45:09+00:00",
       "last_seen_at": "2026-10-05T22:01:47+00:00",
       "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations",
@@ -10010,13 +10010,14 @@
       "bridge_registration_ref": null,
       "relay": {
         "process": "GACR",
-        "state": "ACTIVE",
+        "state": "TAKEOVER_READY",
         "last_heartbeat_at": "2026-10-05T22:01:47+00:00",
         "lease_expires_at": "2026-10-05T22:31:47+00:00",
-        "last_action": "RESUME",
+        "last_action": "STALL_DETECTED",
         "task_id": null,
         "branch": "governance/gscc-post171-review-fixes",
-        "pull_request": 172
+        "pull_request": 172,
+        "stalled_at": "2026-10-05T23:13:21+00:00"
       },
       "connection_fingerprint_version": "gacr-connection-fingerprint/v1",
       "presence_anchor": {
@@ -10248,7 +10249,7 @@
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "2eff67eba5effeff25880e35ae969103e539b300",
       "last_observed_head_sha": "2eff67eba5effeff25880e35ae969103e539b300",
-      "status": "ACTIVE",
+      "status": "STALLED",
       "created_at": "2026-10-05T21:54:54+00:00",
       "last_seen_at": "2026-10-05T21:54:54+00:00",
       "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:chatgpt-codex-connector[bot]",
@@ -10263,13 +10264,14 @@
       "bridge_registration_ref": null,
       "relay": {
         "process": "GACR",
-        "state": "ACTIVE",
+        "state": "TAKEOVER_READY",
         "last_heartbeat_at": "2026-10-05T21:54:54+00:00",
         "lease_expires_at": "2026-10-05T22:24:54+00:00",
-        "last_action": "REGISTER",
+        "last_action": "STALL_DETECTED",
         "task_id": null,
         "branch": "governance/gscc-post171-review-fixes",
-        "pull_request": 172
+        "pull_request": 172,
+        "stalled_at": "2026-10-05T23:13:21+00:00"
       },
       "connection_fingerprint_version": "gacr-connection-fingerprint/v1",
       "presence_anchor": {
@@ -10501,7 +10503,7 @@
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "90b2fcb697e7c90877642e35f370a428088eaac8",
       "last_observed_head_sha": "c8be55d85f17ec5038afc28892da0c9ab7c2bcd8",
-      "status": "ACTIVE",
+      "status": "STALLED",
       "created_at": "2026-10-05T22:04:20+00:00",
       "last_seen_at": "2026-10-05T22:08:54+00:00",
       "client_instance_id": "gscc-client:chatgpt:20261005:continuation-003",
@@ -10520,14 +10522,15 @@
       "bridge_registration_ref": null,
       "relay": {
         "process": "GACR",
-        "state": "ACTIVE",
+        "state": "TAKEOVER_READY",
         "last_heartbeat_at": "2026-10-05T22:08:54+00:00",
         "lease_expires_at": "2026-10-05T22:38:54+00:00",
-        "last_action": "HOST_CHALLENGE_RESPONSE",
+        "last_action": "STALL_DETECTED",
         "task_id": null,
         "branch": "main",
         "pull_request": null,
-        "last_evidence": "github-issue-comment:6004096273"
+        "last_evidence": "github-issue-comment:6004096273",
+        "stalled_at": "2026-10-05T23:13:21+00:00"
       },
       "connection_fingerprint_version": "gacr-connection-fingerprint/v1",
       "presence_anchor": {
@@ -10761,7 +10764,7 @@
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "9387ed6c0de306c78b67f39c072b3a49d227e0de",
       "last_observed_head_sha": "67468144ae2d5f27e25a34c546d35b3bdc17e037",
-      "status": "ACTIVE",
+      "status": "STALLED",
       "created_at": "2026-10-05T22:16:31+00:00",
       "last_seen_at": "2026-10-05T22:20:07+00:00",
       "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations",
@@ -10776,13 +10779,14 @@
       "bridge_registration_ref": null,
       "relay": {
         "process": "GACR",
-        "state": "ACTIVE",
+        "state": "TAKEOVER_READY",
         "last_heartbeat_at": "2026-10-05T22:20:07+00:00",
         "lease_expires_at": "2026-10-05T22:50:07+00:00",
-        "last_action": "RESUME",
+        "last_action": "STALL_DETECTED",
         "task_id": null,
         "branch": "governance/gscc-admission-arrival-loop-guard",
-        "pull_request": 173
+        "pull_request": 173,
+        "stalled_at": "2026-10-05T23:13:21+00:00"
       },
       "connection_fingerprint_version": "gacr-connection-fingerprint/v1",
       "presence_anchor": {
@@ -11014,7 +11018,7 @@
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "67468144ae2d5f27e25a34c546d35b3bdc17e037",
       "last_observed_head_sha": "67468144ae2d5f27e25a34c546d35b3bdc17e037",
-      "status": "ACTIVE",
+      "status": "STALLED",
       "created_at": "2026-10-05T22:18:44+00:00",
       "last_seen_at": "2026-10-05T22:18:55+00:00",
       "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:chatgpt-codex-connector[bot]",
@@ -11029,13 +11033,14 @@
       "bridge_registration_ref": null,
       "relay": {
         "process": "GACR",
-        "state": "ACTIVE",
+        "state": "TAKEOVER_READY",
         "last_heartbeat_at": "2026-10-05T22:18:55+00:00",
         "lease_expires_at": "2026-10-05T22:48:55+00:00",
-        "last_action": "RESUME",
+        "last_action": "STALL_DETECTED",
         "task_id": null,
         "branch": "governance/gscc-admission-arrival-loop-guard",
-        "pull_request": 173
+        "pull_request": 173,
+        "stalled_at": "2026-10-05T23:13:21+00:00"
       },
       "connection_fingerprint_version": "gacr-connection-fingerprint/v1",
       "presence_anchor": {
@@ -11267,7 +11272,7 @@
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "0d993f2a80e75befca5ccfe7bb29ac0cd37b3624",
       "last_observed_head_sha": "761ffdabff585c5b60623d0a1e03fdba57cbffa4",
-      "status": "ACTIVE",
+      "status": "STALLED",
       "created_at": "2026-10-05T22:23:33+00:00",
       "last_seen_at": "2026-10-05T22:25:07+00:00",
       "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations",
@@ -11282,13 +11287,14 @@
       "bridge_registration_ref": null,
       "relay": {
         "process": "GACR",
-        "state": "ACTIVE",
+        "state": "TAKEOVER_READY",
         "last_heartbeat_at": "2026-10-05T22:25:07+00:00",
         "lease_expires_at": "2026-10-05T22:55:07+00:00",
-        "last_action": "RESUME",
+        "last_action": "STALL_DETECTED",
         "task_id": null,
         "branch": "governance/gacr-stalled-arrival-reconciliation-guard",
-        "pull_request": 174
+        "pull_request": 174,
+        "stalled_at": "2026-10-05T23:13:21+00:00"
       },
       "connection_fingerprint_version": "gacr-connection-fingerprint/v1",
       "presence_anchor": {
@@ -11520,7 +11526,7 @@
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "761ffdabff585c5b60623d0a1e03fdba57cbffa4",
       "last_observed_head_sha": "761ffdabff585c5b60623d0a1e03fdba57cbffa4",
-      "status": "ACTIVE",
+      "status": "STALLED",
       "created_at": "2026-10-05T22:27:50+00:00",
       "last_seen_at": "2026-10-05T22:28:01+00:00",
       "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:chatgpt-codex-connector[bot]",
@@ -11535,13 +11541,14 @@
       "bridge_registration_ref": null,
       "relay": {
         "process": "GACR",
-        "state": "ACTIVE",
+        "state": "TAKEOVER_READY",
         "last_heartbeat_at": "2026-10-05T22:28:01+00:00",
         "lease_expires_at": "2026-10-05T22:58:01+00:00",
-        "last_action": "RESUME",
+        "last_action": "STALL_DETECTED",
         "task_id": null,
         "branch": "governance/gacr-stalled-arrival-reconciliation-guard",
-        "pull_request": 174
+        "pull_request": 174,
+        "stalled_at": "2026-10-05T23:13:21+00:00"
       },
       "connection_fingerprint_version": "gacr-connection-fingerprint/v1",
       "presence_anchor": {
@@ -11773,7 +11780,7 @@
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "c6e4e2f82e4cfb6bb7f68e3b83da104699617eca",
       "last_observed_head_sha": "85a7a03063a62d5583e55afe7682491e8fe4fcf7",
-      "status": "ACTIVE",
+      "status": "STALLED",
       "created_at": "2026-10-05T22:30:55+00:00",
       "last_seen_at": "2026-10-05T22:32:06+00:00",
       "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations",
@@ -11788,13 +11795,14 @@
       "bridge_registration_ref": null,
       "relay": {
         "process": "GACR",
-        "state": "ACTIVE",
+        "state": "TAKEOVER_READY",
         "last_heartbeat_at": "2026-10-05T22:32:06+00:00",
         "lease_expires_at": "2026-10-05T23:02:06+00:00",
-        "last_action": "RESUME",
+        "last_action": "STALL_DETECTED",
         "task_id": null,
         "branch": "governance/gacr-post172-live-proof-attestation",
-        "pull_request": 175
+        "pull_request": 175,
+        "stalled_at": "2026-10-05T23:13:21+00:00"
       },
       "connection_fingerprint_version": "gacr-connection-fingerprint/v1",
       "presence_anchor": {
@@ -12026,7 +12034,7 @@
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "85a7a03063a62d5583e55afe7682491e8fe4fcf7",
       "last_observed_head_sha": "85a7a03063a62d5583e55afe7682491e8fe4fcf7",
-      "status": "ACTIVE",
+      "status": "STALLED",
       "created_at": "2026-10-05T22:36:46+00:00",
       "last_seen_at": "2026-10-05T22:36:46+00:00",
       "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:chatgpt-codex-connector[bot]",
@@ -12041,13 +12049,14 @@
       "bridge_registration_ref": null,
       "relay": {
         "process": "GACR",
-        "state": "ACTIVE",
+        "state": "TAKEOVER_READY",
         "last_heartbeat_at": "2026-10-05T22:36:46+00:00",
         "lease_expires_at": "2026-10-05T23:06:46+00:00",
-        "last_action": "REGISTER",
+        "last_action": "STALL_DETECTED",
         "task_id": null,
         "branch": "governance/gacr-post172-live-proof-attestation",
-        "pull_request": 175
+        "pull_request": 175,
+        "stalled_at": "2026-10-05T23:13:21+00:00"
       },
       "connection_fingerprint_version": "gacr-connection-fingerprint/v1",
       "presence_anchor": {
