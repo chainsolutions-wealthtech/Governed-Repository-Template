@@ -83,6 +83,15 @@ def _load_json(path: str | Path) -> dict[str, Any]:
     return data
 
 
+def _configured_function_exposure_issue_number() -> int:
+    config_path = ROOT / ".governance" / "agent-relay" / "config.json"
+    config = _load_json(config_path)
+    value = (config.get("gscc_function_exposure_gate") or {}).get("issue_number")
+    if not isinstance(value, int) or value <= 0:
+        raise RuntimeError("FUNCTION_EXPOSURE_ISSUE_NOT_CONFIGURED")
+    return value
+
+
 def _default_snapshot_path() -> Path:
     if (ROOT / ".template-source").exists():
         return ROOT / ".governance" / "control-plane-state" / "mcp-capability-snapshot.json"
@@ -746,7 +755,7 @@ def main() -> None:
 
     issue_comment = sub.add_parser("issue-comment")
     issue_comment.add_argument("--event-path", default=os.environ.get("GITHUB_EVENT_PATH"))
-    issue_comment.add_argument("--expected-issue-number", type=int, required=True)
+    issue_comment.add_argument("--expected-issue-number", type=int)
     issue_comment.add_argument("--snapshot", default=str(_default_snapshot_path()))
     issue_comment.add_argument("--sessions", default=str(_default_sessions_path()))
     issue_comment.add_argument("--output")
@@ -820,9 +829,14 @@ def main() -> None:
     if args.command == "issue-comment":
         if not args.event_path:
             raise SystemExit("GITHUB_EVENT_PATH_REQUIRED")
+        expected_issue_number = (
+            args.expected_issue_number
+            if args.expected_issue_number is not None
+            else _configured_function_exposure_issue_number()
+        )
         result = evaluate_issue_comment_exposure(
             _event_payload(args.event_path),
-            expected_issue_number=args.expected_issue_number,
+            expected_issue_number=expected_issue_number,
             snapshot=_load_json(args.snapshot),
             sessions=_load_json(args.sessions),
             current_repository_head=_git_remote_canonical_head(),
