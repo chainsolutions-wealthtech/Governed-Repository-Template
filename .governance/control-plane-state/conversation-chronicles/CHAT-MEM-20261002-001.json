@@ -18,9 +18,9 @@
     "next_constraint_event": 7,
     "next_action_event": 12,
     "next_error_event": 1,
-    "next_recovery_event": 6,
-    "next_checkpoint": 14,
-    "next_cache": 14,
+    "next_recovery_event": 7,
+    "next_checkpoint": 15,
+    "next_cache": 15,
     "next_open_loop": 4,
     "next_artifact": 3,
     "next_session": 3
@@ -31,15 +31,14 @@
     "previous_hash": "8b45efbe51e0e9fbf26883ae2a6ee65c7975e7c782bc5c708c4ea06363db5e97"
   },
   "current_session": "SESSION-000002",
-  "current_checkpoint": "CHK-000013",
-  "current_cache": "CACHE-000013",
+  "current_checkpoint": "CHK-000014",
+  "current_cache": "CACHE-000014",
   "open_loops": [
-    "OPEN-000002",
-    "OPEN-000003"
+    "OPEN-000002"
   ],
-  "current_topic": "GACR Step 13B fresh provider agent acceptance",
-  "point_of_stop": "G6 is PASS_CLOSED on canonical main ab3fd3848878e93f929cbd3d89c9d15be43537a7. Step 13B is NEXT_AUTHORIZED and NOT_EXECUTED.",
-  "next_safe_action": "Run Step 13B with a genuinely fresh provider conversation/agent that receives ordinary repository work instructions and no GACR/GSCC/Presence/Beacon registration instruction; observe first-touch and bidirectional session evidence before Steps 14-24.",
+  "current_topic": "GSCC/GACR stale-work reconciliation before fresh-agent acceptance",
+  "point_of_stop": "Draft PR #157 is the only observed open non-global PR and is superseded by the canonical Admission/Q1-Q12 architecture. PR #176 records the reconciliation before #157 is closed unmerged.",
+  "next_safe_action": "Merge PR #176 after GREEN CI, close PR #157 unmerged as superseded, then reobserve live non-global work before selecting the next execution gate. Do not advance P12-S6.",
   "external_state_observed": {
     "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
     "branch": "main",
@@ -119,13 +118,29 @@
         "docs/control-plane/GSE_SESSION_STATE_ENGINE.md",
         "docs/control-plane/GSCC_GACR_CONTROL_INTEGRATION.md"
       ]
+    },
+    {
+      "event_id": "EVT-R-000006",
+      "kind": "HISTORICAL_RECOVERY",
+      "finding": "Draft PR #157 is superseded by the canonical Admission/Q1-Q12/Access Grant architecture, and OPEN-000003 was fulfilled by the live-proven GACR R6 provider-host issue bridge.",
+      "evidence": [
+        "github-pr:157",
+        "CPD-061",
+        "CPD-062",
+        "github-pr:159",
+        "github-pr:163",
+        "github-pr:116",
+        "github-pr:118",
+        "github-pr:120"
+      ]
     }
   ],
   "decision_status_overrides": {
     "EVT-D-000006": "FULFILLED"
   },
   "resolved_open_loops": [
-    "OPEN-000001"
+    "OPEN-000001",
+    "OPEN-000003"
   ],
   "activation_reply": {
     "message_id": "MSG-A-000001",
