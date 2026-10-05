@@ -148,6 +148,7 @@ def main() -> None:
     # GSCC function-exposure hardening is part of the portable client runtime.
     static_block=source.split("static_paths=[", 1)[1].split("]", 1)[0]
     for required in [
+        '"scripts/gscc/admission.py"',
         '"scripts/gscc_function_exposure_gate.py"',
         '"scripts/test_gscc_function_exposure_gate.py"',
         '".github/workflows/gscc-function-exposure-gate.yml"',
