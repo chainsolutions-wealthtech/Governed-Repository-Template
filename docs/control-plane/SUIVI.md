@@ -1129,3 +1129,23 @@ These observations are durable supervision evidence, not new mutation authority 
 - Final aligned candidate: Governance CI `37016097906 = SUCCESS`; Function Exposure `37016097994 = SUCCESS`; Observable Arrival `37016098117 = SUCCESS`.
 - PR remains unmerged. Real provider issue-control challenge/ACK/response on canonical main remains NOT_EXECUTED.
 - No P12-S6 / CASE 1 / GMC advancement. No production/server mutation.
+
+## 2026-10-05 — PR #157 entry-context prototype superseded by canonical Admission/Q1→Q12 path
+
+- Open draft PR #157 (`governance/gscc-entry-context-gate`) was re-audited against current canonical main rather than merged from its stale 2026-10-02 head.
+- The branch is hundreds of commits behind current main and predates CPD-061 / CPD-062, PR #159 Admission Runtime, PR #163 canonical Harvester/Q1→Q12, and PRs #164→#175 live hardening.
+- The useful invariant from #157 is preserved, but its separate `gscc-entry-context/v1` receipt/gate is no longer a valid authority surface because CPD-061 requires one additive admission/access path and one canonical Function Exposure authority.
+- Field reconciliation:
+  - `provider` → required `AdmissionEnvelope.agent.provider`;
+  - `agent_identity` → optional/supplied-only under Admission; provider-private identity must remain unavailable when not exposed;
+  - `client_instance_id` → required `AdmissionEnvelope.client.client_instance_id`;
+  - `connection_ref`, `connection_method`, `surface_class` → required canonical connection facts;
+  - old `capabilities` declaration → split into `requested_capabilities` + `control_capabilities`, then independently tested at Q8/Q9;
+  - old `function_surface` declaration → intentionally NOT an authority; canonical MCP capability snapshot + Access Grant + per-function GSCC exposure validation decide the actual governed surface;
+  - repository / owner / name / default branch / requested ref / exact HEAD → independently harvested/reobserved from GitHub by the canonical Harvester instead of trusting host input;
+  - old `ENTRY_CONTEXT_OPEN` → superseded by `PREAUTHORIZED → Q1…Q12 → bounded Access Grant → existing Function Exposure Gate`.
+- Therefore #157 must be closed as **SUPERSEDED**, not rebased or merged.
+- No runtime code is removed by this attestation because #157 never reached canonical main.
+- Global P12-S6 remains untouched.
+- GACR ultimate live acceptance remains NOT_PASSED; this cleanup only removes a stale parallel-entry prototype from the active work surface.
+
