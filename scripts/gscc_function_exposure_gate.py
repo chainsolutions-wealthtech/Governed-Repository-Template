@@ -85,8 +85,8 @@ def _load_json(path: str | Path) -> dict[str, Any]:
 
 def _default_snapshot_path() -> Path:
     if (ROOT / ".template-source").exists():
-        return SOURCE_SNAPSHOT
-    return PORTABLE_SNAPSHOT
+        return ROOT / ".governance" / "control-plane-state" / "mcp-capability-snapshot.json"
+    return ROOT / ".governance" / "gscc" / "mcp-capability-snapshot.json"
 
 
 def _default_sessions_path() -> Path:
