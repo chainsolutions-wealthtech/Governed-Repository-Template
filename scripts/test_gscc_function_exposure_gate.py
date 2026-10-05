@@ -171,6 +171,49 @@ class ExposureGateTests(unittest.TestCase):
         self.assertEqual(result["authority_required"], "READ_ONLY_DISCOVERY_AUTHORITY")
         self.assertTrue(result["exposure_receipt"].startswith("GSCC-EXPOSURE-"))
 
+    def test_issue_comment_staged_adoption_mutation_carries_route_gate_evidence(self):
+        sessions = json.loads(json.dumps(self.sessions))
+        sessions["sessions"][0].update({
+            "connection_method": "controlled-client-adapter",
+            "surface_class": "CONTROLLED_INSTRUMENTABLE",
+            "entry_action": "ADOPT_EXISTING_REPOSITORY",
+            "connection_intent": "CODE_CHANGE",
+            "branch": "main",
+        })
+        payload = self.function_issue_payload(
+            tool_name="write_tool",
+            authority_class="EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED",
+        )
+        payload["access_grant"] = self.access_grant(
+            allowed_authority_classes=["EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED"]
+        )
+        payload["authority"] = self.evidence(
+            "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED",
+            preflight={
+                "status": "PASSED",
+                "observed_head": self.head,
+                "evidence_ref": "preflight:fixture",
+            },
+            route_gate=self.route_gate(
+                "ADOPT_EXISTING_REPOSITORY",
+                [
+                    "EXACT_HEAD_OBSERVED",
+                    "CLEAN_OR_EXPLICITLY_RECONCILED",
+                    "ADOPTION_PLAN_ACCEPTED",
+                ],
+            ),
+        )
+        result = evaluate_issue_comment_exposure(
+            self.function_issue_event(payload),
+            expected_issue_number=161,
+            snapshot=self.snapshot,
+            sessions=sessions,
+            current_repository_head=self.head,
+            now=self.now,
+        )
+        self.assertEqual(result["status"], "VALIDATED")
+        self.assertEqual(result["route_gate_evidence_ref"], "entry-route:fixture")
+
     def test_issue_comment_exposure_is_bounded_and_fail_closed(self):
         wrong_issue = self.function_issue_event(self.function_issue_payload(), issue_number=162)
         with self.assertRaises(ValueError):
