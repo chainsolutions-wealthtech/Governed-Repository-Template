@@ -76,6 +76,10 @@ on:
         description: Safe non-secret live preflight evidence reference
         required: false
         type: string
+      route_gate_evidence_json:
+        description: Safe gscc-entry-action-gate-evidence/v1 JSON for staged mutation routes
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -122,14 +126,20 @@ jobs:
           python-version: "3.12"
 
       - name: Resolve configured canonical branch
+        id: canonical
         shell: bash
         run: |
           set -euo pipefail
           canonical="$(python3 scripts/gscc_function_exposure_gate.py canonical-branch)"
           test -n "$canonical"
+          echo "branch=$canonical" >> "$GITHUB_OUTPUT"
           echo "CANONICAL_BRANCH=$canonical" >> "$GITHUB_ENV"
-          git fetch origin "refs/heads/$canonical"
-          git checkout --detach FETCH_HEAD
+
+      - name: Checkout configured canonical branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.canonical.outputs.branch }}
+          persist-credentials: false
 
       - name: Verify canonical source before package route validation
         shell: bash
@@ -167,20 +177,28 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
       - name: Resolve configured canonical branch
+        id: canonical
         shell: bash
         run: |
           set -euo pipefail
           canonical="$(python3 scripts/gscc_function_exposure_gate.py canonical-branch)"
           test -n "$canonical"
+          echo "branch=$canonical" >> "$GITHUB_OUTPUT"
           echo "CANONICAL_BRANCH=$canonical" >> "$GITHUB_ENV"
-          git fetch origin "refs/heads/$canonical"
-          git checkout --detach FETCH_HEAD
+
+      - name: Checkout configured canonical branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.canonical.outputs.branch }}
+          persist-credentials: false
 
       - name: Evaluate exposure request through mandatory GSCC gate
         env:
@@ -194,6 +212,7 @@ jobs:
           PREFLIGHT_STATUS: ${{ github.event.client_payload.live_preflight_status || inputs.live_preflight_status }}
           PREFLIGHT_HEAD: ${{ github.event.client_payload.live_preflight_head || inputs.live_preflight_head }}
           PREFLIGHT_EVIDENCE_REF: ${{ github.event.client_payload.live_preflight_evidence_ref || inputs.live_preflight_evidence_ref }}
+          ROUTE_GATE_EVIDENCE_JSON: ${{ github.event.client_payload.route_gate_evidence_json || inputs.route_gate_evidence_json }}
         run: |
           set -euo pipefail
 
@@ -213,6 +232,9 @@ jobs:
           [ -n "$PREFLIGHT_HEAD" ] && preflight_args+=(--live-preflight-head "$PREFLIGHT_HEAD")
           [ -n "$PREFLIGHT_EVIDENCE_REF" ] && preflight_args+=(--live-preflight-evidence-ref "$PREFLIGHT_EVIDENCE_REF")
 
+          route_gate_args=()
+          [ -n "$ROUTE_GATE_EVIDENCE_JSON" ] && route_gate_args+=(--route-gate-evidence-json "$ROUTE_GATE_EVIDENCE_JSON")
+
           python3 scripts/gscc_function_exposure_gate.py evaluate \
             --connection-ref "$CONNECTION_REF" \
             --tool-name "$TOOL_NAME" \
@@ -222,6 +244,7 @@ jobs:
             --authority-evidence-ref "$AUTHORITY_EVIDENCE_REF" \
             "${authority_flag[@]}" \
             "${preflight_args[@]}" \
+            "${route_gate_args[@]}" \
             --output "$RUNNER_TEMP/gscc-exposure-receipt.json" \
             --require-validated
 
