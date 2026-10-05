@@ -15,7 +15,8 @@ from gscc_observable_arrival import build_github_arrival_facts, should_skip_gith
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SNAPSHOT = ROOT / ".governance" / "control-plane-state" / "mcp-capability-snapshot.json"
-DEFAULT_SESSIONS = ROOT / ".governance" / "control-plane-state" / "gacr-sessions.json"
+CONNECTION_INTENT_POLICY = ROOT / ".governance" / "connection-intent-policy.json"
+ENTRY_ACTION_POLICY = ROOT / ".governance" / "entry-action-policy.json"
 
 CONTROLLED_CLIENT_CONNECTION_METHOD = "controlled-client-adapter"
 GSCC_CONNECTION_METHODS = {
@@ -79,6 +80,24 @@ def _load_json(path: str | Path) -> dict[str, Any]:
     if not isinstance(data, dict):
         raise ValueError(f"JSON object required: {path}")
     return data
+
+
+def _default_sessions_path() -> Path:
+    if (ROOT / ".template-source").exists():
+        return ROOT / ".governance" / "control-plane-state" / "gacr-sessions.json"
+    return ROOT / ".governance" / "sessions" / "sessions.json"
+
+
+def _route_policy_allows_mutation(entry_action: str, connection_intent: str) -> tuple[bool, str | None]:
+    entry_policy = _load_json(ENTRY_ACTION_POLICY)
+    intent_policy = _load_json(CONNECTION_INTENT_POLICY)
+    action = (entry_policy.get("actions") or {}).get(entry_action) or {}
+    intent = (intent_policy.get("intents") or {}).get(connection_intent) or {}
+    if action.get("initial_mutable") is not True:
+        return False, "ENTRY_ACTION_POLICY_FORBIDS_MUTATION"
+    if intent.get("may_dispatch_mutable_work") is not True:
+        return False, "CONNECTION_INTENT_POLICY_FORBIDS_MUTATION"
+    return True, None
 
 
 def _safe_evidence(value: Any) -> None:
@@ -273,7 +292,7 @@ def evaluate_function_exposure(
         )
         return result
 
-    if session.get("connection_method") == CONTROLLED_CLIENT_CONNECTION_METHOD:
+    if session.get("surface_class") == "CONTROLLED_INSTRUMENTABLE":
         if current_repository_head is None:
             result.update(status="DENIED", reason_code="CURRENT_HEAD_REOBSERVATION_REQUIRED")
             return result
@@ -354,6 +373,15 @@ def evaluate_function_exposure(
         return result
 
     mutation_like = tool.get("surface") != "read"
+    if mutation_like and session.get("surface_class") == "CONTROLLED_INSTRUMENTABLE":
+        allowed_by_route, route_reason = _route_policy_allows_mutation(
+            str(session.get("entry_action") or ""),
+            str(session.get("connection_intent") or ""),
+        )
+        if not allowed_by_route:
+            result.update(status="DENIED", reason_code=route_reason)
+            return result
+
     if mutation_like and (snapshot.get("refresh_policy") or {}).get("pre_mutation_live_refresh_required", True):
         preflight = authority_evidence.get("live_preflight")
         if not isinstance(preflight, dict) or preflight.get("status") != "PASSED":
@@ -696,6 +724,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="GSCC mandatory function exposure gate")
     sub = parser.add_subparsers(dest="command", required=True)
 
+    canonical = sub.add_parser("canonical-branch")
+
     arrival = sub.add_parser("arrival-plan")
     arrival.add_argument("--event-path", default=os.environ.get("GITHUB_EVENT_PATH"))
     arrival.add_argument("--output")
@@ -711,7 +741,7 @@ def main() -> None:
     issue_comment.add_argument("--event-path", default=os.environ.get("GITHUB_EVENT_PATH"))
     issue_comment.add_argument("--expected-issue-number", type=int, required=True)
     issue_comment.add_argument("--snapshot", default=str(DEFAULT_SNAPSHOT))
-    issue_comment.add_argument("--sessions", default=str(DEFAULT_SESSIONS))
+    issue_comment.add_argument("--sessions", default=str(_default_sessions_path()))
     issue_comment.add_argument("--output")
     issue_comment.add_argument("--require-validated", action="store_true")
 
@@ -727,11 +757,15 @@ def main() -> None:
     evaluate.add_argument("--live-preflight-head")
     evaluate.add_argument("--live-preflight-evidence-ref")
     evaluate.add_argument("--snapshot", default=str(DEFAULT_SNAPSHOT))
-    evaluate.add_argument("--sessions", default=str(DEFAULT_SESSIONS))
+    evaluate.add_argument("--sessions", default=str(_default_sessions_path()))
     evaluate.add_argument("--output")
     evaluate.add_argument("--require-validated", action="store_true")
 
     args = parser.parse_args()
+
+    if args.command == "canonical-branch":
+        print(_canonical_branch())
+        return
 
     if args.command == "package-evaluate":
         actual_head = _git_head()
