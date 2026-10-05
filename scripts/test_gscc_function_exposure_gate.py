@@ -983,6 +983,39 @@ class ExposureGateTests(unittest.TestCase):
         self.assertIn("CANONICAL_BRANCH", text)
         self.assertIn("canonical-branch", text)
 
+    def test_remote_head_reobservation_uses_bound_session_branch_for_lab(self):
+        sessions = json.loads(json.dumps(self.sessions))
+        sessions["sessions"][0].update({
+            "connection_method": "controlled-client-adapter",
+            "surface_class": "CONTROLLED_INSTRUMENTABLE",
+            "entry_action": "LAB_EVOLUTION",
+            "connection_intent": "CODE_CHANGE",
+            "branch": "lab/authorized-change",
+        })
+        observed_calls = []
+
+        class Proc:
+            returncode = 0
+            stdout = ("c" * 40) + "\trefs/heads/lab/authorized-change\n"
+            stderr = ""
+
+        def fake_run(args, **kwargs):
+            observed_calls.append(list(args))
+            return Proc()
+
+        with patch.object(exposure_gate.subprocess, "run", fake_run):
+            observed = exposure_gate._git_remote_session_head(
+                sessions,
+                self.connection_ref,
+                now=self.now,
+            )
+
+        self.assertEqual(observed, "c" * 40)
+        self.assertEqual(
+            observed_calls,
+            [["git", "ls-remote", "--exit-code", "origin", "refs/heads/lab/authorized-change"]],
+        )
+
     def test_remote_head_reobservation_uses_instantiated_canonical_branch(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
