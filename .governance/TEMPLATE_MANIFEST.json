@@ -93,7 +93,11 @@
       ".github/workflows/gscc-observable-arrival.yml",
       "scripts/gscc/admission.py",
       "scripts/test_gscc_admission.py",
-      ".github/workflows/gscc-admission-gate.yml"
+      ".github/workflows/gscc-admission-gate.yml",
+      "scripts/gscc/capability_projection.py",
+      "scripts/gscc_function_exposure_gate.py",
+      "scripts/test_gscc_function_exposure_gate.py",
+      ".github/workflows/gscc-function-exposure-gate.yml"
     ],
     "machine_governance": [
       ".governance/bootstrap-state.json",
@@ -226,9 +230,6 @@
       ".governance/control-plane-state/gacr-correlations.json",
       ".governance/control-plane-state/gacr-dispatches.json",
       ".governance/control-plane-state/gacr-forensics.json",
-      "scripts/gscc_function_exposure_gate.py",
-      "scripts/test_gscc_function_exposure_gate.py",
-      ".github/workflows/gscc-function-exposure-gate.yml",
       ".github/workflows/gscc-function-route-selftest.yml",
       "tests/fixtures/gscc-function-route-package.json"
     ],
@@ -245,7 +246,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.41",
+  "template_version": "2.8.42",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
