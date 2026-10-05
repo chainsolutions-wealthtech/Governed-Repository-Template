@@ -76,7 +76,7 @@ class ExposureGateTests(unittest.TestCase):
             ]
         }
 
-    def evidence(self, authority_class, *, preflight=None):
+    def evidence(self, authority_class, *, preflight=None, route_gate=None):
         value = {
             "authority_class": authority_class,
             "granted": True,
@@ -84,6 +84,22 @@ class ExposureGateTests(unittest.TestCase):
         }
         if preflight is not None:
             value["live_preflight"] = preflight
+        if route_gate is not None:
+            value["route_gate_evidence"] = route_gate
+        return value
+
+    def route_gate(self, entry_action, satisfied_gates, *, branch=None):
+        value = {
+            "schema": "gscc-entry-action-gate-evidence/v1",
+            "status": "PASSED",
+            "entry_action": entry_action,
+            "session_id": "session-live",
+            "observed_head": self.head,
+            "satisfied_gates": list(satisfied_gates),
+            "evidence_ref": "entry-route:fixture",
+        }
+        if branch is not None:
+            value["branch"] = branch
         return value
 
     def access_grant(self, **overrides):
@@ -672,6 +688,137 @@ class ExposureGateTests(unittest.TestCase):
         self.assertEqual(denied["status"], "DENIED")
         self.assertEqual(denied["reason_code"], "ENTRY_ACTION_RESOLUTION_REQUIRED")
 
+    def test_adoption_mutation_requires_completed_entry_gates_not_initial_mutable(self):
+        sessions = json.loads(json.dumps(self.sessions))
+        sessions["sessions"][0].update({
+            "connection_method": "controlled-client-adapter",
+            "surface_class": "CONTROLLED_INSTRUMENTABLE",
+            "entry_action": "ADOPT_EXISTING_REPOSITORY",
+            "connection_intent": "CODE_CHANGE",
+            "branch": "main",
+        })
+        preflight = {
+            "status": "PASSED",
+            "observed_head": self.head,
+            "evidence_ref": "preflight:fixture",
+        }
+
+        incomplete = self.route_gate(
+            "ADOPT_EXISTING_REPOSITORY",
+            ["EXACT_HEAD_OBSERVED", "CLEAN_OR_EXPLICITLY_RECONCILED"],
+        )
+        denied = evaluate_function_exposure(
+            tool_name="write_tool",
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            access_grant=self.access_grant(
+                allowed_authority_classes=["EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED"]
+            ),
+            authority_evidence=self.evidence(
+                "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED",
+                preflight=preflight,
+                route_gate=incomplete,
+            ),
+            snapshot=self.snapshot,
+            sessions=sessions,
+            current_repository_head=self.head,
+            now=self.now,
+        )
+        self.assertEqual(denied["status"], "DENIED")
+        self.assertEqual(denied["reason_code"], "ENTRY_ACTION_REQUIRED_GATES_INCOMPLETE")
+
+        complete = self.route_gate(
+            "ADOPT_EXISTING_REPOSITORY",
+            [
+                "EXACT_HEAD_OBSERVED",
+                "CLEAN_OR_EXPLICITLY_RECONCILED",
+                "ADOPTION_PLAN_ACCEPTED",
+            ],
+        )
+        allowed = evaluate_function_exposure(
+            tool_name="write_tool",
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            access_grant=self.access_grant(
+                allowed_authority_classes=["EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED"]
+            ),
+            authority_evidence=self.evidence(
+                "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED",
+                preflight=preflight,
+                route_gate=complete,
+            ),
+            snapshot=self.snapshot,
+            sessions=sessions,
+            current_repository_head=self.head,
+            now=self.now,
+        )
+        self.assertEqual(allowed["status"], "VALIDATED")
+        self.assertTrue(allowed["exposable"])
+
+    def test_lab_mutation_requires_completed_gates_and_noncanonical_branch(self):
+        sessions = json.loads(json.dumps(self.sessions))
+        sessions["sessions"][0].update({
+            "connection_method": "controlled-client-adapter",
+            "surface_class": "CONTROLLED_INSTRUMENTABLE",
+            "entry_action": "LAB_EVOLUTION",
+            "connection_intent": "CODE_CHANGE",
+            "branch": "main",
+        })
+        preflight = {
+            "status": "PASSED",
+            "observed_head": self.head,
+            "evidence_ref": "preflight:fixture",
+        }
+        route_gate = self.route_gate(
+            "LAB_EVOLUTION",
+            [
+                "EXACT_HEAD_OBSERVED",
+                "LAB_BASELINE_CAPTURED",
+                "EXPLICIT_BRANCH_OR_PR_AUTHORITY",
+            ],
+            branch="main",
+        )
+        denied = evaluate_function_exposure(
+            tool_name="write_tool",
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            access_grant=self.access_grant(
+                allowed_authority_classes=["EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED"]
+            ),
+            authority_evidence=self.evidence(
+                "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED",
+                preflight=preflight,
+                route_gate=route_gate,
+            ),
+            snapshot=self.snapshot,
+            sessions=sessions,
+            current_repository_head=self.head,
+            now=self.now,
+        )
+        self.assertEqual(denied["status"], "DENIED")
+        self.assertEqual(denied["reason_code"], "LAB_EVOLUTION_CANONICAL_BRANCH_FORBIDDEN")
+
+        sessions["sessions"][0]["branch"] = "lab/authorized-change"
+        route_gate["branch"] = "lab/authorized-change"
+        allowed = evaluate_function_exposure(
+            tool_name="write_tool",
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            access_grant=self.access_grant(
+                allowed_authority_classes=["EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED"]
+            ),
+            authority_evidence=self.evidence(
+                "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED",
+                preflight=preflight,
+                route_gate=route_gate,
+            ),
+            snapshot=self.snapshot,
+            sessions=sessions,
+            current_repository_head=self.head,
+            now=self.now,
+        )
+        self.assertEqual(allowed["status"], "VALIDATED")
+
     def test_observe_intent_cannot_expose_mutation_function(self):
         sessions = json.loads(json.dumps(self.sessions))
         sessions["sessions"][0]["connection_method"] = "gscc-controlled-host-gateway"
@@ -774,6 +921,16 @@ class ExposureGateTests(unittest.TestCase):
             with patch.object(exposure_gate, "ROOT", root):
                 with self.assertRaisesRegex(RuntimeError, "FUNCTION_EXPOSURE_ISSUE_NOT_CONFIGURED"):
                     exposure_gate._configured_function_exposure_issue_number()
+
+    def test_private_repository_canonical_checkout_does_not_require_persisted_credentials(self):
+        text = WORKFLOW.read_text(encoding="utf-8")
+        self.assertNotIn('git fetch origin "refs/heads/$canonical"', text)
+        self.assertGreaterEqual(text.count("id: canonical"), 2)
+        self.assertGreaterEqual(
+            text.count('ref: ${{ steps.canonical.outputs.branch }}'),
+            2,
+        )
+        self.assertGreaterEqual(text.count("persist-credentials: false"), 2)
 
     def test_exposure_workflow_has_no_canonical_main_hardcoding(self):
         text = WORKFLOW.read_text(encoding="utf-8")
