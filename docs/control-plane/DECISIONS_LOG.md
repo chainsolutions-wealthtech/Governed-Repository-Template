@@ -483,3 +483,14 @@ Append-only durable decisions for the source/control-plane repository.
 - PR #157 is therefore `SUPERSEDED_BY_CPD_061_CPD_062_AND_PRS_159_163_175` and must be closed without merge.
 - This decision changes no runtime authority, does not execute Step 13B, and does not advance P12-S6 / CASE 1 / GMC.
 
+### CPD-065 — Queued GACR relay ingress reconciles to live default branch before BASE_HEAD capture
+
+- Date: 2026-10-05.
+- Live post-merge evidence showed that a `repository_dispatch` can be queued with an event HEAD that is already behind canonical main by the time its Relay job starts.
+- This queue-age condition is not a real post-capture concurrency conflict and must not be conflated with one.
+- `issue_comment` and `repository_dispatch` Relay ingress therefore reconcile to the current repository default branch immediately before `BASE_HEAD` capture and command execution.
+- Event payload facts remain the observation source; reconciling the code/state checkout does not rewrite the event's observed identity or authority.
+- The existing post-execution `HEAD_MOVED` comparison remains mandatory. A remote movement that occurs after `BASE_HEAD` capture still fails closed; no automatic rebase or replay of mutation/takeover authority is introduced.
+- PR #177 implements and tests this rule. Post-merge downstream run `37386713402` proves the reconciled `repository_dispatch:gacr_auto-attach` path succeeds.
+- This decision grants no new execution, mutation, claim-transfer or takeover authority and does not advance P12-S6.
+
