@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse, base64, json, os, re, urllib.error, urllib.parse, urllib.request
 from pathlib import Path
 from local_governed_entry import reconcile_both_smart_routing, reconcile_domain_question_order, reconcile_existing_host_path_question_order, reconcile_legacy_discovery_authority, reconcile_setup_question_order
+from gscc.capability_projection import build_portable_capability_projection
 
 ROOT=Path(__file__).resolve().parents[1]
 CENTRAL="chainsolutions-wealthtech/Governed-Repository-Template"
@@ -123,11 +124,14 @@ def main():
       "docs/MULTI_AGENT_COORDINATION.md","docs/GACR_AGENT_CONTINUITY_RELAY.md","docs/GACR_BRIDGE_CONTRACT.md",
       ".governance/agent-relay/config.json","schemas/gacr-state.schema.json","schemas/gacr-telemetry.schema.json","schemas/gacr-bridge-contract.schema.json","schemas/session.schema.json","schemas/work-claim.schema.json",
       "scripts/governed_agent_continuity_relay.py","scripts/gacr_workflow_bridge.py","scripts/gacr_agent_telemetry.py","scripts/gacr_bridge_notifier.py","scripts/gacr_auto_attach.py","scripts/gacr_client_emitter.py","scripts/gacr_host_issue_ingress.py","scripts/test_governed_agent_continuity_relay.py","scripts/test_gacr_agent_telemetry.py","scripts/test_gacr_liveness_progress_context.py","scripts/test_gacr_auto_attach.py","scripts/test_gacr_presence_first.py","scripts/test_gacr_client_emitter.py","scripts/test_gacr_host_issue_ingress.py","scripts/test_gacr_host_issue_workflow.py",".github/workflows/governed-agent-continuity-relay.yml",
-      "scripts/gscc/__init__.py","scripts/gscc/protocol.py","scripts/gscc/transport.py","scripts/gscc/session_endpoint.py","scripts/gscc/instrumentation.py","scripts/gscc/gacr_compat.py","scripts/gscc/admission.py","scripts/gscc_observable_arrival.py","scripts/test_gscc_observable_arrival.py",".github/workflows/gscc-observable-arrival.yml",
+      "scripts/gscc/__init__.py","scripts/gscc/protocol.py","scripts/gscc/transport.py","scripts/gscc/session_endpoint.py","scripts/gscc/instrumentation.py","scripts/gscc/gacr_compat.py","scripts/gscc/admission.py","scripts/gscc/capability_projection.py","scripts/gscc_observable_arrival.py","scripts/test_gscc_observable_arrival.py",".github/workflows/gscc-observable-arrival.yml",
       "scripts/gscc_function_exposure_gate.py","scripts/test_gscc_function_exposure_gate.py",".github/workflows/gscc-function-exposure-gate.yml",
       "scripts/mcp_repository_discovery.py","scripts/control_plane_local_command.py","scripts/control_plane_local_start.py","scripts/control_plane_provision_mcp_credential.py","scripts/test_mcp_credential_provisioning.py","scripts/test_mcp_both_ssh_fallback.py","scripts/control_plane_upgrade_local_entry.py","scripts/test_upgrade_session_head_migration.py"
     ]
     updates={p:(ROOT/p).read_text(encoding="utf-8") for p in static_paths}
+    source_capability_snapshot=json.loads((ROOT/".governance/control-plane-state/mcp-capability-snapshot.json").read_text(encoding="utf-8"))
+    portable_capability_snapshot=build_portable_capability_projection(source_capability_snapshot)
+    updates[".governance/gscc/mcp-capability-snapshot.json"]=json.dumps(portable_capability_snapshot,ensure_ascii=False,indent=2)+"\n"
 
     control_plane_policy=json.loads((ROOT/".governance/control-plane-policy.json").read_text(encoding="utf-8"))
     control_plane_policy["current_role"]="GOVERNED_TARGET_CLIENT"
