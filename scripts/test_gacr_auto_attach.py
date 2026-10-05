@@ -167,6 +167,86 @@ def main() -> None:
         assert_true(len(after_sessions["sessions"]) == len(before_sessions["sessions"]), "internal workflow must not create session")
         assert_true(len(after_beacons["items"]) == len(before_beacons["items"]), "internal workflow must not emit auto-attach beacon")
 
+        # A fresh observable arrival that matches a stalled/takeover-ready
+        # session must never resume or resurrect it. It is recorded as unbound
+        # activity until the governed reconciliation/takeover path is used.
+        stalled_sessions = json.loads(
+            (root / ".governance" / "control-plane-state" / "gacr-sessions.json").read_text()
+        )
+        stalled_sessions["sessions"].append({
+            "session_id": "session-stalled-observable",
+            "agent_identity": "external-worker",
+            "provider": "github-actions",
+            "provider_conversation_ref": None,
+            "connection_ref": "github-actions:example/governed:external-worker:stalled",
+            "client_instance_id": "github-actor:external-worker",
+            "repository": "example/governed",
+            "starting_head_sha": "e" * 40,
+            "last_observed_head_sha": "e" * 40,
+            "status": "STALLED",
+            "created_at": "2099-01-01T00:00:00+00:00",
+            "last_seen_at": "2099-01-01T00:00:00+00:00",
+            "capabilities": ["GACR_AUTO_ATTACH", "GACR_PRESENCE_FIRST"],
+            "wake_channels": ["POLL_REPOSITORY"],
+            "relay": {
+                "process": "GACR",
+                "state": "TAKEOVER_READY",
+                "last_heartbeat_at": "2099-01-01T00:00:00+00:00",
+                "lease_expires_at": "2099-01-01T00:30:00+00:00",
+                "last_action": "STALL_DETECTED",
+                "task_id": None,
+                "branch": "main",
+                "pull_request": None,
+            },
+            "surface_class": "GITHUB_EVENT_VISIBLE",
+            "connection_method": "github-actions-event",
+        })
+        write(
+            root / ".governance" / "control-plane-state" / "gacr-sessions.json",
+            stalled_sessions,
+        )
+        before_stalled = json.loads(
+            (root / ".governance" / "control-plane-state" / "gacr-sessions.json").read_text()
+        )
+        stalled_result = json.loads(run(
+            env,
+            "--agent", "external-worker",
+            "--provider", "github-actions",
+            "--connection-ref", "github-actions:example/governed:external-worker:stalled",
+            "--client-instance-id", "github-actor:external-worker",
+            "--repository", "example/governed",
+            "--connection-method", "github-actions-event",
+            "--surface-class", "GITHUB_EVENT_VISIBLE",
+            "--observed-head", "f" * 40,
+            "--branch", "main",
+        ).stdout)
+        after_stalled = json.loads(
+            (root / ".governance" / "control-plane-state" / "gacr-sessions.json").read_text()
+        )
+        stalled_before = next(
+            x for x in before_stalled["sessions"]
+            if x["session_id"] == "session-stalled-observable"
+        )
+        stalled_after = next(
+            x for x in after_stalled["sessions"]
+            if x["session_id"] == "session-stalled-observable"
+        )
+        assert_true(stalled_result["status"] == "UNBOUND_ACTIVITY", "stalled match must become unbound activity")
+        assert_true(stalled_result["binding"]["state"] == "UNBOUND", "stalled match must not remain bound")
+        assert_true(
+            stalled_result["binding"]["reason"] == "STALLED_SESSION_REQUIRES_GOVERNED_RECONCILIATION",
+            "stalled match must require governed reconciliation",
+        )
+        assert_true(
+            stalled_result["binding"]["candidate_session_ids"] == ["session-stalled-observable"],
+            "stalled candidate identity must remain observable",
+        )
+        assert_true(stalled_after == stalled_before, "stalled canonical session must remain unchanged")
+        assert_true(
+            len(after_stalled["sessions"]) == len(before_stalled["sessions"]),
+            "stalled arrival must not create a replacement session",
+        )
+
         # A different GitHub workflow remains a valid external execution anchor.
         external = json.loads(run(
             env | {
