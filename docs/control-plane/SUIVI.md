@@ -1149,3 +1149,26 @@ These observations are durable supervision evidence, not new mutation authority 
 - Global P12-S6 remains untouched.
 - GACR ultimate live acceptance remains NOT_PASSED; this cleanup only removes a stale parallel-entry prototype from the active work surface.
 
+## 2026-10-05 — Non-global stale-work cleanup complete; GACR ingress persistence race closed
+
+- Deep PR audit identified draft PR #157 as the only open non-global PR; its separate `gscc-entry-context/v1` authority was superseded by the canonical Admission/Q1→Q12/Access Grant/Function Exposure architecture.
+- PR #176 merged at `42991a071f6f8666bb517ee120de25b2f4ec8fb2`; CPD-064 records the field-by-field supersession.
+- PR #157 was then closed **without merge** as superseded. No runtime code from the stale prototype entered canonical main.
+- Chronicle `OPEN-000003` was reconciled from stale `WAITING` to `RESOLVED`: PRs #116/#118/#120 had already implemented, portabilized and live-attested the R6 provider-host issue bridge.
+- Post-#176 live validation exposed a separate GACR persistence race: `repository_dispatch` could wait in the Actions queue, start from an event HEAD already behind current main, then fail the existing post-execution `HEAD_MOVED` guard even though the GACR command itself was valid.
+- PR #177 fixed only the stale-start condition: `issue_comment` and `repository_dispatch` now reconcile to the current default branch before `BASE_HEAD` capture. The post-execution `HEAD_MOVED` guard remains unchanged for real concurrent movement after capture.
+- Tests-first evidence:
+  - RED candidate `ae7e5d64c6cc12edc092cf56133158111b427bb3`;
+  - Governance CI `37386416055 = FAILURE` on the new relay-base regression;
+  - final candidate `3d9038c7a73754096c4d9cff01a9168dfdce4c37`;
+  - Governance CI `37386599560 = SUCCESS`;
+  - Function Exposure `37386599827 = SUCCESS`;
+  - Observable Arrival `37386599848 = SUCCESS`.
+- PR #177 merged at `d9c9caf379a763f60db2c1bcffcb50c5c47abff3`.
+- Post-merge push validations all passed, including Governance CI `37386700111`, Relay push `37386699811`, Function Exposure `37386699633`, Observable Arrival `37386700338`, and Function Route Selftest `37386700769`.
+- Real downstream `repository_dispatch:gacr_auto-attach` run `37386713402 = SUCCESS` executed `Reconcile relay ingress to latest default branch` before `Capture exact base HEAD`, then persisted state successfully.
+- No non-global PR remains open after this cleanup. The only open PR observed is #96, which belongs to the parked global P12-S6 programme and is explicitly out of scope here.
+- Chronicle open loop `OPEN-000002` is global-programme continuation only; it remains WAITING for owner OK after GACR finalization.
+- GACR Step 13B remains `NEXT_AUTHORIZED / NOT_EXECUTED`; ultimate live acceptance remains `NOT_PASSED`.
+- Global P12-S6 remains untouched.
+
