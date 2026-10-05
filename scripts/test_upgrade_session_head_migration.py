@@ -159,6 +159,9 @@ def main() -> None:
     assert '".governance/gscc/mcp-capability-snapshot.json"' in source
     assert "build_portable_capability_projection" in source
 
+    assert 'function_gate["issue_number"]=None' in source
+    assert 'function_gate["client_issue_strategy"]="DISABLED_UNTIL_LOCAL_NUMBER_BOUND"' in source
+
     # Existing clients need a distinct additive AGENTS contract marker so an
     # already-present Repository-local control-plane section does not suppress
     # the new first-attach route rules.
