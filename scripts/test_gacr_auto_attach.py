@@ -93,15 +93,30 @@ def main() -> None:
             "--client-instance-id", "chronicle:CHAT-MEM-TEST",
             "--observed-head", "a"*40,
             "--branch", "main",
-            "--entry-action", "LAB_EVOLUTION",
-            "--connection-intent", "CODE_CHANGE",
         ).stdout)
         assert_true(second["status"] == "RESUME", "late provider binding resumes")
         assert_true(second["session"]["session_id"] == sid, "late binding must not duplicate session")
         assert_true(second["session"]["provider"] == "chatgpt", "provider promoted from other")
         assert_true(second["session"]["provider_conversation_ref"] == "conversation-123", "provider ref enriched")
-        assert_true(second["session"]["entry_action"] == "CONTINUE_GOVERNED_WORK", "resume cannot rewrite canonical entry action")
-        assert_true(second["session"]["connection_intent"] == "OBSERVE", "resume cannot rewrite canonical connection intent")
+        assert_true(second["session"]["entry_action"] == "CONTINUE_GOVERNED_WORK", "provider enrichment preserves canonical entry action")
+        assert_true(second["session"]["connection_intent"] == "OBSERVE", "provider enrichment preserves canonical connection intent")
+
+        rewrite = run(
+            env,
+            "--provider", "chatgpt",
+            "--provider-ref", "conversation-123",
+            "--connection-ref", "chronicle:CHAT-MEM-TEST:SESSION-TEST",
+            "--observed-head", "a"*40,
+            "--branch", "main",
+            "--entry-action", "LAB_EVOLUTION",
+            "--connection-intent", "CODE_CHANGE",
+            expect=1,
+        )
+        assert_true("GACR_ROUTE_RECONCILIATION_REQUIRED" in rewrite.stderr, "route rewrite must fail closed")
+        after_rewrite = json.loads((root / ".governance" / "control-plane-state" / "gacr-sessions.json").read_text())
+        canonical = after_rewrite["sessions"][0]
+        assert_true(canonical["entry_action"] == "CONTINUE_GOVERNED_WORK", "failed resume cannot mutate entry action")
+        assert_true(canonical["connection_intent"] == "OBSERVE", "failed resume cannot mutate connection intent")
 
         third = json.loads(run(
             env,
