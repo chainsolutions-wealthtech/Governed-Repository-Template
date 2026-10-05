@@ -175,6 +175,7 @@ def main() -> None:
         project_profile = read_json(target, ".governance/project-profile.json")
         infrastructure = read_json(target, ".governance/infrastructure-intent.json")
         intent_policy = read_json(target, ".governance/connection-intent-policy.json")
+        portable_snapshot = read_json(target, ".governance/gscc/mcp-capability-snapshot.json")
 
         checks = {
             "receipt_validation": receipt.get("validation") == "PASS",
@@ -207,6 +208,11 @@ def main() -> None:
             "no_repo_credentials": infrastructure.get("server_access", {}).get("credentials_in_repository") == "FORBIDDEN",
             "unknown_intent_closed": intent_policy.get("intents", {}).get("UNKNOWN", {}).get("may_dispatch_mutable_work") is False,
             "information_ne_code": intent_policy.get("intents", {}).get("INFORMATION_INTAKE", {}).get("may_dispatch_mutable_work") is False,
+            "portable_snapshot_scope": portable_snapshot.get("scope") == "PORTABLE_CLIENT_PROJECTION",
+            "portable_snapshot_current": portable_snapshot.get("status") == "CURRENT" and portable_snapshot.get("catalogue", {}).get("status") == "CURRENT",
+            "portable_snapshot_has_tools": len(portable_snapshot.get("catalogue", {}).get("tools") or []) > 0,
+            "portable_snapshot_no_servers": "servers" not in portable_snapshot,
+            "portable_snapshot_no_endpoint": "endpoint" not in portable_snapshot,
         }
         failed = [name for name, ok in checks.items() if not ok]
         if failed:
