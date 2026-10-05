@@ -162,7 +162,7 @@ jobs:
           retention-days: 30
 
   evaluate:
-    if: ${{ github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && github.event.issue.number == 161 && startsWith(github.event.comment.body, '/gscc-function-exposure ') && (github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'COLLABORATOR')) }}
+    if: ${{ github.event_name == 'repository_dispatch' || github.event_name == 'workflow_dispatch' || (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/gscc-function-exposure ') && (github.event.comment.author_association == 'OWNER' || github.event.comment.author_association == 'MEMBER' || github.event.comment.author_association == 'COLLABORATOR')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -200,7 +200,6 @@ jobs:
           if [ "${{ github.event_name }}" = "issue_comment" ]; then
             python3 scripts/gscc_function_exposure_gate.py issue-comment \
               --event-path "$GITHUB_EVENT_PATH" \
-              --expected-issue-number 161 \
               --output "$RUNNER_TEMP/gscc-exposure-receipt.json" \
               --require-validated
             exit 0
