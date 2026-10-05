@@ -635,6 +635,88 @@ class ExposureGateTests(unittest.TestCase):
         self.assertIn('"scripts/gscc/protocol.py"', text)
         self.assertIn('"scripts/gscc_observable_arrival.py"', text)
         self.assertIn('".github/workflows/gscc-observable-arrival.yml"', text)
+        self.assertIn('"scripts/gscc_function_exposure_gate.py"', text)
+        self.assertIn('"scripts/test_gscc_function_exposure_gate.py"', text)
+        self.assertIn('".github/workflows/gscc-function-exposure-gate.yml"', text)
+
+    def test_controlled_host_gateway_requires_canonical_session_route(self):
+        sessions = json.loads(json.dumps(self.sessions))
+        sessions["sessions"][0]["connection_method"] = "gscc-controlled-host-gateway"
+        sessions["sessions"][0]["surface_class"] = "CONTROLLED_INSTRUMENTABLE"
+        sessions["sessions"][0]["entry_action"] = "UNKNOWN"
+        sessions["sessions"][0]["connection_intent"] = "UNKNOWN"
+
+        denied = evaluate_function_exposure(
+            tool_name="read_tool",
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            access_grant=self.access_grant(
+                allowed_authority_classes=["READ_ONLY_DISCOVERY_AUTHORITY"]
+            ),
+            authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
+            snapshot=self.snapshot,
+            sessions=sessions,
+            current_repository_head=self.head,
+            now=self.now,
+        )
+        self.assertEqual(denied["status"], "DENIED")
+        self.assertEqual(denied["reason_code"], "ENTRY_ACTION_RESOLUTION_REQUIRED")
+
+    def test_observe_intent_cannot_expose_mutation_function(self):
+        sessions = json.loads(json.dumps(self.sessions))
+        sessions["sessions"][0]["connection_method"] = "gscc-controlled-host-gateway"
+        sessions["sessions"][0]["surface_class"] = "CONTROLLED_INSTRUMENTABLE"
+        sessions["sessions"][0]["entry_action"] = "CONTINUE_GOVERNED_WORK"
+        sessions["sessions"][0]["connection_intent"] = "OBSERVE"
+
+        denied = evaluate_function_exposure(
+            tool_name="write_tool",
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            access_grant=self.access_grant(
+                allowed_authority_classes=["EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED"]
+            ),
+            authority_evidence=self.evidence(
+                "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED",
+                preflight={
+                    "status": "PASSED",
+                    "observed_head": self.head,
+                    "evidence_ref": "preflight:fixture",
+                },
+            ),
+            snapshot=self.snapshot,
+            sessions=sessions,
+            current_repository_head=self.head,
+            now=self.now,
+        )
+        self.assertEqual(denied["status"], "DENIED")
+        self.assertEqual(denied["reason_code"], "CONNECTION_INTENT_POLICY_FORBIDS_MUTATION")
+
+    def test_default_session_store_follows_source_client_boundary(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            governance = root / ".governance"
+            governance.mkdir(parents=True)
+            with patch.object(exposure_gate, "ROOT", root):
+                self.assertEqual(
+                    exposure_gate._default_sessions_path(),
+                    root / ".governance" / "sessions" / "sessions.json",
+                )
+
+            (root / ".template-source").write_text("", encoding="utf-8")
+            with patch.object(exposure_gate, "ROOT", root):
+                self.assertEqual(
+                    exposure_gate._default_sessions_path(),
+                    root / ".governance" / "control-plane-state" / "gacr-sessions.json",
+                )
+
+    def test_exposure_workflow_has_no_canonical_main_hardcoding(self):
+        text = WORKFLOW.read_text(encoding="utf-8")
+        self.assertNotIn("ref: main", text)
+        self.assertNotIn("refs/heads/main", text)
+        self.assertNotIn("GSCC_FUNCTION_GATE_REQUIRES_CANONICAL_MAIN", text)
+        self.assertIn("CANONICAL_BRANCH", text)
+        self.assertIn("canonical-branch", text)
 
     def test_remote_head_reobservation_uses_instantiated_canonical_branch(self):
         with tempfile.TemporaryDirectory() as tmp:
