@@ -325,6 +325,22 @@ def main():
     ]:
         assert_true(fragment in workflow, f"GACR workflow safety boundary missing: {fragment}")
 
+    reconcile_step = workflow.split(
+        "- name: Reconcile relay ingress to latest default branch", 1
+    )
+    assert_true(len(reconcile_step) == 2, "relay workflow must have a canonical ingress reconciliation step")
+    reconcile_prefix = reconcile_step[1].split("- name: Capture exact base HEAD", 1)[0]
+    assert_true(
+        "github.event_name == 'issue_comment' || github.event_name == 'repository_dispatch'"
+        in reconcile_prefix,
+        "issue_comment and repository_dispatch must reconcile before BASE_HEAD capture",
+    )
+    assert_true(
+        'git fetch origin "$DEFAULT_BRANCH"' in reconcile_prefix
+        and "git checkout --detach FETCH_HEAD" in reconcile_prefix,
+        "relay ingress reconciliation must checkout current default branch",
+    )
+
     print("GACR_AGENT_CONTINUITY_RELAY_TEST_PASS")
 
 
