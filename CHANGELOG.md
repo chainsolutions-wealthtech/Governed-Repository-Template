@@ -10,6 +10,24 @@
 - Machine-readable governance profile.
 - Governance validation CI.
 
+## Governance Automation V2.8.42
+
+### Fixed
+
+- GSCC Function Exposure now uses the canonical GACR session route for every controlled/instrumentable surface;
+- route fields are immutable after initial GACR session creation and require governed reconciliation to change;
+- mutation exposure is denied when entry-action or connection-intent policy forbids mutable work;
+- exact-HEAD reobservation follows the configured canonical branch instead of assuming `main`;
+- initialized clients load their canonical session store and a safe portable MCP capability projection;
+- client upgrades distribute the hardened exposure gate, workflow, tests, admission dependency, capability projection helper and additive host-route contract.
+
+### Safety and portability
+
+- the portable capability projection contains only `status`, `catalogue`, `refresh_policy` and safe source provenance; source-only server inventory, endpoint and control-plane state are not copied;
+- provider enrichment remains route-neutral;
+- existing client work/session stores are preserved;
+- no P12-S6 / CASE 1 / GMC / global-programme advancement is introduced by this release.
+
 ## Governance Automation V2
 
 ### Added
