@@ -17,13 +17,19 @@ def main() -> None:
     assert_true("github.event.issue.number == 115" not in text, "source issue number must not be hard-coded in generic workflow")
     assert_true("startsWith(github.event.comment.body, '/gacr-host ')" in text, "host ingress prefix gate missing")
 
-    reconcile = text.index("Reconcile issue-comment ingress to latest default branch")
+    reconcile = text.index("Reconcile relay ingress to latest default branch")
     capture = text.index("Capture exact base HEAD")
     execute = text.index("Execute GACR command")
     persist = text.index("Persist changed relay state")
-    assert_true(reconcile < capture < execute < persist, "issue-comment rerun reconciliation must precede base capture and execution")
+    assert_true(reconcile < capture < execute < persist, "relay ingress reconciliation must precede base capture and execution")
+    reconcile_block = text[reconcile:capture]
+    assert_true(
+        "github.event_name == 'issue_comment' || github.event_name == 'repository_dispatch'"
+        in reconcile_block,
+        "issue_comment and repository_dispatch must share live default-branch reconciliation",
+    )
     assert_true('git fetch origin "$DEFAULT_BRANCH"' in text, "latest default branch fetch missing")
-    assert_true("git checkout --detach FETCH_HEAD" in text, "issue-comment workflow must execute from fetched default-branch head")
+    assert_true("git checkout --detach FETCH_HEAD" in reconcile_block, "reconciled relay ingress must execute from fetched default-branch head")
     assert_true("scripts/gacr_host_issue_ingress.py" in text, "host ingress adapter compile validation missing")
 
     control_delivery = "Deliver pending GSCC issue control challenges"
