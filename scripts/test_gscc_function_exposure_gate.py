@@ -9,6 +9,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 import gscc_function_exposure_gate as exposure_gate
+from gscc.capability_projection import build_portable_capability_projection
 from gscc_function_exposure_gate import (
     build_arrival_route,
     build_package_route_receipt,
@@ -693,6 +694,27 @@ class ExposureGateTests(unittest.TestCase):
         )
         self.assertEqual(denied["status"], "DENIED")
         self.assertEqual(denied["reason_code"], "CONNECTION_INTENT_POLICY_FORBIDS_MUTATION")
+
+    def test_portable_capability_projection_is_minimal(self):
+        source = {
+            "status": "CURRENT",
+            "authority_id": "CP-MCP-CAP-001",
+            "observed_at": "2026-10-05T00:00:00+00:00",
+            "endpoint": "https://secret-ish.example.invalid/mcp",
+            "servers": {"s1": {"protected_domains": ["example.invalid"]}},
+            "refresh_policy": {"pre_mutation_live_refresh_required": True},
+            "catalogue": {
+                "status": "CURRENT",
+                "catalogue_digest": "d" * 64,
+                "tools": [{"name": "read_tool", "surface": "read"}],
+            },
+        }
+        projected = build_portable_capability_projection(source)
+        self.assertEqual(projected["scope"], "PORTABLE_CLIENT_PROJECTION")
+        self.assertEqual(projected["catalogue"]["tools"][0]["name"], "read_tool")
+        self.assertTrue(projected["refresh_policy"]["pre_mutation_live_refresh_required"])
+        self.assertNotIn("endpoint", projected)
+        self.assertNotIn("servers", projected)
 
     def test_default_snapshot_follows_source_client_boundary(self):
         with tempfile.TemporaryDirectory() as tmp:
