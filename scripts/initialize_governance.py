@@ -10,6 +10,8 @@ import subprocess
 from datetime import datetime, timezone
 from pathlib import Path
 
+from gscc.capability_projection import build_portable_capability_projection
+
 ROOT = Path(__file__).resolve().parents[1]
 EXCLUDED = {
     ROOT / "scripts" / "initialize_governance.py",
@@ -193,6 +195,11 @@ def main() -> None:
     work["revision"] = int(work.get("revision", 0)) + 1
     work["items"] = items
     _write_json(work_path, work)
+
+    source_snapshot_path = ROOT / ".governance" / "control-plane-state" / "mcp-capability-snapshot.json"
+    if source_snapshot_path.exists():
+        portable_snapshot = build_portable_capability_projection(_read_json(source_snapshot_path))
+        _write_json(ROOT / ".governance" / "gscc" / "mcp-capability-snapshot.json", portable_snapshot)
 
     marker = ROOT / ".template-source"
     if marker.exists():
