@@ -117,6 +117,10 @@ jobs:
         with:
           persist-credentials: false
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - name: Resolve configured canonical branch
         shell: bash
         run: |
@@ -126,10 +130,6 @@ jobs:
           echo "CANONICAL_BRANCH=$canonical" >> "$GITHUB_ENV"
           git fetch origin "refs/heads/$canonical"
           git checkout --detach FETCH_HEAD
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
 
       - name: Verify canonical source before package route validation
         shell: bash
@@ -168,6 +168,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
       - name: Resolve configured canonical branch
         shell: bash
         run: |
@@ -177,10 +181,6 @@ jobs:
           echo "CANONICAL_BRANCH=$canonical" >> "$GITHUB_ENV"
           git fetch origin "refs/heads/$canonical"
           git checkout --detach FETCH_HEAD
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
 
       - name: Evaluate exposure request through mandatory GSCC gate
         env:
