@@ -8,10 +8,10 @@
     "original_intent": "CANONICAL_RECORDED",
     "baseline_r1_r6": "PRESERVED_REOBSERVED_ATTESTED_OR01_PASS",
     "origin_realignment_plan": "ACCEPTED",
-    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13B_BLOCKED_PENDING_PR163_INTEGRATION_AND_LIVE_PROVIDER_PROOF",
+    "realignment_execution": "STEPS_1_THROUGH_12_CLOSED_STEP_13B_NEXT_AUTHORIZED_LIVE_PREREQUISITES_PASSED",
     "ultimate_live_acceptance": "NOT_PASSED"
   },
-  "next_action": "GSCC_PR163_INTEGRATE_THEN_RUN_REAL_READ_ONLY_ADMISSION_CONTROL_AND_ACCESS_GRANT_PROOF",
+  "next_action": "REALIGNMENT_STEP_13B_RUN_REAL_FRESH_PROVIDER_AGENT_TEST",
   "or01": {
     "status": "PASS",
     "attestation": "docs/control-plane/GACR_R6_BASELINE_ATTESTATION.md",
@@ -160,15 +160,16 @@
   },
   "relational_projection": "PENDING_PROJECTION_NO_DEDICATED_GACR_REALIGNMENT_STEP_TABLE",
   "step_13b": {
-    "status": "BLOCKED_PENDING_PR163_INTEGRATION_AND_REAL_PROVIDER_CONTROL_PROOF",
+    "status": "NEXT_AUTHORIZED_NOT_EXECUTED",
     "requirement": "After the pre-Step-13B remediation is closed, run a genuinely fresh provider conversation/agent through the integrated GSCC/GSE/GACR path without telling it to register with GACR. Observe first-touch, SessionTwin, control challenge/wake capability and provider-bound evidence without inventing unavailable provider-private fields.",
     "fresh_provider_agent": "NOT_EXECUTED",
     "ultimate_live_acceptance": "NOT_PASSED",
-    "remediation_required": [
-      "GSCC_PR163_INTEGRATE",
-      "GSCC_REAL_PROVIDER_CONTROL_CHALLENGE_ACK_RESPONSE",
-      "GSCC_LIVE_READ_ONLY_ACCESS_GRANT",
-      "GSCC_FUNCTION_EXPOSURE_GATE_LIVE_FUNCTION_REQUEST"
+    "remediation_required": [],
+    "remediation_completed": [
+      "GSCC_PR163_INTEGRATED",
+      "GSCC_REAL_PROVIDER_CONTROL_CHALLENGE_ACK_RESPONSE_PASS",
+      "GSCC_LIVE_READ_ONLY_ACCESS_GRANT_PASS",
+      "GSCC_FUNCTION_EXPOSURE_GATE_LIVE_FUNCTION_REQUEST_VALIDATED"
     ]
   },
   "integration_post_attestation_audit": {
@@ -244,7 +245,7 @@
     "ultimate_live_acceptance": "NOT_PASSED"
   },
   "gscc_function_exposure_gate": {
-    "status": "INTEGRATED_POSTMERGE_GREEN_PENDING_LIVE_FUNCTION_REQUEST",
+    "status": "INTEGRATED_LIVE_FUNCTION_REQUEST_VALIDATED",
     "pr": 153,
     "invariant": "NO_GOVERNED_FUNCTION_EXPOSURE_OR_USE_WITHOUT_VALIDATED_GSCC_EXPOSURE_RECEIPT",
     "workflow": ".github/workflows/gscc-function-exposure-gate.yml",
@@ -255,7 +256,7 @@
     "explicit_authority_evidence_required": true,
     "mutation_live_preflight_required": true,
     "pre_call_revalidation_required": true,
-    "postmerge_live_proof": "ARRIVAL_AND_ROUTE_PASS_FUNCTION_REQUEST_NOT_EXECUTED",
+    "postmerge_live_proof": "PASS_AUTHORIZED_READ_ONLY_FUNCTION_EXPOSURE_VALIDATED",
     "fresh_provider_agent": "NOT_EXECUTED",
     "ultimate_live_acceptance": "NOT_PASSED",
     "merge": "14641e4abcf8abf37f7a4975a8311c6253ea9263",
@@ -285,12 +286,23 @@
       "candidate_function_exposure_workflow": 36978495981,
       "candidate_arrival_gateway": 36978496029,
       "postmerge_workflow_call": "PENDING",
-      "live_function_exposure_request": "NOT_EXECUTED"
+      "live_function_exposure_request": "VALIDATED"
     },
-    "live_function_request_blocked_by": "GSCC_ADMISSION_ACCESS_GATE"
+    "live_function_request_blocked_by": null,
+    "live_function_proof": {
+      "status": "VALIDATED",
+      "run": 37381090312,
+      "connection_ref": "gscc-live:chatgpt:20261005:continuation-003",
+      "access_grant_id": "GSCC-GRANT-4e5e4fde92cd8728dc5ef14f94123c56231a5aadd6bf9054002d88283a7f8fda",
+      "tool_name": "github_get_repository_state",
+      "exposure_receipt": "GSCC-EXPOSURE-f810c5254cd16e7fe04a439d863d672930dd3927be5be87a07d613328e3d936a",
+      "observed_head": "9387ed6c0de306c78b67f39c072b3a49d227e0de",
+      "exposable": true,
+      "authority_class": "READ_ONLY_DISCOVERY_AUTHORITY"
+    }
   },
   "gscc_admission_access_gate": {
-    "status": "CANDIDATE_Q1_Q12_GREEN_PENDING_MERGE_AND_LIVE_PROVIDER_PROOF",
+    "status": "INTEGRATED_LIVE_Q1_Q12_AUTHORIZED",
     "authority": "docs/control-plane/GSCC_ADMISSION_ACCESS_GATE.md",
     "decision": "CPD-061",
     "invariant": "IDENTITY_NE_ADMISSION_NE_PREAUTHORIZATION_NE_ACCESS_AUTHORIZATION_NE_FUNCTION_EXPOSURE_NE_MUTATION_AUTHORITY",
@@ -300,8 +312,8 @@
     "access_grant_grants_mutation_authority": false,
     "extends_existing_function_exposure_gate": true,
     "parallel_gate_authority_allowed": false,
-    "blocks_live_function_exposure_request": true,
-    "implementation_required": "TESTS_FIRST",
+    "blocks_live_function_exposure_request": false,
+    "implementation_required": "DONE",
     "global_programme_advanced": false,
     "pr": 159,
     "branch": "governance/gscc-admission-runtime",
@@ -328,7 +340,7 @@
       "final_candidate_function_gate": 37002023423
     },
     "postmerge_attestation": "PASS",
-    "live_admission_request": "NOT_EXECUTED",
+    "live_admission_request": "PASS_AUTHORIZED",
     "merge": "56c48aafbe00a50b47ad2189f4ab3645b937c82f",
     "postmerge_governance_ci": 37002783058,
     "postmerge_arrival_gateway": 37002783052,
@@ -337,7 +349,7 @@
     "postmerge_relay_push": 37002783111,
     "postmerge_relay_dispatch": 37002796444,
     "harvester": {
-      "status": "CANDIDATE_Q1_Q12_GREEN_PENDING_MERGE_AND_LIVE_PROVIDER_PROOF",
+      "status": "INTEGRATED_POSTMERGE_LIVE_Q1_Q12_PASS",
       "pr": 163,
       "branch": "governance/gscc-admission-harvester",
       "tests_first_red_commit": "c7ade40b7af024bb3a31d1b563e631ffceda40ab",
@@ -356,10 +368,10 @@
       "canonical_bundle_required": true,
       "stale_head_fails_closed": true,
       "missing_gse_control_policy_fails_closed": true,
-      "merge": "NOT_MERGED",
-      "postmerge_attestation": "PENDING",
-      "live_admission_request": "NOT_EXECUTED",
-      "step_13b": "NOT_EXECUTED",
+      "merge": "74eab5845aebdc1071099c054dbb1ad2b3929d0d",
+      "postmerge_attestation": "PASS",
+      "live_admission_request": "PASS_AUTHORIZED",
+      "step_13b": "NEXT_AUTHORIZED_NOT_EXECUTED",
       "global_programme_advanced": false,
       "live_lease_binding_required": true,
       "control_transport": "EXISTING_GACR_HOST_ISSUE_BRIDGE_ISSUE_115",
@@ -386,9 +398,53 @@
         "observable_arrival": 37016098117,
         "result": "PASS"
       },
-      "real_provider_control_proof": "NOT_EXECUTED",
-      "postmerge_live_access_grant": "NOT_EXECUTED",
+      "real_provider_control_proof": "PASS",
+      "postmerge_live_access_grant": "GSCC-GRANT-4e5e4fde92cd8728dc5ef14f94123c56231a5aadd6bf9054002d88283a7f8fda",
       "ultimate_live_acceptance": "NOT_PASSED"
+    },
+    "live_proof": {
+      "status": "PASS",
+      "connection_ref": "gscc-live:chatgpt:20261005:continuation-003",
+      "session_id": "session-5d3a9f81431841b798353de1",
+      "control_dispatch": "GSCC-CTRL-4f74a843203789270f1dd4e4",
+      "challenge_id": "GSCC-CH-0c01697f0efce16a6479bf05",
+      "command_ack_evidence": "github-issue-comment:6004084287",
+      "challenge_response_evidence": "github-issue-comment:6004096273",
+      "admission_run": 37380656936,
+      "admission_id": "GSCC-ADM-65b5430f45f03e63ba736e2638b4bc4470174e3cc3774558de009c49072f47ea",
+      "access_grant_id": "GSCC-GRANT-4e5e4fde92cd8728dc5ef14f94123c56231a5aadd6bf9054002d88283a7f8fda",
+      "bound_head": "9387ed6c0de306c78b67f39c072b3a49d227e0de",
+      "authority_class": "READ_ONLY_DISCOVERY_AUTHORITY",
+      "mutation_authority_granted": false,
+      "invocation_authority_granted": false
     }
+  },
+  "post_live_proof_hardening": {
+    "status": "PASS",
+    "admission_arrival_loop_guard": {
+      "pr": 173,
+      "merge": "0d993f2a80e75befca5ccfe7bb29ac0cd37b3624",
+      "replay_admission_run": 37382668963,
+      "observable_arrival_run": 37382668905,
+      "observable_result": "GSCC_ARRIVAL_SKIPPED",
+      "reason": "INTERNAL_GSCC_ADMISSION_INGRESS",
+      "recursive_gacr_auto_attach_emitted": false
+    },
+    "stalled_arrival_reconciliation_guard": {
+      "pr": 174,
+      "merge": "0d6a0170a2ff3175bd4ce77f333c19782707f42d",
+      "postmerge_governance_ci": 37382500294,
+      "postmerge_function_exposure": 37382500133,
+      "postmerge_function_route_selftest": 37382500536,
+      "postmerge_relay_push": 37382500222,
+      "downstream_auto_attach": 37382512096,
+      "downstream_result": "UNBOUND_ACTIVITY",
+      "reason": "STALLED_SESSION_REQUIRES_GOVERNED_RECONCILIATION",
+      "stalled_session_resumed": false,
+      "replacement_session_created": false
+    },
+    "global_programme_advanced": false,
+    "global_next_action_preserved": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+    "ultimate_live_acceptance": "NOT_PASSED"
   }
 }
