@@ -30,6 +30,10 @@ CONTROLLED_SURFACES = {
     "GITHUB_EVENT_VISIBLE",
     "CONTROLLED_INSTRUMENTABLE",
 }
+ROUTE_GATED_MUTATION_ENTRY_ACTIONS = {
+    "ADOPT_EXISTING_REPOSITORY",
+    "LAB_EVOLUTION",
+}
 FUNCTION_EXPOSURE_ISSUE_PREFIX = "/gscc-function-exposure "
 FUNCTION_EXPOSURE_ISSUE_SCHEMA = "gscc-function-exposure-request/v1"
 AUTHORIZED_ISSUE_ASSOCIATIONS = {"OWNER", "MEMBER", "COLLABORATOR"}
@@ -104,15 +108,59 @@ def _default_sessions_path() -> Path:
     return ROOT / ".governance" / "sessions" / "sessions.json"
 
 
-def _route_policy_allows_mutation(entry_action: str, connection_intent: str) -> tuple[bool, str | None]:
+def _route_policy_allows_mutation(
+    entry_action: str,
+    connection_intent: str,
+    *,
+    session: dict[str, Any],
+    requested_head: str,
+    authority_evidence: dict[str, Any],
+) -> tuple[bool, str | None]:
     entry_policy = _load_json(ENTRY_ACTION_POLICY)
     intent_policy = _load_json(CONNECTION_INTENT_POLICY)
     action = (entry_policy.get("actions") or {}).get(entry_action) or {}
     intent = (intent_policy.get("intents") or {}).get(connection_intent) or {}
-    if action.get("initial_mutable") is not True:
-        return False, "ENTRY_ACTION_POLICY_FORBIDS_MUTATION"
+
     if intent.get("may_dispatch_mutable_work") is not True:
         return False, "CONNECTION_INTENT_POLICY_FORBIDS_MUTATION"
+
+    if action.get("initial_mutable") is True:
+        return True, None
+
+    if entry_action not in ROUTE_GATED_MUTATION_ENTRY_ACTIONS:
+        return False, "ENTRY_ACTION_POLICY_FORBIDS_MUTATION"
+
+    route_gate = authority_evidence.get("route_gate_evidence")
+    if not isinstance(route_gate, dict):
+        return False, "ENTRY_ACTION_GATE_EVIDENCE_REQUIRED"
+    if route_gate.get("schema") != "gscc-entry-action-gate-evidence/v1":
+        return False, "ENTRY_ACTION_GATE_EVIDENCE_INVALID"
+    if route_gate.get("status") != "PASSED":
+        return False, "ENTRY_ACTION_GATE_EVIDENCE_INVALID"
+    if route_gate.get("entry_action") != entry_action:
+        return False, "ENTRY_ACTION_GATE_EVIDENCE_MISMATCH"
+    if route_gate.get("session_id") != session.get("session_id"):
+        return False, "ENTRY_ACTION_GATE_EVIDENCE_MISMATCH"
+    if route_gate.get("observed_head") != requested_head:
+        return False, "ENTRY_ACTION_GATE_EVIDENCE_HEAD_MISMATCH"
+    if not route_gate.get("evidence_ref"):
+        return False, "ENTRY_ACTION_GATE_EVIDENCE_REF_REQUIRED"
+
+    required_gates = set(action.get("required_gates") or [])
+    satisfied_gates = set(route_gate.get("satisfied_gates") or [])
+    if not required_gates.issubset(satisfied_gates):
+        return False, "ENTRY_ACTION_REQUIRED_GATES_INCOMPLETE"
+
+    if entry_action == "LAB_EVOLUTION":
+        branch = str(session.get("branch") or "")
+        if not branch:
+            return False, "LAB_EVOLUTION_BRANCH_REQUIRED"
+        canonical_branch = _canonical_branch()
+        if branch == canonical_branch:
+            return False, "LAB_EVOLUTION_CANONICAL_BRANCH_FORBIDDEN"
+        if route_gate.get("branch") != branch:
+            return False, "LAB_EVOLUTION_BRANCH_EVIDENCE_MISMATCH"
+
     return True, None
 
 
@@ -393,6 +441,9 @@ def evaluate_function_exposure(
         allowed_by_route, route_reason = _route_policy_allows_mutation(
             str(session.get("entry_action") or ""),
             str(session.get("connection_intent") or ""),
+            session=session,
+            requested_head=str(requested_head or ""),
+            authority_evidence=authority_evidence,
         )
         if not allowed_by_route:
             result.update(status="DENIED", reason_code=route_reason)
@@ -422,6 +473,7 @@ def evaluate_function_exposure(
         "authority_required": required,
         "authority_evidence_ref": authority_evidence.get("evidence_ref"),
         "live_preflight_evidence_ref": (authority_evidence.get("live_preflight") or {}).get("evidence_ref"),
+        "route_gate_evidence_ref": (authority_evidence.get("route_gate_evidence") or {}).get("evidence_ref"),
         "evaluated_at": result["evaluated_at"],
     }
     result.update(
@@ -431,6 +483,7 @@ def evaluate_function_exposure(
         exposure_receipt=f"GSCC-EXPOSURE-{_digest(receipt_material)}",
         authority_evidence_ref=authority_evidence.get("evidence_ref"),
         live_preflight_evidence_ref=(authority_evidence.get("live_preflight") or {}).get("evidence_ref"),
+        route_gate_evidence_ref=(authority_evidence.get("route_gate_evidence") or {}).get("evidence_ref"),
     )
     return result
 
@@ -496,7 +549,13 @@ def evaluate_issue_comment_exposure(
     if not isinstance(authority, dict):
         raise ValueError("FUNCTION_EXPOSURE_ISSUE_AUTHORITY_OBJECT_REQUIRED")
 
-    allowed_authority_keys = {"authority_class", "evidence_ref", "granted", "live_preflight"}
+    allowed_authority_keys = {
+        "authority_class",
+        "evidence_ref",
+        "granted",
+        "live_preflight",
+        "route_gate_evidence",
+    }
     unexpected_authority = sorted(set(authority) - allowed_authority_keys)
     if unexpected_authority:
         raise ValueError(
@@ -772,6 +831,7 @@ def main() -> None:
     evaluate.add_argument("--live-preflight-status")
     evaluate.add_argument("--live-preflight-head")
     evaluate.add_argument("--live-preflight-evidence-ref")
+    evaluate.add_argument("--route-gate-evidence-json")
     evaluate.add_argument("--snapshot", default=str(_default_snapshot_path()))
     evaluate.add_argument("--sessions", default=str(_default_sessions_path()))
     evaluate.add_argument("--output")
@@ -868,6 +928,14 @@ def main() -> None:
                 "observed_head": args.live_preflight_head,
                 "evidence_ref": args.live_preflight_evidence_ref,
             }
+        if args.route_gate_evidence_json:
+            try:
+                route_gate = json.loads(args.route_gate_evidence_json)
+            except json.JSONDecodeError as exc:
+                raise SystemExit(f"ROUTE_GATE_EVIDENCE_JSON_INVALID:{exc}") from exc
+            if not isinstance(route_gate, dict):
+                raise SystemExit("ROUTE_GATE_EVIDENCE_JSON_OBJECT_REQUIRED")
+            evidence["route_gate_evidence"] = route_gate
 
     result = evaluate_function_exposure(
         tool_name=args.tool_name,
