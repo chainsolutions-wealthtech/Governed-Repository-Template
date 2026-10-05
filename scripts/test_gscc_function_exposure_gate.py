@@ -23,7 +23,7 @@ from gscc_observable_arrival import should_skip_github_arrival
 ROOT = Path(__file__).resolve().parents[1]
 WORKFLOW = ROOT / ".github" / "workflows" / "gscc-function-exposure-gate.yml"
 EXECUTION_WORKFLOW = ROOT / ".github" / "workflows" / "governed-execution.yml"
-SNAPSHOT_PATH = ROOT / ".governance" / "control-plane-state" / "mcp-capability-snapshot.json"
+SNAPSHOT_PATH = exposure_gate._default_snapshot_path()
 UPGRADER = ROOT / "scripts" / "control_plane_upgrade_local_entry.py"
 
 
@@ -613,10 +613,15 @@ class ExposureGateTests(unittest.TestCase):
         self.assertGreater(len(tools), 100)
         self.assertTrue(all(x.get("governed_exposure_gate") == "GSCC_REQUIRED" for x in tools))
         self.assertTrue(all(x.get("governed_exposure_status") == "REQUIRES_RUNTIME_VALIDATION" for x in tools))
-        contract = snapshot["operation_planning_contract"]
-        self.assertTrue(contract["gscc_function_gate_required_before_governed_exposure"])
-        self.assertTrue(contract["gscc_function_gate_required_before_every_governed_invocation"])
-        self.assertTrue(contract["catalogue_presence_is_not_governed_exposure_authority"])
+        if (ROOT / ".template-source").exists():
+            contract = snapshot["operation_planning_contract"]
+            self.assertTrue(contract["gscc_function_gate_required_before_governed_exposure"])
+            self.assertTrue(contract["gscc_function_gate_required_before_every_governed_invocation"])
+            self.assertTrue(contract["catalogue_presence_is_not_governed_exposure_authority"])
+        else:
+            self.assertEqual(snapshot.get("scope"), "PORTABLE_CLIENT_PROJECTION")
+            self.assertNotIn("servers", snapshot)
+            self.assertNotIn("endpoint", snapshot)
 
     def test_governed_execution_must_call_same_exposure_workflow(self):
         workflow = WORKFLOW.read_text(encoding="utf-8")
@@ -624,6 +629,8 @@ class ExposureGateTests(unittest.TestCase):
         self.assertIn("package-evaluate:", workflow)
         self.assertIn("build-package-route", workflow)
         self.assertIn("route_validated", workflow)
+        if not (ROOT / ".template-source").exists():
+            self.skipTest("central governed-execution workflow is source-only")
         execution = EXECUTION_WORKFLOW.read_text(encoding="utf-8")
         self.assertIn("function-exposure-gate:", execution)
         self.assertIn("uses: ./.github/workflows/gscc-function-exposure-gate.yml", execution)
