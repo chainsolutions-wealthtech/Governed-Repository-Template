@@ -370,7 +370,11 @@
     "raw_tool_results_persisted": false,
     "secret_values_persisted": false,
     "provider_private_identity_policy": "SUPPLIED_ONLY_NEVER_INVENT",
-    "external_unintegrated_surface_policy": "OUTSIDE_GOVERNED_EXPOSURE_BOUNDARY"
+    "external_unintegrated_surface_policy": "OUTSIDE_GOVERNED_EXPOSURE_BOUNDARY",
+    "issue_number": 161,
+    "issue_title": "[GSCC Admission Gate] Provider event ingress",
+    "source_issue_number_distributed": false,
+    "client_issue_strategy": "DISABLED_UNTIL_LOCAL_NUMBER_BOUND"
   },
   "gscc_admission_gate": {
     "enabled": true,
