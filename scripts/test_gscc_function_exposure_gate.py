@@ -740,7 +740,7 @@ class ExposureGateTests(unittest.TestCase):
             "surface_class": "CONTROLLED_INSTRUMENTABLE",
             "entry_action": "ADOPT_EXISTING_REPOSITORY",
             "connection_intent": "CODE_CHANGE",
-            "branch": "main",
+            "branch": "governance/adoption",
         })
         preflight = {
             "status": "PASSED",
@@ -969,6 +969,7 @@ class ExposureGateTests(unittest.TestCase):
             ],
             branch="trunk",
         )
+
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
             governance = root / ".governance"
@@ -983,45 +984,46 @@ class ExposureGateTests(unittest.TestCase):
             )
             with patch.object(exposure_gate, "ROOT", root):
                 denied = evaluate_function_exposure(
-            tool_name="write_tool",
-            connection_ref=self.connection_ref,
-            requested_head=self.head,
-            access_grant=self.access_grant(
-                allowed_authority_classes=["EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED"]
-            ),
-            authority_evidence=self.evidence(
-                "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED",
-                preflight=preflight,
-                route_gate=route_gate,
-            ),
-            snapshot=self.snapshot,
-            sessions=sessions,
-            current_repository_head=self.head,
-            now=self.now,
-        )
-        self.assertEqual(denied["status"], "DENIED")
-        self.assertEqual(denied["reason_code"], "LAB_EVOLUTION_CANONICAL_BRANCH_FORBIDDEN")
+                    tool_name="write_tool",
+                    connection_ref=self.connection_ref,
+                    requested_head=self.head,
+                    access_grant=self.access_grant(
+                        allowed_authority_classes=["EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED"]
+                    ),
+                    authority_evidence=self.evidence(
+                        "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED",
+                        preflight=preflight,
+                        route_gate=route_gate,
+                    ),
+                    snapshot=self.snapshot,
+                    sessions=sessions,
+                    current_repository_head=self.head,
+                    now=self.now,
+                )
+                self.assertEqual(denied["status"], "DENIED")
+                self.assertEqual(denied["reason_code"], "LAB_EVOLUTION_CANONICAL_BRANCH_FORBIDDEN")
 
-        sessions["sessions"][0]["branch"] = "lab/authorized-change"
-        route_gate["branch"] = "lab/authorized-change"
-        allowed = evaluate_function_exposure(
-            tool_name="write_tool",
-            connection_ref=self.connection_ref,
-            requested_head=self.head,
-            access_grant=self.access_grant(
-                allowed_authority_classes=["EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED"]
-            ),
-            authority_evidence=self.evidence(
-                "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED",
-                preflight=preflight,
-                route_gate=route_gate,
-            ),
-            snapshot=self.snapshot,
-            sessions=sessions,
-            current_repository_head=self.head,
-            now=self.now,
-        )
-        self.assertEqual(allowed["status"], "VALIDATED")
+                sessions["sessions"][0]["branch"] = "lab/authorized-change"
+                route_gate["branch"] = "lab/authorized-change"
+                allowed = evaluate_function_exposure(
+                    tool_name="write_tool",
+                    connection_ref=self.connection_ref,
+                    requested_head=self.head,
+                    access_grant=self.access_grant(
+                        allowed_authority_classes=["EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED"]
+                    ),
+                    authority_evidence=self.evidence(
+                        "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED",
+                        preflight=preflight,
+                        route_gate=route_gate,
+                    ),
+                    snapshot=self.snapshot,
+                    sessions=sessions,
+                    current_repository_head=self.head,
+                    now=self.now,
+                )
+                self.assertEqual(allowed["status"], "VALIDATED")
+                self.assertEqual(allowed["route_gate_branch"], "lab/authorized-change")
 
     def test_observe_intent_cannot_expose_mutation_function(self):
         sessions = json.loads(json.dumps(self.sessions))
