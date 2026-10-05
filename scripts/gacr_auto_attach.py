@@ -411,6 +411,22 @@ def _candidate_sessions(sessions_doc: dict, observation: dict) -> list[dict]:
             candidates[session["session_id"]] = session
 
     return sorted(candidates.values(), key=lambda x: x.get("session_id") or "")
+def _requires_governed_reconciliation(session: dict) -> bool:
+    relay_state = (session.get("relay") or {}).get("state")
+    return session.get("status") == "STALLED" or relay_state == "TAKEOVER_READY"
+
+
+def _stalled_unbound(session: dict, *, fingerprint: str | None, anchor: dict | None) -> dict:
+    return {
+        "state": "UNBOUND",
+        "reason": "STALLED_SESSION_REQUIRES_GOVERNED_RECONCILIATION",
+        "selected_session": None,
+        "candidate_session_ids": [session["session_id"]],
+        "connection_fingerprint": fingerprint,
+        "presence_anchor": anchor,
+    }
+
+
 def _stable_anchor_present(observation: dict) -> bool:
     return any(
         observation.get(key)
@@ -453,6 +469,8 @@ def bind_presence(sessions_doc: dict, observation: dict, config: dict) -> dict:
             )
         if not fingerprint:
             fingerprint = _fingerprint(anchor)
+        if _requires_governed_reconciliation(session):
+            return _stalled_unbound(session, fingerprint=fingerprint, anchor=anchor)
         return {
             "state": "BOUND",
             "reason": "STABLE_ANCHOR_RESUME",
@@ -489,13 +507,17 @@ def bind_presence(sessions_doc: dict, observation: dict, config: dict) -> dict:
             "presence_anchor": anchor,
         }
     if len(fingerprint_matches) == 1:
+        session = fingerprint_matches[0]
+        selected_anchor = session.get("presence_anchor") or anchor
+        if _requires_governed_reconciliation(session):
+            return _stalled_unbound(session, fingerprint=fingerprint, anchor=selected_anchor)
         return {
             "state": "BOUND",
             "reason": "FINGERPRINT_EXACT",
-            "selected_session": fingerprint_matches[0],
-            "candidate_session_ids": [fingerprint_matches[0]["session_id"]],
+            "selected_session": session,
+            "candidate_session_ids": [session["session_id"]],
             "connection_fingerprint": fingerprint,
-            "presence_anchor": fingerprint_matches[0].get("presence_anchor") or anchor,
+            "presence_anchor": selected_anchor,
         }
 
     return {
