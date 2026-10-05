@@ -145,6 +145,26 @@ def main() -> None:
     ]:
         assert required in source, required
 
+    # GSCC function-exposure hardening is part of the portable client runtime.
+    static_block=source.split("static_paths=[", 1)[1].split("]", 1)[0]
+    for required in [
+        '"scripts/gscc_function_exposure_gate.py"',
+        '"scripts/test_gscc_function_exposure_gate.py"',
+        '".github/workflows/gscc-function-exposure-gate.yml"',
+    ]:
+        assert required in static_block, required
+
+    # Existing clients need a distinct additive AGENTS contract marker so an
+    # already-present Repository-local control-plane section does not suppress
+    # the new first-attach route rules.
+    for required in [
+        "## GACR controlled host route",
+        "CONTINUE_GOVERNED_WORK",
+        "route-neutral",
+        "provider enrichment",
+    ]:
+        assert required in source, required
+
     # Stateful client work/session stores must never be overwritten by upgrade.
     for forbidden in [
         '".governance/work/work-items.json"',
