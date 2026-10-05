@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 63,
+  "revision": 64,
   "items": [
     {
       "forensic_id": "GACR-F-9e71238bc954",
@@ -3452,6 +3452,73 @@
         "active_claims": 0
       },
       "analysis_digest": "44f95aaae398677de64216db9905f24ffd611ae7de49c414aaeac3e1ec309b1a"
+    },
+    {
+      "forensic_id": "GACR-F-c665627dfaef",
+      "generated_at": "2026-10-05T22:04:21+00:00",
+      "process": "GACR",
+      "authority": "CP-AGENT-RELAY-001-R3",
+      "session_id": "session-5d3a9f81431841b798353de1",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "classification": "NO_INTERRUPTION_OBSERVED",
+      "recoverability": "CONTINUE_CURRENT_SESSION",
+      "cause": {
+        "status": "UNOBSERVED",
+        "code": "UNOBSERVED_EXTERNAL_CAUSE",
+        "confidence": "NONE",
+        "note": "GACR never infers browser crash, provider timeout, network loss or tool failure from missing heartbeat alone."
+      },
+      "liveness": {
+        "session_status": "ACTIVE",
+        "relay_state": "ACTIVE",
+        "last_seen_at": "2026-10-05T22:04:20+00:00",
+        "last_heartbeat_at": "2026-10-05T22:04:20+00:00",
+        "lease_expires_at": "2026-10-05T22:34:20+00:00",
+        "lease_expired_at_analysis": false,
+        "stalled_at": null
+      },
+      "work": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "starting_head_sha": "90b2fcb697e7c90877642e35f370a428088eaac8",
+        "last_observed_head_sha": "90b2fcb697e7c90877642e35f370a428088eaac8",
+        "last_written_head_sha": null,
+        "active_claims": [],
+        "lock_observation": "NO_INDEPENDENT_LOCK_STORE; CLAIMS_AND_COLLISION_DOMAINS_ARE_CANONICAL"
+      },
+      "actions": {
+        "last_action_started": null,
+        "last_action_completed": null,
+        "last_tool_call": null,
+        "in_flight_action": null
+      },
+      "last_checkpoint_ref": null,
+      "last_evidence_ref": "github-issue-comment:6003994186",
+      "last_takeover": null,
+      "last_dispatch": null,
+      "resume_point": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "90b2fcb697e7c90877642e35f370a428088eaac8",
+        "last_written_head_sha": null,
+        "checkpoint_ref": null,
+        "evidence_ref": "github-issue-comment:6003994186",
+        "active_claim_work_items": [],
+        "collision_domains": [],
+        "in_flight_action": null,
+        "last_completed_action": null,
+        "requires_exact_head_reobservation": true,
+        "may_replay_in_flight_action_without_reconciliation": false
+      },
+      "evidence_counts": {
+        "beacons": 2,
+        "takeovers": 0,
+        "dispatches": 0,
+        "active_claims": 0
+      },
+      "analysis_digest": "caa75f2a41901f0fb778a9228be737935732cfa0bfd46518e11f43b43fbd96bf"
     }
   ]
 }
