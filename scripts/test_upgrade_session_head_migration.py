@@ -123,6 +123,23 @@ def main() -> None:
     assert merged["gscc_function_exposure_gate"]["client_issue_strategy"] == "LOCAL_NUMBER_BOUND"
     assert merged["gscc_function_exposure_gate"]["source_issue_number_distributed"] is False
 
+    original_target_text = upgrade.target_text
+    try:
+        upgrade.target_text = lambda token, target, path: (
+            __import__("json").dumps(target_config)
+            if path == ".governance/agent-relay/config.json"
+            else None
+        )
+        emitted = __import__("json").loads(
+            upgrade.build_relay_config_update("token", "owner/repo")
+        )
+    finally:
+        upgrade.target_text = original_target_text
+
+    assert emitted["gscc_function_exposure_gate"]["issue_number"] == 333
+    assert emitted["gscc_function_exposure_gate"]["issue_title"] == "[Local GSCC Function Exposure]"
+    assert emitted["gscc_function_exposure_gate"]["client_issue_strategy"] == "LOCAL_NUMBER_BOUND"
+
     unbound = upgrade.merge_relay_config_for_client(source_config, {})
     assert unbound["gscc_function_exposure_gate"]["issue_number"] is None
     assert unbound["gscc_function_exposure_gate"]["client_issue_strategy"] == "DISABLED_UNTIL_LOCAL_NUMBER_BOUND"
@@ -201,7 +218,8 @@ def main() -> None:
     assert "build_portable_capability_projection" in source
 
     assert "merge_relay_config_for_client" in source
-    assert "existing_gacr_config" in source
+    assert "build_relay_config_update(token,target)" in source
+    assert 'updates[".governance/agent-relay/config.json"]=build_relay_config_update(token,target)' in source
 
     # Existing clients need a distinct additive AGENTS contract marker so an
     # already-present Repository-local control-plane section does not suppress
