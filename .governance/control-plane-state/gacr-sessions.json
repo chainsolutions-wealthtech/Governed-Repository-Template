@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 301,
+  "revision": 302,
   "sessions": [
     {
       "session_id": "session-68c97d4bb1ef71c86444de12",
@@ -10760,10 +10760,10 @@
       "connection_intent_provenance": "DEFAULT_UNKNOWN",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "9387ed6c0de306c78b67f39c072b3a49d227e0de",
-      "last_observed_head_sha": "e857f8597da1cacaa4988323144796e3f0bd7400",
+      "last_observed_head_sha": "67468144ae2d5f27e25a34c546d35b3bdc17e037",
       "status": "ACTIVE",
       "created_at": "2026-10-05T22:16:31+00:00",
-      "last_seen_at": "2026-10-05T22:16:53+00:00",
+      "last_seen_at": "2026-10-05T22:17:55+00:00",
       "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations",
       "agent_role": null,
       "capabilities": [
@@ -10777,12 +10777,12 @@
       "relay": {
         "process": "GACR",
         "state": "ACTIVE",
-        "last_heartbeat_at": "2026-10-05T22:16:53+00:00",
-        "lease_expires_at": "2026-10-05T22:46:53+00:00",
+        "last_heartbeat_at": "2026-10-05T22:17:55+00:00",
+        "lease_expires_at": "2026-10-05T22:47:55+00:00",
         "last_action": "RESUME",
         "task_id": null,
         "branch": "governance/gscc-admission-arrival-loop-guard",
-        "pull_request": null
+        "pull_request": 173
       },
       "connection_fingerprint_version": "gacr-connection-fingerprint/v1",
       "presence_anchor": {
@@ -10806,7 +10806,7 @@
         "schema": "gacr-connection-envelope/v1",
         "surface_class": "GITHUB_EVENT_VISIBLE",
         "presence_event": "PRESENCE_RESUME",
-        "observed_at": "2026-10-05T22:16:53+00:00",
+        "observed_at": "2026-10-05T22:17:55+00:00",
         "fields": {
           "gacr_session_id": {
             "value": "session-e34061074ee08ddd3b8d0a11",
@@ -10907,22 +10907,22 @@
             "source": "REPOSITORY_SURFACE"
           },
           "base_branch": {
-            "value": "UNAVAILABLE",
+            "value": "main",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "REPOSITORY_SURFACE"
           },
           "HEAD": {
-            "value": "e857f8597da1cacaa4988323144796e3f0bd7400",
+            "value": "67468144ae2d5f27e25a34c546d35b3bdc17e037",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "REPOSITORY_SURFACE"
           },
           "PR": {
-            "value": "UNAVAILABLE",
+            "value": 173,
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "REPOSITORY_SURFACE"
           },
           "workflow_run_id": {
-            "value": "37381394784",
+            "value": "37381524597",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "GITHUB_EVENT"
           },
@@ -10937,12 +10937,12 @@
             "source": "GITHUB_EVENT"
           },
           "event_type": {
-            "value": "GSCC_OBSERVABLE_PUSH",
+            "value": "GSCC_OBSERVABLE_PULL_REQUEST",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "REPOSITORY_SURFACE"
           },
           "delivery_or_correlation_id": {
-            "value": "37381394784:1",
+            "value": "37381524597:1",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "CONTROLLED_SURFACE"
           },
@@ -10952,7 +10952,7 @@
             "source": "GACR_SESSION"
           },
           "last_seen_at": {
-            "value": "2026-10-05T22:16:53+00:00",
+            "value": "2026-10-05T22:17:55+00:00",
             "provenance": "CORRELATED",
             "source": "GACR_SESSION"
           },
@@ -10962,7 +10962,7 @@
             "source": "CLIENT_OR_ADAPTER"
           },
           "lease_expires_at": {
-            "value": "2026-10-05T22:46:53+00:00",
+            "value": "2026-10-05T22:47:55+00:00",
             "provenance": "CORRELATED",
             "source": "GACR_WATCH"
           },
@@ -10987,7 +10987,7 @@
             "source": "CLIENT_OR_GACR_SESSION"
           },
           "last_evidence": {
-            "value": "github-event:push:37381394784:1",
+            "value": "github-event:pull_request:37381524597:1",
             "provenance": "DECLARED_BY_AGENT_OR_CLIENT",
             "source": "CLIENT_OR_GACR_SESSION"
           },
