@@ -196,6 +196,19 @@ def main() -> None:
     work["items"] = items
     _write_json(work_path, work)
 
+    relay_config_path = ROOT / ".governance" / "agent-relay" / "config.json"
+    if relay_config_path.exists():
+        relay_config = _read_json(relay_config_path)
+        host_bridge = relay_config.setdefault("host_issue_bridge", {})
+        host_bridge["issue_number"] = None
+        host_bridge["source_issue_number_distributed"] = False
+        host_bridge["client_issue_strategy"] = "TITLE_FALLBACK_UNTIL_LOCAL_NUMBER_BOUND"
+        function_gate = relay_config.setdefault("gscc_function_exposure_gate", {})
+        function_gate["issue_number"] = None
+        function_gate["source_issue_number_distributed"] = False
+        function_gate["client_issue_strategy"] = "DISABLED_UNTIL_LOCAL_NUMBER_BOUND"
+        _write_json(relay_config_path, relay_config)
+
     source_snapshot_path = ROOT / ".governance" / "control-plane-state" / "mcp-capability-snapshot.json"
     if source_snapshot_path.exists():
         portable_snapshot = build_portable_capability_projection(_read_json(source_snapshot_path))
