@@ -355,3 +355,64 @@ Tests-first evidence:
 No fresh provider challenge has been claimed. PR #163 remains unmerged. Step 13B remains NOT_EXECUTED and ultimate acceptance remains NOT_PASSED.
 
 Next GACR/GSCC action after owner-authorized integration is one real read-only admission on canonical main, including the issue-control challenge, provider/host ACK and challenge response, GSE projection, Access Policy decision, Access Grant, then the already-required governed read-function exposure request.
+
+## 2026-10-05 — Post-#172 live admission/access/function proof PASS
+
+Status: **PASS / STEP 13B REAUTHORIZED / STEP 13B NOT EXECUTED / ULTIMATE LIVE ACCEPTANCE NOT PASSED**.
+
+The pre-Step-13B live prerequisite is now closed on canonical `main` through one real controlled provider-host path. This evidence does **not** itself execute the fresh-provider Step 13B scenario.
+
+Canonical live chain proved:
+
+```text
+controlled provider-host attach
+→ canonical GACR session
+→ GSCC Admission PREAUTHORIZED
+→ canonical qualification harvest
+→ GSCC liveness challenge
+→ COMMAND_ACK
+→ CHALLENGE_RESPONSE
+→ GSE/control qualification complete
+→ bounded read-only Access Grant
+→ existing GSCC Function Exposure Gate
+→ github_get_repository_state
+→ VALIDATED exposure receipt
+```
+
+Live evidence:
+
+- connection: `gscc-live:chatgpt:20261005:continuation-003`;
+- canonical session: `session-5d3a9f81431841b798353de1`;
+- control dispatch: `GSCC-CTRL-4f74a843203789270f1dd4e4`;
+- challenge: `GSCC-CH-0c01697f0efce16a6479bf05`;
+- ACK evidence: `github-issue-comment:6004084287`;
+- challenge-response evidence: `github-issue-comment:6004096273`;
+- admission/qualification run: `37380656936 = SUCCESS`;
+- admission: `GSCC-ADM-65b5430f45f03e63ba736e2638b4bc4470174e3cc3774558de009c49072f47ea`;
+- Access Grant: `GSCC-GRANT-4e5e4fde92cd8728dc5ef14f94123c56231a5aadd6bf9054002d88283a7f8fda`;
+- bounded HEAD: `9387ed6c0de306c78b67f39c072b3a49d227e0de`;
+- authority class: `READ_ONLY_DISCOVERY_AUTHORITY`;
+- mutation authority: `false`;
+- invocation authority: `false`;
+- function-exposure run: `37381090312 = SUCCESS`;
+- tool: `github_get_repository_state`;
+- exposure receipt: `GSCC-EXPOSURE-f810c5254cd16e7fe04a439d863d672930dd3927be5be87a07d613328e3d936a`;
+- exposure result: `VALIDATED / exposable=true`.
+
+Two live transport/continuity findings discovered after that proof were closed without weakening GACR safety:
+
+1. PR #173, merge `0d993f2a80e75befca5ccfe7bb29ac0cd37b3624`, classifies `/gscc-admission ` as `INTERNAL_GSCC_ADMISSION_INGRESS`. Replay Admission run `37382668963` remained successful; Observable Arrival run `37382668905` returned `GSCC_ARRIVAL_SKIPPED / INTERNAL_GSCC_ADMISSION_INGRESS`; no recursive `gacr_auto-attach` was emitted by that replay.
+2. PR #174, merge `0d6a0170a2ff3175bd4ce77f333c19782707f42d`, preserves the no-resurrection rule for `STALLED / TAKEOVER_READY` sessions. Post-merge Governance CI `37382500294`, Function Exposure `37382500133`, Function Route Selftest `37382500536` and Relay push `37382500222` all passed. Downstream auto-attach `37382512096 = SUCCESS` returned `UNBOUND_ACTIVITY / STALLED_SESSION_REQUIRES_GOVERNED_RECONCILIATION`, with no stalled-session resume and no replacement session.
+
+Canonical consequence:
+
+```text
+Step 13B = NEXT_AUTHORIZED / NOT_EXECUTED
+ULTIMATE_LIVE_ACCEPTANCE = NOT_PASSED
+GACR_NEXT_ACTION = REALIGNMENT_STEP_13B_RUN_REAL_FRESH_PROVIDER_AGENT_TEST
+```
+
+Step 13B still requires the genuinely fresh provider conversation/agent defined by the origin-realignment authority, without instructing that fresh agent to register with GACR, followed by the complete live continuity scenario through stall, second agent, stopping-point reconstruction, exact-HEAD reconciliation, governed takeover and continuation.
+
+This GACR/GSCC attestation does not advance or replace the global Control Plane programme. Global `NEXT_ACTION` remains `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+
