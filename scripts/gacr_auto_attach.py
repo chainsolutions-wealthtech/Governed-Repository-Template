@@ -755,12 +755,19 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
     session["connection_method"] = observation.get("connection_method")
     if observation.get("github_actor"):
         session["github_actor"] = observation["github_actor"]
-    if observation.get("entry_action"):
-        session["entry_action"] = observation["entry_action"]
-        session["entry_action_provenance"] = "PROVIDED_BY_CLIENT"
-    if observation.get("connection_intent"):
-        session["connection_intent"] = observation["connection_intent"]
-        session["connection_intent_provenance"] = "PROVIDED_BY_CLIENT"
+    for route_field in ("entry_action", "connection_intent"):
+        incoming = observation.get(route_field)
+        if incoming in (None, ""):
+            continue
+        if resolution == "CREATE":
+            session[route_field] = incoming
+            session[f"{route_field}_provenance"] = "PROVIDED_BY_CLIENT"
+            continue
+        current = session.get(route_field)
+        if current != incoming:
+            raise ValueError(
+                f"GACR_ROUTE_RECONCILIATION_REQUIRED:{route_field}:current={current or UNAVAILABLE}:requested={incoming}"
+            )
 
     presence_event = "PRESENCE_FIRST_TOUCH" if resolution == "CREATE" else "PRESENCE_RESUME"
     envelope = build_connection_envelope(

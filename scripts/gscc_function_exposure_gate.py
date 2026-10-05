@@ -14,8 +14,10 @@ from gscc.admission import validate_access_grant
 from gscc_observable_arrival import build_github_arrival_facts, should_skip_github_arrival
 
 ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_SNAPSHOT = ROOT / ".governance" / "control-plane-state" / "mcp-capability-snapshot.json"
-DEFAULT_SESSIONS = ROOT / ".governance" / "control-plane-state" / "gacr-sessions.json"
+SOURCE_SNAPSHOT = ROOT / ".governance" / "control-plane-state" / "mcp-capability-snapshot.json"
+PORTABLE_SNAPSHOT = ROOT / ".governance" / "gscc" / "mcp-capability-snapshot.json"
+CONNECTION_INTENT_POLICY = ROOT / ".governance" / "connection-intent-policy.json"
+ENTRY_ACTION_POLICY = ROOT / ".governance" / "entry-action-policy.json"
 
 CONTROLLED_CLIENT_CONNECTION_METHOD = "controlled-client-adapter"
 GSCC_CONNECTION_METHODS = {
@@ -79,6 +81,39 @@ def _load_json(path: str | Path) -> dict[str, Any]:
     if not isinstance(data, dict):
         raise ValueError(f"JSON object required: {path}")
     return data
+
+
+def _configured_function_exposure_issue_number() -> int:
+    config_path = ROOT / ".governance" / "agent-relay" / "config.json"
+    config = _load_json(config_path)
+    value = (config.get("gscc_function_exposure_gate") or {}).get("issue_number")
+    if not isinstance(value, int) or value <= 0:
+        raise RuntimeError("FUNCTION_EXPOSURE_ISSUE_NOT_CONFIGURED")
+    return value
+
+
+def _default_snapshot_path() -> Path:
+    if (ROOT / ".template-source").exists():
+        return ROOT / ".governance" / "control-plane-state" / "mcp-capability-snapshot.json"
+    return ROOT / ".governance" / "gscc" / "mcp-capability-snapshot.json"
+
+
+def _default_sessions_path() -> Path:
+    if (ROOT / ".template-source").exists():
+        return ROOT / ".governance" / "control-plane-state" / "gacr-sessions.json"
+    return ROOT / ".governance" / "sessions" / "sessions.json"
+
+
+def _route_policy_allows_mutation(entry_action: str, connection_intent: str) -> tuple[bool, str | None]:
+    entry_policy = _load_json(ENTRY_ACTION_POLICY)
+    intent_policy = _load_json(CONNECTION_INTENT_POLICY)
+    action = (entry_policy.get("actions") or {}).get(entry_action) or {}
+    intent = (intent_policy.get("intents") or {}).get(connection_intent) or {}
+    if action.get("initial_mutable") is not True:
+        return False, "ENTRY_ACTION_POLICY_FORBIDS_MUTATION"
+    if intent.get("may_dispatch_mutable_work") is not True:
+        return False, "CONNECTION_INTENT_POLICY_FORBIDS_MUTATION"
+    return True, None
 
 
 def _safe_evidence(value: Any) -> None:
@@ -273,12 +308,12 @@ def evaluate_function_exposure(
         )
         return result
 
-    if session.get("connection_method") == CONTROLLED_CLIENT_CONNECTION_METHOD:
+    if session.get("surface_class") == "CONTROLLED_INSTRUMENTABLE":
         if current_repository_head is None:
             result.update(status="DENIED", reason_code="CURRENT_HEAD_REOBSERVATION_REQUIRED")
             return result
-        entry_action = access_grant.get("entry_action")
-        connection_intent = access_grant.get("connection_intent")
+        entry_action = session.get("entry_action")
+        connection_intent = session.get("connection_intent")
         if entry_action in UNRESOLVED_ROUTE_VALUES:
             result.update(status="DENIED", reason_code="ENTRY_ACTION_RESOLUTION_REQUIRED")
             return result
@@ -287,6 +322,12 @@ def evaluate_function_exposure(
             return result
         result["entry_action"] = entry_action
         result["connection_intent"] = connection_intent
+        result["route_authority"] = {
+            "source": "CANONICAL_GACR_SESSION",
+            "session_id": session.get("session_id"),
+            "entry_action_provenance": session.get("entry_action_provenance"),
+            "connection_intent_provenance": session.get("connection_intent_provenance"),
+        }
 
     if tool is None:
         result.update(status="DENIED", reason_code="FUNCTION_NOT_IN_CANONICAL_CATALOGUE")
@@ -348,6 +389,15 @@ def evaluate_function_exposure(
         return result
 
     mutation_like = tool.get("surface") != "read"
+    if mutation_like and session.get("surface_class") == "CONTROLLED_INSTRUMENTABLE":
+        allowed_by_route, route_reason = _route_policy_allows_mutation(
+            str(session.get("entry_action") or ""),
+            str(session.get("connection_intent") or ""),
+        )
+        if not allowed_by_route:
+            result.update(status="DENIED", reason_code=route_reason)
+            return result
+
     if mutation_like and (snapshot.get("refresh_policy") or {}).get("pre_mutation_live_refresh_required", True):
         preflight = authority_evidence.get("live_preflight")
         if not isinstance(preflight, dict) or preflight.get("status") != "PASSED":
@@ -624,9 +674,31 @@ def _git_head() -> str:
     return proc.stdout.strip()
 
 
-def _git_remote_main_head() -> str:
+def _canonical_branch() -> str:
+    profile_path = ROOT / ".governance" / "profile.json"
+    if profile_path.exists():
+        profile = _load_json(profile_path)
+        branch = profile.get("canonical_branch")
+        if isinstance(branch, str):
+            branch = branch.strip()
+            if branch and not branch.startswith("{{"):
+                return branch
+
+    if (ROOT / ".template-source").exists():
+        handoff_path = ROOT / ".governance" / "control-plane-state" / "handoff.json"
+        if handoff_path.exists():
+            handoff = _load_json(handoff_path)
+            branch = handoff.get("canonical_branch")
+            if isinstance(branch, str) and branch.strip():
+                return branch.strip()
+
+    raise RuntimeError("CANONICAL_BRANCH_UNAVAILABLE")
+
+
+def _git_remote_canonical_head() -> str:
+    branch = _canonical_branch()
     proc = subprocess.run(
-        ["git", "ls-remote", "--exit-code", "origin", "refs/heads/main"],
+        ["git", "ls-remote", "--exit-code", "origin", f"refs/heads/{branch}"],
         cwd=ROOT,
         text=True,
         capture_output=True,
@@ -668,6 +740,8 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="GSCC mandatory function exposure gate")
     sub = parser.add_subparsers(dest="command", required=True)
 
+    canonical = sub.add_parser("canonical-branch")
+
     arrival = sub.add_parser("arrival-plan")
     arrival.add_argument("--event-path", default=os.environ.get("GITHUB_EVENT_PATH"))
     arrival.add_argument("--output")
@@ -676,14 +750,14 @@ def main() -> None:
     package.add_argument("--package", required=True)
     package.add_argument("--repository", required=True)
     package.add_argument("--expected-source-head", required=True)
-    package.add_argument("--snapshot", default=str(DEFAULT_SNAPSHOT))
+    package.add_argument("--snapshot", default=str(_default_snapshot_path()))
     package.add_argument("--output")
 
     issue_comment = sub.add_parser("issue-comment")
     issue_comment.add_argument("--event-path", default=os.environ.get("GITHUB_EVENT_PATH"))
-    issue_comment.add_argument("--expected-issue-number", type=int, required=True)
-    issue_comment.add_argument("--snapshot", default=str(DEFAULT_SNAPSHOT))
-    issue_comment.add_argument("--sessions", default=str(DEFAULT_SESSIONS))
+    issue_comment.add_argument("--expected-issue-number", type=int)
+    issue_comment.add_argument("--snapshot", default=str(_default_snapshot_path()))
+    issue_comment.add_argument("--sessions", default=str(_default_sessions_path()))
     issue_comment.add_argument("--output")
     issue_comment.add_argument("--require-validated", action="store_true")
 
@@ -698,12 +772,16 @@ def main() -> None:
     evaluate.add_argument("--live-preflight-status")
     evaluate.add_argument("--live-preflight-head")
     evaluate.add_argument("--live-preflight-evidence-ref")
-    evaluate.add_argument("--snapshot", default=str(DEFAULT_SNAPSHOT))
-    evaluate.add_argument("--sessions", default=str(DEFAULT_SESSIONS))
+    evaluate.add_argument("--snapshot", default=str(_default_snapshot_path()))
+    evaluate.add_argument("--sessions", default=str(_default_sessions_path()))
     evaluate.add_argument("--output")
     evaluate.add_argument("--require-validated", action="store_true")
 
     args = parser.parse_args()
+
+    if args.command == "canonical-branch":
+        print(_canonical_branch())
+        return
 
     if args.command == "package-evaluate":
         actual_head = _git_head()
@@ -751,12 +829,17 @@ def main() -> None:
     if args.command == "issue-comment":
         if not args.event_path:
             raise SystemExit("GITHUB_EVENT_PATH_REQUIRED")
+        expected_issue_number = (
+            args.expected_issue_number
+            if args.expected_issue_number is not None
+            else _configured_function_exposure_issue_number()
+        )
         result = evaluate_issue_comment_exposure(
             _event_payload(args.event_path),
-            expected_issue_number=args.expected_issue_number,
+            expected_issue_number=expected_issue_number,
             snapshot=_load_json(args.snapshot),
             sessions=_load_json(args.sessions),
-            current_repository_head=_git_remote_main_head(),
+            current_repository_head=_git_remote_canonical_head(),
         )
         _write_output(result, args.output)
         if args.require_validated and result.get("status") != "VALIDATED":
@@ -794,7 +877,7 @@ def main() -> None:
         authority_evidence=evidence,
         snapshot=_load_json(args.snapshot),
         sessions=_load_json(args.sessions),
-        current_repository_head=_git_remote_main_head(),
+        current_repository_head=_git_remote_canonical_head(),
     )
     _write_output(result, args.output)
     if args.require_validated and result.get("status") != "VALIDATED":

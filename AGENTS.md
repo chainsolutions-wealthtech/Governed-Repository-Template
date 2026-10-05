@@ -161,13 +161,16 @@ For this Template source, the configured ingress is issue `#115`. Read `.governa
 A host event uses one JSON object after the exact prefix `/gacr-host `:
 
 ```text
-/gacr-host {"schema":"gacr-host-event/v1","event":"action","connection_ref":"<stable-connection-ref>","client_instance_id":"<stable-client-instance>","provider":"chatgpt","action_id":"<opaque-id>","action_label":"<safe-label>","action_phase":"STARTED","tool_name":"<safe-tool-name>","tool_call_id":"<opaque-call-id>","observed_head":"<sha>"}
+/gacr-host {"schema":"gacr-host-event/v1","event":"attach","connection_ref":"<stable-connection-ref>","client_instance_id":"<stable-client-instance>","provider":"chatgpt","observed_head":"<sha>","entry_action":"CONTINUE_GOVERNED_WORK","connection_intent":"OBSERVE"}
 ```
 
 Required behavior for hosts using this fallback:
 
 - emit an `attach`, `heartbeat`, `action`, or explicitly observed `interrupt` event without waiting for a human reminder;
 - reuse the same `connection_ref` / `client_instance_id` for the same conversation/client instance;
+- on first controlled attach, supply the canonical GACR `entry_action` and `connection_intent` when they are known; for read-only continuation this may be `CONTINUE_GOVERNED_WORK` + `OBSERVE`;
+- treat GACR session route and GSCC Admission intent as distinct vocabularies: Admission values such as `REPOSITORY_ACCESS` / `READ_ONLY_DISCOVERY` never resolve an `UNKNOWN` GACR session route;
+- never use later provider enrichment to change or resolve an existing session route; route changes require the normal governed session/reconciliation path;
 - use provider references only when actually available;
 - never include transcript bodies, prompts, responses, cookies, authorization headers, tokens, passwords, private keys or secret values;
 - treat the GitHub comment ID as the immutable ingress evidence/idempotency key;
