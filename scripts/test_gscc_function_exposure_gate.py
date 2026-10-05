@@ -635,7 +635,9 @@ class ExposureGateTests(unittest.TestCase):
         self.assertIn('"scripts/gscc/protocol.py"', text)
         self.assertIn('"scripts/gscc_observable_arrival.py"', text)
         self.assertIn('".github/workflows/gscc-observable-arrival.yml"', text)
+        self.assertIn('"scripts/gscc/capability_projection.py"', text)
         self.assertIn('"scripts/gscc_function_exposure_gate.py"', text)
+        self.assertIn('".governance/gscc/mcp-capability-snapshot.json"', text)
         self.assertIn('"scripts/test_gscc_function_exposure_gate.py"', text)
         self.assertIn('".github/workflows/gscc-function-exposure-gate.yml"', text)
 
@@ -691,6 +693,24 @@ class ExposureGateTests(unittest.TestCase):
         )
         self.assertEqual(denied["status"], "DENIED")
         self.assertEqual(denied["reason_code"], "CONNECTION_INTENT_POLICY_FORBIDS_MUTATION")
+
+    def test_default_snapshot_follows_source_client_boundary(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / ".governance").mkdir(parents=True)
+
+            with patch.object(exposure_gate, "ROOT", root):
+                self.assertEqual(
+                    exposure_gate._default_snapshot_path(),
+                    root / ".governance" / "gscc" / "mcp-capability-snapshot.json",
+                )
+
+            (root / ".template-source").write_text("", encoding="utf-8")
+            with patch.object(exposure_gate, "ROOT", root):
+                self.assertEqual(
+                    exposure_gate._default_snapshot_path(),
+                    root / ".governance" / "control-plane-state" / "mcp-capability-snapshot.json",
+                )
 
     def test_default_session_store_follows_source_client_boundary(self):
         with tempfile.TemporaryDirectory() as tmp:
