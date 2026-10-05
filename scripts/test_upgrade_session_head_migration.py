@@ -149,11 +149,15 @@ def main() -> None:
     static_block=source.split("static_paths=[", 1)[1].split("]", 1)[0]
     for required in [
         '"scripts/gscc/admission.py"',
+        '"scripts/gscc/capability_projection.py"',
         '"scripts/gscc_function_exposure_gate.py"',
         '"scripts/test_gscc_function_exposure_gate.py"',
         '".github/workflows/gscc-function-exposure-gate.yml"',
     ]:
         assert required in static_block, required
+
+    assert '".governance/gscc/mcp-capability-snapshot.json"' in source
+    assert "build_portable_capability_projection" in source
 
     # Existing clients need a distinct additive AGENTS contract marker so an
     # already-present Repository-local control-plane section does not suppress
