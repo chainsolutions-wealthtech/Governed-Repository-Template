@@ -759,6 +759,22 @@ class ExposureGateTests(unittest.TestCase):
                     root / ".governance" / "control-plane-state" / "gacr-sessions.json",
                 )
 
+    def test_exposure_issue_ingress_is_repository_local_and_fail_closed(self):
+        text = WORKFLOW.read_text(encoding="utf-8")
+        self.assertNotIn("github.event.issue.number == 161", text)
+        self.assertNotIn("--expected-issue-number 161", text)
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            cfg = root / ".governance" / "agent-relay"
+            cfg.mkdir(parents=True)
+            (cfg / "config.json").write_text(
+                json.dumps({"gscc_function_exposure_gate": {"issue_number": None}}),
+                encoding="utf-8",
+            )
+            with patch.object(exposure_gate, "ROOT", root):
+                with self.assertRaisesRegex(RuntimeError, "FUNCTION_EXPOSURE_ISSUE_NOT_CONFIGURED"):
+                    exposure_gate._configured_function_exposure_issue_number()
+
     def test_exposure_workflow_has_no_canonical_main_hardcoding(self):
         text = WORKFLOW.read_text(encoding="utf-8")
         self.assertNotIn("ref: main", text)
