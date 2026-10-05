@@ -169,7 +169,7 @@ def main() -> None:
         "## GACR controlled host route",
         "CONTINUE_GOVERNED_WORK",
         "route-neutral",
-        "provider enrichment",
+        "Provider enrichment",
     ]:
         assert required in source, required
 
