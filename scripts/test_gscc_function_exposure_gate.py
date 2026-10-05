@@ -201,6 +201,7 @@ class ExposureGateTests(unittest.TestCase):
                     "CLEAN_OR_EXPLICITLY_RECONCILED",
                     "ADOPTION_PLAN_ACCEPTED",
                 ],
+                branch="governance/adoption",
             ),
         )
         result = evaluate_issue_comment_exposure(
@@ -988,7 +989,8 @@ class ExposureGateTests(unittest.TestCase):
                     connection_ref=self.connection_ref,
                     requested_head=self.head,
                     access_grant=self.access_grant(
-                        allowed_authority_classes=["EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED"]
+                        allowed_authority_classes=["EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED"],
+                        constraints={"direct_main_write": True, "merge": False},
                     ),
                     authority_evidence=self.evidence(
                         "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED",
@@ -1010,7 +1012,8 @@ class ExposureGateTests(unittest.TestCase):
                     connection_ref=self.connection_ref,
                     requested_head=self.head,
                     access_grant=self.access_grant(
-                        allowed_authority_classes=["EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED"]
+                        allowed_authority_classes=["EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED"],
+                        constraints={"direct_main_write": True, "merge": False},
                     ),
                     authority_evidence=self.evidence(
                         "EXPLICIT_SCOPED_MUTATION_AUTHORITY_REQUIRED",
