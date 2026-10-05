@@ -127,6 +127,19 @@ def main() -> None:
     assert unbound["gscc_function_exposure_gate"]["issue_number"] is None
     assert unbound["gscc_function_exposure_gate"]["client_issue_strategy"] == "DISABLED_UNTIL_LOCAL_NUMBER_BOUND"
 
+    legacy_unbound = upgrade.merge_relay_config_for_client(
+        source_config,
+        {
+            "gscc_function_exposure_gate": {
+                "issue_number": 161,
+                "source_issue_number_distributed": False,
+                "client_issue_strategy": "DISABLED_UNTIL_LOCAL_NUMBER_BOUND",
+            }
+        },
+    )
+    assert legacy_unbound["gscc_function_exposure_gate"]["issue_number"] is None
+    assert legacy_unbound["gscc_function_exposure_gate"]["client_issue_strategy"] == "DISABLED_UNTIL_LOCAL_NUMBER_BOUND"
+
     source = open(upgrade.__file__, "r", encoding="utf-8").read()
     assert 'local.update({"repository":target,"status":"WAITING_FOR_FIRST_AGENT"' not in source
     assert 'existing_local=target_text(token,target,".governance/local-entry/state.json")' in source
