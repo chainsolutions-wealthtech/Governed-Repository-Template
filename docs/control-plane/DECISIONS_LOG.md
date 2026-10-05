@@ -469,3 +469,17 @@ Append-only durable decisions for the source/control-plane repository.
 - PR #163 provides the tests-first candidate. Its controlled Q12 path is green, but real provider/host challenge proof on canonical main remains NOT_EXECUTED.
 - Step 13B and ultimate live acceptance remain NOT_EXECUTED / NOT_PASSED.
 - The global Control Plane programme remains independent; P12-S6, CASE 1 and GMC are untouched.
+
+### CPD-064 — The draft GSCC Entry Context Gate is superseded by Admission + canonical qualification
+
+- Date: 2026-10-05.
+- Draft PR #157 introduced a separate `gscc-entry-context/v1` gate before CPD-061/062 were defined.
+- Its core safety intent is retained: provider/host facts must be bounded and secretless, while repository facts that GSCC can verify must be independently observed.
+- The canonical architecture now satisfies this intent through the stronger chain `AdmissionEnvelope → PREAUTHORIZED → canonical Harvester/Q1→Q12 → Access Grant → existing Function Exposure Gate`.
+- No second entry receipt or parallel function-exposure prerequisite is authorized.
+- Provider-private `agent_identity` is not promoted back to REQUIRED; unavailable provider-private identity remains explicitly unavailable.
+- A host-declared `function_surface` is not access authority and must not constrain or broaden the canonical function catalogue. Requested capabilities are declarations; the canonical capability snapshot, Access Grant, route policy, authority evidence and per-function exposure receipt govern actual exposure.
+- GitHub-verifiable repository/branch/HEAD facts are harvested from canonical GitHub state and are not trusted merely because the host supplied them.
+- PR #157 is therefore `SUPERSEDED_BY_CPD_061_CPD_062_AND_PRS_159_163_175` and must be closed without merge.
+- This decision changes no runtime authority, does not execute Step 13B, and does not advance P12-S6 / CASE 1 / GMC.
+
