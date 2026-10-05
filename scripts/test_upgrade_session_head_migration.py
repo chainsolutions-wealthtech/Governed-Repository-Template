@@ -170,6 +170,21 @@ def main() -> None:
     ]:
         assert required in source, required
 
+    manifest_categories=manifest["categories"]
+    for portable in [
+        "scripts/gscc/capability_projection.py",
+        "scripts/gscc_function_exposure_gate.py",
+        "scripts/test_gscc_function_exposure_gate.py",
+        ".github/workflows/gscc-function-exposure-gate.yml",
+    ]:
+        assert portable in manifest_categories["automation"], portable
+    for no_longer_source_only in [
+        "scripts/gscc_function_exposure_gate.py",
+        "scripts/test_gscc_function_exposure_gate.py",
+        ".github/workflows/gscc-function-exposure-gate.yml",
+    ]:
+        assert no_longer_source_only not in manifest_categories["control_plane_source_only"], no_longer_source_only
+
     # Stateful client work/session stores must never be overwritten by upgrade.
     for forbidden in [
         '".governance/work/work-items.json"',
