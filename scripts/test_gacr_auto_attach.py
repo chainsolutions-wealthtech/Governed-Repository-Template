@@ -68,12 +68,21 @@ def main() -> None:
         env = os.environ.copy()
         env["GACR_ROOT"] = str(root)
         env["GITHUB_REPOSITORY"] = "example/governed"
-        first = json.loads(run(env, "--prefer-chronicle", "--observed-head", "a"*40, "--branch", "main").stdout)
+        first = json.loads(run(
+            env,
+            "--prefer-chronicle",
+            "--observed-head", "a"*40,
+            "--branch", "main",
+            "--entry-action", "CONTINUE_GOVERNED_WORK",
+            "--connection-intent", "OBSERVE",
+        ).stdout)
         sid = first["session"]["session_id"]
         assert_true(first["status"] == "CREATE", "first attach creates")
         assert_true(first["attachment_source"] == "CONVERSATION_CHRONICLE", "chronicle selected")
         assert_true(first["session"]["connection_ref"] == "chronicle:CHAT-MEM-TEST:SESSION-TEST", "stable chronicle ref")
         assert_true(first["session"]["provider_conversation_ref"] is None, "conversation ref may be unavailable")
+        assert_true(first["session"]["entry_action"] == "CONTINUE_GOVERNED_WORK", "create stores canonical entry action")
+        assert_true(first["session"]["connection_intent"] == "OBSERVE", "create stores canonical connection intent")
 
         second = json.loads(run(
             env,
@@ -84,11 +93,15 @@ def main() -> None:
             "--client-instance-id", "chronicle:CHAT-MEM-TEST",
             "--observed-head", "a"*40,
             "--branch", "main",
+            "--entry-action", "LAB_EVOLUTION",
+            "--connection-intent", "CODE_CHANGE",
         ).stdout)
         assert_true(second["status"] == "RESUME", "late provider binding resumes")
         assert_true(second["session"]["session_id"] == sid, "late binding must not duplicate session")
         assert_true(second["session"]["provider"] == "chatgpt", "provider promoted from other")
         assert_true(second["session"]["provider_conversation_ref"] == "conversation-123", "provider ref enriched")
+        assert_true(second["session"]["entry_action"] == "CONTINUE_GOVERNED_WORK", "resume cannot rewrite canonical entry action")
+        assert_true(second["session"]["connection_intent"] == "OBSERVE", "resume cannot rewrite canonical connection intent")
 
         third = json.loads(run(
             env,
