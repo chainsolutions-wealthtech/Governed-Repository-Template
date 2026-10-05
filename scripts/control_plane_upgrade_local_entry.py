@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, base64, json, os, re, urllib.error, urllib.parse, urllib.request
+import argparse, base64, copy, json, os, re, urllib.error, urllib.parse, urllib.request
 from pathlib import Path
 from local_governed_entry import reconcile_both_smart_routing, reconcile_domain_question_order, reconcile_existing_host_path_question_order, reconcile_legacy_discovery_authority, reconcile_setup_question_order
 from gscc.capability_projection import build_portable_capability_projection
@@ -39,6 +39,42 @@ def target_text(token,target,path):
 def append_once(text,marker,addition):
     if marker in text:return text
     return text.rstrip()+"\n\n"+addition.strip()+"\n"
+
+
+def merge_relay_config_for_client(source_config,target_config):
+    merged=copy.deepcopy(source_config if isinstance(source_config,dict) else {})
+    target_config=target_config if isinstance(target_config,dict) else {}
+
+    # Host-bridge source identity remains repository-local. Preserve the
+    # established title-fallback behavior from the portable baseline.
+    host_bridge=merged.setdefault("host_issue_bridge",{})
+    host_bridge["issue_number"]=None
+    host_bridge["source_issue_number_distributed"]=False
+    host_bridge["client_issue_strategy"]="TITLE_FALLBACK_UNTIL_LOCAL_NUMBER_BOUND"
+    host_bridge["live_proof_status"]="CLIENT_TITLE_FALLBACK_CI_PROVEN_SOURCE_LIVE_PROOF_SEPARATE"
+    merged.setdefault("external_bridge",{})["chatgpt_issue_bridge_live_proven"]=False
+
+    function_gate=merged.setdefault("gscc_function_exposure_gate",{})
+    target_gate=target_config.get("gscc_function_exposure_gate")
+    target_gate=target_gate if isinstance(target_gate,dict) else {}
+    target_issue=target_gate.get("issue_number")
+    local_bound=(
+        isinstance(target_issue,int)
+        and target_issue>0
+        and target_gate.get("source_issue_number_distributed") is False
+        and target_gate.get("client_issue_strategy")=="LOCAL_NUMBER_BOUND"
+    )
+    if local_bound:
+        function_gate["issue_number"]=target_issue
+        if isinstance(target_gate.get("issue_title"),str) and target_gate.get("issue_title").strip():
+            function_gate["issue_title"]=target_gate["issue_title"]
+        function_gate["source_issue_number_distributed"]=False
+        function_gate["client_issue_strategy"]="LOCAL_NUMBER_BOUND"
+    else:
+        function_gate["issue_number"]=None
+        function_gate["source_issue_number_distributed"]=False
+        function_gate["client_issue_strategy"]="DISABLED_UNTIL_LOCAL_NUMBER_BOUND"
+    return merged
 
 def decode_local_issue_state(body):
     match=LOCAL_STATE_RE.search(body or "")
@@ -166,21 +202,13 @@ def main():
     workflow_model["repository"]=target
     updates[".governance/workflow-model.json"]=json.dumps(workflow_model,ensure_ascii=False,indent=2)+"\n"
 
-    # GACR provider-host inbox identity is repository-local runtime state. Never
-    # distribute the Template source issue number (#115) into a target client.
-    # Until a client-local issue number is explicitly bound, the ingress
-    # validates the canonical configured title instead.
-    gacr_config=json.loads((ROOT/".governance/agent-relay/config.json").read_text(encoding="utf-8"))
-    host_bridge=gacr_config.setdefault("host_issue_bridge",{})
-    host_bridge["issue_number"]=None
-    host_bridge["source_issue_number_distributed"]=False
-    host_bridge["client_issue_strategy"]="TITLE_FALLBACK_UNTIL_LOCAL_NUMBER_BOUND"
-    host_bridge["live_proof_status"]="CLIENT_TITLE_FALLBACK_CI_PROVEN_SOURCE_LIVE_PROOF_SEPARATE"
-    gacr_config.setdefault("external_bridge",{})["chatgpt_issue_bridge_live_proven"]=False
-    function_gate=gacr_config.setdefault("gscc_function_exposure_gate",{})
-    function_gate["issue_number"]=None
-    function_gate["source_issue_number_distributed"]=False
-    function_gate["client_issue_strategy"]="DISABLED_UNTIL_LOCAL_NUMBER_BOUND"
+    # GACR/GSCC ingress identities are repository-local runtime state. Start
+    # from the portable Template contract, but preserve an explicitly bound
+    # target-local function exposure issue across governed upgrades.
+    source_gacr_config=json.loads((ROOT/".governance/agent-relay/config.json").read_text(encoding="utf-8"))
+    existing_gacr_config_text=target_text(token,target,".governance/agent-relay/config.json")
+    existing_gacr_config=json.loads(existing_gacr_config_text) if existing_gacr_config_text else {}
+    gacr_config=merge_relay_config_for_client(source_gacr_config,existing_gacr_config)
     updates[".governance/agent-relay/config.json"]=json.dumps(gacr_config,ensure_ascii=False,indent=2)+"\n"
 
     existing_gacr_takeovers=target_text(token,target,".governance/agent-relay/takeovers.json")
