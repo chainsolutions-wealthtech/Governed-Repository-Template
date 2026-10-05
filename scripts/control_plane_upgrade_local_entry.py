@@ -76,6 +76,14 @@ def merge_relay_config_for_client(source_config,target_config):
         function_gate["client_issue_strategy"]="DISABLED_UNTIL_LOCAL_NUMBER_BOUND"
     return merged
 
+def build_relay_config_update(token,target):
+    source_config=json.loads((ROOT/".governance/agent-relay/config.json").read_text(encoding="utf-8"))
+    existing_text=target_text(token,target,".governance/agent-relay/config.json")
+    existing_config=json.loads(existing_text) if existing_text else {}
+    merged=merge_relay_config_for_client(source_config,existing_config)
+    return json.dumps(merged,ensure_ascii=False,indent=2)+"\n"
+
+
 def decode_local_issue_state(body):
     match=LOCAL_STATE_RE.search(body or "")
     if not match:return None
@@ -205,11 +213,7 @@ def main():
     # GACR/GSCC ingress identities are repository-local runtime state. Start
     # from the portable Template contract, but preserve an explicitly bound
     # target-local function exposure issue across governed upgrades.
-    source_gacr_config=json.loads((ROOT/".governance/agent-relay/config.json").read_text(encoding="utf-8"))
-    existing_gacr_config_text=target_text(token,target,".governance/agent-relay/config.json")
-    existing_gacr_config=json.loads(existing_gacr_config_text) if existing_gacr_config_text else {}
-    gacr_config=merge_relay_config_for_client(source_gacr_config,existing_gacr_config)
-    updates[".governance/agent-relay/config.json"]=json.dumps(gacr_config,ensure_ascii=False,indent=2)+"\n"
+    updates[".governance/agent-relay/config.json"]=build_relay_config_update(token,target)
 
     existing_gacr_takeovers=target_text(token,target,".governance/agent-relay/takeovers.json")
     if existing_gacr_takeovers is None:
