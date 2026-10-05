@@ -117,6 +117,16 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Resolve configured canonical branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          canonical="$(python3 scripts/gscc_function_exposure_gate.py canonical-branch)"
+          test -n "$canonical"
+          echo "CANONICAL_BRANCH=$canonical" >> "$GITHUB_ENV"
+          git fetch origin "refs/heads/$canonical"
+          git checkout --detach FETCH_HEAD
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -125,10 +135,6 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "${{ github.ref }}" = "refs/heads/main" || {
-            echo "::error::GSCC_FUNCTION_GATE_REQUIRES_CANONICAL_MAIN"
-            exit 1
-          }
           actual="$(git rev-parse HEAD)"
           test "$actual" = "${{ inputs.expected_source_head }}" || {
             echo "::error::GSCC_FUNCTION_ROUTE_HEAD_MOVED expected=${{ inputs.expected_source_head }} actual=$actual"
@@ -161,8 +167,16 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: main
+
+      - name: Resolve configured canonical branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          canonical="$(python3 scripts/gscc_function_exposure_gate.py canonical-branch)"
+          test -n "$canonical"
+          echo "CANONICAL_BRANCH=$canonical" >> "$GITHUB_ENV"
+          git fetch origin "refs/heads/$canonical"
+          git checkout --detach FETCH_HEAD
 
       - uses: actions/setup-python@v5
         with:
