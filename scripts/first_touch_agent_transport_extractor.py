@@ -35,7 +35,90 @@ def _status(value:Any)->str:
         return "UNKNOWN"
     return "PRESENT_VALID"
 
+
+def _provider_envelope_to_host(payload:dict[str,Any])->dict[str,Any]:
+    """Flatten the canonical provider First Touch envelope without inventing values."""
+    if payload.get("schema") != "gscc-provider-first-touch-envelope/v1":
+        return payload
+
+    context=payload.get("provider_context") if isinstance(payload.get("provider_context"),dict) else {}
+    agent=context.get("agent") if isinstance(context.get("agent"),dict) else {}
+    client=context.get("client") if isinstance(context.get("client"),dict) else {}
+    session=context.get("session") if isinstance(context.get("session"),dict) else {}
+    connection=context.get("connection") if isinstance(context.get("connection"),dict) else {}
+    request=context.get("request") if isinstance(context.get("request"),dict) else {}
+    identity=payload.get("identity") if isinstance(payload.get("identity"),dict) else {}
+    tool=payload.get("tool") if isinstance(payload.get("tool"),dict) else {}
+
+    host={
+      "provider":payload.get("provider","UNAVAILABLE"),
+      "provider_product":agent.get("provider_product","UNAVAILABLE"),
+      "provider_family":agent.get("provider_family","UNAVAILABLE"),
+      "agent_type":agent.get("agent_type","UNAVAILABLE"),
+      "agent_name":agent.get("agent_name","UNAVAILABLE"),
+      "agent_role":agent.get("agent_role","UNAVAILABLE"),
+      "runtime":agent.get("agent_runtime",connection.get("runtime","UNAVAILABLE")),
+      "surface":agent.get("agent_surface","UNAVAILABLE"),
+      "channel":agent.get("agent_channel","UNAVAILABLE"),
+      "execution_mode":agent.get("agent_execution_mode","UNAVAILABLE"),
+      "model":agent.get("model","UNAVAILABLE"),
+      "model_family":agent.get("model_family","UNAVAILABLE"),
+      "model_variant":agent.get("model_variant","UNAVAILABLE"),
+      "thinking_mode":agent.get("thinking_mode","UNAVAILABLE"),
+      "reasoning_effort":agent.get("reasoning_effort","UNAVAILABLE"),
+      "client_instance_id":client.get("client_instance_id","UNAVAILABLE"),
+      "client_type":client.get("client_type","UNAVAILABLE"),
+      "application":client.get("application","UNAVAILABLE"),
+      "application_version":client.get("application_version","UNAVAILABLE"),
+      "device_type":client.get("device_type","UNAVAILABLE"),
+      "platform":client.get("platform","UNAVAILABLE"),
+      "locale":client.get("locale","UNAVAILABLE"),
+      "language":client.get("language","UNAVAILABLE"),
+      "timezone":client.get("timezone","UNAVAILABLE"),
+      "run_id":session.get("run_id","UNAVAILABLE"),
+      "task_id":session.get("task_id","UNAVAILABLE"),
+      "job_id":session.get("job_id","UNAVAILABLE"),
+      "thread_id":session.get("thread_id","UNAVAILABLE"),
+      "turn_id":session.get("turn_id","UNAVAILABLE"),
+      "message_id":session.get("message_id","UNAVAILABLE"),
+      "parent_message_id":session.get("parent_message_id","UNAVAILABLE"),
+      "interaction_sequence":session.get("interaction_sequence","UNAVAILABLE"),
+      "connection_method":connection.get("connection_method","UNAVAILABLE"),
+      "surface_class":connection.get("surface_class","UNAVAILABLE"),
+      "transport":payload.get("transport",connection.get("transport_name","UNAVAILABLE")),
+      "transport_type":connection.get("transport_type","UNAVAILABLE"),
+      "transport_layer":connection.get("transport_layer","UNAVAILABLE"),
+      "transport_surface":connection.get("transport_surface","UNAVAILABLE"),
+      "connector_name":connection.get("connector_name","UNAVAILABLE"),
+      "connector_type":connection.get("connector_type","UNAVAILABLE"),
+      "connector_version":connection.get("connector_version","UNAVAILABLE"),
+      "api_proxy":connection.get("api_proxy","UNAVAILABLE"),
+      "direct_connector":connection.get("direct_connector","UNAVAILABLE"),
+      "github_tool_surface":connection.get("github_tool_surface","UNAVAILABLE"),
+      "user_agent":connection.get("user_agent","UNAVAILABLE"),
+      "region":connection.get("region","UNAVAILABLE"),
+      "actor":agent.get("public_identity","UNAVAILABLE"),
+      "request_id":request.get("request_id","UNAVAILABLE"),
+      "correlation_id":request.get("correlation_id","UNAVAILABLE"),
+      "trace_id":request.get("trace_id","UNAVAILABLE"),
+      "idempotency_key":request.get("idempotency_key","UNAVAILABLE"),
+      "issued_at":request.get("issued_at","UNAVAILABLE"),
+      "observed_at":request.get("observed_at","UNAVAILABLE"),
+      "identity":{
+        "conversation_id":identity.get("conversation_id",session.get("conversation_id","UNAVAILABLE")),
+        "conversation_ref":identity.get("conversation_ref",session.get("conversation_ref","UNAVAILABLE")),
+        "session_id":identity.get("session_id",session.get("session_id","UNAVAILABLE")),
+        "session_ref":identity.get("session_ref",session.get("session_ref","UNAVAILABLE")),
+        "connection_ref":identity.get("connection_ref",connection.get("connection_ref","UNAVAILABLE")),
+        "workspace_id":identity.get("workspace_id",session.get("workspace_id","UNAVAILABLE")),
+        "workspace_name":identity.get("workspace_name",session.get("workspace_name","UNAVAILABLE"))
+      },
+      "tool":tool,
+    }
+    return host
+
 def extract(host:dict[str,Any], github:dict[str,Any])->dict[str,Any]:
+    host=_provider_envelope_to_host(host)
     tool=host.get("tool") if isinstance(host.get("tool"),dict) else {}
     identity=host.get("identity") if isinstance(host.get("identity"),dict) else {}
     sections={}
