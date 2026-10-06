@@ -114,6 +114,10 @@ def merge_previous(current:Path, previous:Path)->dict:
             conn.execute("INSERT OR IGNORE INTO gscc_arrival_events SELECT * FROM previous.gscc_arrival_events")
         if "gscc_session_bindings" in tables:
             conn.execute("INSERT OR IGNORE INTO gscc_session_bindings SELECT * FROM previous.gscc_session_bindings")
+        if "gscc_session_runtime" in tables:
+            conn.execute("INSERT OR IGNORE INTO gscc_session_runtime SELECT * FROM previous.gscc_session_runtime")
+        if "gscc_pre_gse_control_challenges" in tables:
+            conn.execute("INSERT OR IGNORE INTO gscc_pre_gse_control_challenges SELECT * FROM previous.gscc_pre_gse_control_challenges")
         count=conn.execute("SELECT COUNT(*) FROM gscc_conversation_identities").fetchone()[0]
         conn.commit()
         return {"status":"MERGED","identity_count":count}
