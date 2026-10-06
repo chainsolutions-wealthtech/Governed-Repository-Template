@@ -45,7 +45,7 @@ def _evidence(value: Any, source_ref: str, observed_at: str, *, reason: str | No
         "evidence_ref": source_ref,
     }
 
-def enrich_envelope(envelope: dict[str, Any], token: str, *, api_base: str = "https://api.github.com", observed_at: str | None = None) -> dict[str, Any]:
+def enrich_envelope(envelope: dict[str, Any], token: str, *, api_base: str = "https://api.github.com", observed_at: str | None = None, request_fn=_get_json) -> dict[str, Any]:
     observed_at = observed_at or utc_now()
     repository = str(envelope.get("repository") or "").strip()
     if repository.count("/") != 1:
@@ -62,7 +62,7 @@ def enrich_envelope(envelope: dict[str, Any], token: str, *, api_base: str = "ht
     runs_data: dict[str, Any] = {}
 
     def call(label: str, url: str) -> Any:
-        status, payload = _get_json(url, token)
+        status, payload = request_fn(url, token)
         attempts.append({
             "operation": label,
             "method": "GET",
