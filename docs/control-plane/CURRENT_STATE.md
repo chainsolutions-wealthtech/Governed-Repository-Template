@@ -948,3 +948,27 @@ Global programme state is unchanged: `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` r
 - GACR own next action: `GACR-OR-01_REOBSERVE_AND_ATTEST_R6_BASELINE`.
 - Original two-limit stop point and BEACON/WATCH/CORRELATOR/DISPATCHER target are now durable canonical memory.
 - Global programme state remains unchanged by this GACR registration.
+
+
+## Owner-authorized IDN identity/session lane — 2026-10-07
+
+Status: `PR #229 CANDIDATE_GREEN / LIVE_Q12_PROOF_PENDING`.
+
+This is a separately authorized control-plane infrastructure lane. It does **not** resume `P12-S6`; the global programme checkpoint remains parked.
+
+Candidate proves:
+- distinct GSCC arrival identity per controlled arrival;
+- no provider-private identity fabrication;
+- deterministic continuation only for the same arrival anchor;
+- isolated GSE SessionTwin per GSCC identity;
+- Q9 live control semantics before Q10;
+- Q10 before durable Q2/GACR;
+- canonical GACR remains the only durable continuity authority;
+- candidate qualification path through Q12;
+- F1 remains an actual-function gate.
+
+Candidate branch: `governance/per-arrival-identity-full-session-runtime`.
+Candidate PR: `#229`.
+Governance CI: `37543670685 = SUCCESS`.
+
+Next IDN verification after merge: run a new-conversation live arrival, complete its Q9 ACK/response, attest unique GSE identity, canonical GACR binding and Q12, then test F1 with a real requested governed function.
