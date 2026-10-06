@@ -9,6 +9,7 @@ on:
       - "scripts/provider_first_touch_ingress.py"
       - "scripts/provider_first_touch_repository_enrichment.py"
       - "scripts/provider_first_tool_hook.py"
+      - "scripts/gscc/instrumentation.py"
       - "scripts/governed_github_read_connector.py"
       - "scripts/provider_first_touch_evidence.py"
       - "scripts/first_touch_entry_contract.py"
@@ -19,6 +20,7 @@ on:
       - "scripts/test_provider_first_touch_ingress.py"
       - "scripts/test_provider_first_touch_repository_enrichment.py"
       - "scripts/test_provider_first_tool_hook.py"
+      - "tests/test_gscc_core.py"
       - "scripts/test_governed_github_read_connector.py"
       - ".github/workflows/gscc-provider-first-touch-ingress.yml"
 
@@ -37,9 +39,9 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python3 -m py_compile scripts/provider_first_touch_ingress.py scripts/provider_first_touch_repository_enrichment.py scripts/provider_first_touch_evidence.py scripts/provider_first_tool_hook.py scripts/governed_github_read_connector.py scripts/first_touch_entry_contract.py scripts/first_touch_state_artifact.py scripts/gscc/first_touch_handoff.py scripts/test_provider_first_touch_ingress.py scripts/test_provider_first_tool_hook.py scripts/test_provider_first_touch_repository_enrichment.py scripts/test_governed_github_read_connector.py
+        run: python3 -m py_compile scripts/provider_first_touch_ingress.py scripts/provider_first_touch_repository_enrichment.py scripts/provider_first_touch_evidence.py scripts/provider_first_tool_hook.py scripts/gscc/instrumentation.py scripts/governed_github_read_connector.py scripts/first_touch_entry_contract.py scripts/first_touch_state_artifact.py scripts/gscc/first_touch_handoff.py scripts/test_provider_first_touch_ingress.py scripts/test_provider_first_tool_hook.py scripts/test_provider_first_touch_repository_enrichment.py scripts/test_governed_github_read_connector.py
       - name: Test provider first-touch sidecar, repository enrichment and host hook
-        run: PYTHONPATH=scripts python3 -m unittest scripts/test_provider_first_touch_ingress.py scripts/test_provider_first_touch_repository_enrichment.py scripts/test_provider_first_tool_hook.py scripts/test_governed_github_read_connector.py
+        run: PYTHONPATH=scripts:. python3 -m unittest scripts/test_provider_first_touch_ingress.py scripts/test_provider_first_touch_repository_enrichment.py scripts/test_provider_first_tool_hook.py scripts/test_governed_github_read_connector.py tests/test_gscc_core.py
 
   ingest:
     if: ${{ github.event_name == 'repository_dispatch' }}
