@@ -3,7 +3,10 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any
 
-from gse.session_state_engine import new_session_twin, reduce_event
+try:
+    from scripts.gse.session_state_engine import new_session_twin, reduce_event
+except ModuleNotFoundError:
+    from gse.session_state_engine import new_session_twin, reduce_event
 
 GSCC_GSE_PROJECTION_SCHEMA="gscc-gse-session-projection/v1"
 
