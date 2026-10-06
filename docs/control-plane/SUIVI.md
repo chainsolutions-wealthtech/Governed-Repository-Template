@@ -1191,3 +1191,12 @@ These observations are durable supervision evidence, not new mutation authority 
 - Optional state-file persistence preserves the first-touch marker across wrapper process restarts.
 - Unresolved provider identity still captures once and remains blocked at the canonical identity gate.
 - This does not patch the proprietary ChatGPT `@GitHub` connector; hosts/custom connectors must route through the governed wrapper to obtain automatic First Touch.
+
+
+## 2026-10-06 — First Touch bound to canonical GSCC tool instrumentation
+
+- Confirmed the existing `gscc.instrument_tool()` abstraction is the correct generic interception surface.
+- Added `before_tool_call` ordering before Function Exposure and `TOOL_STARTED`.
+- Added `FirstTouchBeforeToolCall` as the provider adapter that emits exactly one `gscc_provider_first_touch` per controlled connector session.
+- This supersedes tool-by-tool First Touch interception as the canonical design; specialized read wrappers remain compatibility integrations only.
+- The historical `emit_controlled_arrival()` path is not reused for First Touch because it enters the GACR compatibility route too early.
