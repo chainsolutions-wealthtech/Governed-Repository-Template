@@ -142,6 +142,13 @@ class ProviderFirstTouchIngressTests(unittest.TestCase):
             self.assertEqual(result["classification"],"FIRST_TOUCH")
             self.assertFalse(result["authority_granted"])
 
+    def test_q10_gacr_dispatch_respects_github_payload_width(self):
+        workflow = (Path(__file__).resolve().parents[1] / ".github/workflows/gscc-provider-first-touch-ingress.yml").read_text(encoding="utf-8")
+        self.assertIn('payload["arrival_context"]=arrival_context', workflow)
+        self.assertIn('if len(payload)>10:', workflow)
+        self.assertIn('GACR_DISPATCH_CLIENT_PAYLOAD_TOO_WIDE', workflow)
+        self.assertNotIn('payload["repository"]=os.environ["GITHUB_REPOSITORY"]', workflow)
+
     def test_stable_identity_routes_to_canonical_gscc_q1_pipeline(self):
         value = envelope()
         capture = build_capture(value, observed_at="2026-10-06T05:30:00+00:00")
