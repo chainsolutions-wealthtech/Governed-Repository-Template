@@ -237,8 +237,52 @@ def main():
     test_admission_workflow_harvests_instead_of_trusting_caller_evidence()
     test_gacr_head_mismatch_is_reobserved_for_access_without_rewriting_session_store()
     test_harvester_direct_cli_import_path_is_valid()
+    test_q10_is_verified_without_preexisting_gacr_session()
     print("GSCC_ADMISSION_HARVESTER_TESTS_OK")
 
 
 if __name__ == "__main__":
     main()
+
+
+def test_q10_is_verified_without_preexisting_gacr_session():
+    admission = sample_admission()
+    admission["admission_context"]["control_capabilities"] = {
+        "command_receive": True,
+        "command_ack": True,
+        "challenge_response": True,
+    }
+    result = harvest_qualification_evidence(
+        admission,
+        github_request_fn=fake_github,
+        sessions={"sessions": []},
+        claims={"claims": []},
+        tasks={"tasks": []},
+        governance_documents={
+            "00_START_HERE.md": "start",
+            "GOVERNANCE.md": "governance",
+            "docs/control-plane/GSCC_ADMISSION_ACCESS_GATE.md": "admission",
+            "docs/control-plane/GACR_PROGRAM.md": "gacr",
+        },
+        capability_evidence={
+            "status": "VERIFIED",
+            "evidence_ref": "capability:q8:test",
+            "observed_at": "2026-10-02T12:00:01+00:00",
+        },
+        control_evidence={
+            "status": "VERIFIED",
+            "state": "REACHABLE",
+            "evidence_ref": "control:q9:test",
+            "observed_at": "2026-10-02T12:00:02+00:00",
+            "challenge_id": "challenge-q9-test",
+        },
+        now=NOW,
+    )
+    assert result["session"]["status"] != "BOUND", result
+    assert result["gse_initial_state"]["status"] == "VERIFIED", result
+    assert result["gse_initial_state"]["durable_gacr_session_required"] is False, result
+    assert result["q10_status"] == "Q10_GSE_VERIFIED", result
+    assert result["pre_gse_missing_canonical_evidence"] == [], result
+    assert result["post_gse_gacr_required"] is True, result
+    assert result["status"] == "Q10_GSE_VERIFIED_PENDING_GACR", result
+    assert "session" in result["missing_canonical_evidence"], result
