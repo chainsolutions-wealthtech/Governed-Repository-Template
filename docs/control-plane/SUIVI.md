@@ -1200,3 +1200,12 @@ These observations are durable supervision evidence, not new mutation authority 
 - Added `FirstTouchBeforeToolCall` as the provider adapter that emits exactly one `gscc_provider_first_touch` per controlled connector session.
 - This supersedes tool-by-tool First Touch interception as the canonical design; specialized read wrappers remain compatibility integrations only.
 - The historical `emit_controlled_arrival()` path is not reused for First Touch because it enters the GACR compatibility route too early.
+
+
+## 2026-10-06 — Provider-owned First Touch context normalization
+
+- Provider First Touch now materializes a canonical `provider_context` before the first instrumented GitHub call.
+- Host-supplied provider/model/runtime/surface/client/session/connector/request facts are preserved.
+- Missing provider-private identifiers are explicitly `UNAVAILABLE`; no synthetic conversation/session/client identity is generated.
+- Repository facts remain repository-owned and are enriched only after the provider dispatch.
+- The dispatch envelope is kept compact so the provider signal is transport-safe and provenance remains separated.
