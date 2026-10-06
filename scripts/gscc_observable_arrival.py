@@ -101,6 +101,8 @@ def _subject(
     branch: str | None,
     event: dict[str, Any],
 ) -> str:
+    if event_name in {"issues", "issue_comment"} and issue_number is not None:
+        return f"issue:{issue_number}"
     if branch:
         return f"ref:{branch}"
     if pull_request is not None:
