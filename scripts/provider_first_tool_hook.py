@@ -139,6 +139,45 @@ class FirstToolHook:
             "mutation_authority_granted":False,
         }
 
+
+@dataclass
+class FirstTouchBeforeToolCall:
+    """Callable adapter for gscc.instrument_tool(before_tool_call=...).
+
+    One adapter instance represents one provider/client connector session.
+    It emits Provider First Touch before the first instrumented tool only.
+    """
+
+    event_base: dict[str, Any]
+    token: str | None = None
+    dispatch_fn: Any = send_dispatch
+    hook: FirstToolHook = field(default_factory=FirstToolHook)
+    emitted_for_session: bool = False
+
+    def __call__(self, tool_name: str) -> dict[str, Any]:
+        if self.emitted_for_session:
+            return {
+                "status": "FIRST_TOUCH_ALREADY_EMITTED",
+                "event_type": EVENT_TYPE,
+                "mutation_authority_granted": False,
+            }
+
+        event = dict(self.event_base)
+        event["first_tool_call"] = True
+        event["tool_name"] = tool_name
+        event.setdefault("operation", "tool_call")
+        event.setdefault("category", "READ")
+        event.setdefault("success", True)
+
+        result = self.hook.maybe_emit_first_touch(
+            event,
+            token=self.token,
+            dispatch_fn=self.dispatch_fn,
+        )
+        self.emitted_for_session = True
+        return result
+
+
 def main()->None:
     p=argparse.ArgumentParser(description="Provider first GitHub tool-call hook")
     p.add_argument("--event",required=True,help="JSON event file for the first GitHub tool call")
