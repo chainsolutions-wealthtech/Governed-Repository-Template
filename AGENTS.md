@@ -1,5 +1,10 @@
 # AGENTS — Règles pour tout agent, humain ou automatisation
 
+> **PRIORITÉ ABSOLUE D'ENTRÉE**  
+> Avant toute autre instruction de ce fichier, lire `/00_GSCC_ENTRY.md`.  
+> Ce chemin est prioritaire sur `00_START_HERE.md` et sur toute opération de travail gouverné.
+
+
 Ce fichier s'applique à toute intervention sur `{{REPOSITORY}}`.
 
 ## Démarrage obligatoire
