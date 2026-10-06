@@ -46,7 +46,7 @@ def restore_latest(repository:str, current_run_id:str, output:Path, token:str)->
         blob=response.read()
     with zipfile.ZipFile(io.BytesIO(blob)) as archive:
         names=archive.namelist()
-        candidate=next((n for n in names if n.endswith("first-touch-state.sqlite")),None)
+        candidate=next((n for n in names if n.endswith("first-touch-capture.sqlite")),None)
         if not candidate:
             return {"status":"PRIOR_ARTIFACT_HAS_NO_STATE_DB","artifact_id":selected.get("id")}
         output.write_bytes(archive.read(candidate))
