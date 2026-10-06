@@ -275,7 +275,7 @@ jobs:
           python3 - <<'PY'
           import json, os
           from pathlib import Path
-          from gscc_arrival_identity import mint
+          from scripts.gscc_arrival_identity import mint
           event=json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text(encoding="utf-8"))
           repository=((event.get("repository") or {}).get("full_name") or os.environ.get("GITHUB_REPOSITORY"))
           result=mint({"repository":repository,"identity":{}},event,run_id=os.environ.get("GITHUB_RUN_ID"),run_attempt=os.environ.get("GITHUB_RUN_ATTEMPT"))
