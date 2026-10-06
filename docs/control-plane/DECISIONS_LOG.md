@@ -504,3 +504,20 @@ Append-only durable decisions for the source/control-plane repository.
 - Provider-only identity/runtime/session facts remain provider-sourced or explicit `UNAVAILABLE`; the repository must never infer a conversation identity from GitHub actor + repository alone.
 - Missing stable provider identity does not suppress capture. It yields an enriched `UNRESOLVED` capture and blocks Q1 until identity becomes strong/exact.
 - Workflow-token permissions are evidence only for the workflow credential and must not be misrepresented as private scopes of the originating ChatGPT/GitHub connector.
+
+
+### CPD-067 — First repository access response must carry the mandatory next-path directive
+
+- Date: 2026-10-06.
+- Owner requirement: the first governed repository access response presented to an agent/conversation must not expose repository metadata, permissions or GitHub access facts alone.
+- The response surface that mediates the GitHub/API/GitHub-App result to the agent must also return an explicit mandatory next-step directive pointing to `/00_GSCC_ENTRY.md`.
+- Canonical response semantics are:
+  - preserve the underlying GitHub response facts such as repository identity, permissions, default branch and other safe metadata;
+  - add a governance-entry directive with `required=true`, `priority=0`, `path=00_GSCC_ENTRY.md` and an instruction equivalent to `READ_BEFORE_ANY_OTHER_REPOSITORY_OPERATION`;
+  - treat this directive as the first navigation instruction for governed admission;
+  - do not treat a successful raw GitHub/API read as governed admission.
+- This reuses the existing governed-response pattern already present in the control plane, where responses carry machine-readable routing such as `required_reads`, `next_request`, `allowed_next_operation` and handoff data.
+- `00_GSCC_ENTRY.md` remains the repository authority that defines what provider/agent/runtime/session facts must be exposed, how unavailable fields are represented, and how GSCC admission continues.
+- The response enrichment layer must not fabricate provider-private identifiers, expose secrets, or infer authority from repository metadata.
+- This decision records the required contract only. It does not implement or attest the runtime response enrichment.
+- No P12-S6, CASE 1, GMC, MCP, server or production state is advanced by this decision.

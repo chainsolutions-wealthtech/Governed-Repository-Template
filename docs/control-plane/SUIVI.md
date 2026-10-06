@@ -1240,3 +1240,13 @@ These observations are durable supervision evidence, not new mutation authority 
 - Physical repository read remains distinct from governed admission.
 - Missing provider-private facts are explicit `UNAVAILABLE`; fabrication remains forbidden.
 - MCP/plugin/dispatch/issue transports are optional carriers, not canonical governance authorities.
+
+
+## 2026-10-06 — First-access response routing requirement recorded
+
+- Recorded CPD-067.
+- Required behavior: the first repository access response shown to an agent must preserve the normal GitHub/API metadata and additionally expose a mandatory governance-entry directive pointing to `/00_GSCC_ENTRY.md`.
+- Target response shape includes `required=true`, `priority=0`, `path=00_GSCC_ENTRY.md` and a read-first instruction.
+- This is the same governed-response principle already used by `required_reads`, `next_request`, `allowed_next_operation` and handoff responses.
+- A raw successful GitHub read is not admission.
+- Recording only: no runtime implementation, test execution, transport change, MCP change or global-program advancement is authorized by this note.
