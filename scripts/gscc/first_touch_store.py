@@ -6,7 +6,7 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
-from gse.session_state_engine import new_session_twin, reduce_event
+from gscc.gse_projection import apply_session_event
 
 SCHEMA="gscc-first-touch-identity/v1"
 
@@ -87,20 +87,19 @@ def project_to_gse(
         "SELECT session_twin_json,revision FROM gse_session_twins WHERE identity_id=?",
         (identity_id,),
     ).fetchone()
-    twin=json.loads(existing[0]) if existing else new_session_twin(identity_id)
-    event={
-        "event_id":f"{capture_id}:{event_type}",
-        "event_type":event_type,
-        "observed_at":capture["observed_at"],
-        "payload":{
-            "session_identity":identity_id,
-            "repository":capture["repository"],
-            "branch":branch,
-            "observed_head":head,
-            "last_action":"GSCC_FIRST_TOUCH" if classification=="FIRST_TOUCH" else "GSCC_CONTINUATION",
-        },
-    }
-    twin=reduce_event(twin,event,reference_time=capture["observed_at"])
+    previous=json.loads(existing[0]) if existing else None
+    projection=apply_session_event(
+        previous,
+        identity_id=identity_id,
+        event_type=event_type,
+        observed_at=capture["observed_at"],
+        repository=capture["repository"],
+        branch=branch,
+        observed_head=head,
+        last_action="GSCC_FIRST_TOUCH" if classification=="FIRST_TOUCH" else "GSCC_CONTINUATION",
+        event_id=f"{capture_id}:{event_type}",
+    )
+    twin=projection["session_twin"]
     revision=(int(existing[1])+1) if existing else 1
     encoded=json.dumps(twin,ensure_ascii=False,sort_keys=True,separators=(",",":"))
     conn.execute(
@@ -108,4 +107,12 @@ def project_to_gse(
         "ON CONFLICT(identity_id) DO UPDATE SET session_twin_json=excluded.session_twin_json,revision=excluded.revision,last_event_type=excluded.last_event_type,updated_at=excluded.updated_at",
         (identity_id,encoded,revision,event_type,capture["observed_at"]),
     )
-    return {"schema":"gscc-gse-first-touch-projection/v1","identity_id":identity_id,"event_type":event_type,"revision":revision,"session_twin":twin,"gacr_required":False}
+    return {
+        "schema":"gscc-gse-first-touch-projection/v1",
+        "identity_id":identity_id,
+        "event_type":event_type,
+        "revision":revision,
+        "session_twin":twin,
+        "gacr_required":False,
+        "authority_granted":False,
+    }
