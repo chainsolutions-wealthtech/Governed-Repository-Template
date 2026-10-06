@@ -50,6 +50,32 @@ class ProxyTests(unittest.TestCase):
         self.assertIsNone(name)
         self.assertEqual(args, {})
 
+    def test_governance_entry_directive_is_mandatory_and_first(self):
+        directive = proxy._governance_entry_directive()
+        self.assertTrue(directive["required"])
+        self.assertEqual(directive["priority"], 0)
+        self.assertEqual(directive["path"], "00_GSCC_ENTRY.md")
+        self.assertEqual(
+            directive["instruction"],
+            "READ_BEFORE_ANY_OTHER_REPOSITORY_OPERATION",
+        )
+        self.assertTrue(directive["blocks_normal_entry"])
+        self.assertEqual(directive["start_here_status"], "NOT_YET_APPLICABLE")
+
+    def test_entry_response_preserves_repository_and_adds_directive(self):
+        repository = {
+            "full_name": "owner/repo",
+            "default_branch": "main",
+            "permissions": {"pull": True},
+        }
+        response = proxy._entry_response(repository)
+        self.assertEqual(response["schema"], "governed-repository-entry-response/v1")
+        self.assertEqual(response["repository"], repository)
+        self.assertEqual(
+            response["governance_entry"]["path"],
+            "00_GSCC_ENTRY.md",
+        )
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
