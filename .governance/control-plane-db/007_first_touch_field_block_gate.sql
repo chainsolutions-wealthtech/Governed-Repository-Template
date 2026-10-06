@@ -118,3 +118,42 @@ CREATE INDEX IF NOT EXISTS idx_ft_capture_nodes_path ON first_touch_capture_node
 CREATE INDEX IF NOT EXISTS idx_ft_capture_nodes_key ON first_touch_capture_nodes(key_name);
 CREATE INDEX IF NOT EXISTS idx_ft_membership_block ON first_touch_field_block_membership(block_id);
 CREATE INDEX IF NOT EXISTS idx_ft_gate_requirements_block ON first_touch_gate_requirements(block_id);
+
+
+-- GSCC-owned logical conversation identity and immutable First Touch snapshot.
+CREATE TABLE IF NOT EXISTS gscc_conversation_identities (
+  identity_id TEXT PRIMARY KEY,
+  anchor_sha256 TEXT NOT NULL UNIQUE,
+  identity_strength TEXT NOT NULL CHECK(identity_strength IN ('EXACT','STRONG')),
+  first_capture_id TEXT NOT NULL UNIQUE,
+  first_observed_at TEXT,
+  last_capture_id TEXT NOT NULL,
+  last_seen_at TEXT,
+  status TEXT NOT NULL CHECK(status IN ('FIRST_TOUCH_CONSUMED','ACTIVE')),
+  FOREIGN KEY(first_capture_id) REFERENCES first_touch_capture_records(capture_id),
+  FOREIGN KEY(last_capture_id) REFERENCES first_touch_capture_records(capture_id)
+);
+
+CREATE TABLE IF NOT EXISTS gscc_first_touch_snapshots (
+  identity_id TEXT PRIMARY KEY,
+  capture_id TEXT NOT NULL UNIQUE,
+  snapshot_json TEXT NOT NULL,
+  snapshot_sha256 TEXT NOT NULL,
+  created_at TEXT,
+  FOREIGN KEY(identity_id) REFERENCES gscc_conversation_identities(identity_id) ON DELETE CASCADE,
+  FOREIGN KEY(capture_id) REFERENCES first_touch_capture_records(capture_id)
+);
+
+-- GSE-owned projection of the logical conversation state. GACR durable
+-- continuity is intentionally not required to create or update this twin.
+CREATE TABLE IF NOT EXISTS gse_session_twins (
+  identity_id TEXT PRIMARY KEY,
+  session_twin_json TEXT NOT NULL,
+  revision INTEGER NOT NULL CHECK(revision >= 1),
+  last_event_type TEXT NOT NULL CHECK(last_event_type IN ('SESSION_ATTACH','SESSION_RESUME')),
+  updated_at TEXT,
+  FOREIGN KEY(identity_id) REFERENCES gscc_conversation_identities(identity_id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_gscc_identity_anchor ON gscc_conversation_identities(anchor_sha256);
+CREATE INDEX IF NOT EXISTS idx_gscc_identity_last_seen ON gscc_conversation_identities(last_seen_at);
