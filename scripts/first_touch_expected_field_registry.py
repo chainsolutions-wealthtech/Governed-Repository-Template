@@ -142,10 +142,46 @@ def main():
         "tool_schema_field_count": len(json.loads(TOOL_SCHEMA_SNAPSHOT.read_text(encoding="utf-8")).get("fields", [])) if TOOL_SCHEMA_SNAPSHOT.exists() else 0,
         "field_count":len(fields),
         "fields":[fields[k] for k in sorted(fields)],
+        "expected_observations": (
+            [
+                {
+                    "observation_id": f"probe:{str(p.relative_to(ROOT))}:{line}:{norm_key(key)}",
+                    "field_id": norm_key(key),
+                    "source_kind": "PROBE_REFERENCE",
+                    "source_path": str(p.relative_to(ROOT)),
+                    "source_line": line,
+                }
+                for p in sorted(PROBE_ROOT.glob("*.md"))
+                for key, value, line, section, kind in parse_probe(p)
+                if norm_key(key)
+            ]
+            + [
+                {
+                    "observation_id": f"github_tool:{row.get('tool')}:{row.get('field')}",
+                    "field_id": norm_key(str(row.get("field_id") or "")),
+                    "source_kind": "TOOL_SCHEMA",
+                    "source_path": str(TOOL_SCHEMA_SNAPSHOT.relative_to(ROOT)),
+                    "source_line": None,
+                }
+                for row in (json.loads(TOOL_SCHEMA_SNAPSHOT.read_text(encoding="utf-8")).get("fields", []) if TOOL_SCHEMA_SNAPSHOT.exists() else [])
+                if norm_key(str(row.get("field_id") or ""))
+            ]
+            + [
+                {
+                    "observation_id": f"canonical:{norm_key(key)}",
+                    "field_id": norm_key(key),
+                    "source_kind": "CANONICAL_CONNECTION_FIELD",
+                    "source_path": "CANONICAL_CONNECTION_FIELDS",
+                    "source_line": None,
+                }
+                for key in CANONICAL_CONNECTION_FIELDS
+            ]
+        ),
         "authority_granted":False,
     }
+    out["expected_observation_count"] = len(out["expected_observations"])
     OUT.write_text(json.dumps(out,indent=2,ensure_ascii=False,sort_keys=True)+"\\n",encoding="utf-8")
-    print(json.dumps({"status":"EXPECTED_FIELD_REGISTRY_BUILT","field_count":len(fields),"output":str(OUT)},indent=2))
+    print(json.dumps({"status":"EXPECTED_FIELD_REGISTRY_BUILT","field_count":len(fields),"expected_observation_count":out["expected_observation_count"],"output":str(OUT)},indent=2))
 
 if __name__=="__main__":
     main()
