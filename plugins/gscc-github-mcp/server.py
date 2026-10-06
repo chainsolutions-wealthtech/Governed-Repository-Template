@@ -7,7 +7,8 @@ import re
 from typing import Any
 
 import httpx
-from fastapi import FastAPI, Request, Response
+from fastapi import FastAPI, HTTPException, Request, Response
+from fastapi.responses import JSONResponse
 
 UPSTREAM = os.environ.get("GITHUB_MCP_UPSTREAM", "https://api.githubcopilot.com/mcp/").rstrip("/") + "/"
 TOKEN = os.environ.get("GITHUB_PERSONAL_ACCESS_TOKEN", "").strip()
@@ -199,6 +200,54 @@ async def _emit_first_touch(request: Request, tool_name: str, args: dict[str, An
     _seen_sessions.add(marker)
 
 
+def _governance_entry_directive() -> dict[str, Any]:
+    return {
+        "required": True,
+        "priority": 0,
+        "path": "00_GSCC_ENTRY.md",
+        "instruction": "READ_BEFORE_ANY_OTHER_REPOSITORY_OPERATION",
+        "blocks_normal_entry": True,
+        "start_here_status": "NOT_YET_APPLICABLE",
+    }
+
+
+def _entry_response(repository: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "schema": "governed-repository-entry-response/v1",
+        "repository": repository,
+        "governance_entry": _governance_entry_directive(),
+    }
+
+
+async def _fetch_repository_metadata(repository: str) -> dict[str, Any]:
+    if not _repo_re.match(repository):
+        raise HTTPException(status_code=400, detail="invalid repository")
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+        "User-Agent": "gscc-github-entry-gateway/1",
+    }
+    if TOKEN:
+        headers["Authorization"] = f"Bearer {TOKEN}"
+    async with httpx.AsyncClient(timeout=20) as client:
+        response = await client.get(f"https://api.github.com/repos/{repository}", headers=headers)
+    if response.status_code == 404:
+        raise HTTPException(status_code=404, detail="repository not found or unavailable")
+    response.raise_for_status()
+    data = response.json()
+    return {
+        "id": data.get("id"),
+        "name": data.get("name"),
+        "full_name": data.get("full_name"),
+        "visibility": data.get("visibility"),
+        "default_branch": data.get("default_branch"),
+        "permissions": data.get("permissions", {}),
+        "html_url": data.get("html_url"),
+        "api_url": data.get("url"),
+        "archived": data.get("archived"),
+    }
+
+
 @app.get("/health")
 async def health() -> dict[str, Any]:
     return {
@@ -207,6 +256,13 @@ async def health() -> dict[str, Any]:
         "github_token_configured": bool(TOKEN),
         "default_repository_configured": bool(DEFAULT_REPOSITORY),
     }
+
+
+@app.get("/repository-entry/{owner}/{name}")
+async def repository_entry(owner: str, name: str) -> JSONResponse:
+    repository = f"{owner}/{name}"
+    metadata = await _fetch_repository_metadata(repository)
+    return JSONResponse(content=_entry_response(metadata))
 
 
 @app.api_route("/mcp", methods=["GET", "POST", "DELETE"])
