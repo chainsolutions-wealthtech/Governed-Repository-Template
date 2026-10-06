@@ -53,12 +53,26 @@ jobs:
           python3 scripts/first_touch_exhaustive_collector.py github-event \
             --output "${RUNNER_TEMP}/first-touch-capture.json"
 
+      - name: Restore previous GSCC GSE First Touch state
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/first_touch_state_artifact.py restore \
+            --repository "${GITHUB_REPOSITORY}" \
+            --run-id "${GITHUB_RUN_ID}" \
+            --output "${RUNNER_TEMP}/first-touch-previous.sqlite"
+
       - name: Materialize first-touch field block gate database
         run: |
           python3 scripts/first_touch_field_block_gate.py \
             --capture "${RUNNER_TEMP}/first-touch-capture.json" \
             --output "${RUNNER_TEMP}/first-touch-capture.sqlite" \
             --source-ref "github-actions:${GITHUB_RUN_ID}:${GITHUB_RUN_ATTEMPT}"
+          if [ -f "${RUNNER_TEMP}/first-touch-previous.sqlite" ]; then
+            python3 scripts/first_touch_state_artifact.py merge \
+              --current "${RUNNER_TEMP}/first-touch-capture.sqlite" \
+              --previous "${RUNNER_TEMP}/first-touch-previous.sqlite"
+          fi
 
       - name: Build expected first-touch field registry
         run: |
@@ -97,6 +111,15 @@ jobs:
             ${{ runner.temp }}/first-touch-capture.sqlite
             ${{ runner.temp }}/first-touch-completeness.json
             ${{ runner.temp }}/first-touch-entry-contract.json
+            ${{ runner.temp }}/first-touch-capture.sqlite
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Persist GSCC GSE First Touch state
+        uses: actions/upload-artifact@v4
+        with:
+          name: first-touch-state-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/first-touch-capture.sqlite
           if-no-files-found: error
           retention-days: 30
 
