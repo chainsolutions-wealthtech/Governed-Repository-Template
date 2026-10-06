@@ -90,3 +90,22 @@ Negative facts are first-class evidence, including `codex_used=false`, `reposito
 Raw credential-bearing fields remain forbidden at provider ingress. A provider must report only safe status metadata about secrets; it must never put an OAuth token, GitHub token, password, cookie, authorization header, private key, client secret or equivalent credential value into the envelope.
 
 The full raw non-sensitive provider envelope and the normalized field-evidence rows are both retained in the existing B00-B30 first-touch projection. This is evidence collection only and grants no mutation authority.
+
+
+## Provider first-tool hook
+
+The repository includes `scripts/provider_first_tool_hook.py` as the host-side adapter contract for the first GitHub tool call.
+
+Expected host behavior:
+
+```text
+FIRST_GITHUB_TOOL_CALL
+→ build gscc-provider-first-touch-envelope/v1
+→ repository_dispatch: gscc_provider_first_touch
+→ mark host-local emitted marker
+→ continue normal tool execution
+```
+
+The host-local marker is only an emission optimization. Canonical First Touch uniqueness remains owned by the GSCC First Touch store. Repeated provider dispatches for the same strong/exact identity must classify as continuation rather than create a second First Touch.
+
+If no stable conversation/session/connection reference is available, the hook fails closed and must not fabricate one from GitHub actor + repository alone.
