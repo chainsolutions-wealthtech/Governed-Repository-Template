@@ -23,8 +23,8 @@ capture={
  'repository':'chainsolutions-wealthtech/Governed-Repository-Template',
  'actor':'Wealthtechinnovations',
  'provider':'chatgpt',
- 'connection_ref':'chatgpt:conversation:test-001',
- 'client_instance_id':'chatgpt:conversation:test-001',
+ 'connection_ref':'test-anchor-001',
+ 'client_instance_id':'test-anchor-001',
  'github_event':{
    'sender':{'login':'Wealthtechinnovations','id':94637590},
    'repository':{'id':1386478935,'full_name':'chainsolutions-wealthtech/Governed-Repository-Template','default_branch':'main'},
@@ -52,13 +52,26 @@ def main():
         cap.write_text(json.dumps(capture),encoding='utf-8')
         fb.build_capture_database(cap,db,source_ref='unit-test')
         cp.build_packet(None,comp,capture_path=cap)
-        first=ec.evaluate(comp,db,identity_strength='EXACT',identity_anchor='chatgpt:conversation:test-001',first_touch_seen=False)
+        registry=root/'registry.json'
+        registry.write_text(json.dumps({'schema':'first-touch-conversation-registry/v1','conversations':[]}),encoding='utf-8')
+        anchor='test-anchor-001'
+        first=ec.evaluate(comp,db,identity_strength='EXACT',identity_anchor=anchor,first_touch_seen=(ec.registry_match(registry,anchor) is not None))
         assert first['status']=='ENTRY_READY_FOR_Q1'
         assert first['classification']=='FIRST_TOUCH'
         assert first['create_first_touch_snapshot'] is True
-        cont=ec.evaluate(comp,db,identity_strength='EXACT',identity_anchor='chatgpt:conversation:test-001',first_touch_seen=True)
+        first['identity_anchor']=anchor
+        assert ec.persist_registry(registry,first,cap) is True
+        saved=ec.load_registry(registry)
+        assert len(saved['conversations'])==1
+        initial_capture=saved['conversations'][0]['first_capture_id']
+        cont=ec.evaluate(comp,db,identity_strength='EXACT',identity_anchor=anchor,first_touch_seen=(ec.registry_match(registry,anchor) is not None))
         assert cont['classification']=='CONTINUATION'
         assert cont['create_first_touch_snapshot'] is False
+        cont['identity_anchor']=anchor
+        assert ec.persist_registry(registry,cont,cap) is True
+        saved2=ec.load_registry(registry)
+        assert len(saved2['conversations'])==1
+        assert saved2['conversations'][0]['first_capture_id']==initial_capture
         weak=ec.evaluate(comp,db,identity_strength='WEAK',identity_anchor='actor+repo',first_touch_seen=False)
         assert weak['status']=='ENTRY_BLOCKED'
         assert weak['create_first_touch_snapshot'] is False
