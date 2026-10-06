@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 476,
+  "revision": 477,
   "sessions": [
     {
       "session_id": "session-68c97d4bb1ef71c86444de12",
@@ -21923,10 +21923,10 @@
       "connection_intent_provenance": "DEFAULT_UNKNOWN",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "938e08fc6d7414e8c2ff4b349fd13d10f686d423",
-      "last_observed_head_sha": "62cd20cbed27de2432563a9a0fd8037a2d337c71",
+      "last_observed_head_sha": "8bfd1cd324a931b5ff030d557e6ed8bc41703db4",
       "status": "ACTIVE",
       "created_at": "2026-10-06T04:02:06+00:00",
-      "last_seen_at": "2026-10-06T04:22:33+00:00",
+      "last_seen_at": "2026-10-06T04:22:47+00:00",
       "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations",
       "agent_role": null,
       "capabilities": [
@@ -21940,8 +21940,8 @@
       "relay": {
         "process": "GACR",
         "state": "ACTIVE",
-        "last_heartbeat_at": "2026-10-06T04:22:33+00:00",
-        "lease_expires_at": "2026-10-06T04:52:33+00:00",
+        "last_heartbeat_at": "2026-10-06T04:22:47+00:00",
+        "lease_expires_at": "2026-10-06T04:52:47+00:00",
         "last_action": "RESUME",
         "task_id": null,
         "branch": "governance/gscc-gse-gacr-realignment",
@@ -21969,7 +21969,7 @@
         "schema": "gacr-connection-envelope/v1",
         "surface_class": "GITHUB_EVENT_VISIBLE",
         "presence_event": "PRESENCE_RESUME",
-        "observed_at": "2026-10-06T04:22:33+00:00",
+        "observed_at": "2026-10-06T04:22:47+00:00",
         "fields": {
           "gacr_session_id": {
             "value": "session-22cea69c16a47de7abd981c5",
@@ -22070,12 +22070,12 @@
             "source": "REPOSITORY_SURFACE"
           },
           "base_branch": {
-            "value": "main",
+            "value": "UNAVAILABLE",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "REPOSITORY_SURFACE"
           },
           "HEAD": {
-            "value": "62cd20cbed27de2432563a9a0fd8037a2d337c71",
+            "value": "8bfd1cd324a931b5ff030d557e6ed8bc41703db4",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "REPOSITORY_SURFACE"
           },
@@ -22085,7 +22085,7 @@
             "source": "REPOSITORY_SURFACE"
           },
           "workflow_run_id": {
-            "value": "37413364519",
+            "value": "37413390116",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "GITHUB_EVENT"
           },
@@ -22100,12 +22100,12 @@
             "source": "GITHUB_EVENT"
           },
           "event_type": {
-            "value": "GSCC_OBSERVABLE_PULL_REQUEST",
+            "value": "GSCC_OBSERVABLE_PUSH",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "REPOSITORY_SURFACE"
           },
           "delivery_or_correlation_id": {
-            "value": "37413364519:1",
+            "value": "37413390116:1",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "CONTROLLED_SURFACE"
           },
@@ -22115,7 +22115,7 @@
             "source": "GACR_SESSION"
           },
           "last_seen_at": {
-            "value": "2026-10-06T04:22:33+00:00",
+            "value": "2026-10-06T04:22:47+00:00",
             "provenance": "CORRELATED",
             "source": "GACR_SESSION"
           },
@@ -22125,7 +22125,7 @@
             "source": "CLIENT_OR_ADAPTER"
           },
           "lease_expires_at": {
-            "value": "2026-10-06T04:52:33+00:00",
+            "value": "2026-10-06T04:52:47+00:00",
             "provenance": "CORRELATED",
             "source": "GACR_WATCH"
           },
@@ -22150,7 +22150,7 @@
             "source": "CLIENT_OR_GACR_SESSION"
           },
           "last_evidence": {
-            "value": "github-event:pull_request:37413364519:1",
+            "value": "github-event:push:37413390116:1",
             "provenance": "DECLARED_BY_AGENT_OR_CLIENT",
             "source": "CLIENT_OR_GACR_SESSION"
           },
