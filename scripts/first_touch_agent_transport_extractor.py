@@ -22,7 +22,11 @@ EXPECTED={
 
 def _value(source:dict[str,Any], key:str)->Any:
     value=source.get(key,"UNAVAILABLE")
-    return "UNAVAILABLE" if value in UNAVAILABLE_MARKERS else value
+    if value is None or value == "":
+        return "UNAVAILABLE"
+    if isinstance(value, str) and value in {"UNAVAILABLE","UNKNOWN","NOT_EXPOSED","NOT_ACCESSIBLE"}:
+        return "UNAVAILABLE"
+    return value
 
 def _status(value:Any)->str:
     if value=="UNAVAILABLE":
