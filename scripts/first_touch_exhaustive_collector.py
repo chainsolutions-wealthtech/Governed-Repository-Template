@@ -21,8 +21,58 @@ SENSITIVE_KEY_RE = re.compile(
     re.IGNORECASE,
 )
 
-ENV_PREFIXES = ("GITHUB_", "RUNNER_", "ACTIONS_")
-SAFE_ENV_EXACT = {"CI", "HOME", "PATH", "PWD", "SHELL", "LANG", "LC_ALL", "PYTHONPATH", "PYTHONHOME"}
+SAFE_ENV_KEYS = {
+    "CI",
+    "GITHUB_REPOSITORY",
+    "GITHUB_REPOSITORY_ID",
+    "GITHUB_REPOSITORY_OWNER",
+    "GITHUB_REPOSITORY_OWNER_ID",
+    "GITHUB_ACTOR",
+    "GITHUB_ACTOR_ID",
+    "GITHUB_TRIGGERING_ACTOR",
+    "GITHUB_EVENT_NAME",
+    "GITHUB_REF",
+    "GITHUB_REF_NAME",
+    "GITHUB_REF_TYPE",
+    "GITHUB_SHA",
+    "GITHUB_HEAD_REF",
+    "GITHUB_BASE_REF",
+    "GITHUB_WORKFLOW",
+    "GITHUB_WORKFLOW_REF",
+    "GITHUB_WORKFLOW_SHA",
+    "GITHUB_RUN_ID",
+    "GITHUB_RUN_NUMBER",
+    "GITHUB_RUN_ATTEMPT",
+    "GITHUB_JOB",
+    "GITHUB_ACTION",
+    "GITHUB_ACTION_REPOSITORY",
+    "GITHUB_ACTION_REF",
+    "GITHUB_SERVER_URL",
+    "GITHUB_API_URL",
+    "GITHUB_GRAPHQL_URL",
+    "GITHUB_WORKSPACE",
+    "GITHUB_EVENT_PATH",
+    "RUNNER_OS",
+    "RUNNER_ARCH",
+    "RUNNER_NAME",
+    "RUNNER_ENVIRONMENT",
+    "RUNNER_TEMP",
+    "RUNNER_TOOL_CACHE",
+}
+
+FREEFORM_CONTENT_KEYS = {
+    "body",
+    "text",
+    "content",
+    "message",
+    "description",
+    "raw_prompt",
+    "prompt",
+    "response",
+    "transcript",
+    "tool_output",
+    "tool_result",
+}
 
 
 def utc_now() -> str:
@@ -34,13 +84,25 @@ def _is_sensitive_key(key: str) -> bool:
     return bool(SENSITIVE_KEY_RE.search(normalized))
 
 
+def _redacted_metadata(value: Any, reason: str) -> dict[str, Any]:
+    rendered = "" if value is None else (
+        value if isinstance(value, str)
+        else json.dumps(value, sort_keys=True, ensure_ascii=False, default=str)
+    )
+    return {
+        "_capture_status": "REDACTED_VALUE",
+        "_reason": reason,
+        "_field_present": value not in (None, ""),
+        "_value_length": len(rendered),
+        "_value_sha256": hashlib.sha256(rendered.encode("utf-8")).hexdigest() if rendered else None,
+    }
+
+
 def sanitize(value: Any, *, key: str | None = None) -> Any:
     if key is not None and _is_sensitive_key(key):
-        return {
-            "_capture_status": "REDACTED_VALUE",
-            "_reason": "SENSITIVE_KEY",
-            "_field_present": value not in (None, ""),
-        }
+        return _redacted_metadata(value, "SENSITIVE_KEY")
+    if key is not None and key.lower() in FREEFORM_CONTENT_KEYS:
+        return _redacted_metadata(value, "FREEFORM_CONTENT")
     if isinstance(value, dict):
         return {str(k): sanitize(v, key=str(k)) for k, v in value.items()}
     if isinstance(value, list):
@@ -80,11 +142,11 @@ def _event_subject(event: dict[str, Any], env: dict[str, str]) -> dict[str, Any]
 
 
 def _environment_snapshot(env: dict[str, str]) -> dict[str, Any]:
-    selected: dict[str, Any] = {}
-    for key in sorted(env):
-        if key in SAFE_ENV_EXACT or key.startswith(ENV_PREFIXES):
-            selected[key] = sanitize(env[key], key=key)
-    return selected
+    return {
+        key: sanitize(env[key], key=key)
+        for key in sorted(SAFE_ENV_KEYS)
+        if key in env
+    }
 
 
 def _http_json(url: str, token: str | None, timeout: int = 15) -> tuple[int, Any]:
