@@ -110,9 +110,12 @@ jobs:
           PY
 
       - name: Merge previous persisted GSCC state
-        if: ${{ hashFiles(format('{0}/first-touch-previous.sqlite', runner.temp)) != '' }}
         run: |
-          python3 scripts/first_touch_state_artifact.py merge             --current "$RUNNER_TEMP/provider-first-touch-capture.sqlite"             --previous "$RUNNER_TEMP/first-touch-previous.sqlite"
+          if [ -f "$RUNNER_TEMP/first-touch-previous.sqlite" ]; then
+            python3 scripts/first_touch_state_artifact.py merge               --current "$RUNNER_TEMP/provider-first-touch-capture.sqlite"               --previous "$RUNNER_TEMP/first-touch-previous.sqlite"
+          else
+            echo "NO_PRIOR_PERSISTED_GSCC_STATE"
+          fi
 
       - name: Build expected first-touch field registry
         run: python3 scripts/first_touch_expected_field_registry.py
