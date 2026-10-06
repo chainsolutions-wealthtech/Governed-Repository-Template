@@ -162,6 +162,62 @@ def enrich_envelope(envelope: dict[str, Any], token: str, *, api_base: str = "ht
 
     workflows = workflows_data.get("workflows") if isinstance(workflows_data.get("workflows"), list) else []
     runs = runs_data.get("workflow_runs") if isinstance(runs_data.get("workflow_runs"), list) else []
+    enriched["permissions"] = {
+        "admin": permissions.get("admin", "UNAVAILABLE"),
+        "maintain": permissions.get("maintain", "UNAVAILABLE"),
+        "push": permissions.get("push", "UNAVAILABLE"),
+        "pull": permissions.get("pull", "UNAVAILABLE"),
+        "triage": permissions.get("triage", "UNAVAILABLE"),
+        "source": "github_actions_repository_token_observation",
+        "observed_at": observed_at,
+    }
+    enriched["git"] = {
+        "branch": default_branch,
+        "head": observed_head or "UNAVAILABLE",
+        "ref": f"refs/heads/{default_branch}",
+        "ref_name": default_branch,
+        "ref_type": "branch",
+        "ref_sha": observed_head or "UNAVAILABLE",
+        "default_branch_sha": observed_head or "UNAVAILABLE",
+        "branch_protected": branch_data.get("protected", "UNAVAILABLE") if isinstance(branch_data, dict) else "UNAVAILABLE",
+    }
+    enriched["commit"] = {
+        "sha": commit_data.get("sha", observed_head or "UNAVAILABLE"),
+        "parent_sha": (parents[0].get("sha") if parents and isinstance(parents[0], dict) else "UNAVAILABLE"),
+        "parent_shas": [p.get("sha") for p in parents if isinstance(p, dict) and p.get("sha")],
+        "tree_sha": tree.get("sha", "UNAVAILABLE"),
+        "message": commit_obj.get("message", "UNAVAILABLE"),
+        "author_name": commit_author.get("name", "UNAVAILABLE"),
+        "author_email": commit_author.get("email", "UNAVAILABLE"),
+        "author_date": commit_author.get("date", "UNAVAILABLE"),
+        "committer_name": commit_committer.get("name", "UNAVAILABLE"),
+        "committer_email": commit_committer.get("email", "UNAVAILABLE"),
+        "committer_date": commit_committer.get("date", "UNAVAILABLE"),
+        "html_url": commit_data.get("html_url", "UNAVAILABLE"),
+        "api_url": commit_data.get("url", "UNAVAILABLE"),
+        "comment_count": commit_obj.get("comment_count", "UNAVAILABLE"),
+        "signature_verified": ((commit_obj.get("verification") or {}).get("verified") if isinstance(commit_obj.get("verification"), dict) else "UNAVAILABLE"),
+        "signature_reason": ((commit_obj.get("verification") or {}).get("reason") if isinstance(commit_obj.get("verification"), dict) else "UNAVAILABLE"),
+        "verification_status": ((commit_obj.get("verification") or {}).get("verified") if isinstance(commit_obj.get("verification"), dict) else "UNAVAILABLE"),
+        "files_changed": len(commit_data.get("files") or []) if isinstance(commit_data.get("files"), list) else "UNAVAILABLE",
+        "additions": stats.get("additions", "UNAVAILABLE"),
+        "deletions": stats.get("deletions", "UNAVAILABLE"),
+    }
+    enriched["tree"] = {
+        "sha": tree.get("sha", "UNAVAILABLE"),
+        "url": tree.get("url", "UNAVAILABLE"),
+    }
+    enriched["repository_state"] = {
+        "observed_head": observed_head or "UNAVAILABLE",
+        "observed_default_branch": repository_data.get("default_branch", "UNAVAILABLE"),
+        "observed_branch": default_branch,
+        "observed_tree": tree.get("sha", "UNAVAILABLE"),
+        "observed_parent": (parents[0].get("sha") if parents and isinstance(parents[0], dict) else "UNAVAILABLE"),
+        "observed_last_commit_message": commit_obj.get("message", "UNAVAILABLE"),
+        "observed_last_commit_author": commit_author.get("name", "UNAVAILABLE"),
+        "observed_last_commit_time": commit_author.get("date", "UNAVAILABLE"),
+    }
+
     enriched["actions_observation"] = {
         "workflow_count": workflows_data.get("total_count", len(workflows)),
         "workflows": [
@@ -189,6 +245,22 @@ def enrich_envelope(envelope: dict[str, Any], token: str, *, api_base: str = "ht
             }
             for r in runs[:20] if isinstance(r, dict)
         ],
+    }
+
+    latest_run = runs[0] if runs and isinstance(runs[0], dict) else {}
+    enriched["workflow"] = {
+        "workflow_id": latest_run.get("workflow_id", "UNAVAILABLE"),
+        "name": latest_run.get("name", "UNAVAILABLE"),
+        "run_id": latest_run.get("id", "UNAVAILABLE"),
+        "run_number": latest_run.get("run_number", "UNAVAILABLE"),
+        "run_attempt": latest_run.get("run_attempt", "UNAVAILABLE"),
+        "run_status": latest_run.get("status", "UNAVAILABLE"),
+        "run_conclusion": latest_run.get("conclusion", "UNAVAILABLE"),
+        "event": latest_run.get("event", "UNAVAILABLE"),
+        "head_sha": latest_run.get("head_sha", "UNAVAILABLE"),
+        "head_branch": latest_run.get("head_branch", "UNAVAILABLE"),
+        "created_at": latest_run.get("created_at", "UNAVAILABLE"),
+        "updated_at": latest_run.get("updated_at", "UNAVAILABLE"),
     }
 
     enriched["repository_enrichment"] = {
