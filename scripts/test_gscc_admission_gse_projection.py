@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from gscc_gacr.admission_gse_projection import project_admission_gse_state
+from gscc_gacr.admission_gse_projection import project_admission_gse_state, project_pre_gacr_admission_gse_state
 
 NOW = datetime(2026, 10, 2, 13, 30, 30, tzinfo=timezone.utc)
 SESSION_ID = "session-gse-live"
@@ -101,8 +101,43 @@ def main():
     test_stale_control_proof_does_not_project_verified_liveness()
     test_unverified_control_proof_fails_closed()
     test_post_challenge_heartbeat_newer_than_response_preserves_control_proof()
+    test_pre_gacr_projection_requires_no_durable_session()
     print("GSCC_ADMISSION_GSE_PROJECTION_TESTS_OK")
 
 
 if __name__ == "__main__":
     main()
+
+
+def test_pre_gacr_projection_requires_no_durable_session():
+    admission = {
+        "admission_id": "GSCC-ADM-PRE-GACR-1",
+        "connection_ref": "conn-pre-gacr-1",
+        "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+        "evaluated_at": "2026-10-06T06:10:00+00:00",
+    }
+    baseline = {
+        "status": "OBSERVED",
+        "repository": admission["repository"],
+        "requested_branch": "main",
+        "default_branch": "main",
+        "observed_head": "a"*40,
+        "observed_at": "2026-10-06T06:10:00+00:00",
+    }
+    control = {
+        "capabilities": {"status": "VERIFIED", "evidence_ref": "cap:1"},
+        "control_channel": {
+            "status": "VERIFIED",
+            "state": "REACHABLE",
+            "evidence_ref": "ctrl:1",
+            "observed_at": "2026-10-06T06:10:01+00:00",
+            "challenge_id": "challenge-1",
+        },
+    }
+    state = project_pre_gacr_admission_gse_state(admission, baseline, control)
+    assert state["status"] == "VERIFIED", state
+    assert state["session_id"] == admission["connection_ref"], state
+    assert state["durable_gacr_session_required"] is False, state
+    assert state["presence"] == "PRESENT", state
+    assert state["liveness"] == "VERIFIED", state
+    assert state["control_reachability"] == "REACHABLE", state
