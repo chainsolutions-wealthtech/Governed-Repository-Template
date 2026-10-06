@@ -1128,6 +1128,16 @@ def correlate_beacon(beacon: dict, sessions_doc: dict, claims_doc: dict | None =
             for sid in matches:
                 direct_reasons.setdefault(sid, []).append(reason)
 
+    # connection_ref identifies a concrete governed connection, while one
+    # client_instance_id may legitimately host several concurrent connections.
+    # When both anchors are supplied and overlap, restrict the process-level
+    # client anchor to the connection-scoped match. If they do not overlap,
+    # preserve the original conflicting-anchor behavior and fail closed.
+    if "connection_ref" in direct_targets and "client_instance_id" in direct_targets:
+        overlap = direct_targets["connection_ref"].intersection(direct_targets["client_instance_id"])
+        if overlap:
+            direct_targets["client_instance_id"] = overlap
+
     union = set().union(*direct_targets.values()) if direct_targets else set()
     if len(union) > 1 or any(len(values) > 1 for values in direct_targets.values()):
         return _correlation_result(
