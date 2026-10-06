@@ -70,6 +70,24 @@ jobs:
             --capture "${RUNNER_TEMP}/first-touch-capture.json" \
             --output "${RUNNER_TEMP}/first-touch-completeness.json"
 
+      - name: Evaluate mandatory first-touch entry contract
+        id: entry
+        run: |
+          python3 scripts/first_touch_entry_contract.py \
+            --capture "${RUNNER_TEMP}/first-touch-capture.json" \
+            --completeness "${RUNNER_TEMP}/first-touch-completeness.json" \
+            --db "${RUNNER_TEMP}/first-touch-capture.sqlite" \
+            --output "${RUNNER_TEMP}/first-touch-entry-contract.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path(os.environ["RUNNER_TEMP"])/"first-touch-entry-contract.json"
+          v=json.loads(p.read_text(encoding="utf-8"))
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("status="+v["status"]+"\n")
+              f.write("classification="+v["classification"]+"\n")
+          PY
+
       - name: Upload exhaustive first-touch evidence
         uses: actions/upload-artifact@v4
         with:
@@ -78,10 +96,12 @@ jobs:
             ${{ runner.temp }}/first-touch-capture.json
             ${{ runner.temp }}/first-touch-capture.sqlite
             ${{ runner.temp }}/first-touch-completeness.json
+            ${{ runner.temp }}/first-touch-entry-contract.json
           if-no-files-found: error
           retention-days: 30
 
       - name: Enter canonical GSCC arrival gateway
+        if: ${{ steps.entry.outputs.status == 'ENTRY_READY_FOR_Q1' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python3 scripts/gscc_observable_arrival.py github-event
