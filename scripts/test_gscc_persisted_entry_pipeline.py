@@ -14,6 +14,8 @@ GITHUB={
  "owner":{"login":"chainsolutions-wealthtech","id":299685687},
  "permissions":{"admin":True,"maintain":True,"pull":True,"push":True,"triage":True},
  "default_branch":"main",
+ "branch":"main",
+ "head_sha":"a"*40,
  "visibility":"public"
 }
 
