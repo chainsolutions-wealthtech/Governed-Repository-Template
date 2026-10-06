@@ -132,7 +132,7 @@ class FirstToolHook:
             self.emitted[marker]=True
         return {
             "status":"FIRST_TOUCH_EMITTED",
-            "marker":marker,
+            "marker":marker or "UNRESOLVED",
             "event_type":EVENT_TYPE,
             "http_status":status,
             "envelope":envelope,
