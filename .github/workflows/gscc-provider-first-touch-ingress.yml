@@ -256,6 +256,10 @@ jobs:
 
   control:
     if: ${{ github.event_name == 'issue_comment' && startsWith(github.event.issue.title, '[GSCC First Touch]') && github.actor != 'github-actions[bot]' && (startsWith(github.event.comment.body, '/gscc-entry-ack ') || startsWith(github.event.comment.body, '/gscc-entry-response ')) }}
+    permissions:
+      contents: write
+      actions: read
+      issues: write
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
@@ -333,8 +337,22 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          payload="$(cat "$RUNNER_TEMP/gacr-attach.json")"
-          gh api "repos/${GITHUB_REPOSITORY}/issues/115/comments" -f body="/gacr-host $payload"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path(os.environ["RUNNER_TEMP"])/"gacr-attach.json"
+          payload=json.loads(p.read_text(encoding="utf-8"))
+          for key in ("capabilities","wake_channels"):
+              if isinstance(payload.get(key),list):
+                  payload[key]=",".join(str(x) for x in payload[key])
+          payload["source"]="GSCC_PRE_GSE_RUNTIME"
+          payload["repository"]=os.environ["GITHUB_REPOSITORY"]
+          out={"event_type":"gacr_auto-attach","client_payload":payload}
+          (Path(os.environ["RUNNER_TEMP"])/"gacr-auto-attach-dispatch.json").write_text(
+              json.dumps(out,ensure_ascii=False,separators=(",",":")),encoding="utf-8"
+          )
+          PY
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches"             --input "$RUNNER_TEMP/gacr-auto-attach-dispatch.json"
 
       - name: Wait for canonical GACR session and bind Q2-Q12
         if: ${{ steps.q9.outputs.state == 'GSE_VERIFIED_WAITING_GACR' }}
