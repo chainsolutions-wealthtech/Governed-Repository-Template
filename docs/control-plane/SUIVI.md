@@ -1209,3 +1209,13 @@ These observations are durable supervision evidence, not new mutation authority 
 - Missing provider-private identifiers are explicitly `UNAVAILABLE`; no synthetic conversation/session/client identity is generated.
 - Repository facts remain repository-owned and are enriched only after the provider dispatch.
 - The dispatch envelope is kept compact so the provider signal is transport-safe and provenance remains separated.
+
+
+## 2026-10-06 — Full GitHub plugin tool-surface instrumentation
+
+- Reused the canonical `chatgpt-github-tool-schema-snapshot/v1` instead of maintaining a hand-written tool list.
+- Snapshot currently declares 89 GitHub plugin tools and 866 tool/field pairs.
+- Added `chatgpt_github_surface_instrumentation.py` to instrument the complete exposed surface with `gscc.instrument_tool()`.
+- Added `instrument_github_plugin_surface_with_first_touch()` so one Provider First Touch hook is shared across the whole surface.
+- Tests prove `get_repo`, `fetch_file`, `search_commits` and mutation tools are all wrapped from the same catalogue, and only the first wrapped invocation emits Provider First Touch.
+- Remaining external boundary: the OpenAI-managed GitHub plugin runtime must instantiate this wrapper around its exposed function mapping; repository code cannot monkeypatch that proprietary runtime.
