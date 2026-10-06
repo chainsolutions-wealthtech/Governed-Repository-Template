@@ -90,6 +90,7 @@ def main() -> None:
             "GITHUB_RUN_ID": "40000000003",
             "GITHUB_RUN_ATTEMPT": "1",
             "GITHUB_SHA": "c" * 40,
+            "GITHUB_REF_NAME": "main",
         },
     )
     assert_true(
@@ -104,6 +105,30 @@ def main() -> None:
     assert_true(
         controlled_app_facts["connection_ref"].endswith(":issue:888"),
         "controlled connector arrival must retain a stable repository subject anchor",
+    )
+
+    controlled_comment_event = {
+        "repository": event["repository"],
+        "sender": {"login": "fresh-provider-actor"},
+        "issue": {"number": 888},
+        "comment": {
+            "body": "ordinary governed work update",
+            "performed_via_github_app": {"slug": "chatgpt-codex-connector"},
+        },
+    }
+    controlled_comment_facts = build_github_arrival_facts(
+        controlled_comment_event,
+        {
+            "GITHUB_EVENT_NAME": "issue_comment",
+            "GITHUB_RUN_ID": "40000000005",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_SHA": "e" * 40,
+            "GITHUB_REF_NAME": "main",
+        },
+    )
+    assert_true(
+        controlled_comment_facts["connection_ref"] == controlled_app_facts["connection_ref"],
+        "issue creation and later issue comment must preserve one stable controlled connection",
     )
 
     untrusted_app_event = {
