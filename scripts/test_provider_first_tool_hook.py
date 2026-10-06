@@ -2,7 +2,7 @@
 from __future__ import annotations
 import unittest
 
-from provider_first_tool_hook import FirstToolHook, build_envelope
+from provider_first_tool_hook import FirstToolHook, FirstTouchBeforeToolCall, build_envelope
 
 def event():
     return {
@@ -88,6 +88,34 @@ class ProviderFirstToolHookTests(unittest.TestCase):
         result=hook.maybe_emit_first_touch(value,token="test",dispatch_fn=dispatch)
         self.assertEqual(result["status"],"NOT_FIRST_TOOL_CALL")
         self.assertEqual(calls,[])
+
+
+    def test_generic_before_tool_adapter_emits_only_once_for_any_tool(self):
+        calls=[]
+        def dispatch(repository,envelope,token):
+            calls.append(envelope["tool"]["name"])
+            return 204
+        adapter=FirstTouchBeforeToolCall(
+            event_base={
+                "provider":"chatgpt",
+                "transport":"chatgpt-github-direct",
+                "repository":"chainsolutions-wealthtech/Governed-Repository-Template",
+                "identity":{
+                    "conversation_ref":"UNAVAILABLE",
+                    "session_ref":"UNAVAILABLE",
+                    "connection_ref":"conn-generic-1",
+                },
+            },
+            token="test",
+            dispatch_fn=dispatch,
+        )
+        first=adapter("mcp__GitHub__get_repo")
+        second=adapter("mcp__GitHub__fetch_file")
+        third=adapter("mcp__GitHub__search_commits")
+        self.assertEqual(first["status"],"FIRST_TOUCH_EMITTED")
+        self.assertEqual(second["status"],"FIRST_TOUCH_ALREADY_EMITTED")
+        self.assertEqual(third["status"],"FIRST_TOUCH_ALREADY_EMITTED")
+        self.assertEqual(calls,["mcp__GitHub__get_repo"])
 
 if __name__=="__main__":
     unittest.main()
