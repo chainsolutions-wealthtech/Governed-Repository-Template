@@ -6,7 +6,7 @@
   "historical_pilot": "Patricked-code/Gouvern",
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
   "current_phase": "C1-14",
-  "current_status": "IN_PROGRESS",
+  "current_status": "DONE",
   "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
   "phases": [
     {
@@ -378,11 +378,12 @@
     {
       "id": "C1-14",
       "name": "case closure",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-13"
       ],
-      "next_action": "CLOSE_CREATE_NEW_REPOSITORY_CASE"
+      "next_action": null,
+      "completed_state": "CREATE_NEW_REPOSITORY_CASE_COMPLETE"
     }
   ],
   "change_protocol": {

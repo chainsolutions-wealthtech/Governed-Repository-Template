@@ -23,10 +23,11 @@
       "run_id": "CASE1-PILOT-GOUVERN",
       "case_id": "CREATE_NEW_REPOSITORY",
       "repository_id": "repo-gouvern",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "current_phase_id": "C1-14",
       "source_issue": "Patricked-code/Gouvern#2",
-      "started_at": "2026-09-26"
+      "started_at": "2026-09-26",
+      "completed_at": "2026-10-01"
     }
   ],
   "decisions": [

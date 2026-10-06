@@ -345,13 +345,34 @@ def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0,
     if cases != 4:
         raise SystemExit(f"CONTROL_PLANE_DB_FAILED: expected 4 structuring cases, got {cases}")
     active = conn.execute("SELECT phase_id FROM case_phases WHERE case_id='CREATE_NEW_REPOSITORY' AND status='IN_PROGRESS'").fetchall()
-    if len(active) != 1:
-        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: expected exactly one active CASE1 phase, got {active}")
-    next_phase = conn.execute("SELECT current_phase_id FROM runs WHERE run_id='CASE1-PILOT-GOUVERN'").fetchone()
-    if next_phase is None:
-        raise SystemExit("CONTROL_PLANE_DB_FAILED: pilot run current phase missing")
-    if active[0] != next_phase:
-        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: CASE1 active phase/run mismatch: active={active[0]} run={next_phase}")
+    run = conn.execute("SELECT status,current_phase_id,completed_at FROM runs WHERE run_id='CASE1-PILOT-GOUVERN'").fetchone()
+    if run is None:
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: CASE1 pilot run missing")
+    run_status,current_phase,completed_at = run
+    case_status_row = conn.execute("SELECT status FROM framework_cases WHERE case_id='CREATE_NEW_REPOSITORY'").fetchone()
+    if case_status_row is None:
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: CREATE_NEW_REPOSITORY catalogue entry missing")
+    case_status = case_status_row[0]
+    if case_status != run_status:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: CASE1 catalogue/run lifecycle mismatch: case={case_status!r} run={run_status!r}")
+    if run_status == "DONE":
+        terminal = conn.execute("SELECT status FROM case_phases WHERE case_id='CREATE_NEW_REPOSITORY' AND phase_id='C1-14'").fetchone()
+        if current_phase != "C1-14" or terminal != ("DONE",):
+            raise SystemExit(f"CONTROL_PLANE_DB_FAILED: completed CASE1 must terminate at DONE C1-14: run={run} terminal={terminal}")
+        if active:
+            raise SystemExit(f"CONTROL_PLANE_DB_FAILED: completed CASE1 retains active phases: {active}")
+        unfinished = conn.execute("SELECT phase_id,status FROM case_phases WHERE case_id='CREATE_NEW_REPOSITORY' AND status!='DONE' ORDER BY ordinal").fetchall()
+        if unfinished:
+            raise SystemExit(f"CONTROL_PLANE_DB_FAILED: completed CASE1 retains unfinished phases: {unfinished}")
+        if not completed_at:
+            raise SystemExit("CONTROL_PLANE_DB_FAILED: completed CASE1 run missing completed_at")
+    elif run_status == "IN_PROGRESS":
+        if len(active) != 1:
+            raise SystemExit(f"CONTROL_PLANE_DB_FAILED: expected exactly one active CASE1 phase, got {active}")
+        if active[0] != (current_phase,):
+            raise SystemExit(f"CONTROL_PLANE_DB_FAILED: CASE1 active phase/run mismatch: active={active[0]} run={(current_phase,)}")
+    else:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: unsupported CASE1 run status: {run_status!r}")
     mcp_choices = [json.loads(r[0]) for r in conn.execute(
         "SELECT value_json FROM question_options WHERE question_id='C1-Q-MCP-TRANSPORT' ORDER BY ordinal"
     ).fetchall()]
@@ -541,7 +562,7 @@ def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0,
     print("cases=4")
     print(f"questions={conn.execute('SELECT COUNT(*) FROM questions').fetchone()[0]}")
     print(f"activities={conn.execute('SELECT COUNT(*) FROM activities').fetchone()[0]}")
-    print(f"current_phase={active[0][0]}")
+    print(f"current_phase={current_phase}")
     print(f"server_inventory_slots={facts_count}")
     print(f"server_identity_secret_facts={identity_secret_count}")
     print(f"first_touch_probes={probe_count}")
