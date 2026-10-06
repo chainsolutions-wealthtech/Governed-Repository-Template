@@ -107,8 +107,9 @@ def _match_capture_field(field_id: str, index: dict[str, list[tuple[str, Any]]])
 
 
 def build_packet(observation_path: Path | None, output_path: Path, *, capture_path: Path | None = None):
-    mod = load_registry_module()
-    mod.main()
+    if not REGISTRY_PATH.exists():
+        mod = load_registry_module()
+        mod.main()
     registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
 
     observed: dict[str, Any] = {}
