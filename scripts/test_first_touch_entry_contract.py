@@ -62,12 +62,11 @@ def main():
         conn=sqlite3.connect(db); conn.execute('PRAGMA foreign_keys=ON')
         try:
             identity=fts.register_first_touch(conn,anchor=anchor,identity_strength='EXACT',capture_id=capture['capture_id'])
-            projection=fts.project_to_gse(conn,identity_id=identity['identity_id'],capture_id=capture['capture_id'],classification=identity['classification'])
             conn.commit()
             assert identity['classification']=='FIRST_TOUCH'
-            assert projection['event_type']=='SESSION_ATTACH'
             snap_count=conn.execute('SELECT COUNT(*) FROM gscc_first_touch_snapshots').fetchone()[0]
             assert snap_count==1
+            assert conn.execute('SELECT COUNT(*) FROM gse_session_twins').fetchone()[0]==0
         finally:
             conn.close()
 
@@ -75,12 +74,10 @@ def main():
         try:
             assert fts.find_identity(conn,anchor) is not None
             identity2=fts.register_first_touch(conn,anchor=anchor,identity_strength='EXACT',capture_id=capture['capture_id'])
-            projection2=fts.project_to_gse(conn,identity_id=identity2['identity_id'],capture_id=capture['capture_id'],classification=identity2['classification'])
             conn.commit()
             assert identity2['classification']=='CONTINUATION'
-            assert projection2['event_type']=='SESSION_RESUME'
-            assert projection2['revision']==2
             assert conn.execute('SELECT COUNT(*) FROM gscc_first_touch_snapshots').fetchone()[0]==1
+            assert conn.execute('SELECT COUNT(*) FROM gse_session_twins').fetchone()[0]==0
         finally:
             conn.close()
 
