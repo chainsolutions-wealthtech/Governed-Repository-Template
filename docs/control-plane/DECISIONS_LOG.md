@@ -496,7 +496,7 @@ Append-only durable decisions for the source/control-plane repository.
 
 
 
-### CPD-034 — Provider First Touch uses minimal signal and repository-owned enrichment
+### CPD-066 — Provider First Touch uses minimal signal and repository-owned enrichment
 
 - Date: 2026-10-06.
 - Decision: the provider/host emits only the minimum First Touch signal it alone can know or observe. The governed repository is authoritative for read-only enrichment of GitHub repository state before First Touch normalization.
