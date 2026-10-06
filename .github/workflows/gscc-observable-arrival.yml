@@ -25,7 +25,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
   actions: read
   issues: read
   pull-requests: read
@@ -123,8 +123,19 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Enter canonical GSCC arrival gateway
+      - name: Build canonical GSCC First Touch handoff
         if: ${{ steps.entry.outputs.status == 'ENTRY_READY_FOR_Q1' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python3 scripts/gscc_observable_arrival.py github-event
+        run: |
+          python3 scripts/gscc/first_touch_handoff.py \
+            --entry "${RUNNER_TEMP}/first-touch-entry-contract.json" \
+            --db "${RUNNER_TEMP}/first-touch-capture.sqlite" \
+            --output "${RUNNER_TEMP}/gscc-first-touch-handoff.json"
+
+      - name: Upload GSCC First Touch handoff
+        if: ${{ steps.entry.outputs.status == 'ENTRY_READY_FOR_Q1' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-first-touch-handoff-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/gscc-first-touch-handoff.json
+          if-no-files-found: error
+          retention-days: 30

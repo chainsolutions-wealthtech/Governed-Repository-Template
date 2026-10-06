@@ -8,6 +8,7 @@ import os
 import sqlite3
 import urllib.parse
 import urllib.request
+import urllib.error
 import zipfile
 from pathlib import Path
 
@@ -23,6 +24,34 @@ def _request_json(url:str, token:str):
     with urllib.request.urlopen(req,timeout=20) as response:
         return json.loads(response.read().decode("utf-8"))
 
+
+class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+def _artifact_blob(download_url:str, token:str)->bytes:
+    req=urllib.request.Request(download_url,headers={
+        "Authorization":f"Bearer {token}",
+        "Accept":"application/vnd.github+json",
+        "User-Agent":"gscc-first-touch-state",
+    })
+    opener=urllib.request.build_opener(_NoRedirect)
+    try:
+        response=opener.open(req,timeout=20)
+    except urllib.error.HTTPError as exc:
+        if exc.code not in {301,302,303,307,308}:
+            raise
+        location=exc.headers.get("Location")
+        if not location:
+            raise
+    else:
+        location=response.headers.get("Location")
+        if not location:
+            return response.read()
+    clean=urllib.request.Request(location,headers={"User-Agent":"gscc-first-touch-state"})
+    with urllib.request.urlopen(clean,timeout=30) as response:
+        return response.read()
+
 def restore_latest(repository:str, current_run_id:str, output:Path, token:str)->dict:
     encoded=urllib.parse.quote(repository,safe="/")
     url=f"https://api.github.com/repos/{encoded}/actions/artifacts?per_page=100"
@@ -37,13 +66,7 @@ def restore_latest(repository:str, current_run_id:str, output:Path, token:str)->
     if not artifacts:
         return {"status":"NO_PRIOR_STATE"}
     selected=artifacts[0]
-    req=urllib.request.Request(selected["archive_download_url"],headers={
-        "Authorization":f"Bearer {token}",
-        "Accept":"application/vnd.github+json",
-        "User-Agent":"gscc-first-touch-state",
-    })
-    with urllib.request.urlopen(req,timeout=30) as response:
-        blob=response.read()
+    blob=_artifact_blob(selected["archive_download_url"],token)
     with zipfile.ZipFile(io.BytesIO(blob)) as archive:
         names=archive.namelist()
         candidate=next((n for n in names if n.endswith("first-touch-capture.sqlite")),None)

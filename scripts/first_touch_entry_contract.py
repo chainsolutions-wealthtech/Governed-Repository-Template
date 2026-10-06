@@ -7,7 +7,7 @@ import json
 import sqlite3
 from pathlib import Path
 
-from gscc.first_touch_store import find_identity, project_to_gse, register_first_touch
+from gscc.first_touch_store import find_identity, register_first_touch
 
 ROOT=Path(__file__).resolve().parents[1]
 CONTRACT=ROOT/".governance"/"control-plane-state"/"first-touch-entry-contract.json"
@@ -145,12 +145,6 @@ def main():
                 identity_strength=str(strength),
                 capture_id=str(result["capture_id"]),
             )
-            projection=project_to_gse(
-                conn,
-                identity_id=identity["identity_id"],
-                capture_id=str(result["capture_id"]),
-                classification=identity["classification"],
-            )
             conn.commit()
         finally:
             conn.close()
@@ -159,12 +153,13 @@ def main():
         result["create_first_touch_snapshot"]=identity["classification"]=="FIRST_TOUCH"
         result["gscc_identity_id"]=identity["identity_id"]
         result["gscc_first_capture_id"]=identity["first_capture_id"]
+        result["next_gate"]="Q1"
         result["gse_projection"]={
-            "event_type":projection["event_type"],
-            "revision":projection["revision"],
-            "identity_id":projection["identity_id"],
-            "gacr_required":projection["gacr_required"],
+            "status":"PENDING_Q10",
+            "identity_id":identity["identity_id"],
+            "gacr_required":False,
         }
+        result["gacr_continuity"]={"status":"NOT_YET_ENTERED"}
 
     Path(a.output).write_text(
         json.dumps(result,indent=2,ensure_ascii=False,sort_keys=True)+"\n",

@@ -304,6 +304,18 @@ def main() -> None:
         "internal state persistence push must not recursively create GSCC arrival",
     )
 
+
+    first_touch_comment = {
+        "repository": event["repository"],
+        "sender": {"login": "Wealthtechinnovations"},
+        "comment": {"body": "/gscc-first-touch {\"connection\":{\"connection_ref\":\"ft:test\"}}"},
+    }
+    assert_true(
+        should_skip_github_arrival(first_touch_comment, {"GITHUB_EVENT_NAME": "issue_comment"})
+        == "INTERNAL_GSCC_FIRST_TOUCH_INGRESS",
+        "GSCC First Touch ingress must remain in the pre-Q1 path and never dispatch directly to GACR",
+    )
+
     admission_comment = {
         "repository": event["repository"],
         "sender": {"login": "Wealthtechinnovations"},
@@ -339,8 +351,9 @@ def main() -> None:
         assert_true(trigger in text, f"workflow must observe {trigger}")
     assert_true("repository_dispatch:" not in text, "gateway workflow must not recursively trigger on its own dispatch")
     assert_true("branches:" not in text, "gateway must not restrict observable arrival to main or a branch allowlist")
-    assert_true("python3 scripts/gscc_observable_arrival.py github-event" in text, "workflow must enter GSCC gateway")
-    assert_true("contents: write" in text, "repository_dispatch requires bounded write permission")
+    assert_true("python3 scripts/gscc/first_touch_handoff.py" in text, "workflow must build canonical GSCC First Touch handoff")
+    assert_true("python3 scripts/gscc_observable_arrival.py github-event" not in text, "First Touch workflow must not dispatch directly through historical GACR arrival path")
+    assert_true("contents: read" in text, "First Touch workflow must use read-only repository contents permission")
 
     print("GSCC_OBSERVABLE_ARRIVAL_GATEWAY_TEST_PASS")
 
