@@ -1,0 +1,398 @@
+{
+  "schema": "gscc-gse-gacr-realignment/v1",
+  "issue": 199,
+  "invariant": "CAPTURE -> GSCC -> GSE -> GACR -> GOVERNED_REPOSITORY",
+  "historical_contract": "GSCC transports. GSE interprets. GACR governs continuity.",
+  "principles": [
+    "NO_FIELD_LOSS",
+    "OBSERVED_EVIDENCE_NE_INTERPRETED_STATE",
+    "INTERPRETED_STATE_NE_DURABLE_CONTINUITY",
+    "DURABLE_CONTINUITY_NE_DOWNSTREAM_GOVERNED_AUTHORITY",
+    "GSE_INITIAL_STATE_MUST_NOT_REQUIRE_PREEXISTING_GACR_CONTINUITY",
+    "EXISTING_GACR_CORRELATION_AND_CONTINUITY_MECHANISMS_ARE_PRESERVED",
+    "GLOBAL_GOVERNED_WORKFLOW_REMAINS_DOWNSTREAM"
+  ],
+  "layer_order": [
+    "CAPTURE",
+    "GSCC",
+    "GSE",
+    "GACR",
+    "GOVERNED_REPOSITORY"
+  ],
+  "blocks": [
+    {
+      "block_id": "B00",
+      "label": "RAW_CAPTURE_PROVENANCE",
+      "target_primary_layer": "CAPTURE",
+      "target_role": "PRESERVE",
+      "notes": "Every captured node remains losslessly queryable."
+    },
+    {
+      "block_id": "B01",
+      "label": "PLATFORM_PROVIDER_SURFACE",
+      "target_primary_layer": "GSCC",
+      "target_role": "OBSERVE",
+      "notes": "Provider/platform surface evidence."
+    },
+    {
+      "block_id": "B02",
+      "label": "PRINCIPAL_ACTOR_IDENTITY",
+      "target_primary_layer": "GSCC",
+      "target_role": "OBSERVE",
+      "notes": "Observed principal/actor facts; downstream authority remains separate."
+    },
+    {
+      "block_id": "B03",
+      "label": "CLIENT_APP_INSTALLATION",
+      "target_primary_layer": "GSCC",
+      "target_role": "OBSERVE",
+      "notes": "Client/App/installation evidence when exposed."
+    },
+    {
+      "block_id": "B04",
+      "label": "CONNECTION_IDENTITY",
+      "target_primary_layer": "GSCC",
+      "target_role": "ESTABLISH_CONNECTION_CONTEXT",
+      "notes": "Stable GSCC connection identity usable before GACR continuity exists."
+    },
+    {
+      "block_id": "B05",
+      "label": "REPOSITORY_IDENTITY",
+      "target_primary_layer": "GSCC",
+      "target_role": "OBSERVE",
+      "notes": "Repository/org identity."
+    },
+    {
+      "block_id": "B06",
+      "label": "REF_BRANCH_HEAD",
+      "target_primary_layer": "GSCC",
+      "target_role": "OBSERVE_REVALIDATE",
+      "notes": "Branch/ref/exact-HEAD evidence; reused downstream."
+    },
+    {
+      "block_id": "B07",
+      "label": "EVENT_FIRST_TOUCH_SUBJECT",
+      "target_primary_layer": "GSCC",
+      "target_role": "OBSERVE",
+      "notes": "First-touch issue/PR/ref/event subject."
+    },
+    {
+      "block_id": "B08",
+      "label": "WORKFLOW_RUN_JOB",
+      "target_primary_layer": "GSCC",
+      "target_role": "OBSERVE",
+      "notes": "Workflow/run/job evidence."
+    },
+    {
+      "block_id": "B09",
+      "label": "PERMISSIONS_ACCESS_OBSERVABILITY",
+      "target_primary_layer": "GSCC",
+      "target_role": "OBSERVE",
+      "notes": "Observed permissions/access facts, never inferred authority."
+    },
+    {
+      "block_id": "B10",
+      "label": "CAPABILITY_TOOL_SURFACE",
+      "target_primary_layer": "GSCC",
+      "target_role": "OBSERVE_AND_TEST",
+      "notes": "Declared/observed/tested capability evidence."
+    },
+    {
+      "block_id": "B11",
+      "label": "SESSION_BINDING",
+      "target_primary_layer": "CROSS",
+      "target_role": "SPLIT",
+      "notes": "Pre-GSE: GSCC logical connection/session input; post-GSE: GACR durable canonical binding/reconciliation."
+    },
+    {
+      "block_id": "B12",
+      "label": "CONTROL_CHANNEL",
+      "target_primary_layer": "GSCC",
+      "target_role": "CHALLENGE_AND_OBSERVE",
+      "notes": "Command/ACK/response evidence addressable from GSCC context before durable GACR continuity."
+    },
+    {
+      "block_id": "B13",
+      "label": "LIVENESS",
+      "target_primary_layer": "CROSS",
+      "target_role": "SPLIT",
+      "notes": "GSCC observes liveness evidence; GSE interprets liveness state; GACR persists durable lease/continuity."
+    },
+    {
+      "block_id": "B14",
+      "label": "ACTIVITY",
+      "target_primary_layer": "CROSS",
+      "target_role": "SPLIT",
+      "notes": "GSCC observes activity; GSE interprets current activity; GACR may retain continuity references."
+    },
+    {
+      "block_id": "B15",
+      "label": "PROGRESS",
+      "target_primary_layer": "CROSS",
+      "target_role": "SPLIT",
+      "notes": "GSCC observes progress evidence; GSE interprets qualifying progress; GACR persists continuity/checkpoint references."
+    },
+    {
+      "block_id": "B16",
+      "label": "CHECKPOINT_CONTEXT",
+      "target_primary_layer": "CROSS",
+      "target_role": "SPLIT",
+      "notes": "GSE interprets bounded resumable context; GACR durably retains continuity/checkpoint state."
+    },
+    {
+      "block_id": "B17",
+      "label": "TASK_WORK_ITEM",
+      "target_primary_layer": "CROSS",
+      "target_role": "SPLIT",
+      "notes": "GSCC observes hints; GSE qualifies task context; GACR durably correlates; governed workflow retains task authority."
+    },
+    {
+      "block_id": "B18",
+      "label": "CLAIM_COLLISION_DOMAIN",
+      "target_primary_layer": "CROSS",
+      "target_role": "SPLIT",
+      "notes": "Observed/qualified claim evidence may feed GSE/GACR; final governed claim authority remains downstream."
+    },
+    {
+      "block_id": "B19",
+      "label": "GOVERNANCE_READ",
+      "target_primary_layer": "GSCC",
+      "target_role": "OBSERVE",
+      "notes": "Required governance authorities observed with provenance."
+    },
+    {
+      "block_id": "B20",
+      "label": "ADMISSION_PREAUTHORIZATION",
+      "target_primary_layer": "GSCC",
+      "target_role": "VALIDATE",
+      "notes": "Admission/PREAUTHORIZED only; no repository or mutation authority."
+    },
+    {
+      "block_id": "B21",
+      "label": "QUALIFICATION",
+      "target_primary_layer": "CROSS",
+      "target_role": "AGGREGATE",
+      "notes": "GSCC evidence plus GSE interpreted state plus post-GSE durable reconciliation where required."
+    },
+    {
+      "block_id": "B22",
+      "label": "ACCESS_POLICY",
+      "target_primary_layer": "GSCC",
+      "target_role": "EVALUATE",
+      "notes": "Fail-closed access policy after required evidence is assembled."
+    },
+    {
+      "block_id": "B23",
+      "label": "ACCESS_GRANT",
+      "target_primary_layer": "GSCC",
+      "target_role": "ISSUE_BOUNDED",
+      "notes": "Bounded grant; neither invocation nor mutation authority."
+    },
+    {
+      "block_id": "B24",
+      "label": "FUNCTION_EXPOSURE",
+      "target_primary_layer": "GSCC",
+      "target_role": "VALIDATE",
+      "notes": "Existing canonical function exposure gate preserved."
+    },
+    {
+      "block_id": "B25",
+      "label": "PRECALL_MUTATION_AUTHORITY",
+      "target_primary_layer": "GOVERNED_REPOSITORY",
+      "target_role": "REVALIDATE",
+      "notes": "Pre-call and mutation authority remain governed-workflow responsibilities."
+    },
+    {
+      "block_id": "B26",
+      "label": "CONTINUITY",
+      "target_primary_layer": "GACR",
+      "target_role": "PERSIST",
+      "notes": "Durable continuity after GSE initial interpretation; never a prerequisite for initial GSE state."
+    },
+    {
+      "block_id": "B27",
+      "label": "FORENSICS_INTERRUPTION",
+      "target_primary_layer": "GACR",
+      "target_role": "PERSIST",
+      "notes": "Interruption/forensic evidence."
+    },
+    {
+      "block_id": "B28",
+      "label": "TAKEOVER_HANDOFF",
+      "target_primary_layer": "GACR",
+      "target_role": "GOVERN",
+      "notes": "Durable handoff/takeover preparation subject to existing exact-HEAD rules."
+    },
+    {
+      "block_id": "B29",
+      "label": "ADDRESSABILITY_WAKE",
+      "target_primary_layer": "CROSS",
+      "target_role": "SPLIT",
+      "notes": "GSCC observes reachable channels; GACR persists safe durable addressability/wake context."
+    },
+    {
+      "block_id": "B30",
+      "label": "UNAVAILABLE_NEGATIVE_EVIDENCE",
+      "target_primary_layer": "CROSS",
+      "target_role": "PRESERVE",
+      "notes": "Unavailable/unknown/denied evidence remains explicit across layers."
+    }
+  ],
+  "gates": [
+    {
+      "gate_id": "G00",
+      "label": "CAPTURE_PRESERVED",
+      "target_owner_layer": "CAPTURE",
+      "target_rank": 0,
+      "target_phase": "CAPTURE",
+      "notes": "Preserve evidence only."
+    },
+    {
+      "gate_id": "Q1",
+      "label": "ADMISSION_ENVELOPE_VALIDATED",
+      "target_owner_layer": "GSCC",
+      "target_rank": 10,
+      "target_phase": "PRE_GSE",
+      "notes": "Validate admission and PREAUTHORIZED decision eligibility."
+    },
+    {
+      "gate_id": "Q3",
+      "label": "REQUIRED_GOVERNANCE_READ",
+      "target_owner_layer": "GSCC",
+      "target_rank": 20,
+      "target_phase": "PRE_GSE",
+      "notes": "Read governance authorities."
+    },
+    {
+      "gate_id": "Q4",
+      "label": "CURRENT_REPOSITORY_BASELINE_OBSERVED",
+      "target_owner_layer": "GSCC",
+      "target_rank": 30,
+      "target_phase": "PRE_GSE",
+      "notes": "Observe repository baseline."
+    },
+    {
+      "gate_id": "Q5",
+      "label": "EXACT_HEAD_ESTABLISHED",
+      "target_owner_layer": "GSCC",
+      "target_rank": 40,
+      "target_phase": "PRE_GSE",
+      "notes": "Establish exact current HEAD."
+    },
+    {
+      "gate_id": "Q8",
+      "label": "DECLARED_CAPABILITIES_TESTED",
+      "target_owner_layer": "GSCC",
+      "target_rank": 50,
+      "target_phase": "PRE_GSE",
+      "notes": "Test capability evidence."
+    },
+    {
+      "gate_id": "Q9",
+      "label": "GSCC_CONTROL_CHANNEL_CHALLENGE",
+      "target_owner_layer": "GSCC",
+      "target_rank": 60,
+      "target_phase": "PRE_GSE",
+      "notes": "Prove control reachability using GSCC connection context; must not require durable GACR continuity."
+    },
+    {
+      "gate_id": "Q10",
+      "label": "GSE_INITIAL_SESSION_STATE",
+      "target_owner_layer": "GSE",
+      "target_rank": 70,
+      "target_phase": "GSE",
+      "notes": "Construct initial SessionTwin from GSCC evidence/context."
+    },
+    {
+      "gate_id": "Q2",
+      "label": "CANONICAL_SESSION_BOUND",
+      "target_owner_layer": "GACR",
+      "target_rank": 80,
+      "target_phase": "POST_GSE",
+      "notes": "Create/reconcile durable canonical continuity session after initial GSE interpretation."
+    },
+    {
+      "gate_id": "Q6",
+      "label": "TASK_RECONCILED",
+      "target_owner_layer": "GACR",
+      "target_rank": 90,
+      "target_phase": "POST_GSE",
+      "notes": "Durably reconcile qualified task/work context; task authority remains downstream."
+    },
+    {
+      "gate_id": "Q7",
+      "label": "CLAIM_COLLISION_RECONCILED",
+      "target_owner_layer": "GACR",
+      "target_rank": 100,
+      "target_phase": "POST_GSE",
+      "notes": "Durably reconcile claim/collision evidence without taking governed claim authority."
+    },
+    {
+      "gate_id": "Q11",
+      "label": "ACCESS_POLICY_EVALUATION",
+      "target_owner_layer": "GSCC",
+      "target_rank": 110,
+      "target_phase": "POST_GACR_RECONCILIATION",
+      "notes": "Evaluate access policy over assembled evidence."
+    },
+    {
+      "gate_id": "Q12",
+      "label": "ACCESS_GRANT",
+      "target_owner_layer": "GSCC",
+      "target_rank": 120,
+      "target_phase": "POST_GACR_RECONCILIATION",
+      "notes": "Issue bounded access grant."
+    },
+    {
+      "gate_id": "F1",
+      "label": "FUNCTION_EXPOSURE",
+      "target_owner_layer": "GSCC",
+      "target_rank": 130,
+      "target_phase": "POST_AUTH",
+      "notes": "Existing function exposure validation."
+    },
+    {
+      "gate_id": "F2",
+      "label": "PRECALL_REVALIDATION",
+      "target_owner_layer": "GOVERNED_REPOSITORY",
+      "target_rank": 140,
+      "target_phase": "GOVERNED_EXECUTION",
+      "notes": "Existing pre-call authority/exact-HEAD checks."
+    },
+    {
+      "gate_id": "C1",
+      "label": "CONTINUITY_EVALUATION",
+      "target_owner_layer": "GACR",
+      "target_rank": 150,
+      "target_phase": "CONTINUITY",
+      "notes": "Ongoing continuity evaluation."
+    },
+    {
+      "gate_id": "T1",
+      "label": "TAKEOVER_HANDOFF",
+      "target_owner_layer": "GACR",
+      "target_rank": 160,
+      "target_phase": "CONTINUITY",
+      "notes": "Existing handoff/takeover rules."
+    }
+  ],
+  "target_q10_required_inputs": [
+    "B04",
+    "B05",
+    "B06",
+    "B12",
+    "B13"
+  ],
+  "target_q10_forbidden_hard_prerequisites": [
+    "GACR_SESSION_ID",
+    "GACR_ACTIVE_LEASE",
+    "B26_DURABLE_CONTINUITY"
+  ],
+  "preserved_downstream": [
+    "GOVERNED_REPOSITORY",
+    "GOVERNED_LOCAL_ENTRY",
+    "FIRST_AGENT_BOOTSTRAP",
+    "NORMAL_GOVERNED_ENTRY",
+    "EXISTING_GOVERNED_WORKFLOW"
+  ]
+}
