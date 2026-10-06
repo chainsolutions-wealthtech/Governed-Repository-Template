@@ -232,6 +232,7 @@ def control(db:Path,runtime_id:str,payload:dict[str,Any],observed_at:str)->dict[
         "agent":rt["identity_id"],"observed_head":packet["sections"]["github"].get("head_sha"),"branch":packet["sections"]["github"].get("branch"),
         "capabilities":["GACR_AUTO_ATTACH","GACR_PRESENCE_FIRST","COMMAND_RECEIVE","COMMAND_ACK","CHALLENGE_RESPONSE"],
         "wake_channels":["POLL_REPOSITORY"],"last_evidence":control_evidence["evidence_ref"],
+        "entry_action":"CONTINUE_GOVERNED_WORK","connection_intent":"OBSERVE","agent_role":"qualification-client",
       },
       "authority_granted":False,
     }
