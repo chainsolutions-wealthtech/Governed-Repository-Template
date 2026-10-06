@@ -974,7 +974,7 @@ def session_recovery_packet(session_id: str, *, generated_at: str | None = None)
             "delivery_modes": last_dispatch.get("delivery_modes") or [],
         } if last_dispatch else None),
         "targetable_via_observed_transport": bool(transport_candidates),
-        "freeform_prompt_delivery": {
+        "freeform_message_delivery": {
             "status": "VERIFIED_CAPABILITY" if prompt_receive_verified else "NOT_VERIFIED",
             "transport": available(explicit_prompt_transport),
             "provider_conversation_ref_alone_is_sufficient": False,
@@ -1022,7 +1022,7 @@ def session_recovery_packet(session_id: str, *, generated_at: str | None = None)
         "next_gate": {
             "may_resume_without_exact_head_reobservation": False,
             "may_accept_takeover_implicitly": False,
-            "may_send_freeform_prompt_without_verified_transport": False,
+            "may_send_freeform_message_without_verified_transport": False,
         },
     }
     assert_secretless(packet)
