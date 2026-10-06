@@ -11,7 +11,7 @@ def main() -> None:
     assert first["execute_next_automatically"] is False, first
 
     after_entry = route("00_GSCC_ENTRY.md")
-    assert after_entry["action"] == "REPORT_PROVIDER_CONTEXT", after_entry
+    assert after_entry["action"] == "BUILD_OBSERVABLE_PACKET", after_entry
     assert after_entry["next_step"] == "R2_FIRST_TOUCH_CLASSIFICATION", after_entry
 
     first_touch = route("R1_PROVIDER_CONTEXT", "FIRST_TOUCH")
