@@ -138,7 +138,7 @@ def insert_server_identity_secret_facts(conn, state):
 
 def _probe_scalar(value: str):
     text = value.strip()
-    if len(text) >= 2 and text[0] == text[-1] == "\`":
+    if len(text) >= 2 and text[0] == text[-1] == "`":
         text = text[1:-1]
     if text.startswith("#") and text[1:].isdigit():
         return text, "string"
@@ -193,7 +193,7 @@ def _probe_observations(lines: list[str]):
             i += 1
             continue
 
-        if line.strip().startswith("\`\`\`"):
+        if line.strip().startswith("```"):
             if in_code and raw_anchor:
                 nonblank = [(n, t.strip()) for n, t in raw_anchor_buffer if t.strip()]
                 j = 0
@@ -232,7 +232,7 @@ def _probe_observations(lines: list[str]):
                 j += 1
             if j < len(lines):
                 nxt = lines[j].strip()
-                if nxt.startswith("\`") and nxt.endswith("\`"):
+                if nxt.startswith("`") and nxt.endswith("`"):
                     emit(j + 1, m.group(1), nxt, "LABEL_VALUE")
                     i = j + 1
                     continue
