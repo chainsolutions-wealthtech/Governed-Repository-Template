@@ -22,5 +22,7 @@ __all__ = [
     "DeliveryTracker", "IdempotencyStore", "MessageEnvelope", "UnsafePayloadError",
     "UnsupportedMessageError", "assert_secretless", "SessionEndpoint", "GitHubDispatchTransport",
     "InMemoryTransport", "Transport", "TransportError", "instrument_tool",
-    "GACRClientEmitterAdapter", "GACRCompatibilityError",
+    "GACRClientEmitterAdapter", "GACRCompatibilityError", "apply_session_event", "build_session_event",
 ]
+
+from .gse_projection import apply_session_event, build_session_event
