@@ -330,7 +330,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments"             -f body="### GSCC Q9 ACK accepted\n\nThe arrival remains isolated under runtime `${{ steps.q9.outputs.runtime_id }}`. Send the challenge-response command from the Q9 challenge message."
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments"             -f body="### GSCC Q9 ACK accepted\n\nThe arrival remains isolated under runtime ${{ steps.q9.outputs.runtime_id }}. Send the challenge-response command from the Q9 challenge message."
 
       - name: Request canonical GACR attach after Q10
         if: ${{ steps.q9.outputs.state == 'GSE_VERIFIED_WAITING_GACR' }}
@@ -345,8 +345,21 @@ jobs:
           for key in ("capabilities","wake_channels"):
               if isinstance(payload.get(key),list):
                   payload[key]=",".join(str(x) for x in payload[key])
+          # GitHub repository_dispatch limits client_payload to 10 top-level
+          # properties. Preserve the full arrival evidence by using the
+          # existing GACR arrival_context expansion contract instead of
+          # dropping fields.
+          arrival_context={"repository":os.environ["GITHUB_REPOSITORY"]}
+          for key in ("observed_head","branch","last_evidence","entry_action","connection_intent"):
+              value=payload.pop(key,None)
+              if value not in (None,""):
+                  arrival_context[key]=value
+          payload.pop("schema",None)
+          payload.pop("event",None)
           payload["source"]="GSCC_PRE_GSE_RUNTIME"
-          payload["repository"]=os.environ["GITHUB_REPOSITORY"]
+          payload["arrival_context"]=arrival_context
+          if len(payload)>10:
+              raise SystemExit(f"GACR_DISPATCH_CLIENT_PAYLOAD_TOO_WIDE:{len(payload)}")
           out={"event_type":"gacr_auto-attach","client_payload":payload}
           (Path(os.environ["RUNNER_TEMP"])/"gacr-auto-attach-dispatch.json").write_text(
               json.dumps(out,ensure_ascii=False,separators=(",",":")),encoding="utf-8"
