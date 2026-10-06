@@ -24,9 +24,9 @@ def _id(prefix:str,*parts:Any)->str:
     return prefix+hashlib.sha256(raw.encode("utf-8")).hexdigest()[:24]
 
 def _load_runtime(conn:sqlite3.Connection, runtime_id:str)->dict[str,Any]:
-    row=conn.execute("SELECT runtime_id,run_id,arrival_ref,identity_id,capture_id,issue_number,connection_ref,state,admission_json,capability_evidence_json,control_evidence_json,gse_state_json,access_grant_json,last_gate,next_gate,created_at,updated_at FROM gscc_session_runtime WHERE runtime_id=?",(runtime_id,)).fetchone()
+    row=conn.execute("SELECT runtime_id,run_id,arrival_ref,identity_id,capture_id,issue_number,connection_ref,state,admission_json,capability_evidence_json,control_evidence_json,gse_state_json,qualification_evidence_json,access_grant_json,last_gate,next_gate,created_at,updated_at FROM gscc_session_runtime WHERE runtime_id=?",(runtime_id,)).fetchone()
     if not row: raise ValueError("runtime not found")
-    keys=("runtime_id","run_id","arrival_ref","identity_id","capture_id","issue_number","connection_ref","state","admission_json","capability_evidence_json","control_evidence_json","gse_state_json","access_grant_json","last_gate","next_gate","created_at","updated_at")
+    keys=("runtime_id","run_id","arrival_ref","identity_id","capture_id","issue_number","connection_ref","state","admission_json","capability_evidence_json","control_evidence_json","gse_state_json","qualification_evidence_json","access_grant_json","last_gate","next_gate","created_at","updated_at")
     return dict(zip(keys,row))
 
 def _packet(conn:sqlite3.Connection, run_id:str)->tuple[dict[str,Any],dict[str,Any]]:
