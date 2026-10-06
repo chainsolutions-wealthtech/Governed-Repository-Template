@@ -35,6 +35,26 @@ def envelope() -> dict:
             "installation_id": "UNAVAILABLE",
             "client_id": "UNAVAILABLE",
         },
+        "codex_used": False,
+        "github_app_codex_used": False,
+        "codex_workspace_created": False,
+        "codex_task_created": False,
+        "repository_mutated": False,
+        "secret_accessed": False,
+        "token_exposed": False,
+        "oauth_secret_exposed": False,
+        "private_key_exposed": False,
+        "conversation_id_exposed": False,
+        "session_id_exposed": False,
+        "installation_id_exposed": False,
+        "client_id_exposed": False,
+        "ip_exposed": False,
+        "tool": {
+            "name": "mcp__GitHub__get_repo",
+            "operation": "read_repository",
+            "category": "READ",
+            "success": True,
+        },
     }
 
 
@@ -48,6 +68,21 @@ class ProviderFirstTouchIngressTests(unittest.TestCase):
         self.assertFalse(capture["mutation_authority_granted"])
         self.assertFalse(capture["interpretation_applied"])
         self.assertTrue(capture["capture_id"].startswith("FTC-"))
+        self.assertEqual(capture["field_evidence_contract"]["schema"], "first-touch-field-evidence/v1")
+        self.assertEqual(capture["field_evidence_contract"]["expected_field_count"], len(capture["field_evidence"]))
+        self.assertFalse(capture["field_evidence_contract"]["silent_absence_allowed"])
+        self.assertGreaterEqual(len(capture["field_evidence"]), 600)
+        by_id = {row["field_id"]: row for row in capture["field_evidence"]}
+        self.assertEqual(by_id["agent.provider"]["value"], "chatgpt")
+        self.assertEqual(by_id["agent.provider"]["source"], "provider_envelope")
+        self.assertEqual(by_id["agent.provider"]["confidence"], "exact")
+        self.assertEqual(by_id["agent.model"]["value"], "GPT-5.6 Sol")
+        self.assertEqual(by_id["repository.full_name"]["value"], value["repository"])
+        self.assertEqual(by_id["git.head"]["value"], value["observed_head"])
+        self.assertEqual(by_id["negative.codex_used"]["value"], False)
+        self.assertEqual(by_id["negative.secret_accessed"]["value"], False)
+        self.assertEqual(by_id["session.conversation_id"]["value"], "UNAVAILABLE")
+        self.assertEqual(by_id["session.conversation_id"]["source"], "not_exposed")
 
     def test_capture_id_is_deterministic_for_same_material(self):
         value = envelope()
@@ -55,6 +90,14 @@ class ProviderFirstTouchIngressTests(unittest.TestCase):
         b = build_capture(value, observed_at="2026-10-06T05:30:00+00:00")
         self.assertEqual(a["capture_id"], b["capture_id"])
         self.assertEqual(a["capture_digest"], b["capture_digest"])
+
+    def test_negative_security_status_fields_are_allowed(self):
+        value = envelope()
+        validate_envelope(value)
+        capture = build_capture(value, observed_at="2026-10-06T05:30:00+00:00")
+        by_id = {row["field_id"]: row for row in capture["field_evidence"]}
+        self.assertFalse(by_id["negative.token_exposed"]["value"])
+        self.assertFalse(by_id["negative.oauth_secret_exposed"]["value"])
 
     def test_sensitive_keys_are_rejected(self):
         value = envelope()
