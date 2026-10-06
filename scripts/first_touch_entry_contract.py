@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, json, sqlite3
+import argparse, hashlib, json, sqlite3
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 CONTRACT=ROOT/".governance"/"control-plane-state"/"first-touch-entry-contract.json"
+REGISTRY=ROOT/".governance"/"control-plane-state"/"first-touch-conversation-registry.json"
 
 def rank(s:str)->int:
     return {"EMPTY":0,"UNAVAILABLE":0,"PARTIAL":1,"PRESENT":2,"SUFFICIENT":3,"VERIFIED":4,"STALE":1,"CONFLICTING":1}.get(s,0)
@@ -35,6 +36,60 @@ def discover_identity(capture_path:Path|None):
             if client_id and str(client_id).upper() not in {"UNAVAILABLE","UNKNOWN","NOT_EXPOSED"}:
                 return "STRONG", f"conversation_scoped_client_instance_id:{client_id}"
     return "WEAK", None
+
+
+def anchor_digest(anchor:str)->str:
+    return hashlib.sha256(anchor.encode("utf-8")).hexdigest()
+
+def load_registry(path:Path)->dict:
+    if not path.exists():
+        return {"schema":"first-touch-conversation-registry/v1","conversations":[]}
+    value=json.loads(path.read_text(encoding="utf-8"))
+    if value.get("schema")!="first-touch-conversation-registry/v1":
+        raise ValueError("unsupported first-touch conversation registry")
+    if not isinstance(value.get("conversations"),list):
+        raise ValueError("invalid first-touch conversation registry")
+    return value
+
+def registry_match(path:Path, anchor:str|None):
+    if not anchor:
+        return None
+    digest=anchor_digest(anchor)
+    for item in load_registry(path)["conversations"]:
+        if item.get("anchor_sha256")==digest:
+            return item
+    return None
+
+def persist_registry(path:Path, result:dict, capture_path:Path|None):
+    if result.get("status")!="ENTRY_READY_FOR_Q1" or not result.get("identity_anchor"):
+        return False
+    registry=load_registry(path)
+    digest=anchor_digest(str(result["identity_anchor"]))
+    capture={}
+    if capture_path and capture_path.exists():
+        capture=json.loads(capture_path.read_text(encoding="utf-8"))
+    observed_at=capture.get("observed_at")
+    for item in registry["conversations"]:
+        if item.get("anchor_sha256")==digest:
+            if observed_at:
+                item["last_seen_at"]=observed_at
+            item["last_capture_id"]=result.get("capture_id")
+            path.write_text(json.dumps(registry,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
+            return True
+    if result.get("classification")!="FIRST_TOUCH":
+        raise ValueError("continuation has no existing registry entry")
+    registry["conversations"].append({
+        "anchor_sha256":digest,
+        "identity_strength":result.get("identity_strength"),
+        "first_capture_id":result.get("capture_id"),
+        "last_capture_id":result.get("capture_id"),
+        "first_observed_at":observed_at,
+        "last_seen_at":observed_at,
+        "first_touch_consumed":True
+    })
+    registry["conversations"]=sorted(registry["conversations"],key=lambda x:x["anchor_sha256"])
+    path.write_text(json.dumps(registry,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
+    return True
 
 def evaluate(completeness_path:Path, db_path:Path, *, identity_strength:str, identity_anchor:str|None, first_touch_seen:bool):
     contract=json.loads(CONTRACT.read_text(encoding="utf-8"))
@@ -92,6 +147,8 @@ def main():
     p.add_argument("--identity-anchor")
     p.add_argument("--capture")
     p.add_argument("--first-touch-seen",action="store_true")
+    p.add_argument("--registry",default=str(REGISTRY))
+    p.add_argument("--persist-registry",action="store_true")
     p.add_argument("--output",required=True)
     a=p.parse_args()
     strength=a.identity_strength
@@ -100,7 +157,16 @@ def main():
         strength, discovered_anchor = discover_identity(Path(a.capture) if a.capture else None)
         if not anchor:
             anchor=discovered_anchor
-    result=evaluate(Path(a.completeness),Path(a.db),identity_strength=strength or "UNKNOWN",identity_anchor=anchor,first_touch_seen=a.first_touch_seen)
+    registry_path=Path(a.registry)
+    seen=a.first_touch_seen or (registry_match(registry_path,anchor) is not None)
+    result=evaluate(Path(a.completeness),Path(a.db),identity_strength=strength or "UNKNOWN",identity_anchor=anchor,first_touch_seen=seen)
+    result["identity_anchor_sha256"]=anchor_digest(anchor) if anchor else None
+    result["registry_match"]=seen
+    result["registry_path"]=str(registry_path)
+    if a.persist_registry:
+        result["registry_persisted"]=persist_registry(registry_path,result,Path(a.capture) if a.capture else None)
+    else:
+        result["registry_persisted"]=False
     Path(a.output).write_text(json.dumps(result,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
     print(json.dumps(result,indent=2,ensure_ascii=False,sort_keys=True))
 
