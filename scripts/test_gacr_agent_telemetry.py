@@ -218,6 +218,50 @@ def main():
         score, reasons, exact = g.correlation_score(beacon, terminal)
         assert_true(score < 0 and reasons == [] and exact is False, "terminal session must be excluded from correlation")
 
+        # A connection-scoped issue anchor is more specific than a client instance
+        # that legitimately hosts multiple concurrent issue connections.
+        shared_client_a = json.loads(json.dumps(session_a))
+        shared_client_a["session_id"] = "session-shared-issue-183"
+        shared_client_a["provider_conversation_ref"] = None
+        shared_client_a["client_instance_id"] = "shared-client"
+        shared_client_a["connection_ref"] = "issue:183"
+        shared_client_a["relay"]["task_id"] = None
+        shared_client_a["relay"]["branch"] = "main"
+        shared_client_a["relay"]["pull_request"] = None
+        shared_client_b = json.loads(json.dumps(shared_client_a))
+        shared_client_b["session_id"] = "session-shared-issue-184"
+        shared_client_b["connection_ref"] = "issue:184"
+        sessions_doc = json.loads(g.SESSIONS_PATH.read_text(encoding="utf-8"))
+        sessions_doc["sessions"].extend([shared_client_a, shared_client_b])
+        write(g.SESSIONS_PATH, sessions_doc)
+
+        issue_scoped = g.record_beacon(
+            session=None,
+            event_type="AUTO_ATTACH",
+            provider=None,
+            client_instance_id="shared-client",
+            connection_ref="issue:184",
+            branch="main",
+            source="CLIENT_EMITTER",
+        )
+        g.correlate_all()
+        issue_corr = next(
+            x for x in json.loads(g.CORRELATIONS_PATH.read_text(encoding="utf-8"))["items"]
+            if x["beacon_id"] == issue_scoped["beacon_id"]
+        )
+        assert_true(
+            issue_corr["level"] == "EXACT",
+            "issue-scoped connection_ref must outrank a shared client_instance_id",
+        )
+        assert_true(
+            issue_corr["selected_session_id"] == "session-shared-issue-184",
+            "issue-scoped connection_ref must select the matching session",
+        )
+        assert_true(
+            "CONNECTION_REF_EXACT" in issue_corr["reasons"],
+            "issue-scoped correlation must retain connection-ref evidence",
+        )
+
         # A second indistinguishable session must make heuristic correlation ambiguous.
         session_c = json.loads(json.dumps(session_a))
         session_c["session_id"] = "session-c"
