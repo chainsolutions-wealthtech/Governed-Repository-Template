@@ -88,7 +88,13 @@ def merge_previous(current:Path, previous:Path)->dict:
             return {"status":"PRIOR_SCHEMA_INCOMPATIBLE","missing":sorted(required-tables)}
         first_ids=[row[0] for row in conn.execute("SELECT first_capture_id FROM previous.gscc_conversation_identities")]
         last_ids=[row[0] for row in conn.execute("SELECT last_capture_id FROM previous.gscc_conversation_identities")]
-        for capture_id in sorted(set(first_ids+last_ids)):
+        packet_capture_ids=[]
+        if "gscc_observable_packets" in tables:
+            packet_capture_ids=[row[0] for row in conn.execute("SELECT capture_id FROM previous.gscc_observable_packets")]
+        pipeline_capture_ids=[]
+        if "gscc_entry_pipeline_runs" in tables:
+            pipeline_capture_ids=[row[0] for row in conn.execute("SELECT capture_id FROM previous.gscc_entry_pipeline_runs")]
+        for capture_id in sorted(set(first_ids+last_ids+packet_capture_ids+pipeline_capture_ids)):
             conn.execute(
                 "INSERT OR IGNORE INTO first_touch_capture_records SELECT * FROM previous.first_touch_capture_records WHERE capture_id=?",
                 (capture_id,),
