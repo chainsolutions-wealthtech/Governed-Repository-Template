@@ -7,6 +7,7 @@ on:
   pull_request:
     paths:
       - "scripts/provider_first_touch_ingress.py"
+      - "scripts/provider_first_tool_hook.py"
       - "scripts/provider_first_touch_evidence.py"
       - "scripts/first_touch_entry_contract.py"
       - "scripts/first_touch_state_artifact.py"
@@ -14,6 +15,7 @@ on:
       - "scripts/first_touch_field_block_gate.py"
       - "scripts/gscc/first_touch_handoff.py"
       - "scripts/test_provider_first_touch_ingress.py"
+      - "scripts/test_provider_first_tool_hook.py"
       - ".github/workflows/gscc-provider-first-touch-ingress.yml"
 
 permissions:
@@ -31,9 +33,9 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python3 -m py_compile scripts/provider_first_touch_ingress.py scripts/provider_first_touch_evidence.py scripts/first_touch_entry_contract.py scripts/first_touch_state_artifact.py scripts/gscc/first_touch_handoff.py scripts/test_provider_first_touch_ingress.py
-      - name: Test provider first-touch sidecar
-        run: PYTHONPATH=scripts python3 -m unittest scripts/test_provider_first_touch_ingress.py
+        run: python3 -m py_compile scripts/provider_first_touch_ingress.py scripts/provider_first_touch_evidence.py scripts/provider_first_tool_hook.py scripts/first_touch_entry_contract.py scripts/first_touch_state_artifact.py scripts/gscc/first_touch_handoff.py scripts/test_provider_first_touch_ingress.py scripts/test_provider_first_tool_hook.py
+      - name: Test provider first-touch sidecar and host hook
+        run: PYTHONPATH=scripts python3 -m unittest scripts/test_provider_first_touch_ingress.py scripts/test_provider_first_tool_hook.py
 
   ingest:
     if: ${{ github.event_name == 'repository_dispatch' }}
