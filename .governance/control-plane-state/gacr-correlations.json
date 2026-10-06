@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 438,
+  "revision": 439,
   "items": [
     {
       "correlation_id": "GACR-C-caffb7cb6efd",
@@ -17396,6 +17396,30 @@
       "provider_conversation_ref": null,
       "evaluations": [],
       "evaluated_at": "2026-10-06T02:43:08+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-a0108b4203ed",
+      "beacon_id": "GACR-B-4fc9d50691f4",
+      "level": "EXACT",
+      "selected_session_id": "session-8e5ee7cff3ff8c157a8aee43",
+      "candidate_session_ids": [
+        "session-8e5ee7cff3ff8c157a8aee43"
+      ],
+      "reasons": [
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T02:46:10+00:00"
     }
   ]
 }
