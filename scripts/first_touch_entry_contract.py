@@ -22,27 +22,17 @@ def discover_identity(capture_path:Path|None):
     if capture_path is None:
         return "UNKNOWN", None
     capture=json.loads(capture_path.read_text(encoding="utf-8"))
-    event=capture.get("github_event") or {}
-    comment=event.get("comment") or {}
-    body=str(comment.get("body") or "").strip()
-    for prefix in ("/gscc-admission ", "/gscc-first-touch "):
-        if body.startswith(prefix):
-            try:
-                env=json.loads(body[len(prefix):].strip())
-            except Exception:
-                continue
-            session=env.get("session") or {}
-            connection=env.get("connection") or {}
-            client=env.get("client") or {}
-            conversation_ref=session.get("conversation_ref") or session.get("provider_conversation_ref")
-            if conversation_ref and str(conversation_ref).upper() not in {"UNAVAILABLE","UNKNOWN","NOT_EXPOSED"}:
-                return "EXACT", f"provider_conversation_ref:{conversation_ref}"
-            connection_ref=connection.get("connection_ref")
-            if connection_ref and str(connection_ref).upper() not in {"UNAVAILABLE","UNKNOWN","NOT_EXPOSED"}:
-                return "STRONG", f"provider_connection_ref:{connection_ref}"
-            client_id=client.get("client_instance_id")
-            if client_id and str(client_id).upper() not in {"UNAVAILABLE","UNKNOWN","NOT_EXPOSED"}:
-                return "STRONG", f"conversation_scoped_client_instance_id:{client_id}"
+    ingress=capture.get("safe_ingress") if isinstance(capture.get("safe_ingress"),dict) else {}
+    if ingress.get("status")=="VALID" and ingress.get("ingress_type")=="FIRST_TOUCH":
+        conversation_ref=ingress.get("conversation_ref") or ingress.get("provider_conversation_ref")
+        if conversation_ref:
+            return "EXACT", f"provider_conversation_ref:{conversation_ref}"
+        connection_ref=ingress.get("connection_ref")
+        if connection_ref:
+            return "STRONG", f"provider_connection_ref:{connection_ref}"
+        client_id=ingress.get("client_instance_id")
+        if client_id:
+            return "STRONG", f"conversation_scoped_client_instance_id:{client_id}"
     return "WEAK", None
 
 def evaluate(completeness_path:Path, db_path:Path, *, identity_strength:str, identity_anchor:str|None, first_touch_seen:bool):
