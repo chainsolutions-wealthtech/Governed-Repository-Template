@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import importlib.util
+import faulthandler
 import json
 import tempfile
 from pathlib import Path
@@ -16,12 +17,15 @@ assert spec and spec.loader
 spec.loader.exec_module(mod)
 
 def main():
+    faulthandler.dump_traceback_later(20, exit=True)
     with tempfile.TemporaryDirectory() as tmp:
         root=Path(tmp)
 
         # Historical live overlay regression for comment 6009181746.
         out=root/"packet-observed.json"
+        print("COMPLETENESS_DIAG historical:start", flush=True)
         packet=mod.build_packet(OBS,out)
+        print("COMPLETENESS_DIAG historical:done", flush=True)
         assert packet["expected_observation_count"] == packet["canonical_field_count"]
         assert packet["canonical_field_count"] >= 60
         assert packet["complete_accounting"] is True
@@ -75,7 +79,9 @@ def main():
         capture_path=root/"capture.json"
         capture_path.write_text(json.dumps(capture),encoding="utf-8")
         generic_out=root/"packet-generic.json"
+        print("COMPLETENESS_DIAG generic:start", flush=True)
         generic=mod.build_packet(None,generic_out,capture_path=capture_path)
+        print("COMPLETENESS_DIAG generic:done", flush=True)
         assert generic["expected_observation_count"] == generic["canonical_field_count"]
         assert generic["canonical_field_count"] >= 60
         assert generic["complete_accounting"] is True
@@ -86,6 +92,7 @@ def main():
         assert generic["total_accounted_items"] > generic["expected_observation_count"]
         assert generic["live_value_count"] >= 5
 
+        faulthandler.cancel_dump_traceback_later()
         print("FIRST_TOUCH_CONNECTION_COMPLETENESS_TEST_PASS")
         print(f"CANONICAL_FIELDS={packet['canonical_field_count']}")
         print(f"LIVE_VALUES={packet['live_value_count']}")
