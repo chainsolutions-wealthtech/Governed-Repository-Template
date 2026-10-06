@@ -24,8 +24,22 @@ capture={
  'repository':'chainsolutions-wealthtech/Governed-Repository-Template',
  'actor':'Wealthtechinnovations',
  'provider':'chatgpt',
- 'connection_ref':'test-anchor-001',
- 'client_instance_id':'test-anchor-001',
+ 'safe_ingress':{
+   'schema':'gscc-first-touch-safe-ingress/v1',
+   'status':'VALID',
+   'ingress_type':'FIRST_TOUCH',
+   'comment_id':6010194437,
+   'connection_ref':'test-anchor-001',
+   'client_instance_id':'test-client-001',
+   'conversation_ref':None,
+   'provider_conversation_ref':None,
+   'conversation_ref_status':'UNAVAILABLE',
+   'provider_conversation_ref_status':'UNAVAILABLE',
+   'source':'GITHUB_ISSUE_COMMENT_STRUCTURED_PREFIX',
+   'source_method':'ISSUE_COMMENT',
+   'observed_at':'2026-10-06T05:00:00+00:00',
+   'freeform_body_persisted':False
+ },
  'github_event':{
    'sender':{'login':'Wealthtechinnovations','id':94637590},
    'repository':{'id':1386478935,'full_name':'chainsolutions-wealthtech/Governed-Repository-Template','default_branch':'main'},
@@ -54,14 +68,17 @@ def main():
         fb.build_capture_database(cap,db,source_ref='unit-test')
         cp.build_packet(None,comp,capture_path=cap)
 
+        strength, discovered=ec.discover_identity(cap)
+        assert strength=='STRONG'
+        assert discovered=='provider_connection_ref:test-anchor-001'
         anchor='test-anchor-001'
-        first=ec.evaluate(comp,db,identity_strength='EXACT',identity_anchor=anchor,first_touch_seen=False)
+        first=ec.evaluate(comp,db,identity_strength='STRONG',identity_anchor='provider_connection_ref:'+anchor,first_touch_seen=False)
         assert first['status']=='ENTRY_READY_FOR_Q1'
         assert first['classification']=='FIRST_TOUCH'
 
         conn=sqlite3.connect(db); conn.execute('PRAGMA foreign_keys=ON')
         try:
-            identity=fts.register_first_touch(conn,anchor=anchor,identity_strength='EXACT',capture_id=capture['capture_id'])
+            identity=fts.register_first_touch(conn,anchor='provider_connection_ref:'+anchor,identity_strength='STRONG',capture_id=capture['capture_id'])
             conn.commit()
             assert identity['classification']=='FIRST_TOUCH'
             snap_count=conn.execute('SELECT COUNT(*) FROM gscc_first_touch_snapshots').fetchone()[0]
@@ -72,8 +89,8 @@ def main():
 
         conn=sqlite3.connect(db); conn.execute('PRAGMA foreign_keys=ON')
         try:
-            assert fts.find_identity(conn,anchor) is not None
-            identity2=fts.register_first_touch(conn,anchor=anchor,identity_strength='EXACT',capture_id=capture['capture_id'])
+            assert fts.find_identity(conn,'provider_connection_ref:'+anchor) is not None
+            identity2=fts.register_first_touch(conn,anchor='provider_connection_ref:'+anchor,identity_strength='STRONG',capture_id=capture['capture_id'])
             conn.commit()
             assert identity2['classification']=='CONTINUATION'
             assert conn.execute('SELECT COUNT(*) FROM gscc_first_touch_snapshots').fetchone()[0]==1

@@ -75,6 +75,88 @@ FREEFORM_CONTENT_KEYS = {
 }
 
 
+
+FIRST_TOUCH_PREFIX = "/gscc-first-touch "
+FIRST_TOUCH_SAFE_MAX = 512
+OPAQUE_REF_RE = re.compile(r"^[A-Za-z0-9._:-]{8,256}$")
+UNAVAILABLE_MARKERS = {"UNAVAILABLE","UNKNOWN","NOT_EXPOSED"}
+
+def _safe_first_touch_ingress(event: dict[str, Any], observed_at: str) -> dict[str, Any] | None:
+    if not isinstance(event, dict):
+        return None
+    comment = event.get("comment") if isinstance(event.get("comment"), dict) else {}
+    body = comment.get("body")
+    if not isinstance(body, str) or not body.startswith(FIRST_TOUCH_PREFIX):
+        return None
+    raw = body[len(FIRST_TOUCH_PREFIX):].strip()
+    if not raw or len(raw) > FIRST_TOUCH_SAFE_MAX:
+        return {
+            "schema":"gscc-first-touch-safe-ingress/v1",
+            "status":"INVALID",
+            "reason":"PAYLOAD_SIZE_OR_EMPTY",
+            "comment_id":comment.get("id"),
+            "observed_at":observed_at,
+        }
+    try:
+        payload=json.loads(raw)
+    except Exception:
+        return {
+            "schema":"gscc-first-touch-safe-ingress/v1",
+            "status":"INVALID",
+            "reason":"JSON_INVALID",
+            "comment_id":comment.get("id"),
+            "observed_at":observed_at,
+        }
+    if not isinstance(payload, dict):
+        return {
+            "schema":"gscc-first-touch-safe-ingress/v1",
+            "status":"INVALID",
+            "reason":"JSON_OBJECT_REQUIRED",
+            "comment_id":comment.get("id"),
+            "observed_at":observed_at,
+        }
+
+    connection = payload.get("connection") if isinstance(payload.get("connection"), dict) else {}
+    client = payload.get("client") if isinstance(payload.get("client"), dict) else {}
+    session = payload.get("session") if isinstance(payload.get("session"), dict) else {}
+
+    connection_ref = connection.get("connection_ref")
+    client_instance_id = client.get("client_instance_id")
+    conversation_ref = session.get("conversation_ref")
+    provider_conversation_ref = session.get("provider_conversation_ref")
+
+    def safe_ref(value: Any) -> str | None:
+        if not isinstance(value, str) or value.upper() in UNAVAILABLE_MARKERS:
+            return None
+        return value if OPAQUE_REF_RE.fullmatch(value) else None
+
+    result = {
+        "schema":"gscc-first-touch-safe-ingress/v1",
+        "status":"VALID",
+        "ingress_type":"FIRST_TOUCH",
+        "comment_id":comment.get("id"),
+        "connection_ref":safe_ref(connection_ref),
+        "client_instance_id":safe_ref(client_instance_id),
+        "conversation_ref":safe_ref(conversation_ref),
+        "provider_conversation_ref":safe_ref(provider_conversation_ref),
+        "conversation_ref_status":(
+            "UNAVAILABLE" if isinstance(conversation_ref,str) and conversation_ref.upper() in UNAVAILABLE_MARKERS
+            else "PRESENT" if safe_ref(conversation_ref) else "UNKNOWN"
+        ),
+        "provider_conversation_ref_status":(
+            "UNAVAILABLE" if isinstance(provider_conversation_ref,str) and provider_conversation_ref.upper() in UNAVAILABLE_MARKERS
+            else "PRESENT" if safe_ref(provider_conversation_ref) else "UNKNOWN"
+        ),
+        "source":"GITHUB_ISSUE_COMMENT_STRUCTURED_PREFIX",
+        "source_method":"ISSUE_COMMENT",
+        "observed_at":observed_at,
+        "freeform_body_persisted":False,
+    }
+    if not result["connection_ref"] and not result["client_instance_id"] and not result["conversation_ref"] and not result["provider_conversation_ref"]:
+        result["status"]="INVALID"
+        result["reason"]="NO_SAFE_IDENTITY_ANCHOR"
+    return result
+
 def utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
@@ -251,12 +333,15 @@ def build_capture(
             request_fn=request_fn,
         ))
 
+    safe_ingress = _safe_first_touch_ingress(event, observed_at)
+
     material = {
         "schema": SCHEMA,
         "observed_at": observed_at,
         "repository": repo or None,
         "actor": actor or None,
         "subject": sanitize(subject),
+        "safe_ingress": safe_ingress,
         "github_event": sanitize(event),
         "environment": _environment_snapshot(env),
         "api_attempts": attempts,
