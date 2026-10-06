@@ -586,7 +586,639 @@ Read the source-only control-plane authorities, especially:
 
 ---
 
-## 17. Core invariants
+## 17. How to use the framework
+
+The framework should be used as a **governed decision and execution path**, not as a collection of scripts to call independently.
+
+The recommended operating model is:
+
+```mermaid
+flowchart TD
+    A["1. Express the objective"] --> B["2. Enter through governed arrival"]
+    B --> C["3. Resolve macro route + connection intent"]
+    C --> D["4. Observe repository / provider / infrastructure facts"]
+    D --> E["5. Classify evidence and missing facts"]
+    E --> F["6. Build the governed plan"]
+    F --> G["7. Resolve human / policy / capability authority"]
+    G --> H{"Authorized?"}
+    H -->|No| I["Stop / request evidence / hold for review"]
+    H -->|Yes| J["8. Execute one governed step"]
+    J --> K["9. Validate result / CI / receipt"]
+    K --> L["10. Persist checkpoint and next action"]
+    L --> M["11. Handoff or continue"]
+```
+
+### 17.1 For a human project owner
+
+A human owner normally uses the framework to state **what outcome is wanted**, answer only the decisions that cannot be derived from evidence, approve sensitive transitions where required, and inspect the resulting plan/evidence.
+
+The owner should not need to manually reconstruct every repository fact before starting. The governance layer is intended to observe reusable facts first and ask questions only where a real choice, ambiguity or authority decision remains.
+
+Typical owner interaction:
+
+```text
+OBJECTIVE
+→ observed context
+→ one unresolved decision at a time
+→ proposed governed plan
+→ explicit approval where required
+→ execution evidence
+→ final checkpoint / handoff
+```
+
+Examples of owner-level requests:
+
+- "Create a new repository for this application."
+- "Bring this existing repository under governance without breaking it."
+- "Map this project before we decide how to modernize it."
+- "Continue the work the previous agent stopped yesterday."
+- "Prepare the deployment plan but do not touch production yet."
+- "Let two agents work in parallel without colliding."
+- "Record this new business requirement; do not code yet."
+
+### 17.2 For an AI agent or assistant
+
+An arriving agent must not select its own shortcut into the repository. It begins at `00_GSCC_ENTRY.md`, exposes only actually observable provider/runtime/tool context, follows the emitted gate sequence, and enters normal governed work only after release.
+
+Once admitted, the agent should:
+
+1. reobserve the canonical repository state;
+2. load current checkpoint, tasks and handoff;
+3. identify the currently authorized work item;
+4. check dependencies and collision/claim state;
+5. reobserve exact HEAD before mutation;
+6. perform only the allowed scope;
+7. validate through available tests/CI/evidence;
+8. persist the result and next action;
+9. leave a durable handoff if execution stops.
+
+### 17.3 For automation, API clients and GitHub Apps
+
+Automation follows the same authority model as conversational agents.
+
+Being non-interactive does not waive:
+
+- admission;
+- evidence integrity;
+- exact-HEAD verification;
+- scope checks;
+- authority gates;
+- secret-handling rules;
+- execution receipts;
+- fail-closed behavior.
+
+Where an expected provider fact is not exposed, automation records `UNAVAILABLE` rather than fabricating a substitute.
+
+### 17.4 For the Central Governance Control Plane
+
+The source repository can coordinate preparation across repositories. A governed request can be used to:
+
+- identify the target repository;
+- resolve whether the request is CREATE, ADOPT, MAP, LAB or CONTINUE;
+- observe target facts;
+- establish owner scope and authority;
+- gather missing choices progressively;
+- compile a chronological execution package;
+- persist evidence;
+- release a handoff into the target repository when ready.
+
+The control plane prepares and governs the path; it does not automatically gain unrestricted authority over a target.
+
+---
+
+## 18. Use-case catalogue
+
+The following catalogue describes the principal practical situations the framework is intended to support.
+
+### UC-01 — Create a brand-new governed repository
+
+**When to use it:** a project does not yet have its final repository and should start with governance from day one.
+
+**Objective:** create the repository, establish its project baseline, collect required project/infrastructure intent, initialize durable state and produce a clean first-agent handoff.
+
+**Governed route:** `CREATE_NEW_REPOSITORY`.
+
+```mermaid
+flowchart LR
+    A["Project idea"] --> B["Owner / scope"]
+    B --> C["Repository identity"]
+    C --> D["Governance bootstrap"]
+    D --> E["Project choices"]
+    E --> F["Baseline materialization"]
+    F --> G["First-agent session"]
+    G --> H["Normal governed work"]
+```
+
+**Expected result:** a repository that has its own source of truth, governance state, baseline and resumable entry path.
+
+**Important boundary:** repository creation does not automatically authorize server, DNS, database or production changes.
+
+---
+
+### UC-02 — Adopt an existing repository without destroying its history
+
+**When to use it:** a real project already exists and must gain the governance framework.
+
+**Objective:** add the governance structures while preserving application code, existing documentation and project history.
+
+**Governed route:** `ADOPT_EXISTING_REPOSITORY`.
+
+Typical sequence:
+
+```text
+READ EXISTING REPOSITORY
+→ inventory current structure
+→ identify conflicts
+→ propose additive adoption
+→ preserve project files
+→ materialize governance
+→ validate non-regression
+→ establish governed baseline
+```
+
+**Expected result:** the existing project becomes governed without being treated as a blank template.
+
+**Important boundary:** adoption is preservation-first. Existing files are not silently replaced merely because equivalent template files exist.
+
+---
+
+### UC-03 — Map and understand a project before modifying it
+
+**When to use it:** architecture, dependencies, infrastructure or current implementation are not sufficiently understood.
+
+**Objective:** build a factual current-state map and, where requested, a target architecture before any implementation decision.
+
+**Governed route:** `MAP_EXISTING_PROJECT`.
+
+Useful outputs can include:
+
+- repository topology;
+- application components;
+- deployment surfaces;
+- external dependencies;
+- databases;
+- infrastructure facts;
+- current versus target architecture;
+- technical debt or unknowns;
+- capability gaps;
+- evidence that requires human confirmation.
+
+**Expected result:** a documented evidence-backed map.
+
+**Default posture:** read-only. Mapping is not implicit permission to refactor.
+
+---
+
+### UC-04 — Develop or experiment safely in an isolated lab
+
+**When to use it:** a change should be designed, prototyped or validated without mutating the canonical branch directly.
+
+**Objective:** isolate evolution in a governed branch/PR, retain exact baseline evidence and validate before integration.
+
+**Governed route:** `LAB_EVOLUTION`.
+
+```mermaid
+flowchart TD
+    A["Canonical baseline"] --> B["Governed lab branch"]
+    B --> C["Scoped implementation"]
+    C --> D["Tests / CI / review"]
+    D --> E{"Accept?"}
+    E -->|No| F["Revise or close lab"]
+    E -->|Yes| G["Governed integration"]
+```
+
+**Expected result:** an auditable experiment or implementation that can be reviewed without contaminating the canonical state.
+
+---
+
+### UC-05 — Continue a project from its exact point of stop
+
+**When to use it:** work already exists and a new agent, new conversation or later session must resume it.
+
+**Objective:** avoid restarting from memory, repeating completed work or acting on stale context.
+
+**Governed route:** `CONTINUE_GOVERNED_WORK` plus GACR continuity.
+
+The continuation should reconstruct:
+
+- repository and canonical branch;
+- observed HEAD;
+- current work package/task;
+- completed dependencies;
+- active blockers;
+- claims/collisions;
+- relevant decisions;
+- latest evidence;
+- previous checkpoint;
+- unique next action.
+
+**Expected result:** continuation from durable state rather than conversational recollection.
+
+---
+
+### UC-06 — Hand work from one agent/conversation to another
+
+**When to use it:** the original session ends, times out, reaches a limit or intentionally delegates.
+
+**Objective:** preserve the exact stopping point and enough context for another governed arrival to resume safely.
+
+```mermaid
+sequenceDiagram
+    participant A as Agent A
+    participant G as Governance
+    participant M as Persistent memory
+    participant B as Agent B
+
+    A->>G: checkpoint + current evidence
+    G->>M: persist task / HEAD / decisions / next action
+    A->>G: durable handoff
+    B->>G: governed arrival
+    G->>M: correlate continuation evidence
+    M-->>B: canonical resume context
+```
+
+**Expected result:** Agent B does not have to infer where Agent A stopped.
+
+**Important boundary:** a new conversation is not automatically declared identical to the previous conversation; correlation remains evidence-driven.
+
+---
+
+### UC-07 — Coordinate several agents working on the same project
+
+**When to use it:** multiple agents, people or automations may work concurrently.
+
+**Objective:** maximize parallelism while preventing incompatible writes and duplicated work.
+
+Mechanisms include:
+
+- namespaced work;
+- claims;
+- dependency ordering;
+- exact-HEAD checks;
+- collision detection;
+- single-writer rules where required;
+- durable task state;
+- independent evidence and handoffs.
+
+```text
+PARALLEL THINKING / OBSERVATION
+        allowed where safe
+              │
+              ▼
+MUTABLE SURFACE
+→ claim / dependency / exact-HEAD / authority
+→ one compatible writer path
+```
+
+**Expected result:** parallel work without losing a single canonical project state.
+
+---
+
+### UC-08 — Intake new information without authorizing implementation
+
+**When to use it:** the user, another system or an agent brings new facts, requirements, files, constraints or decisions.
+
+**Objective:** persist and reconcile the information before turning it into implementation.
+
+Information may be:
+
+- accepted;
+- linked to existing state;
+- recognized as duplicate;
+- classified as stale;
+- found contradictory;
+- held for review;
+- routed into a future work item.
+
+**Expected result:** knowledge can evolve independently of code execution.
+
+**Important boundary:** `INFORMATION_INTAKE` and `CONTEXT_INTAKE` do not silently become mutation authority.
+
+---
+
+### UC-09 — Handle missing or unavailable provider identity
+
+**When to use it:** ChatGPT, Claude, an API client or another provider does not expose an expected conversation/session/connection identifier.
+
+**Objective:** keep the evidence model truthful.
+
+Correct behavior:
+
+```text
+expected field not exposed
+→ UNAVAILABLE
+→ continue only if policy permits
+→ never reconstruct from unrelated GitHub metadata
+```
+
+**Expected result:** admission and correlation remain based on facts rather than invented identity.
+
+---
+
+### UC-10 — Prepare infrastructure work without immediately changing infrastructure
+
+**When to use it:** the project needs server, domain, DNS, TLS, directory, database, MCP, SSH or deployment preparation.
+
+**Objective:** distinguish observed infrastructure, intended infrastructure and execution authority.
+
+```mermaid
+flowchart LR
+    A["Observe existing infrastructure"] --> B["Record intent"]
+    B --> C["Resolve target choices"]
+    C --> D["Capability discovery"]
+    D --> E["Compile execution package"]
+    E --> F["Authority gate"]
+    F --> G["Only then: execution"]
+```
+
+**Expected result:** a reproducible infrastructure plan with explicit unknowns, capabilities, dependencies and approvals.
+
+**Important boundary:** choosing a server or domain is not itself permission to mutate that server or DNS zone.
+
+---
+
+### UC-11 — Use MCP capabilities safely
+
+**When to use it:** the governed project can interact with external infrastructure through MCP.
+
+**Objective:** bind execution only to capabilities that are currently observed, in scope and compatible with the required action.
+
+The framework should verify:
+
+- capability exists;
+- tool contract matches;
+- project/resource is in scope;
+- credentials are available through approved mechanisms;
+- mutation authority exists;
+- target state is fresh enough;
+- receipt can be produced safely.
+
+**Expected result:** MCP becomes an execution transport under governance, not an authority source.
+
+---
+
+### UC-12 — Use GitHub as an execution surface
+
+**When to use it:** repository operations such as branches, commits, pull requests, issues or Actions must be performed.
+
+**Objective:** make GitHub mutations reproducible and attributable.
+
+Typical governed checks:
+
+```text
+target repository
+→ canonical branch
+→ exact HEAD
+→ allowed operation
+→ work-item / claim
+→ mutation
+→ diff / CI / evidence
+→ checkpoint
+```
+
+**Expected result:** GitHub work remains traceable and resumable.
+
+---
+
+### UC-13 — Recover from a failed workflow or partial execution
+
+**When to use it:** CI fails, a transport is unavailable, an external dependency breaks or execution stops after partial progress.
+
+**Objective:** diagnose from persisted evidence and resume without replaying successful or unsafe steps.
+
+Recovery principles include:
+
+- preserve failure evidence;
+- distinguish retryable and non-retryable failure;
+- reobserve state before retry;
+- do not fabricate PASS;
+- do not replay already attested successful operations unnecessarily;
+- reopen the exact gate that needs correction;
+- create a new corrective task if the defect is generic.
+
+**Expected result:** deterministic recovery rather than blind rerun.
+
+---
+
+### UC-14 — Detect and handle contradictions
+
+**When to use it:** new information conflicts with canonical state, previous evidence or another source.
+
+**Objective:** prevent silent overwrites.
+
+```text
+NEW FACT
+  + EXISTING CANONICAL FACT
+            │
+            ▼
+       CONTRADICTION
+            │
+            ▼
+      HOLD_FOR_REVIEW
+            │
+            ▼
+ governed reconciliation
+```
+
+**Expected result:** contradiction becomes an explicit governance event.
+
+---
+
+### UC-15 — Upgrade governance across governed client repositories
+
+**When to use it:** the framework evolves and clients need a compatible governance update.
+
+**Objective:** distribute reusable governance improvements while preserving each client's mutable project state and source/client boundary.
+
+**Expected result:** clients gain new governance capabilities without inheriting source-only control-plane history or resetting their own sessions, answers, baselines or project state.
+
+---
+
+### UC-16 — Maintain a durable project memory
+
+**When to use it:** a project spans many days, agents, PRs, decisions and infrastructure activities.
+
+**Objective:** make important state durable and queryable.
+
+The durable memory model is intended to preserve relationships among:
+
+- decisions;
+- work packages;
+- atomic tasks;
+- evidence;
+- questions/answers;
+- dependencies;
+- execution runs;
+- artifacts;
+- checkpoints;
+- handoffs;
+- external intakes.
+
+**Expected result:** the repository becomes the durable operational memory instead of relying on one person's or one conversation's recollection.
+
+---
+
+### UC-17 — Prepare work now, execute later
+
+**When to use it:** analysis and planning are authorized but mutation is not yet authorized.
+
+**Objective:** allow useful progress without crossing the execution boundary.
+
+The framework can progress through:
+
+```text
+observe
+→ classify
+→ map
+→ ask missing questions
+→ build plan
+→ compile execution package
+→ WAIT FOR AUTHORITY
+```
+
+**Expected result:** the project can become execution-ready while production/repository mutation remains blocked.
+
+---
+
+### UC-18 — Human approval as an explicit gate
+
+**When to use it:** a decision is genuinely discretionary, irreversible, sensitive or outside previously delegated authority.
+
+**Objective:** record the human choice as a governed decision rather than infer consent.
+
+Examples:
+
+- repository ownership or visibility;
+- production server selection;
+- destructive migration;
+- sensitive infrastructure changes;
+- approval of a prepared setup package;
+- acceptance of an architectural direction.
+
+**Expected result:** human agency remains visible and auditable.
+
+---
+
+### UC-19 — Audit what happened and why
+
+**When to use it:** someone needs to reconstruct a prior action, failure, decision or handoff.
+
+**Objective:** trace from current state back to evidence.
+
+A useful audit chain is:
+
+```text
+CURRENT STATE
+→ checkpoint
+→ task/work package
+→ decision
+→ evidence
+→ execution run
+→ receipt / CI
+→ source commit / PR
+```
+
+**Expected result:** an auditor or future agent can distinguish observed facts, human choices, inferred state and executed mutations.
+
+---
+
+### UC-20 — Operate the framework as a reusable governance platform
+
+**When to use it:** multiple projects need a consistent governance model.
+
+**Objective:** use the source repository as a reusable control plane while each project remains independently governed.
+
+```mermaid
+flowchart TB
+    CP["Central Control Plane"]
+    CP --> R1["Project A"]
+    CP --> R2["Project B"]
+    CP --> R3["Project C"]
+    CP --> RN["Project N"]
+
+    R1 --> M1["Independent state"]
+    R2 --> M2["Independent state"]
+    R3 --> M3["Independent state"]
+    RN --> MN["Independent state"]
+```
+
+**Expected result:** common governance mechanics with isolated project truth.
+
+---
+
+## 19. Choosing the right route
+
+A practical decision tree is:
+
+```mermaid
+flowchart TD
+    A["What do you want to do?"] --> B{"Does the target repository already exist?"}
+    B -->|No| C["CREATE_NEW_REPOSITORY"]
+    B -->|Yes| D{"Is governance already installed?"}
+    D -->|No| E{"Do you only need understanding / architecture?"}
+    E -->|Yes| F["MAP_EXISTING_PROJECT"]
+    E -->|No| G["ADOPT_EXISTING_REPOSITORY"]
+    D -->|Yes| H{"Is this an isolated experiment/evolution?"}
+    H -->|Yes| I["LAB_EVOLUTION"]
+    H -->|No| J["CONTINUE_GOVERNED_WORK"]
+```
+
+This selects the **macro route**, not mutation permission. Entry classification, intent, authority, capability and exact-state gates still apply afterward.
+
+---
+
+## 20. What the framework is not
+
+The project is **not**:
+
+- a mechanism for bypassing GitHub permissions;
+- an authorization system that treats tool availability as consent;
+- a replacement for application-specific architecture;
+- a secret store;
+- a guarantee that every provider exposes the same identity/session metadata;
+- a reason to copy one project's history into another;
+- a mandate to change production whenever infrastructure is discovered;
+- a parallel task system that replaces the repository's canonical work state;
+- a license for autonomous mutation without governed authority;
+- a substitute for tests, CI, review or rollback planning.
+
+It is a coordination, evidence, continuity and execution-governance framework around those systems.
+
+---
+
+## 21. Use-case outcome model
+
+Across the different use cases, the intended pattern remains consistent:
+
+```text
+REQUEST
+→ GOVERNED ARRIVAL
+→ OBSERVATION
+→ CLASSIFICATION
+→ DECISION / AUTHORITY
+→ PLAN
+→ OPTIONAL EXECUTION
+→ EVIDENCE
+→ CHECKPOINT
+→ HANDOFF / CONTINUATION
+```
+
+A valid outcome may therefore be:
+
+- **executed successfully**;
+- **prepared but awaiting approval**;
+- **blocked by missing capability**;
+- **blocked by contradictory evidence**;
+- **read-only mapping completed**;
+- **handoff ready**;
+- **continuation correlated**;
+- **fail-closed because identity/authority remains unresolved**.
+
+A blocked outcome is not necessarily a failure of the framework. In a fail-closed governance model, refusing an unsafe or unsupported transition is often the correct result.
+
+---
+
+## 22. Core invariants
 
 The project can be understood through a small set of invariants:
 
@@ -609,6 +1241,6 @@ These invariants are more important than any individual implementation detail. T
 
 ---
 
-## 18. In one sentence
+## 23. In one sentence
 
 **Governed Repository Template turns repository access into a controlled, evidence-backed, persistent and resumable workflow so that humans and AI agents can collaborate across conversations, tools and repositories without losing state, inventing authority or silently bypassing governance.**
