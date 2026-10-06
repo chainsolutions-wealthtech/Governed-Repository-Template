@@ -11,26 +11,17 @@ def main() -> None:
     assert first["execute_next_automatically"] is False, first
 
     after_entry = route("00_GSCC_ENTRY.md")
-    assert after_entry["action"] == "BUILD_OBSERVABLE_PACKET", after_entry
-    assert after_entry["next_step"] == "R2_FIRST_TOUCH_CLASSIFICATION", after_entry
+    assert after_entry["action"] == "RUN_PERSISTED_ENTRY_PIPELINE", after_entry
+    assert after_entry["target"] == "scripts/gscc_persisted_entry_pipeline.py", after_entry
+    assert after_entry["next_step"] == "Q1", after_entry
+    assert after_entry["execute_next_automatically"] is False, after_entry
 
-    first_touch = route("R1_PROVIDER_CONTEXT", "FIRST_TOUCH")
-    assert first_touch["next_step"] == "R3_ENTRY_CONTRACT", first_touch
-
-    continuation = route("R1_PROVIDER_CONTEXT", "CONTINUATION")
-    assert continuation["next_step"] == "R3_ENTRY_CONTRACT", continuation
-
-    unresolved = route("R1_PROVIDER_CONTEXT", "UNRESOLVED_ENTRY")
-    assert unresolved["next_step"] == "BLOCK_UNRESOLVED", unresolved
-
-    ready = route("R2_FIRST_TOUCH_CLASSIFICATION", "ENTRY_READY_FOR_Q1")
-    assert ready["next_step"] == "R4_Q1_HANDOFF", ready
-
-    blocked = route("R2_FIRST_TOUCH_CLASSIFICATION", "ENTRY_BLOCKED")
+    blocked = route("00_GSCC_ENTRY.md", "ENTRY_BLOCKED")
     assert blocked["next_step"] == "BLOCK_UNRESOLVED", blocked
 
-    q1 = route("R3_ENTRY_CONTRACT", "READY_FOR_Q1")
-    assert q1["next_step"] == "Q1", q1
+    stopped = route("BLOCK_UNRESOLVED")
+    assert stopped["action"] == "STOP_FAIL_CLOSED", stopped
+    assert stopped["next_step"] is None, stopped
 
     print("GSCC_ENTRY_ROUTER_TEST_PASS")
 
