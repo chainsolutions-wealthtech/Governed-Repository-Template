@@ -161,6 +161,20 @@ def main():
         assert_true(set(item["delivery_modes"]) == {"POLL_REPOSITORY","REPOSITORY_DISPATCH","EXTERNAL_BRIDGE"}, "all declared delivery modes")
         assert_true(item["may_write_before_takeover_accept"] is False, "dispatch must not grant write")
 
+        recovery_b = g.session_recovery_packet("session-b", generated_at="2026-10-01T20:10:00+00:00")
+        assert_true(recovery_b["schema"] == "gacr-session-recovery-packet/v1", "recovery packet schema")
+        assert_true(recovery_b["addressability"]["provider"] == "chatgpt", "provider recovered")
+        assert_true(recovery_b["addressability"]["provider_conversation_ref"] == "conv-b", "provider conversation ref recovered")
+        assert_true(recovery_b["addressability"]["bridge_registration_ref"] == "bridge-b", "bridge ref recovered")
+        assert_true(
+            set(recovery_b["addressability"]["transport_candidates"]) == {"POLL_REPOSITORY", "REPOSITORY_DISPATCH", "EXTERNAL_BRIDGE"},
+            "recovery packet preserves observable transports",
+        )
+        assert_true(recovery_b["addressability"]["targetable_via_observed_transport"] is True, "session addressable through observed transport")
+        assert_true(recovery_b["addressability"]["freeform_prompt_delivery"]["status"] == "NOT_VERIFIED", "wake transport must not be mistaken for prompt transport")
+        assert_true(recovery_b["next_gate"]["may_send_freeform_prompt_without_verified_transport"] is False, "prompt delivery fails closed")
+        assert_true(recovery_b["addressability"]["grants_mutation_authority"] is False, "recovery packet grants no mutation authority")
+
         notifier = load_notifier()
         bridge_payload = notifier.build_payload("owner/repo", item)
         assert_true(bridge_payload["dispatch_id"] == item["dispatch_id"], "bridge dispatch id")
