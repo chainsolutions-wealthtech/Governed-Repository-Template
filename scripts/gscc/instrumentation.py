@@ -15,16 +15,26 @@ def instrument_tool(
     tool_name: str,
     fn: Callable[..., T],
     *,
+    before_tool_call: Callable[[str], dict[str, Any] | None] | None = None,
     exposure_guard: Callable[[str], dict[str, Any]] | None = None,
 ) -> Callable[..., T]:
     """Emit GSCC lifecycle evidence without serializing arguments/results.
 
-    Controlled hosts may supply an exposure_guard. When present, the guard is
-    evaluated before TOOL_STARTED and must return a VALIDATED exposure receipt.
-    The guard decision itself is transported through GSCC as activity evidence.
+    Controlled hosts may supply a before_tool_call hook. It executes before any
+    exposure evaluation or TOOL_STARTED event and is the canonical extension point
+    for provider First Touch emission. The hook receives only the tool name and
+    must not inspect or serialize tool arguments/results.
+
+    Controlled hosts may also supply an exposure_guard. When present, the guard is
+    evaluated after before_tool_call and before TOOL_STARTED, and must return a
+    VALIDATED exposure receipt. The guard decision itself is transported through
+    GSCC as activity evidence.
     """
     @functools.wraps(fn)
     def wrapped(*args: Any, **kwargs: Any) -> T:
+        if before_tool_call is not None:
+            before_tool_call(tool_name)
+
         if exposure_guard is not None:
             gate_id = f"GSCC-EXPOSURE-GATE-{uuid.uuid4()}"
             endpoint.activity_started(
