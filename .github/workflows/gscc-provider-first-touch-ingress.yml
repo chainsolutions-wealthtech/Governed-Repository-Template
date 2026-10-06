@@ -90,9 +90,29 @@ jobs:
       - name: Materialize existing B00-B30 first-touch database
         run: |
           python3 scripts/first_touch_field_block_gate.py             --capture "$RUNNER_TEMP/provider-first-touch-capture.json"             --output "$RUNNER_TEMP/provider-first-touch-capture.sqlite"             --source-ref "provider-first-touch:${GITHUB_RUN_ID}:${GITHUB_RUN_ATTEMPT}"
-          if [ -f "${RUNNER_TEMP}/first-touch-previous.sqlite" ]; then
-            python3 scripts/first_touch_state_artifact.py merge               --current "${RUNNER_TEMP}/provider-first-touch-capture.sqlite"               --previous "${RUNNER_TEMP}/first-touch-previous.sqlite"
-          fi
+
+      - name: Install persisted GSCC runtime schemas
+        run: |
+          python3 - <<'PY'
+          import sqlite3, os
+          from pathlib import Path
+          db=Path(os.environ["RUNNER_TEMP"])/"provider-first-touch-capture.sqlite"
+          conn=sqlite3.connect(db)
+          try:
+              for name in (
+                  "008_gscc_observable_entry_pipeline.sql",
+                  "009_gscc_post_q1_gate_route.sql",
+              ):
+                  conn.executescript((Path(".governance/control-plane-db")/name).read_text(encoding="utf-8"))
+              conn.commit()
+          finally:
+              conn.close()
+          PY
+
+      - name: Merge previous persisted GSCC state
+        if: ${{ hashFiles(format('{0}/first-touch-previous.sqlite', runner.temp)) != '' }}
+        run: |
+          python3 scripts/first_touch_state_artifact.py merge             --current "$RUNNER_TEMP/provider-first-touch-capture.sqlite"             --previous "$RUNNER_TEMP/first-touch-previous.sqlite"
 
       - name: Build expected first-touch field registry
         run: python3 scripts/first_touch_expected_field_registry.py
@@ -113,6 +133,21 @@ jobs:
           with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
               f.write("status="+v["status"]+"\n")
               f.write("classification="+v["classification"]+"\n")
+          PY
+
+      - name: Run canonical persisted GSCC entry pipeline
+        id: persisted_entry
+        run: |
+          python3 scripts/gscc_persisted_entry_pipeline.py             --provider-envelope "$RUNNER_TEMP/provider-first-touch-enriched-envelope.json"             --github "$RUNNER_TEMP/provider-first-touch-enriched-envelope.json"             --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite"             --run-id "provider-first-touch-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"             > "$RUNNER_TEMP/gscc-persisted-entry-result.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path(os.environ["RUNNER_TEMP"])/"gscc-persisted-entry-result.json"
+          v=json.loads(p.read_text(encoding="utf-8"))
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("entry_status="+str(v.get("entry_status"))+"\n")
+              f.write("classification="+str(v.get("classification"))+"\n")
+              f.write("next_gate="+str(v.get("next_gate"))+"\n")
           PY
 
       - name: Persist canonical GSCC First Touch state
@@ -139,6 +174,7 @@ jobs:
             ${{ runner.temp }}/provider-first-touch-capture.sqlite
             ${{ runner.temp }}/provider-first-touch-completeness.json
             ${{ runner.temp }}/provider-first-touch-entry-contract.json
+            ${{ runner.temp }}/gscc-persisted-entry-result.json
             ${{ runner.temp }}/gscc-first-touch-handoff.json
           if-no-files-found: warn
           retention-days: 30
