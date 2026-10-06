@@ -52,13 +52,14 @@ def _artifact_blob(download_url:str, token:str)->bytes:
     with urllib.request.urlopen(clean,timeout=30) as response:
         return response.read()
 
-def restore_latest(repository:str, current_run_id:str, output:Path, token:str)->dict:
+def restore_latest(repository:str, current_run_id:str, output:Path, token:str, *, scope:str|None=None)->dict:
     encoded=urllib.parse.quote(repository,safe="/")
     url=f"https://api.github.com/repos/{encoded}/actions/artifacts?per_page=100"
     payload=_request_json(url,token)
+    prefix=STATE_NAME_PREFIX if not scope else f"{STATE_NAME_PREFIX}{scope}-"
     artifacts=[
         x for x in payload.get("artifacts",[])
-        if str(x.get("name") or "").startswith(STATE_NAME_PREFIX)
+        if str(x.get("name") or "").startswith(prefix)
         and not x.get("expired")
         and str((x.get("workflow_run") or {}).get("id") or "") != str(current_run_id)
     ]
@@ -128,14 +129,14 @@ def main():
     p=argparse.ArgumentParser()
     sub=p.add_subparsers(dest="command",required=True)
     r=sub.add_parser("restore")
-    r.add_argument("--repository",required=True); r.add_argument("--run-id",required=True); r.add_argument("--output",required=True)
+    r.add_argument("--repository",required=True); r.add_argument("--run-id",required=True); r.add_argument("--output",required=True); r.add_argument("--scope")
     m=sub.add_parser("merge")
     m.add_argument("--current",required=True); m.add_argument("--previous",required=True)
     a=p.parse_args()
     if a.command=="restore":
         token=os.environ.get("GITHUB_TOKEN")
         if not token: raise SystemExit("GITHUB_TOKEN unavailable")
-        result=restore_latest(a.repository,a.run_id,Path(a.output),token)
+        result=restore_latest(a.repository,a.run_id,Path(a.output),token,scope=a.scope)
     else:
         result=merge_previous(Path(a.current),Path(a.previous))
     print(json.dumps(result,indent=2,sort_keys=True))
