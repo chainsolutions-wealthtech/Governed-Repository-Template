@@ -45,5 +45,7 @@
     "Q12",
     "F1",
     "00_START_HERE.md"
-  ]
+  ],
+  "post_q1_router": ".governance/gscc-post-q1-router.json",
+  "post_q1_persistence": ".governance/control-plane-db/009_gscc_post_q1_gate_route.sql"
 }

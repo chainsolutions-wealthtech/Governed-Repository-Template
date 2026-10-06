@@ -218,6 +218,39 @@ No transport is itself GSCC authority.
 
 A transport failure or unavailable provider-side hook MUST remain explicit. It MUST NOT be reported as a successful First Touch.
 
+## Canonical post-Q1 persisted route
+
+After the persisted entry pipeline returns `READY_FOR_Q1`, progression is controlled by:
+
+`.governance/gscc-post-q1-router.json`
+
+and persisted by:
+
+`scripts/gscc_post_q1_gate_router.py`
+
+The mandatory chronological route is:
+
+```text
+Q1
+→ Q3
+→ Q4
+→ Q5
+→ Q8
+→ Q9
+→ Q10 / GSE initial SessionTwin
+→ Q2 / GACR durable binding
+→ Q6
+→ Q7
+→ Q11
+→ Q12
+→ F1
+→ 00_START_HERE.md
+```
+
+Every gate transition is persisted in SQLite. A gate advances only on its canonical success outcome. Any other observed outcome fails closed and produces no next gate.
+
+This route does not grant invocation or mutation authority.
+
 ## Canonical GSCC → GSE → GACR order
 
 The canonical gate order is:
