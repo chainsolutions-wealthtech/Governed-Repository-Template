@@ -48,10 +48,12 @@ Initial routing contract:
 ```text
 ARRIVAL
 → READ_AUTHORITY: 00_GSCC_ENTRY.md
-→ BUILD_OBSERVABLE_PACKET
-→ CLASSIFY_FIRST_TOUCH: FIRST_TOUCH | CONTINUATION | UNRESOLVED
-→ EVALUATE_ENTRY_CONTRACT
-→ BUILD_Q1_HANDOFF
+→ RUN_PERSISTED_ENTRY_PIPELINE
+   → BUILD_OBSERVABLE_PACKET
+   → PERSIST_PACKET_AND_CAPTURE_TO_SQLITE
+   → CLASSIFY_FIRST_TOUCH: FIRST_TOUCH | CONTINUATION | UNRESOLVED
+   → EVALUATE_ENTRY_CONTRACT
+   → PERSIST_CLASSIFICATION_AND_HANDOFF
 → Q1
 ```
 
@@ -66,12 +68,27 @@ For the entry test, once this file has been read, the expected emitted next step
 
 ```text
 CURRENT = 00_GSCC_ENTRY.md
-ACTION = BUILD_OBSERVABLE_PACKET
-NEXT_STEP = R2_FIRST_TOUCH_CLASSIFICATION
+ACTION = RUN_PERSISTED_ENTRY_PIPELINE
+NEXT_STEP = Q1 only when READY_FOR_Q1
 EXECUTE_NEXT_AUTOMATICALLY = FALSE
 ```
 
+## Persistent entry database
+
+The canonical entry pipeline MUST persist its observable packet, normalized capture, classification, blocking reasons and Q1 handoff state in SQLite before progression.
+
+Runtime orchestrator:
+
+`scripts/gscc_persisted_entry_pipeline.py`
+
+Schema migration:
+
+`.governance/control-plane-db/008_gscc_observable_entry_pipeline.sql`
+
+A blocked or unresolved entry is also persisted. Persistence never grants mutation authority.
+
 ## Observable extraction layer
+
 
 Before First Touch classification, the agent MUST build one normalized observable packet from:
 
