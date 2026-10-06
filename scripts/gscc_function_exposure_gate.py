@@ -23,6 +23,7 @@ CONTROLLED_CLIENT_CONNECTION_METHOD = "controlled-client-adapter"
 GSCC_CONNECTION_METHODS = {
     "gscc-github-event-gateway",
     "gscc-controlled-host-gateway",
+    "controlled-repository-surface",
     CONTROLLED_CLIENT_CONNECTION_METHOD,
 }
 UNRESOLVED_ROUTE_VALUES = {None, "", "UNKNOWN", "UNAVAILABLE"}
