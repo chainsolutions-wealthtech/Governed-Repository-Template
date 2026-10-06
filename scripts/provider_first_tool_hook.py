@@ -33,6 +33,120 @@ def _marker_key(provider:str,repository:str,identity:dict[str,Any])->str | None:
     kind,value=stable
     return f"{provider}:{repository}:{kind}:{value}"
 
+def _reported(event:dict[str,Any], key:str, default:Any="UNAVAILABLE")->Any:
+    value=event.get(key, default)
+    return default if value in (None, "") else value
+
+def build_provider_context(event:dict[str,Any], identity:dict[str,Any])->dict[str,Any]:
+    """Normalize only provider/host-observable facts.
+
+    Missing provider-private facts are explicit UNAVAILABLE. No repository fact is
+    inferred here; repository-owned enrichment happens after repository_dispatch.
+    """
+    return {
+        "request":{
+            "request_id":_reported(event,"request_id"),
+            "correlation_id":_reported(event,"correlation_id"),
+            "trace_id":_reported(event,"trace_id"),
+            "idempotency_key":_reported(event,"idempotency_key"),
+            "issued_at":_reported(event,"issued_at"),
+            "observed_at":_reported(event,"observed_at"),
+        },
+        "agent":{
+            "agent_type":_reported(event,"agent_type"),
+            "agent_name":_reported(event,"agent_name"),
+            "agent_role":_reported(event,"agent_role"),
+            "agent_runtime":_reported(event,"runtime"),
+            "agent_surface":_reported(event,"surface"),
+            "agent_channel":_reported(event,"channel"),
+            "agent_execution_mode":_reported(event,"execution_mode"),
+            "provider":_reported(event,"provider"),
+            "provider_family":_reported(event,"provider_family"),
+            "provider_product":_reported(event,"provider_product"),
+            "provider_ref":_reported(event,"provider_ref"),
+            "public_identity":_reported(event,"actor"),
+            "model":_reported(event,"model"),
+            "model_family":_reported(event,"model_family"),
+            "model_variant":_reported(event,"model_variant"),
+            "thinking_mode":_reported(event,"thinking_mode"),
+            "reasoning_effort":_reported(event,"reasoning_effort"),
+            "direct_github_functions_used":True,
+            "codex_used":bool(event.get("codex_used",False)),
+            "codex_workspace_created":bool(event.get("codex_workspace_created",False)),
+            "codex_task_created":bool(event.get("codex_task_created",False)),
+            "github_app_codex_used":bool(event.get("github_app_codex_used",False)),
+        },
+        "client":{
+            "client_instance_id":_reported(event,"client_instance_id"),
+            "client_type":_reported(event,"client_type"),
+            "application":_reported(event,"application"),
+            "application_version":_reported(event,"application_version"),
+            "device_type":_reported(event,"device_type"),
+            "platform":_reported(event,"platform"),
+            "locale":_reported(event,"locale"),
+            "language":_reported(event,"language"),
+            "timezone":_reported(event,"timezone"),
+        },
+        "session":{
+            "conversation_id":identity.get("conversation_id","UNAVAILABLE"),
+            "conversation_ref":identity.get("conversation_ref","UNAVAILABLE"),
+            "conversation_type":_reported(event,"conversation_type"),
+            "conversation_start_time":_reported(event,"conversation_start_time"),
+            "first_touch_time":_reported(event,"first_touch_time"),
+            "session_id":identity.get("session_id","UNAVAILABLE"),
+            "session_ref":identity.get("session_ref","UNAVAILABLE"),
+            "run_id":_reported(event,"run_id"),
+            "task_id":_reported(event,"task_id"),
+            "job_id":_reported(event,"job_id"),
+            "workspace_id":identity.get("workspace_id","UNAVAILABLE"),
+            "workspace_name":identity.get("workspace_name","UNAVAILABLE"),
+            "thread_id":_reported(event,"thread_id"),
+            "turn_id":_reported(event,"turn_id"),
+            "message_id":_reported(event,"message_id"),
+            "parent_message_id":_reported(event,"parent_message_id"),
+            "interaction_sequence":_reported(event,"interaction_sequence"),
+            "first_operation":_reported(event,"tool_name"),
+            "operation_count":1,
+            "new_arrival":True,
+            "first_touch_consumed":False,
+        },
+        "connection":{
+            "connection_ref":identity.get("connection_ref","UNAVAILABLE"),
+            "connection_method":_reported(event,"connection_method"),
+            "surface_class":_reported(event,"surface_class"),
+            "transport_type":_reported(event,"transport_type"),
+            "transport_name":_reported(event,"transport"),
+            "transport_layer":_reported(event,"transport_layer"),
+            "transport_surface":_reported(event,"transport_surface"),
+            "connector_name":_reported(event,"connector_name"),
+            "connector_type":_reported(event,"connector_type"),
+            "connector_version":_reported(event,"connector_version"),
+            "api_proxy":_reported(event,"api_proxy"),
+            "direct_connector":_reported(event,"direct_connector"),
+            "github_tool_surface":_reported(event,"github_tool_surface"),
+            "runtime":_reported(event,"runtime"),
+            "user_agent":_reported(event,"user_agent"),
+            "region":_reported(event,"region"),
+            "capabilities":event.get("capabilities","UNAVAILABLE"),
+        },
+        "negative":{
+            "codex_used":bool(event.get("codex_used",False)),
+            "github_app_codex_used":bool(event.get("github_app_codex_used",False)),
+            "codex_workspace_created":bool(event.get("codex_workspace_created",False)),
+            "codex_task_created":bool(event.get("codex_task_created",False)),
+            "repository_mutated":bool(event.get("repository_mutated",False)),
+            "secret_accessed":bool(event.get("secret_accessed",False)),
+            "token_exposed":bool(event.get("token_exposed",False)),
+            "oauth_secret_exposed":bool(event.get("oauth_secret_exposed",False)),
+            "private_key_exposed":bool(event.get("private_key_exposed",False)),
+            "conversation_id_exposed":identity.get("conversation_id") not in UNAVAILABLE,
+            "session_id_exposed":identity.get("session_id") not in UNAVAILABLE,
+            "installation_id_exposed":bool(event.get("installation_id_exposed",False)),
+            "client_id_exposed":bool(event.get("client_id_exposed",False)),
+            "ip_exposed":bool(event.get("ip_exposed",False)),
+        },
+    }
+
 def build_envelope(event:dict[str,Any])->dict[str,Any]:
     provider=str(_clean(event.get("provider") or ""))
     transport=str(_clean(event.get("transport") or ""))
@@ -44,43 +158,30 @@ def build_envelope(event:dict[str,Any])->dict[str,Any]:
         raise ValueError("transport required")
     if repository.count("/") != 1:
         raise ValueError("repository must use owner/name")
-    envelope={
+    normalized_identity={
+        "conversation_id":identity.get("conversation_id","UNAVAILABLE"),
+        "conversation_ref":identity.get("conversation_ref","UNAVAILABLE"),
+        "session_id":identity.get("session_id","UNAVAILABLE"),
+        "session_ref":identity.get("session_ref","UNAVAILABLE"),
+        "connection_ref":identity.get("connection_ref","UNAVAILABLE"),
+        "workspace_id":identity.get("workspace_id","UNAVAILABLE"),
+        "workspace_name":identity.get("workspace_name","UNAVAILABLE"),
+    }
+    return {
         "schema":SCHEMA,
         "provider":provider,
         "transport":transport,
         "repository":repository,
-        "identity":{
-            "conversation_ref":identity.get("conversation_ref","UNAVAILABLE"),
-            "session_ref":identity.get("session_ref","UNAVAILABLE"),
-            "connection_ref":identity.get("connection_ref","UNAVAILABLE"),
-        },
-        "direct_github_functions_used":True,
-        "codex_used":False,
-        "repository_mutated":False,
-        "secret_accessed":False,
-        "token_exposed":False,
-        "identity_status":"STABLE" if _stable_identity(identity) else "UNRESOLVED",
+        "identity":normalized_identity,
+        "identity_status":"STABLE" if _stable_identity(normalized_identity) else "UNRESOLVED",
         "tool":{
-            "name":event.get("tool_name"),
-            "operation":event.get("operation"),
-            "category":event.get("category"),
+            "name":event.get("tool_name","UNAVAILABLE"),
+            "operation":event.get("operation","UNAVAILABLE"),
+            "category":event.get("category","UNAVAILABLE"),
             "success":event.get("success",True),
         },
+        "provider_context":build_provider_context(event,normalized_identity),
     }
-    for key in (
-        "actor","model","branch","observed_head","repository_id","repository_owner",
-        "repository_owner_id","repository_owner_type","repository_visibility",
-        "default_branch","transport_type","transport_surface","connector_name",
-        "connector_type","connector_version","github_tool_surface","observed_at",
-    ):
-        value=event.get(key)
-        if value not in (None,""):
-            envelope[key]=value
-    if isinstance(event.get("capabilities"),dict):
-        envelope["capabilities"]=event["capabilities"]
-    if isinstance(event.get("unavailable"),dict):
-        envelope["unavailable"]=event["unavailable"]
-    return envelope
 
 def send_dispatch(repository:str,envelope:dict[str,Any],token:str,api_base:str="https://api.github.com")->int:
     owner,name=repository.split("/",1)

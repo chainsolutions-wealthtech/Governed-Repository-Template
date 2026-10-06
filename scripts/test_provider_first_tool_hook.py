@@ -30,8 +30,13 @@ class ProviderFirstToolHookTests(unittest.TestCase):
         self.assertEqual(env["schema"],"gscc-provider-first-touch-envelope/v1")
         self.assertEqual(env["provider"],"chatgpt")
         self.assertEqual(env["identity"]["connection_ref"],"conn_ft_test_12345678")
-        self.assertTrue(env["direct_github_functions_used"])
-        self.assertFalse(env["codex_used"])
+        self.assertTrue(env["provider_context"]["agent"]["direct_github_functions_used"])
+        self.assertFalse(env["provider_context"]["negative"]["codex_used"])
+        self.assertEqual(env["provider_context"]["agent"]["model"],"GPT-5.6 Sol")
+        self.assertEqual(env["provider_context"]["client"]["client_instance_id"],"UNAVAILABLE")
+        self.assertEqual(env["provider_context"]["session"]["conversation_ref"],"UNAVAILABLE")
+        self.assertEqual(env["provider_context"]["connection"]["transport_name"],"chatgpt-github-direct")
+        self.assertLessEqual(len(env),10)
 
     def test_exactly_once_per_host_marker(self):
         calls=[]
@@ -116,6 +121,45 @@ class ProviderFirstToolHookTests(unittest.TestCase):
         self.assertEqual(second["status"],"FIRST_TOUCH_ALREADY_EMITTED")
         self.assertEqual(third["status"],"FIRST_TOUCH_ALREADY_EMITTED")
         self.assertEqual(calls,["mcp__GitHub__get_repo"])
+
+
+    def test_provider_context_never_invents_private_identifiers(self):
+        value=event()
+        value["identity"]={
+            "conversation_ref":"UNAVAILABLE",
+            "session_ref":"UNAVAILABLE",
+            "connection_ref":"UNAVAILABLE",
+        }
+        env=build_envelope(value)
+        self.assertEqual(env["identity_status"],"UNRESOLVED")
+        self.assertEqual(env["provider_context"]["session"]["conversation_id"],"UNAVAILABLE")
+        self.assertEqual(env["provider_context"]["session"]["session_id"],"UNAVAILABLE")
+        self.assertEqual(env["provider_context"]["client"]["client_instance_id"],"UNAVAILABLE")
+        self.assertEqual(env["provider_context"]["request"]["request_id"],"UNAVAILABLE")
+        self.assertEqual(env["provider_context"]["connection"]["connector_name"],"UNAVAILABLE")
+
+    def test_provider_context_preserves_only_host_supplied_provider_metadata(self):
+        value=event()
+        value.update({
+            "runtime":"chatgpt-runtime",
+            "surface":"plugin",
+            "channel":"text",
+            "connector_name":"GitHub",
+            "connector_type":"native",
+            "client_instance_id":"client-visible-1",
+            "request_id":"req-visible-1",
+            "observed_at":"2026-10-06T10:30:00Z",
+        })
+        env=build_envelope(value)
+        ctx=env["provider_context"]
+        self.assertEqual(ctx["agent"]["agent_runtime"],"chatgpt-runtime")
+        self.assertEqual(ctx["agent"]["agent_surface"],"plugin")
+        self.assertEqual(ctx["agent"]["agent_channel"],"text")
+        self.assertEqual(ctx["connection"]["connector_name"],"GitHub")
+        self.assertEqual(ctx["connection"]["connector_type"],"native")
+        self.assertEqual(ctx["client"]["client_instance_id"],"client-visible-1")
+        self.assertEqual(ctx["request"]["request_id"],"req-visible-1")
+        self.assertEqual(ctx["request"]["observed_at"],"2026-10-06T10:30:00Z")
 
 if __name__=="__main__":
     unittest.main()
