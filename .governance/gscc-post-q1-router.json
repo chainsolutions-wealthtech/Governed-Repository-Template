@@ -1,0 +1,119 @@
+{
+  "schema": "gscc-post-q1-router/v1",
+  "authority": "00_GSCC_ENTRY.md",
+  "fail_closed": true,
+  "sequence": [
+    {
+      "gate": "Q1",
+      "owner_layer": "GSCC",
+      "action": "VALIDATE_ADMISSION_ENVELOPE",
+      "implementation": "scripts/gscc/admission.py",
+      "success_outcome": "Q1_VERIFIED",
+      "next_gate": "Q3"
+    },
+    {
+      "gate": "Q3",
+      "owner_layer": "GSCC",
+      "action": "READ_REQUIRED_GOVERNANCE",
+      "implementation": "scripts/gscc/admission_harvester.py",
+      "success_outcome": "Q3_VERIFIED",
+      "next_gate": "Q4"
+    },
+    {
+      "gate": "Q4",
+      "owner_layer": "GSCC",
+      "action": "OBSERVE_REPOSITORY_BASELINE",
+      "implementation": "scripts/gscc/admission_harvester.py",
+      "success_outcome": "Q4_VERIFIED",
+      "next_gate": "Q5"
+    },
+    {
+      "gate": "Q5",
+      "owner_layer": "GSCC",
+      "action": "ESTABLISH_EXACT_HEAD",
+      "implementation": "scripts/gscc/admission_harvester.py",
+      "success_outcome": "Q5_VERIFIED",
+      "next_gate": "Q8"
+    },
+    {
+      "gate": "Q8",
+      "owner_layer": "GSCC",
+      "action": "TEST_DECLARED_CAPABILITIES",
+      "implementation": "scripts/gscc/admission_harvester.py",
+      "success_outcome": "Q8_VERIFIED",
+      "next_gate": "Q9"
+    },
+    {
+      "gate": "Q9",
+      "owner_layer": "GSCC",
+      "action": "PROVE_CONTROL_CHANNEL",
+      "implementation": "scripts/gscc_gacr/issue_control_bridge.py",
+      "success_outcome": "Q9_VERIFIED",
+      "next_gate": "Q10_GSE"
+    },
+    {
+      "gate": "Q10_GSE",
+      "owner_layer": "GSE",
+      "action": "BUILD_INITIAL_SESSION_STATE",
+      "implementation": "scripts/gscc/admission_gse_projection.py",
+      "success_outcome": "Q10_GSE_VERIFIED",
+      "next_gate": "Q2_GACR"
+    },
+    {
+      "gate": "Q2_GACR",
+      "owner_layer": "GACR",
+      "action": "BIND_CANONICAL_SESSION",
+      "implementation": "scripts/gacr_auto_attach.py",
+      "success_outcome": "Q2_GACR_VERIFIED",
+      "next_gate": "Q6"
+    },
+    {
+      "gate": "Q6",
+      "owner_layer": "GACR",
+      "action": "RECONCILE_TASK",
+      "implementation": "scripts/gscc/admission_harvester.py",
+      "success_outcome": "Q6_VERIFIED",
+      "next_gate": "Q7"
+    },
+    {
+      "gate": "Q7",
+      "owner_layer": "GACR",
+      "action": "RECONCILE_CLAIM_COLLISION",
+      "implementation": "scripts/gscc/admission_harvester.py",
+      "success_outcome": "Q7_VERIFIED",
+      "next_gate": "Q11"
+    },
+    {
+      "gate": "Q11",
+      "owner_layer": "GSCC",
+      "action": "EVALUATE_ACCESS_POLICY",
+      "implementation": "scripts/gscc/admission_access_policy.py",
+      "success_outcome": "Q11_VERIFIED",
+      "next_gate": "Q12"
+    },
+    {
+      "gate": "Q12",
+      "owner_layer": "GSCC",
+      "action": "ISSUE_BOUNDED_ACCESS_GRANT",
+      "implementation": "scripts/gscc/admission.py",
+      "success_outcome": "Q12_VERIFIED",
+      "next_gate": "F1"
+    },
+    {
+      "gate": "F1",
+      "owner_layer": "GSCC",
+      "action": "VALIDATE_FUNCTION_EXPOSURE",
+      "implementation": "scripts/gscc_function_exposure_gate.py",
+      "success_outcome": "F1_VERIFIED",
+      "next_gate": "00_START_HERE.md"
+    },
+    {
+      "gate": "00_START_HERE.md",
+      "owner_layer": "GOVERNED_REPOSITORY",
+      "action": "RELEASE_TO_NORMAL_GOVERNANCE",
+      "implementation": "00_START_HERE.md",
+      "success_outcome": "RELEASED",
+      "next_gate": null
+    }
+  ]
+}
