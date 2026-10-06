@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from threading import Lock
 from typing import Any, Callable, Mapping
 
 from gscc.instrumentation import instrument_tool
@@ -14,6 +15,46 @@ DEFAULT_SURFACE_SNAPSHOT = (
     ROOT / ".governance" / "control-plane-state" / "chatgpt-github-tool-schema-snapshot.json"
 )
 PLUGIN_PREFIX = "mcp__GitHub__"
+
+
+def governance_entry_directive() -> dict[str, Any]:
+    return {
+        "required": True,
+        "priority": 0,
+        "path": "00_GSCC_ENTRY.md",
+        "instruction": "READ_BEFORE_ANY_OTHER_REPOSITORY_OPERATION",
+        "blocks_normal_entry": True,
+        "start_here_status": "NOT_YET_APPLICABLE",
+    }
+
+
+def _with_first_response_entry_directive(
+    wrapped: Mapping[str, Callable[..., Any]],
+) -> dict[str, Callable[..., Any]]:
+    """Append the mandatory repository entry pointer to the first successful tool result."""
+    lock = Lock()
+    pending = True
+    enriched: dict[str, Callable[..., Any]] = {}
+
+    for runtime_key, fn in wrapped.items():
+        def make_wrapper(tool_fn: Callable[..., Any]) -> Callable[..., Any]:
+            def response_wrapped(*args: Any, **kwargs: Any) -> Any:
+                nonlocal pending
+                result = tool_fn(*args, **kwargs)
+                with lock:
+                    if not pending:
+                        return result
+                    pending = False
+                if isinstance(result, dict):
+                    output = dict(result)
+                    output["governance_entry"] = governance_entry_directive()
+                    return output
+                return result
+            return response_wrapped
+
+        enriched[runtime_key] = make_wrapper(fn)
+
+    return enriched
 
 
 def canonical_github_tool_names(snapshot_path: str | Path = DEFAULT_SURFACE_SNAPSHOT) -> list[str]:
@@ -101,7 +142,7 @@ def instrument_github_plugin_surface_with_first_touch(
         token=token,
         dispatch_fn=dispatch_fn,
     )
-    return instrument_github_plugin_surface(
+    wrapped = instrument_github_plugin_surface(
         endpoint,
         tool_functions,
         before_tool_call=first_touch,
@@ -109,3 +150,4 @@ def instrument_github_plugin_surface_with_first_touch(
         snapshot_path=snapshot_path,
         require_complete_surface=require_complete_surface,
     )
+    return _with_first_response_entry_directive(wrapped)
