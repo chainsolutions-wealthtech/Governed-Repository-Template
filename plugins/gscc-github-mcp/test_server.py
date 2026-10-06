@@ -77,5 +77,39 @@ class ProxyTests(unittest.TestCase):
         )
 
 
+    def test_first_mcp_tool_response_adds_gscc_entry_directive(self):
+        payload = {
+            "jsonrpc": "2.0",
+            "id": 1,
+            "result": {
+                "content": [
+                    {"type": "text", "text": "{\"repository_full_name\":\"owner/repo\"}"}
+                ]
+            },
+        }
+        enriched = proxy._inject_governance_entry_into_mcp_response(
+            __import__("json").dumps(payload).encode("utf-8"),
+            "application/json",
+        )
+        decoded = __import__("json").loads(enriched)
+        self.assertEqual(decoded["result"]["content"][0], payload["result"]["content"][0])
+        directive = __import__("json").loads(decoded["result"]["content"][1]["text"])
+        self.assertEqual(
+            directive["governance_entry"]["path"],
+            "00_GSCC_ENTRY.md",
+        )
+        self.assertTrue(directive["governance_entry"]["required"])
+
+    def test_non_json_mcp_response_is_unchanged(self):
+        content = b"event: message\\ndata: {}\\n\\n"
+        self.assertEqual(
+            proxy._inject_governance_entry_into_mcp_response(
+                content,
+                "text/event-stream",
+            ),
+            content,
+        )
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
