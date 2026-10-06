@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 50,
+  "revision": 51,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -896,7 +896,7 @@
     },
     {
       "id": "IDN-006",
-      "status": "IN_PROGRESS",
+      "status": "PLANNED",
       "depends_on": [],
       "next_action": "LIVE_PROVE_AUTO_CREATE_OR_RESUME_SESSION_THROUGH_Q12_AND_F1",
       "evidence": [
@@ -905,7 +905,9 @@
         "Governance CI 37543670685 PASS candidate",
         "Per-arrival identity/GSE isolation test PASS",
         "Implementation and multi-arrival isolation candidate PASS in Governance CI 37543670685",
-        "Remaining acceptance: post-merge live fresh-arrival Q9 -> Q10 GSE -> Q2 GACR -> Q12 -> actual-function F1"
+        "Remaining acceptance: post-merge live fresh-arrival Q9 -> Q10 GSE -> Q2 GACR -> Q12 -> actual-function F1",
+        "Owner-authorized candidate implementation exists in PR #229",
+        "Machine task remains PLANNED to preserve the single canonical IN_PROGRESS invariant until live acceptance"
       ]
     },
     {
