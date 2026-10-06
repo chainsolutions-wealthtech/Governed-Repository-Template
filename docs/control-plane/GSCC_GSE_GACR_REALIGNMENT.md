@@ -1,3 +1,7 @@
+# GSCC–GSE–GACR Connection Loop
+
+This is the canonical name for the complete connection lifecycle spanning First Touch, GSCC transport/admission, GSE interpretation, GACR durable continuity, and re-entry into the governed repository workflow.
+
 # GSCC → GSE → GACR Realignment Matrix
 
 Status: `BOUNDED REALIGNMENT AUTHORITY — ISSUE #199`
@@ -98,7 +102,7 @@ The evaluator is:
 
 `scripts/first_touch_entry_contract.py`
 
-The Observable Arrival workflow evaluates this contract before calling the canonical GSCC arrival gateway.
+The Observable Arrival workflow evaluates this contract before calling the canonical GSCC arrival gateway. First Touch uniqueness is owned by the GSCC store in the existing First Touch database, projected to the GSE SessionTwin with SESSION_ATTACH/SESSION_RESUME, and GACR is not a prerequisite for this projection.
 
 ## Target process ordering
 
