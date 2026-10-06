@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 492,
+  "revision": 541,
   "items": [
     {
       "correlation_id": "GACR-C-caffb7cb6efd",
@@ -18744,6 +18744,1231 @@
       "provider_conversation_ref": null,
       "evaluations": [],
       "evaluated_at": "2026-10-06T03:48:37+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-2754dbf6031e",
+      "beacon_id": "GACR-B-5b1422b60620",
+      "level": "EXACT",
+      "selected_session_id": "session-7bf3f82c6b5763fc29ffebe6",
+      "candidate_session_ids": [
+        "session-7bf3f82c6b5763fc29ffebe6"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:01:42+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-2ed35c77dcb5",
+      "beacon_id": "GACR-B-afe84a874b8c",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:02:06+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-921a8716fb48",
+      "beacon_id": "GACR-B-537c7e0f1218",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:02:18+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-b4dbe8150748",
+      "beacon_id": "GACR-B-6987c823abe4",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:02:58+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-bd5c137192fa",
+      "beacon_id": "GACR-B-6cdbee56843a",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:04:06+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-68de5a6ab09f",
+      "beacon_id": "GACR-B-f829bb6fd9c6",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:04:16+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-4ff11d5332f2",
+      "beacon_id": "GACR-B-896ea4d3897c",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:04:28+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-3c5af1cf6c0a",
+      "beacon_id": "GACR-B-c8e71377a728",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:06:04+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-0a6421ac8c8f",
+      "beacon_id": "GACR-B-5e66e467b865",
+      "level": "EXACT",
+      "selected_session_id": "session-324fcfb2fb440bec4eecff02",
+      "candidate_session_ids": [
+        "session-324fcfb2fb440bec4eecff02"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:06:17+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-8669dfd21093",
+      "beacon_id": "GACR-B-b84c249ddf9d",
+      "level": "EXACT",
+      "selected_session_id": "session-f9e5e91ff9ea6590dd36eabe",
+      "candidate_session_ids": [
+        "session-f9e5e91ff9ea6590dd36eabe"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:09:31+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-856dde6077d8",
+      "beacon_id": "GACR-B-dee4ff919fc6",
+      "level": "EXACT",
+      "selected_session_id": "session-f9e5e91ff9ea6590dd36eabe",
+      "candidate_session_ids": [
+        "session-f9e5e91ff9ea6590dd36eabe"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:09:45+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-df4956fecd30",
+      "beacon_id": "GACR-B-9bb22e60e966",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:19:48+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-e983dd88a40b",
+      "beacon_id": "GACR-B-10b7fbe34a7d",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:20:16+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-e15085f76c78",
+      "beacon_id": "GACR-B-56808cf4849b",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:20:30+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-942dc733c83e",
+      "beacon_id": "GACR-B-03b20d8a5965",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:20:43+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-683f1a715258",
+      "beacon_id": "GACR-B-ac886f9abc35",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:20:57+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-c0110977bd65",
+      "beacon_id": "GACR-B-ced1dc83b328",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:21:10+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-9d0f6d6faafb",
+      "beacon_id": "GACR-B-358e6902a271",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:22:20+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-10ac3be9db51",
+      "beacon_id": "GACR-B-3fb493d6c844",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:22:33+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-80ab2a2e9fbb",
+      "beacon_id": "GACR-B-9db205d106bf",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:22:47+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-72ecf2bdcc08",
+      "beacon_id": "GACR-B-2f90959d1a0f",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:24:05+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-405649552d6f",
+      "beacon_id": "GACR-B-bdcb049a57b6",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:24:17+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-a1384bf8eec5",
+      "beacon_id": "GACR-B-53a2495fa98e",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:24:38+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-0a38b63864ab",
+      "beacon_id": "GACR-B-e46b30a7797a",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:24:53+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-516c89aa20b2",
+      "beacon_id": "GACR-B-8360444787f9",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:25:03+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-314f3fa027d6",
+      "beacon_id": "GACR-B-e51cf241dc08",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:25:16+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-26ece3b86a9d",
+      "beacon_id": "GACR-B-8c61afb773f5",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:26:03+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-e841ec3152ea",
+      "beacon_id": "GACR-B-1c9f780d3ca1",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:26:15+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-4683a9b7970b",
+      "beacon_id": "GACR-B-58695f20309d",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:26:28+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-04d70e0e7bad",
+      "beacon_id": "GACR-B-65f0a8e1bd8a",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:29:28+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-5a7671934584",
+      "beacon_id": "GACR-B-8a9bb4017051",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:29:40+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-fd533237cf2a",
+      "beacon_id": "GACR-B-ea4bb1cd63fe",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:29:52+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-c84c8f3603b4",
+      "beacon_id": "GACR-B-137a18c6ac12",
+      "level": "EXACT",
+      "selected_session_id": "session-22cea69c16a47de7abd981c5",
+      "candidate_session_ids": [
+        "session-22cea69c16a47de7abd981c5"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:30:03+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-bee9ba3a12e0",
+      "beacon_id": "GACR-B-bacce9036229",
+      "level": "EXACT",
+      "selected_session_id": "session-324fcfb2fb440bec4eecff02",
+      "candidate_session_ids": [
+        "session-324fcfb2fb440bec4eecff02"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:50:08+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-3d9e9153783f",
+      "beacon_id": "GACR-B-60b275fd9169",
+      "level": "EXACT",
+      "selected_session_id": "session-324fcfb2fb440bec4eecff02",
+      "candidate_session_ids": [
+        "session-324fcfb2fb440bec4eecff02"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:56:48+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-3b44c0efc7e5",
+      "beacon_id": "GACR-B-c4e6b51cf38c",
+      "level": "EXACT",
+      "selected_session_id": "session-324fcfb2fb440bec4eecff02",
+      "candidate_session_ids": [
+        "session-324fcfb2fb440bec4eecff02"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:57:03+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-eef28ba5ae1d",
+      "beacon_id": "GACR-B-e2b9f95d8c88",
+      "level": "EXACT",
+      "selected_session_id": "session-324fcfb2fb440bec4eecff02",
+      "candidate_session_ids": [
+        "session-324fcfb2fb440bec4eecff02"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:58:11+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-385e7ab3234d",
+      "beacon_id": "GACR-B-01e1a3706fd2",
+      "level": "EXACT",
+      "selected_session_id": "session-324fcfb2fb440bec4eecff02",
+      "candidate_session_ids": [
+        "session-324fcfb2fb440bec4eecff02"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:58:39+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-e48a4f71c0cf",
+      "beacon_id": "GACR-B-5adcc79cc09d",
+      "level": "EXACT",
+      "selected_session_id": "session-324fcfb2fb440bec4eecff02",
+      "candidate_session_ids": [
+        "session-324fcfb2fb440bec4eecff02"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:59:00+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-2dcaa38ed85d",
+      "beacon_id": "GACR-B-a261d70046b7",
+      "level": "EXACT",
+      "selected_session_id": "session-324fcfb2fb440bec4eecff02",
+      "candidate_session_ids": [
+        "session-324fcfb2fb440bec4eecff02"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:59:23+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-e84798ecb502",
+      "beacon_id": "GACR-B-83354224c5dc",
+      "level": "EXACT",
+      "selected_session_id": "session-324fcfb2fb440bec4eecff02",
+      "candidate_session_ids": [
+        "session-324fcfb2fb440bec4eecff02"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:59:37+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-007b812e9bb1",
+      "beacon_id": "GACR-B-fdca9dd078d2",
+      "level": "EXACT",
+      "selected_session_id": "session-324fcfb2fb440bec4eecff02",
+      "candidate_session_ids": [
+        "session-324fcfb2fb440bec4eecff02"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T04:59:50+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-9daa35d702e8",
+      "beacon_id": "GACR-B-a94820990827",
+      "level": "EXACT",
+      "selected_session_id": "session-324fcfb2fb440bec4eecff02",
+      "candidate_session_ids": [
+        "session-324fcfb2fb440bec4eecff02"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T05:00:04+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-5af4cc797020",
+      "beacon_id": "GACR-B-bf0944efffd5",
+      "level": "EXACT",
+      "selected_session_id": "session-324fcfb2fb440bec4eecff02",
+      "candidate_session_ids": [
+        "session-324fcfb2fb440bec4eecff02"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T05:02:21+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-f04166cd75ff",
+      "beacon_id": "GACR-B-a0a435720293",
+      "level": "EXACT",
+      "selected_session_id": "session-324fcfb2fb440bec4eecff02",
+      "candidate_session_ids": [
+        "session-324fcfb2fb440bec4eecff02"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T05:02:33+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-d7c8a9352d05",
+      "beacon_id": "GACR-B-327cb989345b",
+      "level": "EXACT",
+      "selected_session_id": "session-324fcfb2fb440bec4eecff02",
+      "candidate_session_ids": [
+        "session-324fcfb2fb440bec4eecff02"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T05:02:45+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-e817b97fa3d2",
+      "beacon_id": "GACR-B-54cd1475fa86",
+      "level": "EXACT",
+      "selected_session_id": "session-324fcfb2fb440bec4eecff02",
+      "candidate_session_ids": [
+        "session-324fcfb2fb440bec4eecff02"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T05:04:11+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-c537c2da03f9",
+      "beacon_id": "GACR-B-86be32d77d13",
+      "level": "EXACT",
+      "selected_session_id": "session-324fcfb2fb440bec4eecff02",
+      "candidate_session_ids": [
+        "session-324fcfb2fb440bec4eecff02"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T05:07:04+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-25a89b6d6d65",
+      "beacon_id": "GACR-B-7fafe05cc72f",
+      "level": "EXACT",
+      "selected_session_id": "session-324fcfb2fb440bec4eecff02",
+      "candidate_session_ids": [
+        "session-324fcfb2fb440bec4eecff02"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CLIENT_INSTANCE_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-06T05:07:17+00:00"
     }
   ]
 }
