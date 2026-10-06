@@ -84,6 +84,8 @@ def main():
     e1_repeat=mint(base_envelope(),issue_event(9001,301),run_id="r3")
     assert e1["identity"]["connection_ref"] != e2["identity"]["connection_ref"]
     assert e1["identity"]["connection_ref"] == e1_repeat["identity"]["connection_ref"]
+    assert e1["gscc_arrival"]["state_scope"] != e2["gscc_arrival"]["state_scope"]
+    assert e1["gscc_arrival"]["state_scope"] == e1_repeat["gscc_arrival"]["state_scope"]
     assert e1["identity"]["connection_ref_origin"]=="GSCC_MINTED_GITHUB_ISSUE"
     assert e1["identity"]["conversation_ref"]=="UNAVAILABLE"
 
