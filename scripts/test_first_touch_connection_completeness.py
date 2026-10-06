@@ -28,8 +28,7 @@ def main():
         assert packet["silent_missing_count"] == 0
         assert packet["live_value_count"] > 20
         assert packet["explicit_unavailable_count"] >= 2
-        assert packet["reference_probe_observation_count"] >= 700
-        assert packet["reference_tool_schema_field_count"] >= 800
+        assert packet["reference_inventory_evaluated"] is False
         assert packet["reference_inventory_is_gate_input"] is False
         assert packet["unknown_count"] >= 1
 
