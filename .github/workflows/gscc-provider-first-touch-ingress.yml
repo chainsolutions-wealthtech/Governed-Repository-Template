@@ -94,8 +94,17 @@ jobs:
           fi
 
       - name: Mint per-arrival GSCC connection identity
+        id: arrival
         run: |
           python3 scripts/gscc_arrival_identity.py             --envelope "$RUNNER_TEMP/provider-first-touch-envelope.json"             --event "$GITHUB_EVENT_PATH"             --run-id "$GITHUB_RUN_ID"             --run-attempt "$GITHUB_RUN_ATTEMPT"             --output "$RUNNER_TEMP/provider-first-touch-identified-envelope.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          v=json.loads((Path(os.environ["RUNNER_TEMP"])/"provider-first-touch-identified-envelope.json").read_text())
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("state_scope="+v["gscc_arrival"]["state_scope"]+"\n")
+              f.write("arrival_ref="+v["gscc_arrival"]["arrival_ref"]+"\n")
+          PY
           mv "$RUNNER_TEMP/provider-first-touch-identified-envelope.json" "$RUNNER_TEMP/provider-first-touch-envelope.json"
 
       - name: Enrich minimal provider signal from repository-observable GitHub state
@@ -116,7 +125,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python3 scripts/first_touch_state_artifact.py restore             --repository "${GITHUB_REPOSITORY}"             --run-id "${GITHUB_RUN_ID}"             --output "${RUNNER_TEMP}/first-touch-previous.sqlite"
+          python3 scripts/first_touch_state_artifact.py restore             --repository "${GITHUB_REPOSITORY}"             --run-id "${GITHUB_RUN_ID}"             --scope "${{ steps.arrival.outputs.state_scope }}"             --output "${RUNNER_TEMP}/first-touch-previous.sqlite"
 
       - name: Materialize existing B00-B30 first-touch database
         run: |
@@ -219,7 +228,7 @@ jobs:
       - name: Persist canonical GSCC First Touch state
         uses: actions/upload-artifact@v4
         with:
-          name: first-touch-state-${{ github.run_id }}-${{ github.run_attempt }}
+          name: first-touch-state-${{ steps.arrival.outputs.state_scope }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/provider-first-touch-capture.sqlite
           if-no-files-found: error
           retention-days: 30
@@ -260,11 +269,26 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Resolve this arrival state scope
+        id: arrival_scope
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          from gscc_arrival_identity import mint
+          event=json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text(encoding="utf-8"))
+          repository=((event.get("repository") or {}).get("full_name") or os.environ.get("GITHUB_REPOSITORY"))
+          result=mint({"repository":repository,"identity":{}},event,run_id=os.environ.get("GITHUB_RUN_ID"),run_attempt=os.environ.get("GITHUB_RUN_ATTEMPT"))
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("state_scope="+result["gscc_arrival"]["state_scope"]+"\n")
+              f.write("arrival_ref="+result["gscc_arrival"]["arrival_ref"]+"\n")
+          PY
+
       - name: Restore this arrival runtime state
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python3 scripts/first_touch_state_artifact.py restore             --repository "${GITHUB_REPOSITORY}"             --run-id "${GITHUB_RUN_ID}"             --output "${RUNNER_TEMP}/provider-first-touch-capture.sqlite"
+          python3 scripts/first_touch_state_artifact.py restore             --repository "${GITHUB_REPOSITORY}"             --run-id "${GITHUB_RUN_ID}"             --scope "${{ steps.arrival_scope.outputs.state_scope }}"             --output "${RUNNER_TEMP}/provider-first-touch-capture.sqlite"
           test -f "${RUNNER_TEMP}/provider-first-touch-capture.sqlite"
 
       - name: Apply Q9 control event
@@ -355,7 +379,7 @@ jobs:
       - name: Persist resumed per-arrival runtime state
         uses: actions/upload-artifact@v4
         with:
-          name: first-touch-state-${{ github.run_id }}-${{ github.run_attempt }}
+          name: first-touch-state-${{ steps.arrival_scope.outputs.state_scope }}-${{ github.run_id }}-${{ github.run_attempt }}
           path: ${{ runner.temp }}/provider-first-touch-capture.sqlite
           if-no-files-found: error
           retention-days: 30
