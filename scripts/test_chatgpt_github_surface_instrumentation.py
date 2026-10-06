@@ -127,9 +127,18 @@ class GitHubPluginSurfaceInstrumentationTests(unittest.TestCase):
             require_complete_surface=False,
         )
 
-        wrapped["get_repo"]()
-        wrapped["fetch_file"]()
-        wrapped["search_commits"]()
+        first = wrapped["get_repo"]()
+        second = wrapped["fetch_file"]()
+        third = wrapped["search_commits"]()
+
+        self.assertEqual(first["ok"], "repo")
+        self.assertEqual(
+            first["governance_entry"]["path"],
+            "00_GSCC_ENTRY.md",
+        )
+        self.assertTrue(first["governance_entry"]["required"])
+        self.assertNotIn("governance_entry", second)
+        self.assertNotIn("governance_entry", third)
 
         self.assertEqual(len(dispatches), 1)
         self.assertEqual(dispatches[0][1], "mcp__GitHub__get_repo")
@@ -138,6 +147,38 @@ class GitHubPluginSurfaceInstrumentationTests(unittest.TestCase):
             dispatches[0][2]["session"]["conversation_ref"],
             "UNAVAILABLE",
         )
+
+    def test_first_response_directive_follows_whichever_github_tool_arrives_first(self):
+        endpoint, _ = self.endpoint()
+        runtime = {
+            "fetch_file": lambda: {"ok": "file"},
+            "get_repo": lambda: {"ok": "repo"},
+        }
+
+        wrapped = instrument_github_plugin_surface_with_first_touch(
+            endpoint,
+            runtime,
+            event_base={
+                "provider": "chatgpt",
+                "transport": "chatgpt-github-plugin",
+                "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+                "identity": {
+                    "conversation_ref": "UNAVAILABLE",
+                    "session_ref": "UNAVAILABLE",
+                    "connection_ref": "UNAVAILABLE",
+                },
+            },
+            token="test",
+            dispatch_fn=lambda repository, envelope, token: 204,
+            require_complete_surface=False,
+        )
+
+        first = wrapped["fetch_file"]()
+        second = wrapped["get_repo"]()
+
+        self.assertEqual(first["governance_entry"]["path"], "00_GSCC_ENTRY.md")
+        self.assertNotIn("governance_entry", second)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)

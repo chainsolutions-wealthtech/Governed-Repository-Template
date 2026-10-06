@@ -87,6 +87,9 @@ jobs:
             echo "GSCC_FUNCTION_EXPOSURE_GATE_SOURCE_ONLY_SKIP: client repository"
           fi
 
+      - name: Test first GitHub API response GSCC entry directive
+        run: python3 scripts/test_chatgpt_github_surface_instrumentation.py
+
       - name: Test GSE deterministic SessionTwin
         run: python3 tests/gse/test_session_state_engine.py
 
