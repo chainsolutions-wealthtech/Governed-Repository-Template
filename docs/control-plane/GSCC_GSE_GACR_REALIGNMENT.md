@@ -295,3 +295,27 @@ This tranche changes no runtime behavior.
 The next runtime tranche must first add tests proving that an initial GSE state can be built from GSCC connection/evidence context without a pre-existing GACR continuity session. Only after those tests are RED may the runtime adapter/harvester be changed.
 
 P12-S6, CASE 1, GMC and Step 13B remain untouched.
+
+
+## First Touch → Q1 raccord correction
+
+The canonical First Touch path now stops at a GSCC handoff before Q1:
+
+```text
+OBSERVABLE_EVENT
+→ FIRST_TOUCH CAPTURE / CORRELATION
+→ GSCC FIRST_TOUCH STORE
+→ GSCC FIRST_TOUCH HANDOFF
+→ Q1
+→ remaining GSCC gates
+→ Q10 GSE
+→ GACR durable continuity
+```
+
+Invariants:
+- First Touch uniqueness is established in GSCC before Q1.
+- No GSE SessionTwin is created by the pre-Q1 entry contract.
+- GSE remains `PENDING_Q10` until the GSCC gate sequence reaches Q10.
+- GACR remains `NOT_YET_ENTERED` before Q10.
+- `/gscc-first-touch` ingress must never be routed through the historical observable-arrival path that targets GACR.
+- The First Touch handoff grants no execution or mutation authority.
