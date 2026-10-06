@@ -313,5 +313,27 @@
       "scope": "CONTROL_PLANE_SOURCE_ONLY",
       "relational_projection": "PENDING_PROJECTION_GMC_INTEGRATION"
     }
+  },
+  "owner_authorized_identity_session_lane": {
+    "status": "CANDIDATE_GREEN_LIVE_Q12_PENDING",
+    "p12_s6_unchanged": true,
+    "pull_request": 229,
+    "branch": "governance/per-arrival-identity-full-session-runtime",
+    "governance_ci_run": 37543670685,
+    "proofs": {
+      "per_arrival_connection_identity": "PASS_CI",
+      "same_arrival_continuation": "PASS_CI",
+      "gse_session_isolation": "PASS_CI",
+      "q9_ack_before_response": "PASS_CI",
+      "q10_before_q2": "PASS_CI"
+    },
+    "live_pending": [
+      "FRESH_CONVERSATION_FIRST_TOUCH_WITH_GSCC_MINTED_IDENTITY",
+      "LIVE_Q9_ACK_RESPONSE",
+      "LIVE_Q10_GSE_SESSION_TWIN",
+      "LIVE_Q2_GACR_BINDING",
+      "LIVE_Q12_ACCESS_GRANT",
+      "LIVE_F1_ACTUAL_FUNCTION_EXPOSURE"
+    ]
   }
 }
