@@ -1,0 +1,4342 @@
+{
+  "schema": "chatgpt-github-tool-schema-snapshot/v1",
+  "provider": "chatgpt",
+  "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+  "source_comment_id": 6009181746,
+  "github_tool_count": 89,
+  "unique_tool_field_pairs": 866,
+  "note": "Schema-surface inventory only. Presence of a tool/schema field does not mean a runtime value is populated or authority is granted.",
+  "authority_granted": false,
+  "fields": [
+    {
+      "tool": "add_comment_to_issue",
+      "field": "repo_full_name",
+      "field_id": "github_tool.add_comment_to_issue.repo_full_name"
+    },
+    {
+      "tool": "add_comment_to_issue",
+      "field": "pr_number",
+      "field_id": "github_tool.add_comment_to_issue.pr_number"
+    },
+    {
+      "tool": "add_comment_to_issue",
+      "field": "comment",
+      "field_id": "github_tool.add_comment_to_issue.comment"
+    },
+    {
+      "tool": "add_comment_to_issue",
+      "field": "result",
+      "field_id": "github_tool.add_comment_to_issue.result"
+    },
+    {
+      "tool": "add_comment_to_issue",
+      "field": "id",
+      "field_id": "github_tool.add_comment_to_issue.id"
+    },
+    {
+      "tool": "add_issue_assignees",
+      "field": "repository_full_name",
+      "field_id": "github_tool.add_issue_assignees.repository_full_name"
+    },
+    {
+      "tool": "add_issue_assignees",
+      "field": "issue_number",
+      "field_id": "github_tool.add_issue_assignees.issue_number"
+    },
+    {
+      "tool": "add_issue_assignees",
+      "field": "assignees",
+      "field_id": "github_tool.add_issue_assignees.assignees"
+    },
+    {
+      "tool": "add_issue_assignees",
+      "field": "result",
+      "field_id": "github_tool.add_issue_assignees.result"
+    },
+    {
+      "tool": "add_issue_assignees",
+      "field": "issue",
+      "field_id": "github_tool.add_issue_assignees.issue"
+    },
+    {
+      "tool": "add_issue_assignees",
+      "field": "url",
+      "field_id": "github_tool.add_issue_assignees.url"
+    },
+    {
+      "tool": "add_issue_assignees",
+      "field": "title",
+      "field_id": "github_tool.add_issue_assignees.title"
+    },
+    {
+      "tool": "add_issue_labels",
+      "field": "repository_full_name",
+      "field_id": "github_tool.add_issue_labels.repository_full_name"
+    },
+    {
+      "tool": "add_issue_labels",
+      "field": "issue_number",
+      "field_id": "github_tool.add_issue_labels.issue_number"
+    },
+    {
+      "tool": "add_issue_labels",
+      "field": "labels",
+      "field_id": "github_tool.add_issue_labels.labels"
+    },
+    {
+      "tool": "add_issue_labels",
+      "field": "result",
+      "field_id": "github_tool.add_issue_labels.result"
+    },
+    {
+      "tool": "add_issue_labels",
+      "field": "issue",
+      "field_id": "github_tool.add_issue_labels.issue"
+    },
+    {
+      "tool": "add_issue_labels",
+      "field": "url",
+      "field_id": "github_tool.add_issue_labels.url"
+    },
+    {
+      "tool": "add_issue_labels",
+      "field": "title",
+      "field_id": "github_tool.add_issue_labels.title"
+    },
+    {
+      "tool": "add_reaction_to_issue_comment",
+      "field": "repo_full_name",
+      "field_id": "github_tool.add_reaction_to_issue_comment.repo_full_name"
+    },
+    {
+      "tool": "add_reaction_to_issue_comment",
+      "field": "comment_id",
+      "field_id": "github_tool.add_reaction_to_issue_comment.comment_id"
+    },
+    {
+      "tool": "add_reaction_to_issue_comment",
+      "field": "reaction",
+      "field_id": "github_tool.add_reaction_to_issue_comment.reaction"
+    },
+    {
+      "tool": "add_reaction_to_issue_comment",
+      "field": "result",
+      "field_id": "github_tool.add_reaction_to_issue_comment.result"
+    },
+    {
+      "tool": "add_reaction_to_issue_comment",
+      "field": "id",
+      "field_id": "github_tool.add_reaction_to_issue_comment.id"
+    },
+    {
+      "tool": "add_reaction_to_issue_comment",
+      "field": "node_id",
+      "field_id": "github_tool.add_reaction_to_issue_comment.node_id"
+    },
+    {
+      "tool": "add_reaction_to_issue_comment",
+      "field": "user",
+      "field_id": "github_tool.add_reaction_to_issue_comment.user"
+    },
+    {
+      "tool": "add_reaction_to_issue_comment",
+      "field": "login",
+      "field_id": "github_tool.add_reaction_to_issue_comment.login"
+    },
+    {
+      "tool": "add_reaction_to_issue_comment",
+      "field": "name",
+      "field_id": "github_tool.add_reaction_to_issue_comment.name"
+    },
+    {
+      "tool": "add_reaction_to_issue_comment",
+      "field": "email",
+      "field_id": "github_tool.add_reaction_to_issue_comment.email"
+    },
+    {
+      "tool": "add_reaction_to_issue_comment",
+      "field": "avatar_url",
+      "field_id": "github_tool.add_reaction_to_issue_comment.avatar_url"
+    },
+    {
+      "tool": "add_reaction_to_issue_comment",
+      "field": "content",
+      "field_id": "github_tool.add_reaction_to_issue_comment.content"
+    },
+    {
+      "tool": "add_reaction_to_issue_comment",
+      "field": "created_at",
+      "field_id": "github_tool.add_reaction_to_issue_comment.created_at"
+    },
+    {
+      "tool": "add_reaction_to_pr",
+      "field": "repo_full_name",
+      "field_id": "github_tool.add_reaction_to_pr.repo_full_name"
+    },
+    {
+      "tool": "add_reaction_to_pr",
+      "field": "pr_number",
+      "field_id": "github_tool.add_reaction_to_pr.pr_number"
+    },
+    {
+      "tool": "add_reaction_to_pr",
+      "field": "reaction",
+      "field_id": "github_tool.add_reaction_to_pr.reaction"
+    },
+    {
+      "tool": "add_reaction_to_pr",
+      "field": "result",
+      "field_id": "github_tool.add_reaction_to_pr.result"
+    },
+    {
+      "tool": "add_reaction_to_pr",
+      "field": "id",
+      "field_id": "github_tool.add_reaction_to_pr.id"
+    },
+    {
+      "tool": "add_reaction_to_pr",
+      "field": "node_id",
+      "field_id": "github_tool.add_reaction_to_pr.node_id"
+    },
+    {
+      "tool": "add_reaction_to_pr",
+      "field": "user",
+      "field_id": "github_tool.add_reaction_to_pr.user"
+    },
+    {
+      "tool": "add_reaction_to_pr",
+      "field": "login",
+      "field_id": "github_tool.add_reaction_to_pr.login"
+    },
+    {
+      "tool": "add_reaction_to_pr",
+      "field": "name",
+      "field_id": "github_tool.add_reaction_to_pr.name"
+    },
+    {
+      "tool": "add_reaction_to_pr",
+      "field": "email",
+      "field_id": "github_tool.add_reaction_to_pr.email"
+    },
+    {
+      "tool": "add_reaction_to_pr",
+      "field": "avatar_url",
+      "field_id": "github_tool.add_reaction_to_pr.avatar_url"
+    },
+    {
+      "tool": "add_reaction_to_pr",
+      "field": "content",
+      "field_id": "github_tool.add_reaction_to_pr.content"
+    },
+    {
+      "tool": "add_reaction_to_pr",
+      "field": "created_at",
+      "field_id": "github_tool.add_reaction_to_pr.created_at"
+    },
+    {
+      "tool": "add_reaction_to_pr_review_comment",
+      "field": "repo_full_name",
+      "field_id": "github_tool.add_reaction_to_pr_review_comment.repo_full_name"
+    },
+    {
+      "tool": "add_reaction_to_pr_review_comment",
+      "field": "comment_id",
+      "field_id": "github_tool.add_reaction_to_pr_review_comment.comment_id"
+    },
+    {
+      "tool": "add_reaction_to_pr_review_comment",
+      "field": "reaction",
+      "field_id": "github_tool.add_reaction_to_pr_review_comment.reaction"
+    },
+    {
+      "tool": "add_reaction_to_pr_review_comment",
+      "field": "result",
+      "field_id": "github_tool.add_reaction_to_pr_review_comment.result"
+    },
+    {
+      "tool": "add_reaction_to_pr_review_comment",
+      "field": "id",
+      "field_id": "github_tool.add_reaction_to_pr_review_comment.id"
+    },
+    {
+      "tool": "add_reaction_to_pr_review_comment",
+      "field": "node_id",
+      "field_id": "github_tool.add_reaction_to_pr_review_comment.node_id"
+    },
+    {
+      "tool": "add_reaction_to_pr_review_comment",
+      "field": "user",
+      "field_id": "github_tool.add_reaction_to_pr_review_comment.user"
+    },
+    {
+      "tool": "add_reaction_to_pr_review_comment",
+      "field": "login",
+      "field_id": "github_tool.add_reaction_to_pr_review_comment.login"
+    },
+    {
+      "tool": "add_reaction_to_pr_review_comment",
+      "field": "name",
+      "field_id": "github_tool.add_reaction_to_pr_review_comment.name"
+    },
+    {
+      "tool": "add_reaction_to_pr_review_comment",
+      "field": "email",
+      "field_id": "github_tool.add_reaction_to_pr_review_comment.email"
+    },
+    {
+      "tool": "add_reaction_to_pr_review_comment",
+      "field": "avatar_url",
+      "field_id": "github_tool.add_reaction_to_pr_review_comment.avatar_url"
+    },
+    {
+      "tool": "add_reaction_to_pr_review_comment",
+      "field": "content",
+      "field_id": "github_tool.add_reaction_to_pr_review_comment.content"
+    },
+    {
+      "tool": "add_reaction_to_pr_review_comment",
+      "field": "created_at",
+      "field_id": "github_tool.add_reaction_to_pr_review_comment.created_at"
+    },
+    {
+      "tool": "add_review_to_pr",
+      "field": "repo_full_name",
+      "field_id": "github_tool.add_review_to_pr.repo_full_name"
+    },
+    {
+      "tool": "add_review_to_pr",
+      "field": "pr_number",
+      "field_id": "github_tool.add_review_to_pr.pr_number"
+    },
+    {
+      "tool": "add_review_to_pr",
+      "field": "action",
+      "field_id": "github_tool.add_review_to_pr.action"
+    },
+    {
+      "tool": "add_review_to_pr",
+      "field": "review",
+      "field_id": "github_tool.add_review_to_pr.review"
+    },
+    {
+      "tool": "add_review_to_pr",
+      "field": "path",
+      "field_id": "github_tool.add_review_to_pr.path"
+    },
+    {
+      "tool": "add_review_to_pr",
+      "field": "position",
+      "field_id": "github_tool.add_review_to_pr.position"
+    },
+    {
+      "tool": "add_review_to_pr",
+      "field": "body",
+      "field_id": "github_tool.add_review_to_pr.body"
+    },
+    {
+      "tool": "add_review_to_pr",
+      "field": "line",
+      "field_id": "github_tool.add_review_to_pr.line"
+    },
+    {
+      "tool": "add_review_to_pr",
+      "field": "side",
+      "field_id": "github_tool.add_review_to_pr.side"
+    },
+    {
+      "tool": "add_review_to_pr",
+      "field": "start_line",
+      "field_id": "github_tool.add_review_to_pr.start_line"
+    },
+    {
+      "tool": "add_review_to_pr",
+      "field": "start_side",
+      "field_id": "github_tool.add_review_to_pr.start_side"
+    },
+    {
+      "tool": "add_review_to_pr",
+      "field": "commit_id",
+      "field_id": "github_tool.add_review_to_pr.commit_id"
+    },
+    {
+      "tool": "add_review_to_pr",
+      "field": "result",
+      "field_id": "github_tool.add_review_to_pr.result"
+    },
+    {
+      "tool": "add_review_to_pr",
+      "field": "success",
+      "field_id": "github_tool.add_review_to_pr.success"
+    },
+    {
+      "tool": "add_review_to_pr",
+      "field": "review_id",
+      "field_id": "github_tool.add_review_to_pr.review_id"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "repo_full_name",
+      "field_id": "github_tool.compare_commits.repo_full_name"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "base",
+      "field_id": "github_tool.compare_commits.base"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "head",
+      "field_id": "github_tool.compare_commits.head"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "result",
+      "field_id": "github_tool.compare_commits.result"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "repository_full_name",
+      "field_id": "github_tool.compare_commits.repository_full_name"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "status",
+      "field_id": "github_tool.compare_commits.status"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "ahead_by",
+      "field_id": "github_tool.compare_commits.ahead_by"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "behind_by",
+      "field_id": "github_tool.compare_commits.behind_by"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "total_commits",
+      "field_id": "github_tool.compare_commits.total_commits"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "too_large",
+      "field_id": "github_tool.compare_commits.too_large"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "sha",
+      "field_id": "github_tool.compare_commits.sha"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "url",
+      "field_id": "github_tool.compare_commits.url"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "html_url",
+      "field_id": "github_tool.compare_commits.html_url"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "files",
+      "field_id": "github_tool.compare_commits.files"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "filename",
+      "field_id": "github_tool.compare_commits.filename"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "additions",
+      "field_id": "github_tool.compare_commits.additions"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "deletions",
+      "field_id": "github_tool.compare_commits.deletions"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "changes",
+      "field_id": "github_tool.compare_commits.changes"
+    },
+    {
+      "tool": "compare_commits",
+      "field": "previous_filename",
+      "field_id": "github_tool.compare_commits.previous_filename"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "repository_full_name",
+      "field_id": "github_tool.convert_pull_request_to_draft.repository_full_name"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "pr_number",
+      "field_id": "github_tool.convert_pull_request_to_draft.pr_number"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "result",
+      "field_id": "github_tool.convert_pull_request_to_draft.result"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "url",
+      "field_id": "github_tool.convert_pull_request_to_draft.url"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "number",
+      "field_id": "github_tool.convert_pull_request_to_draft.number"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "state",
+      "field_id": "github_tool.convert_pull_request_to_draft.state"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "merged",
+      "field_id": "github_tool.convert_pull_request_to_draft.merged"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "mergeable",
+      "field_id": "github_tool.convert_pull_request_to_draft.mergeable"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "draft",
+      "field_id": "github_tool.convert_pull_request_to_draft.draft"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "body",
+      "field_id": "github_tool.convert_pull_request_to_draft.body"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "title",
+      "field_id": "github_tool.convert_pull_request_to_draft.title"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "base",
+      "field_id": "github_tool.convert_pull_request_to_draft.base"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "base_sha",
+      "field_id": "github_tool.convert_pull_request_to_draft.base_sha"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "head",
+      "field_id": "github_tool.convert_pull_request_to_draft.head"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "head_sha",
+      "field_id": "github_tool.convert_pull_request_to_draft.head_sha"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "head_repo_id",
+      "field_id": "github_tool.convert_pull_request_to_draft.head_repo_id"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "head_repo_full_name",
+      "field_id": "github_tool.convert_pull_request_to_draft.head_repo_full_name"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "merge_commit_sha",
+      "field_id": "github_tool.convert_pull_request_to_draft.merge_commit_sha"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "login",
+      "field_id": "github_tool.convert_pull_request_to_draft.login"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "name",
+      "field_id": "github_tool.convert_pull_request_to_draft.name"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "email",
+      "field_id": "github_tool.convert_pull_request_to_draft.email"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "avatar_url",
+      "field_id": "github_tool.convert_pull_request_to_draft.avatar_url"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "id",
+      "field_id": "github_tool.convert_pull_request_to_draft.id"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "slug",
+      "field_id": "github_tool.convert_pull_request_to_draft.slug"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "diff",
+      "field_id": "github_tool.convert_pull_request_to_draft.diff"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "comments",
+      "field_id": "github_tool.convert_pull_request_to_draft.comments"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "created_at",
+      "field_id": "github_tool.convert_pull_request_to_draft.created_at"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "updated_at",
+      "field_id": "github_tool.convert_pull_request_to_draft.updated_at"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "closed_at",
+      "field_id": "github_tool.convert_pull_request_to_draft.closed_at"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "merged_at",
+      "field_id": "github_tool.convert_pull_request_to_draft.merged_at"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "commits",
+      "field_id": "github_tool.convert_pull_request_to_draft.commits"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "changed_files",
+      "field_id": "github_tool.convert_pull_request_to_draft.changed_files"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "additions",
+      "field_id": "github_tool.convert_pull_request_to_draft.additions"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "deletions",
+      "field_id": "github_tool.convert_pull_request_to_draft.deletions"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "display_url",
+      "field_id": "github_tool.convert_pull_request_to_draft.display_url"
+    },
+    {
+      "tool": "convert_pull_request_to_draft",
+      "field": "display_title",
+      "field_id": "github_tool.convert_pull_request_to_draft.display_title"
+    },
+    {
+      "tool": "create_blob",
+      "field": "repository_full_name",
+      "field_id": "github_tool.create_blob.repository_full_name"
+    },
+    {
+      "tool": "create_blob",
+      "field": "content",
+      "field_id": "github_tool.create_blob.content"
+    },
+    {
+      "tool": "create_blob",
+      "field": "encoding",
+      "field_id": "github_tool.create_blob.encoding"
+    },
+    {
+      "tool": "create_blob",
+      "field": "result",
+      "field_id": "github_tool.create_blob.result"
+    },
+    {
+      "tool": "create_blob",
+      "field": "sha",
+      "field_id": "github_tool.create_blob.sha"
+    },
+    {
+      "tool": "create_branch",
+      "field": "repository_full_name",
+      "field_id": "github_tool.create_branch.repository_full_name"
+    },
+    {
+      "tool": "create_branch",
+      "field": "branch_name",
+      "field_id": "github_tool.create_branch.branch_name"
+    },
+    {
+      "tool": "create_branch",
+      "field": "sha",
+      "field_id": "github_tool.create_branch.sha"
+    },
+    {
+      "tool": "create_branch",
+      "field": "base_ref",
+      "field_id": "github_tool.create_branch.base_ref"
+    },
+    {
+      "tool": "create_branch",
+      "field": "result",
+      "field_id": "github_tool.create_branch.result"
+    },
+    {
+      "tool": "create_branch",
+      "field": "branch",
+      "field_id": "github_tool.create_branch.branch"
+    },
+    {
+      "tool": "create_commit",
+      "field": "repository_full_name",
+      "field_id": "github_tool.create_commit.repository_full_name"
+    },
+    {
+      "tool": "create_commit",
+      "field": "message",
+      "field_id": "github_tool.create_commit.message"
+    },
+    {
+      "tool": "create_commit",
+      "field": "tree_sha",
+      "field_id": "github_tool.create_commit.tree_sha"
+    },
+    {
+      "tool": "create_commit",
+      "field": "parent_sha",
+      "field_id": "github_tool.create_commit.parent_sha"
+    },
+    {
+      "tool": "create_commit",
+      "field": "additional_parent_shas",
+      "field_id": "github_tool.create_commit.additional_parent_shas"
+    },
+    {
+      "tool": "create_commit",
+      "field": "result",
+      "field_id": "github_tool.create_commit.result"
+    },
+    {
+      "tool": "create_commit",
+      "field": "sha",
+      "field_id": "github_tool.create_commit.sha"
+    },
+    {
+      "tool": "create_file",
+      "field": "repository_full_name",
+      "field_id": "github_tool.create_file.repository_full_name"
+    },
+    {
+      "tool": "create_file",
+      "field": "path",
+      "field_id": "github_tool.create_file.path"
+    },
+    {
+      "tool": "create_file",
+      "field": "content",
+      "field_id": "github_tool.create_file.content"
+    },
+    {
+      "tool": "create_file",
+      "field": "message",
+      "field_id": "github_tool.create_file.message"
+    },
+    {
+      "tool": "create_file",
+      "field": "branch",
+      "field_id": "github_tool.create_file.branch"
+    },
+    {
+      "tool": "create_file",
+      "field": "result",
+      "field_id": "github_tool.create_file.result"
+    },
+    {
+      "tool": "create_file",
+      "field": "commit_sha",
+      "field_id": "github_tool.create_file.commit_sha"
+    },
+    {
+      "tool": "create_issue",
+      "field": "repository_full_name",
+      "field_id": "github_tool.create_issue.repository_full_name"
+    },
+    {
+      "tool": "create_issue",
+      "field": "title",
+      "field_id": "github_tool.create_issue.title"
+    },
+    {
+      "tool": "create_issue",
+      "field": "body",
+      "field_id": "github_tool.create_issue.body"
+    },
+    {
+      "tool": "create_issue",
+      "field": "assignees",
+      "field_id": "github_tool.create_issue.assignees"
+    },
+    {
+      "tool": "create_issue",
+      "field": "labels",
+      "field_id": "github_tool.create_issue.labels"
+    },
+    {
+      "tool": "create_issue",
+      "field": "milestone",
+      "field_id": "github_tool.create_issue.milestone"
+    },
+    {
+      "tool": "create_issue",
+      "field": "result",
+      "field_id": "github_tool.create_issue.result"
+    },
+    {
+      "tool": "create_issue",
+      "field": "issue",
+      "field_id": "github_tool.create_issue.issue"
+    },
+    {
+      "tool": "create_issue",
+      "field": "url",
+      "field_id": "github_tool.create_issue.url"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "repository_full_name",
+      "field_id": "github_tool.create_pull_request.repository_full_name"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "title",
+      "field_id": "github_tool.create_pull_request.title"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "body",
+      "field_id": "github_tool.create_pull_request.body"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "head_branch",
+      "field_id": "github_tool.create_pull_request.head_branch"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "base_branch",
+      "field_id": "github_tool.create_pull_request.base_branch"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "draft",
+      "field_id": "github_tool.create_pull_request.draft"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "head",
+      "field_id": "github_tool.create_pull_request.head"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "base",
+      "field_id": "github_tool.create_pull_request.base"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "issue",
+      "field_id": "github_tool.create_pull_request.issue"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "head_repo",
+      "field_id": "github_tool.create_pull_request.head_repo"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "maintainer_can_modify",
+      "field_id": "github_tool.create_pull_request.maintainer_can_modify"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "result",
+      "field_id": "github_tool.create_pull_request.result"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "url",
+      "field_id": "github_tool.create_pull_request.url"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "number",
+      "field_id": "github_tool.create_pull_request.number"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "state",
+      "field_id": "github_tool.create_pull_request.state"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "merged",
+      "field_id": "github_tool.create_pull_request.merged"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "mergeable",
+      "field_id": "github_tool.create_pull_request.mergeable"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "base_sha",
+      "field_id": "github_tool.create_pull_request.base_sha"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "head_sha",
+      "field_id": "github_tool.create_pull_request.head_sha"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "head_repo_id",
+      "field_id": "github_tool.create_pull_request.head_repo_id"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "head_repo_full_name",
+      "field_id": "github_tool.create_pull_request.head_repo_full_name"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "merge_commit_sha",
+      "field_id": "github_tool.create_pull_request.merge_commit_sha"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "login",
+      "field_id": "github_tool.create_pull_request.login"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "name",
+      "field_id": "github_tool.create_pull_request.name"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "email",
+      "field_id": "github_tool.create_pull_request.email"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "avatar_url",
+      "field_id": "github_tool.create_pull_request.avatar_url"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "id",
+      "field_id": "github_tool.create_pull_request.id"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "slug",
+      "field_id": "github_tool.create_pull_request.slug"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "diff",
+      "field_id": "github_tool.create_pull_request.diff"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "comments",
+      "field_id": "github_tool.create_pull_request.comments"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "created_at",
+      "field_id": "github_tool.create_pull_request.created_at"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "updated_at",
+      "field_id": "github_tool.create_pull_request.updated_at"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "closed_at",
+      "field_id": "github_tool.create_pull_request.closed_at"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "merged_at",
+      "field_id": "github_tool.create_pull_request.merged_at"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "commits",
+      "field_id": "github_tool.create_pull_request.commits"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "changed_files",
+      "field_id": "github_tool.create_pull_request.changed_files"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "additions",
+      "field_id": "github_tool.create_pull_request.additions"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "deletions",
+      "field_id": "github_tool.create_pull_request.deletions"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "display_url",
+      "field_id": "github_tool.create_pull_request.display_url"
+    },
+    {
+      "tool": "create_pull_request",
+      "field": "display_title",
+      "field_id": "github_tool.create_pull_request.display_title"
+    },
+    {
+      "tool": "create_tree",
+      "field": "repository_full_name",
+      "field_id": "github_tool.create_tree.repository_full_name"
+    },
+    {
+      "tool": "create_tree",
+      "field": "tree_elements",
+      "field_id": "github_tool.create_tree.tree_elements"
+    },
+    {
+      "tool": "create_tree",
+      "field": "base_tree_sha",
+      "field_id": "github_tool.create_tree.base_tree_sha"
+    },
+    {
+      "tool": "create_tree",
+      "field": "result",
+      "field_id": "github_tool.create_tree.result"
+    },
+    {
+      "tool": "create_tree",
+      "field": "sha",
+      "field_id": "github_tool.create_tree.sha"
+    },
+    {
+      "tool": "delete_file",
+      "field": "repository_full_name",
+      "field_id": "github_tool.delete_file.repository_full_name"
+    },
+    {
+      "tool": "delete_file",
+      "field": "path",
+      "field_id": "github_tool.delete_file.path"
+    },
+    {
+      "tool": "delete_file",
+      "field": "message",
+      "field_id": "github_tool.delete_file.message"
+    },
+    {
+      "tool": "delete_file",
+      "field": "sha",
+      "field_id": "github_tool.delete_file.sha"
+    },
+    {
+      "tool": "delete_file",
+      "field": "branch",
+      "field_id": "github_tool.delete_file.branch"
+    },
+    {
+      "tool": "delete_file",
+      "field": "result",
+      "field_id": "github_tool.delete_file.result"
+    },
+    {
+      "tool": "delete_file",
+      "field": "commit_sha",
+      "field_id": "github_tool.delete_file.commit_sha"
+    },
+    {
+      "tool": "dismiss_pull_request_review",
+      "field": "review_id",
+      "field_id": "github_tool.dismiss_pull_request_review.review_id"
+    },
+    {
+      "tool": "dismiss_pull_request_review",
+      "field": "message",
+      "field_id": "github_tool.dismiss_pull_request_review.message"
+    },
+    {
+      "tool": "dismiss_pull_request_review",
+      "field": "result",
+      "field_id": "github_tool.dismiss_pull_request_review.result"
+    },
+    {
+      "tool": "dismiss_pull_request_review",
+      "field": "review",
+      "field_id": "github_tool.dismiss_pull_request_review.review"
+    },
+    {
+      "tool": "download_user_content",
+      "field": "url",
+      "field_id": "github_tool.download_user_content.url"
+    },
+    {
+      "tool": "download_user_content",
+      "field": "result",
+      "field_id": "github_tool.download_user_content.result"
+    },
+    {
+      "tool": "download_user_content",
+      "field": "content",
+      "field_id": "github_tool.download_user_content.content"
+    },
+    {
+      "tool": "download_workflow_artifact",
+      "field": "repo_full_name",
+      "field_id": "github_tool.download_workflow_artifact.repo_full_name"
+    },
+    {
+      "tool": "download_workflow_artifact",
+      "field": "artifact_id",
+      "field_id": "github_tool.download_workflow_artifact.artifact_id"
+    },
+    {
+      "tool": "download_workflow_artifact",
+      "field": "file_name",
+      "field_id": "github_tool.download_workflow_artifact.file_name"
+    },
+    {
+      "tool": "download_workflow_artifact",
+      "field": "result",
+      "field_id": "github_tool.download_workflow_artifact.result"
+    },
+    {
+      "tool": "download_workflow_artifact",
+      "field": "download_url",
+      "field_id": "github_tool.download_workflow_artifact.download_url"
+    },
+    {
+      "tool": "download_workflow_artifact",
+      "field": "file_id",
+      "field_id": "github_tool.download_workflow_artifact.file_id"
+    },
+    {
+      "tool": "download_workflow_artifact",
+      "field": "mime_type",
+      "field_id": "github_tool.download_workflow_artifact.mime_type"
+    },
+    {
+      "tool": "enable_auto_merge",
+      "field": "repository_full_name",
+      "field_id": "github_tool.enable_auto_merge.repository_full_name"
+    },
+    {
+      "tool": "enable_auto_merge",
+      "field": "pr_number",
+      "field_id": "github_tool.enable_auto_merge.pr_number"
+    },
+    {
+      "tool": "enable_auto_merge",
+      "field": "result",
+      "field_id": "github_tool.enable_auto_merge.result"
+    },
+    {
+      "tool": "enable_auto_merge",
+      "field": "success",
+      "field_id": "github_tool.enable_auto_merge.success"
+    },
+    {
+      "tool": "fetch",
+      "field": "url",
+      "field_id": "github_tool.fetch.url"
+    },
+    {
+      "tool": "fetch",
+      "field": "result",
+      "field_id": "github_tool.fetch.result"
+    },
+    {
+      "tool": "fetch",
+      "field": "content",
+      "field_id": "github_tool.fetch.content"
+    },
+    {
+      "tool": "fetch",
+      "field": "title",
+      "field_id": "github_tool.fetch.title"
+    },
+    {
+      "tool": "fetch",
+      "field": "modified_date",
+      "field_id": "github_tool.fetch.modified_date"
+    },
+    {
+      "tool": "fetch_blob",
+      "field": "repository_full_name",
+      "field_id": "github_tool.fetch_blob.repository_full_name"
+    },
+    {
+      "tool": "fetch_blob",
+      "field": "blob_sha",
+      "field_id": "github_tool.fetch_blob.blob_sha"
+    },
+    {
+      "tool": "fetch_blob",
+      "field": "result",
+      "field_id": "github_tool.fetch_blob.result"
+    },
+    {
+      "tool": "fetch_blob",
+      "field": "content",
+      "field_id": "github_tool.fetch_blob.content"
+    },
+    {
+      "tool": "fetch_commit",
+      "field": "repo_full_name",
+      "field_id": "github_tool.fetch_commit.repo_full_name"
+    },
+    {
+      "tool": "fetch_commit",
+      "field": "commit_sha",
+      "field_id": "github_tool.fetch_commit.commit_sha"
+    },
+    {
+      "tool": "fetch_commit",
+      "field": "result",
+      "field_id": "github_tool.fetch_commit.result"
+    },
+    {
+      "tool": "fetch_commit",
+      "field": "commit",
+      "field_id": "github_tool.fetch_commit.commit"
+    },
+    {
+      "tool": "fetch_commit",
+      "field": "url",
+      "field_id": "github_tool.fetch_commit.url"
+    },
+    {
+      "tool": "fetch_commit",
+      "field": "title",
+      "field_id": "github_tool.fetch_commit.title"
+    },
+    {
+      "tool": "fetch_commit",
+      "field": "diff",
+      "field_id": "github_tool.fetch_commit.diff"
+    },
+    {
+      "tool": "fetch_commit",
+      "field": "display_url",
+      "field_id": "github_tool.fetch_commit.display_url"
+    },
+    {
+      "tool": "fetch_commit",
+      "field": "display_title",
+      "field_id": "github_tool.fetch_commit.display_title"
+    },
+    {
+      "tool": "fetch_commit_workflow_runs",
+      "field": "repo_full_name",
+      "field_id": "github_tool.fetch_commit_workflow_runs.repo_full_name"
+    },
+    {
+      "tool": "fetch_commit_workflow_runs",
+      "field": "commit_sha",
+      "field_id": "github_tool.fetch_commit_workflow_runs.commit_sha"
+    },
+    {
+      "tool": "fetch_commit_workflow_runs",
+      "field": "result",
+      "field_id": "github_tool.fetch_commit_workflow_runs.result"
+    },
+    {
+      "tool": "fetch_commit_workflow_runs",
+      "field": "workflow_runs",
+      "field_id": "github_tool.fetch_commit_workflow_runs.workflow_runs"
+    },
+    {
+      "tool": "fetch_file",
+      "field": "repository_full_name",
+      "field_id": "github_tool.fetch_file.repository_full_name"
+    },
+    {
+      "tool": "fetch_file",
+      "field": "path",
+      "field_id": "github_tool.fetch_file.path"
+    },
+    {
+      "tool": "fetch_file",
+      "field": "ref",
+      "field_id": "github_tool.fetch_file.ref"
+    },
+    {
+      "tool": "fetch_file",
+      "field": "encoding",
+      "field_id": "github_tool.fetch_file.encoding"
+    },
+    {
+      "tool": "fetch_file",
+      "field": "result",
+      "field_id": "github_tool.fetch_file.result"
+    },
+    {
+      "tool": "fetch_file",
+      "field": "content",
+      "field_id": "github_tool.fetch_file.content"
+    },
+    {
+      "tool": "fetch_file",
+      "field": "sha",
+      "field_id": "github_tool.fetch_file.sha"
+    },
+    {
+      "tool": "fetch_file",
+      "field": "display_url",
+      "field_id": "github_tool.fetch_file.display_url"
+    },
+    {
+      "tool": "fetch_file",
+      "field": "display_title",
+      "field_id": "github_tool.fetch_file.display_title"
+    },
+    {
+      "tool": "fetch_issue",
+      "field": "issue_number",
+      "field_id": "github_tool.fetch_issue.issue_number"
+    },
+    {
+      "tool": "fetch_issue",
+      "field": "repository_full_name",
+      "field_id": "github_tool.fetch_issue.repository_full_name"
+    },
+    {
+      "tool": "fetch_issue",
+      "field": "repository_id",
+      "field_id": "github_tool.fetch_issue.repository_id"
+    },
+    {
+      "tool": "fetch_issue",
+      "field": "repository_url",
+      "field_id": "github_tool.fetch_issue.repository_url"
+    },
+    {
+      "tool": "fetch_issue",
+      "field": "result",
+      "field_id": "github_tool.fetch_issue.result"
+    },
+    {
+      "tool": "fetch_issue",
+      "field": "issue",
+      "field_id": "github_tool.fetch_issue.issue"
+    },
+    {
+      "tool": "fetch_issue",
+      "field": "url",
+      "field_id": "github_tool.fetch_issue.url"
+    },
+    {
+      "tool": "fetch_issue",
+      "field": "title",
+      "field_id": "github_tool.fetch_issue.title"
+    },
+    {
+      "tool": "fetch_issue",
+      "field": "display_url",
+      "field_id": "github_tool.fetch_issue.display_url"
+    },
+    {
+      "tool": "fetch_issue",
+      "field": "display_title",
+      "field_id": "github_tool.fetch_issue.display_title"
+    },
+    {
+      "tool": "fetch_issue_comments",
+      "field": "repo_full_name",
+      "field_id": "github_tool.fetch_issue_comments.repo_full_name"
+    },
+    {
+      "tool": "fetch_issue_comments",
+      "field": "issue_number",
+      "field_id": "github_tool.fetch_issue_comments.issue_number"
+    },
+    {
+      "tool": "fetch_issue_comments",
+      "field": "result",
+      "field_id": "github_tool.fetch_issue_comments.result"
+    },
+    {
+      "tool": "fetch_issue_comments",
+      "field": "comments",
+      "field_id": "github_tool.fetch_issue_comments.comments"
+    },
+    {
+      "tool": "fetch_issue_comments",
+      "field": "url",
+      "field_id": "github_tool.fetch_issue_comments.url"
+    },
+    {
+      "tool": "fetch_issue_comments",
+      "field": "title",
+      "field_id": "github_tool.fetch_issue_comments.title"
+    },
+    {
+      "tool": "fetch_pr",
+      "field": "repo_full_name",
+      "field_id": "github_tool.fetch_pr.repo_full_name"
+    },
+    {
+      "tool": "fetch_pr",
+      "field": "pr_number",
+      "field_id": "github_tool.fetch_pr.pr_number"
+    },
+    {
+      "tool": "fetch_pr",
+      "field": "result",
+      "field_id": "github_tool.fetch_pr.result"
+    },
+    {
+      "tool": "fetch_pr",
+      "field": "pull_request",
+      "field_id": "github_tool.fetch_pr.pull_request"
+    },
+    {
+      "tool": "fetch_pr",
+      "field": "url",
+      "field_id": "github_tool.fetch_pr.url"
+    },
+    {
+      "tool": "fetch_pr",
+      "field": "title",
+      "field_id": "github_tool.fetch_pr.title"
+    },
+    {
+      "tool": "fetch_pr",
+      "field": "diff",
+      "field_id": "github_tool.fetch_pr.diff"
+    },
+    {
+      "tool": "fetch_pr",
+      "field": "comments",
+      "field_id": "github_tool.fetch_pr.comments"
+    },
+    {
+      "tool": "fetch_pr",
+      "field": "display_url",
+      "field_id": "github_tool.fetch_pr.display_url"
+    },
+    {
+      "tool": "fetch_pr",
+      "field": "display_title",
+      "field_id": "github_tool.fetch_pr.display_title"
+    },
+    {
+      "tool": "fetch_pr_comments",
+      "field": "repo_full_name",
+      "field_id": "github_tool.fetch_pr_comments.repo_full_name"
+    },
+    {
+      "tool": "fetch_pr_comments",
+      "field": "pr_number",
+      "field_id": "github_tool.fetch_pr_comments.pr_number"
+    },
+    {
+      "tool": "fetch_pr_comments",
+      "field": "result",
+      "field_id": "github_tool.fetch_pr_comments.result"
+    },
+    {
+      "tool": "fetch_pr_comments",
+      "field": "comments",
+      "field_id": "github_tool.fetch_pr_comments.comments"
+    },
+    {
+      "tool": "fetch_pr_comments",
+      "field": "url",
+      "field_id": "github_tool.fetch_pr_comments.url"
+    },
+    {
+      "tool": "fetch_pr_comments",
+      "field": "title",
+      "field_id": "github_tool.fetch_pr_comments.title"
+    },
+    {
+      "tool": "fetch_pr_file_patch",
+      "field": "repo_full_name",
+      "field_id": "github_tool.fetch_pr_file_patch.repo_full_name"
+    },
+    {
+      "tool": "fetch_pr_file_patch",
+      "field": "pr_number",
+      "field_id": "github_tool.fetch_pr_file_patch.pr_number"
+    },
+    {
+      "tool": "fetch_pr_file_patch",
+      "field": "path",
+      "field_id": "github_tool.fetch_pr_file_patch.path"
+    },
+    {
+      "tool": "fetch_pr_file_patch",
+      "field": "result",
+      "field_id": "github_tool.fetch_pr_file_patch.result"
+    },
+    {
+      "tool": "fetch_pr_file_patch",
+      "field": "filename",
+      "field_id": "github_tool.fetch_pr_file_patch.filename"
+    },
+    {
+      "tool": "fetch_pr_file_patch",
+      "field": "patch",
+      "field_id": "github_tool.fetch_pr_file_patch.patch"
+    },
+    {
+      "tool": "fetch_pr_patch",
+      "field": "repo_full_name",
+      "field_id": "github_tool.fetch_pr_patch.repo_full_name"
+    },
+    {
+      "tool": "fetch_pr_patch",
+      "field": "pr_number",
+      "field_id": "github_tool.fetch_pr_patch.pr_number"
+    },
+    {
+      "tool": "fetch_pr_patch",
+      "field": "result",
+      "field_id": "github_tool.fetch_pr_patch.result"
+    },
+    {
+      "tool": "fetch_pr_patch",
+      "field": "patches",
+      "field_id": "github_tool.fetch_pr_patch.patches"
+    },
+    {
+      "tool": "fetch_pr_patch",
+      "field": "filename",
+      "field_id": "github_tool.fetch_pr_patch.filename"
+    },
+    {
+      "tool": "fetch_pr_patch",
+      "field": "patch",
+      "field_id": "github_tool.fetch_pr_patch.patch"
+    },
+    {
+      "tool": "fetch_pr_patch",
+      "field": "url",
+      "field_id": "github_tool.fetch_pr_patch.url"
+    },
+    {
+      "tool": "fetch_pr_patch",
+      "field": "title",
+      "field_id": "github_tool.fetch_pr_patch.title"
+    },
+    {
+      "tool": "fetch_workflow_job_logs",
+      "field": "repo_full_name",
+      "field_id": "github_tool.fetch_workflow_job_logs.repo_full_name"
+    },
+    {
+      "tool": "fetch_workflow_job_logs",
+      "field": "job_id",
+      "field_id": "github_tool.fetch_workflow_job_logs.job_id"
+    },
+    {
+      "tool": "fetch_workflow_job_logs",
+      "field": "result",
+      "field_id": "github_tool.fetch_workflow_job_logs.result"
+    },
+    {
+      "tool": "fetch_workflow_job_logs",
+      "field": "content",
+      "field_id": "github_tool.fetch_workflow_job_logs.content"
+    },
+    {
+      "tool": "fetch_workflow_job_steps",
+      "field": "repo_full_name",
+      "field_id": "github_tool.fetch_workflow_job_steps.repo_full_name"
+    },
+    {
+      "tool": "fetch_workflow_job_steps",
+      "field": "job_id",
+      "field_id": "github_tool.fetch_workflow_job_steps.job_id"
+    },
+    {
+      "tool": "fetch_workflow_job_steps",
+      "field": "result",
+      "field_id": "github_tool.fetch_workflow_job_steps.result"
+    },
+    {
+      "tool": "fetch_workflow_job_steps",
+      "field": "steps",
+      "field_id": "github_tool.fetch_workflow_job_steps.steps"
+    },
+    {
+      "tool": "fetch_workflow_run_artifacts",
+      "field": "repo_full_name",
+      "field_id": "github_tool.fetch_workflow_run_artifacts.repo_full_name"
+    },
+    {
+      "tool": "fetch_workflow_run_artifacts",
+      "field": "run_id",
+      "field_id": "github_tool.fetch_workflow_run_artifacts.run_id"
+    },
+    {
+      "tool": "fetch_workflow_run_artifacts",
+      "field": "name",
+      "field_id": "github_tool.fetch_workflow_run_artifacts.name"
+    },
+    {
+      "tool": "fetch_workflow_run_artifacts",
+      "field": "result",
+      "field_id": "github_tool.fetch_workflow_run_artifacts.result"
+    },
+    {
+      "tool": "fetch_workflow_run_artifacts",
+      "field": "artifacts",
+      "field_id": "github_tool.fetch_workflow_run_artifacts.artifacts"
+    },
+    {
+      "tool": "fetch_workflow_run_jobs",
+      "field": "repo_full_name",
+      "field_id": "github_tool.fetch_workflow_run_jobs.repo_full_name"
+    },
+    {
+      "tool": "fetch_workflow_run_jobs",
+      "field": "run_id",
+      "field_id": "github_tool.fetch_workflow_run_jobs.run_id"
+    },
+    {
+      "tool": "fetch_workflow_run_jobs",
+      "field": "result",
+      "field_id": "github_tool.fetch_workflow_run_jobs.result"
+    },
+    {
+      "tool": "fetch_workflow_run_jobs",
+      "field": "jobs",
+      "field_id": "github_tool.fetch_workflow_run_jobs.jobs"
+    },
+    {
+      "tool": "get_commit_combined_status",
+      "field": "repo_full_name",
+      "field_id": "github_tool.get_commit_combined_status.repo_full_name"
+    },
+    {
+      "tool": "get_commit_combined_status",
+      "field": "commit_sha",
+      "field_id": "github_tool.get_commit_combined_status.commit_sha"
+    },
+    {
+      "tool": "get_commit_combined_status",
+      "field": "result",
+      "field_id": "github_tool.get_commit_combined_status.result"
+    },
+    {
+      "tool": "get_commit_combined_status",
+      "field": "statuses",
+      "field_id": "github_tool.get_commit_combined_status.statuses"
+    },
+    {
+      "tool": "get_issue_comment_reactions",
+      "field": "repo_full_name",
+      "field_id": "github_tool.get_issue_comment_reactions.repo_full_name"
+    },
+    {
+      "tool": "get_issue_comment_reactions",
+      "field": "comment_id",
+      "field_id": "github_tool.get_issue_comment_reactions.comment_id"
+    },
+    {
+      "tool": "get_issue_comment_reactions",
+      "field": "per_page",
+      "field_id": "github_tool.get_issue_comment_reactions.per_page"
+    },
+    {
+      "tool": "get_issue_comment_reactions",
+      "field": "page",
+      "field_id": "github_tool.get_issue_comment_reactions.page"
+    },
+    {
+      "tool": "get_issue_comment_reactions",
+      "field": "result",
+      "field_id": "github_tool.get_issue_comment_reactions.result"
+    },
+    {
+      "tool": "get_issue_comment_reactions",
+      "field": "reactions",
+      "field_id": "github_tool.get_issue_comment_reactions.reactions"
+    },
+    {
+      "tool": "get_issue_comment_reactions",
+      "field": "id",
+      "field_id": "github_tool.get_issue_comment_reactions.id"
+    },
+    {
+      "tool": "get_issue_comment_reactions",
+      "field": "node_id",
+      "field_id": "github_tool.get_issue_comment_reactions.node_id"
+    },
+    {
+      "tool": "get_issue_comment_reactions",
+      "field": "user",
+      "field_id": "github_tool.get_issue_comment_reactions.user"
+    },
+    {
+      "tool": "get_issue_comment_reactions",
+      "field": "login",
+      "field_id": "github_tool.get_issue_comment_reactions.login"
+    },
+    {
+      "tool": "get_issue_comment_reactions",
+      "field": "name",
+      "field_id": "github_tool.get_issue_comment_reactions.name"
+    },
+    {
+      "tool": "get_issue_comment_reactions",
+      "field": "email",
+      "field_id": "github_tool.get_issue_comment_reactions.email"
+    },
+    {
+      "tool": "get_issue_comment_reactions",
+      "field": "avatar_url",
+      "field_id": "github_tool.get_issue_comment_reactions.avatar_url"
+    },
+    {
+      "tool": "get_issue_comment_reactions",
+      "field": "content",
+      "field_id": "github_tool.get_issue_comment_reactions.content"
+    },
+    {
+      "tool": "get_issue_comment_reactions",
+      "field": "created_at",
+      "field_id": "github_tool.get_issue_comment_reactions.created_at"
+    },
+    {
+      "tool": "get_pr_diff",
+      "field": "repo_full_name",
+      "field_id": "github_tool.get_pr_diff.repo_full_name"
+    },
+    {
+      "tool": "get_pr_diff",
+      "field": "pr_number",
+      "field_id": "github_tool.get_pr_diff.pr_number"
+    },
+    {
+      "tool": "get_pr_diff",
+      "field": "format",
+      "field_id": "github_tool.get_pr_diff.format"
+    },
+    {
+      "tool": "get_pr_diff",
+      "field": "result",
+      "field_id": "github_tool.get_pr_diff.result"
+    },
+    {
+      "tool": "get_pr_diff",
+      "field": "diff",
+      "field_id": "github_tool.get_pr_diff.diff"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "repository_full_name",
+      "field_id": "github_tool.get_pr_info.repository_full_name"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "pr_number",
+      "field_id": "github_tool.get_pr_info.pr_number"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "result",
+      "field_id": "github_tool.get_pr_info.result"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "url",
+      "field_id": "github_tool.get_pr_info.url"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "number",
+      "field_id": "github_tool.get_pr_info.number"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "state",
+      "field_id": "github_tool.get_pr_info.state"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "merged",
+      "field_id": "github_tool.get_pr_info.merged"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "mergeable",
+      "field_id": "github_tool.get_pr_info.mergeable"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "draft",
+      "field_id": "github_tool.get_pr_info.draft"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "body",
+      "field_id": "github_tool.get_pr_info.body"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "title",
+      "field_id": "github_tool.get_pr_info.title"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "base",
+      "field_id": "github_tool.get_pr_info.base"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "base_sha",
+      "field_id": "github_tool.get_pr_info.base_sha"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "head",
+      "field_id": "github_tool.get_pr_info.head"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "head_sha",
+      "field_id": "github_tool.get_pr_info.head_sha"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "head_repo_id",
+      "field_id": "github_tool.get_pr_info.head_repo_id"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "head_repo_full_name",
+      "field_id": "github_tool.get_pr_info.head_repo_full_name"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "merge_commit_sha",
+      "field_id": "github_tool.get_pr_info.merge_commit_sha"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "login",
+      "field_id": "github_tool.get_pr_info.login"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "name",
+      "field_id": "github_tool.get_pr_info.name"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "email",
+      "field_id": "github_tool.get_pr_info.email"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "avatar_url",
+      "field_id": "github_tool.get_pr_info.avatar_url"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "id",
+      "field_id": "github_tool.get_pr_info.id"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "slug",
+      "field_id": "github_tool.get_pr_info.slug"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "diff",
+      "field_id": "github_tool.get_pr_info.diff"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "comments",
+      "field_id": "github_tool.get_pr_info.comments"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "created_at",
+      "field_id": "github_tool.get_pr_info.created_at"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "updated_at",
+      "field_id": "github_tool.get_pr_info.updated_at"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "closed_at",
+      "field_id": "github_tool.get_pr_info.closed_at"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "merged_at",
+      "field_id": "github_tool.get_pr_info.merged_at"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "commits",
+      "field_id": "github_tool.get_pr_info.commits"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "changed_files",
+      "field_id": "github_tool.get_pr_info.changed_files"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "additions",
+      "field_id": "github_tool.get_pr_info.additions"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "deletions",
+      "field_id": "github_tool.get_pr_info.deletions"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "display_url",
+      "field_id": "github_tool.get_pr_info.display_url"
+    },
+    {
+      "tool": "get_pr_info",
+      "field": "display_title",
+      "field_id": "github_tool.get_pr_info.display_title"
+    },
+    {
+      "tool": "get_pr_reactions",
+      "field": "repo_full_name",
+      "field_id": "github_tool.get_pr_reactions.repo_full_name"
+    },
+    {
+      "tool": "get_pr_reactions",
+      "field": "pr_number",
+      "field_id": "github_tool.get_pr_reactions.pr_number"
+    },
+    {
+      "tool": "get_pr_reactions",
+      "field": "per_page",
+      "field_id": "github_tool.get_pr_reactions.per_page"
+    },
+    {
+      "tool": "get_pr_reactions",
+      "field": "page",
+      "field_id": "github_tool.get_pr_reactions.page"
+    },
+    {
+      "tool": "get_pr_reactions",
+      "field": "result",
+      "field_id": "github_tool.get_pr_reactions.result"
+    },
+    {
+      "tool": "get_pr_reactions",
+      "field": "reactions",
+      "field_id": "github_tool.get_pr_reactions.reactions"
+    },
+    {
+      "tool": "get_pr_reactions",
+      "field": "id",
+      "field_id": "github_tool.get_pr_reactions.id"
+    },
+    {
+      "tool": "get_pr_reactions",
+      "field": "node_id",
+      "field_id": "github_tool.get_pr_reactions.node_id"
+    },
+    {
+      "tool": "get_pr_reactions",
+      "field": "user",
+      "field_id": "github_tool.get_pr_reactions.user"
+    },
+    {
+      "tool": "get_pr_reactions",
+      "field": "login",
+      "field_id": "github_tool.get_pr_reactions.login"
+    },
+    {
+      "tool": "get_pr_reactions",
+      "field": "name",
+      "field_id": "github_tool.get_pr_reactions.name"
+    },
+    {
+      "tool": "get_pr_reactions",
+      "field": "email",
+      "field_id": "github_tool.get_pr_reactions.email"
+    },
+    {
+      "tool": "get_pr_reactions",
+      "field": "avatar_url",
+      "field_id": "github_tool.get_pr_reactions.avatar_url"
+    },
+    {
+      "tool": "get_pr_reactions",
+      "field": "content",
+      "field_id": "github_tool.get_pr_reactions.content"
+    },
+    {
+      "tool": "get_pr_reactions",
+      "field": "created_at",
+      "field_id": "github_tool.get_pr_reactions.created_at"
+    },
+    {
+      "tool": "get_pr_review_comment_reactions",
+      "field": "repo_full_name",
+      "field_id": "github_tool.get_pr_review_comment_reactions.repo_full_name"
+    },
+    {
+      "tool": "get_pr_review_comment_reactions",
+      "field": "comment_id",
+      "field_id": "github_tool.get_pr_review_comment_reactions.comment_id"
+    },
+    {
+      "tool": "get_pr_review_comment_reactions",
+      "field": "per_page",
+      "field_id": "github_tool.get_pr_review_comment_reactions.per_page"
+    },
+    {
+      "tool": "get_pr_review_comment_reactions",
+      "field": "page",
+      "field_id": "github_tool.get_pr_review_comment_reactions.page"
+    },
+    {
+      "tool": "get_pr_review_comment_reactions",
+      "field": "result",
+      "field_id": "github_tool.get_pr_review_comment_reactions.result"
+    },
+    {
+      "tool": "get_pr_review_comment_reactions",
+      "field": "reactions",
+      "field_id": "github_tool.get_pr_review_comment_reactions.reactions"
+    },
+    {
+      "tool": "get_pr_review_comment_reactions",
+      "field": "id",
+      "field_id": "github_tool.get_pr_review_comment_reactions.id"
+    },
+    {
+      "tool": "get_pr_review_comment_reactions",
+      "field": "node_id",
+      "field_id": "github_tool.get_pr_review_comment_reactions.node_id"
+    },
+    {
+      "tool": "get_pr_review_comment_reactions",
+      "field": "user",
+      "field_id": "github_tool.get_pr_review_comment_reactions.user"
+    },
+    {
+      "tool": "get_pr_review_comment_reactions",
+      "field": "login",
+      "field_id": "github_tool.get_pr_review_comment_reactions.login"
+    },
+    {
+      "tool": "get_pr_review_comment_reactions",
+      "field": "name",
+      "field_id": "github_tool.get_pr_review_comment_reactions.name"
+    },
+    {
+      "tool": "get_pr_review_comment_reactions",
+      "field": "email",
+      "field_id": "github_tool.get_pr_review_comment_reactions.email"
+    },
+    {
+      "tool": "get_pr_review_comment_reactions",
+      "field": "avatar_url",
+      "field_id": "github_tool.get_pr_review_comment_reactions.avatar_url"
+    },
+    {
+      "tool": "get_pr_review_comment_reactions",
+      "field": "content",
+      "field_id": "github_tool.get_pr_review_comment_reactions.content"
+    },
+    {
+      "tool": "get_pr_review_comment_reactions",
+      "field": "created_at",
+      "field_id": "github_tool.get_pr_review_comment_reactions.created_at"
+    },
+    {
+      "tool": "get_profile",
+      "field": "result",
+      "field_id": "github_tool.get_profile.result"
+    },
+    {
+      "tool": "get_profile",
+      "field": "id",
+      "field_id": "github_tool.get_profile.id"
+    },
+    {
+      "tool": "get_profile",
+      "field": "name",
+      "field_id": "github_tool.get_profile.name"
+    },
+    {
+      "tool": "get_profile",
+      "field": "email",
+      "field_id": "github_tool.get_profile.email"
+    },
+    {
+      "tool": "get_profile",
+      "field": "nickname",
+      "field_id": "github_tool.get_profile.nickname"
+    },
+    {
+      "tool": "get_profile",
+      "field": "picture",
+      "field_id": "github_tool.get_profile.picture"
+    },
+    {
+      "tool": "get_repo",
+      "field": "repository_full_name",
+      "field_id": "github_tool.get_repo.repository_full_name"
+    },
+    {
+      "tool": "get_repo",
+      "field": "repository_id",
+      "field_id": "github_tool.get_repo.repository_id"
+    },
+    {
+      "tool": "get_repo",
+      "field": "repository_url",
+      "field_id": "github_tool.get_repo.repository_url"
+    },
+    {
+      "tool": "get_repo",
+      "field": "result",
+      "field_id": "github_tool.get_repo.result"
+    },
+    {
+      "tool": "get_repo",
+      "field": "id",
+      "field_id": "github_tool.get_repo.id"
+    },
+    {
+      "tool": "get_repo",
+      "field": "name",
+      "field_id": "github_tool.get_repo.name"
+    },
+    {
+      "tool": "get_repo",
+      "field": "owner",
+      "field_id": "github_tool.get_repo.owner"
+    },
+    {
+      "tool": "get_repo",
+      "field": "login",
+      "field_id": "github_tool.get_repo.login"
+    },
+    {
+      "tool": "get_repo",
+      "field": "type",
+      "field_id": "github_tool.get_repo.type"
+    },
+    {
+      "tool": "get_repo",
+      "field": "avatar_url",
+      "field_id": "github_tool.get_repo.avatar_url"
+    },
+    {
+      "tool": "get_repo",
+      "field": "url",
+      "field_id": "github_tool.get_repo.url"
+    },
+    {
+      "tool": "get_repo",
+      "field": "permissions",
+      "field_id": "github_tool.get_repo.permissions"
+    },
+    {
+      "tool": "get_repo",
+      "field": "admin",
+      "field_id": "github_tool.get_repo.admin"
+    },
+    {
+      "tool": "get_repo",
+      "field": "maintain",
+      "field_id": "github_tool.get_repo.maintain"
+    },
+    {
+      "tool": "get_repo",
+      "field": "pull",
+      "field_id": "github_tool.get_repo.pull"
+    },
+    {
+      "tool": "get_repo",
+      "field": "push",
+      "field_id": "github_tool.get_repo.push"
+    },
+    {
+      "tool": "get_repo",
+      "field": "triage",
+      "field_id": "github_tool.get_repo.triage"
+    },
+    {
+      "tool": "get_repo",
+      "field": "allow_auto_merge",
+      "field_id": "github_tool.get_repo.allow_auto_merge"
+    },
+    {
+      "tool": "get_repo",
+      "field": "allow_merge_commit",
+      "field_id": "github_tool.get_repo.allow_merge_commit"
+    },
+    {
+      "tool": "get_repo",
+      "field": "allow_rebase_merge",
+      "field_id": "github_tool.get_repo.allow_rebase_merge"
+    },
+    {
+      "tool": "get_repo",
+      "field": "allow_squash_merge",
+      "field_id": "github_tool.get_repo.allow_squash_merge"
+    },
+    {
+      "tool": "get_repo",
+      "field": "allow_update_branch",
+      "field_id": "github_tool.get_repo.allow_update_branch"
+    },
+    {
+      "tool": "get_repo",
+      "field": "clone_url",
+      "field_id": "github_tool.get_repo.clone_url"
+    },
+    {
+      "tool": "get_repo",
+      "field": "size",
+      "field_id": "github_tool.get_repo.size"
+    },
+    {
+      "tool": "get_repo",
+      "field": "default_branch",
+      "field_id": "github_tool.get_repo.default_branch"
+    },
+    {
+      "tool": "get_repo",
+      "field": "git_commits_url",
+      "field_id": "github_tool.get_repo.git_commits_url"
+    },
+    {
+      "tool": "get_repo",
+      "field": "git_refs_url",
+      "field_id": "github_tool.get_repo.git_refs_url"
+    },
+    {
+      "tool": "get_repo",
+      "field": "git_url",
+      "field_id": "github_tool.get_repo.git_url"
+    },
+    {
+      "tool": "get_repo",
+      "field": "master_branch",
+      "field_id": "github_tool.get_repo.master_branch"
+    },
+    {
+      "tool": "get_repo",
+      "field": "visibility",
+      "field_id": "github_tool.get_repo.visibility"
+    },
+    {
+      "tool": "get_repo",
+      "field": "archived",
+      "field_id": "github_tool.get_repo.archived"
+    },
+    {
+      "tool": "get_repo",
+      "field": "is_code_search_indexed",
+      "field_id": "github_tool.get_repo.is_code_search_indexed"
+    },
+    {
+      "tool": "get_repo_collaborator_permission",
+      "field": "repository_full_name",
+      "field_id": "github_tool.get_repo_collaborator_permission.repository_full_name"
+    },
+    {
+      "tool": "get_repo_collaborator_permission",
+      "field": "username",
+      "field_id": "github_tool.get_repo_collaborator_permission.username"
+    },
+    {
+      "tool": "get_repo_collaborator_permission",
+      "field": "result",
+      "field_id": "github_tool.get_repo_collaborator_permission.result"
+    },
+    {
+      "tool": "get_repo_collaborator_permission",
+      "field": "permission",
+      "field_id": "github_tool.get_repo_collaborator_permission.permission"
+    },
+    {
+      "tool": "get_user_login",
+      "field": "result",
+      "field_id": "github_tool.get_user_login.result"
+    },
+    {
+      "tool": "get_user_login",
+      "field": "login",
+      "field_id": "github_tool.get_user_login.login"
+    },
+    {
+      "tool": "get_user_login",
+      "field": "id",
+      "field_id": "github_tool.get_user_login.id"
+    },
+    {
+      "tool": "get_users_recent_prs_in_repo",
+      "field": "repository_full_name",
+      "field_id": "github_tool.get_users_recent_prs_in_repo.repository_full_name"
+    },
+    {
+      "tool": "get_users_recent_prs_in_repo",
+      "field": "limit",
+      "field_id": "github_tool.get_users_recent_prs_in_repo.limit"
+    },
+    {
+      "tool": "get_users_recent_prs_in_repo",
+      "field": "state",
+      "field_id": "github_tool.get_users_recent_prs_in_repo.state"
+    },
+    {
+      "tool": "get_users_recent_prs_in_repo",
+      "field": "include_diff",
+      "field_id": "github_tool.get_users_recent_prs_in_repo.include_diff"
+    },
+    {
+      "tool": "get_users_recent_prs_in_repo",
+      "field": "include_comments",
+      "field_id": "github_tool.get_users_recent_prs_in_repo.include_comments"
+    },
+    {
+      "tool": "get_users_recent_prs_in_repo",
+      "field": "result",
+      "field_id": "github_tool.get_users_recent_prs_in_repo.result"
+    },
+    {
+      "tool": "get_users_recent_prs_in_repo",
+      "field": "pull_requests",
+      "field_id": "github_tool.get_users_recent_prs_in_repo.pull_requests"
+    },
+    {
+      "tool": "label_pr",
+      "field": "repository_full_name",
+      "field_id": "github_tool.label_pr.repository_full_name"
+    },
+    {
+      "tool": "label_pr",
+      "field": "pr_number",
+      "field_id": "github_tool.label_pr.pr_number"
+    },
+    {
+      "tool": "label_pr",
+      "field": "label",
+      "field_id": "github_tool.label_pr.label"
+    },
+    {
+      "tool": "label_pr",
+      "field": "result",
+      "field_id": "github_tool.label_pr.result"
+    },
+    {
+      "tool": "label_pr",
+      "field": "success",
+      "field_id": "github_tool.label_pr.success"
+    },
+    {
+      "tool": "list_installations",
+      "field": "manageable_only",
+      "field_id": "github_tool.list_installations.manageable_only"
+    },
+    {
+      "tool": "list_installations",
+      "field": "result",
+      "field_id": "github_tool.list_installations.result"
+    },
+    {
+      "tool": "list_installations",
+      "field": "allow_all_repositories_for_testing",
+      "field_id": "github_tool.list_installations.allow_all_repositories_for_testing"
+    },
+    {
+      "tool": "list_installations",
+      "field": "installations",
+      "field_id": "github_tool.list_installations.installations"
+    },
+    {
+      "tool": "list_installed_accounts",
+      "field": "result",
+      "field_id": "github_tool.list_installed_accounts.result"
+    },
+    {
+      "tool": "list_installed_accounts",
+      "field": "accounts",
+      "field_id": "github_tool.list_installed_accounts.accounts"
+    },
+    {
+      "tool": "list_pr_changed_filenames",
+      "field": "repo_full_name",
+      "field_id": "github_tool.list_pr_changed_filenames.repo_full_name"
+    },
+    {
+      "tool": "list_pr_changed_filenames",
+      "field": "pr_number",
+      "field_id": "github_tool.list_pr_changed_filenames.pr_number"
+    },
+    {
+      "tool": "list_pr_changed_filenames",
+      "field": "result",
+      "field_id": "github_tool.list_pr_changed_filenames.result"
+    },
+    {
+      "tool": "list_pr_changed_filenames",
+      "field": "filenames",
+      "field_id": "github_tool.list_pr_changed_filenames.filenames"
+    },
+    {
+      "tool": "list_pull_request_review_threads",
+      "field": "repo_full_name",
+      "field_id": "github_tool.list_pull_request_review_threads.repo_full_name"
+    },
+    {
+      "tool": "list_pull_request_review_threads",
+      "field": "pr_number",
+      "field_id": "github_tool.list_pull_request_review_threads.pr_number"
+    },
+    {
+      "tool": "list_pull_request_review_threads",
+      "field": "result",
+      "field_id": "github_tool.list_pull_request_review_threads.result"
+    },
+    {
+      "tool": "list_pull_request_review_threads",
+      "field": "review_threads",
+      "field_id": "github_tool.list_pull_request_review_threads.review_threads"
+    },
+    {
+      "tool": "list_pull_request_reviews",
+      "field": "repo_full_name",
+      "field_id": "github_tool.list_pull_request_reviews.repo_full_name"
+    },
+    {
+      "tool": "list_pull_request_reviews",
+      "field": "pr_number",
+      "field_id": "github_tool.list_pull_request_reviews.pr_number"
+    },
+    {
+      "tool": "list_pull_request_reviews",
+      "field": "result",
+      "field_id": "github_tool.list_pull_request_reviews.result"
+    },
+    {
+      "tool": "list_pull_request_reviews",
+      "field": "reviews",
+      "field_id": "github_tool.list_pull_request_reviews.reviews"
+    },
+    {
+      "tool": "list_recent_issues",
+      "field": "top_k",
+      "field_id": "github_tool.list_recent_issues.top_k"
+    },
+    {
+      "tool": "list_recent_issues",
+      "field": "result",
+      "field_id": "github_tool.list_recent_issues.result"
+    },
+    {
+      "tool": "list_recent_issues",
+      "field": "issues",
+      "field_id": "github_tool.list_recent_issues.issues"
+    },
+    {
+      "tool": "list_recent_issues",
+      "field": "display_url",
+      "field_id": "github_tool.list_recent_issues.display_url"
+    },
+    {
+      "tool": "list_recent_issues",
+      "field": "display_title",
+      "field_id": "github_tool.list_recent_issues.display_title"
+    },
+    {
+      "tool": "list_repositories",
+      "field": "page_size",
+      "field_id": "github_tool.list_repositories.page_size"
+    },
+    {
+      "tool": "list_repositories",
+      "field": "page_offset",
+      "field_id": "github_tool.list_repositories.page_offset"
+    },
+    {
+      "tool": "list_repositories",
+      "field": "owner",
+      "field_id": "github_tool.list_repositories.owner"
+    },
+    {
+      "tool": "list_repositories",
+      "field": "include_search_index_status",
+      "field_id": "github_tool.list_repositories.include_search_index_status"
+    },
+    {
+      "tool": "list_repositories",
+      "field": "result",
+      "field_id": "github_tool.list_repositories.result"
+    },
+    {
+      "tool": "list_repositories",
+      "field": "repositories",
+      "field_id": "github_tool.list_repositories.repositories"
+    },
+    {
+      "tool": "list_repositories_by_affiliation",
+      "field": "affiliation",
+      "field_id": "github_tool.list_repositories_by_affiliation.affiliation"
+    },
+    {
+      "tool": "list_repositories_by_affiliation",
+      "field": "page_size",
+      "field_id": "github_tool.list_repositories_by_affiliation.page_size"
+    },
+    {
+      "tool": "list_repositories_by_affiliation",
+      "field": "page_offset",
+      "field_id": "github_tool.list_repositories_by_affiliation.page_offset"
+    },
+    {
+      "tool": "list_repositories_by_affiliation",
+      "field": "result",
+      "field_id": "github_tool.list_repositories_by_affiliation.result"
+    },
+    {
+      "tool": "list_repositories_by_affiliation",
+      "field": "repositories",
+      "field_id": "github_tool.list_repositories_by_affiliation.repositories"
+    },
+    {
+      "tool": "list_repositories_by_installation",
+      "field": "installation_id",
+      "field_id": "github_tool.list_repositories_by_installation.installation_id"
+    },
+    {
+      "tool": "list_repositories_by_installation",
+      "field": "page_size",
+      "field_id": "github_tool.list_repositories_by_installation.page_size"
+    },
+    {
+      "tool": "list_repositories_by_installation",
+      "field": "page_offset",
+      "field_id": "github_tool.list_repositories_by_installation.page_offset"
+    },
+    {
+      "tool": "list_repositories_by_installation",
+      "field": "result",
+      "field_id": "github_tool.list_repositories_by_installation.result"
+    },
+    {
+      "tool": "list_repositories_by_installation",
+      "field": "repositories",
+      "field_id": "github_tool.list_repositories_by_installation.repositories"
+    },
+    {
+      "tool": "list_user_org_memberships",
+      "field": "result",
+      "field_id": "github_tool.list_user_org_memberships.result"
+    },
+    {
+      "tool": "list_user_org_memberships",
+      "field": "orgs",
+      "field_id": "github_tool.list_user_org_memberships.orgs"
+    },
+    {
+      "tool": "list_user_orgs",
+      "field": "result",
+      "field_id": "github_tool.list_user_orgs.result"
+    },
+    {
+      "tool": "list_user_orgs",
+      "field": "orgs",
+      "field_id": "github_tool.list_user_orgs.orgs"
+    },
+    {
+      "tool": "lock_issue_conversation",
+      "field": "repository_full_name",
+      "field_id": "github_tool.lock_issue_conversation.repository_full_name"
+    },
+    {
+      "tool": "lock_issue_conversation",
+      "field": "issue_number",
+      "field_id": "github_tool.lock_issue_conversation.issue_number"
+    },
+    {
+      "tool": "lock_issue_conversation",
+      "field": "lock_reason",
+      "field_id": "github_tool.lock_issue_conversation.lock_reason"
+    },
+    {
+      "tool": "lock_issue_conversation",
+      "field": "result",
+      "field_id": "github_tool.lock_issue_conversation.result"
+    },
+    {
+      "tool": "lock_issue_conversation",
+      "field": "success",
+      "field_id": "github_tool.lock_issue_conversation.success"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "repository_full_name",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.repository_full_name"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "pr_number",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.pr_number"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "result",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.result"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "url",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.url"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "number",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.number"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "state",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.state"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "merged",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.merged"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "mergeable",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.mergeable"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "draft",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.draft"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "body",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.body"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "title",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.title"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "base",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.base"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "base_sha",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.base_sha"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "head",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.head"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "head_sha",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.head_sha"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "head_repo_id",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.head_repo_id"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "head_repo_full_name",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.head_repo_full_name"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "merge_commit_sha",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.merge_commit_sha"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "login",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.login"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "name",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.name"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "email",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.email"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "avatar_url",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.avatar_url"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "id",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.id"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "slug",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.slug"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "diff",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.diff"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "comments",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.comments"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "created_at",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.created_at"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "updated_at",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.updated_at"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "closed_at",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.closed_at"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "merged_at",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.merged_at"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "commits",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.commits"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "changed_files",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.changed_files"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "additions",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.additions"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "deletions",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.deletions"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "display_url",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.display_url"
+    },
+    {
+      "tool": "mark_pull_request_ready_for_review",
+      "field": "display_title",
+      "field_id": "github_tool.mark_pull_request_ready_for_review.display_title"
+    },
+    {
+      "tool": "merge_pull_request",
+      "field": "repository_full_name",
+      "field_id": "github_tool.merge_pull_request.repository_full_name"
+    },
+    {
+      "tool": "merge_pull_request",
+      "field": "pr_number",
+      "field_id": "github_tool.merge_pull_request.pr_number"
+    },
+    {
+      "tool": "merge_pull_request",
+      "field": "merge_method",
+      "field_id": "github_tool.merge_pull_request.merge_method"
+    },
+    {
+      "tool": "merge_pull_request",
+      "field": "commit_title",
+      "field_id": "github_tool.merge_pull_request.commit_title"
+    },
+    {
+      "tool": "merge_pull_request",
+      "field": "commit_message",
+      "field_id": "github_tool.merge_pull_request.commit_message"
+    },
+    {
+      "tool": "merge_pull_request",
+      "field": "expected_head_sha",
+      "field_id": "github_tool.merge_pull_request.expected_head_sha"
+    },
+    {
+      "tool": "merge_pull_request",
+      "field": "result",
+      "field_id": "github_tool.merge_pull_request.result"
+    },
+    {
+      "tool": "merge_pull_request",
+      "field": "sha",
+      "field_id": "github_tool.merge_pull_request.sha"
+    },
+    {
+      "tool": "merge_pull_request",
+      "field": "merged",
+      "field_id": "github_tool.merge_pull_request.merged"
+    },
+    {
+      "tool": "merge_pull_request",
+      "field": "message",
+      "field_id": "github_tool.merge_pull_request.message"
+    },
+    {
+      "tool": "remove_issue_assignees",
+      "field": "repository_full_name",
+      "field_id": "github_tool.remove_issue_assignees.repository_full_name"
+    },
+    {
+      "tool": "remove_issue_assignees",
+      "field": "issue_number",
+      "field_id": "github_tool.remove_issue_assignees.issue_number"
+    },
+    {
+      "tool": "remove_issue_assignees",
+      "field": "assignees",
+      "field_id": "github_tool.remove_issue_assignees.assignees"
+    },
+    {
+      "tool": "remove_issue_assignees",
+      "field": "result",
+      "field_id": "github_tool.remove_issue_assignees.result"
+    },
+    {
+      "tool": "remove_issue_assignees",
+      "field": "issue",
+      "field_id": "github_tool.remove_issue_assignees.issue"
+    },
+    {
+      "tool": "remove_issue_assignees",
+      "field": "url",
+      "field_id": "github_tool.remove_issue_assignees.url"
+    },
+    {
+      "tool": "remove_issue_assignees",
+      "field": "title",
+      "field_id": "github_tool.remove_issue_assignees.title"
+    },
+    {
+      "tool": "remove_issue_label",
+      "field": "repository_full_name",
+      "field_id": "github_tool.remove_issue_label.repository_full_name"
+    },
+    {
+      "tool": "remove_issue_label",
+      "field": "issue_number",
+      "field_id": "github_tool.remove_issue_label.issue_number"
+    },
+    {
+      "tool": "remove_issue_label",
+      "field": "label",
+      "field_id": "github_tool.remove_issue_label.label"
+    },
+    {
+      "tool": "remove_issue_label",
+      "field": "result",
+      "field_id": "github_tool.remove_issue_label.result"
+    },
+    {
+      "tool": "remove_issue_label",
+      "field": "issue",
+      "field_id": "github_tool.remove_issue_label.issue"
+    },
+    {
+      "tool": "remove_issue_label",
+      "field": "url",
+      "field_id": "github_tool.remove_issue_label.url"
+    },
+    {
+      "tool": "remove_issue_label",
+      "field": "title",
+      "field_id": "github_tool.remove_issue_label.title"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "repository_full_name",
+      "field_id": "github_tool.remove_pull_request_reviewers.repository_full_name"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "pr_number",
+      "field_id": "github_tool.remove_pull_request_reviewers.pr_number"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "reviewers",
+      "field_id": "github_tool.remove_pull_request_reviewers.reviewers"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "team_reviewers",
+      "field_id": "github_tool.remove_pull_request_reviewers.team_reviewers"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "result",
+      "field_id": "github_tool.remove_pull_request_reviewers.result"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "url",
+      "field_id": "github_tool.remove_pull_request_reviewers.url"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "number",
+      "field_id": "github_tool.remove_pull_request_reviewers.number"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "state",
+      "field_id": "github_tool.remove_pull_request_reviewers.state"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "merged",
+      "field_id": "github_tool.remove_pull_request_reviewers.merged"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "mergeable",
+      "field_id": "github_tool.remove_pull_request_reviewers.mergeable"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "draft",
+      "field_id": "github_tool.remove_pull_request_reviewers.draft"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "body",
+      "field_id": "github_tool.remove_pull_request_reviewers.body"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "title",
+      "field_id": "github_tool.remove_pull_request_reviewers.title"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "base",
+      "field_id": "github_tool.remove_pull_request_reviewers.base"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "base_sha",
+      "field_id": "github_tool.remove_pull_request_reviewers.base_sha"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "head",
+      "field_id": "github_tool.remove_pull_request_reviewers.head"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "head_sha",
+      "field_id": "github_tool.remove_pull_request_reviewers.head_sha"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "head_repo_id",
+      "field_id": "github_tool.remove_pull_request_reviewers.head_repo_id"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "head_repo_full_name",
+      "field_id": "github_tool.remove_pull_request_reviewers.head_repo_full_name"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "merge_commit_sha",
+      "field_id": "github_tool.remove_pull_request_reviewers.merge_commit_sha"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "login",
+      "field_id": "github_tool.remove_pull_request_reviewers.login"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "name",
+      "field_id": "github_tool.remove_pull_request_reviewers.name"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "email",
+      "field_id": "github_tool.remove_pull_request_reviewers.email"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "avatar_url",
+      "field_id": "github_tool.remove_pull_request_reviewers.avatar_url"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "id",
+      "field_id": "github_tool.remove_pull_request_reviewers.id"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "slug",
+      "field_id": "github_tool.remove_pull_request_reviewers.slug"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "diff",
+      "field_id": "github_tool.remove_pull_request_reviewers.diff"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "comments",
+      "field_id": "github_tool.remove_pull_request_reviewers.comments"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "created_at",
+      "field_id": "github_tool.remove_pull_request_reviewers.created_at"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "updated_at",
+      "field_id": "github_tool.remove_pull_request_reviewers.updated_at"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "closed_at",
+      "field_id": "github_tool.remove_pull_request_reviewers.closed_at"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "merged_at",
+      "field_id": "github_tool.remove_pull_request_reviewers.merged_at"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "commits",
+      "field_id": "github_tool.remove_pull_request_reviewers.commits"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "changed_files",
+      "field_id": "github_tool.remove_pull_request_reviewers.changed_files"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "additions",
+      "field_id": "github_tool.remove_pull_request_reviewers.additions"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "deletions",
+      "field_id": "github_tool.remove_pull_request_reviewers.deletions"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "display_url",
+      "field_id": "github_tool.remove_pull_request_reviewers.display_url"
+    },
+    {
+      "tool": "remove_pull_request_reviewers",
+      "field": "display_title",
+      "field_id": "github_tool.remove_pull_request_reviewers.display_title"
+    },
+    {
+      "tool": "remove_reaction_from_issue_comment",
+      "field": "repo_full_name",
+      "field_id": "github_tool.remove_reaction_from_issue_comment.repo_full_name"
+    },
+    {
+      "tool": "remove_reaction_from_issue_comment",
+      "field": "comment_id",
+      "field_id": "github_tool.remove_reaction_from_issue_comment.comment_id"
+    },
+    {
+      "tool": "remove_reaction_from_issue_comment",
+      "field": "reaction_id",
+      "field_id": "github_tool.remove_reaction_from_issue_comment.reaction_id"
+    },
+    {
+      "tool": "remove_reaction_from_issue_comment",
+      "field": "result",
+      "field_id": "github_tool.remove_reaction_from_issue_comment.result"
+    },
+    {
+      "tool": "remove_reaction_from_issue_comment",
+      "field": "success",
+      "field_id": "github_tool.remove_reaction_from_issue_comment.success"
+    },
+    {
+      "tool": "remove_reaction_from_pr",
+      "field": "repo_full_name",
+      "field_id": "github_tool.remove_reaction_from_pr.repo_full_name"
+    },
+    {
+      "tool": "remove_reaction_from_pr",
+      "field": "pr_number",
+      "field_id": "github_tool.remove_reaction_from_pr.pr_number"
+    },
+    {
+      "tool": "remove_reaction_from_pr",
+      "field": "reaction_id",
+      "field_id": "github_tool.remove_reaction_from_pr.reaction_id"
+    },
+    {
+      "tool": "remove_reaction_from_pr",
+      "field": "result",
+      "field_id": "github_tool.remove_reaction_from_pr.result"
+    },
+    {
+      "tool": "remove_reaction_from_pr",
+      "field": "success",
+      "field_id": "github_tool.remove_reaction_from_pr.success"
+    },
+    {
+      "tool": "remove_reaction_from_pr_review_comment",
+      "field": "repo_full_name",
+      "field_id": "github_tool.remove_reaction_from_pr_review_comment.repo_full_name"
+    },
+    {
+      "tool": "remove_reaction_from_pr_review_comment",
+      "field": "comment_id",
+      "field_id": "github_tool.remove_reaction_from_pr_review_comment.comment_id"
+    },
+    {
+      "tool": "remove_reaction_from_pr_review_comment",
+      "field": "reaction_id",
+      "field_id": "github_tool.remove_reaction_from_pr_review_comment.reaction_id"
+    },
+    {
+      "tool": "remove_reaction_from_pr_review_comment",
+      "field": "result",
+      "field_id": "github_tool.remove_reaction_from_pr_review_comment.result"
+    },
+    {
+      "tool": "remove_reaction_from_pr_review_comment",
+      "field": "success",
+      "field_id": "github_tool.remove_reaction_from_pr_review_comment.success"
+    },
+    {
+      "tool": "reply_to_review_comment",
+      "field": "repo_full_name",
+      "field_id": "github_tool.reply_to_review_comment.repo_full_name"
+    },
+    {
+      "tool": "reply_to_review_comment",
+      "field": "pr_number",
+      "field_id": "github_tool.reply_to_review_comment.pr_number"
+    },
+    {
+      "tool": "reply_to_review_comment",
+      "field": "comment_id",
+      "field_id": "github_tool.reply_to_review_comment.comment_id"
+    },
+    {
+      "tool": "reply_to_review_comment",
+      "field": "comment",
+      "field_id": "github_tool.reply_to_review_comment.comment"
+    },
+    {
+      "tool": "reply_to_review_comment",
+      "field": "result",
+      "field_id": "github_tool.reply_to_review_comment.result"
+    },
+    {
+      "tool": "reply_to_review_comment",
+      "field": "id",
+      "field_id": "github_tool.reply_to_review_comment.id"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "repository_full_name",
+      "field_id": "github_tool.request_pull_request_reviewers.repository_full_name"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "pr_number",
+      "field_id": "github_tool.request_pull_request_reviewers.pr_number"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "reviewers",
+      "field_id": "github_tool.request_pull_request_reviewers.reviewers"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "team_reviewers",
+      "field_id": "github_tool.request_pull_request_reviewers.team_reviewers"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "result",
+      "field_id": "github_tool.request_pull_request_reviewers.result"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "url",
+      "field_id": "github_tool.request_pull_request_reviewers.url"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "number",
+      "field_id": "github_tool.request_pull_request_reviewers.number"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "state",
+      "field_id": "github_tool.request_pull_request_reviewers.state"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "merged",
+      "field_id": "github_tool.request_pull_request_reviewers.merged"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "mergeable",
+      "field_id": "github_tool.request_pull_request_reviewers.mergeable"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "draft",
+      "field_id": "github_tool.request_pull_request_reviewers.draft"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "body",
+      "field_id": "github_tool.request_pull_request_reviewers.body"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "title",
+      "field_id": "github_tool.request_pull_request_reviewers.title"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "base",
+      "field_id": "github_tool.request_pull_request_reviewers.base"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "base_sha",
+      "field_id": "github_tool.request_pull_request_reviewers.base_sha"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "head",
+      "field_id": "github_tool.request_pull_request_reviewers.head"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "head_sha",
+      "field_id": "github_tool.request_pull_request_reviewers.head_sha"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "head_repo_id",
+      "field_id": "github_tool.request_pull_request_reviewers.head_repo_id"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "head_repo_full_name",
+      "field_id": "github_tool.request_pull_request_reviewers.head_repo_full_name"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "merge_commit_sha",
+      "field_id": "github_tool.request_pull_request_reviewers.merge_commit_sha"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "login",
+      "field_id": "github_tool.request_pull_request_reviewers.login"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "name",
+      "field_id": "github_tool.request_pull_request_reviewers.name"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "email",
+      "field_id": "github_tool.request_pull_request_reviewers.email"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "avatar_url",
+      "field_id": "github_tool.request_pull_request_reviewers.avatar_url"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "id",
+      "field_id": "github_tool.request_pull_request_reviewers.id"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "slug",
+      "field_id": "github_tool.request_pull_request_reviewers.slug"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "diff",
+      "field_id": "github_tool.request_pull_request_reviewers.diff"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "comments",
+      "field_id": "github_tool.request_pull_request_reviewers.comments"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "created_at",
+      "field_id": "github_tool.request_pull_request_reviewers.created_at"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "updated_at",
+      "field_id": "github_tool.request_pull_request_reviewers.updated_at"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "closed_at",
+      "field_id": "github_tool.request_pull_request_reviewers.closed_at"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "merged_at",
+      "field_id": "github_tool.request_pull_request_reviewers.merged_at"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "commits",
+      "field_id": "github_tool.request_pull_request_reviewers.commits"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "changed_files",
+      "field_id": "github_tool.request_pull_request_reviewers.changed_files"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "additions",
+      "field_id": "github_tool.request_pull_request_reviewers.additions"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "deletions",
+      "field_id": "github_tool.request_pull_request_reviewers.deletions"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "display_url",
+      "field_id": "github_tool.request_pull_request_reviewers.display_url"
+    },
+    {
+      "tool": "request_pull_request_reviewers",
+      "field": "display_title",
+      "field_id": "github_tool.request_pull_request_reviewers.display_title"
+    },
+    {
+      "tool": "rerun_failed_workflow_run_jobs",
+      "field": "repo_full_name",
+      "field_id": "github_tool.rerun_failed_workflow_run_jobs.repo_full_name"
+    },
+    {
+      "tool": "rerun_failed_workflow_run_jobs",
+      "field": "run_id",
+      "field_id": "github_tool.rerun_failed_workflow_run_jobs.run_id"
+    },
+    {
+      "tool": "rerun_failed_workflow_run_jobs",
+      "field": "result",
+      "field_id": "github_tool.rerun_failed_workflow_run_jobs.result"
+    },
+    {
+      "tool": "rerun_failed_workflow_run_jobs",
+      "field": "success",
+      "field_id": "github_tool.rerun_failed_workflow_run_jobs.success"
+    },
+    {
+      "tool": "rerun_workflow_job",
+      "field": "repo_full_name",
+      "field_id": "github_tool.rerun_workflow_job.repo_full_name"
+    },
+    {
+      "tool": "rerun_workflow_job",
+      "field": "job_id",
+      "field_id": "github_tool.rerun_workflow_job.job_id"
+    },
+    {
+      "tool": "rerun_workflow_job",
+      "field": "result",
+      "field_id": "github_tool.rerun_workflow_job.result"
+    },
+    {
+      "tool": "rerun_workflow_job",
+      "field": "success",
+      "field_id": "github_tool.rerun_workflow_job.success"
+    },
+    {
+      "tool": "resolve_review_thread",
+      "field": "thread_id",
+      "field_id": "github_tool.resolve_review_thread.thread_id"
+    },
+    {
+      "tool": "resolve_review_thread",
+      "field": "result",
+      "field_id": "github_tool.resolve_review_thread.result"
+    },
+    {
+      "tool": "resolve_review_thread",
+      "field": "review_thread",
+      "field_id": "github_tool.resolve_review_thread.review_thread"
+    },
+    {
+      "tool": "search",
+      "field": "query",
+      "field_id": "github_tool.search.query"
+    },
+    {
+      "tool": "search",
+      "field": "topn",
+      "field_id": "github_tool.search.topn"
+    },
+    {
+      "tool": "search",
+      "field": "repository_name",
+      "field_id": "github_tool.search.repository_name"
+    },
+    {
+      "tool": "search",
+      "field": "org",
+      "field_id": "github_tool.search.org"
+    },
+    {
+      "tool": "search",
+      "field": "result",
+      "field_id": "github_tool.search.result"
+    },
+    {
+      "tool": "search",
+      "field": "results",
+      "field_id": "github_tool.search.results"
+    },
+    {
+      "tool": "search",
+      "field": "display_url",
+      "field_id": "github_tool.search.display_url"
+    },
+    {
+      "tool": "search_branches",
+      "field": "owner",
+      "field_id": "github_tool.search_branches.owner"
+    },
+    {
+      "tool": "search_branches",
+      "field": "repo_name",
+      "field_id": "github_tool.search_branches.repo_name"
+    },
+    {
+      "tool": "search_branches",
+      "field": "query",
+      "field_id": "github_tool.search_branches.query"
+    },
+    {
+      "tool": "search_branches",
+      "field": "page_size",
+      "field_id": "github_tool.search_branches.page_size"
+    },
+    {
+      "tool": "search_branches",
+      "field": "cursor",
+      "field_id": "github_tool.search_branches.cursor"
+    },
+    {
+      "tool": "search_branches",
+      "field": "result",
+      "field_id": "github_tool.search_branches.result"
+    },
+    {
+      "tool": "search_branches",
+      "field": "branches",
+      "field_id": "github_tool.search_branches.branches"
+    },
+    {
+      "tool": "search_branches",
+      "field": "branch",
+      "field_id": "github_tool.search_branches.branch"
+    },
+    {
+      "tool": "search_commits",
+      "field": "query",
+      "field_id": "github_tool.search_commits.query"
+    },
+    {
+      "tool": "search_commits",
+      "field": "repository_full_name",
+      "field_id": "github_tool.search_commits.repository_full_name"
+    },
+    {
+      "tool": "search_commits",
+      "field": "repository_id",
+      "field_id": "github_tool.search_commits.repository_id"
+    },
+    {
+      "tool": "search_commits",
+      "field": "repository_url",
+      "field_id": "github_tool.search_commits.repository_url"
+    },
+    {
+      "tool": "search_commits",
+      "field": "org",
+      "field_id": "github_tool.search_commits.org"
+    },
+    {
+      "tool": "search_commits",
+      "field": "topn",
+      "field_id": "github_tool.search_commits.topn"
+    },
+    {
+      "tool": "search_commits",
+      "field": "result",
+      "field_id": "github_tool.search_commits.result"
+    },
+    {
+      "tool": "search_commits",
+      "field": "commits",
+      "field_id": "github_tool.search_commits.commits"
+    },
+    {
+      "tool": "search_commits",
+      "field": "html_url",
+      "field_id": "github_tool.search_commits.html_url"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "query",
+      "field_id": "github_tool.search_installed_repositories_streaming.query"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "limit",
+      "field_id": "github_tool.search_installed_repositories_streaming.limit"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "next_token",
+      "field_id": "github_tool.search_installed_repositories_streaming.next_token"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "option_enrich_code_search_index_availability",
+      "field_id": "github_tool.search_installed_repositories_streaming.option_enrich_code_search_index_availability"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "option_enrich_code_search_index_request_concurrency_limit",
+      "field_id": "github_tool.search_installed_repositories_streaming.option_enrich_code_search_index_request_concurrency_limit"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "result",
+      "field_id": "github_tool.search_installed_repositories_streaming.result"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "repositories",
+      "field_id": "github_tool.search_installed_repositories_streaming.repositories"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "id",
+      "field_id": "github_tool.search_installed_repositories_streaming.id"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "name",
+      "field_id": "github_tool.search_installed_repositories_streaming.name"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "repository_full_name",
+      "field_id": "github_tool.search_installed_repositories_streaming.repository_full_name"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "description",
+      "field_id": "github_tool.search_installed_repositories_streaming.description"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "is_code_search_indexed",
+      "field_id": "github_tool.search_installed_repositories_streaming.is_code_search_indexed"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "owner",
+      "field_id": "github_tool.search_installed_repositories_streaming.owner"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "login",
+      "field_id": "github_tool.search_installed_repositories_streaming.login"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "type",
+      "field_id": "github_tool.search_installed_repositories_streaming.type"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "avatar_url",
+      "field_id": "github_tool.search_installed_repositories_streaming.avatar_url"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "url",
+      "field_id": "github_tool.search_installed_repositories_streaming.url"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "clone_url",
+      "field_id": "github_tool.search_installed_repositories_streaming.clone_url"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "default_branch",
+      "field_id": "github_tool.search_installed_repositories_streaming.default_branch"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "git_commits_url",
+      "field_id": "github_tool.search_installed_repositories_streaming.git_commits_url"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "git_refs_url",
+      "field_id": "github_tool.search_installed_repositories_streaming.git_refs_url"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "git_url",
+      "field_id": "github_tool.search_installed_repositories_streaming.git_url"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "visibility",
+      "field_id": "github_tool.search_installed_repositories_streaming.visibility"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "archived",
+      "field_id": "github_tool.search_installed_repositories_streaming.archived"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "master_branch",
+      "field_id": "github_tool.search_installed_repositories_streaming.master_branch"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "allow_auto_merge",
+      "field_id": "github_tool.search_installed_repositories_streaming.allow_auto_merge"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "allow_merge_commit",
+      "field_id": "github_tool.search_installed_repositories_streaming.allow_merge_commit"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "allow_rebase_merge",
+      "field_id": "github_tool.search_installed_repositories_streaming.allow_rebase_merge"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "allow_squash_merge",
+      "field_id": "github_tool.search_installed_repositories_streaming.allow_squash_merge"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "allow_update_branch",
+      "field_id": "github_tool.search_installed_repositories_streaming.allow_update_branch"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "display_url",
+      "field_id": "github_tool.search_installed_repositories_streaming.display_url"
+    },
+    {
+      "tool": "search_installed_repositories_streaming",
+      "field": "display_title",
+      "field_id": "github_tool.search_installed_repositories_streaming.display_title"
+    },
+    {
+      "tool": "search_installed_repositories_v2",
+      "field": "query",
+      "field_id": "github_tool.search_installed_repositories_v2.query"
+    },
+    {
+      "tool": "search_installed_repositories_v2",
+      "field": "limit",
+      "field_id": "github_tool.search_installed_repositories_v2.limit"
+    },
+    {
+      "tool": "search_installed_repositories_v2",
+      "field": "installation_ids",
+      "field_id": "github_tool.search_installed_repositories_v2.installation_ids"
+    },
+    {
+      "tool": "search_installed_repositories_v2",
+      "field": "page",
+      "field_id": "github_tool.search_installed_repositories_v2.page"
+    },
+    {
+      "tool": "search_installed_repositories_v2",
+      "field": "include_search_index_status",
+      "field_id": "github_tool.search_installed_repositories_v2.include_search_index_status"
+    },
+    {
+      "tool": "search_installed_repositories_v2",
+      "field": "include_archived",
+      "field_id": "github_tool.search_installed_repositories_v2.include_archived"
+    },
+    {
+      "tool": "search_installed_repositories_v2",
+      "field": "result",
+      "field_id": "github_tool.search_installed_repositories_v2.result"
+    },
+    {
+      "tool": "search_installed_repositories_v2",
+      "field": "archive_filter_applied",
+      "field_id": "github_tool.search_installed_repositories_v2.archive_filter_applied"
+    },
+    {
+      "tool": "search_installed_repositories_v2",
+      "field": "repositories",
+      "field_id": "github_tool.search_installed_repositories_v2.repositories"
+    },
+    {
+      "tool": "search_issues",
+      "field": "query",
+      "field_id": "github_tool.search_issues.query"
+    },
+    {
+      "tool": "search_issues",
+      "field": "repository_full_name",
+      "field_id": "github_tool.search_issues.repository_full_name"
+    },
+    {
+      "tool": "search_issues",
+      "field": "repository_id",
+      "field_id": "github_tool.search_issues.repository_id"
+    },
+    {
+      "tool": "search_issues",
+      "field": "repository_url",
+      "field_id": "github_tool.search_issues.repository_url"
+    },
+    {
+      "tool": "search_issues",
+      "field": "topn",
+      "field_id": "github_tool.search_issues.topn"
+    },
+    {
+      "tool": "search_issues",
+      "field": "state",
+      "field_id": "github_tool.search_issues.state"
+    },
+    {
+      "tool": "search_issues",
+      "field": "result",
+      "field_id": "github_tool.search_issues.result"
+    },
+    {
+      "tool": "search_issues",
+      "field": "issues",
+      "field_id": "github_tool.search_issues.issues"
+    },
+    {
+      "tool": "search_issues",
+      "field": "display_url",
+      "field_id": "github_tool.search_issues.display_url"
+    },
+    {
+      "tool": "search_issues",
+      "field": "display_title",
+      "field_id": "github_tool.search_issues.display_title"
+    },
+    {
+      "tool": "search_prs",
+      "field": "query",
+      "field_id": "github_tool.search_prs.query"
+    },
+    {
+      "tool": "search_prs",
+      "field": "repository_full_name",
+      "field_id": "github_tool.search_prs.repository_full_name"
+    },
+    {
+      "tool": "search_prs",
+      "field": "repository_id",
+      "field_id": "github_tool.search_prs.repository_id"
+    },
+    {
+      "tool": "search_prs",
+      "field": "repository_url",
+      "field_id": "github_tool.search_prs.repository_url"
+    },
+    {
+      "tool": "search_prs",
+      "field": "org",
+      "field_id": "github_tool.search_prs.org"
+    },
+    {
+      "tool": "search_prs",
+      "field": "topn",
+      "field_id": "github_tool.search_prs.topn"
+    },
+    {
+      "tool": "search_prs",
+      "field": "state",
+      "field_id": "github_tool.search_prs.state"
+    },
+    {
+      "tool": "search_prs",
+      "field": "result",
+      "field_id": "github_tool.search_prs.result"
+    },
+    {
+      "tool": "search_prs",
+      "field": "issues",
+      "field_id": "github_tool.search_prs.issues"
+    },
+    {
+      "tool": "search_prs",
+      "field": "display_url",
+      "field_id": "github_tool.search_prs.display_url"
+    },
+    {
+      "tool": "search_prs",
+      "field": "display_title",
+      "field_id": "github_tool.search_prs.display_title"
+    },
+    {
+      "tool": "search_repositories",
+      "field": "query",
+      "field_id": "github_tool.search_repositories.query"
+    },
+    {
+      "tool": "search_repositories",
+      "field": "per_page",
+      "field_id": "github_tool.search_repositories.per_page"
+    },
+    {
+      "tool": "search_repositories",
+      "field": "page",
+      "field_id": "github_tool.search_repositories.page"
+    },
+    {
+      "tool": "search_repositories",
+      "field": "org",
+      "field_id": "github_tool.search_repositories.org"
+    },
+    {
+      "tool": "search_repositories",
+      "field": "topn",
+      "field_id": "github_tool.search_repositories.topn"
+    },
+    {
+      "tool": "search_repositories",
+      "field": "result",
+      "field_id": "github_tool.search_repositories.result"
+    },
+    {
+      "tool": "search_repositories",
+      "field": "archive_filter_applied",
+      "field_id": "github_tool.search_repositories.archive_filter_applied"
+    },
+    {
+      "tool": "search_repositories",
+      "field": "repositories",
+      "field_id": "github_tool.search_repositories.repositories"
+    },
+    {
+      "tool": "unlock_issue_conversation",
+      "field": "repository_full_name",
+      "field_id": "github_tool.unlock_issue_conversation.repository_full_name"
+    },
+    {
+      "tool": "unlock_issue_conversation",
+      "field": "issue_number",
+      "field_id": "github_tool.unlock_issue_conversation.issue_number"
+    },
+    {
+      "tool": "unlock_issue_conversation",
+      "field": "result",
+      "field_id": "github_tool.unlock_issue_conversation.result"
+    },
+    {
+      "tool": "unlock_issue_conversation",
+      "field": "success",
+      "field_id": "github_tool.unlock_issue_conversation.success"
+    },
+    {
+      "tool": "unresolve_review_thread",
+      "field": "thread_id",
+      "field_id": "github_tool.unresolve_review_thread.thread_id"
+    },
+    {
+      "tool": "unresolve_review_thread",
+      "field": "result",
+      "field_id": "github_tool.unresolve_review_thread.result"
+    },
+    {
+      "tool": "unresolve_review_thread",
+      "field": "review_thread",
+      "field_id": "github_tool.unresolve_review_thread.review_thread"
+    },
+    {
+      "tool": "update_file",
+      "field": "repository_full_name",
+      "field_id": "github_tool.update_file.repository_full_name"
+    },
+    {
+      "tool": "update_file",
+      "field": "path",
+      "field_id": "github_tool.update_file.path"
+    },
+    {
+      "tool": "update_file",
+      "field": "content",
+      "field_id": "github_tool.update_file.content"
+    },
+    {
+      "tool": "update_file",
+      "field": "message",
+      "field_id": "github_tool.update_file.message"
+    },
+    {
+      "tool": "update_file",
+      "field": "sha",
+      "field_id": "github_tool.update_file.sha"
+    },
+    {
+      "tool": "update_file",
+      "field": "branch",
+      "field_id": "github_tool.update_file.branch"
+    },
+    {
+      "tool": "update_file",
+      "field": "result",
+      "field_id": "github_tool.update_file.result"
+    },
+    {
+      "tool": "update_file",
+      "field": "commit_sha",
+      "field_id": "github_tool.update_file.commit_sha"
+    },
+    {
+      "tool": "update_file",
+      "field": "content_sha",
+      "field_id": "github_tool.update_file.content_sha"
+    },
+    {
+      "tool": "update_issue",
+      "field": "repository_full_name",
+      "field_id": "github_tool.update_issue.repository_full_name"
+    },
+    {
+      "tool": "update_issue",
+      "field": "issue_number",
+      "field_id": "github_tool.update_issue.issue_number"
+    },
+    {
+      "tool": "update_issue",
+      "field": "title",
+      "field_id": "github_tool.update_issue.title"
+    },
+    {
+      "tool": "update_issue",
+      "field": "body",
+      "field_id": "github_tool.update_issue.body"
+    },
+    {
+      "tool": "update_issue",
+      "field": "state",
+      "field_id": "github_tool.update_issue.state"
+    },
+    {
+      "tool": "update_issue",
+      "field": "state_reason",
+      "field_id": "github_tool.update_issue.state_reason"
+    },
+    {
+      "tool": "update_issue",
+      "field": "assignees",
+      "field_id": "github_tool.update_issue.assignees"
+    },
+    {
+      "tool": "update_issue",
+      "field": "labels",
+      "field_id": "github_tool.update_issue.labels"
+    },
+    {
+      "tool": "update_issue",
+      "field": "milestone",
+      "field_id": "github_tool.update_issue.milestone"
+    },
+    {
+      "tool": "update_issue",
+      "field": "result",
+      "field_id": "github_tool.update_issue.result"
+    },
+    {
+      "tool": "update_issue",
+      "field": "issue",
+      "field_id": "github_tool.update_issue.issue"
+    },
+    {
+      "tool": "update_issue",
+      "field": "url",
+      "field_id": "github_tool.update_issue.url"
+    },
+    {
+      "tool": "update_issue_comment",
+      "field": "repo_full_name",
+      "field_id": "github_tool.update_issue_comment.repo_full_name"
+    },
+    {
+      "tool": "update_issue_comment",
+      "field": "comment_id",
+      "field_id": "github_tool.update_issue_comment.comment_id"
+    },
+    {
+      "tool": "update_issue_comment",
+      "field": "comment",
+      "field_id": "github_tool.update_issue_comment.comment"
+    },
+    {
+      "tool": "update_issue_comment",
+      "field": "result",
+      "field_id": "github_tool.update_issue_comment.result"
+    },
+    {
+      "tool": "update_issue_comment",
+      "field": "id",
+      "field_id": "github_tool.update_issue_comment.id"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "repository_full_name",
+      "field_id": "github_tool.update_pull_request.repository_full_name"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "pr_number",
+      "field_id": "github_tool.update_pull_request.pr_number"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "title",
+      "field_id": "github_tool.update_pull_request.title"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "body",
+      "field_id": "github_tool.update_pull_request.body"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "state",
+      "field_id": "github_tool.update_pull_request.state"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "base_branch",
+      "field_id": "github_tool.update_pull_request.base_branch"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "maintainer_can_modify",
+      "field_id": "github_tool.update_pull_request.maintainer_can_modify"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "result",
+      "field_id": "github_tool.update_pull_request.result"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "url",
+      "field_id": "github_tool.update_pull_request.url"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "number",
+      "field_id": "github_tool.update_pull_request.number"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "merged",
+      "field_id": "github_tool.update_pull_request.merged"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "mergeable",
+      "field_id": "github_tool.update_pull_request.mergeable"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "draft",
+      "field_id": "github_tool.update_pull_request.draft"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "base",
+      "field_id": "github_tool.update_pull_request.base"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "base_sha",
+      "field_id": "github_tool.update_pull_request.base_sha"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "head",
+      "field_id": "github_tool.update_pull_request.head"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "head_sha",
+      "field_id": "github_tool.update_pull_request.head_sha"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "head_repo_id",
+      "field_id": "github_tool.update_pull_request.head_repo_id"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "head_repo_full_name",
+      "field_id": "github_tool.update_pull_request.head_repo_full_name"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "merge_commit_sha",
+      "field_id": "github_tool.update_pull_request.merge_commit_sha"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "login",
+      "field_id": "github_tool.update_pull_request.login"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "name",
+      "field_id": "github_tool.update_pull_request.name"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "email",
+      "field_id": "github_tool.update_pull_request.email"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "avatar_url",
+      "field_id": "github_tool.update_pull_request.avatar_url"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "id",
+      "field_id": "github_tool.update_pull_request.id"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "slug",
+      "field_id": "github_tool.update_pull_request.slug"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "diff",
+      "field_id": "github_tool.update_pull_request.diff"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "comments",
+      "field_id": "github_tool.update_pull_request.comments"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "created_at",
+      "field_id": "github_tool.update_pull_request.created_at"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "updated_at",
+      "field_id": "github_tool.update_pull_request.updated_at"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "closed_at",
+      "field_id": "github_tool.update_pull_request.closed_at"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "merged_at",
+      "field_id": "github_tool.update_pull_request.merged_at"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "commits",
+      "field_id": "github_tool.update_pull_request.commits"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "changed_files",
+      "field_id": "github_tool.update_pull_request.changed_files"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "additions",
+      "field_id": "github_tool.update_pull_request.additions"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "deletions",
+      "field_id": "github_tool.update_pull_request.deletions"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "display_url",
+      "field_id": "github_tool.update_pull_request.display_url"
+    },
+    {
+      "tool": "update_pull_request",
+      "field": "display_title",
+      "field_id": "github_tool.update_pull_request.display_title"
+    },
+    {
+      "tool": "update_ref",
+      "field": "repository_full_name",
+      "field_id": "github_tool.update_ref.repository_full_name"
+    },
+    {
+      "tool": "update_ref",
+      "field": "branch_name",
+      "field_id": "github_tool.update_ref.branch_name"
+    },
+    {
+      "tool": "update_ref",
+      "field": "sha",
+      "field_id": "github_tool.update_ref.sha"
+    },
+    {
+      "tool": "update_ref",
+      "field": "force",
+      "field_id": "github_tool.update_ref.force"
+    },
+    {
+      "tool": "update_ref",
+      "field": "expected_sha",
+      "field_id": "github_tool.update_ref.expected_sha"
+    },
+    {
+      "tool": "update_ref",
+      "field": "result",
+      "field_id": "github_tool.update_ref.result"
+    },
+    {
+      "tool": "update_ref",
+      "field": "success",
+      "field_id": "github_tool.update_ref.success"
+    },
+    {
+      "tool": "update_review_comment",
+      "field": "repo_full_name",
+      "field_id": "github_tool.update_review_comment.repo_full_name"
+    },
+    {
+      "tool": "update_review_comment",
+      "field": "comment_id",
+      "field_id": "github_tool.update_review_comment.comment_id"
+    },
+    {
+      "tool": "update_review_comment",
+      "field": "comment",
+      "field_id": "github_tool.update_review_comment.comment"
+    },
+    {
+      "tool": "update_review_comment",
+      "field": "result",
+      "field_id": "github_tool.update_review_comment.result"
+    },
+    {
+      "tool": "update_review_comment",
+      "field": "id",
+      "field_id": "github_tool.update_review_comment.id"
+    }
+  ]
+}
