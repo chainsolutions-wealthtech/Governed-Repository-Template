@@ -50,7 +50,7 @@ def parse_probe(path: Path):
     buf = []
     section = ""
     for idx, line in enumerate(lines, start=1):
-        h = re.match(r"^##\\s+(?:(?:\\d+)\\.\\s+)?(.+?)\\s*$", line)
+        h = re.match(r"^##\s+(?:(?:\d+)\.\s+)?(.+?)\s*$", line)
         if h and not in_code:
             section = h.group(1).strip()
             raw = section.lower() in {"raw inventory","raw anchor inventory"}
@@ -66,11 +66,11 @@ def parse_probe(path: Path):
         if in_code:
             if raw: buf.append((idx,line))
             continue
-        m=re.match(r"^[-*>]\\s*([^:]+):\\s*(.*?)\\s*$", line)
+        m=re.match(r"^[-*>]\s*([^:]+):\s*(.*?)\s*$", line)
         if m:
             observations.append((m.group(1),m.group(2),idx,section,"KEY_VALUE"))
             continue
-        m=re.match(r"^([A-Za-z0-9_ /()#.+-]+):\\s*$",line)
+        m=re.match(r"^([A-Za-z0-9_ /()#.+-]+):\s*$",line)
         if m:
             j=idx
             while j < len(lines) and not lines[j].strip():
