@@ -1,5 +1,20 @@
 # Governed Repository Template
 
+> **MANDATORY REPOSITORY ENTRY**
+>
+> Any agent, assistant, automation, connector, GitHub App, API client, or tool surface that reaches this repository MUST treat `/00_GSCC_ENTRY.md` as the first repository authority.
+>
+> Before planning work, reading `00_START_HERE.md`, selecting a task, or attempting any mutation:
+>
+> ```text
+> ARRIVAL
+> → 00_GSCC_ENTRY.md
+> → follow only the next authority explicitly emitted by that entry path
+> ```
+>
+> A successful GitHub/API read is only physical access. It is not governed admission.
+> No write, branch, commit, issue, PR, dispatch, or governed execution may be selected before the pre-entry path authorizes continuation.
+
 Template générique de gouvernance pour les dépôts de l'organisation `chainsolutions-wealthtech`.
 
 ## Objectif
