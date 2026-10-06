@@ -1,0 +1,79 @@
+name: GSCC Provider First Touch Ingress
+
+on:
+  repository_dispatch:
+    types:
+      - gscc_provider_first_touch
+  pull_request:
+    paths:
+      - "scripts/provider_first_touch_ingress.py"
+      - "scripts/test_provider_first_touch_ingress.py"
+      - ".github/workflows/gscc-provider-first-touch-ingress.yml"
+
+permissions:
+  contents: write
+  actions: read
+
+jobs:
+  regression:
+    if: ${{ github.event_name == 'pull_request' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Compile
+        run: python3 -m py_compile scripts/provider_first_touch_ingress.py scripts/test_provider_first_touch_ingress.py
+      - name: Test provider first-touch sidecar
+        run: PYTHONPATH=scripts python3 -m unittest scripts/test_provider_first_touch_ingress.py
+
+  ingest:
+    if: ${{ github.event_name == 'repository_dispatch' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate provider envelope
+        env:
+          PROVIDER_ENVELOPE: ${{ toJson(github.event.client_payload) }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf '%s' "$PROVIDER_ENVELOPE" > "$RUNNER_TEMP/provider-first-touch-envelope.json"
+
+      - name: Capture and enter controlled GSCC path
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/provider_first_touch_ingress.py \
+            --envelope "$RUNNER_TEMP/provider-first-touch-envelope.json" \
+            --capture-output "$RUNNER_TEMP/provider-first-touch-capture.json" \
+            --emit
+
+      - name: Materialize existing B00-B30 first-touch database
+        run: |
+          python3 scripts/first_touch_field_block_gate.py \
+            --capture "$RUNNER_TEMP/provider-first-touch-capture.json" \
+            --output "$RUNNER_TEMP/provider-first-touch-capture.sqlite" \
+            --source-ref "provider-first-touch:${GITHUB_RUN_ID}:${GITHUB_RUN_ATTEMPT}"
+
+      - name: Upload provider first-touch evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: provider-first-touch-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/provider-first-touch-envelope.json
+            ${{ runner.temp }}/provider-first-touch-capture.json
+            ${{ runner.temp }}/provider-first-touch-capture.sqlite
+          if-no-files-found: error
+          retention-days: 30
