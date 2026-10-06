@@ -15,14 +15,14 @@ from pathlib import Path
 from typing import Any, Callable
 
 if __package__:
-    from .admission import QUALIFICATION_REQUIREMENTS, resolve_admission_session_binding
+    from .admission import INITIAL_GSE_QUALIFICATION_REQUIREMENTS, QUALIFICATION_REQUIREMENTS, resolve_admission_session_binding
     from .protocol import assert_secretless
     from gscc_gacr.issue_control_bridge import canonical_control_evidence
-    from gscc_gacr.admission_gse_projection import project_admission_gse_state
+    from gscc_gacr.admission_gse_projection import project_admission_gse_state, project_pre_gacr_admission_gse_state
     from .admission_access_policy import evaluate_access_policy
 else:
     sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-    from gscc.admission import QUALIFICATION_REQUIREMENTS, resolve_admission_session_binding
+    from gscc.admission import INITIAL_GSE_QUALIFICATION_REQUIREMENTS, QUALIFICATION_REQUIREMENTS, resolve_admission_session_binding
     from gscc.protocol import assert_secretless
     from gscc_gacr.issue_control_bridge import canonical_control_evidence
     from gscc_gacr.admission_gse_projection import project_admission_gse_state
@@ -410,7 +410,10 @@ def harvest_qualification_evidence(
     task = _reconcile_reference("task", session.get("task_id") if session.get("status") in {"BOUND", "STALE_HEAD"} else None, tasks, now)
     claim = _reconcile_reference("claim", session.get("claim_id") if session.get("status") in {"BOUND", "STALE_HEAD"} else None, claims, now)
 
-    declared_capabilities = session.get("capabilities") if session.get("status") in {"BOUND", "STALE_HEAD"} else []
+    admission_controls = context.get("control_capabilities") if isinstance(context.get("control_capabilities"), dict) else {}
+    declared_capabilities = session.get("capabilities") if session.get("status") in {"BOUND", "STALE_HEAD"} else [
+        name for name, enabled in admission_controls.items() if enabled
+    ]
     canonical_control = (
         canonical_control_evidence(
             dispatches or {"items": []},
@@ -448,12 +451,13 @@ def harvest_qualification_evidence(
         now=now,
     )
 
-    if (
-        gse_state is None
-        and session.get("status") == "BOUND"
-        and (canonical_control.get("control_channel") or {}).get("status") == "VERIFIED"
-    ):
-        gse_state = project_admission_gse_state(session, canonical_control, now=now)
+    if gse_state is None and capabilities.get("status") == "VERIFIED" and control_channel.get("status") == "VERIFIED":
+        gse_state = project_pre_gacr_admission_gse_state(
+            admission_receipt,
+            repository_baseline,
+            {"capabilities": capabilities, "control_channel": control_channel},
+            now=now,
+        )
 
     if (
         isinstance(gse_state, dict)
@@ -522,24 +526,37 @@ def harvest_qualification_evidence(
         "observed_at": _iso(now),
         "provenance_matrix": {
             "repository_baseline": "GITHUB_API_GET",
-            "session": "GACR_CANONICAL_SESSION_STORE",
+            "session": "GACR_CANONICAL_SESSION_STORE_POST_GSE",
             "governance_read": "CHECKED_OUT_CANONICAL_REPOSITORY",
             "task": "CANONICAL_TASK_STORE",
             "claim": "CANONICAL_CLAIM_STORE",
-            "capabilities": "GACR_PLUS_GSCC_CHALLENGE_REQUIRED",
+            "capabilities": "GSCC_DECLARATION_PLUS_CHALLENGE",
             "control_channel": "GSCC_CONTROL_CHALLENGE_REQUIRED",
-            "gse_initial_state": "GSE_CANONICAL_STATE_REQUIRED",
+            "gse_initial_state": "GSE_FROM_GSCC_PRE_GACR",
             "access_policy": "GOVERNANCE_POLICY_REQUIRED",
         },
     }
 
+    pre_gse_missing = [
+        name
+        for name, validator in INITIAL_GSE_QUALIFICATION_REQUIREMENTS.items()
+        if not validator(evidence.get(name))
+    ]
     missing = [
         name
         for name, validator in QUALIFICATION_REQUIREMENTS.items()
         if not validator(evidence.get(name))
     ]
+    evidence["pre_gse_missing_canonical_evidence"] = pre_gse_missing
+    evidence["q10_status"] = "Q10_GSE_VERIFIED" if not pre_gse_missing else "Q10_GSE_PENDING"
+    evidence["post_gse_gacr_required"] = not pre_gse_missing
     evidence["missing_canonical_evidence"] = missing
-    evidence["status"] = "QUALIFICATION_EVIDENCE_COMPLETE" if not missing else "QUALIFICATION_EVIDENCE_PARTIAL"
+    if not missing:
+        evidence["status"] = "QUALIFICATION_EVIDENCE_COMPLETE"
+    elif not pre_gse_missing:
+        evidence["status"] = "Q10_GSE_VERIFIED_PENDING_GACR"
+    else:
+        evidence["status"] = "QUALIFICATION_EVIDENCE_PARTIAL"
     material = copy.deepcopy(evidence)
     evidence["harvest_digest"] = _digest(material)
     assert_secretless(evidence)
