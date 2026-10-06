@@ -171,8 +171,8 @@ def main():
             "recovery packet preserves observable transports",
         )
         assert_true(recovery_b["addressability"]["targetable_via_observed_transport"] is True, "session addressable through observed transport")
-        assert_true(recovery_b["addressability"]["freeform_prompt_delivery"]["status"] == "NOT_VERIFIED", "wake transport must not be mistaken for prompt transport")
-        assert_true(recovery_b["next_gate"]["may_send_freeform_prompt_without_verified_transport"] is False, "prompt delivery fails closed")
+        assert_true(recovery_b["addressability"]["freeform_message_delivery"]["status"] == "NOT_VERIFIED", "wake transport must not be mistaken for prompt transport")
+        assert_true(recovery_b["next_gate"]["may_send_freeform_message_without_verified_transport"] is False, "prompt delivery fails closed")
         assert_true(recovery_b["addressability"]["grants_mutation_authority"] is False, "recovery packet grants no mutation authority")
 
         notifier = load_notifier()
