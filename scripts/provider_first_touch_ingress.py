@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 from gscc_observable_arrival import emit_controlled_arrival
+from provider_first_touch_evidence import build_field_evidence
 
 SCHEMA = "gscc-provider-first-touch-envelope/v1"
 CAPTURE_SCHEMA = "first-touch-exhaustive-capture/v1"
@@ -22,13 +23,29 @@ SENSITIVE_KEY_RE = re.compile(
 
 UNAVAILABLE_MARKERS = {None, "", "UNAVAILABLE", "UNKNOWN", "NOT_EXPOSED", "NOT_ACCESSIBLE"}
 
+SAFE_SECURITY_STATUS_KEYS = {
+    "secret_accessed",
+    "token_exposed",
+    "oauth_secret_exposed",
+    "private_key_exposed",
+    "conversation_id_exposed",
+    "session_id_exposed",
+    "installation_id_exposed",
+    "client_id_exposed",
+    "ip_exposed",
+    "sensitive_value_present",
+    "redacted",
+}
+
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
 def _is_sensitive_key(key: str) -> bool:
-    normalized = re.sub(r"[^A-Za-z0-9]+", "_", key).strip("_")
+    normalized = re.sub(r"[^A-Za-z0-9]+", "_", key).strip("_").lower()
+    if normalized in SAFE_SECURITY_STATUS_KEYS:
+        return False
     return bool(SENSITIVE_KEY_RE.search(normalized))
 
 
@@ -73,6 +90,7 @@ def validate_envelope(envelope: dict[str, Any]) -> None:
 def build_capture(envelope: dict[str, Any], *, observed_at: str | None = None) -> dict[str, Any]:
     validate_envelope(envelope)
     observed_at = observed_at or str(envelope.get("observed_at") or utc_now())
+    field_evidence = build_field_evidence(envelope, observed_at)
     material = {
         "schema": CAPTURE_SCHEMA,
         "observed_at": observed_at,
@@ -86,6 +104,14 @@ def build_capture(envelope: dict[str, Any], *, observed_at: str | None = None) -
         "environment": {},
         "api_attempts": [],
         "provider_context": envelope,
+        "field_evidence": field_evidence,
+        "field_evidence_contract": {
+            "schema": "first-touch-field-evidence/v1",
+            "expected_field_count": len(field_evidence),
+            "silent_absence_allowed": False,
+            "unavailable_value": "UNAVAILABLE",
+            "required_provenance_keys": ["source", "confidence", "observed_at", "reason", "evidence_ref"],
+        },
         "mutation_authority_granted": False,
         "interpretation_applied": False,
     }

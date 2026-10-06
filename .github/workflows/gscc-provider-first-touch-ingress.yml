@@ -7,6 +7,8 @@ on:
   pull_request:
     paths:
       - "scripts/provider_first_touch_ingress.py"
+      - "scripts/provider_first_touch_evidence.py"
+      - "scripts/first_touch_expected_field_registry.py"
       - "scripts/test_provider_first_touch_ingress.py"
       - ".github/workflows/gscc-provider-first-touch-ingress.yml"
 
@@ -25,7 +27,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python3 -m py_compile scripts/provider_first_touch_ingress.py scripts/test_provider_first_touch_ingress.py
+        run: python3 -m py_compile scripts/provider_first_touch_ingress.py scripts/provider_first_touch_evidence.py scripts/first_touch_expected_field_registry.py scripts/test_provider_first_touch_ingress.py
       - name: Test provider first-touch sidecar
         run: PYTHONPATH=scripts python3 -m unittest scripts/test_provider_first_touch_ingress.py
 
