@@ -45,6 +45,107 @@ def _event(event_id: str, event_type: str, observed_at: str, **payload: Any) -> 
     }
 
 
+
+def project_pre_gacr_admission_gse_state(
+    admission_receipt: dict[str, Any],
+    repository_baseline: dict[str, Any],
+    control_proof: dict[str, Any],
+    *,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """Project Q10 from GSCC evidence only, before durable GACR continuity."""
+    now = (now or datetime.now(timezone.utc)).astimezone(timezone.utc)
+    logical_identity = str(
+        admission_receipt.get("connection_ref")
+        or admission_receipt.get("admission_id")
+        or ""
+    )
+    if not logical_identity:
+        raise ValueError("GSCC logical connection identity required")
+
+    repository = repository_baseline.get("repository") or admission_receipt.get("repository")
+    branch = repository_baseline.get("requested_branch") or repository_baseline.get("default_branch")
+    observed_head = repository_baseline.get("observed_head")
+    observed_at = repository_baseline.get("observed_at") or admission_receipt.get("evaluated_at") or _iso(now)
+
+    events = [
+        _event(
+            "admission-gscc-session-attach",
+            "SESSION_ATTACH",
+            str(observed_at),
+            session_identity=logical_identity,
+            repository=repository,
+            branch=branch,
+            observed_head=observed_head,
+            last_action="GSCC_Q10_INITIAL_SESSION_STATE",
+        )
+    ]
+
+    capabilities = control_proof.get("capabilities") if isinstance(control_proof, dict) else {}
+    control = control_proof.get("control_channel") if isinstance(control_proof, dict) else {}
+    control_verified = (
+        isinstance(capabilities, dict)
+        and capabilities.get("status") == "VERIFIED"
+        and isinstance(control, dict)
+        and control.get("status") == "VERIFIED"
+        and control.get("state") == "REACHABLE"
+        and bool(control.get("evidence_ref"))
+    )
+    control_at = control.get("observed_at") if isinstance(control, dict) else None
+    if control_verified:
+        events.append(
+            _event(
+                "admission-gscc-control-challenge-response",
+                "CHALLENGE_RESPONSE",
+                str(control_at or observed_at),
+                delivery_state="ACKNOWLEDGED",
+                replay=False,
+                fresh_liveness=True,
+                challenge_id=control.get("challenge_id"),
+            )
+        )
+
+    events.sort(key=lambda event: _parse(event.get("observed_at")) or now)
+    twin = project(events, reference_time=_iso(now), session_id=logical_identity)
+    presence_state = (twin.get("presence") or {}).get("state") or "UNKNOWN"
+    liveness_state = (twin.get("liveness") or {}).get("state") or "UNKNOWN"
+    control_state = (twin.get("control_channel") or {}).get("state") or "UNKNOWN"
+
+    result = {
+        "schema": SCHEMA,
+        "status": "GSE_ADMISSION_STATE_INCOMPLETE",
+        "session_id": logical_identity,
+        "logical_identity": logical_identity,
+        "durable_gacr_session_required": False,
+        "repository": repository,
+        "branch": branch,
+        "observed_head": observed_head,
+        "presence": presence_state,
+        "liveness": "VERIFIED" if liveness_state == "ACTIVE" else liveness_state,
+        "activity": (twin.get("activity") or {}).get("state") or "UNKNOWN",
+        "progress": (twin.get("progress") or {}).get("state") or "UNKNOWN",
+        "control_reachability": "REACHABLE" if control_state == "REACHABLE" else control_state,
+        "continuity": (twin.get("continuity") or {}).get("state") or "UNKNOWN",
+        "timestamps": deepcopy(twin.get("timestamps") or {}),
+        "evidence_ref": control.get("evidence_ref") if control_verified else None,
+        "provenance": "GSE_DERIVED_FROM_GSCC_PRE_GACR",
+        "source": "GSE_SESSION_STATE_ENGINE",
+        "observed_at": _iso(now),
+        "invocation_authority_granted": False,
+        "mutation_authority_granted": False,
+    }
+    if (
+        result["presence"] == "PRESENT"
+        and result["liveness"] == "VERIFIED"
+        and result["control_reachability"] == "REACHABLE"
+        and result["evidence_ref"]
+    ):
+        result["status"] = "VERIFIED"
+    material = deepcopy(result)
+    result["projection_digest"] = _digest(material)
+    return result
+
+
 def project_admission_gse_state(
     session: dict[str, Any],
     control_proof: dict[str, Any],
