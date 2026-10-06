@@ -39,11 +39,29 @@ Secrets, tokens, passwords, cookies, authorization headers, private keys and cli
 
 The complete provider envelope is always preserved as first-touch evidence and projected into the existing B00-B30 SQLite model.
 
-GSCC controlled arrival is emitted only when the provider supplies a stable conversation/session/connection reference. If none is exposed, the result is `CAPTURE_ONLY_IDENTITY_UNRESOLVED`; evidence remains preserved but Q1/continuity progression is not fabricated.
+When the provider supplies a stable conversation/session/connection reference, the sidecar projects it into the canonical First Touch identity surface and enters the existing GSCC First Touch store / entry contract. If none is exposed, the result remains capture-only and Q1 progression is not fabricated. The provider sidecar must not dispatch directly to GACR.
 
-## Concurrency boundary
+## Canonical routing boundary
 
-This sidecar is additive. It does not modify `gscc-observable-arrival.yml`, the existing first-touch store/GSE projection, GACR stores, or the realignment files introduced by PR #200.
+The provider sidecar reuses the same canonical state and gate machinery as repository-observable First Touch:
+
+```text
+provider first tool call
+→ gscc_provider_first_touch
+→ provider_first_touch_ingress
+→ exhaustive capture + field evidence
+→ canonical First Touch state restore
+→ B00–B30
+→ completeness
+→ GSCC First Touch identity / uniqueness
+→ GSCC First Touch handoff
+→ Q1
+→ remaining GSCC gates
+→ Q10 GSE
+→ GACR durable continuity
+```
+
+It must not call the historical `emit_controlled_arrival() → target=gacr` path during First Touch.
 
 
 ## Exhaustive evidence contract
