@@ -16,6 +16,7 @@ on:
       - "scripts/first_touch_field_block_gate.py"
       - "scripts/gscc/first_touch_handoff.py"
       - "scripts/test_provider_first_touch_ingress.py"
+      - "scripts/test_provider_first_touch_repository_enrichment.py"
       - "scripts/test_provider_first_tool_hook.py"
       - ".github/workflows/gscc-provider-first-touch-ingress.yml"
 
