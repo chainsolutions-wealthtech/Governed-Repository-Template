@@ -48,7 +48,7 @@ Initial routing contract:
 ```text
 ARRIVAL
 → READ_AUTHORITY: 00_GSCC_ENTRY.md
-→ REPORT_PROVIDER_CONTEXT
+→ BUILD_OBSERVABLE_PACKET
 → CLASSIFY_FIRST_TOUCH: FIRST_TOUCH | CONTINUATION | UNRESOLVED
 → EVALUATE_ENTRY_CONTRACT
 → BUILD_Q1_HANDOFF
@@ -66,10 +66,30 @@ For the entry test, once this file has been read, the expected emitted next step
 
 ```text
 CURRENT = 00_GSCC_ENTRY.md
-ACTION = REPORT_PROVIDER_CONTEXT
+ACTION = BUILD_OBSERVABLE_PACKET
 NEXT_STEP = R2_FIRST_TOUCH_CLASSIFICATION
 EXECUTE_NEXT_AUTOMATICALLY = FALSE
 ```
+
+## Observable extraction layer
+
+Before First Touch classification, the agent MUST build one normalized observable packet from:
+
+1. provider / agent facts exposed by the host;
+2. transport / connector facts exposed by the tool surface;
+3. repository facts returned by GitHub.
+
+Canonical extractor:
+
+`scripts/first_touch_agent_transport_extractor.py`
+
+Its output schema is:
+
+`gscc-first-touch-observable-packet/v1`
+
+Every expected field MUST be accounted for. A field not exposed by the runtime is recorded as `UNAVAILABLE`; it is never silently omitted or invented.
+
+The extractor grants no mutation authority.
 
 ## Required arrival report
 
