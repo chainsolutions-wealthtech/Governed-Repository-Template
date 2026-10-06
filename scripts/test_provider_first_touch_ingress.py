@@ -2,7 +2,14 @@
 from __future__ import annotations
 
 import copy
+import json
+import tempfile
 import unittest
+from pathlib import Path
+
+import first_touch_field_block_gate as fb
+import first_touch_connection_completeness as cp
+import first_touch_entry_contract as ec
 
 from provider_first_touch_ingress import (
     SCHEMA,
@@ -115,6 +122,25 @@ class ProviderFirstTouchIngressTests(unittest.TestCase):
         self.assertEqual(result["status"], "CAPTURE_ONLY_IDENTITY_UNRESOLVED")
         self.assertEqual(result["identity_strength"], "UNRESOLVED")
         self.assertFalse(result["mutation_authority_granted"])
+
+    def test_provider_capture_is_ready_for_canonical_q1_entry(self):
+        value = envelope()
+        capture = build_capture(value, observed_at="2026-10-06T05:30:00+00:00")
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            cap=root/"capture.json"
+            db=root/"capture.sqlite"
+            comp=root/"completeness.json"
+            cap.write_text(json.dumps(capture),encoding="utf-8")
+            fb.build_capture_database(cap,db,source_ref="provider-unit-test")
+            cp.build_packet(None,comp,capture_path=cap)
+            strength, anchor = ec.discover_identity(cap)
+            self.assertEqual(strength,"EXACT")
+            self.assertEqual(anchor,"provider_conversation_ref:provider-conversation-123")
+            result=ec.evaluate(comp,db,identity_strength=strength,identity_anchor=anchor,first_touch_seen=False)
+            self.assertEqual(result["status"],"ENTRY_READY_FOR_Q1",result)
+            self.assertEqual(result["classification"],"FIRST_TOUCH")
+            self.assertFalse(result["authority_granted"])
 
     def test_stable_identity_routes_to_canonical_gscc_q1_pipeline(self):
         value = envelope()
