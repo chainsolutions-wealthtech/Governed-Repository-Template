@@ -27,6 +27,7 @@ CONTROL_REQUEST_PREFIX = "/gscc-control "
 CONTROL_COMMAND_PREFIX = "/gscc-control-command "
 ADMISSION_REQUEST_PREFIX = "/gscc-admission "
 FUNCTION_EXPOSURE_REQUEST_PREFIX = "/gscc-function-exposure "
+CONTROLLED_GITHUB_APP_SLUGS = frozenset({"chatgpt-codex-connector"})
 
 
 def _nonempty(value: Any) -> Any:
@@ -80,6 +81,16 @@ def _issue_number(event: dict[str, Any]) -> int | None:
     issue = event.get("issue") or {}
     number = _nonempty(issue.get("number")) or _nonempty(event.get("number"))
     return int(number) if number is not None else None
+
+
+def _performed_via_github_app_slug(event: dict[str, Any]) -> str | None:
+    for key in ("comment", "issue", "pull_request", "review"):
+        item = event.get(key) or {}
+        app = item.get("performed_via_github_app") or {}
+        slug = _nonempty(app.get("slug"))
+        if slug:
+            return str(slug)
+    return None
 
 
 def _subject(
@@ -163,6 +174,14 @@ def build_github_arrival_facts(event: dict[str, Any], env: dict[str, str]) -> di
     run_attempt = _nonempty(env.get("GITHUB_RUN_ATTEMPT"))
     correlation = ":".join(str(x) for x in (run_id, run_attempt) if x is not None) or None
     installation = event.get("installation") or {}
+    app_slug = _performed_via_github_app_slug(event)
+    controlled_app = app_slug in CONTROLLED_GITHUB_APP_SLUGS
+    connection_method = (
+        f"gscc-controlled-github-app:{app_slug}"
+        if controlled_app
+        else "gscc-github-event-gateway"
+    )
+    surface_class = "CONTROLLED_INSTRUMENTABLE" if controlled_app else "GITHUB_EVENT_VISIBLE"
 
     return {
         "repository": repository,
@@ -175,8 +194,8 @@ def build_github_arrival_facts(event: dict[str, Any], env: dict[str, str]) -> di
         "provider": None,
         "connection_ref": f"gscc-observable:{repository}:{actor}:{subject}",
         "client_instance_id": f"github-observable:{repository}:{actor}",
-        "connection_method": "gscc-github-event-gateway",
-        "surface_class": "GITHUB_EVENT_VISIBLE",
+        "connection_method": connection_method,
+        "surface_class": surface_class,
         "branch": str(branch) if branch else None,
         "base_branch": str(base_branch) if base_branch else None,
         "observed_head": str(observed_head) if observed_head else None,
