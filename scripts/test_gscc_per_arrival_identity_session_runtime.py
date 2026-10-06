@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import sqlite3, tempfile
+from datetime import datetime, timedelta
 from pathlib import Path
 
 from provider_first_tool_hook import build_envelope
@@ -52,6 +53,9 @@ def issue_event(issue_id,number):
 
 def pass_q9(db,runtime):
     d=runtime["dispatch"]; cmd=d["command"]; p=cmd["payload"]
+    issued=datetime.fromisoformat(cmd["issued_at"].replace("Z","+00:00"))
+    ack_at=(issued+timedelta(seconds=5)).isoformat()
+    response_at=(issued+timedelta(seconds=10)).isoformat()
     ack={
       "event":"command_ack",
       "session_id":d["target_session_id"],
@@ -60,7 +64,7 @@ def pass_q9(db,runtime):
       "correlation_id":cmd["correlation_id"],
       "delivery_state":"ACKNOWLEDGED",
     }
-    a=control(db,runtime["runtime_id"],ack,"2026-10-07T01:00:10+00:00")
+    a=control(db,runtime["runtime_id"],ack,ack_at)
     assert a["state"]=="WAITING_Q9_RESPONSE",a
     resp={
       "event":"challenge_response",
@@ -72,7 +76,7 @@ def pass_q9(db,runtime):
       "nonce":p["nonce"],
       "challenge_status":"ACK",
     }
-    return control(db,runtime["runtime_id"],resp,"2026-10-07T01:00:20+00:00")
+    return control(db,runtime["runtime_id"],resp,response_at)
 
 def main():
     e1=mint(base_envelope(),issue_event(9001,301),run_id="r1")
