@@ -53,11 +53,19 @@ jobs:
           python3 scripts/first_touch_exhaustive_collector.py github-event \
             --output "${RUNNER_TEMP}/first-touch-capture.json"
 
+      - name: Materialize first-touch capture database
+        run: |
+          python3 .governance/control-plane-db/materialize.py \
+            --output "${RUNNER_TEMP}/first-touch-capture.sqlite" \
+            --first-touch-capture "${RUNNER_TEMP}/first-touch-capture.json"
+
       - name: Upload exhaustive first-touch evidence
         uses: actions/upload-artifact@v4
         with:
           name: first-touch-capture-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/first-touch-capture.json
+          path: |
+            ${{ runner.temp }}/first-touch-capture.json
+            ${{ runner.temp }}/first-touch-capture.sqlite
           if-no-files-found: error
           retention-days: 30
 

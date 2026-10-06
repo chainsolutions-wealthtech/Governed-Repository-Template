@@ -335,7 +335,159 @@ def insert_first_touch_probes(conn):
             )
 
 
-def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0, expected_probe_count=0):
+
+def _capture_value_type(value):
+    if value is None:
+        return "null"
+    if isinstance(value, bool):
+        return "boolean"
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return "number"
+    if isinstance(value, str):
+        return "string"
+    if isinstance(value, list):
+        return "array"
+    if isinstance(value, dict):
+        return "object"
+    raise TypeError(f"unsupported first-touch capture value type: {type(value).__name__}")
+
+
+def _capture_nodes(capture_id, root):
+    nodes = []
+
+    def walk(value, json_path="$", parent_path=None, key_name=None, array_index=None):
+        ordinal = len(nodes) + 1
+        terminal = not isinstance(value, (dict, list))
+        nodes.append({
+            "capture_id": capture_id,
+            "node_ordinal": ordinal,
+            "json_path": json_path,
+            "parent_path": parent_path,
+            "key_name": key_name,
+            "array_index": array_index,
+            "value_type": _capture_value_type(value),
+            "is_terminal": 1 if terminal else 0,
+            "value_json": jdump(value),
+        })
+        if isinstance(value, dict):
+            for key, child in value.items():
+                child_path = f"{json_path}.{key}" if json_path != "$" else f"$.{key}"
+                walk(child, child_path, json_path, str(key), None)
+        elif isinstance(value, list):
+            for index, child in enumerate(value):
+                walk(child, f"{json_path}[{index}]", json_path, None, index)
+
+    walk(root)
+    return nodes
+
+
+def insert_first_touch_captures(conn, capture_paths):
+    inserted = 0
+    for path in capture_paths:
+        path = Path(path)
+        raw = path.read_text(encoding="utf-8")
+        capture = json.loads(raw)
+        if not isinstance(capture, dict):
+            raise SystemExit(f"CONTROL_PLANE_DB_FAILED: first-touch capture must be an object: {path}")
+        capture_id = capture.get("capture_id")
+        schema_id = capture.get("schema")
+        if not capture_id or schema_id != "first-touch-exhaustive-capture/v1":
+            raise SystemExit(
+                f"CONTROL_PLANE_DB_FAILED: invalid first-touch capture identity/schema: {path}"
+            )
+
+        nodes = _capture_nodes(str(capture_id), capture)
+        terminal_count = sum(node["is_terminal"] for node in nodes)
+        api_attempts = capture.get("api_attempts") or []
+        if not isinstance(api_attempts, list):
+            raise SystemExit(f"CONTROL_PLANE_DB_FAILED: api_attempts must be a list: {path}")
+
+        conn.execute(
+            "INSERT INTO first_touch_capture_records("
+            "capture_id,schema_id,observed_at,repository,actor,capture_digest,source_path,"
+            "raw_json,raw_json_sha256,path_count,terminal_value_count,api_attempt_count,"
+            "mutation_authority_granted,interpretation_applied"
+            ") VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            (
+                str(capture_id),
+                str(schema_id),
+                capture.get("observed_at"),
+                capture.get("repository"),
+                capture.get("actor"),
+                capture.get("capture_digest"),
+                str(path),
+                raw,
+                hashlib.sha256(raw.encode("utf-8")).hexdigest(),
+                len(nodes),
+                terminal_count,
+                len(api_attempts),
+                int(bool(capture.get("mutation_authority_granted"))),
+                int(bool(capture.get("interpretation_applied"))),
+            ),
+        )
+
+        for node in nodes:
+            conn.execute(
+                "INSERT INTO first_touch_capture_nodes("
+                "capture_id,node_ordinal,json_path,parent_path,key_name,array_index,"
+                "value_type,is_terminal,value_json"
+                ") VALUES(?,?,?,?,?,?,?,?,?)",
+                (
+                    node["capture_id"],
+                    node["node_ordinal"],
+                    node["json_path"],
+                    node["parent_path"],
+                    node["key_name"],
+                    node["array_index"],
+                    node["value_type"],
+                    node["is_terminal"],
+                    node["value_json"],
+                ),
+            )
+
+        for ordinal, attempt in enumerate(api_attempts, start=1):
+            if not isinstance(attempt, dict):
+                raise SystemExit(
+                    f"CONTROL_PLANE_DB_FAILED: first-touch api attempt must be an object: {path} #{ordinal}"
+                )
+            conn.execute(
+                "INSERT INTO first_touch_capture_api_attempts("
+                "capture_id,attempt_ordinal,name,url,http_status,response_json"
+                ") VALUES(?,?,?,?,?,?)",
+                (
+                    str(capture_id),
+                    ordinal,
+                    attempt.get("name"),
+                    attempt.get("url"),
+                    attempt.get("http_status"),
+                    jdump(attempt.get("response")),
+                ),
+            )
+
+        stored_nodes = conn.execute(
+            "SELECT COUNT(*) FROM first_touch_capture_nodes WHERE capture_id=?",
+            (str(capture_id),),
+        ).fetchone()[0]
+        stored_terminal = conn.execute(
+            "SELECT COUNT(*) FROM first_touch_capture_nodes "
+            "WHERE capture_id=? AND is_terminal=1",
+            (str(capture_id),),
+        ).fetchone()[0]
+        stored_attempts = conn.execute(
+            "SELECT COUNT(*) FROM first_touch_capture_api_attempts WHERE capture_id=?",
+            (str(capture_id),),
+        ).fetchone()[0]
+        if (stored_nodes, stored_terminal, stored_attempts) != (
+            len(nodes), terminal_count, len(api_attempts)
+        ):
+            raise SystemExit(
+                "CONTROL_PLANE_DB_FAILED: first-touch capture preservation mismatch: "
+                f"{capture_id}"
+            )
+        inserted += 1
+    return inserted
+
+def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0, expected_probe_count=0, expected_capture_count=0):
     conn.execute("PRAGMA foreign_key_check")
     fk = conn.fetchall() if False else []
     if conn.execute("PRAGMA foreign_key_check").fetchall():
@@ -543,19 +695,35 @@ def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0,
     print(f"current_phase={active[0][0]}")
     print(f"server_inventory_slots={facts_count}")
     print(f"server_identity_secret_facts={identity_secret_count}")
+    capture_count = conn.execute("SELECT COUNT(*) FROM first_touch_capture_records").fetchone()[0]
+    if capture_count != expected_capture_count:
+        raise SystemExit(
+            f"CONTROL_PLANE_DB_FAILED: first-touch capture count mismatch: {capture_count} != {expected_capture_count}"
+        )
     print(f"first_touch_probes={probe_count}")
+    print(f"first_touch_captures={capture_count}")
 
-def build(path: Path, inventory_path: Path | None = None, identity_secret_path: Path | None = None):
+def build(path: Path, inventory_path: Path | None = None, identity_secret_path: Path | None = None, capture_paths=None):
     catalog = json.loads((DB_ROOT/"catalog.json").read_text(encoding="utf-8"))
     seed = json.loads((DB_ROOT/"runtime-seed.json").read_text(encoding="utf-8"))
     replay = json.loads((ROOT/".governance"/"control-plane-state"/"case1-replay.json").read_text(encoding="utf-8"))
     inventory = json.loads((inventory_path or ROOT/".governance/control-plane-state/server-inventory-facts.json").read_text(encoding="utf-8"))
     identity_secret = json.loads((identity_secret_path or ROOT/".governance/control-plane-state/server-identity-secret-facts.json").read_text(encoding="utf-8"))
+    default_capture_root = ROOT / ".governance" / "control-plane-state" / "first-touch-captures"
+    discovered_capture_paths = sorted(default_capture_root.glob("*.json")) if default_capture_root.exists() else []
+    capture_paths = [Path(p) for p in (capture_paths or [])]
+    combined_capture_paths = []
+    seen_capture_paths = set()
+    for capture_path in [*discovered_capture_paths, *capture_paths]:
+        resolved = str(Path(capture_path).resolve())
+        if resolved not in seen_capture_paths:
+            combined_capture_paths.append(Path(capture_path))
+            seen_capture_paths.add(resolved)
     conn = sqlite3.connect(path)
     try:
         for migration in sorted(DB_ROOT.glob("[0-9][0-9][0-9]_*.sql")):
             conn.executescript(migration.read_text(encoding="utf-8"))
-        conn.execute("INSERT INTO schema_meta(key,value) VALUES('schema_version','1.5.0')")
+        conn.execute("INSERT INTO schema_meta(key,value) VALUES('schema_version','1.6.0')")
         insert_case_data(conn,catalog)
         insert_replay(conn,replay)
         insert_questions_activities(conn,catalog)
@@ -563,25 +731,27 @@ def build(path: Path, inventory_path: Path | None = None, identity_secret_path: 
         insert_server_inventory(conn,inventory)
         insert_server_identity_secret_facts(conn,identity_secret)
         insert_first_touch_probes(conn)
+        capture_count = insert_first_touch_captures(conn, combined_capture_paths)
         conn.commit()
         probe_count = len(list((ROOT / "docs" / "control-plane" / "probes").glob("*.md"))) if (ROOT / "docs" / "control-plane" / "probes").exists() else 0
-        validate(conn, len(inventory["facts"]), len(identity_secret["facts"]), probe_count)
+        validate(conn, len(inventory["facts"]), len(identity_secret["facts"]), probe_count, capture_count)
     finally:
         conn.close()
 
 def main():
     parser=argparse.ArgumentParser()
     parser.add_argument("--output")
+    parser.add_argument("--first-touch-capture", action="append", default=[])
     args=parser.parse_args()
     if args.output:
         path=Path(args.output).resolve()
         path.parent.mkdir(parents=True,exist_ok=True)
         if path.exists(): path.unlink()
-        build(path)
+        build(path, capture_paths=args.first_touch_capture)
         print(f"database={path}")
     else:
         with tempfile.TemporaryDirectory(prefix="control-plane-db-") as tmp:
-            build(Path(tmp)/"control-plane.sqlite")
+            build(Path(tmp)/"control-plane.sqlite", capture_paths=args.first_touch_capture)
 
 if __name__=="__main__":
     main()
