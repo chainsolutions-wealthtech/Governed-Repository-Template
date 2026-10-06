@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 495,
+  "revision": 496,
   "items": [
     {
       "beacon_id": "GACR-B-6e9a2275ea04",
@@ -43411,6 +43411,94 @@
       },
       "context_digest": "1901aac1b557da768486b3a11d77897c80fb7123ceeec8a07ada886fec3560ec",
       "dedupe_key": "fc4fbc19eedeab4b50252a25dcd05fc309072455a0a8c490eb7b326eea65ac14"
+    },
+    {
+      "beacon_id": "GACR-B-e450fc035134",
+      "observed_at": "2026-10-06T03:48:37+00:00",
+      "source": "CLIENT_EMITTER",
+      "event_type": "AUTO_ATTACH",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "session_id": "session-2ea5650b0fe4518ef20bae74",
+      "provider": "other",
+      "provider_conversation_ref": null,
+      "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:chatgpt-codex-connector[bot]",
+      "connection_ref": "gscc-observable:chainsolutions-wealthtech/Governed-Repository-Template:chatgpt-codex-connector[bot]:ref:governance/first-touch-field-block-gate-db",
+      "connection_fingerprint": "GACR-FP1-16565e60c0b085bd72b59230e49ae54e8cb0d0268429ee52516a557d70994fe4",
+      "claim_id": null,
+      "connection_envelope_digest": "fa7c0520aac9b63d657f79943c7416738d273f90b0714c19c7ca266a1199c1e2",
+      "surface_class": "GITHUB_EVENT_VISIBLE",
+      "presence_event": "PRESENCE_RESUME",
+      "agent_identity": "chatgpt-codex-connector[bot]",
+      "agent_role": null,
+      "capabilities": [
+        "GACR_AUTO_ATTACH",
+        "GACR_PRESENCE_FIRST"
+      ],
+      "task_id": null,
+      "branch": "governance/first-touch-field-block-gate-db",
+      "pull_request": 198,
+      "observed_head_sha": "f562dbde9da241286d8c0762e09929c8ecfac3cd",
+      "action_id": null,
+      "action_label": null,
+      "action_phase": null,
+      "tool_name": null,
+      "tool_call_id": null,
+      "outcome": null,
+      "written_head_sha": null,
+      "checkpoint_ref": null,
+      "evidence_ref": "github-event:pull_request_review_comment:37410683950:1",
+      "interruption_code": null,
+      "github_actor": "github-actions[bot]",
+      "github_installation_id": null,
+      "github_workflow": "Governed Agent Continuity Relay",
+      "github_run_id": "37410714246",
+      "github_run_attempt": "1",
+      "github_job": "relay",
+      "github": {
+        "environment": {
+          "GITHUB_REPOSITORY": "chainsolutions-wealthtech/Governed-Repository-Template",
+          "GITHUB_REPOSITORY_ID": "1386478935",
+          "GITHUB_REPOSITORY_OWNER": "chainsolutions-wealthtech",
+          "GITHUB_REPOSITORY_OWNER_ID": "299685687",
+          "GITHUB_ACTOR": "github-actions[bot]",
+          "GITHUB_ACTOR_ID": "41898282",
+          "GITHUB_TRIGGERING_ACTOR": "github-actions[bot]",
+          "GITHUB_EVENT_NAME": "repository_dispatch",
+          "GITHUB_REF": "refs/heads/main",
+          "GITHUB_REF_NAME": "main",
+          "GITHUB_REF_TYPE": "branch",
+          "GITHUB_SHA": "29dfb05e45d518be19f1c27c3b625d85e2c5b056",
+          "GITHUB_WORKFLOW": "Governed Agent Continuity Relay",
+          "GITHUB_WORKFLOW_REF": "chainsolutions-wealthtech/Governed-Repository-Template/.github/workflows/governed-agent-continuity-relay.yml@refs/heads/main",
+          "GITHUB_RUN_ID": "37410714246",
+          "GITHUB_RUN_NUMBER": "938",
+          "GITHUB_RUN_ATTEMPT": "1",
+          "GITHUB_JOB": "relay",
+          "GITHUB_ACTION": "relay",
+          "GITHUB_SERVER_URL": "https://github.com",
+          "GITHUB_API_URL": "https://api.github.com",
+          "GITHUB_GRAPHQL_URL": "https://api.github.com/graphql"
+        },
+        "event": {
+          "sender": {
+            "login": "github-actions[bot]",
+            "id": 41898282,
+            "type": "Bot"
+          },
+          "installation_id": null,
+          "repository": {
+            "id": 1386478935,
+            "full_name": "chainsolutions-wealthtech/Governed-Repository-Template",
+            "owner_login": "chainsolutions-wealthtech",
+            "owner_id": 299685687,
+            "default_branch": "main"
+          },
+          "pull_request": null,
+          "issue_number": null
+        }
+      },
+      "context_digest": "2d273d49f9f9bb44831e06d50a996af5e12cdcc55476d9a3adb786a1d3634673",
+      "dedupe_key": "4129977ac74bf3cfd6a15cf65e76ec4b4d84920c851a80b5a82d610439f6246b"
     }
   ]
 }
