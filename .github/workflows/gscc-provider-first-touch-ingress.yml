@@ -18,6 +18,10 @@ on:
       - "scripts/provider_first_touch_evidence.py"
       - "scripts/first_touch_entry_contract.py"
       - "scripts/first_touch_state_artifact.py"
+      - "scripts/first_touch_agent_transport_extractor.py"
+      - "scripts/gscc_persisted_entry_pipeline.py"
+      - ".governance/control-plane-db/008_gscc_observable_entry_pipeline.sql"
+      - ".governance/control-plane-db/009_gscc_post_q1_gate_route.sql"
       - "scripts/first_touch_connection_completeness.py"
       - "scripts/first_touch_field_block_gate.py"
       - "scripts/gscc/first_touch_handoff.py"
@@ -73,20 +77,8 @@ jobs:
           if [ "${GITHUB_EVENT_NAME}" = "repository_dispatch" ]; then
             printf '%s' "$PROVIDER_ENVELOPE" > "$RUNNER_TEMP/provider-first-touch-envelope.json"
           else
-            python3 - <<'PY'
-          import json, os
-          from pathlib import Path
-          raw=(os.environ.get("ISSUE_BODY") or "").strip()
-          prefix="/gscc-first-touch"
-          if not raw.startswith(prefix):
-              raise SystemExit("GSCC_FIRST_TOUCH_ISSUE_INVALID: body must start with /gscc-first-touch")
-          payload=json.loads(raw[len(prefix):].strip())
-          if not isinstance(payload,dict):
-              raise SystemExit("GSCC_FIRST_TOUCH_ISSUE_INVALID: JSON object required")
-          Path(os.environ["RUNNER_TEMP"]).joinpath("provider-first-touch-envelope.json").write_text(
-              json.dumps(payload,ensure_ascii=False,sort_keys=True),encoding="utf-8"
-          )
-          PY
+            printf '%s' "$ISSUE_BODY" > "$RUNNER_TEMP/gscc-first-touch-issue-body.txt"
+            python3 -c 'import json,os,pathlib; raw=pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("gscc-first-touch-issue-body.txt").read_text(encoding="utf-8").strip(); prefix="/gscc-first-touch"; assert raw.startswith(prefix), "body must start with /gscc-first-touch"; payload=json.loads(raw[len(prefix):].strip()); assert isinstance(payload,dict), "JSON object required"; pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("provider-first-touch-envelope.json").write_text(json.dumps(payload,ensure_ascii=False,sort_keys=True),encoding="utf-8")'
           fi
 
       - name: Enrich minimal provider signal from repository-observable GitHub state
