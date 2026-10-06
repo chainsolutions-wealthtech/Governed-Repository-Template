@@ -1181,3 +1181,13 @@ These observations are durable supervision evidence, not new mutation authority 
 - Enriched observations are projected into canonical First Touch evidence before B00–B30 materialization.
 - Missing provider conversation/session/connection identity remains explicit and blocks Q1 rather than being inferred.
 - Added deterministic regression coverage for minimal signal → repository enrichment → canonical evidence.
+
+
+## 2026-10-06 — Governed GitHub read wrapper
+
+- Added `scripts/governed_github_read_connector.py`.
+- `get_repo()` and `fetch_file()` now have a repository-controlled integration path that emits `gscc_provider_first_touch` before the first governed GitHub read.
+- Connector-session idempotence prevents a second First Touch on subsequent reads.
+- Optional state-file persistence preserves the first-touch marker across wrapper process restarts.
+- Unresolved provider identity still captures once and remains blocked at the canonical identity gate.
+- This does not patch the proprietary ChatGPT `@GitHub` connector; hosts/custom connectors must route through the governed wrapper to obtain automatic First Touch.
