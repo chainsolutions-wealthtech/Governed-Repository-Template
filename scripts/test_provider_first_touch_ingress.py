@@ -7,7 +7,7 @@ import unittest
 from provider_first_touch_ingress import (
     SCHEMA,
     build_capture,
-    emit_if_identifiable,
+    classify_identity,
     validate_envelope,
 )
 
@@ -111,25 +111,23 @@ class ProviderFirstTouchIngressTests(unittest.TestCase):
             "conversation_ref": "UNAVAILABLE",
             "session_ref": "UNAVAILABLE",
         }
-        result = emit_if_identifiable(value)
+        result = classify_identity(value)
         self.assertEqual(result["status"], "CAPTURE_ONLY_IDENTITY_UNRESOLVED")
         self.assertEqual(result["identity_strength"], "UNRESOLVED")
         self.assertFalse(result["mutation_authority_granted"])
 
-    def test_stable_identity_routes_through_existing_controlled_arrival(self):
+    def test_stable_identity_routes_to_canonical_gscc_q1_pipeline(self):
         value = envelope()
-        calls = []
-
-        def request_fn(method, url, token, body=None):
-            calls.append((method, url, token, body))
-            return 204, b""
-
-        result = emit_if_identifiable(value, token="test-token", request_fn=request_fn)
-        self.assertEqual(result["status"], "GSCC_ARRIVAL_DISPATCHED")
+        capture = build_capture(value, observed_at="2026-10-06T05:30:00+00:00")
+        result = classify_identity(value)
+        self.assertEqual(result["status"], "READY_FOR_GSCC_Q1_PIPELINE")
         self.assertEqual(result["identity_strength"], "EXACT")
         self.assertEqual(result["identity_source"], "conversation_ref")
         self.assertFalse(result["mutation_authority_granted"])
-        self.assertTrue(calls)
+        self.assertEqual(capture["safe_ingress"]["status"], "VALID")
+        self.assertEqual(capture["safe_ingress"]["ingress_type"], "FIRST_TOUCH")
+        self.assertTrue(capture["safe_ingress"]["connection_ref"].startswith("provider-first-touch:chatgpt:conversation_ref:"))
+        self.assertEqual(capture["safe_ingress"]["provider_conversation_ref"], "provider-conversation-123")
 
 
 if __name__ == "__main__":
