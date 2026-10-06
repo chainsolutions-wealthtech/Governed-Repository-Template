@@ -227,6 +227,38 @@ class GSCCTests(unittest.TestCase):
         self.assertIn("TOOL_STARTED", serialized)
         self.assertIn("TOOL_COMPLETED", serialized)
 
+
+    def test_before_tool_call_runs_before_exposure_and_tool_started(self):
+        transport = InMemoryTransport()
+        endpoint = SessionEndpoint(transport, source=SRC, target=TARGET, scope=SCOPE)
+        order = []
+
+        def before(tool_name):
+            order.append(("before", tool_name))
+            return {"status": "FIRST_TOUCH_EMITTED"}
+
+        def guard(tool_name):
+            order.append(("guard", tool_name))
+            return {"status": "VALIDATED", "exposable": True, "exposure_receipt": "receipt-1"}
+
+        wrapped = instrument_tool(
+            endpoint,
+            "GitHub.get_repo",
+            lambda: order.append(("call", "GitHub.get_repo")) or {"ok": True},
+            before_tool_call=before,
+            exposure_guard=guard,
+        )
+        result = wrapped()
+        self.assertEqual(result, {"ok": True})
+        self.assertEqual(order, [
+            ("before", "GitHub.get_repo"),
+            ("guard", "GitHub.get_repo"),
+            ("call", "GitHub.get_repo"),
+        ])
+        types = [m.type for m in transport.sent]
+        self.assertIn("TOOL_STARTED", types)
+        self.assertIn("TOOL_COMPLETED", types)
+
     def test_unknown_capability_rejected(self):
         transport = InMemoryTransport()
         with self.assertRaises(UnsupportedMessageError):
