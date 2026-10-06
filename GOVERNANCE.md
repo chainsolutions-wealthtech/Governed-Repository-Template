@@ -1,5 +1,16 @@
 # GOVERNANCE — Contrat supérieur du dépôt
 
+> **PRE-ENTRY ABSOLUE**
+>
+> `00_GSCC_ENTRY.md` is the first repository authority for every arriving agent or API-driven tool surface.
+> This file is not an alternative entry point. It becomes applicable only after the pre-entry path has authorized continuation.
+>
+> Before any mutation or normal governed work:
+>
+> ```text
+> ARRIVAL → 00_GSCC_ENTRY.md → explicit next authority
+> ```
+
 > Dépôt : `{{REPOSITORY}}`  
 > Projet : `{{PROJECT_NAME}}`  
 > Propriétaire : `{{OWNER}}`
