@@ -122,6 +122,39 @@ EXACT_IDENTITY
 
 Missing provider-native facts are represented explicitly, for example as `UNAVAILABLE`; they are never reconstructed from unrelated GitHub metadata.
 
+### How to use the project
+
+The framework is used by starting from the **goal**, not by jumping directly to a script or mutation.
+
+| You want to... | Governed route | Typical outcome |
+| --- | --- | --- |
+| Create a new project | `CREATE_NEW_REPOSITORY` | New governed repository with an established baseline |
+| Bring an existing repository under governance | `ADOPT_EXISTING_REPOSITORY` | Additive governance without replacing existing project history |
+| Understand an existing codebase before changing it | `MAP_EXISTING_PROJECT` | Current-state map, target architecture and evidence package |
+| Experiment or evolve safely | `LAB_EVOLUTION` | Isolated branch/PR with governed evidence and validation |
+| Resume work already in progress | `CONTINUE_GOVERNED_WORK` | Recovery of the canonical checkpoint, task and next action |
+| Let another agent continue after interruption | GACR continuation | Correlated durable session, checkpoint and handoff |
+| Supply new information without authorizing code changes | Information intake | Persisted evidence, contradiction handling and routing |
+| Prepare server/domain/database/MCP work | Governed infrastructure intent | Observed capabilities, plan, authority gates and execution package |
+| Coordinate several agents | Multi-agent coordination | Claims, exact-HEAD checks, collision prevention and handoffs |
+| Recover after a failed run or stale state | Governed recovery | Reobservation, diagnosis, preserved evidence and safe continuation |
+
+The normal usage pattern is:
+
+```mermaid
+flowchart LR
+    A["State the goal"] --> B["Governed arrival"]
+    B --> C["Resolve entry route"]
+    C --> D["Observe facts and evidence"]
+    D --> E["Resolve authority"]
+    E --> F["Prepare / plan"]
+    F --> G["Execute only if authorized"]
+    G --> H["Validate"]
+    H --> I["Persist checkpoint / handoff"]
+```
+
+For detailed instructions and full use cases, see **[How to use the framework and use-case catalogue](docs/PROJECT_OVERVIEW.md#17-how-to-use-the-framework)**.
+
 ### Detailed public architecture
 
 For the full explanation, diagrams, hierarchy, end-to-end arrival example, persistence model, execution lifecycle, source-of-truth hierarchy and repository map, read:
