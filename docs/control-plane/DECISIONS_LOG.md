@@ -494,3 +494,13 @@ Append-only durable decisions for the source/control-plane repository.
 - PR #177 implements and tests this rule. Post-merge downstream run `37386713402` proves the reconciled `repository_dispatch:gacr_auto-attach` path succeeds.
 - This decision grants no new execution, mutation, claim-transfer or takeover authority and does not advance P12-S6.
 
+
+
+### CPD-066 — Provider First Touch uses minimal signal and repository-owned enrichment
+
+- Date: 2026-10-06.
+- Decision: the provider/host emits only the minimum First Touch signal it alone can know or observe. The governed repository is authoritative for read-only enrichment of GitHub repository state before First Touch normalization.
+- Repository-observable facts such as repository metadata, default branch, current HEAD, commit/tree metadata and Actions state are collected by the repository-side workflow and projected into the existing canonical field registry with explicit provenance.
+- Provider-only identity/runtime/session facts remain provider-sourced or explicit `UNAVAILABLE`; the repository must never infer a conversation identity from GitHub actor + repository alone.
+- Missing stable provider identity does not suppress capture. It yields an enriched `UNRESOLVED` capture and blocks Q1 until identity becomes strong/exact.
+- Workflow-token permissions are evidence only for the workflow credential and must not be misrepresented as private scopes of the originating ChatGPT/GitHub connector.

@@ -58,15 +58,36 @@ class ProviderFirstToolHookTests(unittest.TestCase):
         hook.maybe_emit_first_touch(two,token="test",dispatch_fn=dispatch)
         self.assertEqual(len(calls),2)
 
-    def test_missing_stable_identity_fails_closed(self):
+    def test_missing_stable_identity_still_emits_capture_signal(self):
         value=event()
         value["identity"]={
             "conversation_ref":"UNAVAILABLE",
             "session_ref":"UNAVAILABLE",
             "connection_ref":"UNAVAILABLE",
         }
-        with self.assertRaisesRegex(ValueError,"stable identity required"):
-            build_envelope(value)
+        value["first_tool_call"]=True
+        calls=[]
+        def dispatch(repository,envelope,token):
+            calls.append(envelope)
+            return 204
+        hook=FirstToolHook({})
+        result=hook.maybe_emit_first_touch(value,token="test",dispatch_fn=dispatch)
+        self.assertEqual(result["status"],"FIRST_TOUCH_EMITTED")
+        self.assertEqual(result["marker"],"UNRESOLVED")
+        self.assertEqual(result["envelope"]["identity_status"],"UNRESOLVED")
+        self.assertEqual(len(calls),1)
+
+    def test_non_first_tool_call_does_not_emit(self):
+        value=event()
+        value["first_tool_call"]=False
+        calls=[]
+        def dispatch(repository,envelope,token):
+            calls.append(envelope)
+            return 204
+        hook=FirstToolHook({})
+        result=hook.maybe_emit_first_touch(value,token="test",dispatch_fn=dispatch)
+        self.assertEqual(result["status"],"NOT_FIRST_TOOL_CALL")
+        self.assertEqual(calls,[])
 
 if __name__=="__main__":
     unittest.main()

@@ -109,3 +109,38 @@ FIRST_GITHUB_TOOL_CALL
 The host-local marker is only an emission optimization. Canonical First Touch uniqueness remains owned by the GSCC First Touch store. Repeated provider dispatches for the same strong/exact identity must classify as continuation rather than create a second First Touch.
 
 If no stable conversation/session/connection reference is available, the hook fails closed and must not fabricate one from GitHub actor + repository alone.
+
+
+## Minimal provider signal / repository-owned enrichment
+
+The provider is not required to reproduce GitHub repository state that the governed repository can observe itself.
+
+Minimum provider signal:
+
+```text
+schema
+provider
+transport
+repository
+identity.{conversation_ref|session_ref|connection_ref} when genuinely exposed
+first tool metadata when exposed
+observed_at when exposed
+explicit UNAVAILABLE markers for provider-only identifiers not exposed
+```
+
+After `gscc_provider_first_touch`, the repository enriches the signal using read-only GitHub APIs before exhaustive capture. The enrichment currently observes repository/owner metadata, effective repository permissions visible to the workflow credential, default branch, current branch HEAD, commit/tree facts and Actions workflow/run state. These observations are projected into the existing canonical First Touch field registry with repository-side provenance.
+
+The repository must not treat workflow-token permissions as proof of the original provider connector's private scopes. Provider-only facts remain provider-sourced or `UNAVAILABLE`.
+
+A missing stable provider conversation/session/connection reference no longer prevents evidence capture. It produces a fully enriched capture with `UNRESOLVED` identity and blocks Q1 until a strong/exact identity can be established. No identity may be fabricated from GitHub actor + repository alone.
+
+Canonical boundary:
+
+```text
+MINIMAL PROVIDER SIGNAL
+→ REPOSITORY READ-ONLY ENRICHMENT
+→ FULL OBSERVABILITY EVIDENCE
+→ B00–B30 / SQLite
+→ identity gate
+→ Q1 only when identity is sufficient
+```

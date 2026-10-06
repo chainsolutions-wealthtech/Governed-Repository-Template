@@ -7,6 +7,7 @@ on:
   pull_request:
     paths:
       - "scripts/provider_first_touch_ingress.py"
+      - "scripts/provider_first_touch_repository_enrichment.py"
       - "scripts/provider_first_tool_hook.py"
       - "scripts/provider_first_touch_evidence.py"
       - "scripts/first_touch_entry_contract.py"
@@ -15,6 +16,7 @@ on:
       - "scripts/first_touch_field_block_gate.py"
       - "scripts/gscc/first_touch_handoff.py"
       - "scripts/test_provider_first_touch_ingress.py"
+      - "scripts/test_provider_first_touch_repository_enrichment.py"
       - "scripts/test_provider_first_tool_hook.py"
       - ".github/workflows/gscc-provider-first-touch-ingress.yml"
 
@@ -33,9 +35,9 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python3 -m py_compile scripts/provider_first_touch_ingress.py scripts/provider_first_touch_evidence.py scripts/provider_first_tool_hook.py scripts/first_touch_entry_contract.py scripts/first_touch_state_artifact.py scripts/gscc/first_touch_handoff.py scripts/test_provider_first_touch_ingress.py scripts/test_provider_first_tool_hook.py
-      - name: Test provider first-touch sidecar and host hook
-        run: PYTHONPATH=scripts python3 -m unittest scripts/test_provider_first_touch_ingress.py scripts/test_provider_first_tool_hook.py
+        run: python3 -m py_compile scripts/provider_first_touch_ingress.py scripts/provider_first_touch_repository_enrichment.py scripts/provider_first_touch_evidence.py scripts/provider_first_tool_hook.py scripts/first_touch_entry_contract.py scripts/first_touch_state_artifact.py scripts/gscc/first_touch_handoff.py scripts/test_provider_first_touch_ingress.py scripts/test_provider_first_tool_hook.py scripts/test_provider_first_touch_repository_enrichment.py
+      - name: Test provider first-touch sidecar, repository enrichment and host hook
+        run: PYTHONPATH=scripts python3 -m unittest scripts/test_provider_first_touch_ingress.py scripts/test_provider_first_touch_repository_enrichment.py scripts/test_provider_first_tool_hook.py
 
   ingest:
     if: ${{ github.event_name == 'repository_dispatch' }}
@@ -59,9 +61,19 @@ jobs:
           set -euo pipefail
           printf '%s' "$PROVIDER_ENVELOPE" > "$RUNNER_TEMP/provider-first-touch-envelope.json"
 
+      - name: Enrich minimal provider signal from repository-observable GitHub state
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/provider_first_touch_repository_enrichment.py \
+            --input "$RUNNER_TEMP/provider-first-touch-envelope.json" \
+            --output "$RUNNER_TEMP/provider-first-touch-enriched-envelope.json"
+
       - name: Capture provider First Touch
         run: |
-          python3 scripts/provider_first_touch_ingress.py             --envelope "$RUNNER_TEMP/provider-first-touch-envelope.json"             --capture-output "$RUNNER_TEMP/provider-first-touch-capture.json"
+          python3 scripts/provider_first_touch_ingress.py \
+            --envelope "$RUNNER_TEMP/provider-first-touch-enriched-envelope.json" \
+            --capture-output "$RUNNER_TEMP/provider-first-touch-capture.json"
 
       - name: Restore previous GSCC GSE First Touch state
         env:
@@ -116,6 +128,7 @@ jobs:
           name: provider-first-touch-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             ${{ runner.temp }}/provider-first-touch-envelope.json
+            ${{ runner.temp }}/provider-first-touch-enriched-envelope.json
             ${{ runner.temp }}/provider-first-touch-capture.json
             ${{ runner.temp }}/provider-first-touch-capture.sqlite
             ${{ runner.temp }}/provider-first-touch-completeness.json

@@ -1172,3 +1172,12 @@ These observations are durable supervision evidence, not new mutation authority 
 - GACR Step 13B remains `NEXT_AUTHORIZED / NOT_EXECUTED`; ultimate live acceptance remains `NOT_PASSED`.
 - Global P12-S6 remains untouched.
 
+
+
+## 2026-10-06 — Provider First Touch minimal-signal repository enrichment
+
+- Added repository-side read-only enrichment before Provider First Touch capture.
+- Provider signal no longer needs to duplicate repository/branch/commit/Actions state available to GitHub Actions.
+- Enriched observations are projected into canonical First Touch evidence before B00–B30 materialization.
+- Missing provider conversation/session/connection identity remains explicit and blocks Q1 rather than being inferred.
+- Added deterministic regression coverage for minimal signal → repository enrichment → canonical evidence.
