@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 340,
+  "revision": 341,
   "sessions": [
     {
       "session_id": "session-68c97d4bb1ef71c86444de12",
@@ -13046,10 +13046,10 @@
       "connection_intent_provenance": "DEFAULT_UNKNOWN",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "53fb0c4de8cca26ff40278ffbc5a08c21fe830d1",
-      "last_observed_head_sha": "53fb0c4de8cca26ff40278ffbc5a08c21fe830d1",
+      "last_observed_head_sha": "dca575c5c271d98e63c72074619f4786a12209e4",
       "status": "ACTIVE",
       "created_at": "2026-10-06T00:02:00+00:00",
-      "last_seen_at": "2026-10-06T00:02:14+00:00",
+      "last_seen_at": "2026-10-06T00:02:26+00:00",
       "client_instance_id": "github-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations",
       "agent_role": null,
       "capabilities": [
@@ -13063,8 +13063,8 @@
       "relay": {
         "process": "GACR",
         "state": "ACTIVE",
-        "last_heartbeat_at": "2026-10-06T00:02:14+00:00",
-        "lease_expires_at": "2026-10-06T00:32:14+00:00",
+        "last_heartbeat_at": "2026-10-06T00:02:26+00:00",
+        "lease_expires_at": "2026-10-06T00:32:26+00:00",
         "last_action": "RESUME",
         "task_id": null,
         "branch": "governance/gacr-chatgpt-controlled-first-touch",
@@ -13092,7 +13092,7 @@
         "schema": "gacr-connection-envelope/v1",
         "surface_class": "GITHUB_EVENT_VISIBLE",
         "presence_event": "PRESENCE_RESUME",
-        "observed_at": "2026-10-06T00:02:14+00:00",
+        "observed_at": "2026-10-06T00:02:26+00:00",
         "fields": {
           "gacr_session_id": {
             "value": "session-f36bc5c458def477676b2a02",
@@ -13198,7 +13198,7 @@
             "source": "REPOSITORY_SURFACE"
           },
           "HEAD": {
-            "value": "53fb0c4de8cca26ff40278ffbc5a08c21fe830d1",
+            "value": "dca575c5c271d98e63c72074619f4786a12209e4",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "REPOSITORY_SURFACE"
           },
@@ -13208,7 +13208,7 @@
             "source": "REPOSITORY_SURFACE"
           },
           "workflow_run_id": {
-            "value": "37391768100",
+            "value": "37391789160",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "GITHUB_EVENT"
           },
@@ -13223,12 +13223,12 @@
             "source": "GITHUB_EVENT"
           },
           "event_type": {
-            "value": "GSCC_OBSERVABLE_CREATE",
+            "value": "GSCC_OBSERVABLE_PUSH",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "REPOSITORY_SURFACE"
           },
           "delivery_or_correlation_id": {
-            "value": "37391768100:1",
+            "value": "37391789160:1",
             "provenance": "OBSERVABLE_BY_PLATFORM",
             "source": "CONTROLLED_SURFACE"
           },
@@ -13238,7 +13238,7 @@
             "source": "GACR_SESSION"
           },
           "last_seen_at": {
-            "value": "2026-10-06T00:02:14+00:00",
+            "value": "2026-10-06T00:02:26+00:00",
             "provenance": "CORRELATED",
             "source": "GACR_SESSION"
           },
@@ -13248,7 +13248,7 @@
             "source": "CLIENT_OR_ADAPTER"
           },
           "lease_expires_at": {
-            "value": "2026-10-06T00:32:14+00:00",
+            "value": "2026-10-06T00:32:26+00:00",
             "provenance": "CORRELATED",
             "source": "GACR_WATCH"
           },
@@ -13273,7 +13273,7 @@
             "source": "CLIENT_OR_GACR_SESSION"
           },
           "last_evidence": {
-            "value": "github-event:create:37391768100:1",
+            "value": "github-event:push:37391789160:1",
             "provenance": "DECLARED_BY_AGENT_OR_CLIENT",
             "source": "CLIENT_OR_GACR_SESSION"
           },
