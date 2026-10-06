@@ -202,3 +202,18 @@ provider_context
 ```
 
 Repository-owned GitHub enrichment remains a separate phase after `gscc_provider_first_touch`. Provider facts and repository facts therefore retain distinct provenance.
+
+
+## Complete ChatGPT GitHub plugin surface binding
+
+The repository now contains `scripts/chatgpt_github_surface_instrumentation.py`, which reads the canonical ChatGPT GitHub tool-surface snapshot and instruments every declared GitHub plugin function through `gscc.instrument_tool()`.
+
+Current canonical snapshot:
+
+- 89 GitHub tools;
+- 866 tool/field pairs;
+- provider-visible names normalized as `mcp__GitHub__<tool>`.
+
+`instrument_github_plugin_surface_with_first_touch(...)` binds one `FirstTouchBeforeToolCall` instance across the whole exposed surface. The first wrapped GitHub function emits `gscc_provider_first_touch`; later wrapped functions in the same adapter session do not emit a second First Touch.
+
+This is the canonical binding for an instrumentable host/plugin runtime. Repository code still cannot mutate OpenAI's proprietary plugin runtime by itself; the host must instantiate this binding around the exposed function mapping.
