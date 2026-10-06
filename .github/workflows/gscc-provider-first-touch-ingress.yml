@@ -24,6 +24,7 @@ on:
       - "scripts/first_touch_agent_transport_extractor.py"
       - "scripts/gscc_arrival_identity.py"
       - "scripts/gscc_session_runtime.py"
+      - "scripts/test_gscc_per_arrival_identity_session_runtime.py"
       - "scripts/gscc_persisted_entry_pipeline.py"
       - ".governance/control-plane-db/008_gscc_observable_entry_pipeline.sql"
       - ".governance/control-plane-db/009_gscc_post_q1_gate_route.sql"
@@ -213,7 +214,7 @@ jobs:
         if: ${{ github.event_name == 'issues' && steps.session_runtime.outputs.state == 'WAITING_Q9_ACK' }}
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" -f body@"$RUNNER_TEMP/gscc-q9-comment.txt"
+        run: gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" -f body="$(cat "$RUNNER_TEMP/gscc-q9-comment.txt")"
 
       - name: Persist canonical GSCC First Touch state
         uses: actions/upload-artifact@v4
@@ -323,15 +324,10 @@ jobs:
           for i in $(seq 1 30); do
             git fetch origin main >/dev/null 2>&1
             if git show FETCH_HEAD:.governance/control-plane-state/gacr-sessions.json > "$RUNNER_TEMP/gacr-sessions.json" 2>/dev/null; then
-              if CONNECTION_REF="$connection_ref" python3 - <<'PY'
-          import json, os
-          from pathlib import Path
-          d=json.loads((Path(os.environ["RUNNER_TEMP"])/"gacr-sessions.json").read_text())
-          ref=os.environ["CONNECTION_REF"]
-          matches=[s for s in d.get("sessions",[]) if s.get("connection_ref")==ref and s.get("status")=="ACTIVE" and (s.get("relay") or {}).get("state")=="ACTIVE"]
-          raise SystemExit(0 if len(matches)==1 else 1)
-          PY
-              then found=1; break; fi
+              if CONNECTION_REF="$connection_ref" RUNNER_TEMP="$RUNNER_TEMP" python3 -c 'import json,os,pathlib; d=json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("gacr-sessions.json").read_text()); ref=os.environ["CONNECTION_REF"]; m=[s for s in d.get("sessions",[]) if s.get("connection_ref")==ref and s.get("status")=="ACTIVE" and (s.get("relay") or {}).get("state")=="ACTIVE"]; raise SystemExit(0 if len(m)==1 else 1)'; then
+                found=1
+                break
+              fi
             fi
             sleep 2
           done
