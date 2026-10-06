@@ -8,12 +8,16 @@ on:
     paths:
       - "scripts/provider_first_touch_ingress.py"
       - "scripts/provider_first_touch_evidence.py"
-      - "scripts/first_touch_expected_field_registry.py"
+      - "scripts/first_touch_entry_contract.py"
+      - "scripts/first_touch_state_artifact.py"
+      - "scripts/first_touch_connection_completeness.py"
+      - "scripts/first_touch_field_block_gate.py"
+      - "scripts/gscc/first_touch_handoff.py"
       - "scripts/test_provider_first_touch_ingress.py"
       - ".github/workflows/gscc-provider-first-touch-ingress.yml"
 
 permissions:
-  contents: write
+  contents: read
   actions: read
 
 jobs:
@@ -27,7 +31,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Compile
-        run: python3 -m py_compile scripts/provider_first_touch_ingress.py scripts/provider_first_touch_evidence.py scripts/first_touch_expected_field_registry.py scripts/test_provider_first_touch_ingress.py
+        run: python3 -m py_compile scripts/provider_first_touch_ingress.py scripts/provider_first_touch_evidence.py scripts/first_touch_entry_contract.py scripts/first_touch_state_artifact.py scripts/gscc/first_touch_handoff.py scripts/test_provider_first_touch_ingress.py
       - name: Test provider first-touch sidecar
         run: PYTHONPATH=scripts python3 -m unittest scripts/test_provider_first_touch_ingress.py
 
@@ -53,21 +57,56 @@ jobs:
           set -euo pipefail
           printf '%s' "$PROVIDER_ENVELOPE" > "$RUNNER_TEMP/provider-first-touch-envelope.json"
 
-      - name: Capture and enter controlled GSCC path
+      - name: Capture provider First Touch
+        run: |
+          python3 scripts/provider_first_touch_ingress.py             --envelope "$RUNNER_TEMP/provider-first-touch-envelope.json"             --capture-output "$RUNNER_TEMP/provider-first-touch-capture.json"
+
+      - name: Restore previous GSCC GSE First Touch state
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python3 scripts/provider_first_touch_ingress.py \
-            --envelope "$RUNNER_TEMP/provider-first-touch-envelope.json" \
-            --capture-output "$RUNNER_TEMP/provider-first-touch-capture.json" \
-            --emit
+          python3 scripts/first_touch_state_artifact.py restore             --repository "${GITHUB_REPOSITORY}"             --run-id "${GITHUB_RUN_ID}"             --output "${RUNNER_TEMP}/first-touch-previous.sqlite"
 
       - name: Materialize existing B00-B30 first-touch database
         run: |
-          python3 scripts/first_touch_field_block_gate.py \
-            --capture "$RUNNER_TEMP/provider-first-touch-capture.json" \
-            --output "$RUNNER_TEMP/provider-first-touch-capture.sqlite" \
-            --source-ref "provider-first-touch:${GITHUB_RUN_ID}:${GITHUB_RUN_ATTEMPT}"
+          python3 scripts/first_touch_field_block_gate.py             --capture "$RUNNER_TEMP/provider-first-touch-capture.json"             --output "$RUNNER_TEMP/provider-first-touch-capture.sqlite"             --source-ref "provider-first-touch:${GITHUB_RUN_ID}:${GITHUB_RUN_ATTEMPT}"
+          if [ -f "${RUNNER_TEMP}/first-touch-previous.sqlite" ]; then
+            python3 scripts/first_touch_state_artifact.py merge               --current "${RUNNER_TEMP}/provider-first-touch-capture.sqlite"               --previous "${RUNNER_TEMP}/first-touch-previous.sqlite"
+          fi
+
+      - name: Build expected first-touch field registry
+        run: python3 scripts/first_touch_expected_field_registry.py
+
+      - name: Build provider first-touch completeness packet
+        run: |
+          python3 scripts/first_touch_connection_completeness.py             --capture "$RUNNER_TEMP/provider-first-touch-capture.json"             --output "$RUNNER_TEMP/provider-first-touch-completeness.json"
+
+      - name: Evaluate mandatory First Touch entry contract
+        id: entry
+        run: |
+          python3 scripts/first_touch_entry_contract.py             --capture "$RUNNER_TEMP/provider-first-touch-capture.json"             --completeness "$RUNNER_TEMP/provider-first-touch-completeness.json"             --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite"             --output "$RUNNER_TEMP/provider-first-touch-entry-contract.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          p=Path(os.environ["RUNNER_TEMP"])/"provider-first-touch-entry-contract.json"
+          v=json.loads(p.read_text(encoding="utf-8"))
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("status="+v["status"]+"\n")
+              f.write("classification="+v["classification"]+"\n")
+          PY
+
+      - name: Persist canonical GSCC First Touch state
+        uses: actions/upload-artifact@v4
+        with:
+          name: first-touch-state-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/provider-first-touch-capture.sqlite
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Build canonical GSCC First Touch handoff
+        if: ${{ steps.entry.outputs.status == 'ENTRY_READY_FOR_Q1' }}
+        run: |
+          python3 scripts/gscc/first_touch_handoff.py             --entry "$RUNNER_TEMP/provider-first-touch-entry-contract.json"             --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite"             --output "$RUNNER_TEMP/gscc-first-touch-handoff.json"
 
       - name: Upload provider first-touch evidence
         uses: actions/upload-artifact@v4
@@ -77,5 +116,8 @@ jobs:
             ${{ runner.temp }}/provider-first-touch-envelope.json
             ${{ runner.temp }}/provider-first-touch-capture.json
             ${{ runner.temp }}/provider-first-touch-capture.sqlite
-          if-no-files-found: error
+            ${{ runner.temp }}/provider-first-touch-completeness.json
+            ${{ runner.temp }}/provider-first-touch-entry-contract.json
+            ${{ runner.temp }}/gscc-first-touch-handoff.json
+          if-no-files-found: warn
           retention-days: 30
