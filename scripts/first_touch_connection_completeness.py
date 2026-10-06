@@ -78,9 +78,13 @@ def _capture_index(capture: dict[str, Any]) -> tuple[dict[str, list[tuple[str, A
         "installation_id": ["github_event.installation.id"],
     }
     for target, sources in aliases.items():
+        target_key=_norm(target)
         for source in sources:
-            for item in index.get(_norm(source), []):
-                index[_norm(target)].append(item)
+            source_key=_norm(source)
+            source_items=list(index.get(source_key, []))
+            for item in source_items:
+                if item not in index[target_key]:
+                    index[target_key].append(item)
     return index, terminal_count
 
 
