@@ -411,6 +411,22 @@ def resolve_admission_session_binding(
     }
 
 
+INITIAL_GSE_QUALIFICATION_REQUIREMENTS = {
+    "governance_read": lambda x: isinstance(x, dict) and x.get("status") == "COMPLETED" and bool(x.get("documents")),
+    "repository_baseline": lambda x: isinstance(x, dict) and x.get("status") == "OBSERVED" and bool(x.get("repository")) and bool(x.get("observed_head")),
+    "capabilities": lambda x: isinstance(x, dict) and x.get("status") == "VERIFIED",
+    "control_channel": lambda x: isinstance(x, dict) and x.get("status") == "VERIFIED",
+    "gse_initial_state": lambda x: (
+        isinstance(x, dict)
+        and x.get("status") == "VERIFIED"
+        and x.get("presence") == "PRESENT"
+        and x.get("liveness") == "VERIFIED"
+        and x.get("control_reachability") == "REACHABLE"
+        and x.get("durable_gacr_session_required") is False
+    ),
+}
+
+
 QUALIFICATION_REQUIREMENTS = {
     "session": lambda x: isinstance(x, dict) and x.get("status") == "BOUND" and bool(x.get("session_id")) and bool(x.get("connection_ref")),
     "governance_read": lambda x: isinstance(x, dict) and x.get("status") == "COMPLETED" and bool(x.get("documents")),
@@ -698,7 +714,7 @@ def evaluate_admission(
     receipt.update(
         status="PREAUTHORIZED",
         reason_code="ADMISSION_PREAUTHORIZED",
-        next_step="CANONICAL_SESSION_BIND",
+        next_step="GSCC_PRE_GSE_QUALIFICATION",
         allowed_surface=list(QUALIFICATION_SURFACE),
         envelope_digest=_canonical_digest(envelope),
     )
