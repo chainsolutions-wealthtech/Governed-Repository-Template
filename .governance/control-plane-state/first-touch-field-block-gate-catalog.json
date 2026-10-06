@@ -1,0 +1,1123 @@
+{
+  "schema": "first-touch-field-block-gate-catalog/v1",
+  "blocks": [
+    {
+      "block_id": "B00",
+      "ordinal": 0,
+      "label": "RAW_CAPTURE_PROVENANCE",
+      "owner_layer": "CAPTURE",
+      "purpose": "Preserve every captured field and provenance without loss."
+    },
+    {
+      "block_id": "B01",
+      "ordinal": 1,
+      "label": "PLATFORM_PROVIDER_SURFACE",
+      "owner_layer": "GSCC",
+      "purpose": "Identify observable provider/platform surface."
+    },
+    {
+      "block_id": "B02",
+      "ordinal": 2,
+      "label": "PRINCIPAL_ACTOR_IDENTITY",
+      "owner_layer": "GSCC",
+      "purpose": "Establish observed actor/principal identity facts."
+    },
+    {
+      "block_id": "B03",
+      "ordinal": 3,
+      "label": "CLIENT_APP_INSTALLATION",
+      "owner_layer": "GSCC",
+      "purpose": "Describe client, GitHub App and installation context."
+    },
+    {
+      "block_id": "B04",
+      "ordinal": 4,
+      "label": "CONNECTION_IDENTITY",
+      "owner_layer": "GSCC",
+      "purpose": "Build stable connection/client correlation inputs."
+    },
+    {
+      "block_id": "B05",
+      "ordinal": 5,
+      "label": "REPOSITORY_IDENTITY",
+      "owner_layer": "GSCC",
+      "purpose": "Establish repository and organization identity."
+    },
+    {
+      "block_id": "B06",
+      "ordinal": 6,
+      "label": "REF_BRANCH_HEAD",
+      "owner_layer": "GSCC",
+      "purpose": "Reconcile branch/ref/base/exact HEAD evidence."
+    },
+    {
+      "block_id": "B07",
+      "ordinal": 7,
+      "label": "EVENT_FIRST_TOUCH_SUBJECT",
+      "owner_layer": "GSCC",
+      "purpose": "Identify first-touch event and issue/PR/ref subject."
+    },
+    {
+      "block_id": "B08",
+      "ordinal": 8,
+      "label": "WORKFLOW_RUN_JOB",
+      "owner_layer": "GSCC",
+      "purpose": "Preserve workflow/run/job execution evidence."
+    },
+    {
+      "block_id": "B09",
+      "ordinal": 9,
+      "label": "PERMISSIONS_ACCESS_OBSERVABILITY",
+      "owner_layer": "GSCC",
+      "purpose": "Observe repository/access/permission facts and failures."
+    },
+    {
+      "block_id": "B10",
+      "ordinal": 10,
+      "label": "CAPABILITY_TOOL_SURFACE",
+      "owner_layer": "GSCC",
+      "purpose": "Record declared/observed/testable capabilities and tools."
+    },
+    {
+      "block_id": "B11",
+      "ordinal": 11,
+      "label": "SESSION_BINDING",
+      "owner_layer": "GACR",
+      "purpose": "Bind observable connection to canonical session."
+    },
+    {
+      "block_id": "B12",
+      "ordinal": 12,
+      "label": "CONTROL_CHANNEL",
+      "owner_layer": "GSCC",
+      "purpose": "Track commands, delivery, ACKs and responses."
+    },
+    {
+      "block_id": "B13",
+      "ordinal": 13,
+      "label": "LIVENESS",
+      "owner_layer": "GSE",
+      "purpose": "Provide liveness and freshness evidence."
+    },
+    {
+      "block_id": "B14",
+      "ordinal": 14,
+      "label": "ACTIVITY",
+      "owner_layer": "GSE",
+      "purpose": "Provide current activity/tool lifecycle evidence."
+    },
+    {
+      "block_id": "B15",
+      "ordinal": 15,
+      "label": "PROGRESS",
+      "owner_layer": "GSE",
+      "purpose": "Provide qualifying progress evidence."
+    },
+    {
+      "block_id": "B16",
+      "ordinal": 16,
+      "label": "CHECKPOINT_CONTEXT",
+      "owner_layer": "GSE",
+      "purpose": "Provide checkpoint and bounded resumable context."
+    },
+    {
+      "block_id": "B17",
+      "ordinal": 17,
+      "label": "TASK_WORK_ITEM",
+      "owner_layer": "GACR",
+      "purpose": "Reconcile task/work-item references."
+    },
+    {
+      "block_id": "B18",
+      "ordinal": 18,
+      "label": "CLAIM_COLLISION_DOMAIN",
+      "owner_layer": "GACR",
+      "purpose": "Reconcile claims and collision-domain authority."
+    },
+    {
+      "block_id": "B19",
+      "ordinal": 19,
+      "label": "GOVERNANCE_READ",
+      "owner_layer": "GSCC",
+      "purpose": "Prove required governance authorities were observed."
+    },
+    {
+      "block_id": "B20",
+      "ordinal": 20,
+      "label": "ADMISSION_PREAUTHORIZATION",
+      "owner_layer": "GSCC",
+      "purpose": "Support admission validation and PREAUTHORIZED state."
+    },
+    {
+      "block_id": "B21",
+      "ordinal": 21,
+      "label": "QUALIFICATION",
+      "owner_layer": "GSCC",
+      "purpose": "Aggregate Q1-Q12 qualification evidence."
+    },
+    {
+      "block_id": "B22",
+      "ordinal": 22,
+      "label": "ACCESS_POLICY",
+      "owner_layer": "GSCC",
+      "purpose": "Support canonical access-policy evaluation."
+    },
+    {
+      "block_id": "B23",
+      "ordinal": 23,
+      "label": "ACCESS_GRANT",
+      "owner_layer": "GSCC",
+      "purpose": "Bind evidence supporting a bounded Access Grant."
+    },
+    {
+      "block_id": "B24",
+      "ordinal": 24,
+      "label": "FUNCTION_EXPOSURE",
+      "owner_layer": "GSCC",
+      "purpose": "Support function exposure contract validation."
+    },
+    {
+      "block_id": "B25",
+      "ordinal": 25,
+      "label": "PRECALL_MUTATION_AUTHORITY",
+      "owner_layer": "GSCC",
+      "purpose": "Support pre-call and mutation-authority checks."
+    },
+    {
+      "block_id": "B26",
+      "ordinal": 26,
+      "label": "CONTINUITY",
+      "owner_layer": "GACR",
+      "purpose": "Provide resumability and continuity evidence."
+    },
+    {
+      "block_id": "B27",
+      "ordinal": 27,
+      "label": "FORENSICS_INTERRUPTION",
+      "owner_layer": "GACR",
+      "purpose": "Preserve interruption and forensic evidence."
+    },
+    {
+      "block_id": "B28",
+      "ordinal": 28,
+      "label": "TAKEOVER_HANDOFF",
+      "owner_layer": "GACR",
+      "purpose": "Support governed handoff/takeover preparation and acceptance."
+    },
+    {
+      "block_id": "B29",
+      "ordinal": 29,
+      "label": "ADDRESSABILITY_WAKE",
+      "owner_layer": "GACR",
+      "purpose": "Preserve safe addressability, wake and transport reachability facts."
+    },
+    {
+      "block_id": "B30",
+      "ordinal": 30,
+      "label": "UNAVAILABLE_NEGATIVE_EVIDENCE",
+      "owner_layer": "CROSS",
+      "purpose": "Preserve unavailable/error/denial/negative evidence."
+    }
+  ],
+  "gates": [
+    {
+      "gate_id": "G00",
+      "ordinal": 0,
+      "phase": "FIRST_TOUCH",
+      "owner_layer": "CAPTURE",
+      "label": "CAPTURE_PRESERVED",
+      "unlock_effect": "EVIDENCE_ONLY",
+      "authority_effect": "NONE"
+    },
+    {
+      "gate_id": "Q1",
+      "ordinal": 1,
+      "phase": "QUALIFICATION",
+      "owner_layer": "GSCC",
+      "label": "ADMISSION_ENVELOPE_VALIDATED",
+      "unlock_effect": "ELIGIBLE_FOR_PREAUTHORIZATION_DECISION",
+      "authority_effect": "NONE"
+    },
+    {
+      "gate_id": "Q2",
+      "ordinal": 2,
+      "phase": "QUALIFICATION",
+      "owner_layer": "GACR",
+      "label": "CANONICAL_SESSION_BOUND",
+      "unlock_effect": "ELIGIBLE_FOR_SESSION_BOUND_CONTINUATION",
+      "authority_effect": "NONE"
+    },
+    {
+      "gate_id": "Q3",
+      "ordinal": 3,
+      "phase": "QUALIFICATION",
+      "owner_layer": "GSCC",
+      "label": "REQUIRED_GOVERNANCE_READ",
+      "unlock_effect": "ELIGIBLE_FOR_GOVERNANCE_READ_VALIDATION",
+      "authority_effect": "NONE"
+    },
+    {
+      "gate_id": "Q4",
+      "ordinal": 4,
+      "phase": "QUALIFICATION",
+      "owner_layer": "GSCC",
+      "label": "CURRENT_REPOSITORY_BASELINE_OBSERVED",
+      "unlock_effect": "ELIGIBLE_FOR_BASELINE_VALIDATION",
+      "authority_effect": "NONE"
+    },
+    {
+      "gate_id": "Q5",
+      "ordinal": 5,
+      "phase": "QUALIFICATION",
+      "owner_layer": "GSCC",
+      "label": "EXACT_HEAD_ESTABLISHED",
+      "unlock_effect": "ELIGIBLE_FOR_EXACT_HEAD_VALIDATION",
+      "authority_effect": "NONE"
+    },
+    {
+      "gate_id": "Q6",
+      "ordinal": 6,
+      "phase": "QUALIFICATION",
+      "owner_layer": "GACR",
+      "label": "TASK_RECONCILED",
+      "unlock_effect": "ELIGIBLE_FOR_TASK_RECONCILIATION",
+      "authority_effect": "NONE"
+    },
+    {
+      "gate_id": "Q7",
+      "ordinal": 7,
+      "phase": "QUALIFICATION",
+      "owner_layer": "GACR",
+      "label": "CLAIM_COLLISION_RECONCILED",
+      "unlock_effect": "ELIGIBLE_FOR_CLAIM_COLLISION_VALIDATION",
+      "authority_effect": "NONE"
+    },
+    {
+      "gate_id": "Q8",
+      "ordinal": 8,
+      "phase": "QUALIFICATION",
+      "owner_layer": "GSCC",
+      "label": "DECLARED_CAPABILITIES_TESTED",
+      "unlock_effect": "ELIGIBLE_FOR_CAPABILITY_VALIDATION",
+      "authority_effect": "NONE"
+    },
+    {
+      "gate_id": "Q9",
+      "ordinal": 9,
+      "phase": "QUALIFICATION",
+      "owner_layer": "GSCC",
+      "label": "GSCC_CONTROL_CHANNEL_CHALLENGE",
+      "unlock_effect": "ELIGIBLE_FOR_CONTROL_CHALLENGE_VALIDATION",
+      "authority_effect": "NONE"
+    },
+    {
+      "gate_id": "Q10",
+      "ordinal": 10,
+      "phase": "QUALIFICATION",
+      "owner_layer": "GSE",
+      "label": "GSE_INITIAL_SESSION_STATE",
+      "unlock_effect": "ELIGIBLE_FOR_GSE_STATE_VALIDATION",
+      "authority_effect": "NONE"
+    },
+    {
+      "gate_id": "Q11",
+      "ordinal": 11,
+      "phase": "QUALIFICATION",
+      "owner_layer": "GSCC",
+      "label": "ACCESS_POLICY_EVALUATION",
+      "unlock_effect": "ELIGIBLE_FOR_ACCESS_POLICY_DECISION",
+      "authority_effect": "NONE"
+    },
+    {
+      "gate_id": "Q12",
+      "ordinal": 12,
+      "phase": "QUALIFICATION",
+      "owner_layer": "GSCC",
+      "label": "ACCESS_GRANT",
+      "unlock_effect": "ELIGIBLE_FOR_ACCESS_GRANT_DECISION",
+      "authority_effect": "NONE"
+    },
+    {
+      "gate_id": "F1",
+      "ordinal": 13,
+      "phase": "POST_AUTH",
+      "owner_layer": "GSCC",
+      "label": "FUNCTION_EXPOSURE",
+      "unlock_effect": "ELIGIBLE_FOR_FUNCTION_EXPOSURE_VALIDATION",
+      "authority_effect": "NONE"
+    },
+    {
+      "gate_id": "F2",
+      "ordinal": 14,
+      "phase": "POST_AUTH",
+      "owner_layer": "GSCC",
+      "label": "PRECALL_REVALIDATION",
+      "unlock_effect": "ELIGIBLE_FOR_PRECALL_VALIDATION",
+      "authority_effect": "NONE"
+    },
+    {
+      "gate_id": "C1",
+      "ordinal": 15,
+      "phase": "CONTINUITY",
+      "owner_layer": "GACR",
+      "label": "CONTINUITY_EVALUATION",
+      "unlock_effect": "ELIGIBLE_FOR_CONTINUITY_EVALUATION",
+      "authority_effect": "NONE"
+    },
+    {
+      "gate_id": "T1",
+      "ordinal": 16,
+      "phase": "CONTINUITY",
+      "owner_layer": "GACR",
+      "label": "TAKEOVER_HANDOFF",
+      "unlock_effect": "ELIGIBLE_FOR_TAKEOVER_HANDOFF_VALIDATION",
+      "authority_effect": "NONE"
+    }
+  ],
+  "requirements": {
+    "G00": [
+      [
+        "B00",
+        "REQUIRED",
+        "PRESENT"
+      ]
+    ],
+    "Q1": [
+      [
+        "B01",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B02",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B04",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B05",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B07",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B09",
+        "SUPPORTING",
+        "PRESENT"
+      ],
+      [
+        "B20",
+        "REQUIRED",
+        "PRESENT"
+      ]
+    ],
+    "Q2": [
+      [
+        "B04",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B05",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B11",
+        "REQUIRED",
+        "SUFFICIENT"
+      ],
+      [
+        "B26",
+        "SUPPORTING",
+        "PRESENT"
+      ]
+    ],
+    "Q3": [
+      [
+        "B05",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B06",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B08",
+        "SUPPORTING",
+        "PRESENT"
+      ],
+      [
+        "B19",
+        "REQUIRED",
+        "SUFFICIENT"
+      ]
+    ],
+    "Q4": [
+      [
+        "B05",
+        "REQUIRED",
+        "SUFFICIENT"
+      ],
+      [
+        "B09",
+        "REQUIRED",
+        "PRESENT"
+      ]
+    ],
+    "Q5": [
+      [
+        "B06",
+        "REQUIRED",
+        "SUFFICIENT"
+      ]
+    ],
+    "Q6": [
+      [
+        "B07",
+        "SUPPORTING",
+        "PRESENT"
+      ],
+      [
+        "B17",
+        "REQUIRED",
+        "SUFFICIENT"
+      ]
+    ],
+    "Q7": [
+      [
+        "B06",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B11",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B17",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B18",
+        "REQUIRED",
+        "SUFFICIENT"
+      ]
+    ],
+    "Q8": [
+      [
+        "B10",
+        "REQUIRED",
+        "SUFFICIENT"
+      ]
+    ],
+    "Q9": [
+      [
+        "B04",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B11",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B12",
+        "REQUIRED",
+        "VERIFIED"
+      ],
+      [
+        "B13",
+        "SUPPORTING",
+        "PRESENT"
+      ],
+      [
+        "B29",
+        "SUPPORTING",
+        "PRESENT"
+      ]
+    ],
+    "Q10": [
+      [
+        "B11",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B12",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B13",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B14",
+        "SUPPORTING",
+        "PRESENT"
+      ],
+      [
+        "B15",
+        "SUPPORTING",
+        "PRESENT"
+      ],
+      [
+        "B16",
+        "SUPPORTING",
+        "PRESENT"
+      ],
+      [
+        "B26",
+        "REQUIRED",
+        "SUFFICIENT"
+      ]
+    ],
+    "Q11": [
+      [
+        "B02",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B04",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B05",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B06",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B09",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B10",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B11",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B12",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B17",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B18",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B21",
+        "REQUIRED",
+        "SUFFICIENT"
+      ],
+      [
+        "B22",
+        "REQUIRED",
+        "SUFFICIENT"
+      ]
+    ],
+    "Q12": [
+      [
+        "B21",
+        "REQUIRED",
+        "SUFFICIENT"
+      ],
+      [
+        "B22",
+        "REQUIRED",
+        "SUFFICIENT"
+      ],
+      [
+        "B23",
+        "REQUIRED",
+        "VERIFIED"
+      ]
+    ],
+    "F1": [
+      [
+        "B06",
+        "REQUIRED",
+        "VERIFIED"
+      ],
+      [
+        "B10",
+        "REQUIRED",
+        "VERIFIED"
+      ],
+      [
+        "B17",
+        "SUPPORTING",
+        "PRESENT"
+      ],
+      [
+        "B18",
+        "SUPPORTING",
+        "PRESENT"
+      ],
+      [
+        "B23",
+        "REQUIRED",
+        "VERIFIED"
+      ],
+      [
+        "B24",
+        "REQUIRED",
+        "VERIFIED"
+      ]
+    ],
+    "F2": [
+      [
+        "B06",
+        "REQUIRED",
+        "VERIFIED"
+      ],
+      [
+        "B12",
+        "SUPPORTING",
+        "PRESENT"
+      ],
+      [
+        "B13",
+        "SUPPORTING",
+        "PRESENT"
+      ],
+      [
+        "B18",
+        "SUPPORTING",
+        "PRESENT"
+      ],
+      [
+        "B25",
+        "REQUIRED",
+        "VERIFIED"
+      ]
+    ],
+    "C1": [
+      [
+        "B13",
+        "REQUIRED",
+        "PRESENT"
+      ],
+      [
+        "B14",
+        "SUPPORTING",
+        "PRESENT"
+      ],
+      [
+        "B15",
+        "SUPPORTING",
+        "PRESENT"
+      ],
+      [
+        "B16",
+        "SUPPORTING",
+        "PRESENT"
+      ],
+      [
+        "B26",
+        "REQUIRED",
+        "SUFFICIENT"
+      ]
+    ],
+    "T1": [
+      [
+        "B06",
+        "REQUIRED",
+        "VERIFIED"
+      ],
+      [
+        "B18",
+        "REQUIRED",
+        "VERIFIED"
+      ],
+      [
+        "B26",
+        "REQUIRED",
+        "SUFFICIENT"
+      ],
+      [
+        "B27",
+        "SUPPORTING",
+        "PRESENT"
+      ],
+      [
+        "B28",
+        "REQUIRED",
+        "VERIFIED"
+      ],
+      [
+        "B29",
+        "SUPPORTING",
+        "PRESENT"
+      ]
+    ]
+  },
+  "rules": [
+    {
+      "rule_id": "R000",
+      "priority": 0,
+      "match_kind": "FALLBACK",
+      "pattern": "*",
+      "block_id": "B00",
+      "usage_purpose": "Preserve every field exactly as captured.",
+      "stage_hint": "ALL"
+    },
+    {
+      "rule_id": "R010",
+      "priority": 10,
+      "match_kind": "CONTAINS",
+      "pattern": "github_event",
+      "block_id": "B07",
+      "usage_purpose": "Use event payload as first-touch subject evidence.",
+      "stage_hint": "FIRST_TOUCH"
+    },
+    {
+      "rule_id": "R011",
+      "priority": 11,
+      "match_kind": "CONTAINS",
+      "pattern": "environment.GITHUB_EVENT",
+      "block_id": "B07",
+      "usage_purpose": "Use GitHub event metadata as first-touch evidence.",
+      "stage_hint": "FIRST_TOUCH"
+    },
+    {
+      "rule_id": "R020",
+      "priority": 20,
+      "match_kind": "CONTAINS",
+      "pattern": "sender",
+      "block_id": "B02",
+      "usage_purpose": "Use observed sender identity.",
+      "stage_hint": "Q1"
+    },
+    {
+      "rule_id": "R021",
+      "priority": 21,
+      "match_kind": "CONTAINS",
+      "pattern": "actor",
+      "block_id": "B02",
+      "usage_purpose": "Use actor identity.",
+      "stage_hint": "Q1"
+    },
+    {
+      "rule_id": "R022",
+      "priority": 22,
+      "match_kind": "CONTAINS",
+      "pattern": "user",
+      "block_id": "B02",
+      "usage_purpose": "Use user/principal identity facts.",
+      "stage_hint": "Q1"
+    },
+    {
+      "rule_id": "R030",
+      "priority": 30,
+      "match_kind": "CONTAINS",
+      "pattern": "performed_via_github_app",
+      "block_id": "B03",
+      "usage_purpose": "Use GitHub App provenance.",
+      "stage_hint": "Q1"
+    },
+    {
+      "rule_id": "R031",
+      "priority": 31,
+      "match_kind": "CONTAINS",
+      "pattern": "installation",
+      "block_id": "B03",
+      "usage_purpose": "Use installation context.",
+      "stage_hint": "Q1"
+    },
+    {
+      "rule_id": "R040",
+      "priority": 40,
+      "match_kind": "CONTAINS",
+      "pattern": "connection",
+      "block_id": "B04",
+      "usage_purpose": "Use connection identifiers/correlation.",
+      "stage_hint": "Q1-Q2"
+    },
+    {
+      "rule_id": "R041",
+      "priority": 41,
+      "match_kind": "CONTAINS",
+      "pattern": "client_instance",
+      "block_id": "B04",
+      "usage_purpose": "Use client instance correlation.",
+      "stage_hint": "Q1-Q2"
+    },
+    {
+      "rule_id": "R050",
+      "priority": 50,
+      "match_kind": "CONTAINS",
+      "pattern": "repository",
+      "block_id": "B05",
+      "usage_purpose": "Use repository identity and metadata.",
+      "stage_hint": "Q1-Q5"
+    },
+    {
+      "rule_id": "R051",
+      "priority": 51,
+      "match_kind": "CONTAINS",
+      "pattern": "organization",
+      "block_id": "B05",
+      "usage_purpose": "Use organization identity.",
+      "stage_hint": "Q1-Q5"
+    },
+    {
+      "rule_id": "R060",
+      "priority": 60,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(head|sha|ref|branch|base_branch)",
+      "block_id": "B06",
+      "usage_purpose": "Use ref/branch/SHA evidence for exact-HEAD reconciliation.",
+      "stage_hint": "Q3-Q5"
+    },
+    {
+      "rule_id": "R070",
+      "priority": 70,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(issue|pull_request|review|comment|subject)",
+      "block_id": "B07",
+      "usage_purpose": "Use issue/PR/review subject evidence.",
+      "stage_hint": "FIRST_TOUCH-Q6"
+    },
+    {
+      "rule_id": "R080",
+      "priority": 80,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(workflow|run_id|run_number|run_attempt|job)",
+      "block_id": "B08",
+      "usage_purpose": "Use workflow/run/job evidence.",
+      "stage_hint": "Q3"
+    },
+    {
+      "rule_id": "R090",
+      "priority": 90,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(permission|allowed_actions|http_status|status)",
+      "block_id": "B09",
+      "usage_purpose": "Use access/permission observations.",
+      "stage_hint": "Q1-Q4"
+    },
+    {
+      "rule_id": "R100",
+      "priority": 100,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(capabilit|tool|plugin|function|action_repository|action_ref)",
+      "block_id": "B10",
+      "usage_purpose": "Use capability/tool surface evidence.",
+      "stage_hint": "Q8-F1"
+    },
+    {
+      "rule_id": "R110",
+      "priority": 110,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(session_id|session_binding|gacr_session)",
+      "block_id": "B11",
+      "usage_purpose": "Use canonical session-binding evidence.",
+      "stage_hint": "Q2"
+    },
+    {
+      "rule_id": "R120",
+      "priority": 120,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(command|ack|challenge|delivery|response|nonce|correlation_id)",
+      "block_id": "B12",
+      "usage_purpose": "Use control-channel evidence.",
+      "stage_hint": "Q9"
+    },
+    {
+      "rule_id": "R130",
+      "priority": 130,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(heartbeat|liveness|last_seen|freshness)",
+      "block_id": "B13",
+      "usage_purpose": "Use liveness evidence.",
+      "stage_hint": "Q9-Q10"
+    },
+    {
+      "rule_id": "R140",
+      "priority": 140,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(activity|tool_started|tool_completed|tool_failed)",
+      "block_id": "B14",
+      "usage_purpose": "Use activity lifecycle evidence.",
+      "stage_hint": "GSE"
+    },
+    {
+      "rule_id": "R150",
+      "priority": 150,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(progress|completed_step|next_step)",
+      "block_id": "B15",
+      "usage_purpose": "Use progress evidence.",
+      "stage_hint": "GSE"
+    },
+    {
+      "rule_id": "R160",
+      "priority": 160,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(checkpoint|context|next_action|last_action)",
+      "block_id": "B16",
+      "usage_purpose": "Use resumable context/checkpoint evidence.",
+      "stage_hint": "Q10"
+    },
+    {
+      "rule_id": "R170",
+      "priority": 170,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(task|work_item|entry_action)",
+      "block_id": "B17",
+      "usage_purpose": "Use task/work-item evidence.",
+      "stage_hint": "Q6-Q7"
+    },
+    {
+      "rule_id": "R180",
+      "priority": 180,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(claim|collision)",
+      "block_id": "B18",
+      "usage_purpose": "Use claim/collision evidence.",
+      "stage_hint": "Q7"
+    },
+    {
+      "rule_id": "R190",
+      "priority": 190,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(governance|document|blob|digest)",
+      "block_id": "B19",
+      "usage_purpose": "Use governance-read evidence.",
+      "stage_hint": "Q3"
+    },
+    {
+      "rule_id": "R200",
+      "priority": 200,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(admission|preauthor)",
+      "block_id": "B20",
+      "usage_purpose": "Use admission/preauthorization evidence.",
+      "stage_hint": "Q1"
+    },
+    {
+      "rule_id": "R210",
+      "priority": 210,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(qualification|Q[0-9]+)",
+      "block_id": "B21",
+      "usage_purpose": "Use qualification evidence.",
+      "stage_hint": "Q1-Q12"
+    },
+    {
+      "rule_id": "R220",
+      "priority": 220,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(access_policy|policy)",
+      "block_id": "B22",
+      "usage_purpose": "Use access-policy evidence.",
+      "stage_hint": "Q11"
+    },
+    {
+      "rule_id": "R230",
+      "priority": 230,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(access_grant|grant_id)",
+      "block_id": "B23",
+      "usage_purpose": "Use Access Grant evidence.",
+      "stage_hint": "Q12"
+    },
+    {
+      "rule_id": "R240",
+      "priority": 240,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(exposure|function_contract)",
+      "block_id": "B24",
+      "usage_purpose": "Use function-exposure evidence.",
+      "stage_hint": "F1"
+    },
+    {
+      "rule_id": "R250",
+      "priority": 250,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(mutation_authority|invocation_authority|preflight|pre_call)",
+      "block_id": "B25",
+      "usage_purpose": "Use pre-call/mutation authority evidence.",
+      "stage_hint": "F2"
+    },
+    {
+      "rule_id": "R260",
+      "priority": 260,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(continuity|resume|handoff|last_progress)",
+      "block_id": "B26",
+      "usage_purpose": "Use continuity/resume evidence.",
+      "stage_hint": "Q2-Q10-C1"
+    },
+    {
+      "rule_id": "R270",
+      "priority": 270,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(interrupt|forensic|failure|error_type)",
+      "block_id": "B27",
+      "usage_purpose": "Use interruption/forensic evidence.",
+      "stage_hint": "CONTINUITY"
+    },
+    {
+      "rule_id": "R280",
+      "priority": 280,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(takeover|handoff)",
+      "block_id": "B28",
+      "usage_purpose": "Use takeover/handoff evidence.",
+      "stage_hint": "T1"
+    },
+    {
+      "rule_id": "R290",
+      "priority": 290,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(wake|address|provider_ref|conversation|endpoint|transport)",
+      "block_id": "B29",
+      "usage_purpose": "Use addressability/wake evidence.",
+      "stage_hint": "CONTINUITY"
+    },
+    {
+      "rule_id": "R300",
+      "priority": 300,
+      "match_kind": "REGEX",
+      "pattern": "(?i)(unavailable|unknown|denied|forbidden|not accessible|http_status)",
+      "block_id": "B30",
+      "usage_purpose": "Use negative/unavailable evidence rather than dropping it.",
+      "stage_hint": "ALL"
+    }
+  ]
+}

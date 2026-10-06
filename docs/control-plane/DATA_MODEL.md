@@ -368,3 +368,36 @@ future PostgreSQL projection
 ```
 
 A second canonical database or second materializer is forbidden. Until the schema extension exists, the detailed catalogue is explicitly `PENDING_PROJECTION` and its accepted target is stored in `CP-GOVMODEL-001`.
+
+
+## First-touch field / block / gate evidence model
+
+First-touch observability is stored in the existing canonical control-plane database. It does not create a second database authority.
+
+Migration `007_first_touch_field_block_gate.sql` adds:
+
+- `first_touch_capture_records` — complete raw capture plus capture identity/digests/counts;
+- `first_touch_capture_nodes` — one row for every JSON path/node;
+- `first_touch_capture_api_attempts` — every complementary API attempt, including denied/unavailable results;
+- `first_touch_evidence_blocks` — B00–B30 evidence-block catalogue;
+- `first_touch_process_gates` — capture, Q1–Q12, post-authorization and continuity gates;
+- `first_touch_gate_requirements` — block requirements per gate;
+- `first_touch_field_assignment_rules` — additive path-to-block rules;
+- `first_touch_field_block_membership` — many-to-many field usages;
+- `first_touch_capture_block_status` — per-capture evidence completeness;
+- `first_touch_gate_evaluations` — evidence readiness only.
+
+The mandatory no-loss invariant is:
+
+```text
+every captured JSON node
+→ stored in first_touch_capture_nodes
+→ has B00 RAW_CAPTURE_PROVENANCE membership
+→ may have zero or more additional functional memberships
+```
+
+No field is dropped because it lacks an immediate GSCC/GSE/GACR use.
+
+A gate evaluation of `EVIDENCE_READY_FOR_CANONICAL_VALIDATION` grants no authority. Canonical GSCC admission, Access Grant, function-exposure, exact-HEAD, claim and takeover validators remain authoritative.
+
+See `docs/control-plane/FIRST_TOUCH_FIELD_BLOCK_GATE_MODEL.md`.
