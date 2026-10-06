@@ -60,6 +60,16 @@ jobs:
             --output "${RUNNER_TEMP}/first-touch-capture.sqlite" \
             --source-ref "github-actions:${GITHUB_RUN_ID}:${GITHUB_RUN_ATTEMPT}"
 
+      - name: Build expected first-touch field registry
+        run: |
+          python3 scripts/first_touch_expected_field_registry.py
+
+      - name: Build first-touch connection completeness packet
+        run: |
+          python3 scripts/first_touch_connection_completeness.py \
+            --capture "${RUNNER_TEMP}/first-touch-capture.json" \
+            --output "${RUNNER_TEMP}/first-touch-completeness.json"
+
       - name: Upload exhaustive first-touch evidence
         uses: actions/upload-artifact@v4
         with:
@@ -67,6 +77,7 @@ jobs:
           path: |
             ${{ runner.temp }}/first-touch-capture.json
             ${{ runner.temp }}/first-touch-capture.sqlite
+            ${{ runner.temp }}/first-touch-completeness.json
           if-no-files-found: error
           retention-days: 30
 
