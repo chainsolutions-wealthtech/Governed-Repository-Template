@@ -405,7 +405,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments"             -f body="### GSCC → GSE → GACR qualification complete\n\nRuntime: `${{ steps.q9.outputs.runtime_id }}`\nGACR session: `${{ steps.bind.outputs.gacr_session_id }}`\nLast gate: `Q12`\nNext gate: `F1`\n\n`00_START_HERE.md` remains NOT_YET_APPLICABLE until F1 validates the first requested governed function."
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments"             -f body="### GSCC → GSE → GACR qualification complete\n\nRuntime: ${{ steps.q9.outputs.runtime_id }}\nGACR session: ${{ steps.bind.outputs.gacr_session_id }}\nLast gate: Q12\nNext gate: F1\n\n00_START_HERE.md remains NOT_YET_APPLICABLE until F1 validates the first requested governed function."
 
       - name: Persist resumed per-arrival runtime state
         uses: actions/upload-artifact@v4
