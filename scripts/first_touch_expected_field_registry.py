@@ -84,8 +84,14 @@ def parse_probe(path: Path):
 
 def main():
     fields={}
-    for p in sorted(PROBE_ROOT.glob("*.md")):
-        for key,value,line,section,kind in parse_probe(p):
+    probe_paths=sorted(PROBE_ROOT.glob("*.md"))
+    parsed_probes={p: parse_probe(p) for p in probe_paths}
+    tool_rows=[]
+    if TOOL_SCHEMA_SNAPSHOT.exists():
+        tool_rows=json.loads(TOOL_SCHEMA_SNAPSHOT.read_text(encoding="utf-8")).get("fields", [])
+
+    for p in probe_paths:
+        for key,value,line,section,kind in parsed_probes[p]:
             nk=norm_key(key)
             if not nk: continue
             item=fields.setdefault(nk,{
@@ -101,9 +107,8 @@ def main():
                 "section":section,
                 "source_kind":kind,
             })
-    if TOOL_SCHEMA_SNAPSHOT.exists():
-        snap = json.loads(TOOL_SCHEMA_SNAPSHOT.read_text(encoding="utf-8"))
-        for row in snap.get("fields", []):
+    if tool_rows:
+        for row in tool_rows:
             key = str(row.get("field_id") or "")
             nk = norm_key(key)
             if not nk:
@@ -136,10 +141,10 @@ def main():
     out={
         "schema":"first-touch-expected-field-registry/v1",
         "purpose":"Every expected first-touch/connection field must have a value or an explicit non-value status; silent absence is not complete.",
-        "source_probe_files":[str(p.relative_to(ROOT)) for p in sorted(PROBE_ROOT.glob("*.md"))],
+        "source_probe_files":[str(p.relative_to(ROOT)) for p in probe_paths],
         "status_values":STATUS_VALUES,
-        "probe_observation_count": sum(len(parse_probe(p)) for p in sorted(PROBE_ROOT.glob("*.md"))),
-        "tool_schema_field_count": len(json.loads(TOOL_SCHEMA_SNAPSHOT.read_text(encoding="utf-8")).get("fields", [])) if TOOL_SCHEMA_SNAPSHOT.exists() else 0,
+        "probe_observation_count": sum(len(parsed_probes[p]) for p in probe_paths),
+        "tool_schema_field_count": len(tool_rows),
         "field_count":len(fields),
         "fields":[fields[k] for k in sorted(fields)],
         "expected_observations": (
@@ -151,8 +156,8 @@ def main():
                     "source_path": str(p.relative_to(ROOT)),
                     "source_line": line,
                 }
-                for p in sorted(PROBE_ROOT.glob("*.md"))
-                for key, value, line, section, kind in parse_probe(p)
+                for p in probe_paths
+                for key, value, line, section, kind in parsed_probes[p]
                 if norm_key(key)
             ]
             + [
@@ -163,7 +168,7 @@ def main():
                     "source_path": str(TOOL_SCHEMA_SNAPSHOT.relative_to(ROOT)),
                     "source_line": None,
                 }
-                for row in (json.loads(TOOL_SCHEMA_SNAPSHOT.read_text(encoding="utf-8")).get("fields", []) if TOOL_SCHEMA_SNAPSHOT.exists() else [])
+                for row in tool_rows
                 if norm_key(str(row.get("field_id") or ""))
             ]
             + [
