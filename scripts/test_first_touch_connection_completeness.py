@@ -22,14 +22,16 @@ def main():
         # Historical live overlay regression for comment 6009181746.
         out=root/"packet-observed.json"
         packet=mod.build_packet(OBS,out)
-        assert packet["expected_observation_count"] >= 1500, packet["expected_observation_count"]
+        assert packet["expected_observation_count"] == packet["canonical_field_count"]
+        assert packet["canonical_field_count"] >= 60
         assert packet["complete_accounting"] is True
         assert packet["silent_missing_count"] == 0
         assert packet["live_value_count"] > 20
         assert packet["explicit_unavailable_count"] >= 2
-        assert packet["status_counts"].get("SCHEMA_AVAILABLE",0) >= 800
-        assert packet["status_counts"].get("REFERENCE_ONLY",0) >= 700
-        assert packet["status_counts"].get("UNKNOWN",0) >= 1
+        assert packet["reference_probe_observation_count"] >= 700
+        assert packet["reference_tool_schema_field_count"] >= 800
+        assert packet["reference_inventory_is_gate_input"] is False
+        assert packet["unknown_count"] >= 1
 
         # Generic runtime path: consume the First Touch JSON directly.
         capture={
@@ -75,7 +77,8 @@ def main():
         capture_path.write_text(json.dumps(capture),encoding="utf-8")
         generic_out=root/"packet-generic.json"
         generic=mod.build_packet(None,generic_out,capture_path=capture_path)
-        assert generic["expected_observation_count"] >= 1500
+        assert generic["expected_observation_count"] == generic["canonical_field_count"]
+        assert generic["canonical_field_count"] >= 60
         assert generic["complete_accounting"] is True
         assert generic["silent_missing_count"] == 0
         assert generic["capture_id"] == "FTC-generic-live"
@@ -85,7 +88,7 @@ def main():
         assert generic["live_value_count"] >= 5
 
         print("FIRST_TOUCH_CONNECTION_COMPLETENESS_TEST_PASS")
-        print(f"EXPECTED_OBSERVATIONS={packet['expected_observation_count']}")
+        print(f"CANONICAL_FIELDS={packet['canonical_field_count']}")
         print(f"LIVE_VALUES={packet['live_value_count']}")
         print(f"EXPLICIT_UNAVAILABLE={packet['explicit_unavailable_count']}")
         print(f"SILENT_MISSING={packet['silent_missing_count']}")
