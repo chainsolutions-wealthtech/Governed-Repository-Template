@@ -1,0 +1,26 @@
+name: GSCC GitHub Plugin MCP Proxy
+
+on:
+  pull_request:
+    paths:
+      - "plugins/gscc-github-mcp/**"
+      - ".github/workflows/gscc-github-plugin-proxy.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  proxy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install proxy dependencies
+        run: pip install -r plugins/gscc-github-mcp/requirements.txt
+      - name: Compile proxy
+        run: python3 -m py_compile plugins/gscc-github-mcp/server.py plugins/gscc-github-mcp/test_server.py
+      - name: Test proxy routing
+        run: python3 plugins/gscc-github-mcp/test_server.py
