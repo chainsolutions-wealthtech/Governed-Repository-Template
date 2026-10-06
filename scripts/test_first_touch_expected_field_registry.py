@@ -26,8 +26,14 @@ def main():
         unique_keys.update(mod.norm_key(key) for key, *_ in observations if mod.norm_key(key))
 
     canonical = {mod.norm_key(x) for x in mod.CANONICAL_CONNECTION_FIELDS}
+    tool_snapshot = mod.json.loads(mod.TOOL_SCHEMA_SNAPSHOT.read_text(encoding="utf-8"))
+    tool_schema_fields = tool_snapshot.get("fields", [])
     assert canonical
     assert canonical.issubset(unique_keys | canonical)
+    assert tool_snapshot["github_tool_count"] == 89, tool_snapshot["github_tool_count"]
+    assert len(tool_schema_fields) >= 800, len(tool_schema_fields)
+    combined_expected_observations = total_observations + len(tool_schema_fields)
+    assert combined_expected_observations >= 1500, combined_expected_observations
 
     # PR #195 already established at least 400 normalized Codex observations.
     codex = [
@@ -41,6 +47,8 @@ def main():
     print(f"TOTAL_NORMALIZED_OBSERVATIONS={total_observations}")
     print(f"UNIQUE_NORMALIZED_FIELD_KEYS={len(unique_keys)}")
     print(f"CANONICAL_CONNECTION_FIELDS={len(canonical)}")
+    print(f"GITHUB_TOOL_SCHEMA_FIELDS={len(tool_schema_fields)}")
+    print(f"COMBINED_EXPECTED_OBSERVATIONS={combined_expected_observations}")
     for path, count in sorted(per_probe.items()):
         print(f"PROBE_OBSERVATIONS {path}={count}")
 
