@@ -174,6 +174,72 @@ def main() -> None:
         "push and PR observations for the same actor/branch must resume one GSCC surface identity",
     )
 
+    # Non-main pushes must retain the actual branch and HEAD.
+    alt_push = {
+        "repository": event["repository"],
+        "sender": {"login": "fresh-provider-actor"},
+        "ref": "refs/heads/feature/non-main-first-touch",
+        "after": "f" * 40,
+    }
+    alt_push_facts = build_github_arrival_facts(
+        alt_push,
+        {
+            "GITHUB_EVENT_NAME": "push",
+            "GITHUB_REF_NAME": "feature/non-main-first-touch",
+            "GITHUB_SHA": "f" * 40,
+            "GITHUB_RUN_ID": "40000000006",
+            "GITHUB_RUN_ATTEMPT": "1",
+        },
+    )
+    assert_true(alt_push_facts["branch"] == "feature/non-main-first-touch", "non-main branch must be preserved")
+    assert_true(alt_push_facts["observed_head"] == "f" * 40, "non-main exact HEAD must be preserved")
+    assert_true(
+        alt_push_facts["connection_ref"].endswith(":ref:feature/non-main-first-touch"),
+        "connection identity must be ref-specific rather than main-specific",
+    )
+
+    # Issue/comment workflows run from the default branch. That execution ref
+    # is transport context, not evidence of the agent's working branch/HEAD.
+    issue_without_work_ref = {
+        "repository": event["repository"],
+        "sender": {"login": "fresh-provider-actor"},
+        "issue": {"number": 990},
+        "number": 990,
+    }
+    issue_facts = build_github_arrival_facts(
+        issue_without_work_ref,
+        {
+            "GITHUB_EVENT_NAME": "issues",
+            "GITHUB_REF_NAME": "main",
+            "GITHUB_SHA": "9" * 40,
+            "GITHUB_RUN_ID": "40000000007",
+            "GITHUB_RUN_ATTEMPT": "1",
+        },
+    )
+    assert_true(issue_facts["branch"] is None, "default workflow branch must not be attributed to issue-arriving agent")
+    assert_true(issue_facts["observed_head"] is None, "default workflow HEAD must not be attributed to issue-arriving agent")
+    assert_true(issue_facts["connection_ref"].endswith(":issue:990"), "issue arrival must retain issue-scoped identity")
+
+    # A created non-main ref remains observable without any main assumption.
+    create_ref_event = {
+        "repository": event["repository"],
+        "sender": {"login": "fresh-provider-actor"},
+        "ref": "feature/created-ref",
+        "ref_type": "branch",
+    }
+    create_facts = build_github_arrival_facts(
+        create_ref_event,
+        {
+            "GITHUB_EVENT_NAME": "create",
+            "GITHUB_REF_NAME": "feature/created-ref",
+            "GITHUB_SHA": "8" * 40,
+            "GITHUB_RUN_ID": "40000000008",
+            "GITHUB_RUN_ATTEMPT": "1",
+        },
+    )
+    assert_true(create_facts["branch"] == "feature/created-ref", "created non-main ref must be preserved")
+    assert_true(create_facts["observed_head"] == "8" * 40, "created ref exact HEAD must be preserved")
+
     calls: list[dict] = []
     result = emit_github_arrival(
         event,
@@ -272,6 +338,7 @@ def main() -> None:
     ):
         assert_true(trigger in text, f"workflow must observe {trigger}")
     assert_true("repository_dispatch:" not in text, "gateway workflow must not recursively trigger on its own dispatch")
+    assert_true("branches:" not in text, "gateway must not restrict observable arrival to main or a branch allowlist")
     assert_true("python3 scripts/gscc_observable_arrival.py github-event" in text, "workflow must enter GSCC gateway")
     assert_true("contents: write" in text, "repository_dispatch requires bounded write permission")
 
