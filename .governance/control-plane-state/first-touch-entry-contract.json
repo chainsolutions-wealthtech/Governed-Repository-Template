@@ -1,0 +1,81 @@
+{
+  "schema": "first-touch-entry-contract/v1",
+  "purpose": "Mandatory pre-Q1 contract for every observable conversation/agent repository entry.",
+  "process": [
+    "OBSERVABLE_EVENT",
+    "IDENTIFY_OR_CORRELATE_CONVERSATION",
+    "CLASSIFY_FIRST_TOUCH_OR_CONTINUATION",
+    "AUTO_COLLECT",
+    "NORMALIZE_COMMON_FIELDS_IN_COMMON_BLOCKS",
+    "STORE_CONVERSATION_VALUES",
+    "EVALUATE_COMPLETENESS",
+    "ONLY_THEN_Q1"
+  ],
+  "invariants": [
+    "ONE_LOGICAL_CONVERSATION_HAS_AT_MOST_ONE_FIRST_TOUCH",
+    "COMMON_BLOCK_SCHEMA_IS_SHARED_BY_ALL_CONVERSATIONS",
+    "FIELD_SCHEMA_IS_SHARED_VALUES_ARE_CONVERSATION_SCOPED",
+    "ACTOR_PLUS_REPOSITORY_IS_NOT_A_UNIQUE_CONVERSATION_IDENTITY",
+    "NO_SILENT_MISSING_EXPECTED_FIELD",
+    "UNAVAILABLE_UNKNOWN_DENIED_REDACTED_STALE_CONTRADICTORY_ARE_EXPLICIT_STATES",
+    "ENTRY_CONTRACT_GRANTS_NO_REPOSITORY_INVOCATION_OR_MUTATION_AUTHORITY",
+    "Q1_MUST_NOT_RUN_WHILE_ENTRY_CONTRACT_IS_BLOCKED"
+  ],
+  "common_entry_blocks": [
+    "B00",
+    "B01",
+    "B02",
+    "B03",
+    "B04",
+    "B05",
+    "B06",
+    "B07",
+    "B08",
+    "B09",
+    "B10",
+    "B30"
+  ],
+  "critical_blocks": {
+    "B00": "VERIFIED",
+    "B02": "PRESENT",
+    "B04": "PRESENT",
+    "B05": "PRESENT",
+    "B06": "PRESENT",
+    "B07": "PRESENT"
+  },
+  "conversation_identity": {
+    "accepted_strengths": [
+      "EXACT",
+      "STRONG"
+    ],
+    "accepted_anchor_families": [
+      "provider_conversation_ref",
+      "provider_session_ref",
+      "provider_connection_ref",
+      "conversation_scoped_client_instance_id",
+      "explicit_first_touch_correlation_key"
+    ],
+    "insufficient_anchor_families": [
+      "github_actor_only",
+      "repository_only",
+      "github_actor_plus_repository",
+      "workflow_run_only",
+      "issue_or_pr_subject_only"
+    ],
+    "ambiguous_behavior": "BLOCK_AND_REQUIRE_ADDITIONAL_OBSERVABLE_EVIDENCE",
+    "unavailable_native_provider_id_behavior": "KEEP_UNAVAILABLE_AND_USE_OTHER_STRONG_CONVERSATION_SCOPED_ANCHOR_IF_AVAILABLE"
+  },
+  "first_touch": {
+    "max_per_logical_conversation": 1,
+    "on_new_identity": "CREATE_IMMUTABLE_FIRST_TOUCH_SNAPSHOT",
+    "on_known_identity": "CLASSIFY_AS_CONTINUATION_AND_ENRICH_EXISTING_PROFILE",
+    "on_ambiguous_identity": "BLOCK_NO_NEW_FIRST_TOUCH"
+  },
+  "completeness": {
+    "numeric_field_threshold": null,
+    "rule": "No fixed field-count threshold. Every expected field in the common schema must be accounted for for this conversation and every required block must satisfy its policy.",
+    "require_complete_accounting": true,
+    "require_silent_missing_count": 0
+  },
+  "authority_effect": "NONE"
+}
