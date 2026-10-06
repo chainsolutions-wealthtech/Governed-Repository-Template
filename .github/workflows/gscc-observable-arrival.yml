@@ -26,6 +26,9 @@ on:
 
 permissions:
   contents: write
+  actions: read
+  issues: read
+  pull-requests: read
 
 concurrency:
   group: gscc-observable-arrival-${{ github.repository }}-${{ github.actor }}-${{ github.ref_name || github.event_name }}
@@ -42,6 +45,21 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+
+      - name: Capture exhaustive first-touch evidence
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/first_touch_exhaustive_collector.py github-event \
+            --output "${RUNNER_TEMP}/first-touch-capture.json"
+
+      - name: Upload exhaustive first-touch evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: first-touch-capture-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/first-touch-capture.json
+          if-no-files-found: error
+          retention-days: 30
 
       - name: Enter canonical GSCC arrival gateway
         env:
