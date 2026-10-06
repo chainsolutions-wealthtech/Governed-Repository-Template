@@ -26,10 +26,10 @@ def _stable_identity(identity: dict[str,Any]) -> tuple[str,str] | None:
             return key,str(value)
     return None
 
-def _marker_key(provider:str,repository:str,identity:dict[str,Any])->str:
+def _marker_key(provider:str,repository:str,identity:dict[str,Any])->str | None:
     stable=_stable_identity(identity)
     if not stable:
-        raise ValueError("provider hook requires a stable conversation/session/connection reference")
+        return None
     kind,value=stable
     return f"{provider}:{repository}:{kind}:{value}"
 
@@ -44,8 +44,6 @@ def build_envelope(event:dict[str,Any])->dict[str,Any]:
         raise ValueError("transport required")
     if repository.count("/") != 1:
         raise ValueError("repository must use owner/name")
-    if _stable_identity(identity) is None:
-        raise ValueError("stable identity required before first GitHub tool call")
     envelope={
         "schema":SCHEMA,
         "provider":provider,
@@ -61,6 +59,7 @@ def build_envelope(event:dict[str,Any])->dict[str,Any]:
         "repository_mutated":False,
         "secret_accessed":False,
         "token_exposed":False,
+        "identity_status":"STABLE" if _stable_identity(identity) else "UNRESOLVED",
         "tool":{
             "name":event.get("tool_name"),
             "operation":event.get("operation"),
@@ -108,12 +107,18 @@ class FirstToolHook:
         token:str|None=None,
         dispatch_fn=send_dispatch,
     )->dict[str,Any]:
+        if event.get("first_tool_call") is False:
+            return {
+                "status":"NOT_FIRST_TOOL_CALL",
+                "event_type":EVENT_TYPE,
+                "mutation_authority_granted":False,
+            }
         envelope=build_envelope(event)
         marker=_marker_key(envelope["provider"],envelope["repository"],envelope["identity"])
-        if self.emitted.get(marker):
+        if marker is not None and self.emitted.get(marker):
             return {
                 "status":"FIRST_TOUCH_ALREADY_EMITTED",
-                "marker":marker,
+                "marker":marker or "UNRESOLVED",
                 "event_type":EVENT_TYPE,
                 "mutation_authority_granted":False,
             }
@@ -123,7 +128,8 @@ class FirstToolHook:
         status=dispatch_fn(envelope["repository"],envelope,runtime_token)
         if status not in {200,201,202,204}:
             raise RuntimeError(f"provider first-touch dispatch returned HTTP {status}")
-        self.emitted[marker]=True
+        if marker is not None:
+            self.emitted[marker]=True
         return {
             "status":"FIRST_TOUCH_EMITTED",
             "marker":marker,
