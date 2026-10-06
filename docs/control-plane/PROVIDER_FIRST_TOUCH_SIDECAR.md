@@ -144,3 +144,30 @@ MINIMAL PROVIDER SIGNAL
 → identity gate
 → Q1 only when identity is sufficient
 ```
+
+
+## Governed GitHub read wrapper
+
+The repository now includes `scripts/governed_github_read_connector.py` as the executable adapter that binds common GitHub reads to Provider First Touch.
+
+Supported governed reads:
+
+- `get_repo()`
+- `fetch_file(path, ref=...)`
+
+Behavior:
+
+```text
+first governed get_repo OR fetch_file
+→ provider_first_tool_hook
+→ repository_dispatch: gscc_provider_first_touch
+→ GitHub read
+
+subsequent governed reads in the same connector session
+→ no second First Touch
+→ GitHub read
+```
+
+If provider conversation/session/connection identity is unavailable, the wrapper still emits exactly one unresolved capture signal per connector session and the repository preserves the Q1 fail-closed identity rule.
+
+This wrapper is the repository-controlled integration surface. It does not modify ChatGPT's proprietary native `@GitHub` connector. A host or custom connector must invoke this governed surface instead of calling the native GitHub read directly if automatic First Touch is required.
