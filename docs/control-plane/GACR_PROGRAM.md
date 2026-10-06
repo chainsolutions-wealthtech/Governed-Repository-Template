@@ -416,3 +416,32 @@ Step 13B still requires the genuinely fresh provider conversation/agent defined 
 
 This GACR/GSCC attestation does not advance or replace the global Control Plane programme. Global `NEXT_ACTION` remains `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
 
+
+
+## 2026-10-06 — Issue-scoped Correlator consistency reconciliation
+
+Status: **PROVEN LIVE / CANDIDATE FIX IN PR #185 / GLOBAL PROGRAMME UNCHANGED**.
+
+Issue #184 was intentionally opened as the first repository interaction for a bounded continuity consistency review. The resulting controlled first-touch provided a live proof that the PR #182 issue-scoped arrival correction had not yet propagated consistently through the downstream GACR Correlator.
+
+Observed live evidence on canonical source state:
+
+- issue-scoped connection: `gscc-observable:chainsolutions-wealthtech/Governed-Repository-Template:Wealthtechinnovations:issue:184`;
+- surface: `CONTROLLED_INSTRUMENTABLE`;
+- dedicated session: `session-5971ddf33f8014060ac35fe4`;
+- beacon: `GACR-B-1bdb8838cd0d`;
+- correlation: `GACR-C-bfe9f360b853`;
+- incorrect result before correction: `AMBIGUOUS / UNBOUND_ACTIVITY / CONFLICTING_EXPLICIT_ANCHORS`;
+- evidence commit carrying the live observation: `bac0eeea0b02eae2f6196b187f2381636241fa78`.
+
+Root cause: the automatic-attachment path already treats `connection_ref` as more specific than a shared `client_instance_id`, but `gacr_agent_telemetry.py::correlate_beacon()` treated both anchors as equally exact. A client instance legitimately hosting multiple issue-scoped connections could therefore invalidate an otherwise unique connection anchor.
+
+PR #185 corrects only that proven inconsistency. When the explicit `connection_ref` and shared `client_instance_id` have a non-empty intersection, the process-level client anchor is narrowed to that connection-scoped match. A genuinely non-overlapping explicit-anchor conflict remains fail-closed.
+
+Tests-first lineage after exact-HEAD reconciliation onto `main@8686f8d21f18f639267be18cd908b4be61e5d3a2`:
+
+- RED contract commit: `2a77507947340291553491a446b3d2b34fd3e710`;
+- runtime correction commit: `bc480acda8ca6ead13a44f03f491ae8dcb5425c2`;
+- prior semantically identical candidate proof before the latest runtime-state-only rebase: Governance CI `37393238645 = SUCCESS`, Function Exposure Gate `37393238765 = SUCCESS`, Observable Arrival Gateway `37393238550 = SUCCESS`.
+
+The branch must still pass its final CI after this durable-attestation commit before merge. No P12-S6, CASE 1 or GMC work is executed by this reconciliation. Step 13B status is unchanged by this correction.

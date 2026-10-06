@@ -433,3 +433,24 @@
 - Event-driven host integration: LIVE_PROVEN.
 - Continuous background heartbeat: HOST_CAPABILITY_NOT_EXPOSED / NOT_CLAIMED.
 - Programme next action remains `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+
+
+## Entry AAL-20261006-GACR-ISSUE-ANCHOR-001
+
+- Agent identity: ChatGPT.
+- Workstream: bounded non-global GACR continuity consistency reconciliation from issue #184.
+- Repository: `chainsolutions-wealthtech/Governed-Repository-Template`.
+- Issue #184 was the first GitHub interaction in the work session, per owner instruction.
+- Initial post-issue observed main: `688173a47d59ef960ef0a82cc753c3e8399fc70d`; live auto-attach then advanced main through `bac0eeea0b02eae2f6196b187f2381636241fa78`.
+- Proven defect: issue #184 created a dedicated issue-scoped controlled session, but downstream correlation became `AMBIGUOUS / UNBOUND_ACTIVITY` because a shared `client_instance_id` conflicted with the more-specific `connection_ref`.
+- Live evidence: session `session-5971ddf33f8014060ac35fe4`, beacon `GACR-B-1bdb8838cd0d`, correlation `GACR-C-bfe9f360b853`.
+- Existing architecture preserved: no second correlator/store/session authority/claim authority introduced.
+- Governed branch: `governance/reconcile-continuity-issue-anchor-correlation`.
+- Exact-head reconciliation performed twice as runtime GACR projections advanced `main`; latest code baseline before durable attestation: `8686f8d21f18f639267be18cd908b4be61e5d3a2`.
+- Tests-first commits on that baseline: `2a77507947340291553491a446b3d2b34fd3e710` then `bc480acda8ca6ead13a44f03f491ae8dcb5425c2`.
+- PR: #185, `GACR: reconcile issue-scoped anchor correlation`.
+- Prior identical candidate CI before the latest runtime-only rebase: Governance CI `37393238645 = SUCCESS`; GACR Beacon/Correlator/Dispatcher test passed; GSCC Function Exposure `37393238765 = SUCCESS`; Observable Arrival `37393238550 = SUCCESS`.
+- Final branch CI after this attestation remains the merge gate.
+- Global programme remains parked: P12-S6 not advanced; CASE 1 untouched; GMC untouched.
+- Last completed action at this checkpoint: runtime correction + durable GACR/activity attestation prepared on the governed branch.
+- Next action: validate final PR #185 head, reconcile any new runtime-only main movement, then merge only if all governed checks remain green.
