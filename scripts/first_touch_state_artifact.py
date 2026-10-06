@@ -108,6 +108,12 @@ def merge_previous(current:Path, previous:Path)->dict:
             conn.execute("INSERT OR IGNORE INTO gscc_entry_pipeline_runs SELECT * FROM previous.gscc_entry_pipeline_runs")
         if "gscc_gate_route_runs" in tables:
             conn.execute("INSERT OR IGNORE INTO gscc_gate_route_runs SELECT * FROM previous.gscc_gate_route_runs")
+        if "gscc_arrival_instances" in tables:
+            conn.execute("INSERT OR IGNORE INTO gscc_arrival_instances SELECT * FROM previous.gscc_arrival_instances")
+        if "gscc_arrival_events" in tables:
+            conn.execute("INSERT OR IGNORE INTO gscc_arrival_events SELECT * FROM previous.gscc_arrival_events")
+        if "gscc_session_bindings" in tables:
+            conn.execute("INSERT OR IGNORE INTO gscc_session_bindings SELECT * FROM previous.gscc_session_bindings")
         count=conn.execute("SELECT COUNT(*) FROM gscc_conversation_identities").fetchone()[0]
         conn.commit()
         return {"status":"MERGED","identity_count":count}
