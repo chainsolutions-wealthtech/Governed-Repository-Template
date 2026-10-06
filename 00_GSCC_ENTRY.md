@@ -71,6 +71,26 @@ NEXT_STEP = R2_FIRST_TOUCH_CLASSIFICATION
 EXECUTE_NEXT_AUTOMATICALLY = FALSE
 ```
 
+## Observable extraction layer
+
+Before First Touch classification, the agent MUST build one normalized observable packet from:
+
+1. provider / agent facts exposed by the host;
+2. transport / connector facts exposed by the tool surface;
+3. repository facts returned by GitHub.
+
+Canonical extractor:
+
+`scripts/first_touch_agent_transport_extractor.py`
+
+Its output schema is:
+
+`gscc-first-touch-observable-packet/v1`
+
+Every expected field MUST be accounted for. A field not exposed by the runtime is recorded as `UNAVAILABLE`; it is never silently omitted or invented.
+
+The extractor grants no mutation authority.
+
 ## Required arrival report
 
 Before proceeding, the arriving agent MUST report every non-sensitive fact that its own environment actually exposes about:
