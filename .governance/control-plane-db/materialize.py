@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
+import re
 import sqlite3
 import sys
 import tempfile
@@ -133,7 +135,207 @@ def insert_server_identity_secret_facts(conn, state):
             ),
         )
 
-def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0):
+
+def _probe_scalar(value: str):
+    text = value.strip()
+    if len(text) >= 2 and text[0] == text[-1] == "`":
+        text = text[1:-1]
+    if text.startswith("#") and text[1:].isdigit():
+        return text, "string"
+    try:
+        parsed = json.loads(text)
+        return parsed, (
+            "null" if parsed is None else
+            "boolean" if isinstance(parsed, bool) else
+            "number" if isinstance(parsed, (int, float)) else
+            "array" if isinstance(parsed, list) else
+            "object" if isinstance(parsed, dict) else
+            "string"
+        )
+    except (json.JSONDecodeError, TypeError):
+        return text, "string"
+
+
+def _probe_observations(lines: list[str]):
+    section_ordinal = 0
+    section_heading = None
+    in_code = False
+    raw_anchor = False
+    raw_anchor_buffer: list[tuple[int, str]] = []
+    observations = []
+
+    def emit(line_number: int, key: str, value: str, kind: str):
+        parsed, value_type = _probe_scalar(value)
+        observations.append({
+            "section_ordinal": section_ordinal or None,
+            "section_heading": section_heading,
+            "key": key.strip(),
+            "value_text": value.strip(),
+            "value_json": jdump(parsed),
+            "value_type": value_type,
+            "source_line_number": line_number,
+            "source_kind": kind,
+        })
+
+    heading_re = re.compile(r"^##\s+(?:(\d+)\.\s+)?(.+?)\s*$")
+    metadata_re = re.compile(r"^>\s+([^:]+):\s*(.+?)\s*$")
+    bullet_re = re.compile(r"^-\s+([^:]+):\s*(.*?)\s*$")
+    label_re = re.compile(r"^([A-Za-z0-9_ /()#.+-]+):\s*$")
+
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        heading = heading_re.match(line)
+        if heading and not in_code:
+            section_ordinal += 1
+            section_heading = heading.group(2).strip()
+            raw_anchor = section_heading.lower() == "raw anchor inventory"
+            i += 1
+            continue
+
+        if line.strip().startswith("```"):
+            if in_code and raw_anchor:
+                nonblank = [(n, t.strip()) for n, t in raw_anchor_buffer if t.strip()]
+                j = 0
+                while j + 1 < len(nonblank):
+                    key_line, key = nonblank[j]
+                    value_line, value = nonblank[j + 1]
+                    emit(value_line, key, value, "RAW_ANCHOR")
+                    j += 2
+                raw_anchor_buffer = []
+            in_code = not in_code
+            i += 1
+            continue
+
+        if in_code:
+            if raw_anchor:
+                raw_anchor_buffer.append((i + 1, line))
+            i += 1
+            continue
+
+        m = metadata_re.match(line)
+        if m:
+            emit(i + 1, m.group(1), m.group(2), "HEADER_METADATA")
+            i += 1
+            continue
+
+        m = bullet_re.match(line)
+        if m:
+            emit(i + 1, m.group(1), m.group(2), "BULLET_KEY_VALUE")
+            i += 1
+            continue
+
+        m = label_re.match(line)
+        if m:
+            j = i + 1
+            while j < len(lines) and not lines[j].strip():
+                j += 1
+            if j < len(lines):
+                nxt = lines[j].strip()
+                if nxt.startswith("`") and nxt.endswith("`"):
+                    emit(j + 1, m.group(1), nxt, "LABEL_VALUE")
+                    i = j + 1
+                    continue
+        i += 1
+
+    return observations
+
+
+def insert_first_touch_probes(conn):
+    probe_root = ROOT / "docs" / "control-plane" / "probes"
+    if not probe_root.exists():
+        return
+
+    for path in sorted(probe_root.glob("*.md")):
+        raw = path.read_text(encoding="utf-8")
+        lines = raw.splitlines()
+        observations = _probe_observations(lines)
+        probe_id = path.stem
+
+        by_key = {}
+        for obs in observations:
+            by_key.setdefault(obs["key"].strip().lower(), []).append(json.loads(obs["value_json"]))
+
+        def first(*keys):
+            for key in keys:
+                vals = by_key.get(key.lower())
+                if vals:
+                    return vals[0]
+            return None
+
+        correlation_key = first("Correlation key") or probe_id
+        issue = first("Original probe issue", "Created issue")
+        issue_number = None
+        if isinstance(issue, str):
+            m = re.search(r"(\d+)", issue)
+            issue_number = int(m.group(1)) if m else None
+        elif isinstance(issue, int):
+            issue_number = issue
+
+        section_headings = []
+        for line in lines:
+            m = re.match(r"^##\s+(?:(\d+)\.\s+)?(.+?)\s*$", line)
+            if m:
+                section_headings.append(m.group(2).strip())
+
+        conn.execute(
+            "INSERT INTO first_touch_probe_records("
+            "probe_id,correlation_key,source_path,status,scope,repository,original_issue_number,"
+            "original_issue_created_at,document_sha256,raw_markdown,line_count,section_count,observation_count"
+            ") VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
+            (
+                probe_id,
+                str(correlation_key),
+                str(path.relative_to(ROOT)),
+                first("Status"),
+                first("Scope"),
+                first("Repository"),
+                issue_number,
+                first("Original issue created at", "Created at"),
+                hashlib.sha256(raw.encode("utf-8")).hexdigest(),
+                raw,
+                len(lines),
+                len(section_headings),
+                len(observations),
+            ),
+        )
+
+        section_ordinal = 0
+        section_heading = None
+        for line_number, line in enumerate(lines, start=1):
+            m = re.match(r"^##\s+(?:(\d+)\.\s+)?(.+?)\s*$", line)
+            if m:
+                section_ordinal += 1
+                section_heading = m.group(2).strip()
+            conn.execute(
+                "INSERT INTO first_touch_probe_lines("
+                "probe_id,line_number,section_ordinal,section_heading,line_text"
+                ") VALUES(?,?,?,?,?)",
+                (probe_id, line_number, section_ordinal or None, section_heading, line),
+            )
+
+        for ordinal, obs in enumerate(observations, start=1):
+            conn.execute(
+                "INSERT INTO first_touch_probe_observations("
+                "probe_id,observation_id,section_ordinal,section_heading,observation_key,value_text,"
+                "value_json,value_type,source_line_number,source_kind"
+                ") VALUES(?,?,?,?,?,?,?,?,?,?)",
+                (
+                    probe_id,
+                    f"{probe_id}-OBS-{ordinal:04d}",
+                    obs["section_ordinal"],
+                    obs["section_heading"],
+                    obs["key"],
+                    obs["value_text"],
+                    obs["value_json"],
+                    obs["value_type"],
+                    obs["source_line_number"],
+                    obs["source_kind"],
+                ),
+            )
+
+
+def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0, expected_probe_count=0):
     conn.execute("PRAGMA foreign_key_check")
     fk = conn.fetchall() if False else []
     if conn.execute("PRAGMA foreign_key_check").fetchall():
@@ -260,6 +462,40 @@ def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0)
     facts_count = conn.execute("SELECT COUNT(*) FROM server_inventory_facts").fetchone()[0]
     if facts_count != expected_inventory_count:
         raise SystemExit("CONTROL_PLANE_DB_FAILED: server inventory projection count mismatch")
+    probe_count = conn.execute("SELECT COUNT(*) FROM first_touch_probe_records").fetchone()[0]
+    if probe_count != expected_probe_count:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: first-touch probe record count mismatch: {probe_count} != {expected_probe_count}")
+    if expected_probe_count:
+        probe = conn.execute(
+            "SELECT correlation_key,line_count,section_count,observation_count FROM first_touch_probe_records "
+            "WHERE probe_id='FT-PROBE-20261006-01'"
+        ).fetchone()
+        if probe is None or probe[0] != "FT-PROBE-20261006-01" or probe[1] < 400 or probe[2] < 40 or probe[3] < 80:
+            raise SystemExit(f"CONTROL_PLANE_DB_FAILED: first-touch probe projection incomplete: {probe}")
+        required_probe_keys = {
+            row[0] for row in conn.execute(
+                "SELECT observation_key FROM first_touch_probe_observations "
+                "WHERE probe_id='FT-PROBE-20261006-01'"
+            ).fetchall()
+        }
+        for required_key in {
+            "GACR_SESSION_ID",
+            "CONNECTION_REF",
+            "CLIENT_INSTANCE_ID",
+            "PROVIDER_CONVERSATION_REF",
+            "DIRECT_GITHUB_TO_CURRENT_CHATGPT_THREAD_ADDRESSABILITY_PROVEN",
+        }:
+            if required_key not in required_probe_keys:
+                raise SystemExit(
+                    f"CONTROL_PLANE_DB_FAILED: first-touch probe key missing: {required_key}"
+                )
+        source_line_count = conn.execute(
+            "SELECT COUNT(*) FROM first_touch_probe_lines WHERE probe_id='FT-PROBE-20261006-01'"
+        ).fetchone()[0]
+        if source_line_count != probe[1]:
+            raise SystemExit(
+                f"CONTROL_PLANE_DB_FAILED: probe line preservation mismatch: {source_line_count} != {probe[1]}"
+            )
     identity_secret_count = conn.execute("SELECT COUNT(*) FROM server_identity_secret_facts").fetchone()[0]
     if identity_secret_count != expected_identity_secret_count:
         raise SystemExit("CONTROL_PLANE_DB_FAILED: server identity-secret projection count mismatch")
@@ -270,6 +506,7 @@ def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0)
     print(f"current_phase={active[0][0]}")
     print(f"server_inventory_slots={facts_count}")
     print(f"server_identity_secret_facts={identity_secret_count}")
+    print(f"first_touch_probes={probe_count}")
 
 def build(path: Path, inventory_path: Path | None = None, identity_secret_path: Path | None = None):
     catalog = json.loads((DB_ROOT/"catalog.json").read_text(encoding="utf-8"))
@@ -281,15 +518,17 @@ def build(path: Path, inventory_path: Path | None = None, identity_secret_path: 
     try:
         for migration in sorted(DB_ROOT.glob("[0-9][0-9][0-9]_*.sql")):
             conn.executescript(migration.read_text(encoding="utf-8"))
-        conn.execute("INSERT INTO schema_meta(key,value) VALUES('schema_version','1.4.0')")
+        conn.execute("INSERT INTO schema_meta(key,value) VALUES('schema_version','1.5.0')")
         insert_case_data(conn,catalog)
         insert_replay(conn,replay)
         insert_questions_activities(conn,catalog)
         insert_runtime(conn,seed)
         insert_server_inventory(conn,inventory)
         insert_server_identity_secret_facts(conn,identity_secret)
+        insert_first_touch_probes(conn)
         conn.commit()
-        validate(conn, len(inventory["facts"]), len(identity_secret["facts"]))
+        probe_count = len(list((ROOT / "docs" / "control-plane" / "probes").glob("*.md"))) if (ROOT / "docs" / "control-plane" / "probes").exists() else 0
+        validate(conn, len(inventory["facts"]), len(identity_secret["facts"]), probe_count)
     finally:
         conn.close()
 

@@ -70,6 +70,33 @@ An initial source at revision 0 produces zero rows, not invented infrastructure
 facts. A failed refresh preserves an older value as `KNOWN_STALE`, which does
 not satisfy an execution preflight. The relational binary remains derived.
 
+## First-touch probe observability projection
+
+Additive migration `006_first_touch_probe_observability.sql` projects durable first-touch discovery records from
+`docs/control-plane/probes/*.md` into the existing canonical relational materialization.
+
+The projection deliberately uses three layers:
+
+- `first_touch_probe_records` stores probe identity, correlation metadata, source path, document hash, counts, and the **complete raw Markdown document**;
+- `first_touch_probe_lines` stores **every source line** with line number and section context, so no observation is lost when the normalization parser does not yet understand it;
+- `first_touch_probe_observations` stores queryable key/value observations extracted from header metadata, bullet key/value fields, labelled values, and the `Raw anchor inventory`.
+
+This design makes the relational projection exhaustive without pretending that every future provider-specific field is already modeled. The raw record and line projection are lossless; normalized observations are additive and can evolve.
+
+The probe tables are evidence projections only. They do not grant session, claim, routing, function invocation, or mutation authority.
+
+```text
+first-touch discovery Markdown
+        ↓
+raw document + every line
+        ↓
+generic key/value observations
+        ↓
+SQLite materialization / validation
+        ↓
+future PostgreSQL projection
+```
+
 ## Reuse across all cases
 
 The same model is used for:
