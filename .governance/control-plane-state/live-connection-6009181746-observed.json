@@ -1,0 +1,239 @@
+{
+  "schema": "first-touch-live-observation/v1",
+  "source_comment_id": 6009181746,
+  "request_id": "admreq-chatgpt-20261006041245851",
+  "correlation_id": "corr-chatgpt-20261006041245851",
+  "connection_ref": "chatgpt-github-direct:chainsolutions-wealthtech/Governed-Repository-Template:issue-161",
+  "observed_head_by_agent": "ccbb11951f2f2798333042e7b6eb87a476518363",
+  "reobserved_current_main": "f517839b6f2eab147682119cf74c84eb3996d391",
+  "fields": {
+    "request.request_id": {
+      "status": "OBSERVED",
+      "value": "admreq-chatgpt-20261006041245851",
+      "source": "issue_comment:6009181746"
+    },
+    "request.correlation_id": {
+      "status": "OBSERVED",
+      "value": "corr-chatgpt-20261006041245851",
+      "source": "issue_comment:6009181746"
+    },
+    "request.idempotency_key": {
+      "status": "OBSERVED",
+      "value": "idem-chatgpt-20261006041245851",
+      "source": "issue_comment:6009181746"
+    },
+    "request.issued_at": {
+      "status": "OBSERVED",
+      "value": "2026-10-06T04:12:45.851Z",
+      "source": "issue_comment:6009181746"
+    },
+    "request.observed_at": {
+      "status": "OBSERVED",
+      "value": "2026-10-06T04:12:45.851Z",
+      "source": "issue_comment:6009181746"
+    },
+    "agent.agent_type": {
+      "status": "OBSERVED",
+      "value": "conversation-agent",
+      "source": "issue_comment:6009181746"
+    },
+    "agent.provider": {
+      "status": "OBSERVED",
+      "value": "chatgpt",
+      "source": "issue_comment:6009181746"
+    },
+    "agent.requested_role": {
+      "status": "OBSERVED",
+      "value": "supervisor",
+      "source": "issue_comment:6009181746"
+    },
+    "client.client_instance_id": {
+      "status": "UNAVAILABLE",
+      "value": null,
+      "source": "issue_comment:6009181746"
+    },
+    "client.client_type": {
+      "status": "OBSERVED",
+      "value": "chatgpt-github-connector",
+      "source": "issue_comment:6009181746"
+    },
+    "session.conversation_ref": {
+      "status": "UNAVAILABLE",
+      "value": null,
+      "source": "issue_comment:6009181746"
+    },
+    "connection.connection_ref": {
+      "status": "OBSERVED",
+      "value": "chatgpt-github-direct:chainsolutions-wealthtech/Governed-Repository-Template:issue-161",
+      "source": "issue_comment:6009181746"
+    },
+    "connection.connection_method": {
+      "status": "OBSERVED",
+      "value": "github-issue-comment-admission-bridge",
+      "source": "issue_comment:6009181746"
+    },
+    "connection.surface_class": {
+      "status": "OBSERVED",
+      "value": "CONTROLLED_INSTRUMENTABLE",
+      "source": "issue_comment:6009181746"
+    },
+    "connection.wake_channels": {
+      "status": "OBSERVED",
+      "value": [],
+      "source": "issue_comment:6009181746"
+    },
+    "target.repository": {
+      "status": "OBSERVED",
+      "value": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "source": "issue_comment:6009181746"
+    },
+    "target.requested_branch": {
+      "status": "OBSERVED",
+      "value": "main",
+      "source": "issue_comment:6009181746"
+    },
+    "intent.entry_action": {
+      "status": "OBSERVED",
+      "value": "REPOSITORY_ACCESS",
+      "source": "issue_comment:6009181746"
+    },
+    "intent.connection_intent": {
+      "status": "OBSERVED",
+      "value": "READ_ONLY_DISCOVERY",
+      "source": "issue_comment:6009181746"
+    },
+    "intent.requested_capabilities": {
+      "status": "OBSERVED",
+      "value": [
+        "READ_REPOSITORY"
+      ],
+      "source": "issue_comment:6009181746"
+    },
+    "control_capabilities.heartbeat": {
+      "status": "OBSERVED",
+      "value": false,
+      "source": "issue_comment:6009181746"
+    },
+    "control_capabilities.command_receive": {
+      "status": "OBSERVED",
+      "value": false,
+      "source": "issue_comment:6009181746"
+    },
+    "control_capabilities.command_ack": {
+      "status": "OBSERVED",
+      "value": false,
+      "source": "issue_comment:6009181746"
+    },
+    "control_capabilities.challenge_response": {
+      "status": "OBSERVED",
+      "value": false,
+      "source": "issue_comment:6009181746"
+    },
+    "control_capabilities.checkpoint_report": {
+      "status": "OBSERVED",
+      "value": false,
+      "source": "issue_comment:6009181746"
+    },
+    "control_capabilities.progress_report": {
+      "status": "OBSERVED",
+      "value": false,
+      "source": "issue_comment:6009181746"
+    },
+    "control_capabilities.context_report": {
+      "status": "OBSERVED",
+      "value": false,
+      "source": "issue_comment:6009181746"
+    },
+    "control_capabilities.reobserve_head": {
+      "status": "OBSERVED",
+      "value": true,
+      "source": "issue_comment:6009181746"
+    },
+    "github.actor.login": {
+      "status": "OBSERVED",
+      "value": "Wealthtechinnovations",
+      "source": "github:issue_comment"
+    },
+    "github.actor.id": {
+      "status": "OBSERVED",
+      "value": 94637590,
+      "source": "github:issue_comment/profile"
+    },
+    "github.permission": {
+      "status": "OBSERVED",
+      "value": "admin",
+      "source": "github:get_repo_collaborator_permission"
+    },
+    "github.installation.id": {
+      "status": "OBSERVED",
+      "value": 145098929,
+      "source": "github:list_installations:chainsolutions-wealthtech"
+    },
+    "github.installation.account_login": {
+      "status": "OBSERVED",
+      "value": "chainsolutions-wealthtech",
+      "source": "github:list_installations"
+    },
+    "github.installation.account_id": {
+      "status": "OBSERVED",
+      "value": 299685687,
+      "source": "github:list_installations"
+    },
+    "git.branch": {
+      "status": "OBSERVED",
+      "value": "main",
+      "source": "issue_comment:6009181746"
+    },
+    "git.head": {
+      "status": "OBSERVED",
+      "value": "ccbb11951f2f2798333042e7b6eb87a476518363",
+      "source": "agent_pre_send_observation"
+    },
+    "gacr.session_id": {
+      "status": "UNKNOWN",
+      "value": null,
+      "source": "main_stores:no_match_for_comment_or_request"
+    },
+    "gacr.beacon_id": {
+      "status": "UNKNOWN",
+      "value": null,
+      "source": "main_stores:no_match_for_comment_or_request"
+    },
+    "gacr.correlation_id": {
+      "status": "UNKNOWN",
+      "value": null,
+      "source": "main_stores:no_match_for_comment_or_request"
+    },
+    "gacr.provider_conversation_ref": {
+      "status": "UNAVAILABLE",
+      "value": null,
+      "source": "provider_not_exposed"
+    },
+    "gacr.provider_conversation_url": {
+      "status": "UNAVAILABLE",
+      "value": null,
+      "source": "provider_not_exposed"
+    },
+    "task.task_id": {
+      "status": "UNKNOWN",
+      "value": null,
+      "source": "not_yet_qualified"
+    },
+    "claim.claim_id": {
+      "status": "UNKNOWN",
+      "value": null,
+      "source": "not_yet_qualified"
+    },
+    "pull_request.number": {
+      "status": "NOT_APPLICABLE",
+      "value": null,
+      "source": "issue_comment_admission"
+    },
+    "checkpoint.ref": {
+      "status": "UNKNOWN",
+      "value": null,
+      "source": "not_yet_established"
+    }
+  },
+  "authority_granted": false
+}
