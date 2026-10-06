@@ -171,3 +171,12 @@ subsequent governed reads in the same connector session
 If provider conversation/session/connection identity is unavailable, the wrapper still emits exactly one unresolved capture signal per connector session and the repository preserves the Q1 fail-closed identity rule.
 
 This wrapper is the repository-controlled integration surface. It does not modify ChatGPT's proprietary native `@GitHub` connector. A host or custom connector must invoke this governed surface instead of calling the native GitHub read directly if automatic First Touch is required.
+
+
+## Canonical GSCC instrumentation binding
+
+The generic binding point is now `gscc.instrument_tool(..., before_tool_call=...)`.
+
+`provider_first_tool_hook.FirstTouchBeforeToolCall` is the canonical Provider First Touch adapter for that hook. One adapter instance represents one provider/client connector session and emits at most one First Touch before the first instrumented tool, regardless of whether that tool is `get_repo`, `fetch_file`, a search/read operation, or another instrumented GitHub function.
+
+The previously added `governed_github_read_connector.py` remains a compatibility/example integration for common reads; it is not a second First Touch authority. New controlled hosts should instrument their actual tool surface through the generic GSCC hook rather than create one wrapper per tool name.
