@@ -929,6 +929,106 @@ def interrogate_session(session_id: str, *, generated_at: str | None = None) -> 
     return agent_context(session_id, generated_at=generated_at)
 
 
+def session_recovery_packet(session_id: str, *, generated_at: str | None = None) -> dict:
+    """Build a secretless, derived continuity + addressability packet.
+
+    This is a projection over existing canonical GACR stores. It creates no
+    session, claim, routing, task, authority, or transport source of truth.
+    """
+    context = agent_context(session_id, generated_at=generated_at)
+    session = context["session"]
+    dispatches = sorted(
+        context.get("dispatches") or [],
+        key=lambda item: (item.get("created_at") or "", item.get("dispatch_id") or ""),
+    )
+
+    wake_channels = set(session.get("wake_channels") or [])
+    for item in dispatches:
+        wake_channels.update(item.get("delivery_modes") or [])
+
+    capabilities = sorted(set(session.get("capabilities") or []))
+    transport_candidates = sorted(wake_channels)
+    last_dispatch = dispatches[-1] if dispatches else None
+
+    explicit_prompt_transport = session.get("prompt_transport")
+    prompt_receive_verified = (
+        "PROMPT_RECEIVE" in capabilities
+        or bool(explicit_prompt_transport)
+    )
+    addressability = {
+        "session_id": session_id,
+        "provider": available(session.get("provider")),
+        "provider_conversation_ref": available(session.get("provider_conversation_ref")),
+        "client_instance_id": available(session.get("client_instance_id")),
+        "connection_ref": available(session.get("connection_ref")),
+        "connection_method": available(session.get("connection_method")),
+        "bridge_registration_ref": available(session.get("bridge_registration_ref")),
+        "wake_channels": sorted(session.get("wake_channels") or []),
+        "transport_candidates": transport_candidates,
+        "capabilities": capabilities,
+        "control_channel_reachability": available(session.get("control_channel_reachability")),
+        "last_dispatch": available({
+            "dispatch_id": last_dispatch.get("dispatch_id"),
+            "status": last_dispatch.get("status"),
+            "created_at": last_dispatch.get("created_at"),
+            "delivery_modes": last_dispatch.get("delivery_modes") or [],
+        } if last_dispatch else None),
+        "targetable_via_observed_transport": bool(transport_candidates),
+        "freeform_message_delivery": {
+            "status": "VERIFIED_CAPABILITY" if prompt_receive_verified else "NOT_VERIFIED",
+            "transport": available(explicit_prompt_transport),
+            "provider_conversation_ref_alone_is_sufficient": False,
+            "requires_verified_host_or_provider_transport": True,
+        },
+        "credentials": {
+            "persisted_in_packet": False,
+            "runtime_only": True,
+        },
+        "grants_invocation_authority": False,
+        "grants_mutation_authority": False,
+    }
+
+    packet = {
+        "schema": "gacr-session-recovery-packet/v1",
+        "process": "GACR",
+        "authority": "CP-AGENT-RELAY-001",
+        "session_id": session_id,
+        "generated_at": context["generated_at"],
+        "addressability": addressability,
+        "continuity": {
+            "repository": context["repository"],
+            "branch": context["branch"],
+            "pull_request": context["pull_request"],
+            "task_id": context["task_id"],
+            "claims": context["claims"],
+            "checkpoint": context["checkpoint"],
+            "observed_head": context["observed_head"],
+            "written_head": context["written_head"],
+            "liveness": context["liveness"],
+            "progress": context["progress"],
+            "takeover": context["takeover"],
+            "interruption_forensics": context["interruption_forensics"],
+            "exact_head_reobservation_requirement": context["exact_head_reobservation_requirement"],
+        },
+        "provenance": {
+            "session_store": str(SESSIONS_PATH.relative_to(ROOT)) if SESSIONS_PATH.is_relative_to(ROOT) else str(SESSIONS_PATH),
+            "claims_store": str(CLAIMS_PATH.relative_to(ROOT)) if CLAIMS_PATH.is_relative_to(ROOT) else str(CLAIMS_PATH),
+            "takeovers_store": str(TAKEOVERS_PATH.relative_to(ROOT)) if TAKEOVERS_PATH.is_relative_to(ROOT) else str(TAKEOVERS_PATH),
+            "beacons_store": str(BEACONS_PATH.relative_to(ROOT)) if BEACONS_PATH.is_relative_to(ROOT) else str(BEACONS_PATH),
+            "correlations_store": str(CORRELATIONS_PATH.relative_to(ROOT)) if CORRELATIONS_PATH.is_relative_to(ROOT) else str(CORRELATIONS_PATH),
+            "dispatches_store": str(DISPATCHES_PATH.relative_to(ROOT)) if DISPATCHES_PATH.is_relative_to(ROOT) else str(DISPATCHES_PATH),
+            "derived_projection_only": True,
+        },
+        "next_gate": {
+            "may_resume_without_exact_head_reobservation": False,
+            "may_accept_takeover_implicitly": False,
+            "may_send_freeform_message_without_verified_transport": False,
+        },
+    }
+    assert_secretless(packet)
+    return packet
+
+
 def worker_c_integration_projection(session_id: str, *, generated_at: str | None = None) -> dict:
     context = agent_context(session_id, generated_at=generated_at)
     return {
@@ -1609,6 +1709,10 @@ def command_context(a: argparse.Namespace) -> None:
     print(json.dumps(agent_context(a.session_id),indent=2,ensure_ascii=False))
 
 
+def command_recover(a: argparse.Namespace) -> None:
+    print(json.dumps(session_recovery_packet(a.session_id), indent=2, ensure_ascii=False))
+
+
 def command_forensics(a: argparse.Namespace) -> None:
     if a.session_id:
         print(json.dumps({"status":"FORENSICS_COMPLETE","report":build_interruption_forensics(a.session_id,persist=True)},indent=2,ensure_ascii=False))
@@ -1663,6 +1767,10 @@ def parser() -> argparse.ArgumentParser:
     ctx=sub.add_parser("context")
     ctx.add_argument("--session-id",required=True)
     ctx.set_defaults(fn=command_context)
+
+    recover=sub.add_parser("recover")
+    recover.add_argument("--session-id",required=True)
+    recover.set_defaults(fn=command_recover)
 
     forensic=sub.add_parser("forensics")
     forensic.add_argument("--session-id")
