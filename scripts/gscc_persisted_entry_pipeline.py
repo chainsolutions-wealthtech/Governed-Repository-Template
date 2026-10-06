@@ -19,6 +19,7 @@ from gscc.first_touch_handoff import build_handoff
 
 ROOT=Path(__file__).resolve().parents[1]
 MIGRATION=ROOT/".governance"/"control-plane-db"/"008_gscc_observable_entry_pipeline.sql"
+IDENTITY_MIGRATION=ROOT/".governance"/"control-plane-db"/"010_gscc_arrival_session_identity.sql"
 
 def now_iso()->str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
@@ -30,6 +31,9 @@ def packet_identity(packet:dict[str,Any])->tuple[str,str|None]:
     candidates=packet.get("identity",{}).get("candidates",[])
     if not candidates:
         return "UNKNOWN",None
+    sections=packet.get("sections") if isinstance(packet.get("sections"),dict) else {}
+    connection=sections.get("connection") if isinstance(sections.get("connection"),dict) else {}
+    origin=connection.get("connection_ref_origin")
     first=candidates[0]
     field=str(first.get("field") or "")
     value=first.get("value")
@@ -38,9 +42,10 @@ def packet_identity(packet:dict[str,Any])->tuple[str,str|None]:
     family={
       "session.conversation_ref":"provider_conversation_ref",
       "session.session_ref":"provider_session_ref",
-      "connection.connection_ref":"provider_connection_ref",
       "client.client_instance_id":"conversation_scoped_client_instance_id",
     }.get(field)
+    if field=="connection.connection_ref":
+        family="gscc_arrival_ref" if isinstance(origin,str) and origin.startswith("GSCC_MINTED_") else "provider_connection_ref"
     if not family:
         return "WEAK",None
     return "STRONG",f"{family}:{value}"
@@ -126,6 +131,7 @@ def install_pipeline_schema(conn:sqlite3.Connection)->None:
     install_schema(conn)
     insert_catalog(conn)
     conn.executescript(MIGRATION.read_text(encoding="utf-8"))
+    conn.executescript(IDENTITY_MIGRATION.read_text(encoding="utf-8"))
 
 def run_pipeline(provider_envelope:dict[str,Any], github:dict[str,Any], db_path:Path, *, run_id:str, observed_at:str|None=None)->dict[str,Any]:
     observed_at=observed_at or now_iso()
@@ -176,6 +182,31 @@ def run_pipeline(provider_envelope:dict[str,Any], github:dict[str,Any], db_path:
     try:
         install_pipeline_schema(conn)
         packet_json=json.dumps(packet,ensure_ascii=False,sort_keys=True,separators=(",",":"))
+        sections=packet.get("sections") if isinstance(packet.get("sections"),dict) else {}
+        connection_section=sections.get("connection") if isinstance(sections.get("connection"),dict) else {}
+        arrival_ref=connection_section.get("gscc_arrival_ref")
+        connection_ref=connection_section.get("connection_ref")
+        connection_origin=connection_section.get("connection_ref_origin")
+        subject_ref=connection_section.get("transport_subject_ref")
+        if arrival_ref not in (None,"","UNAVAILABLE"):
+            conn.execute(
+              "INSERT INTO gscc_arrival_instances(arrival_ref,connection_ref,connection_ref_origin,transport_subject_ref,repository,resumable,identity_id,first_run_id,last_run_id,first_seen_at,last_seen_at,status,provider_private_identity_inferred) "
+              "VALUES(?,?,?,?,?,?,?,?,?,?,?,?,0) "
+              "ON CONFLICT(arrival_ref) DO UPDATE SET last_run_id=excluded.last_run_id,last_seen_at=excluded.last_seen_at,status=excluded.status",
+              (
+                arrival_ref,connection_ref,connection_origin,subject_ref,capture.get("repository"),
+                1 if str(connection_origin)=="GSCC_MINTED_GITHUB_ISSUE" else 0,
+                None,run_id,run_id,observed_at,observed_at,"OBSERVED",
+              ),
+            )
+            conn.execute(
+              "INSERT OR REPLACE INTO gscc_arrival_events(event_id,arrival_ref,run_id,event_type,gate_id,status,evidence_json,observed_at) VALUES(?,?,?,?,?,?,?,?)",
+              (
+                f"{run_id}:ARRIVAL",arrival_ref,run_id,"ARRIVAL_CAPTURE",None,"OBSERVED",
+                json.dumps({"packet_id":packet_id,"capture_id":capture_id},sort_keys=True),observed_at,
+              ),
+            )
+
         conn.execute(
           "INSERT OR REPLACE INTO gscc_observable_packets(packet_id,capture_id,schema_id,repository,observed_at,identity_strength,classification,packet_json,packet_sha256,created_at) VALUES(?,?,?,?,?,?,?,?,?,?)",
           (
@@ -193,6 +224,11 @@ def run_pipeline(provider_envelope:dict[str,Any], github:dict[str,Any], db_path:
             )
             classification=identity["classification"]
             identity_id=identity["identity_id"]
+            if arrival_ref not in (None,"","UNAVAILABLE"):
+                conn.execute(
+                  "UPDATE gscc_arrival_instances SET identity_id=?,status='IDENTITY_BOUND',last_seen_at=? WHERE arrival_ref=?",
+                  (identity_id,observed_at,arrival_ref),
+                )
             entry["classification"]=classification
             entry["gscc_identity_id"]=identity_id
             entry["gscc_first_capture_id"]=identity["first_capture_id"]

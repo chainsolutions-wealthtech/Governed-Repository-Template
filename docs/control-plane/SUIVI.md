@@ -1250,3 +1250,46 @@ These observations are durable supervision evidence, not new mutation authority 
 - This is the same governed-response principle already used by `required_reads`, `next_request`, `allowed_next_operation` and handoff responses.
 - A raw successful GitHub read is not admission.
 - Recording only: no runtime implementation, test execution, transport change, MCP change or global-program advancement is authorized by this note.
+
+
+## 2026-10-07 — Per-arrival GSCC identity and session runtime
+
+Owner-authorized infrastructure lane: `IDN-001..IDN-012`. This lane does not resume or advance `P12-S6`.
+
+Candidate PR: `#229`.
+Candidate branch: `governance/per-arrival-identity-full-session-runtime`.
+Candidate Governance CI: `37543670685 = SUCCESS`.
+
+Identity/session invariant:
+
+```text
+ONE CONTROLLED ARRIVAL
+→ ONE GSCC arrival_ref / connection_ref
+→ ONE GSCC logical identity
+→ ONE GSE SessionTwin
+→ ONE explicitly correlated canonical GACR session
+
+provider-private conversation/session ids remain SUPPLIED_ONLY
+GSCC-minted refs never impersonate provider ids
+different arrival issues never collapse merely because actor/model/repository match
+same arrival issue may resume the same logical identity
+```
+
+Implemented candidate surfaces:
+- `scripts/gscc_arrival_identity.py` — mints a repository-controlled arrival identity when the provider exposes no stable private identifier;
+- DB migration `010_gscc_arrival_session_identity.sql` — arrival instances, arrival events and explicit GSCC/GSE/GACR binding;
+- DB migration `011_gscc_session_runtime.sql` — resumable qualification runtime and pre-GSE control challenge state;
+- `scripts/gscc_session_runtime.py` — Q1/Q3/Q4/Q5/Q8, live Q9 ACK/response, Q10 GSE projection, then canonical GACR binding and Q2/Q6/Q7/Q11/Q12 qualification;
+- existing GACR remains the sole durable continuity/session authority;
+- F1 remains dependent on the real governed function requested by the arriving agent and is never auto-fabricated.
+
+Multi-arrival isolation proof:
+- two arrivals with the same provider/model/repository but different GitHub issue identities produce different `connection_ref`, GSCC identities and GSE SessionTwins;
+- a repeat of the same arrival identity becomes `CONTINUATION`;
+- Q9 refuses invalid/expired correlation and requires ACK before challenge response;
+- Governance CI `37543670685` passed the new `Test per-arrival identity and GSE session isolation` together with historical GSCC/GSE/GACR suites.
+
+Current candidate stop point:
+- implementation through Q12 is CI-proven;
+- live fresh-conversation proof through Q12 is still required after merge;
+- F1 / `00_START_HERE.md` release remains intentionally unproven until an actual governed function request is validated.
