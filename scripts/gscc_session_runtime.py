@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Any
 
 from gscc.admission import evaluate_admission, evaluate_access_grant
+from gscc.admission_harvester import harvest_qualification_evidence
 from gscc.first_touch_store import project_to_gse
 from gscc_post_q1_gate_router import route_gate
 from gscc_gacr.issue_control_bridge import apply_host_control_event
@@ -235,14 +236,117 @@ def control(db:Path,runtime_id:str,payload:dict[str,Any],observed_at:str)->dict[
       "authority_granted":False,
     }
 
+
+def bind_gacr(db:Path,runtime_id:str,sessions_path:Path,current_head:str)->dict[str,Any]:
+    conn=sqlite3.connect(db)
+    try:
+      rt=_load_runtime(conn,runtime_id)
+      if rt["state"]!="GSE_VERIFIED_WAITING_GACR":
+          raise ValueError("runtime is not waiting for GACR binding")
+      sessions=json.loads(sessions_path.read_text(encoding="utf-8"))
+      matches=[
+        s for s in (sessions.get("sessions") or [])
+        if isinstance(s,dict)
+        and s.get("connection_ref")==rt["connection_ref"]
+        and s.get("status")=="ACTIVE"
+        and ((s.get("relay") or {}).get("state")=="ACTIVE")
+      ]
+      if len(matches)!=1:
+          raise ValueError("exactly one active GACR session required")
+      session=matches[0]
+      sid=session.get("session_id")
+      if not sid: raise ValueError("GACR session id missing")
+      conn.execute(
+        "UPDATE gscc_session_bindings SET gacr_session_id=?,binding_status='GACR_BOUND',binding_level='EXACT',evidence_ref=?,updated_at=? WHERE arrival_ref=?",
+        (sid,f"gacr-session:{sid}",now_iso(),rt["arrival_ref"]),
+      )
+      conn.commit()
+      entry,packet=_packet(conn,rt["run_id"])
+    finally: conn.close()
+
+    _route(db,runtime_id,"Q2_GACR","Q2_GACR_VERIFIED",{"session_id":sid,"connection_ref":rt["connection_ref"]},rt["identity_id"])
+
+    admission=json.loads(rt["admission_json"])
+    capability=json.loads(rt["capability_evidence_json"])
+    control_evidence=json.loads(rt["control_evidence_json"])
+    gse_state=json.loads(rt["gse_state_json"])
+    github=packet["sections"]["github"]
+    repository=github.get("repository_full_name")
+    branch=github.get("branch") or github.get("default_branch")
+
+    def fake_github(url:str):
+        if url.endswith("/repos/"+repository):
+            return {
+              "id":github.get("repository_id"),
+              "full_name":repository,
+              "owner":{"login":github.get("owner_login")},
+              "visibility":github.get("visibility"),
+              "default_branch":github.get("default_branch"),
+              "permissions":github.get("permissions"),
+            }
+        if "/branches/" in url:
+            return {"name":branch,"commit":{"sha":current_head}}
+        raise ValueError(f"unexpected github observation URL:{url}")
+
+    governance={}
+    for p in ("00_START_HERE.md","GOVERNANCE.md","docs/control-plane/GSCC_ADMISSION_ACCESS_GATE.md","docs/control-plane/GACR_PROGRAM.md"):
+        governance[p]=(ROOT/p).read_text(encoding="utf-8")
+    claims=json.loads((ROOT/".governance/control-plane-state/gacr-claims.json").read_text(encoding="utf-8"))
+    tasks=json.loads((ROOT/".governance/control-plane-state/tasks.json").read_text(encoding="utf-8"))
+    access_policy=json.loads((ROOT/".governance/agent-relay/gscc-admission-access-policy.json").read_text(encoding="utf-8"))
+
+    evidence=harvest_qualification_evidence(
+      admission,
+      github_request_fn=fake_github,
+      sessions=sessions,
+      claims=claims,
+      tasks=tasks,
+      governance_documents=governance,
+      target_repository=repository,
+      requested_branch=branch,
+      capability_evidence=capability,
+      control_evidence=control_evidence,
+      gse_state=gse_state,
+      access_policy_document=access_policy,
+    )
+    if evidence.get("session",{}).get("status")!="BOUND":
+        raise ValueError("canonical GACR session not bound in qualification")
+    if evidence.get("task",{}).get("status") not in {"RECONCILED","NOT_REQUIRED"}:
+        raise ValueError("Q6 task reconciliation incomplete")
+    _route(db,runtime_id,"Q6","Q6_VERIFIED",evidence["task"],rt["identity_id"])
+    if evidence.get("claim",{}).get("status") not in {"RECONCILED","NOT_REQUIRED"}:
+        raise ValueError("Q7 claim reconciliation incomplete")
+    _route(db,runtime_id,"Q7","Q7_VERIFIED",evidence["claim"],rt["identity_id"])
+    if evidence.get("access_policy",{}).get("status")!="ALLOW":
+        raise ValueError("Q11 access policy did not allow")
+    _route(db,runtime_id,"Q11","Q11_VERIFIED",evidence["access_policy"],rt["identity_id"])
+    grant=evaluate_access_grant(admission,evidence)
+    if grant.get("status")!="AUTHORIZED":
+        raise ValueError(f"Q12 access grant blocked:{grant.get('reason_code')}")
+    _route(db,runtime_id,"Q12","Q12_VERIFIED",{"grant_id":grant.get("grant_id"),"access_class":grant.get("access_class")},rt["identity_id"])
+
+    conn=sqlite3.connect(db)
+    try:
+      conn.execute("UPDATE gscc_session_runtime SET state='READY_FOR_F1',qualification_evidence_json=?,access_grant_json=?,last_gate='Q12',next_gate='F1',updated_at=? WHERE runtime_id=?",(json.dumps(evidence,sort_keys=True),json.dumps(grant,sort_keys=True),now_iso(),runtime_id))
+      conn.commit()
+    finally: conn.close()
+    return {
+      "runtime_id":runtime_id,"state":"READY_FOR_F1","last_gate":"Q12","next_gate":"F1",
+      "gacr_session_id":sid,"access_grant":grant,
+      "start_here_status":"NOT_YET_APPLICABLE",
+      "authority_granted":False,
+    }
+
 def main()->None:
     p=argparse.ArgumentParser(); sub=p.add_subparsers(dest="command",required=True)
     a=sub.add_parser("prepare"); a.add_argument("--db",required=True); a.add_argument("--run-id",required=True); a.add_argument("--issue-number",required=True,type=int)
     b=sub.add_parser("control"); b.add_argument("--db",required=True); b.add_argument("--runtime-id",required=True); b.add_argument("--payload-json",required=True); b.add_argument("--observed-at",required=True)
+    g=sub.add_parser("bind-gacr"); g.add_argument("--db",required=True); g.add_argument("--runtime-id",required=True); g.add_argument("--sessions",required=True); g.add_argument("--current-head",required=True)
     s=sub.add_parser("status"); s.add_argument("--db",required=True); s.add_argument("--runtime-id",required=True)
     args=p.parse_args()
     if args.command=="prepare": result=prepare(Path(args.db),args.run_id,args.issue_number)
     elif args.command=="control": result=control(Path(args.db),args.runtime_id,json.loads(args.payload_json),args.observed_at)
+    elif args.command=="bind-gacr": result=bind_gacr(Path(args.db),args.runtime_id,Path(args.sessions),args.current_head)
     else:
         conn=sqlite3.connect(args.db)
         try: result=_load_runtime(conn,args.runtime_id)
