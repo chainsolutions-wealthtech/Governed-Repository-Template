@@ -107,10 +107,8 @@ def _match_capture_field(field_id: str, index: dict[str, list[tuple[str, Any]]])
 
 
 def build_packet(observation_path: Path | None, output_path: Path, *, capture_path: Path | None = None):
-    if not REGISTRY_PATH.exists():
-        mod = load_registry_module()
-        mod.main()
-    registry = json.loads(REGISTRY_PATH.read_text(encoding="utf-8"))
+    mod = load_registry_module()
+    canonical_fields = [mod.norm_key(x) for x in mod.CANONICAL_CONNECTION_FIELDS]
 
     observed: dict[str, Any] = {}
     current: dict[str, Any] = {}
@@ -126,63 +124,64 @@ def build_packet(observation_path: Path | None, output_path: Path, *, capture_pa
         capture_index, capture_terminal_count = _capture_index(capture)
 
     rows=[]
-    for expected in registry["expected_observations"]:
-        field_id=expected["field_id"]
+    for field_id in canonical_fields:
         live=current.get(field_id)
         if live is None and capture_index:
-            live = _match_capture_field(field_id, capture_index)
+            live=_match_capture_field(field_id,capture_index)
         if live:
             status=live["status"]
             value=live.get("value")
             source=live.get("source")
-        elif expected["source_kind"]=="TOOL_SCHEMA":
-            status="SCHEMA_AVAILABLE"
-            value=None
-            source=expected["source_path"]
-        elif expected["source_kind"]=="PROBE_REFERENCE":
-            status="REFERENCE_ONLY"
-            value=None
-            source=expected["source_path"]
         else:
             status="UNKNOWN"
             value=None
             source="NO_LIVE_VALUE_OBSERVED"
         rows.append({
-            **expected,
+            "observation_id":f"canonical:{field_id}",
+            "field_id":field_id,
+            "source_kind":"CANONICAL_CONNECTION_FIELD",
+            "source_path":"CANONICAL_CONNECTION_FIELDS",
+            "source_line":None,
             "status":status,
             "value":value,
             "evidence_source":source,
         })
 
-    # Every terminal node from the actual First Touch capture is also preserved
-    # as live observed evidence even if it has no historical registry alias yet.
     capture_rows=[]
     if capture:
         for path, value in _walk(capture):
             if isinstance(value, (dict, list)):
                 continue
             capture_rows.append({
-                "observation_id": f"capture:{path}",
-                "field_id": _norm(path.removeprefix("$.")),
-                "source_kind": "LIVE_CAPTURE_NODE",
-                "source_path": str(capture_path),
-                "source_line": None,
-                "status": "OBSERVED" if value is not None else "UNAVAILABLE",
-                "value": value,
-                "evidence_source": f"first-touch-capture:{path}",
+                "observation_id":f"capture:{path}",
+                "field_id":_norm(path.removeprefix("$.")),
+                "source_kind":"LIVE_CAPTURE_NODE",
+                "source_path":str(capture_path),
+                "source_line":None,
+                "status":"OBSERVED" if value is not None else "UNAVAILABLE",
+                "value":value,
+                "evidence_source":f"first-touch-capture:{path}",
             })
+
+    probe_paths=sorted(mod.PROBE_ROOT.glob("*.md"))
+    probe_reference_count=sum(len(mod.parse_probe(p)) for p in probe_paths)
+    tool_schema_field_count=0
+    if mod.TOOL_SCHEMA_SNAPSHOT.exists():
+        tool_schema_field_count=len(json.loads(mod.TOOL_SCHEMA_SNAPSHOT.read_text(encoding="utf-8")).get("fields",[]))
 
     counts=Counter(row["status"] for row in rows)
     silent=[row for row in rows if not row.get("status")]
     packet={
-        "schema":"first-touch-connection-completeness/v1",
-        "capture_id": capture.get("capture_id"),
+        "schema":"first-touch-connection-completeness/v2",
+        "capture_id":capture.get("capture_id"),
         "source_comment_id":observed.get("source_comment_id"),
         "request_id":observed.get("request_id"),
         "correlation_id":observed.get("correlation_id"),
         "connection_ref":observed.get("connection_ref"),
         "expected_observation_count":len(rows),
-        "registry_field_count":registry["field_count"],
+        "canonical_field_count":len(canonical_fields),
+        "reference_probe_observation_count":probe_reference_count,
+        "reference_tool_schema_field_count":tool_schema_field_count,
         "capture_terminal_value_count":capture_terminal_count,
         "captured_live_node_count":len(capture_rows),
         "total_accounted_items":len(rows)+len(capture_rows),
@@ -191,13 +190,14 @@ def build_packet(observation_path: Path | None, output_path: Path, *, capture_pa
         "complete_accounting":len(silent)==0,
         "live_value_count":sum(1 for row in rows if row["status"]=="OBSERVED"),
         "explicit_unavailable_count":sum(1 for row in rows if row["status"]=="UNAVAILABLE"),
+        "unknown_count":sum(1 for row in rows if row["status"]=="UNKNOWN"),
         "rows":rows,
         "live_capture_rows":capture_rows,
+        "reference_inventory_is_gate_input":False,
         "authority_granted":False,
     }
     output_path.write_text(json.dumps(packet,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
     return packet
-
 
 def main():
     p=argparse.ArgumentParser()
@@ -215,7 +215,7 @@ def main():
     print(json.dumps({
         "status":"FIRST_TOUCH_CONNECTION_COMPLETENESS_BUILT",
         "expected_observation_count":packet["expected_observation_count"],
-        "registry_field_count":packet["registry_field_count"],
+        "canonical_field_count":packet["canonical_field_count"],
         "capture_terminal_value_count":packet["capture_terminal_value_count"],
         "captured_live_node_count":packet["captured_live_node_count"],
         "total_accounted_items":packet["total_accounted_items"],
