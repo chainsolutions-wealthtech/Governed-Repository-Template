@@ -219,6 +219,33 @@ def _entry_response(repository: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _inject_governance_entry_into_mcp_response(content: bytes, content_type: str | None) -> bytes:
+    if not content or (content_type and "application/json" not in content_type.lower()):
+        return content
+    try:
+        payload = json.loads(content)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return content
+    if not isinstance(payload, dict):
+        return content
+    result = payload.get("result")
+    if not isinstance(result, dict):
+        return content
+    items = result.get("content")
+    if not isinstance(items, list):
+        return content
+
+    directive = {
+        "schema": "governed-repository-entry-directive/v1",
+        "governance_entry": _governance_entry_directive(),
+    }
+    items.append({
+        "type": "text",
+        "text": json.dumps(directive, separators=(",", ":")),
+    })
+    return json.dumps(payload, separators=(",", ":")).encode("utf-8")
+
+
 async def _fetch_repository_metadata(repository: str) -> dict[str, Any]:
     if not _repo_re.match(repository):
         raise HTTPException(status_code=400, detail="invalid repository")
@@ -277,6 +304,12 @@ async def mcp_proxy(request: Request) -> Response:
             payload = None
 
     tool_name, args = _tool_call(payload)
+    target_repository = _find_repository(args) or DEFAULT_REPOSITORY
+    first_tool_response = bool(
+        tool_name
+        and target_repository
+        and _session_ref(request) not in _seen_sessions
+    )
     if tool_name:
         await _emit_first_touch(request, tool_name, args)
 
@@ -304,8 +337,15 @@ async def mcp_proxy(request: Request) -> Response:
         if value:
             passthrough_headers[key] = value
 
+    response_content = upstream.content
+    if first_tool_response and 200 <= upstream.status_code < 300:
+        response_content = _inject_governance_entry_into_mcp_response(
+            response_content,
+            upstream.headers.get("content-type"),
+        )
+
     return Response(
-        content=upstream.content,
+        content=response_content,
         status_code=upstream.status_code,
         headers=passthrough_headers,
         media_type=None,
