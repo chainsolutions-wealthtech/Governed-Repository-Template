@@ -121,7 +121,10 @@ def test_pre_gacr_projection_requires_no_durable_session():
             "challenge_id": "challenge-1",
         },
     }
-    state = project_pre_gacr_admission_gse_state(admission, baseline, control)
+    state = project_pre_gacr_admission_gse_state(
+        admission, baseline, control,
+        now=datetime(2026, 10, 6, 6, 10, 2, tzinfo=timezone.utc),
+    )
     assert state["status"] == "VERIFIED", state
     assert state["session_id"] == admission["connection_ref"], state
     assert state["durable_gacr_session_required"] is False, state
