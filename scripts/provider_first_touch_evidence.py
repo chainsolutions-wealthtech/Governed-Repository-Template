@@ -115,7 +115,7 @@ def _unwrap(value: Any) -> tuple[Any, str | None, str | None, str | None, str | 
 def build_field_evidence(envelope: dict[str, Any], observed_at: str) -> list[dict[str, Any]]:
     rows: list[dict[str, Any]] = []
     for field_id in CANONICAL_CONNECTION_FIELDS:
-        candidates = (field_id,) + ALIASES.get(field_id, ())
+        candidates = (field_id, f"provider_context.{field_id}") + ALIASES.get(field_id, ())
         found = False
         raw: Any = None
         matched_path: str | None = None
