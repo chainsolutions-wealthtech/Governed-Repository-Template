@@ -29,6 +29,47 @@ ARRIVAL
 → normal governed repository workflow
 ```
 
+## Machine-readable sequential router
+
+This document is the human-readable authority for the canonical pre-entry router.
+
+Machine-readable contract:
+
+`.governance/gscc-entry-router.json`
+
+Deterministic router:
+
+`scripts/gscc_entry_router.py`
+
+The router MUST emit exactly one next step at a time and MUST NOT execute that next step automatically.
+
+Initial routing contract:
+
+```text
+ARRIVAL
+→ READ_AUTHORITY: 00_GSCC_ENTRY.md
+→ REPORT_PROVIDER_CONTEXT
+→ EVALUATE_ENTRY_CONTRACT
+→ BUILD_Q1_HANDOFF
+→ Q1
+```
+
+Failure at any required condition routes to:
+
+```text
+BLOCK_UNRESOLVED
+→ STOP_FAIL_CLOSED
+```
+
+For the entry test, once this file has been read, the expected emitted next step is:
+
+```text
+CURRENT = 00_GSCC_ENTRY.md
+ACTION = REPORT_PROVIDER_CONTEXT
+NEXT_STEP = R2_ENTRY_CONTRACT
+EXECUTE_NEXT_AUTOMATICALLY = FALSE
+```
+
 ## Required arrival report
 
 Before proceeding, the arriving agent MUST report every non-sensitive fact that its own environment actually exposes about:
