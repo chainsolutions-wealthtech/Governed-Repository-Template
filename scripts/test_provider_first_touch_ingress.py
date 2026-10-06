@@ -2,12 +2,19 @@
 from __future__ import annotations
 
 import copy
+import json
+import tempfile
 import unittest
+from pathlib import Path
+
+import first_touch_field_block_gate as fb
+import first_touch_connection_completeness as cp
+import first_touch_entry_contract as ec
 
 from provider_first_touch_ingress import (
     SCHEMA,
     build_capture,
-    emit_if_identifiable,
+    classify_identity,
     validate_envelope,
 )
 
@@ -111,25 +118,42 @@ class ProviderFirstTouchIngressTests(unittest.TestCase):
             "conversation_ref": "UNAVAILABLE",
             "session_ref": "UNAVAILABLE",
         }
-        result = emit_if_identifiable(value)
+        result = classify_identity(value)
         self.assertEqual(result["status"], "CAPTURE_ONLY_IDENTITY_UNRESOLVED")
         self.assertEqual(result["identity_strength"], "UNRESOLVED")
         self.assertFalse(result["mutation_authority_granted"])
 
-    def test_stable_identity_routes_through_existing_controlled_arrival(self):
+    def test_provider_capture_is_ready_for_canonical_q1_entry(self):
         value = envelope()
-        calls = []
+        capture = build_capture(value, observed_at="2026-10-06T05:30:00+00:00")
+        with tempfile.TemporaryDirectory() as td:
+            root=Path(td)
+            cap=root/"capture.json"
+            db=root/"capture.sqlite"
+            comp=root/"completeness.json"
+            cap.write_text(json.dumps(capture),encoding="utf-8")
+            fb.build_capture_database(cap,db,source_ref="provider-unit-test")
+            cp.build_packet(None,comp,capture_path=cap)
+            strength, anchor = ec.discover_identity(cap)
+            self.assertEqual(strength,"EXACT")
+            self.assertEqual(anchor,"provider_conversation_ref:provider-conversation-123")
+            result=ec.evaluate(comp,db,identity_strength=strength,identity_anchor=anchor,first_touch_seen=False)
+            self.assertEqual(result["status"],"ENTRY_READY_FOR_Q1",result)
+            self.assertEqual(result["classification"],"FIRST_TOUCH")
+            self.assertFalse(result["authority_granted"])
 
-        def request_fn(method, url, token, body=None):
-            calls.append((method, url, token, body))
-            return 204, b""
-
-        result = emit_if_identifiable(value, token="test-token", request_fn=request_fn)
-        self.assertEqual(result["status"], "GSCC_ARRIVAL_DISPATCHED")
+    def test_stable_identity_routes_to_canonical_gscc_q1_pipeline(self):
+        value = envelope()
+        capture = build_capture(value, observed_at="2026-10-06T05:30:00+00:00")
+        result = classify_identity(value)
+        self.assertEqual(result["status"], "READY_FOR_GSCC_Q1_PIPELINE")
         self.assertEqual(result["identity_strength"], "EXACT")
         self.assertEqual(result["identity_source"], "conversation_ref")
         self.assertFalse(result["mutation_authority_granted"])
-        self.assertTrue(calls)
+        self.assertEqual(capture["safe_ingress"]["status"], "VALID")
+        self.assertEqual(capture["safe_ingress"]["ingress_type"], "FIRST_TOUCH")
+        self.assertTrue(capture["safe_ingress"]["connection_ref"].startswith("provider-first-touch:chatgpt:conversation_ref:"))
+        self.assertEqual(capture["safe_ingress"]["provider_conversation_ref"], "provider-conversation-123")
 
 
 if __name__ == "__main__":
