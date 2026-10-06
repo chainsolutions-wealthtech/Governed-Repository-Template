@@ -104,6 +104,7 @@ def enrich_envelope(envelope: dict[str, Any], token: str, *, api_base: str = "ht
 
     enriched["repository_observation"] = {
         "id": repository_data.get("id", "UNAVAILABLE"),
+        "node_id": repository_data.get("node_id", "UNAVAILABLE"),
         "name": repository_data.get("name", name),
         "full_name": repository_data.get("full_name", repository),
         "owner": {
@@ -120,12 +121,20 @@ def enrich_envelope(envelope: dict[str, Any], token: str, *, api_base: str = "ht
         "html_url": repository_data.get("html_url", "UNAVAILABLE"),
         "clone_url": repository_data.get("clone_url", "UNAVAILABLE"),
         "git_url": repository_data.get("git_url", "UNAVAILABLE"),
+        "api_url": repository_data.get("url", "UNAVAILABLE"),
+        "commits_url": repository_data.get("commits_url", "UNAVAILABLE"),
+        "refs_url": repository_data.get("git_refs_url", "UNAVAILABLE"),
         "created_at": repository_data.get("created_at", "UNAVAILABLE"),
         "updated_at": repository_data.get("updated_at", "UNAVAILABLE"),
         "pushed_at": repository_data.get("pushed_at", "UNAVAILABLE"),
         "language": repository_data.get("language", "UNAVAILABLE"),
         "topics": repository_data.get("topics", []),
+        "description": repository_data.get("description", "UNAVAILABLE"),
         "is_template": repository_data.get("is_template", "UNAVAILABLE"),
+        "parent": repository_data.get("parent", "UNAVAILABLE"),
+        "source": repository_data.get("source", "UNAVAILABLE"),
+        "code_search_indexed": repository_data.get("is_code_search_indexed", "UNAVAILABLE"),
+        "master_branch": repository_data.get("master_branch", "UNAVAILABLE"),
         "permissions": {
             "admin": permissions.get("admin", "UNAVAILABLE"),
             "maintain": permissions.get("maintain", "UNAVAILABLE"),
