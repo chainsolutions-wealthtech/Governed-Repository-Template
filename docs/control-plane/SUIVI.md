@@ -1219,3 +1219,13 @@ These observations are durable supervision evidence, not new mutation authority 
 - Added `instrument_github_plugin_surface_with_first_touch()` so one Provider First Touch hook is shared across the whole surface.
 - Tests prove `get_repo`, `fetch_file`, `search_commits` and mutation tools are all wrapped from the same catalogue, and only the first wrapped invocation emits Provider First Touch.
 - Remaining external boundary: the OpenAI-managed GitHub plugin runtime must instantiate this wrapper around its exposed function mapping; repository code cannot monkeypatch that proprietary runtime.
+
+
+## 2026-10-06 — Controlled ChatGPT GitHub plugin MCP proxy
+
+- Added `plugins/gscc-github-mcp/` as the deployable controlled plugin boundary.
+- The proxy receives ChatGPT MCP traffic, observes `tools/call`, emits `gscc_provider_first_touch` before the first observed tool call for an observed MCP session, then forwards the unchanged MCP request to GitHub's official remote MCP server.
+- GitHub credentials are runtime-only through `GITHUB_PERSONAL_ACCESS_TOKEN`; no credential is stored in repository state.
+- Provider-private identifiers remain `UNAVAILABLE` unless actually exposed by the incoming MCP transport.
+- The native OpenAI-managed GitHub plugin is not modified; this proxy is the controlled custom-plugin route where GSCC can actually execute before GitHub.
+- Installation still requires a deployed HTTPS `/mcp` endpoint to be added in ChatGPT as a custom MCP plugin.
