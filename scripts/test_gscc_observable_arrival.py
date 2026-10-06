@@ -74,6 +74,61 @@ def main() -> None:
     assert_true("raw_prompt" not in json.dumps(facts), "raw prompt must not enter safe projection")
     assert_true("Bearer" not in json.dumps(facts), "authorization data must not enter safe projection")
 
+    controlled_app_event = {
+        "repository": event["repository"],
+        "sender": {"login": "fresh-provider-actor"},
+        "issue": {
+            "number": 888,
+            "performed_via_github_app": {"slug": "chatgpt-codex-connector"},
+        },
+        "number": 888,
+    }
+    controlled_app_facts = build_github_arrival_facts(
+        controlled_app_event,
+        {
+            "GITHUB_EVENT_NAME": "issues",
+            "GITHUB_RUN_ID": "40000000003",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_SHA": "c" * 40,
+        },
+    )
+    assert_true(
+        controlled_app_facts["surface_class"] == "CONTROLLED_INSTRUMENTABLE",
+        "trusted ChatGPT connector event must enter the existing controlled surface",
+    )
+    assert_true(
+        controlled_app_facts["connection_method"] == "gscc-controlled-github-app:chatgpt-codex-connector",
+        "trusted connector provenance must be explicit without inventing provider identity",
+    )
+    assert_true(controlled_app_facts["provider"] is None, "provider identity stays unavailable unless supplied")
+    assert_true(
+        controlled_app_facts["connection_ref"].endswith(":issue:888"),
+        "controlled connector arrival must retain a stable repository subject anchor",
+    )
+
+    untrusted_app_event = {
+        "repository": event["repository"],
+        "sender": {"login": "fresh-provider-actor"},
+        "issue": {
+            "number": 889,
+            "performed_via_github_app": {"slug": "untrusted-example-app"},
+        },
+        "number": 889,
+    }
+    untrusted_app_facts = build_github_arrival_facts(
+        untrusted_app_event,
+        {
+            "GITHUB_EVENT_NAME": "issues",
+            "GITHUB_RUN_ID": "40000000004",
+            "GITHUB_RUN_ATTEMPT": "1",
+            "GITHUB_SHA": "d" * 40,
+        },
+    )
+    assert_true(
+        untrusted_app_facts["surface_class"] == "GITHUB_EVENT_VISIBLE",
+        "unknown GitHub apps must not be promoted to controlled surfaces",
+    )
+
     same_surface_push = {
         "repository": event["repository"],
         "sender": {"login": "fresh-provider-actor"},
