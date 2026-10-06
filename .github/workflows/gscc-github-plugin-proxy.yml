@@ -1,6 +1,12 @@
 name: GSCC GitHub Plugin MCP Proxy
 
 on:
+  push:
+    branches:
+      - governance/gscc-github-plugin-mcp-proxy
+    paths:
+      - "plugins/gscc-github-mcp/**"
+      - ".github/workflows/gscc-github-plugin-proxy.yml"
   pull_request:
     paths:
       - "plugins/gscc-github-mcp/**"
