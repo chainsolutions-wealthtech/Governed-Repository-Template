@@ -15,9 +15,9 @@
     {
       "step_id": "R1_PROVIDER_CONTEXT",
       "current": "00_GSCC_ENTRY.md",
-      "action": "REPORT_PROVIDER_CONTEXT",
-      "target": "required_arrival_report",
-      "success_outcome": "PROVIDER_CONTEXT_ACCOUNTED",
+      "action": "BUILD_OBSERVABLE_PACKET",
+      "target": "scripts/first_touch_agent_transport_extractor.py",
+      "success_outcome": "OBSERVABLE_PACKET_ACCOUNTED",
       "next_step": "R2_FIRST_TOUCH_CLASSIFICATION",
       "failure_step": "BLOCK_UNRESOLVED"
     },
