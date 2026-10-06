@@ -53,11 +53,20 @@ jobs:
           python3 scripts/first_touch_exhaustive_collector.py github-event \
             --output "${RUNNER_TEMP}/first-touch-capture.json"
 
+      - name: Materialize first-touch field block gate database
+        run: |
+          python3 scripts/first_touch_field_block_gate.py \
+            --capture "${RUNNER_TEMP}/first-touch-capture.json" \
+            --output "${RUNNER_TEMP}/first-touch-capture.sqlite" \
+            --source-ref "github-actions:${GITHUB_RUN_ID}:${GITHUB_RUN_ATTEMPT}"
+
       - name: Upload exhaustive first-touch evidence
         uses: actions/upload-artifact@v4
         with:
           name: first-touch-capture-${{ github.run_id }}-${{ github.run_attempt }}
-          path: ${{ runner.temp }}/first-touch-capture.json
+          path: |
+            ${{ runner.temp }}/first-touch-capture.json
+            ${{ runner.temp }}/first-touch-capture.sqlite
           if-no-files-found: error
           retention-days: 30
 

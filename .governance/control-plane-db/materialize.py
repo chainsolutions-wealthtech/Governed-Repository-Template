@@ -15,6 +15,7 @@ DB_ROOT = ROOT / ".governance" / "control-plane-db"
 sys.path.insert(0, str(ROOT / "scripts"))
 from control_plane_server_inventory_facts import validate_inventory_state
 from control_plane_server_identity_secret_facts import validate_initial_or_persisted_state as validate_identity_secret_state
+from first_touch_field_block_gate import insert_catalog as insert_first_touch_field_gate_catalog
 
 def jdump(value):
     return json.dumps(value, sort_keys=True, separators=(",", ":"))
@@ -544,6 +545,8 @@ def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0,
     print(f"server_inventory_slots={facts_count}")
     print(f"server_identity_secret_facts={identity_secret_count}")
     print(f"first_touch_probes={probe_count}")
+    print(f"first_touch_evidence_blocks={conn.execute('SELECT COUNT(*) FROM first_touch_evidence_blocks').fetchone()[0]}")
+    print(f"first_touch_process_gates={conn.execute('SELECT COUNT(*) FROM first_touch_process_gates').fetchone()[0]}")
 
 def build(path: Path, inventory_path: Path | None = None, identity_secret_path: Path | None = None):
     catalog = json.loads((DB_ROOT/"catalog.json").read_text(encoding="utf-8"))
@@ -555,7 +558,7 @@ def build(path: Path, inventory_path: Path | None = None, identity_secret_path: 
     try:
         for migration in sorted(DB_ROOT.glob("[0-9][0-9][0-9]_*.sql")):
             conn.executescript(migration.read_text(encoding="utf-8"))
-        conn.execute("INSERT INTO schema_meta(key,value) VALUES('schema_version','1.5.0')")
+        conn.execute("INSERT INTO schema_meta(key,value) VALUES('schema_version','1.6.0')")
         insert_case_data(conn,catalog)
         insert_replay(conn,replay)
         insert_questions_activities(conn,catalog)
@@ -563,6 +566,7 @@ def build(path: Path, inventory_path: Path | None = None, identity_secret_path: 
         insert_server_inventory(conn,inventory)
         insert_server_identity_secret_facts(conn,identity_secret)
         insert_first_touch_probes(conn)
+        insert_first_touch_field_gate_catalog(conn)
         conn.commit()
         probe_count = len(list((ROOT / "docs" / "control-plane" / "probes").glob("*.md"))) if (ROOT / "docs" / "control-plane" / "probes").exists() else 0
         validate(conn, len(inventory["facts"]), len(identity_secret["facts"]), probe_count)
