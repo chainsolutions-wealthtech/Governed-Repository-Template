@@ -163,12 +163,6 @@ def build_packet(observation_path: Path | None, output_path: Path, *, capture_pa
                 "evidence_source":f"first-touch-capture:{path}",
             })
 
-    probe_paths=sorted(mod.PROBE_ROOT.glob("*.md"))
-    probe_reference_count=sum(len(mod.parse_probe(p)) for p in probe_paths)
-    tool_schema_field_count=0
-    if mod.TOOL_SCHEMA_SNAPSHOT.exists():
-        tool_schema_field_count=len(json.loads(mod.TOOL_SCHEMA_SNAPSHOT.read_text(encoding="utf-8")).get("fields",[]))
-
     counts=Counter(row["status"] for row in rows)
     silent=[row for row in rows if not row.get("status")]
     packet={
@@ -180,8 +174,7 @@ def build_packet(observation_path: Path | None, output_path: Path, *, capture_pa
         "connection_ref":observed.get("connection_ref"),
         "expected_observation_count":len(rows),
         "canonical_field_count":len(canonical_fields),
-        "reference_probe_observation_count":probe_reference_count,
-        "reference_tool_schema_field_count":tool_schema_field_count,
+        "reference_inventory_evaluated":False,
         "capture_terminal_value_count":capture_terminal_count,
         "captured_live_node_count":len(capture_rows),
         "total_accounted_items":len(rows)+len(capture_rows),
