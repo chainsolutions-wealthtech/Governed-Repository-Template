@@ -7,6 +7,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 TARGET = ROOT / ".governance/control-plane-state/gscc-gse-gacr-realignment.json"
 CURRENT = ROOT / ".governance/control-plane-state/first-touch-field-block-gate-catalog.json"
+POST_Q1_ROUTER = ROOT / ".governance/gscc-post-q1-router.json"
 
 
 def load(path: Path):
@@ -18,6 +19,7 @@ def load(path: Path):
 def main():
     target = load(TARGET)
     current = load(CURRENT)
+    post_q1 = load(POST_Q1_ROUTER)
 
     assert target["schema"] == "gscc-gse-gacr-realignment/v1"
     assert target["issue"] == 199
@@ -71,6 +73,13 @@ def main():
         "NORMAL_GOVERNED_ENTRY",
         "EXISTING_GOVERNED_WORKFLOW",
     ]
+
+    assert [item["gate"] for item in post_q1["sequence"]] == [
+        "Q1", "Q3", "Q4", "Q5", "Q8", "Q9", "Q10_GSE", "Q2_GACR",
+        "Q6", "Q7", "Q11", "Q12", "F1", "00_START_HERE.md",
+    ]
+    assert post_q1["sequence"][6]["owner_layer"] == "GSE"
+    assert post_q1["sequence"][7]["owner_layer"] == "GACR"
 
     # Baseline proof: the current PR #198 catalogue still contains the exact
     # dependency inversion this realignment is meant to repair. This assertion
