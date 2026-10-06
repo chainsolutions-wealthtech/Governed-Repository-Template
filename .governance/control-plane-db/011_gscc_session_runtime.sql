@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS gscc_session_runtime (
   capability_evidence_json TEXT,
   control_evidence_json TEXT,
   gse_state_json TEXT,
+  qualification_evidence_json TEXT,
   access_grant_json TEXT,
   last_gate TEXT,
   next_gate TEXT,
