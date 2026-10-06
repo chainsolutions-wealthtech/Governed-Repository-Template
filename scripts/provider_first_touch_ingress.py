@@ -7,9 +7,8 @@ import json
 import re
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
-from gscc_observable_arrival import emit_controlled_arrival
 from provider_first_touch_evidence import build_field_evidence
 
 SCHEMA = "gscc-provider-first-touch-envelope/v1"
@@ -87,6 +86,43 @@ def validate_envelope(envelope: dict[str, Any]) -> None:
     _assert_no_sensitive_keys(envelope)
 
 
+
+def _safe_ingress(envelope: dict[str, Any], observed_at: str) -> dict[str, Any]:
+    ref_kind, stable_ref = _stable_ref(envelope)
+    provider = str(envelope.get("provider") or "provider")
+    if not stable_ref:
+        return {
+            "schema":"gscc-first-touch-safe-ingress/v1",
+            "status":"INVALID",
+            "reason":"NO_SAFE_IDENTITY_ANCHOR",
+            "ingress_type":"FIRST_TOUCH",
+            "source":"PROVIDER_FIRST_TOUCH_ENVELOPE",
+            "source_method":"REPOSITORY_DISPATCH",
+            "observed_at":observed_at,
+            "freeform_body_persisted":False,
+        }
+    connection_ref=f"provider-first-touch:{provider}:{ref_kind}:{stable_ref}"
+    client_instance_id=f"{provider}:{ref_kind}:{stable_ref}"
+    identity=envelope.get("identity") if isinstance(envelope.get("identity"),dict) else {}
+    conversation_ref=identity.get("conversation_ref")
+    provider_conversation_ref=conversation_ref if ref_kind=="conversation_ref" else None
+    return {
+        "schema":"gscc-first-touch-safe-ingress/v1",
+        "status":"VALID",
+        "ingress_type":"FIRST_TOUCH",
+        "connection_ref":connection_ref,
+        "client_instance_id":client_instance_id,
+        "conversation_ref":conversation_ref if isinstance(conversation_ref,str) and conversation_ref.upper() not in UNAVAILABLE_MARKERS else None,
+        "provider_conversation_ref":provider_conversation_ref if isinstance(provider_conversation_ref,str) and provider_conversation_ref.upper() not in UNAVAILABLE_MARKERS else None,
+        "conversation_ref_status":"PRESENT" if ref_kind=="conversation_ref" else "UNAVAILABLE",
+        "provider_conversation_ref_status":"PRESENT" if ref_kind=="conversation_ref" else "UNAVAILABLE",
+        "identity_source":ref_kind,
+        "source":"PROVIDER_FIRST_TOUCH_ENVELOPE",
+        "source_method":"REPOSITORY_DISPATCH",
+        "observed_at":observed_at,
+        "freeform_body_persisted":False,
+    }
+
 def build_capture(envelope: dict[str, Any], *, observed_at: str | None = None) -> dict[str, Any]:
     validate_envelope(envelope)
     observed_at = observed_at or str(envelope.get("observed_at") or utc_now())
@@ -104,6 +140,7 @@ def build_capture(envelope: dict[str, Any], *, observed_at: str | None = None) -
         "environment": {},
         "api_attempts": [],
         "provider_context": envelope,
+        "safe_ingress": _safe_ingress(envelope, observed_at),
         "field_evidence": field_evidence,
         "field_evidence_contract": {
             "schema": "first-touch-field-evidence/v1",
@@ -124,56 +161,27 @@ def build_capture(envelope: dict[str, Any], *, observed_at: str | None = None) -
     }
 
 
-def emit_if_identifiable(
-    envelope: dict[str, Any],
-    *,
-    token: str | None = None,
-    request_fn: Callable[..., tuple[int, bytes]] | None = None,
-) -> dict[str, Any]:
+def classify_identity(envelope: dict[str, Any]) -> dict[str, Any]:
     validate_envelope(envelope)
     ref_kind, stable_ref = _stable_ref(envelope)
     if not stable_ref:
         return {
-            "status": "CAPTURE_ONLY_IDENTITY_UNRESOLVED",
-            "identity_strength": "UNRESOLVED",
-            "mutation_authority_granted": False,
+            "status":"CAPTURE_ONLY_IDENTITY_UNRESOLVED",
+            "identity_strength":"UNRESOLVED",
+            "identity_source":None,
+            "mutation_authority_granted":False,
         }
-
-    provider = str(envelope["provider"])
-    repository = str(envelope["repository"])
-    actor = envelope.get("actor")
-    model = envelope.get("model")
-    connection_ref = f"provider-first-touch:{provider}:{ref_kind}:{stable_ref}"
-    client_instance_id = f"{provider}:{ref_kind}:{stable_ref}"
-    provider_ref_parts = [str(envelope.get("transport") or "UNAVAILABLE")]
-    if model:
-        provider_ref_parts.append(str(model))
-
-    result = emit_controlled_arrival(
-        repository=repository,
-        connection_ref=connection_ref,
-        client_instance_id=client_instance_id,
-        provider=provider,
-        provider_ref="|".join(provider_ref_parts),
-        agent=str(actor) if actor else provider,
-        branch=str(envelope.get("branch")) if envelope.get("branch") else None,
-        observed_head=str(envelope.get("observed_head")) if envelope.get("observed_head") else None,
-        token=token,
-        request_fn=request_fn,
-    )
     return {
-        **result,
-        "identity_strength": "EXACT",
-        "identity_source": ref_kind,
-        "mutation_authority_granted": False,
+        "status":"READY_FOR_GSCC_Q1_PIPELINE",
+        "identity_strength":"EXACT" if ref_kind in {"conversation_ref","session_ref"} else "STRONG",
+        "identity_source":ref_kind,
+        "mutation_authority_granted":False,
     }
-
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Provider-side first-touch ingress adapter")
     parser.add_argument("--envelope", required=True, help="Path to provider first-touch envelope JSON")
     parser.add_argument("--capture-output", required=True)
-    parser.add_argument("--emit", action="store_true")
     args = parser.parse_args()
 
     envelope = json.loads(Path(args.envelope).read_text(encoding="utf-8"))
@@ -191,9 +199,7 @@ def main() -> None:
         "capture_output": str(output),
         "mutation_authority_granted": False,
     }
-    if args.emit:
-        import os
-        result["gscc"] = emit_if_identifiable(envelope, token=os.environ.get("GITHUB_TOKEN"))
+    result["identity"] = classify_identity(envelope)
 
     print(json.dumps(result, indent=2, sort_keys=True, ensure_ascii=False))
 
