@@ -228,23 +228,6 @@ def test_harvester_direct_cli_import_path_is_valid():
     assert result.returncode == 0, (result.stdout, result.stderr)
     assert "GSCC canonical admission qualification evidence harvester" in result.stdout, result.stdout
 
-def main():
-    test_repository_facts_are_get_observed()
-    test_gacr_session_is_bound_from_canonical_store()
-    test_unavailable_is_structured_not_silent()
-    test_harvest_uses_canonical_sources_and_fails_closed_on_missing_gse_control()
-    test_caller_repository_claim_cannot_override_get_observation()
-    test_admission_workflow_harvests_instead_of_trusting_caller_evidence()
-    test_gacr_head_mismatch_is_reobserved_for_access_without_rewriting_session_store()
-    test_harvester_direct_cli_import_path_is_valid()
-    test_q10_is_verified_without_preexisting_gacr_session()
-    print("GSCC_ADMISSION_HARVESTER_TESTS_OK")
-
-
-if __name__ == "__main__":
-    main()
-
-
 def test_q10_is_verified_without_preexisting_gacr_session():
     admission = sample_admission()
     admission["admission_context"]["control_capabilities"] = {
@@ -286,3 +269,21 @@ def test_q10_is_verified_without_preexisting_gacr_session():
     assert result["post_gse_gacr_required"] is True, result
     assert result["status"] == "Q10_GSE_VERIFIED_PENDING_GACR", result
     assert "session" in result["missing_canonical_evidence"], result
+
+def main():
+    test_repository_facts_are_get_observed()
+    test_gacr_session_is_bound_from_canonical_store()
+    test_unavailable_is_structured_not_silent()
+    test_harvest_uses_canonical_sources_and_fails_closed_on_missing_gse_control()
+    test_caller_repository_claim_cannot_override_get_observation()
+    test_admission_workflow_harvests_instead_of_trusting_caller_evidence()
+    test_gacr_head_mismatch_is_reobserved_for_access_without_rewriting_session_store()
+    test_harvester_direct_cli_import_path_is_valid()
+    test_q10_is_verified_without_preexisting_gacr_session()
+    print("GSCC_ADMISSION_HARVESTER_TESTS_OK")
+
+
+if __name__ == "__main__":
+    main()
+
+
