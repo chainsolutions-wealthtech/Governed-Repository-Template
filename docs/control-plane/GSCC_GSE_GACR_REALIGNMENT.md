@@ -58,6 +58,48 @@ The current admission harvester therefore resolves a GACR session before project
 
 That implementation solved correlation and liveness/control proof requirements, but it also made durable GACR continuity a hard prerequisite for initial GSE interpretation. This matrix separates those concerns without deleting any of the useful mechanisms.
 
+## Mandatory entry contract before Q1
+
+Every observable repository touch is now subject to a pre-Q1 entry contract:
+
+```text
+OBSERVABLE EVENT / ACTION
+        ↓
+IDENTIFY OR CORRELATE CONVERSATION
+        ↓
+FIRST TOUCH | CONTINUATION | UNRESOLVED
+        ↓
+AUTO-COLLECT
+        ↓
+NORMALIZE INTO THE COMMON B00–B30 FIELD/BLOCK SCHEMA
+        ↓
+STORE VALUES AS THIS CONVERSATION'S INSTANCE
+        ↓
+COMPLETENESS + REQUIRED-BLOCK EVALUATION
+        ↓
+ENTRY_READY_FOR_Q1
+        ↓
+Q1
+```
+
+The schema and block definitions are common to all conversations. Values and statuses are conversation-scoped.
+
+There is no fixed numeric field-count threshold. A conversation may proceed only when every expected field is accounted for and the required entry blocks satisfy their policies. Missing, unavailable, denied, stale, conflicting or not-applicable values remain explicit rather than disappearing.
+
+A GitHub actor plus repository is not a conversation identity. A First Touch requires an EXACT or STRONG conversation-scoped anchor. Ambiguous identity blocks progression and must not create a second First Touch.
+
+A known identity is classified as CONTINUATION and must enrich/revalidate its existing conversation profile instead of creating a new First Touch.
+
+The machine-readable contract is:
+
+`.governance/control-plane-state/first-touch-entry-contract.json`
+
+The evaluator is:
+
+`scripts/first_touch_entry_contract.py`
+
+The Observable Arrival workflow evaluates this contract before calling the canonical GSCC arrival gateway.
+
 ## Target process ordering
 
 Stable gate identifiers are preserved. Their identifiers are not treated as execution ordinals.
