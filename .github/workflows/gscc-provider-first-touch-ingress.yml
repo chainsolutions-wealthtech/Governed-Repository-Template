@@ -4,6 +4,9 @@ on:
   repository_dispatch:
     types:
       - gscc_provider_first_touch
+  issues:
+    types:
+      - opened
   pull_request:
     paths:
       - "scripts/provider_first_touch_ingress.py"
@@ -29,6 +32,7 @@ on:
 permissions:
   contents: read
   actions: read
+  issues: read
 
 jobs:
   regression:
@@ -46,7 +50,7 @@ jobs:
         run: PYTHONPATH=scripts:. python3 -m unittest scripts/test_provider_first_touch_ingress.py scripts/test_provider_first_touch_repository_enrichment.py scripts/test_provider_first_tool_hook.py scripts/test_governed_github_read_connector.py scripts/test_chatgpt_github_surface_instrumentation.py tests/test_gscc_core.py
 
   ingest:
-    if: ${{ github.event_name == 'repository_dispatch' }}
+    if: ${{ github.event_name == 'repository_dispatch' || (github.event_name == 'issues' && startsWith(github.event.issue.title, '[GSCC First Touch]')) }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -62,10 +66,28 @@ jobs:
       - name: Validate provider envelope
         env:
           PROVIDER_ENVELOPE: ${{ toJson(github.event.client_payload) }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
         shell: bash
         run: |
           set -euo pipefail
-          printf '%s' "$PROVIDER_ENVELOPE" > "$RUNNER_TEMP/provider-first-touch-envelope.json"
+          if [ "${GITHUB_EVENT_NAME}" = "repository_dispatch" ]; then
+            printf '%s' "$PROVIDER_ENVELOPE" > "$RUNNER_TEMP/provider-first-touch-envelope.json"
+          else
+            python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          raw=(os.environ.get("ISSUE_BODY") or "").strip()
+          prefix="/gscc-first-touch"
+          if not raw.startswith(prefix):
+              raise SystemExit("GSCC_FIRST_TOUCH_ISSUE_INVALID: body must start with /gscc-first-touch")
+          payload=json.loads(raw[len(prefix):].strip())
+          if not isinstance(payload,dict):
+              raise SystemExit("GSCC_FIRST_TOUCH_ISSUE_INVALID: JSON object required")
+          Path(os.environ["RUNNER_TEMP"]).joinpath("provider-first-touch-envelope.json").write_text(
+              json.dumps(payload,ensure_ascii=False,sort_keys=True),encoding="utf-8"
+          )
+          PY
+          fi
 
       - name: Enrich minimal provider signal from repository-observable GitHub state
         env:
