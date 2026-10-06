@@ -407,5 +407,36 @@
     "pointer": ".governance/control-plane-state/conversation-chronicles/current.json",
     "completeness": "COMPLETE_FOR_RECOVERABLE_VISIBLE_CONTEXT",
     "raw_pre_activation_transcript_completeness": "PARTIAL"
+  },
+  "owner_authorized_parallel_lane": {
+    "lane_id": "IDN_PER_ARRIVAL_SESSION_RUNTIME_20261007",
+    "status": "CANDIDATE_GREEN_LIVE_Q12_PENDING",
+    "authorization_scope": "IDENTITY_SESSION_RUNTIME_ONLY",
+    "global_programme_task_unchanged": "P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+    "p12_s6_resumed": false,
+    "branch": "governance/per-arrival-identity-full-session-runtime",
+    "pull_request": 229,
+    "candidate_head": "06ed073957909303af98b43987ad68e8f955559f",
+    "governance_ci_run": 37543670685,
+    "governance_ci_result": "PASS_BEFORE_CONTINUITY_DOC_COMMITS",
+    "invariants": [
+      "ONE_CONTROLLED_ARRIVAL_ONE_GSCC_ARRIVAL_REF",
+      "GSCC_MINTED_IDENTITY_NE_PROVIDER_PRIVATE_IDENTITY",
+      "ONE_GSCC_IDENTITY_ONE_GSE_SESSION_TWIN",
+      "GACR_DURABLE_SESSION_ONLY_AFTER_Q10",
+      "AMBIGUITY_FAILS_CLOSED",
+      "F1_REQUIRES_ACTUAL_REQUESTED_GOVERNED_FUNCTION"
+    ],
+    "next_action": "MERGE_PR_229_AFTER_FINAL_GREEN_THEN_LIVE_PROVE_Q9_Q10_Q2_Q12_AND_F1",
+    "stop_point": "PR_229_CANDIDATE_GREEN_LIVE_Q12_NOT_YET_PROVEN",
+    "read_first": [
+      "00_GSCC_ENTRY.md",
+      "docs/control-plane/CURRENT_STATE.md",
+      "docs/control-plane/NEXT_ACTION.md",
+      "docs/control-plane/SUIVI.md",
+      "scripts/gscc_arrival_identity.py",
+      "scripts/gscc_session_runtime.py",
+      ".github/workflows/gscc-provider-first-touch-ingress.yml"
+    ]
   }
 }
