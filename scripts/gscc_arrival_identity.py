@@ -47,9 +47,11 @@ def mint(envelope:dict[str,Any], event:dict[str,Any], *, run_id:str|None=None, r
     identity["connection_ref"]=arrival_ref
     identity["connection_ref_origin"]=origin
     out["identity"]=identity
+    state_scope="arrival-"+hashlib.sha256(arrival_ref.encode("utf-8")).hexdigest()[:24]
     out["gscc_arrival"]={
       "schema":SCHEMA,
       "arrival_ref":arrival_ref,
+      "state_scope":state_scope,
       "connection_ref":arrival_ref,
       "origin":origin,
       "resumable":resumable,
