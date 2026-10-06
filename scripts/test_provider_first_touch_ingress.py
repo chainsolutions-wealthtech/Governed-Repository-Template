@@ -77,8 +77,8 @@ class ProviderFirstTouchIngressTests(unittest.TestCase):
         value = envelope()
         calls = []
 
-        def request_fn(url, *, method, token, payload=None):
-            calls.append((url, method, token, payload))
+        def request_fn(method, url, token, body=None):
+            calls.append((method, url, token, body))
             return 204, b""
 
         result = emit_if_identifiable(value, token="test-token", request_fn=request_fn)
