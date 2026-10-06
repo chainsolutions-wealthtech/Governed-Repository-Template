@@ -15,6 +15,123 @@
 > A successful GitHub/API read is only physical access. It is not governed admission.
 > No write, branch, commit, issue, PR, dispatch, or governed execution may be selected before the pre-entry path authorizes continuation.
 
+## What is Governed Repository Template?
+
+**Governed Repository Template is an executable governance framework and central control plane for repositories worked on by humans, AI agents, automations, GitHub Apps, API clients and connected infrastructure tools.**
+
+It is designed to make repository work observable, persistent, resumable and authority-aware. An actor that can reach a repository is not automatically admitted to governed work, and an admitted actor is not automatically authorized to mutate it.
+
+The project combines:
+
+- mandatory arrival and First Touch handling;
+- GSCC evidence collection and admission gates;
+- GSE logical qualification;
+- GACR durable continuity across agents and conversations;
+- exact-HEAD and collision controls;
+- persistent human-readable and machine-readable memory;
+- a central multi-repository control plane;
+- Loop Engineering and dependency-aware execution;
+- governed GitHub/MCP/infrastructure capability boundaries;
+- checkpoints, handoffs, CI evidence and execution receipts.
+
+### Architecture in one view
+
+```mermaid
+flowchart LR
+    A["Agent / Human / Automation"] --> B["ARRIVAL"]
+    B --> C["GSCC<br/>collect · classify · persist"]
+    C --> D["GSE<br/>logical qualification"]
+    D --> E["GACR<br/>durable continuity"]
+    E --> F["Governed Release"]
+    F --> G["00_START_HERE"]
+    G --> H["Normal Governed Workflow"]
+    H --> I["Exact HEAD · Claims · Loop Engineering · CI · Evidence"]
+```
+
+The three pre-entry layers have deliberately different responsibilities:
+
+| Layer | Core question | Responsibility |
+| --- | --- | --- |
+| **GSCC** | What actually arrived and what evidence is observable? | First Touch, provider/transport facts, classification, admission gates |
+| **GSE** | What does this arrival mean logically? | Session interpretation and logical qualification |
+| **GACR** | What durable continuity does it belong to? | Correlation, sessions, beacons, chronicles, handoff and recovery |
+
+A physical GitHub/API read is therefore only the beginning:
+
+```text
+CAN ACCESS
+    ≠
+IS ADMITTED
+    ≠
+IS AUTHORIZED
+    ≠
+MAY MUTATE
+```
+
+### Five governed project routes
+
+The control plane supports five macro workflows:
+
+```text
+CREATE_NEW_REPOSITORY
+ADOPT_EXISTING_REPOSITORY
+MAP_EXISTING_PROJECT
+LAB_EVOLUTION
+CONTINUE_GOVERNED_WORK
+```
+
+They allow the same governance model to cover a fresh repository, additive adoption of an existing project, read-oriented project mapping, isolated lab evolution, and safe continuation of existing governed work.
+
+### Control Plane and client repositories
+
+```mermaid
+flowchart TB
+    CP["Governed-Repository-Template<br/>Central Governance Control Plane"]
+    CP --> P["Policies · schemas · architecture · preparation"]
+    CP --> M["Source-only durable memory"]
+    CP --> C1["Governed Client Repository A"]
+    CP --> C2["Governed Client Repository B"]
+    CP --> CN["Governed Client Repository N"]
+
+    C1 --> S1["Own project state"]
+    C2 --> S2["Own project state"]
+    CN --> SN["Own project state"]
+```
+
+A central invariant is:
+
+```text
+SOURCE CONTROL PLANE MEMORY
+!=
+DISTRIBUTED TEMPLATE PROJECT STATE
+```
+
+The source repository may maintain its own durable control-plane history. Generated or adopted client repositories receive reusable governance structures, not another project's operational history.
+
+### Multi-agent continuity
+
+The framework does not assume that two conversations, agents or provider sessions are the same merely because they access the same repository. Correlation is evidence-driven:
+
+```text
+EXACT_IDENTITY
+→ STRONG_CORRELATION
+→ WEAK_CORRELATION
+→ AMBIGUOUS
+→ NEW_IDENTITY
+```
+
+Missing provider-native facts are represented explicitly, for example as `UNAVAILABLE`; they are never reconstructed from unrelated GitHub metadata.
+
+### Detailed public architecture
+
+For the full explanation, diagrams, hierarchy, end-to-end arrival example, persistence model, execution lifecycle, source-of-truth hierarchy and repository map, read:
+
+**[docs/PROJECT_OVERVIEW.md](docs/PROJECT_OVERVIEW.md)**
+
+> Human discovery can start with this README and the project overview. Agents and automations must still follow the mandatory governed entry beginning at `00_GSCC_ENTRY.md`.
+
+---
+
 Template générique de gouvernance pour les dépôts de l'organisation `chainsolutions-wealthtech`.
 
 ## Objectif
