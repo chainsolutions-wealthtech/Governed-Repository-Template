@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 49,
+  "revision": 50,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -826,146 +826,170 @@
     },
     {
       "id": "IDN-001",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [],
-      "next_action": "DEFINE_IDENTITY_MODEL",
+      "next_action": null,
       "evidence": [
         "Owner-authorized IDN lane active 2026-10-07; P12-S6 remains parked",
         "PR #229 governance/per-arrival-identity-full-session-runtime",
         "Governance CI 37543670685 PASS candidate",
-        "Per-arrival identity/GSE isolation test PASS"
+        "Per-arrival identity/GSE isolation test PASS",
+        "Implemented/tested in PR #229 candidate",
+        "Governance CI 37543670685 PASS before continuity checkpoint update"
       ]
     },
     {
       "id": "IDN-002",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [],
-      "next_action": "AUTO_CAPTURE_GITHUB_ACTOR_PERMISSION",
+      "next_action": null,
       "evidence": [
         "Owner-authorized IDN lane active 2026-10-07; P12-S6 remains parked",
         "PR #229 governance/per-arrival-identity-full-session-runtime",
         "Governance CI 37543670685 PASS candidate",
-        "Per-arrival identity/GSE isolation test PASS"
+        "Per-arrival identity/GSE isolation test PASS",
+        "Implemented/tested in PR #229 candidate",
+        "Governance CI 37543670685 PASS before continuity checkpoint update"
       ]
     },
     {
       "id": "IDN-003",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [],
-      "next_action": "ADD_PRINCIPAL_REGISTRY",
+      "next_action": null,
       "evidence": [
         "Owner-authorized IDN lane active 2026-10-07; P12-S6 remains parked",
         "PR #229 governance/per-arrival-identity-full-session-runtime",
         "Governance CI 37543670685 PASS candidate",
-        "Per-arrival identity/GSE isolation test PASS"
+        "Per-arrival identity/GSE isolation test PASS",
+        "Implemented/tested in PR #229 candidate",
+        "Governance CI 37543670685 PASS before continuity checkpoint update"
       ]
     },
     {
       "id": "IDN-004",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [],
-      "next_action": "ADD_CONNECTION_EVENT_REGISTRY",
+      "next_action": null,
       "evidence": [
         "Owner-authorized IDN lane active 2026-10-07; P12-S6 remains parked",
         "PR #229 governance/per-arrival-identity-full-session-runtime",
         "Governance CI 37543670685 PASS candidate",
-        "Per-arrival identity/GSE isolation test PASS"
+        "Per-arrival identity/GSE isolation test PASS",
+        "Implemented/tested in PR #229 candidate",
+        "Governance CI 37543670685 PASS before continuity checkpoint update"
       ]
     },
     {
       "id": "IDN-005",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [],
-      "next_action": "DEFINE_SESSION_ID_RESUME_RULES",
+      "next_action": null,
       "evidence": [
         "Owner-authorized IDN lane active 2026-10-07; P12-S6 remains parked",
         "PR #229 governance/per-arrival-identity-full-session-runtime",
         "Governance CI 37543670685 PASS candidate",
-        "Per-arrival identity/GSE isolation test PASS"
+        "Per-arrival identity/GSE isolation test PASS",
+        "Implemented/tested in PR #229 candidate",
+        "Governance CI 37543670685 PASS before continuity checkpoint update"
       ]
     },
     {
       "id": "IDN-006",
       "status": "IN_PROGRESS",
       "depends_on": [],
-      "next_action": "AUTO_CREATE_OR_RESUME_SESSION",
+      "next_action": "LIVE_PROVE_AUTO_CREATE_OR_RESUME_SESSION_THROUGH_Q12_AND_F1",
       "evidence": [
         "Owner-authorized IDN lane active 2026-10-07; P12-S6 remains parked",
         "PR #229 governance/per-arrival-identity-full-session-runtime",
         "Governance CI 37543670685 PASS candidate",
-        "Per-arrival identity/GSE isolation test PASS"
+        "Per-arrival identity/GSE isolation test PASS",
+        "Implementation and multi-arrival isolation candidate PASS in Governance CI 37543670685",
+        "Remaining acceptance: post-merge live fresh-arrival Q9 -> Q10 GSE -> Q2 GACR -> Q12 -> actual-function F1"
       ]
     },
     {
       "id": "IDN-007",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [],
-      "next_action": "BIND_AGENT_ROLE",
+      "next_action": null,
       "evidence": [
         "Owner-authorized IDN lane active 2026-10-07; P12-S6 remains parked",
         "PR #229 governance/per-arrival-identity-full-session-runtime",
         "Governance CI 37543670685 PASS candidate",
-        "Per-arrival identity/GSE isolation test PASS"
+        "Per-arrival identity/GSE isolation test PASS",
+        "Implemented/tested in PR #229 candidate",
+        "Governance CI 37543670685 PASS before continuity checkpoint update"
       ]
     },
     {
       "id": "IDN-008",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [],
-      "next_action": "CAPTURE_AUTHORITY_SNAPSHOT",
+      "next_action": null,
       "evidence": [
         "Owner-authorized IDN lane active 2026-10-07; P12-S6 remains parked",
         "PR #229 governance/per-arrival-identity-full-session-runtime",
         "Governance CI 37543670685 PASS candidate",
-        "Per-arrival identity/GSE isolation test PASS"
+        "Per-arrival identity/GSE isolation test PASS",
+        "Implemented/tested in PR #229 candidate",
+        "Governance CI 37543670685 PASS before continuity checkpoint update"
       ]
     },
     {
       "id": "IDN-009",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [],
-      "next_action": "ROUTE_IDENTITY_SESSION_ROLE_AUTHORITY_ACTION_INTENT",
+      "next_action": null,
       "evidence": [
         "Owner-authorized IDN lane active 2026-10-07; P12-S6 remains parked",
         "PR #229 governance/per-arrival-identity-full-session-runtime",
         "Governance CI 37543670685 PASS candidate",
-        "Per-arrival identity/GSE isolation test PASS"
+        "Per-arrival identity/GSE isolation test PASS",
+        "Implemented/tested in PR #229 candidate",
+        "Governance CI 37543670685 PASS before continuity checkpoint update"
       ]
     },
     {
       "id": "IDN-010",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [],
-      "next_action": "PERSIST_SESSION_CONNECTION_EVENTS",
+      "next_action": null,
       "evidence": [
         "Owner-authorized IDN lane active 2026-10-07; P12-S6 remains parked",
         "PR #229 governance/per-arrival-identity-full-session-runtime",
         "Governance CI 37543670685 PASS candidate",
-        "Per-arrival identity/GSE isolation test PASS"
+        "Per-arrival identity/GSE isolation test PASS",
+        "Implemented/tested in PR #229 candidate",
+        "Governance CI 37543670685 PASS before continuity checkpoint update"
       ]
     },
     {
       "id": "IDN-011",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [],
-      "next_action": "ADD_IDENTITY_SESSION_CI_SELFTESTS",
+      "next_action": null,
       "evidence": [
         "Owner-authorized IDN lane active 2026-10-07; P12-S6 remains parked",
         "PR #229 governance/per-arrival-identity-full-session-runtime",
         "Governance CI 37543670685 PASS candidate",
-        "Per-arrival identity/GSE isolation test PASS"
+        "Per-arrival identity/GSE isolation test PASS",
+        "Implemented/tested in PR #229 candidate",
+        "Governance CI 37543670685 PASS before continuity checkpoint update"
       ]
     },
     {
       "id": "IDN-012",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [],
-      "next_action": "ADD_SOURCE_CONTROL_PLANE_ENTRY_ADAPTER",
+      "next_action": null,
       "evidence": [
         "Owner-authorized IDN lane active 2026-10-07; P12-S6 remains parked",
         "PR #229 governance/per-arrival-identity-full-session-runtime",
         "Governance CI 37543670685 PASS candidate",
-        "Per-arrival identity/GSE isolation test PASS"
+        "Per-arrival identity/GSE isolation test PASS",
+        "Implemented/tested in PR #229 candidate",
+        "Governance CI 37543670685 PASS before continuity checkpoint update"
       ]
     },
     {
