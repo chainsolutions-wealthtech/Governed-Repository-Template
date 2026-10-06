@@ -117,8 +117,28 @@ def _provider_envelope_to_host(payload:dict[str,Any])->dict[str,Any]:
     }
     return host
 
+def _github_enriched_to_metadata(payload:dict[str,Any])->dict[str,Any]:
+    if "repository_observation" not in payload:
+        return payload
+    repo=payload.get("repository_observation") if isinstance(payload.get("repository_observation"),dict) else {}
+    owner=repo.get("owner") if isinstance(repo.get("owner"),dict) else {}
+    return {
+      "id":repo.get("id","UNAVAILABLE"),
+      "repository_full_name":repo.get("full_name",payload.get("repository","UNAVAILABLE")),
+      "owner":{
+        "login":owner.get("login",payload.get("repository_owner","UNAVAILABLE")),
+        "id":owner.get("id",payload.get("repository_owner_id","UNAVAILABLE")),
+      },
+      "permissions":repo.get("permissions",payload.get("permissions","UNAVAILABLE")),
+      "default_branch":repo.get("default_branch",payload.get("default_branch","UNAVAILABLE")),
+      "visibility":repo.get("visibility",payload.get("repository_visibility","UNAVAILABLE")),
+      "branch":payload.get("branch","UNAVAILABLE"),
+      "head_sha":payload.get("observed_head","UNAVAILABLE"),
+    }
+
 def extract(host:dict[str,Any], github:dict[str,Any])->dict[str,Any]:
     host=_provider_envelope_to_host(host)
+    github=_github_enriched_to_metadata(github)
     tool=host.get("tool") if isinstance(host.get("tool"),dict) else {}
     identity=host.get("identity") if isinstance(host.get("identity"),dict) else {}
     sections={}
