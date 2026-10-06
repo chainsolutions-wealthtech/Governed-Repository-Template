@@ -33,6 +33,9 @@ jobs:
       - name: Test exhaustive first-touch capture
         run: python3 scripts/test_first_touch_capture_basic.py
 
+      - name: Test first-touch capture database ingestion
+        run: python3 scripts/test_first_touch_capture_db.py
+
       - name: Test GSCC observable arrival gateway
         run: python3 scripts/test_gscc_observable_arrival.py
 

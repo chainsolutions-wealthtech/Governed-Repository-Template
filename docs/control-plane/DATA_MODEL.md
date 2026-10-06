@@ -368,3 +368,25 @@ future PostgreSQL projection
 ```
 
 A second canonical database or second materializer is forbidden. Until the schema extension exists, the detailed catalogue is explicitly `PENDING_PROJECTION` and its accepted target is stored in `CP-GOVMODEL-001`.
+
+
+## First-touch exhaustive capture projection
+
+Migration `007_first_touch_capture_observability.sql` extends the existing canonical database. It does not create a parallel database authority.
+
+The projection is lossless relative to the safe captured document:
+
+```text
+first_touch_capture_records
+  └─ raw_json
+
+first_touch_capture_nodes
+  └─ every JSON node/path/value, including arrays, objects, nulls and booleans
+
+first_touch_capture_api_attempts
+  └─ every enrichment attempt and returned HTTP/result evidence
+```
+
+The projection deliberately performs no semantic selection for GSCC, GSE or GACR. Selection belongs to later architecture work.
+
+Schema version: `1.6.0`.
