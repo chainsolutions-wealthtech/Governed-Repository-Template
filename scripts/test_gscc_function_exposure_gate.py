@@ -263,6 +263,27 @@ class ExposureGateTests(unittest.TestCase):
         self.assertEqual(reason, "INTERNAL_GSCC_FUNCTION_EXPOSURE_INGRESS")
 
 
+    def test_controlled_repository_surface_is_valid_for_gscc_function_exposure(self):
+        sessions = json.loads(json.dumps(self.sessions))
+        sessions["sessions"][0]["connection_method"] = "controlled-repository-surface"
+        sessions["sessions"][0]["surface_class"] = "CONTROLLED_INSTRUMENTABLE"
+        sessions["sessions"][0]["entry_action"] = "CONTINUE_GOVERNED_WORK"
+        sessions["sessions"][0]["connection_intent"] = "OBSERVE"
+
+        result = evaluate_function_exposure(
+            tool_name="read_tool",
+            connection_ref=self.connection_ref,
+            requested_head=self.head,
+            access_grant=self.access_grant(allowed_authority_classes=["READ_ONLY_DISCOVERY_AUTHORITY"]),
+            authority_evidence=self.evidence("READ_ONLY_DISCOVERY_AUTHORITY"),
+            snapshot=self.snapshot,
+            sessions=sessions,
+            current_repository_head=self.head,
+            now=self.now,
+        )
+        self.assertEqual(result["status"], "VALIDATED")
+        self.assertTrue(result["exposable"])
+
     def test_controlled_client_adapter_is_valid_for_gscc_function_exposure(self):
         sessions = json.loads(json.dumps(self.sessions))
         sessions["sessions"][0]["connection_method"] = "controlled-client-adapter"
