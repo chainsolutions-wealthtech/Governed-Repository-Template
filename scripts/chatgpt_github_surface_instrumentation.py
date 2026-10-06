@@ -7,6 +7,7 @@ from typing import Any, Callable, Mapping
 
 from gscc.instrumentation import instrument_tool
 from gscc.session_endpoint import SessionEndpoint
+from provider_first_tool_hook import FirstTouchBeforeToolCall, send_dispatch
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SURFACE_SNAPSHOT = (
@@ -81,3 +82,30 @@ def instrument_github_plugin_surface(
         )
 
     return wrapped
+
+
+def instrument_github_plugin_surface_with_first_touch(
+    endpoint: SessionEndpoint,
+    tool_functions: Mapping[str, Callable[..., Any]],
+    *,
+    event_base: dict[str, Any],
+    token: str | None = None,
+    dispatch_fn: Callable[..., Any] = send_dispatch,
+    exposure_guard: Callable[[str], dict[str, Any]] | None = None,
+    snapshot_path: str | Path = DEFAULT_SURFACE_SNAPSHOT,
+    require_complete_surface: bool = True,
+) -> dict[str, Callable[..., Any]]:
+    """Bind Provider First Touch to the entire exposed GitHub plugin surface."""
+    first_touch = FirstTouchBeforeToolCall(
+        event_base=event_base,
+        token=token,
+        dispatch_fn=dispatch_fn,
+    )
+    return instrument_github_plugin_surface(
+        endpoint,
+        tool_functions,
+        before_tool_call=first_touch,
+        exposure_guard=exposure_guard,
+        snapshot_path=snapshot_path,
+        require_complete_surface=require_complete_surface,
+    )
