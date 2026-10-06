@@ -32,6 +32,7 @@ HOST_INGRESS_PREFIX = "/gacr-host "
 CONTROL_REQUEST_PREFIX = "/gscc-control "
 CONTROL_COMMAND_PREFIX = "/gscc-control-command "
 ADMISSION_REQUEST_PREFIX = "/gscc-admission "
+FIRST_TOUCH_REQUEST_PREFIX = "/gscc-first-touch "
 FUNCTION_EXPOSURE_REQUEST_PREFIX = "/gscc-function-exposure "
 CONTROLLED_GITHUB_APP_SLUGS = frozenset({"chatgpt-codex-connector"})
 
