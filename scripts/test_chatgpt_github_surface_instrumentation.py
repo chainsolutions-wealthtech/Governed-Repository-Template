@@ -7,6 +7,7 @@ from chatgpt_github_surface_instrumentation import (
     PLUGIN_PREFIX,
     canonical_github_tool_names,
     instrument_github_plugin_surface,
+    instrument_github_plugin_surface_with_first_touch,
 )
 from gscc import InMemoryTransport, SessionEndpoint
 
@@ -93,6 +94,50 @@ class GitHubPluginSurfaceInstrumentationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "surface incomplete"):
             instrument_github_plugin_surface(endpoint, runtime)
 
+
+
+    def test_first_touch_is_emitted_once_across_multiple_surface_functions(self):
+        endpoint, _ = self.endpoint()
+        runtime = {
+            "get_repo": lambda: {"ok": "repo"},
+            "fetch_file": lambda: {"ok": "file"},
+            "search_commits": lambda: {"ok": "commits"},
+        }
+        dispatches = []
+
+        def dispatch(repository, envelope, token):
+            dispatches.append((repository, envelope["tool"]["name"], envelope["provider_context"]))
+            return 204
+
+        wrapped = instrument_github_plugin_surface_with_first_touch(
+            endpoint,
+            runtime,
+            event_base={
+                "provider": "chatgpt",
+                "transport": "chatgpt-github-plugin",
+                "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+                "identity": {
+                    "conversation_ref": "UNAVAILABLE",
+                    "session_ref": "UNAVAILABLE",
+                    "connection_ref": "UNAVAILABLE",
+                },
+            },
+            token="test",
+            dispatch_fn=dispatch,
+            require_complete_surface=False,
+        )
+
+        wrapped["get_repo"]()
+        wrapped["fetch_file"]()
+        wrapped["search_commits"]()
+
+        self.assertEqual(len(dispatches), 1)
+        self.assertEqual(dispatches[0][1], "mcp__GitHub__get_repo")
+        self.assertEqual(dispatches[0][2]["agent"]["provider"], "chatgpt")
+        self.assertEqual(
+            dispatches[0][2]["session"]["conversation_ref"],
+            "UNAVAILABLE",
+        )
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
