@@ -189,7 +189,7 @@ def _probe_observations(lines: list[str]):
         if heading and not in_code:
             section_ordinal += 1
             section_heading = heading.group(2).strip()
-            raw_anchor = section_heading.lower() == "raw anchor inventory"
+            raw_anchor = section_heading.lower() in {"raw anchor inventory", "raw inventory"}
             i += 1
             continue
 
@@ -496,6 +496,43 @@ def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0,
             raise SystemExit(
                 f"CONTROL_PLANE_DB_FAILED: probe line preservation mismatch: {source_line_count} != {probe[1]}"
             )
+        codex_probe = conn.execute(
+            "SELECT correlation_key,line_count,section_count,observation_count FROM first_touch_probe_records "
+            "WHERE probe_id='FT-CODEX-PROBE-20261006-01'"
+        ).fetchone()
+        if codex_probe is not None:
+            if codex_probe[0] != "FT-CODEX-PROBE-20261006-01" or codex_probe[1] < 1000 or codex_probe[2] < 20 or codex_probe[3] < 400:
+                raise SystemExit(
+                    f"CONTROL_PLANE_DB_FAILED: Codex first-touch probe projection incomplete: {codex_probe}"
+                )
+            codex_required_keys = {
+                row[0] for row in conn.execute(
+                    "SELECT observation_key FROM first_touch_probe_observations "
+                    "WHERE probe_id='FT-CODEX-PROBE-20261006-01'"
+                ).fetchall()
+            }
+            for required_key in {
+                "NATIVE_CODEX_CONVERSATION_ID",
+                "NATIVE_CODEX_TASK_ID",
+                "NATIVE_CODEX_RUN_ID",
+                "NATIVE_CODEX_WORKSPACE_ID",
+                "DIRECT_REPOSITORY_TO_NATIVE_CODEX_THREAD_ADDRESSABILITY",
+                "GACR_SESSION_ID",
+                "CONNECTION_REF",
+                "CLIENT_INSTANCE_ID",
+            }:
+                if required_key not in codex_required_keys:
+                    raise SystemExit(
+                        f"CONTROL_PLANE_DB_FAILED: Codex first-touch probe key missing: {required_key}"
+                    )
+            codex_source_line_count = conn.execute(
+                "SELECT COUNT(*) FROM first_touch_probe_lines WHERE probe_id='FT-CODEX-PROBE-20261006-01'"
+            ).fetchone()[0]
+            if codex_source_line_count != codex_probe[1]:
+                raise SystemExit(
+                    "CONTROL_PLANE_DB_FAILED: Codex probe line preservation mismatch: "
+                    f"{codex_source_line_count} != {codex_probe[1]}"
+                )
     identity_secret_count = conn.execute("SELECT COUNT(*) FROM server_identity_secret_facts").fetchone()[0]
     if identity_secret_count != expected_identity_secret_count:
         raise SystemExit("CONTROL_PLANE_DB_FAILED: server identity-secret projection count mismatch")
