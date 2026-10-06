@@ -1229,3 +1229,14 @@ These observations are durable supervision evidence, not new mutation authority 
 - Provider-private identifiers remain `UNAVAILABLE` unless actually exposed by the incoming MCP transport.
 - The native OpenAI-managed GitHub plugin is not modified; this proxy is the controlled custom-plugin route where GSCC can actually execute before GitHub.
 - Installation still requires a deployed HTTPS `/mcp` endpoint to be added in ChatGPT as a custom MCP plugin.
+
+
+## 2026-10-06 — GSCC pre-entry authority above START_HERE
+
+- Added root authority `00_GSCC_ENTRY.md`.
+- New canonical entry order is `00_GSCC_ENTRY → GSCC → GSE → GACR → release/handoff → 00_START_HERE`.
+- `00_START_HERE.md` is no longer the first repository authority; it is the first authority of the normal governed workflow after successful pre-entry.
+- `AGENTS.md` now forbids direct normal entry before the GSCC/GSE/GACR release.
+- Physical repository read remains distinct from governed admission.
+- Missing provider-private facts are explicit `UNAVAILABLE`; fabrication remains forbidden.
+- MCP/plugin/dispatch/issue transports are optional carriers, not canonical governance authorities.

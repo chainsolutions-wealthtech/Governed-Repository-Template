@@ -4,7 +4,8 @@ Ce fichier s'applique à toute intervention sur `{{REPOSITORY}}`.
 
 ## Démarrage obligatoire
 
-1. lire `00_START_HERE.md` et l'ordre de lecture ;
+0. lire et satisfaire `00_GSCC_ENTRY.md`; aucun agent ou nouvelle conversation ne peut entrer directement par `00_START_HERE.md`;
+1. après release/handoff GSCC → GSE → GACR, lire `00_START_HERE.md` et l'ordre de lecture ;
 2. confirmer dépôt, branche, HEAD et état du worktree ;
 3. lire les fichiers directement concernés ;
 4. rechercher les travaux existants ;

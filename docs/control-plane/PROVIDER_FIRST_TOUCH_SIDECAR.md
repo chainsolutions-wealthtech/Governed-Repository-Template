@@ -217,3 +217,12 @@ Current canonical snapshot:
 `instrument_github_plugin_surface_with_first_touch(...)` binds one `FirstTouchBeforeToolCall` instance across the whole exposed surface. The first wrapped GitHub function emits `gscc_provider_first_touch`; later wrapped functions in the same adapter session do not emit a second First Touch.
 
 This is the canonical binding for an instrumentable host/plugin runtime. Repository code still cannot mutate OpenAI's proprietary plugin runtime by itself; the host must instantiate this binding around the exposed function mapping.
+
+
+## Repository pre-entry authority
+
+`00_GSCC_ENTRY.md` is now the repository's mandatory pre-entry authority above `00_START_HERE.md`.
+
+This does not make a Markdown file capable of intercepting an external API call. Instead it defines the admission contract: any agent that intends to enter the governed workflow must process the pre-entry authority, expose all actually available provider facts, explicitly mark non-exposed facts `UNAVAILABLE`, and obtain a valid GSCC → GSE → GACR release before `00_START_HERE.md` becomes applicable.
+
+Transport remains replaceable. Provider dispatch, plugin/MCP proxy, issue/comment bridge or another approved carrier may transport evidence, but none is itself the governance authority.

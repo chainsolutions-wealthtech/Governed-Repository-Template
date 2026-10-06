@@ -1,5 +1,13 @@
 # 00_START_HERE — Point d'entrée obligatoire
 
+> **PRECONDITION ABSOLUE**  
+> `00_START_HERE.md` n'est applicable qu'après passage par `00_GSCC_ENTRY.md` puis validation/release du flux `GSCC → GSE → GACR`.
+>
+> Une simple lecture GitHub, y compris `get_repo` ou `fetch_file`, ne constitue pas une admission gouvernée.
+>
+> Si aucune preuve de release/handoff GSCC/GSE/GACR n'est disponible, arrêter ici et revenir à `00_GSCC_ENTRY.md`.
+
+
 > Statut : `APPLICABLE`  
 > Dépôt : `{{REPOSITORY}}`  
 > Projet : `{{PROJECT_NAME}}`
