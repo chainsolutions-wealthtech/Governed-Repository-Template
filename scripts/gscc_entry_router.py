@@ -23,8 +23,15 @@ def route(current: str, outcome: str | None = None, *, path: Path = ROUTER_PATH)
     if step is None:
         raise ValueError(f"unknown GSCC entry router current step: {current}")
 
+    success_outcomes = step.get("success_outcomes") or {}
+    failure_outcomes = step.get("failure_outcomes") or {}
+
     if outcome is None:
         next_step = step.get("next_step")
+    elif outcome in success_outcomes:
+        next_step = success_outcomes[outcome]
+    elif outcome in failure_outcomes:
+        next_step = failure_outcomes[outcome]
     elif outcome == step.get("success_outcome"):
         next_step = step.get("next_step")
     elif outcome == step.get("failure_outcome"):

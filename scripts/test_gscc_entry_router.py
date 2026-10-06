@@ -12,15 +12,24 @@ def main() -> None:
 
     after_entry = route("00_GSCC_ENTRY.md")
     assert after_entry["action"] == "REPORT_PROVIDER_CONTEXT", after_entry
-    assert after_entry["next_step"] == "R2_ENTRY_CONTRACT", after_entry
+    assert after_entry["next_step"] == "R2_FIRST_TOUCH_CLASSIFICATION", after_entry
 
-    ready = route("R1_PROVIDER_CONTEXT", "ENTRY_READY_FOR_Q1")
-    assert ready["next_step"] == "R3_Q1_HANDOFF", ready
+    first_touch = route("R1_PROVIDER_CONTEXT", "FIRST_TOUCH")
+    assert first_touch["next_step"] == "R3_ENTRY_CONTRACT", first_touch
 
-    blocked = route("R1_PROVIDER_CONTEXT", "ENTRY_BLOCKED")
+    continuation = route("R1_PROVIDER_CONTEXT", "CONTINUATION")
+    assert continuation["next_step"] == "R3_ENTRY_CONTRACT", continuation
+
+    unresolved = route("R1_PROVIDER_CONTEXT", "UNRESOLVED_ENTRY")
+    assert unresolved["next_step"] == "BLOCK_UNRESOLVED", unresolved
+
+    ready = route("R2_FIRST_TOUCH_CLASSIFICATION", "ENTRY_READY_FOR_Q1")
+    assert ready["next_step"] == "R4_Q1_HANDOFF", ready
+
+    blocked = route("R2_FIRST_TOUCH_CLASSIFICATION", "ENTRY_BLOCKED")
     assert blocked["next_step"] == "BLOCK_UNRESOLVED", blocked
 
-    q1 = route("R2_ENTRY_CONTRACT", "READY_FOR_Q1")
+    q1 = route("R3_ENTRY_CONTRACT", "READY_FOR_Q1")
     assert q1["next_step"] == "Q1", q1
 
     print("GSCC_ENTRY_ROUTER_TEST_PASS")

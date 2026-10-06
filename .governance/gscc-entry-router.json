@@ -18,22 +18,37 @@
       "action": "REPORT_PROVIDER_CONTEXT",
       "target": "required_arrival_report",
       "success_outcome": "PROVIDER_CONTEXT_ACCOUNTED",
-      "next_step": "R2_ENTRY_CONTRACT",
+      "next_step": "R2_FIRST_TOUCH_CLASSIFICATION",
       "failure_step": "BLOCK_UNRESOLVED"
     },
     {
-      "step_id": "R2_ENTRY_CONTRACT",
+      "step_id": "R2_FIRST_TOUCH_CLASSIFICATION",
       "current": "R1_PROVIDER_CONTEXT",
+      "action": "CLASSIFY_FIRST_TOUCH",
+      "target": "scripts/first_touch_entry_contract.py",
+      "success_outcomes": {
+        "FIRST_TOUCH": "R3_ENTRY_CONTRACT",
+        "CONTINUATION": "R3_ENTRY_CONTRACT"
+      },
+      "failure_outcomes": {
+        "UNRESOLVED_ENTRY": "BLOCK_UNRESOLVED",
+        "UNRESOLVED": "BLOCK_UNRESOLVED"
+      },
+      "failure_step": "BLOCK_UNRESOLVED"
+    },
+    {
+      "step_id": "R3_ENTRY_CONTRACT",
+      "current": "R2_FIRST_TOUCH_CLASSIFICATION",
       "action": "EVALUATE_ENTRY_CONTRACT",
       "target": "scripts/first_touch_entry_contract.py",
       "success_outcome": "ENTRY_READY_FOR_Q1",
-      "next_step": "R3_Q1_HANDOFF",
+      "next_step": "R4_Q1_HANDOFF",
       "failure_outcome": "ENTRY_BLOCKED",
       "failure_step": "BLOCK_UNRESOLVED"
     },
     {
-      "step_id": "R3_Q1_HANDOFF",
-      "current": "R2_ENTRY_CONTRACT",
+      "step_id": "R4_Q1_HANDOFF",
+      "current": "R3_ENTRY_CONTRACT",
       "action": "BUILD_Q1_HANDOFF",
       "target": "scripts/gscc/first_touch_handoff.py",
       "success_outcome": "READY_FOR_Q1",
