@@ -8,6 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 PROBE_ROOT = ROOT / "docs" / "control-plane" / "probes"
 OUT = ROOT / ".governance" / "control-plane-state" / "first-touch-expected-field-registry.json"
+TOOL_SCHEMA_SNAPSHOT = ROOT / ".governance" / "control-plane-state" / "chatgpt-github-tool-schema-snapshot.json"
 
 CANONICAL_CONNECTION_FIELDS = [
     "request.request_id","request.correlation_id","request.idempotency_key","request.issued_at","request.observed_at",
@@ -100,6 +101,28 @@ def main():
                 "section":section,
                 "source_kind":kind,
             })
+    if TOOL_SCHEMA_SNAPSHOT.exists():
+        snap = json.loads(TOOL_SCHEMA_SNAPSHOT.read_text(encoding="utf-8"))
+        for row in snap.get("fields", []):
+            key = str(row.get("field_id") or "")
+            nk = norm_key(key)
+            if not nk:
+                continue
+            item = fields.setdefault(nk, {
+                "field_id": nk,
+                "aliases": [],
+                "sources": [],
+                "expected_status_contract": STATUS_VALUES,
+            })
+            if key not in item["aliases"]:
+                item["aliases"].append(key)
+            item["sources"].append({
+                "source_path": str(TOOL_SCHEMA_SNAPSHOT.relative_to(ROOT)),
+                "source_line": None,
+                "section": "github_tool_schema",
+                "source_kind": "TOOL_SCHEMA",
+            })
+
     for key in CANONICAL_CONNECTION_FIELDS:
         nk=norm_key(key)
         item=fields.setdefault(nk,{
@@ -115,6 +138,8 @@ def main():
         "purpose":"Every expected first-touch/connection field must have a value or an explicit non-value status; silent absence is not complete.",
         "source_probe_files":[str(p.relative_to(ROOT)) for p in sorted(PROBE_ROOT.glob("*.md"))],
         "status_values":STATUS_VALUES,
+        "probe_observation_count": sum(len(parse_probe(p)) for p in sorted(PROBE_ROOT.glob("*.md"))),
+        "tool_schema_field_count": len(json.loads(TOOL_SCHEMA_SNAPSHOT.read_text(encoding="utf-8")).get("fields", [])) if TOOL_SCHEMA_SNAPSHOT.exists() else 0,
         "field_count":len(fields),
         "fields":[fields[k] for k in sorted(fields)],
         "authority_granted":False,
