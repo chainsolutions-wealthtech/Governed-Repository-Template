@@ -144,7 +144,19 @@ The endpoint emits protocol messages through an injected transport and uses an i
 
 ## Tool instrumentation
 
-`scripts/gscc/instrumentation.py` provides a wrapper interface that emits `TOOL_STARTED`, then `TOOL_COMPLETED` or `TOOL_FAILED` around a real call. The wrapper deliberately does not serialize tool arguments, tool results, raw exception messages, prompts or provider content. This is the extension point for future automatic instrumentation; it is not a universal tool proxy.
+`scripts/gscc/instrumentation.py` provides the canonical wrapper interface around real tool calls. It supports a `before_tool_call` hook that executes before Function Exposure evaluation and before `TOOL_STARTED`. Provider First Touch uses this hook so the first instrumented tool of any kind may emit `gscc_provider_first_touch` without maintaining tool-specific wrappers.
+
+Ordering is normative:
+
+```text
+before_tool_call / Provider First Touch
+→ Function Exposure Gate when configured
+→ TOOL_STARTED
+→ real tool call
+→ TOOL_COMPLETED | TOOL_FAILED
+```
+
+The instrumentation layer deliberately does not serialize tool arguments, tool results, raw exception messages, prompts or provider content.
 
 ## Transport abstraction
 
