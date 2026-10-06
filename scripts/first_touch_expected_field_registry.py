@@ -180,7 +180,7 @@ def main():
         "authority_granted":False,
     }
     out["expected_observation_count"] = len(out["expected_observations"])
-    OUT.write_text(json.dumps(out,indent=2,ensure_ascii=False,sort_keys=True)+"\\n",encoding="utf-8")
+    OUT.write_text(json.dumps(out,indent=2,ensure_ascii=False,sort_keys=True)+"\n",encoding="utf-8")
     print(json.dumps({"status":"EXPECTED_FIELD_REGISTRY_BUILT","field_count":len(fields),"expected_observation_count":out["expected_observation_count"],"output":str(OUT)},indent=2))
 
 if __name__=="__main__":
