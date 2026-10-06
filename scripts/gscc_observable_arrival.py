@@ -21,6 +21,12 @@ SUPPORTED_GITHUB_EVENTS = frozenset({
     "workflow_dispatch",
 })
 
+# Only these event classes may safely derive a repository ref/HEAD from the
+# GitHub Actions environment. Issue/comment events execute on the default
+# branch and must not be mistaken for the agent's working ref.
+ENV_REF_BEARING_EVENTS = frozenset({"push", "create", "workflow_dispatch"})
+ENV_HEAD_BEARING_EVENTS = frozenset({"push", "create", "workflow_dispatch"})
+
 INTERNAL_DISPATCH_PREFIXES = ("gacr_", "gscc_")
 HOST_INGRESS_PREFIX = "/gacr-host "
 CONTROL_REQUEST_PREFIX = "/gscc-control "
@@ -152,17 +158,25 @@ def build_github_arrival_facts(event: dict[str, Any], env: dict[str, str]) -> di
     issue_number = _issue_number(event)
 
     event_ref = _branch_from_ref(_nonempty(event.get("ref")))
-    branch = (
-        pr_branch
-        or event_ref
-        or _nonempty(env.get("GITHUB_HEAD_REF"))
-        or _nonempty(env.get("GITHUB_REF_NAME"))
+    env_branch = None
+    if event_name in ENV_REF_BEARING_EVENTS:
+        env_branch = (
+            _nonempty(env.get("GITHUB_HEAD_REF"))
+            or _nonempty(env.get("GITHUB_REF_NAME"))
+        )
+
+    branch = pr_branch or event_ref or env_branch
+    base_branch = base_branch or (
+        _nonempty(env.get("GITHUB_BASE_REF"))
+        if event_name in {"pull_request", "pull_request_review", "pull_request_review_comment"}
+        else None
     )
-    base_branch = base_branch or _nonempty(env.get("GITHUB_BASE_REF"))
+
+    env_head = _nonempty(env.get("GITHUB_SHA")) if event_name in ENV_HEAD_BEARING_EVENTS else None
     observed_head = (
         pr_head
         or _nonempty(event.get("after"))
-        or _nonempty(env.get("GITHUB_SHA"))
+        or env_head
     )
 
     subject = _subject(
