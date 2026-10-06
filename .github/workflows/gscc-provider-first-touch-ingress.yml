@@ -19,9 +19,11 @@ on:
       - "scripts/first_touch_entry_contract.py"
       - "scripts/first_touch_state_artifact.py"
       - "scripts/first_touch_agent_transport_extractor.py"
+      - "scripts/gscc_arrival_identity.py"
       - "scripts/gscc_persisted_entry_pipeline.py"
       - ".governance/control-plane-db/008_gscc_observable_entry_pipeline.sql"
       - ".governance/control-plane-db/009_gscc_post_q1_gate_route.sql"
+      - ".governance/control-plane-db/010_gscc_arrival_session_identity.sql"
       - "scripts/first_touch_connection_completeness.py"
       - "scripts/first_touch_field_block_gate.py"
       - "scripts/gscc/first_touch_handoff.py"
@@ -81,6 +83,11 @@ jobs:
             python3 -c 'import json,os,pathlib; raw=pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("gscc-first-touch-issue-body.txt").read_text(encoding="utf-8").strip(); prefix="/gscc-first-touch"; assert raw.startswith(prefix), "body must start with /gscc-first-touch"; payload=json.loads(raw[len(prefix):].strip()); assert isinstance(payload,dict), "JSON object required"; pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("provider-first-touch-envelope.json").write_text(json.dumps(payload,ensure_ascii=False,sort_keys=True),encoding="utf-8")'
           fi
 
+      - name: Mint per-arrival GSCC connection identity
+        run: |
+          python3 scripts/gscc_arrival_identity.py             --envelope "$RUNNER_TEMP/provider-first-touch-envelope.json"             --event "$GITHUB_EVENT_PATH"             --run-id "$GITHUB_RUN_ID"             --run-attempt "$GITHUB_RUN_ATTEMPT"             --output "$RUNNER_TEMP/provider-first-touch-identified-envelope.json"
+          mv "$RUNNER_TEMP/provider-first-touch-identified-envelope.json" "$RUNNER_TEMP/provider-first-touch-envelope.json"
+
       - name: Enrich minimal provider signal from repository-observable GitHub state
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -116,6 +123,7 @@ jobs:
               for name in (
                   "008_gscc_observable_entry_pipeline.sql",
                   "009_gscc_post_q1_gate_route.sql",
+                  "010_gscc_arrival_session_identity.sql",
               ):
                   conn.executescript((Path(".governance/control-plane-db")/name).read_text(encoding="utf-8"))
               conn.commit()
