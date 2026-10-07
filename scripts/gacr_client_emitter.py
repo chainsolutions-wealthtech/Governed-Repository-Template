@@ -35,6 +35,9 @@ INTERRUPTION_CODES = {
 }
 AVAILABILITY_STATES = {"AVAILABLE", "WAITING", "BUSY", "BLOCKED", "RATE_LIMITED", "QUOTA_BLOCKED", "CHECKPOINTING", "TERMINATING", "UNKNOWN"}
 AVAILABILITY_REASON_CODES = {"WAITING_FOR_WORK", "WAITING_FOR_INPUT", "DEPENDENCY_BLOCKED", "PROVIDER_RATE_LIMIT", "PROVIDER_QUOTA_EXHAUSTED", "CONTEXT_LIMIT", "CHECKPOINTING", "TERMINATING", "MANUAL_BUSY", "UNKNOWN"}
+AGENT_ROLES = {"INTAKER", "SUPERVISOR", "CODE_AGENT", "REVIEWER"}
+ENTRY_PURPOSES = {"WORK_ON_CONTROL_PLANE", "APPLY_GOVERNANCE_CASE"}
+CONTROL_PLANE_WORK_KINDS = {"CODE_IMPLEMENTATION", "EXECUTE_EXISTING_TASK", "ADD_OR_ENRICH_INFORMATION"}
 FORBIDDEN_KEY_FRAGMENTS = ("token", "secret", "password", "private_key", "cookie", "authorization")
 
 
@@ -421,6 +424,9 @@ def parser() -> argparse.ArgumentParser:
     availability.add_argument("--session-id", required=True)
     availability.add_argument("--state", choices=sorted(AVAILABILITY_STATES), required=True)
     availability.add_argument("--reason-code", choices=sorted(AVAILABILITY_REASON_CODES), default="UNKNOWN")
+    availability.add_argument("--agent-role", choices=sorted(AGENT_ROLES))
+    availability.add_argument("--entry-purpose", choices=sorted(ENTRY_PURPOSES))
+    availability.add_argument("--work-kind", choices=sorted(CONTROL_PLANE_WORK_KINDS))
     availability.add_argument("--observed-head")
 
     accept_offer = sub.add_parser("accept-work-offer")
@@ -513,6 +519,9 @@ def main() -> None:
             args.session_id,
             state=args.state,
             reason_code=args.reason_code,
+            agent_role=args.agent_role,
+            entry_purpose=args.entry_purpose,
+            work_kind=args.work_kind,
             observed_head=args.observed_head,
         ))
     elif args.command == "accept-work-offer":
