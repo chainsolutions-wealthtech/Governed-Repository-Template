@@ -507,5 +507,20 @@
     "status": "DONE",
     "decision_id": "CPD-073",
     "checkpoint": "CREATE_NEW_REPOSITORY_CASE_COMPLETE"
+  },
+  "gacr_dispatch_r8": {
+    "status": "CANDIDATE_PENDING_CI_AND_LIVE_PROOF",
+    "authority": "docs/GACR_AGENT_CONTINUITY_RELAY.md",
+    "decision": "CPD-075",
+    "branch": "governance/f1-declaration-auto-dispatch",
+    "live_issue": 254,
+    "invariants": [
+      "F1_RELEASE_REQUIRED_BEFORE_SOURCE_WORK_OFFER",
+      "CANONICAL_ROLE_AND_EXPLICIT_AVAILABILITY_REQUIRED",
+      "SOURCE_CONTROL_PLANE_CANONICAL_TASK_GRAPH_ONLY",
+      "WORK_OFFER_NE_CLAIM_NE_WRITE_AUTHORITY"
+    ],
+    "next_after_merge": "RECOVER_ISSUE_254_SAME_ARRIVAL_THEN_VERIFY_AUTOMATIC_GMC_G01_T01_OFFER",
+    "current_global_task": "GMC-01"
   }
 }
