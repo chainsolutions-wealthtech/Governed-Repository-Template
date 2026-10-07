@@ -181,6 +181,11 @@ def main():
         add(args,'--action',payload.get('action_label'))
         add(args,'--evidence',payload.get('evidence'))
         add(args,'--source',payload.get('source'))
+        add(args,'--workload-state',payload.get('workload_state'))
+        add(args,'--blocker-code',payload.get('blocker_code'))
+        add(args,'--capacity-slots',payload.get('capacity_slots'))
+        add(args,'--max-parallel-tasks',payload.get('max_parallel_tasks'))
+        add(args,'--retry-after-at',payload.get('retry_after_at'))
     elif command=='beacon':
         add(args,'--session-id',payload.get('session_id'))
         add(args,'--event-type',payload.get('event_type') or 'CONNECT')
@@ -200,6 +205,7 @@ def main():
         add(args,'--action-id',payload.get('action_id')); add(args,'--action-label',payload.get('action_label')); add(args,'--action-phase',payload.get('action_phase'))
         add(args,'--tool-name',payload.get('tool_name')); add(args,'--tool-call-id',payload.get('tool_call_id')); add(args,'--outcome',payload.get('outcome')); add(args,'--written-head',payload.get('written_head'))
         add(args,'--checkpoint-ref',payload.get('checkpoint_ref')); add(args,'--evidence-ref',payload.get('evidence_ref')); add(args,'--interruption-code',payload.get('interruption_code'))
+        add(args,'--workload-state',payload.get('workload_state')); add(args,'--blocker-code',payload.get('blocker_code')); add(args,'--capacity-slots',payload.get('capacity_slots')); add(args,'--max-parallel-tasks',payload.get('max_parallel_tasks')); add(args,'--retry-after-at',payload.get('retry_after_at'))
     elif command=='context':
         add(args,'--session-id',payload.get('session_id'))
     elif command=='forensics':
