@@ -1351,3 +1351,17 @@ Reconciliation:
 - `CONTINUE_GOVERNED_WORK` remains an existing entry action and is not promoted to a fifth governance case;
 - no First Touch/GACR replay occurs at the junction;
 - unresolved junction fields are asked/resolved one at a time and fail closed when required.
+
+
+## 2026-10-07 — Master architecture and requirements map materialized
+
+Owner requested consolidation so the GSCC/GSE/GACR capsule, global programme, question/interaction database, agent-purpose junction and remaining roadmap cannot be lost across conversations.
+
+Materialized:
+- `docs/control-plane/MASTER_SYSTEM_MAP.md` — uninterrupted whole-system map;
+- `docs/control-plane/REQUIREMENTS_ROADMAP.md` — requirements/status/validation/remaining-work matrix;
+- CP-ARCH-001 advanced to R7;
+- README / 00_START_HERE / AGENTS / CANONICAL_ARCHITECTURE / DATA_MODEL / capsule linked to the same master map;
+- DATA_MODEL reconciled to show the LIVE identity/session chain separately from the still-planned normalized registry;
+- CI anti-drift test added;
+- global programme state unchanged at `P12-S6`.

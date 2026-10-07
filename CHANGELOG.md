@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Master architecture / requirements consolidation
+
+- Added a single whole-system navigation map for GSCC→GSE→GACR→F1→release→global routing→question/action flow→checkpoint/handoff continuity.
+- Added a requirements/traceability/roadmap matrix distinguishing LIVE-proven, implemented, planned and future capabilities.
+- Linked README, START_HERE, AGENTS, canonical architecture, data model and capsule documentation to the same map.
+- Advanced CP-ARCH-001 to R7 and added CI anti-drift validation.
+- Preserved P12-S6 as the sole active global task.
+
+
 ### IDN pre-entry closure
 
 - Live fresh-arrival acceptance now proves the complete `GSCC → GSE → GACR → Q12 → F1 → release → 00_START_HERE.md` path.

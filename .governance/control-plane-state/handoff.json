@@ -471,5 +471,18 @@
       "RTE_ROUTER",
       "ENTRY_ACTION_POLICY"
     ]
+  },
+  "master_documentation": {
+    "read_first_after_current_state": [
+      "docs/control-plane/MASTER_SYSTEM_MAP.md",
+      "docs/control-plane/REQUIREMENTS_ROADMAP.md",
+      "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+      "docs/control-plane/PROGRAM.md",
+      "docs/control-plane/TASKS.md",
+      "docs/control-plane/NEXT_ACTION.md"
+    ],
+    "status_contract": "DISTINGUISH_LIVE_PROVEN_IMPLEMENTED_PARTIAL_PLANNED_NOT_ACTIVE_FUTURE",
+    "no_parallel_authority": true,
+    "current_global_task": "P12-S6"
   }
 }

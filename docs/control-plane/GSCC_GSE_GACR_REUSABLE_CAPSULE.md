@@ -4,6 +4,14 @@ Authority ID: `CP-CAPSULE-001`
 
 Status: `PLANNED_DEPENDENCY_BOUND`
 
+## Master architecture integration
+
+Whole-system map: `docs/control-plane/MASTER_SYSTEM_MAP.md`.
+
+Requirements/status/roadmap traceability: `docs/control-plane/REQUIREMENTS_ROADMAP.md`.
+
+This capsule authority owns capsule semantics only. The master map shows how those semantics enter the global programme, router and question/interaction model without duplicating them.
+
 ## Purpose
 
 Turn the LIVE-proven pre-entry chain:
