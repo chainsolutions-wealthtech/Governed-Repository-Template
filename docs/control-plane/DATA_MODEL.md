@@ -1,5 +1,13 @@
 # CONTROL PLANE CANONICAL MEMORY DATABASE
 
+## Master architecture integration
+
+Whole-system relationship: `docs/control-plane/MASTER_SYSTEM_MAP.md`.
+
+Requirements/status/roadmap traceability: `docs/control-plane/REQUIREMENTS_ROADMAP.md`.
+
+This document owns the data/interaction model. It does not own programme order or capsule routing semantics.
+
 ## Purpose
 
 The control plane needs a durable memory that is both:
@@ -278,11 +286,33 @@ If a structured record cannot yet be represented by the current schema, it must 
 This preserves the future Admin UI objective without allowing the UI/database to outrank Git authorities.
 
 
-## Planned identity / connection / session registry
+## Current LIVE identity/session chain and planned normalized registry
 
-The current `agent_sessions` model is not yet sufficient for automatic arrival identity.
+The original `agent_sessions` table is not the whole arrival/session model anymore.
 
-Target separation:
+The currently LIVE-proven pre-entry chain uses additive GSCC/GSE/GACR structures, including:
+- GSCC conversation identities and First Touch snapshots;
+- per-arrival `gscc_arrival_ref` / `connection_ref`;
+- per-arrival durable state scope;
+- GSE SessionTwin;
+- explicit GSCC/GSE/GACR binding;
+- canonical GACR durable session;
+- persisted runtime/gate evidence through Q12/F1/release.
+
+Current runtime relationship:
+
+```text
+CONTROLLED ARRIVAL
+→ GSCC ARRIVAL / CONNECTION
+→ GSCC LOGICAL IDENTITY
+→ GSE SESSION TWIN
+→ CANONICAL GACR SESSION
+→ Q12 / F1 / RELEASE EVIDENCE
+```
+
+This chain is LIVE proven through `IDN-006`.
+
+A **broader normalized relational registry** is still planned for common GMC/ARCH/API use. It separates:
 
 ```text
 PRINCIPAL  = authenticated external identity/account
@@ -293,35 +323,16 @@ ROLE       = responsibility model
 AUTHORITY  = separately observed permission/mutation envelope
 ```
 
-Planned relational entities:
+Target normalized relational entities still include:
+- `principals`;
+- `agents`;
+- `connections`;
+- `governed_sessions`;
+- `session_identity_bindings`;
+- `session_authority_snapshots`;
+- `session_events`.
 
-- `principals`
-- `agents`
-- `connections`
-- `governed_sessions`
-- `session_identity_bindings`
-- `session_authority_snapshots`
-- `session_events`
-
-The existing session-id behavior must remain backward-compatible while this model is introduced.
-
-Target entry sequence:
-
-```text
-CAPTURE AUTHENTICATED ACTOR
-→ RESOLVE PRINCIPAL
-→ RESOLVE AGENT
-→ CREATE CONNECTION EVENT
-→ CREATE/RESUME SESSION
-→ RESOLVE ROLE
-→ OBSERVE AUTHORITY
-→ RESOLVE ENTRY ACTION
-→ RESOLVE CONNECTION INTENT
-→ ENTER GOVERNED QUESTION/ACTION FLOW
-```
-
-Opening/viewing a repository alone is not currently sufficient to trigger this full flow; this backlog exists to make the governed arrival explicit and eventually automatable.
-
+These future entities must **reuse/migrate compatibly from the LIVE GSCC/GSE/GACR chain**. They must not create a second session truth or replay First Touch. GACR remains the durable continuity authority until an explicitly governed migration changes that contract.
 
 ## Planned two-stage purpose routing data
 
