@@ -162,6 +162,15 @@ def _active_claims(claims: dict, subject_id: str | None = None) -> list[dict]:
     return values
 
 
+def _active_claims_for_session(claims: dict, session_id: str) -> list[dict]:
+    values = [
+        x for x in claims.get("claims", [])
+        if x.get("status") == "ACTIVE" and x.get("session_id") == session_id
+    ]
+    values.sort(key=lambda x: (str(x.get("created_at") or ""), str(x.get("claim_id") or "")))
+    return values
+
+
 def _subject_claim_history(claims: dict, subject_id: str) -> list[dict]:
     values = [
         x for x in claims.get("claims", [])
@@ -811,7 +820,7 @@ def activate_accepted_offers() -> dict:
             dispatch["current_head_sha"] = current_head
             continue
         sid = dispatch.get("target_session_id")
-        if _active_claims(claims, sid):
+        if _active_claims_for_session(claims, sid):
             dispatch["claim_activation_blocker"] = "SESSION_ALREADY_HAS_ACTIVE_CLAIM"
             continue
         domains = set(dispatch.get("collision_domains") or [])
