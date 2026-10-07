@@ -318,8 +318,9 @@ def persist_roster(roster: dict[str, Any]) -> dict[str, Any]:
         "agents": roster.get("agents") or [],
     }
     revision = int(previous.get("revision") or 0)
-    if stable_previous != stable_new:
-        revision += 1
+    if stable_previous == stable_new and previous.get("schema") == "gacr-agent-roster/v1":
+        return previous
+    revision += 1
     persisted = {
         "schema_version": "1.0.0",
         "schema": "gacr-agent-roster/v1",
