@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 25,
+  "revision": 26,
   "items": [
     {
       "schema": "gscc-control-dispatch/v1",
@@ -344,6 +344,32 @@
       "delivered_at": "2026-10-05T22:07:36+00:00",
       "delivery_evidence_ref": "github-issue-comment:6004074244",
       "completed_at": "2026-10-05T22:08:43+00:00"
+    },
+    {
+      "dispatch_id": "GACR-W-459aad82ea1f",
+      "dispatch_kind": "WORK_OFFER",
+      "status": "READY",
+      "offer_status": "PENDING_ACCEPTANCE",
+      "created_at": "2026-10-07T02:26:41+00:00",
+      "target_session_id": "session-a2a8bd62dd27b64f92ae4cfe",
+      "target_client_instance_id": "GSCC-CLIENT-da9c7f48ffd3bf11970efb51",
+      "work_item_id": "WORK-INIT-001",
+      "task_id": "WORK-INIT-001",
+      "collision_domains": [
+        "governance-state"
+      ],
+      "required_capabilities": [],
+      "required_authorities": [],
+      "allowed_agent_roles": [],
+      "delivery_modes": [
+        "POLL_REPOSITORY"
+      ],
+      "requires_offer_acceptance": true,
+      "requires_claim_after_acceptance": true,
+      "requires_exact_head_reconciliation": true,
+      "may_write_before_acceptance": false,
+      "claim_created": false,
+      "grants_write_authority": false
     }
   ]
 }
