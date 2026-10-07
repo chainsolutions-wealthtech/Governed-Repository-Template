@@ -33,6 +33,7 @@ on:
           - plan-work
           - dispatch-work
           - work-offer-accept
+          - work-relinquish
           - control-challenge
       agent:
         required: false
@@ -110,6 +111,24 @@ on:
       dispatch_id:
         required: false
         type: string
+      claim_id:
+        required: false
+        type: string
+      reason_code:
+        required: false
+        type: string
+      observed_head:
+        required: false
+        type: string
+      checkpoint_ref:
+        required: false
+        type: string
+      handoff_ref:
+        required: false
+        type: string
+      evidence_ref:
+        required: false
+        type: string
       availability_state:
         required: false
         type: string
@@ -135,6 +154,7 @@ on:
       - gacr_plan-work
       - gacr_dispatch-work
       - gacr_work-offer-accept
+      - gacr_work-relinquish
       - gacr_control-challenge
 
 permissions:
