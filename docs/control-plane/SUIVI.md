@@ -1439,3 +1439,24 @@ Global programme ordering is unchanged: `GMC-01 / GMC-G01` remains current.
 - Therefore R7 is operationally installed and green, but no agent is classified AVAILABLE/WAITING until a real explicit capacity signal is emitted.
 - Silence remains UNKNOWN, never AVAILABLE.
 - Global programme remains `GMC-01 / GMC-G01`.
+
+
+## 2026-10-07 — GACR R8 contextual continuous task pool
+
+Owner requirement: the dispatcher must continuously form non-colliding multi-agent task pools, attach sufficient canonical history/method/evidence context, require durable traces, and recover unfinished work for another agent without guesswork.
+
+R8 candidate adds:
+- derived source/client task-pool projections;
+- control-plane atomic task projection from the current canonical blueprint;
+- collision-free waves;
+- role/capability/authority-aware work offers;
+- context packets referencing CURRENT_STATE / programme / decisions / suivi / checkpoint / handoff and task-specific sources;
+- exact-HEAD work-offer acceptance → claim activation;
+- one active claim per session;
+- explicit rate/quota/context/blocker handling;
+- responsive checkpoint/handoff/evidence relinquish and requeue;
+- stalled-claim recovery through existing GACR forensics/takeover;
+- portable Template→client distribution;
+- secretless/no-transcript/no-private-reasoning persistence.
+
+Global programme remains `GMC-01 / GMC-G01`. R8 does not complete GMC work and grants no GMC implementation authority.
