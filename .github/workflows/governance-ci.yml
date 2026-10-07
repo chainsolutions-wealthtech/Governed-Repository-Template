@@ -164,6 +164,9 @@ jobs:
       - name: Test GACR provider-host issue ingress
         run: python3 scripts/test_gacr_host_issue_ingress.py
 
+      - name: Test GACR shared continuity coordination
+        run: python3 scripts/test_gacr_continuity_coordination.py
+
       - name: Test GACR host issue workflow rerun safety
         run: python3 scripts/test_gacr_host_issue_workflow.py
 
