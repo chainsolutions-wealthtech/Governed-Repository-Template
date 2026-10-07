@@ -521,3 +521,16 @@ Append-only durable decisions for the source/control-plane repository.
 - The response enrichment layer must not fabricate provider-private identifiers, expose secrets, or infer authority from repository metadata.
 - This decision records the required contract only. It does not implement or attest the runtime response enrichment.
 - No P12-S6, CASE 1, GMC, MCP, server or production state is advanced by this decision.
+
+### CPD-068 — F1 validation releases an arrival to normal governance only through an exact correlated release
+
+- Date: 2026-10-07.
+- A successful F1 function-exposure evaluation is necessary but does not by itself silently transition an arrival into the normal governed workflow.
+- The release must restore the same per-arrival runtime and validate the same `connection_ref`, canonical GACR session, Access Grant, F1 exposure receipt and current repository HEAD.
+- The canonical transition is persisted as `F1_VERIFIED → 00_START_HERE.md / RELEASED`, with runtime state `RELEASED_TO_NORMAL_GOVERNANCE`.
+- A stale, mismatched, non-exposable or differently bound F1 receipt fails closed.
+- Live acceptance is proven by issue `#244`, session `session-5bba386248ac4d9c0e05f1a8`, F1 workflow `37550409710`, exposure receipt `GSCC-EXPOSURE-083cf0005955022e1c19d5b8d79264a170e9d9cc7bc898a251339e9b3b92b76f`, release workflow `37550477009` and release comment `6027880258`.
+- Released exact HEAD: `f768268bf1a3f62c2e6741aecfba20d86545969c`.
+- Provider-private conversation/session identifiers remained `UNAVAILABLE`; repository-controlled GSCC references do not impersonate provider identifiers.
+- This closes IDN-006 and the temporary IDN lane. It does not execute or reorder the global programme. `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` remains the unique next global action.
+
