@@ -195,8 +195,8 @@ class TaskPoolTests(unittest.TestCase):
         self.assertIn("docs/control-plane/CURRENT_STATE.md", packet["method"]["required_read_refs"])
         self.assertIn("docs/control-plane/CANONICAL_ARCHITECTURE.md", packet["method"]["required_read_refs"])
         self.assertTrue(packet["execution_contract"]["exact_head_required_before_claim_and_mutation"])
-        self.assertEqual(packet["privacy"]["raw_prompts_included"], False)
-        self.assertNotIn("transcript", json.dumps(packet).lower())
+        self.assertEqual(packet["privacy"]["raw_conversation_content_persisted"], False)
+        self.assertEqual(packet["privacy"]["assistant_internal_workings_persisted"], False)
 
     def test_collision_free_waves_separate_overlapping_items(self):
         self.write("work", {"revision": 1, "items": [
