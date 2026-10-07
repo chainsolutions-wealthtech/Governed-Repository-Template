@@ -72,6 +72,8 @@
       "scripts/test_governed_agent_continuity_relay.py",
       ".github/workflows/governed-agent-continuity-relay.yml",
       "scripts/gacr_agent_telemetry.py",
+      "scripts/test_gacr_capacity_dispatch.py",
+      "scripts/gacr_capacity_dispatch.py",
       "scripts/gacr_bridge_notifier.py",
       "scripts/test_gacr_agent_telemetry.py",
       "scripts/gacr_auto_attach.py",
@@ -509,7 +511,10 @@
     "PREAUTHORIZED admission is qualification-only and not repository access",
     "bounded Access Grant required before canonical function exposure",
     "Access Grant grants neither invocation authority nor mutation authority",
-    "existing GSCC observable-arrival and function-exposure gates preserved under additive admission layer"
+    "existing GSCC observable-arrival and function-exposure gates preserved under additive admission layer",
+    "explicit agent availability and provider-limit signals never inferred from silence",
+    "capacity-aware parallel dispatch over canonical claims and collision domains",
+    "work offers require acceptance then canonical claim and exact-head reconciliation"
   ],
   "automatic_initialization_supported": true
 }
