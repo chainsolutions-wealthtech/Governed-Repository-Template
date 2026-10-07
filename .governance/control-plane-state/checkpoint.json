@@ -418,5 +418,12 @@
     "status": "DONE",
     "decision_id": "CPD-073",
     "no_orphan_executable_tasks": true
+  },
+  "gacr_contextual_task_pool": {
+    "authority_revision": "CP-AGENT-RELAY-001-R8",
+    "decision_id": "CPD-075",
+    "status": "IMPLEMENTED_PENDING_CI_MERGE",
+    "next_validation": "RUN_GOVERNANCE_CI_AND_POSTMERGE_RELAY",
+    "global_task_unchanged": "GMC-01"
   }
 }
