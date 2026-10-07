@@ -32,7 +32,26 @@ INTERRUPTION_CODES = {
     "USER_CANCELLED",
     "NETWORK_LOSS",
     "PROCESS_EXITED",
+    "PROVIDER_RATE_LIMIT",
+    "TOOL_RATE_LIMIT",
+    "USAGE_LIMIT",
+    "QUOTA_LIMIT",
+    "CONTEXT_LIMIT",
+    "WAITING_FOR_AUTHORITY",
+    "WAITING_FOR_INPUT",
+    "WAITING_FOR_REVIEW",
+    "EXTERNAL_DEPENDENCY",
     "UNKNOWN",
+}
+WORKLOAD_STATES = {
+    "WORKING","IDLE","WAITING_FOR_WORK","WAITING_FOR_INPUT","WAITING_FOR_AUTHORITY",
+    "WAITING_FOR_REVIEW","BLOCKED","RATE_LIMITED","QUOTA_LIMITED","CONTEXT_LIMITED",
+    "CHECKPOINTING","TERMINATING","UNKNOWN"
+}
+BLOCKER_CODES = {
+    "NONE","DEPENDENCY","COLLISION_DOMAIN","WAITING_FOR_INPUT","WAITING_FOR_AUTHORITY",
+    "WAITING_FOR_REVIEW","PROVIDER_RATE_LIMIT","TOOL_RATE_LIMIT","USAGE_LIMIT","QUOTA_LIMIT",
+    "CONTEXT_LIMIT","EXTERNAL_DEPENDENCY","TOOL_FAILURE","NETWORK_LOSS","UNKNOWN"
 }
 AUTHORIZED_ASSOCIATIONS = {"OWNER", "MEMBER", "COLLABORATOR"}
 ENTRY_ACTIONS = {
@@ -90,6 +109,11 @@ ALLOWED_KEYS = {
     "challenge_id",
     "nonce",
     "challenge_status",
+    "workload_state",
+    "blocker_code",
+    "capacity_slots",
+    "max_parallel_tasks",
+    "retry_after_at",
 }
 
 
@@ -181,6 +205,21 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
     connection_intent = payload.get("connection_intent")
     if connection_intent is not None and connection_intent not in CONNECTION_INTENTS:
         raise ValueError("unsupported host-event connection_intent")
+    workload_state = payload.get("workload_state")
+    if workload_state is not None and workload_state not in WORKLOAD_STATES:
+        raise ValueError("unsupported host-event workload_state")
+    blocker_code = payload.get("blocker_code")
+    if blocker_code is not None and blocker_code not in BLOCKER_CODES:
+        raise ValueError("unsupported host-event blocker_code")
+    for numeric_field in ("capacity_slots", "max_parallel_tasks"):
+        if numeric_field in payload:
+            value = payload.get(numeric_field)
+            if not isinstance(value, int) or value < 0:
+                raise ValueError(f"{numeric_field} must be an integer >= 0")
+    if payload.get("retry_after_at") not in (None, ""):
+        value = str(payload.get("retry_after_at"))
+        if "T" not in value:
+            raise ValueError("retry_after_at must be ISO-8601-like")
 
     if kind == "command_ack":
         for key in ("session_id", "dispatch_id", "command_id", "correlation_id", "delivery_state"):
@@ -355,6 +394,11 @@ def marker_beacon(session_id: str, payload: dict, event_type: str) -> None:
     add(args, "--written-head", payload.get("written_head"))
     add(args, "--checkpoint-ref", payload.get("checkpoint_ref"))
     add(args, "--interruption-code", payload.get("interruption_code"))
+    add(args, "--workload-state", payload.get("workload_state"))
+    add(args, "--blocker-code", payload.get("blocker_code"))
+    add(args, "--capacity-slots", payload.get("capacity_slots"))
+    add(args, "--max-parallel-tasks", payload.get("max_parallel_tasks"))
+    add(args, "--retry-after-at", payload.get("retry_after_at"))
     run_script(TELEMETRY, args)
 
 
