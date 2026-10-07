@@ -686,7 +686,12 @@ def dispatch_ready_work(*, generated_at: str | None = None) -> dict:
     }
 
 
-def accept_work_offer(dispatch_id: str, session_id: str) -> dict:
+def accept_work_offer(
+    dispatch_id: str,
+    session_id: str,
+    observed_head: str | None = None,
+    evidence_ref: str | None = None,
+) -> dict:
     store = read_json(DISPATCHES_PATH, {"schema_version": "1.0.0", "revision": 0, "items": []})
     item = next((x for x in store.get("items", []) if x.get("dispatch_id") == dispatch_id), None)
     if not item:
@@ -716,6 +721,10 @@ def accept_work_offer(dispatch_id: str, session_id: str) -> dict:
     item["offer_status"] = "ACCEPTED"
     item["accepted_at"] = telemetry.now_iso()
     item["accepted_by_session_id"] = session_id
+    if observed_head:
+        item["accepted_observed_head_sha"] = observed_head
+    if evidence_ref:
+        item["acceptance_evidence_ref"] = evidence_ref
     item["claim_created"] = False
     item["requires_claim_after_acceptance"] = True
     item["may_write_before_acceptance"] = False
@@ -742,7 +751,16 @@ def command_dispatch(_: argparse.Namespace) -> None:
 
 
 def command_accept(args: argparse.Namespace) -> None:
-    print(json.dumps(accept_work_offer(args.dispatch_id, args.session_id), indent=2, ensure_ascii=False))
+    print(json.dumps(
+        accept_work_offer(
+            args.dispatch_id,
+            args.session_id,
+            observed_head=args.observed_head,
+            evidence_ref=args.evidence_ref,
+        ),
+        indent=2,
+        ensure_ascii=False,
+    ))
 
 
 def parser() -> argparse.ArgumentParser:
@@ -757,6 +775,8 @@ def parser() -> argparse.ArgumentParser:
     accept = sub.add_parser("accept-work")
     accept.add_argument("--dispatch-id", required=True)
     accept.add_argument("--session-id", required=True)
+    accept.add_argument("--observed-head")
+    accept.add_argument("--evidence-ref")
     accept.set_defaults(fn=command_accept)
     return p
 
