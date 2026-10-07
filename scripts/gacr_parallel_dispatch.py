@@ -527,7 +527,11 @@ def plan_dispatch(
                 continue
             session = sessions_by_id.get(session_id) or {}
             role = _role_key(session, latest_beacon_for_session(session_id, beacons))
-            if role not in set(task_eval.get("allowed_agent_roles") or ["CODE_AGENT"]) and "CODE_AGENT" not in set(task_eval.get("allowed_agent_roles") or []):
+            allowed_roles = set(task_eval.get("allowed_agent_roles") or ["CODE_AGENT"])
+            role_allowed = role in allowed_roles or (
+                "CODE_AGENT" in allowed_roles and bool(agent.get("code_agent"))
+            )
+            if not role_allowed:
                 continue
             required = set(task_eval.get("required_capabilities") or [])
             if not required.issubset(_agent_capabilities(agent, session)):
