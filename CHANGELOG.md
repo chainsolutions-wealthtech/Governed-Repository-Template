@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### SaaS platform / autonomous cockpit target
+
+- Registered `CP-SAAS-001` and `SAA-001..SAA-015`.
+- Added complete admin cockpit, REST/OpenAPI backend, service/microservice, PostgreSQL, SaaS tenancy and operational deployment requirements.
+- Registered production target `https://mcp.wealthtechinnovations.com/template`.
+- Preserved P12-S6 as the sole active global task and granted no production mutation authority.
+
+
 ### Master architecture / requirements consolidation
 
 - Added a single whole-system navigation map for GSCC→GSE→GACR→F1→release→global routing→question/action flow→checkpoint/handoff continuity.
