@@ -435,6 +435,28 @@
       "observed_work_offer_count": 0,
       "no_idle_inference_from_silence": true,
       "live_capacity_dispatch_status": "READY_WAITING_FOR_REAL_AGENT_AVAILABLE_OR_WAITING_SIGNAL"
+    },
+    "gacr_role_capacity_dispatch": {
+      "authority_revision": "CP-AGENT-RELAY-001-R8",
+      "decision_id": "CPD-075",
+      "status": "IMPLEMENTED_PENDING_CI_LIVE_REPLAY",
+      "canonical_roles": [
+        "CODE_AGENT",
+        "INTAKER",
+        "SUPERVISOR",
+        "REVIEWER"
+      ],
+      "historical_roles_preserved": [
+        "qualification-client",
+        "implementer",
+        "continuation-supervisor"
+      ],
+      "role_capability_authority_separation": true,
+      "explicit_availability_required": true,
+      "waiting_outcome_normalization": "WAITING_FOR_WORK_TO_WAITING",
+      "unscoped_ready_work_auto_dispatch": false,
+      "prompts": "docs/control-plane/AGENT_ENTRY_PROMPTS.md",
+      "global_programme_task_unchanged": "GMC_01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES"
     }
   },
   "framework_product_boundary": {
