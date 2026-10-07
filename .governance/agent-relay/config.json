@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.7.0",
+  "schema_version": "1.8.0",
   "process_name": "GACR",
   "process_title": "Governed Agent Continuity Relay",
   "authority_id": "CP-AGENT-RELAY-001",
@@ -83,7 +83,7 @@
     "continuous_background_heartbeat_proven": false,
     "github_issue_control_channel_candidate": true
   },
-  "revision_authority_id": "CP-AGENT-RELAY-001-R7",
+  "revision_authority_id": "CP-AGENT-RELAY-001-R8",
   "forensics": {
     "enabled": true,
     "projection_only": true,
@@ -438,7 +438,39 @@
       "required_authorities",
       "target_session_id"
     ],
-    "unscoped_work_behavior": "NO_AUTO_DISPATCH"
+    "unscoped_work_behavior": "NO_AUTO_DISPATCH",
+    "canonical_work_roles": {
+      "CODE_AGENT": {
+        "required_declared_capabilities": [
+          "CODE"
+        ],
+        "default_mutation_authority": false
+      },
+      "INTAKER": {
+        "required_declared_capabilities": [
+          "INTAKE"
+        ],
+        "default_mutation_authority": false
+      },
+      "SUPERVISOR": {
+        "required_declared_capabilities": [
+          "SUPERVISE"
+        ],
+        "optional_declared_capabilities": [
+          "REVIEW"
+        ],
+        "default_mutation_authority": false
+      },
+      "REVIEWER": {
+        "required_declared_capabilities": [
+          "REVIEW"
+        ],
+        "default_mutation_authority": false
+      }
+    },
+    "role_declaration_updates_existing_session": true,
+    "role_declaration_creates_authority": false,
+    "post_f1_waiting_outcome_normalization": "WAITING_FOR_WORK_TO_WAITING"
   },
   "capacity_dispatch_contract": {
     "states": [
