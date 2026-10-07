@@ -363,12 +363,31 @@ def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0,
         raise SystemExit("CONTROL_PLANE_DB_FAILED: activity catalog unexpectedly small")
     for table in ["agent_sessions","agent_activity_events","canonical_authorities","canonical_authority_revisions","canonical_memory_events"]:
         conn.execute(f"SELECT 1 FROM {table} LIMIT 1")
+    canonical_architecture = json.loads(
+        (ROOT / ".governance/control-plane-state/canonical-architecture.json").read_text(encoding="utf-8")
+    )
+    expected_arch_revision = int(canonical_architecture["current_revision"])
     authority = conn.execute("SELECT authority_id,current_revision FROM canonical_authorities WHERE authority_id='CP-ARCH-001'").fetchone()
-    if authority != ("CP-ARCH-001",6):
-        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: canonical architecture authority missing or invalid: {authority}")
-    revisions = conn.execute("SELECT revision_id,revision_number,supersedes_revision_id FROM canonical_authority_revisions WHERE authority_id='CP-ARCH-001' ORDER BY revision_number").fetchall()
-    if revisions != [("CP-ARCH-001-R1",1,None),("CP-ARCH-001-R2",2,"CP-ARCH-001-R1"),("CP-ARCH-001-R3",3,"CP-ARCH-001-R2"),("CP-ARCH-001-R4",4,"CP-ARCH-001-R3"),("CP-ARCH-001-R5",5,"CP-ARCH-001-R4"),("CP-ARCH-001-R6",6,"CP-ARCH-001-R5")]:
-        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: canonical architecture revision chain mismatch: {revisions}")
+    if authority != ("CP-ARCH-001", expected_arch_revision):
+        raise SystemExit(
+            "CONTROL_PLANE_DB_FAILED: canonical architecture authority missing or invalid: "
+            f"{authority}; expected revision={expected_arch_revision}"
+        )
+    revisions = conn.execute(
+        "SELECT revision_id,revision_number,supersedes_revision_id "
+        "FROM canonical_authority_revisions WHERE authority_id='CP-ARCH-001' ORDER BY revision_number"
+    ).fetchall()
+    if len(revisions) != expected_arch_revision:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: canonical architecture revision count mismatch: {revisions}")
+    for index, (revision_id, revision_number, supersedes_revision_id) in enumerate(revisions, start=1):
+        expected_revision_id = f"CP-ARCH-001-R{index}"
+        expected_supersedes = None if index == 1 else f"CP-ARCH-001-R{index - 1}"
+        if (revision_id, revision_number, supersedes_revision_id) != (
+            expected_revision_id,
+            index,
+            expected_supersedes,
+        ):
+            raise SystemExit(f"CONTROL_PLANE_DB_FAILED: canonical architecture revision chain mismatch: {revisions}")
     govmodel_catalogue = json.loads(
         (ROOT / ".governance/control-plane-state/governance-model-catalogue.json").read_text(encoding="utf-8")
     )
