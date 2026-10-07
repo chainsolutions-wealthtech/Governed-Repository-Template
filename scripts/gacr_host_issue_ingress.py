@@ -42,6 +42,7 @@ INTERRUPTION_CODES = {
 }
 AVAILABILITY_STATES = {"AVAILABLE", "WAITING", "BUSY", "BLOCKED", "RATE_LIMITED", "QUOTA_BLOCKED", "CHECKPOINTING", "TERMINATING", "UNKNOWN"}
 AVAILABILITY_REASON_CODES = {"WAITING_FOR_WORK", "WAITING_FOR_INPUT", "DEPENDENCY_BLOCKED", "PROVIDER_RATE_LIMIT", "PROVIDER_QUOTA_EXHAUSTED", "CONTEXT_LIMIT", "CHECKPOINTING", "TERMINATING", "MANUAL_BUSY", "UNKNOWN"}
+DECLARABLE_AGENT_ROLES = {"CODE_AGENT", "INTAKER", "SUPERVISOR", "REVIEWER"}
 AUTHORIZED_ASSOCIATIONS = {"OWNER", "MEMBER", "COLLABORATOR"}
 ENTRY_ACTIONS = {
     "CREATE_NEW_REPOSITORY",
@@ -197,6 +198,9 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
     connection_intent = payload.get("connection_intent")
     if connection_intent is not None and connection_intent not in CONNECTION_INTENTS:
         raise ValueError("unsupported host-event connection_intent")
+    agent_role = payload.get("agent_role")
+    if agent_role is not None and agent_role not in DECLARABLE_AGENT_ROLES:
+        raise ValueError("unsupported host-event agent_role")
 
     if kind == "work_offer_accept":
         for key in ("session_id", "dispatch_id"):
@@ -296,15 +300,47 @@ def run_script(path: Path, args: list[str]) -> str:
     return cp.stdout
 
 
+def normalize_role_capacity_declaration(payload: dict) -> dict:
+    """Normalize explicit post-release availability declarations without inventing role/capability/authority."""
+    normalized = dict(payload)
+    if (
+        normalized.get("event") == "action"
+        and normalized.get("action_phase") == "COMPLETED"
+        and normalized.get("agent_role") in DECLARABLE_AGENT_ROLES
+        and "WAITING_FOR_WORK" in str(normalized.get("outcome") or "").upper()
+    ):
+        normalized.setdefault("availability_state", "WAITING")
+        normalized.setdefault("availability_reason_code", "WAITING_FOR_WORK")
+    return normalized
+
+
 def ensure_session(payload: dict, repository: str) -> dict:
     existing = resolve_session(payload, repository)
     explicit_provider = payload.get("provider")
     if existing:
         existing_provider = existing.get("provider")
-        if explicit_provider not in (None, "", "other") and existing_provider in (None, "", "other"):
+        if explicit_provider not in (None, "", "other", existing_provider) and existing_provider not in (None, "", "other"):
+            raise ValueError("provider conflict on host-event session")
+
+        provider_enrichment = (
+            explicit_provider not in (None, "", "other")
+            and existing_provider in (None, "", "other")
+        )
+        requested_role = payload.get("agent_role")
+        role_enrichment = bool(requested_role and requested_role != existing.get("agent_role"))
+        requested_capabilities = sorted(set(payload.get("capabilities") or []))
+        capability_enrichment = bool(
+            set(requested_capabilities) - set(existing.get("capabilities") or [])
+        )
+        requested_wake_channels = sorted(set(payload.get("wake_channels") or []))
+        wake_enrichment = bool(
+            set(requested_wake_channels) - set(existing.get("wake_channels") or [])
+        )
+
+        if provider_enrichment or role_enrichment or capability_enrichment or wake_enrichment:
             args: list[str] = []
             add(args, "--agent", payload.get("agent") or existing.get("agent_identity") or "conversation-agent")
-            add(args, "--provider", explicit_provider)
+            add(args, "--provider", explicit_provider or existing_provider or "other")
             add(args, "--provider-ref", payload.get("provider_ref"))
             add(args, "--provider-url", payload.get("provider_url"))
             add(args, "--connection-ref", payload.get("connection_ref") or existing.get("connection_ref"))
@@ -315,15 +351,17 @@ def ensure_session(payload: dict, repository: str) -> dict:
             add(args, "--branch", payload.get("branch") or (existing.get("relay") or {}).get("branch") or "main")
             add(args, "--task-id", payload.get("task_id"))
             add(args, "--pull-request", payload.get("pull_request"))
-            add(args, "--agent-role", payload.get("agent_role"))
+            add(args, "--agent-role", requested_role)
             add(args, "--source", "EXPLICIT_CLIENT")
+            for capability in requested_capabilities:
+                add(args, "--capability", capability)
+            for channel in requested_wake_channels:
+                add(args, "--wake-channel", channel)
             run_script(AUTO_ATTACH, args)
             enriched = resolve_session(payload, repository)
             if not enriched:
-                raise RuntimeError("host-event provider enrichment completed but session could not be resolved")
+                raise RuntimeError("host-event session enrichment completed but session could not be resolved")
             return enriched
-        if explicit_provider not in (None, "", "other", existing_provider) and existing_provider not in (None, "", "other"):
-            raise ValueError("provider conflict on host-event session")
         return existing
 
     if not any(payload.get(key) for key in ("provider_ref", "provider_url", "connection_ref", "client_instance_id")):
@@ -389,6 +427,7 @@ def process(payload: dict, repository: str) -> dict:
             "event": payload.get("event"),
         }
 
+    payload = normalize_role_capacity_declaration(payload)
     kind = payload["event"]
     if kind in {"command_ack", "challenge_response"}:
         session = resolve_session(payload, repository)
