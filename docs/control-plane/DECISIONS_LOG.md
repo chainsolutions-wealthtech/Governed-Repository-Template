@@ -632,3 +632,22 @@ Append-only durable decisions for the source/control-plane repository.
 - External webhook delivery remains takeover-only until an explicit work-offer bridge contract exists.
 - The relay may refresh safe work offers on normal/scheduled GACR cycles.
 - This cross-cutting GACR change does not alter the global programme; `GMC-01 / GMC-G01` remains the unique current work package.
+
+
+### CPD-075 — Post-F1 work-role and capacity declarations feed GACR dispatch
+
+- Date: 2026-10-07.
+- GACR advances to `CP-AGENT-RELAY-001-R8`.
+- A released agent may explicitly enrich its already-bound GACR session with a canonical work role and declared capabilities; the session must be reused, never duplicated.
+- Canonical work roles are `CODE_AGENT`, `INTAKER`, `SUPERVISOR`, and `REVIEWER`.
+- Historical roles `qualification-client`, `implementer`, and `continuation-supervisor` remain accepted for continuity.
+- Role, capability, connection intent, authority and mutation authority remain distinct.
+- Capability is explicit and is not inferred from the role.
+- An explicit completed post-release outcome containing `WAITING_FOR_WORK` is normalized to `WAITING / WAITING_FOR_WORK`.
+- Silence never implies availability.
+- Explicit rate-limit/quota/context/dependency/input interruption signals remain the only basis for corresponding blocked capacity states.
+- Automatic work dispatch requires explicit work compatibility scope: allowed role, required capability, required authority, or target session.
+- An unscoped READY work-item is not auto-dispatchable.
+- A work offer still grants no claim and no mutation authority; acceptance, claim/exact-HEAD and applicable authority gates remain mandatory.
+- Reusable starting prompts are canonicalized in `docs/control-plane/AGENT_ENTRY_PROMPTS.md`.
+- This cross-cutting GACR change does not change the global programme's unique task.
