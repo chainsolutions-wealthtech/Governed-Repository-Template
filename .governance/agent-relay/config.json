@@ -430,7 +430,15 @@
     "offer_requires_acceptance": true,
     "claim_required_after_acceptance": true,
     "exact_head_reconciliation_required": true,
-    "grants_write_authority": false
+    "grants_write_authority": false,
+    "require_explicit_work_compatibility": true,
+    "compatibility_scope_fields": [
+      "allowed_agent_roles",
+      "required_capabilities",
+      "required_authorities",
+      "target_session_id"
+    ],
+    "unscoped_work_behavior": "NO_AUTO_DISPATCH"
   },
   "capacity_dispatch_contract": {
     "states": [
