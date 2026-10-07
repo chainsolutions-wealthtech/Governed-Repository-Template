@@ -74,6 +74,8 @@
       "scripts/gacr_agent_telemetry.py",
       "scripts/test_gacr_capacity_dispatch.py",
       "scripts/gacr_capacity_dispatch.py",
+      "scripts/test_gacr_task_pool.py",
+      "scripts/gacr_task_pool.py",
       "scripts/gacr_bridge_notifier.py",
       "scripts/test_gacr_agent_telemetry.py",
       "scripts/gacr_auto_attach.py",
@@ -126,7 +128,8 @@
       ".governance/agent-relay/beacons.json",
       ".governance/agent-relay/correlations.json",
       ".governance/agent-relay/dispatches.json",
-      ".governance/agent-relay/forensics.json"
+      ".governance/agent-relay/forensics.json",
+      ".governance/agent-relay/task-pool.json"
     ],
     "coordination_docs": [
       "docs/AUTOMATION.md",
@@ -144,7 +147,8 @@
       "docs/LOCAL_GOVERNED_ENTRY.md",
       "docs/MCP_REPOSITORY_BINDING.md",
       "docs/GACR_AGENT_CONTINUITY_RELAY.md",
-      "docs/GACR_BRIDGE_CONTRACT.md"
+      "docs/GACR_BRIDGE_CONTRACT.md",
+      "docs/GACR_TASK_POOL.md"
     ],
     "schemas": [
       "schemas/entry-action.schema.json",
@@ -160,7 +164,8 @@
       "schemas/gacr-bridge-contract.schema.json",
       "schemas/gscc-admission-envelope.schema.json",
       "schemas/gscc-admission-receipt.schema.json",
-      "schemas/gscc-access-grant.schema.json"
+      "schemas/gscc-access-grant.schema.json",
+      "schemas/gacr-task-pool.schema.json"
     ],
     "control_plane_source_only": [
       ".github/workflows/governed-control-plane.yml",
@@ -233,7 +238,9 @@
       ".governance/control-plane-state/gacr-dispatches.json",
       ".governance/control-plane-state/gacr-forensics.json",
       ".github/workflows/gscc-function-route-selftest.yml",
-      "tests/fixtures/gscc-function-route-package.json"
+      "tests/fixtures/gscc-function-route-package.json",
+      ".governance/control-plane-state/gacr-task-pool.json",
+      "docs/control-plane/GACR_CONTEXTUAL_TASK_POOL.md"
     ],
     "local_entry_ui": [
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml"
@@ -248,7 +255,7 @@
     "project-specific application code"
   ],
   "initialization_required": true,
-  "template_version": "2.8.43",
+  "template_version": "2.8.44",
   "generic_patterns_imported": [
     "github-first bootstrap",
     "canonical memory pointer",
@@ -514,7 +521,13 @@
     "existing GSCC observable-arrival and function-exposure gates preserved under additive admission layer",
     "explicit agent availability and provider-limit signals never inferred from silence",
     "capacity-aware parallel dispatch over canonical claims and collision domains",
-    "work offers require acceptance then canonical claim and exact-head reconciliation"
+    "work offers require acceptance then canonical claim and exact-head reconciliation",
+    "capacity-aware contextual continuous multi-agent task pool",
+    "collision-free dispatch waves from canonical tasks",
+    "context packet with canonical history and method references",
+    "exact-head work-offer activation into canonical claim",
+    "checkpoint/handoff based unfinished-work requeue",
+    "forensics/takeover recovery packet for abruptly interrupted work"
   ],
   "automatic_initialization_supported": true
 }
