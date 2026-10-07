@@ -507,5 +507,17 @@
     "status": "DONE",
     "decision_id": "CPD-073",
     "checkpoint": "CREATE_NEW_REPOSITORY_CASE_COMPLETE"
+  },
+  "gacr_contextual_task_pool": {
+    "authority": "docs/control-plane/GACR_CONTEXTUAL_TASK_POOL.md",
+    "revision": "CP-AGENT-RELAY-001-R8",
+    "decision": "CPD-075",
+    "status": "IMPLEMENTED_PENDING_CI_MERGE",
+    "runtime": "scripts/gacr_task_pool.py",
+    "source_pool": ".governance/control-plane-state/gacr-task-pool.json",
+    "client_pool": ".governance/agent-relay/task-pool.json",
+    "trace_contract": "docs/GACR_TASK_POOL.md",
+    "do_not_duplicate_task_authorities": true,
+    "current_global_task": "GMC-01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES"
   }
 }
