@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 131,
+  "revision": 134,
   "items": [
     {
       "forensic_id": "GACR-F-9e71238bc954",
@@ -7602,6 +7602,252 @@
         "active_claims": 0
       },
       "analysis_digest": "0bbb1f45e81a757d8ecd2b21a25d324a7eea284f26969dcba4f450e8918e4e44"
+    },
+    {
+      "forensic_id": "GACR-F-411f4221e790",
+      "generated_at": "2026-10-07T00:56:08+00:00",
+      "process": "GACR",
+      "authority": "CP-AGENT-RELAY-001-R3",
+      "session_id": "session-932a1d4a38e12f89df56c9e3",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "classification": "LEASE_EXPIRED_STALL",
+      "recoverability": "TAKEOVER_RECONCILIATION_REQUIRED",
+      "cause": {
+        "status": "UNOBSERVED",
+        "code": "UNOBSERVED_EXTERNAL_CAUSE",
+        "confidence": "NONE",
+        "note": "GACR never infers browser crash, provider timeout, network loss or tool failure from missing heartbeat alone."
+      },
+      "liveness": {
+        "session_status": "STALLED",
+        "relay_state": "TAKEOVER_READY",
+        "last_seen_at": "2026-10-06T23:46:10+00:00",
+        "last_heartbeat_at": "2026-10-06T23:46:10+00:00",
+        "lease_expires_at": "2026-10-07T00:16:10+00:00",
+        "lease_expired_at_analysis": true,
+        "stalled_at": "2026-10-07T00:56:06+00:00"
+      },
+      "work": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "starting_head_sha": "ab7cc0c288ed78848fcc271f8aa59ee08051f99e",
+        "last_observed_head_sha": "ab7cc0c288ed78848fcc271f8aa59ee08051f99e",
+        "last_written_head_sha": null,
+        "active_claims": [],
+        "lock_observation": "NO_INDEPENDENT_LOCK_STORE; CLAIMS_AND_COLLISION_DOMAINS_ARE_CANONICAL"
+      },
+      "actions": {
+        "last_action_started": null,
+        "last_action_completed": null,
+        "last_tool_call": null,
+        "in_flight_action": null
+      },
+      "last_checkpoint_ref": null,
+      "last_evidence_ref": "gscc-runtime:GSCC-RUNTIME-4ef80768a673f30fe4c57d9a:challenge",
+      "last_takeover": {
+        "takeover_id": "GACR-T-e20b97d24940",
+        "stalled_session_id": "session-932a1d4a38e12f89df56c9e3",
+        "offered_to_session_id": null,
+        "accepted_by_session_id": null,
+        "status": "READY_FOR_RECONCILIATION",
+        "created_at": "2026-10-07T00:56:06+00:00",
+        "accepted_at": null,
+        "work_item_id": null,
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "ab7cc0c288ed78848fcc271f8aa59ee08051f99e",
+        "reconciled_head_sha": null,
+        "active_claim_count": 0
+      },
+      "last_dispatch": null,
+      "resume_point": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "ab7cc0c288ed78848fcc271f8aa59ee08051f99e",
+        "last_written_head_sha": null,
+        "checkpoint_ref": null,
+        "evidence_ref": "gscc-runtime:GSCC-RUNTIME-4ef80768a673f30fe4c57d9a:challenge",
+        "active_claim_work_items": [],
+        "collision_domains": [],
+        "in_flight_action": null,
+        "last_completed_action": null,
+        "requires_exact_head_reobservation": true,
+        "may_replay_in_flight_action_without_reconciliation": false
+      },
+      "evidence_counts": {
+        "beacons": 1,
+        "takeovers": 1,
+        "dispatches": 0,
+        "active_claims": 0
+      },
+      "analysis_digest": "fe96f00fd845785c6b5de37610c725a1cf154f59e50c24b90629c01c6132a015"
+    },
+    {
+      "forensic_id": "GACR-F-2ef1f5c31665",
+      "generated_at": "2026-10-07T00:56:08+00:00",
+      "process": "GACR",
+      "authority": "CP-AGENT-RELAY-001-R3",
+      "session_id": "session-6c2e90b6004282453697c4f1",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "classification": "LEASE_EXPIRED_STALL",
+      "recoverability": "TAKEOVER_RECONCILIATION_REQUIRED",
+      "cause": {
+        "status": "UNOBSERVED",
+        "code": "UNOBSERVED_EXTERNAL_CAUSE",
+        "confidence": "NONE",
+        "note": "GACR never infers browser crash, provider timeout, network loss or tool failure from missing heartbeat alone."
+      },
+      "liveness": {
+        "session_status": "STALLED",
+        "relay_state": "TAKEOVER_READY",
+        "last_seen_at": "2026-10-06T23:54:27+00:00",
+        "last_heartbeat_at": "2026-10-06T23:54:27+00:00",
+        "lease_expires_at": "2026-10-07T00:24:27+00:00",
+        "lease_expired_at_analysis": true,
+        "stalled_at": "2026-10-07T00:56:06+00:00"
+      },
+      "work": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "starting_head_sha": "55ba2b86b21bb002d4ec21577d859ad4907b3bdf",
+        "last_observed_head_sha": "55ba2b86b21bb002d4ec21577d859ad4907b3bdf",
+        "last_written_head_sha": null,
+        "active_claims": [],
+        "lock_observation": "NO_INDEPENDENT_LOCK_STORE; CLAIMS_AND_COLLISION_DOMAINS_ARE_CANONICAL"
+      },
+      "actions": {
+        "last_action_started": null,
+        "last_action_completed": null,
+        "last_tool_call": null,
+        "in_flight_action": null
+      },
+      "last_checkpoint_ref": null,
+      "last_evidence_ref": "gscc-runtime:GSCC-RUNTIME-de28cdd23145595fc0d41a54:challenge",
+      "last_takeover": {
+        "takeover_id": "GACR-T-6a31efc615d4",
+        "stalled_session_id": "session-6c2e90b6004282453697c4f1",
+        "offered_to_session_id": null,
+        "accepted_by_session_id": null,
+        "status": "READY_FOR_RECONCILIATION",
+        "created_at": "2026-10-07T00:56:06+00:00",
+        "accepted_at": null,
+        "work_item_id": null,
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "55ba2b86b21bb002d4ec21577d859ad4907b3bdf",
+        "reconciled_head_sha": null,
+        "active_claim_count": 0
+      },
+      "last_dispatch": null,
+      "resume_point": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "55ba2b86b21bb002d4ec21577d859ad4907b3bdf",
+        "last_written_head_sha": null,
+        "checkpoint_ref": null,
+        "evidence_ref": "gscc-runtime:GSCC-RUNTIME-de28cdd23145595fc0d41a54:challenge",
+        "active_claim_work_items": [],
+        "collision_domains": [],
+        "in_flight_action": null,
+        "last_completed_action": null,
+        "requires_exact_head_reobservation": true,
+        "may_replay_in_flight_action_without_reconciliation": false
+      },
+      "evidence_counts": {
+        "beacons": 1,
+        "takeovers": 1,
+        "dispatches": 0,
+        "active_claims": 0
+      },
+      "analysis_digest": "eb3f60686f4d9eaae26b7737dc4367e706131440c76f8e1c30441fd6880c4542"
+    },
+    {
+      "forensic_id": "GACR-F-b40b7e7c4b49",
+      "generated_at": "2026-10-07T00:56:08+00:00",
+      "process": "GACR",
+      "authority": "CP-AGENT-RELAY-001-R3",
+      "session_id": "session-5bba386248ac4d9c0e05f1a8",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "classification": "LEASE_EXPIRED_STALL",
+      "recoverability": "TAKEOVER_RECONCILIATION_REQUIRED",
+      "cause": {
+        "status": "UNOBSERVED",
+        "code": "UNOBSERVED_EXTERNAL_CAUSE",
+        "confidence": "NONE",
+        "note": "GACR never infers browser crash, provider timeout, network loss or tool failure from missing heartbeat alone."
+      },
+      "liveness": {
+        "session_status": "STALLED",
+        "relay_state": "TAKEOVER_READY",
+        "last_seen_at": "2026-10-07T00:08:02+00:00",
+        "last_heartbeat_at": "2026-10-07T00:08:02+00:00",
+        "lease_expires_at": "2026-10-07T00:38:02+00:00",
+        "lease_expired_at_analysis": true,
+        "stalled_at": "2026-10-07T00:56:06+00:00"
+      },
+      "work": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "starting_head_sha": "4a71b8c0aa0d2b08462e62d884241fd9b3dd910e",
+        "last_observed_head_sha": "4a71b8c0aa0d2b08462e62d884241fd9b3dd910e",
+        "last_written_head_sha": null,
+        "active_claims": [],
+        "lock_observation": "NO_INDEPENDENT_LOCK_STORE; CLAIMS_AND_COLLISION_DOMAINS_ARE_CANONICAL"
+      },
+      "actions": {
+        "last_action_started": null,
+        "last_action_completed": null,
+        "last_tool_call": null,
+        "in_flight_action": null
+      },
+      "last_checkpoint_ref": null,
+      "last_evidence_ref": "gscc-runtime:GSCC-RUNTIME-ded6c37f3dc7c3dd634f838e:challenge",
+      "last_takeover": {
+        "takeover_id": "GACR-T-6674ece10005",
+        "stalled_session_id": "session-5bba386248ac4d9c0e05f1a8",
+        "offered_to_session_id": null,
+        "accepted_by_session_id": null,
+        "status": "READY_FOR_RECONCILIATION",
+        "created_at": "2026-10-07T00:56:06+00:00",
+        "accepted_at": null,
+        "work_item_id": null,
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "4a71b8c0aa0d2b08462e62d884241fd9b3dd910e",
+        "reconciled_head_sha": null,
+        "active_claim_count": 0
+      },
+      "last_dispatch": null,
+      "resume_point": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "4a71b8c0aa0d2b08462e62d884241fd9b3dd910e",
+        "last_written_head_sha": null,
+        "checkpoint_ref": null,
+        "evidence_ref": "gscc-runtime:GSCC-RUNTIME-ded6c37f3dc7c3dd634f838e:challenge",
+        "active_claim_work_items": [],
+        "collision_domains": [],
+        "in_flight_action": null,
+        "last_completed_action": null,
+        "requires_exact_head_reobservation": true,
+        "may_replay_in_flight_action_without_reconciliation": false
+      },
+      "evidence_counts": {
+        "beacons": 1,
+        "takeovers": 1,
+        "dispatches": 0,
+        "active_claims": 0
+      },
+      "analysis_digest": "777abebf3a830de321b3b91911e8a4b9bff747779c9f4360150c500635254fa3"
     }
   ]
 }
