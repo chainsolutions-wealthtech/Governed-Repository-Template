@@ -165,9 +165,9 @@ def main():
       ".governance/connection-intent-policy.json",".governance/entry-action-policy.json",
       "docs/CONNECTION_INTENT.md","docs/ENTRY_ACTION_ROUTER.md",
       ".governance/mcp-connection-policy.json","schemas/mcp-binding.schema.json","docs/MCP_REPOSITORY_BINDING.md",
-      "docs/MULTI_AGENT_COORDINATION.md","docs/GACR_AGENT_CONTINUITY_RELAY.md","docs/GACR_BRIDGE_CONTRACT.md",
-      ".governance/agent-relay/config.json","schemas/gacr-state.schema.json","schemas/gacr-telemetry.schema.json","schemas/gacr-bridge-contract.schema.json","schemas/session.schema.json","schemas/work-claim.schema.json",
-      "scripts/governed_agent_continuity_relay.py","scripts/gacr_workflow_bridge.py","scripts/gacr_agent_telemetry.py","scripts/gacr_capacity_dispatch.py","scripts/gacr_bridge_notifier.py","scripts/gacr_auto_attach.py","scripts/gacr_client_emitter.py","scripts/gacr_host_issue_ingress.py","scripts/test_governed_agent_continuity_relay.py","scripts/test_gacr_agent_telemetry.py","scripts/test_gacr_capacity_dispatch.py","scripts/test_gacr_liveness_progress_context.py","scripts/test_gacr_auto_attach.py","scripts/test_gacr_presence_first.py","scripts/test_gacr_client_emitter.py","scripts/test_gacr_host_issue_ingress.py","scripts/test_gacr_host_issue_workflow.py",".github/workflows/governed-agent-continuity-relay.yml",
+      "docs/MULTI_AGENT_COORDINATION.md","docs/GACR_AGENT_CONTINUITY_RELAY.md","docs/GACR_BRIDGE_CONTRACT.md","docs/GACR_TASK_POOL.md",
+      ".governance/agent-relay/config.json","schemas/gacr-state.schema.json","schemas/gacr-telemetry.schema.json","schemas/gacr-bridge-contract.schema.json","schemas/gacr-task-pool.schema.json","schemas/session.schema.json","schemas/work-claim.schema.json",
+      "scripts/governed_agent_continuity_relay.py","scripts/gacr_workflow_bridge.py","scripts/gacr_agent_telemetry.py","scripts/gacr_capacity_dispatch.py","scripts/gacr_task_pool.py","scripts/gacr_bridge_notifier.py","scripts/gacr_auto_attach.py","scripts/gacr_client_emitter.py","scripts/gacr_host_issue_ingress.py","scripts/test_governed_agent_continuity_relay.py","scripts/test_gacr_agent_telemetry.py","scripts/test_gacr_capacity_dispatch.py","scripts/test_gacr_task_pool.py","scripts/test_gacr_liveness_progress_context.py","scripts/test_gacr_auto_attach.py","scripts/test_gacr_presence_first.py","scripts/test_gacr_client_emitter.py","scripts/test_gacr_host_issue_ingress.py","scripts/test_gacr_host_issue_workflow.py",".github/workflows/governed-agent-continuity-relay.yml",
       "scripts/gscc/__init__.py","scripts/gscc/protocol.py","scripts/gscc/transport.py","scripts/gscc/session_endpoint.py","scripts/gscc/instrumentation.py","scripts/gscc/gacr_compat.py","scripts/gscc/admission.py","scripts/gscc/capability_projection.py","scripts/gscc_observable_arrival.py","scripts/test_gscc_observable_arrival.py",".github/workflows/gscc-observable-arrival.yml",
       "scripts/gscc_function_exposure_gate.py","scripts/test_gscc_function_exposure_gate.py",".github/workflows/gscc-function-exposure-gate.yml",
       "scripts/mcp_repository_discovery.py","scripts/control_plane_local_command.py","scripts/control_plane_local_start.py","scripts/control_plane_provision_mcp_credential.py","scripts/test_mcp_credential_provisioning.py","scripts/test_mcp_both_ssh_fallback.py","scripts/control_plane_upgrade_local_entry.py","scripts/test_upgrade_session_head_migration.py"
@@ -220,7 +220,7 @@ def main():
         existing_gacr_takeovers=(ROOT/".governance/agent-relay/takeovers.json").read_text(encoding="utf-8")
     updates[".governance/agent-relay/takeovers.json"]=existing_gacr_takeovers
 
-    for gacr_state_name in ["beacons.json","correlations.json","dispatches.json","forensics.json"]:
+    for gacr_state_name in ["beacons.json","correlations.json","dispatches.json","forensics.json","task-pool.json"]:
         gacr_path=f".governance/agent-relay/{gacr_state_name}"
         existing_gacr_state=target_text(token,target,gacr_path)
         if existing_gacr_state is None:
