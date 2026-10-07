@@ -83,7 +83,7 @@
     "continuous_background_heartbeat_proven": false,
     "github_issue_control_channel_candidate": true
   },
-  "revision_authority_id": "CP-AGENT-RELAY-001-R7",
+  "revision_authority_id": "CP-AGENT-RELAY-001-R8",
   "forensics": {
     "enabled": true,
     "projection_only": true,
