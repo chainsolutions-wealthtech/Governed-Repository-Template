@@ -459,9 +459,17 @@
     "authority": "docs/control-plane/GSCC_GSE_GACR_REUSABLE_CAPSULE.md",
     "decision": "CPD-069",
     "tasks": "CAP-001..CAP-012",
-    "execution_gate": "P12-S6 DONE + IDN-006 DONE",
+    "execution_gate": "GMC-19 DONE + RTE-012 DONE + ARCH-006 DONE + IDN-006 DONE",
     "current_global_task": "P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
     "next_when_unblocked": "CAP-001 / DEFINE_REUSABLE_CAPSULE_BOUNDARY_AND_PUBLIC_CONTRACT",
-    "do_not_start_before_gate": true
+    "do_not_start_before_gate": true,
+    "junction_handoff": "00_START_HERE.md → role/authority → connection_intent → entry_purpose → work_kind_or_case",
+    "do_not_duplicate": [
+      "FIRST_TOUCH",
+      "GSE_SESSION_TWIN",
+      "GACR_SESSION",
+      "RTE_ROUTER",
+      "ENTRY_ACTION_POLICY"
+    ]
   }
 }
