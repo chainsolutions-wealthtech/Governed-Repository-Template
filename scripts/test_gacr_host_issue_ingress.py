@@ -129,6 +129,25 @@ def main() -> None:
         "connection_intent",
     )
 
+    availability_payload = {
+        "schema": g.SCHEMA,
+        "event": "availability",
+        "session_id": "session-1",
+        "availability_state": "RATE_LIMITED",
+        "availability_reason_code": "PROVIDER_RATE_LIMIT",
+    }
+    parsed_availability = g.parse_issue_comment_event(
+        event(body(availability_payload), comment_id=9004),
+        config(),
+    )
+    assert_true(parsed_availability["availability_state"] == "RATE_LIMITED", "availability state parsed")
+    invalid_availability = dict(availability_payload)
+    invalid_availability["availability_state"] = "MAYBE"
+    expect_error(
+        lambda: g.parse_issue_comment_event(event(body(invalid_availability), comment_id=9005), config()),
+        "availability_state",
+    )
+
     sessions = [
         {
             "session_id": "session-1",
