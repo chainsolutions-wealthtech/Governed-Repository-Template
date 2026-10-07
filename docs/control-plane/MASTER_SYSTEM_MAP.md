@@ -198,6 +198,22 @@ Git-versioned authorities + SQL migrations + JSON seeds/events
 
 The SQLite binary never outranks Git authorities.
 
+## 6A. Availability-aware GACR dispatch
+
+GACR R7 adds a derived code-agent availability roster and safe work-offer scheduler.
+
+```text
+liveness + explicit workload state + claims
+→ ACTIVE / AVAILABLE / WAITING / LIMITED / STALLED
+→ canonical dependency graph
+→ collision/capability/capacity filter
+→ work offer
+→ canonical claim
+→ exact-HEAD execution
+```
+
+Automatic assignment is opt-in per canonical task. A live-but-silent agent is not assumed free, and provider rate/quota limits are never inferred.
+
 ## 7. Four cases and continuation
 
 | Path | Status | Meaning |
