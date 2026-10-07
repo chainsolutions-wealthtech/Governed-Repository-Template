@@ -20,10 +20,11 @@ AUTO_ATTACH = ROOT / "scripts" / "gacr_auto_attach.py"
 CORE = ROOT / "scripts" / "governed_agent_continuity_relay.py"
 TELEMETRY = ROOT / "scripts" / "gacr_agent_telemetry.py"
 CAPACITY = ROOT / "scripts" / "gacr_capacity_dispatch.py"
+TASK_POOL = ROOT / "scripts" / "gacr_task_pool.py"
 
 PREFIX = "/gacr-host "
 SCHEMA = "gacr-host-event/v1"
-EVENTS = {"attach", "heartbeat", "action", "interrupt", "availability", "work_offer_accept", "command_ack", "challenge_response"}
+EVENTS = {"attach", "heartbeat", "action", "interrupt", "availability", "work_offer_accept", "work_relinquish", "command_ack", "challenge_response"}
 ACTION_PHASES = {"STARTED", "COMPLETED", "FAILED", "CANCELLED"}
 INTERRUPTION_CODES = {
     "CLIENT_DISCONNECTED",
@@ -94,6 +95,10 @@ ALLOWED_KEYS = {
     "availability_state",
     "availability_reason_code",
     "dispatch_id",
+    "evidence_ref",
+    "handoff_ref",
+    "reason_code",
+    "claim_id",
     "command_id",
     "correlation_id",
     "delivery_state",
@@ -202,6 +207,10 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
         for key in ("session_id", "dispatch_id"):
             if payload.get(key) in (None, ""):
                 raise ValueError(f"host work_offer_accept requires {key}")
+    if kind == "work_relinquish":
+        for key in ("session_id", "claim_id", "reason_code", "observed_head", "checkpoint_ref", "handoff_ref"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host work_relinquish requires {key}")
     if kind == "command_ack":
         for key in ("session_id", "dispatch_id", "command_id", "correlation_id", "delivery_state"):
             if payload.get(key) in (None, ""):
@@ -439,6 +448,19 @@ def process(payload: dict, repository: str) -> dict:
         add(args, "--observed-head", payload.get("observed_head"))
         run_script(CAPACITY, args)
         marker_beacon(session_id, payload, "WORK_OFFER_ACCEPT")
+    elif kind == "work_relinquish":
+        args = [
+            "relinquish",
+            "--claim-id", str(payload["claim_id"]),
+            "--session-id", session_id,
+            "--reason-code", str(payload["reason_code"]),
+            "--observed-head", str(payload["observed_head"]),
+            "--checkpoint-ref", str(payload["checkpoint_ref"]),
+            "--handoff-ref", str(payload["handoff_ref"]),
+            "--evidence-ref", evidence_ref,
+        ]
+        run_script(TASK_POOL, args)
+        marker_beacon(session_id, payload, "WORK_RELINQUISH")
     elif kind == "attach":
         marker_beacon(session_id, payload, "HOST_ATTACH_RECEIPT")
     elif kind == "heartbeat":
