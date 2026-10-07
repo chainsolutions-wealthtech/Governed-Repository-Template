@@ -459,5 +459,75 @@
     "collision_domains_enforced": true,
     "dependencies_enforced": true,
     "capabilities_roles_authorities_enforced": true
+  },
+  "contextual_task_pool": {
+    "enabled": true,
+    "authority_revision": "CP-AGENT-RELAY-001-R8",
+    "decision_id": "CPD-075",
+    "projection_only": true,
+    "source_control_plane_tasks_from": [
+      ".governance/control-plane-state/tasks.json",
+      ".governance/control-plane-state/governance-model-execution-blueprint.json"
+    ],
+    "client_tasks_from": [
+      ".governance/work/work-items.json"
+    ],
+    "source_projection_path": ".governance/control-plane-state/gacr-task-pool.json",
+    "client_projection_path": ".governance/agent-relay/task-pool.json",
+    "auto_refresh_on_relay_cycle": true,
+    "context_packet_required_on_offer": true,
+    "exact_head_required_before_claim": true,
+    "claim_required_before_execution": true,
+    "one_active_claim_per_session": true,
+    "collision_domain_exclusion": true,
+    "unfinished_work_recovery": "TAKEOVER_OR_EXPLICIT_REQUEUE_WITH_HISTORY",
+    "voluntary_requeue_requires": [
+      "checkpoint_ref",
+      "handoff_ref",
+      "evidence_ref",
+      "exact_head"
+    ],
+    "abrupt_interruption_recovery": [
+      "forensics",
+      "takeover",
+      "exact_head_reconciliation"
+    ],
+    "trace_contract": {
+      "before_mutation": [
+        "READ_CONTEXT_PACKET_REFERENCES",
+        "REOBSERVE_EXACT_HEAD",
+        "ACCEPT_WORK_OFFER",
+        "CREATE_CANONICAL_CLAIM"
+      ],
+      "during_work": [
+        "ACTION_TRACE_STARTED",
+        "HEARTBEAT_OR_ACTIVITY_EVIDENCE",
+        "ACTION_TRACE_COMPLETED_WITH_EVIDENCE"
+      ],
+      "on_block": [
+        "EXPLICIT_AVAILABILITY_OR_INTERRUPTION_REASON",
+        "CHECKPOINT_HANDOFF_IF_RESPONSIVE"
+      ],
+      "on_stop": [
+        "CHECKPOINT_REF",
+        "HANDOFF_REF",
+        "EVIDENCE_REF",
+        "RELINQUISH_CLAIM"
+      ],
+      "on_completion": [
+        "UPDATE_CANONICAL_TASK_AUTHORITY",
+        "FINAL_EVIDENCE",
+        "CHECKPOINT_OR_HANDOFF",
+        "RELEASE_CLAIM"
+      ]
+    },
+    "privacy": {
+      "raw_prompts": false,
+      "transcripts": false,
+      "private_reasoning": false,
+      "provider_private_identity_inference": false
+    },
+    "grants_write_authority": false,
+    "grants_business_authority": false
   }
 }
