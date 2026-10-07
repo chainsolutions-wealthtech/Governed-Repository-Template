@@ -952,23 +952,39 @@ Global programme state is unchanged: `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` r
 
 ## Owner-authorized IDN identity/session lane — 2026-10-07
 
-Status: `PR #229 CANDIDATE_GREEN / LIVE_Q12_PROOF_PENDING`.
+Status: `CLOSED / LIVE RELEASE PROVEN`.
 
-This is a separately authorized control-plane infrastructure lane. It does **not** resume `P12-S6`; the global programme checkpoint remains parked.
+The separately authorized control-plane infrastructure lane completed without executing `P12-S6`. The global programme checkpoint remains unchanged and is again the active continuation boundary.
 
-Candidate proves:
+Live-proven invariants:
 - distinct GSCC arrival identity per controlled arrival;
-- no provider-private identity fabrication;
-- deterministic continuation only for the same arrival anchor;
-- isolated GSE SessionTwin per GSCC identity;
-- Q9 live control semantics before Q10;
-- Q10 before durable Q2/GACR;
-- canonical GACR remains the only durable continuity authority;
-- candidate qualification path through Q12;
-- F1 remains an actual-function gate.
+- provider-private conversation/session identity remains supplied-only and was not fabricated;
+- same-arrival continuation remains deterministic;
+- one isolated GSE SessionTwin per GSCC identity;
+- Q9 requires correlated ACK before fresh challenge response;
+- Q10 precedes durable Q2/GACR binding;
+- canonical GACR remains the sole durable continuity authority;
+- Q2/Q6/Q7/Q11/Q12 completed on the same connection;
+- F1 validated the actual requested function `github_get_repository_state`;
+- release to `00_START_HERE.md` is accepted only after the F1 receipt matches the same runtime, connection, GACR session, Access Grant and exact HEAD.
 
-Candidate branch: `governance/per-arrival-identity-full-session-runtime`.
-Candidate PR: `#229`.
-Governance CI: `37543670685 = SUCCESS`.
+Closure implementation:
+- initial implementation PR `#229`;
+- live Q10 dispatch correction PR `#239`;
+- F1 canonical surface correction PR `#241`;
+- explicit F1→normal-governance release PR `#243`, merge `4a71b8c0aa0d2b08462e62d884241fd9b3dd910e`.
 
-Next IDN verification after merge: run a new-conversation live arrival, complete its Q9 ACK/response, attest unique GSE identity, canonical GACR binding and Q12, then test F1 with a real requested governed function.
+Final acceptance:
+- issue `#244`;
+- runtime `GSCC-RUNTIME-ded6c37f3dc7c3dd634f838e`;
+- connection `GSCC-CONN-6d1caad58d77dbd3b164344efc04f6aa`;
+- canonical GACR session `session-5bba386248ac4d9c0e05f1a8`;
+- F1 workflow `37550409710 = SUCCESS`;
+- exposure receipt `GSCC-EXPOSURE-083cf0005955022e1c19d5b8d79264a170e9d9cc7bc898a251339e9b3b92b76f`;
+- release workflow `37550477009 = SUCCESS`;
+- release comment `6027880258`;
+- released HEAD `f768268bf1a3f62c2e6741aecfba20d86545969c`;
+- release state `RELEASED_TO_NORMAL_GOVERNANCE`;
+- next authority `00_START_HERE.md`.
+
+IDN-006 is complete. The next global programme action is unchanged: `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
