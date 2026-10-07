@@ -1383,3 +1383,23 @@ Registered:
 - target production URL `https://mcp.wealthtechinnovations.com/template`.
 
 ARCH-008/009/010, IDN-013 and RTE-013 were linked as architecture/API/UI prerequisites rather than duplicated. No production mutation authority was granted and global execution remains at P12-S6.
+
+
+## 2026-10-07 — P12-S6 closed; GMC-A released
+
+CASE 1 / `CREATE_NEW_REPOSITORY` closure executed from exact source main `63e67d76970dc4b7e8b9864567a07e7445e84bfc`.
+
+Reconciliation performed:
+- `C1-13-I-B` historical parent closed through completed child path `A..G`;
+- `C1-14 = DONE`;
+- `P12-S6 = DONE`;
+- `CREATE_NEW_REPOSITORY = DONE`;
+- relational run `CASE1-PILOT-GOUVERN = DONE`, no active phase;
+- external MCP references kept as intake/history only;
+- no executable CASE 1 orphan remains;
+- `CPD-073` recorded;
+- checkpoint `CREATE_NEW_REPOSITORY_CASE_COMPLETE`;
+- handoff `GMC_A_RELEASED`;
+- `GMC-01` becomes the unique `IN_PROGRESS` global task.
+
+GMC release is planning/knowledge extraction only. No Governance Model implementation mutation, CAP, SaaS, server, DNS, TLS or database deployment authority is granted by this closure.
