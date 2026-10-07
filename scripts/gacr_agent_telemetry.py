@@ -62,11 +62,13 @@ SAFE_GITHUB_ENV = (
 )
 FORBIDDEN_KEY_FRAGMENTS = ("token", "secret", "password", "private_key", "cookie", "authorization", "transcript", "prompt", "private_reasoning", "chain_of_thought", "raw_response", "response_body", "page_content")
 ACTION_PHASES = {"STARTED", "COMPLETED", "FAILED", "CANCELLED"}
-INTERRUPTION_CODES = {"CLIENT_DISCONNECTED","PROVIDER_TIMEOUT","TOOL_FAILURE","AGENT_ERROR","USER_CANCELLED","NETWORK_LOSS","PROCESS_EXITED","UNKNOWN"}
+INTERRUPTION_CODES = {"CLIENT_DISCONNECTED","PROVIDER_TIMEOUT","TOOL_FAILURE","AGENT_ERROR","USER_CANCELLED","NETWORK_LOSS","PROCESS_EXITED","PROVIDER_RATE_LIMIT","PROVIDER_QUOTA_EXHAUSTED","CONTEXT_LIMIT","WAITING_FOR_INPUT","DEPENDENCY_BLOCKED","UNKNOWN"}
 UNAVAILABLE = "UNAVAILABLE"
 LIVENESS_STATES = {"ACTIVE", "QUIET", "SUSPECTED_STALL", "STALLED", "UNKNOWN", "TERMINAL"}
 PROGRESS_STATES = {"ADVANCING", "NO_RECENT_PROGRESS_EVIDENCE", "BLOCKED_IF_EXPLICITLY_OBSERVED", "UNKNOWN"}
-LIVENESS_CHALLENGE_RESPONSES = {"ACK", "BUSY", "IDLE", "CHECKPOINTING", "TERMINATING"}
+LIVENESS_CHALLENGE_RESPONSES = {"ACK", "BUSY", "IDLE", "WAITING", "BLOCKED", "RATE_LIMITED", "QUOTA_BLOCKED", "CHECKPOINTING", "TERMINATING"}
+AVAILABILITY_STATES = {"AVAILABLE", "WAITING", "BUSY", "BLOCKED", "RATE_LIMITED", "QUOTA_BLOCKED", "CHECKPOINTING", "TERMINATING", "UNKNOWN"}
+AVAILABILITY_REASON_CODES = {"WAITING_FOR_WORK", "WAITING_FOR_INPUT", "DEPENDENCY_BLOCKED", "PROVIDER_RATE_LIMIT", "PROVIDER_QUOTA_EXHAUSTED", "CONTEXT_LIMIT", "CHECKPOINTING", "TERMINATING", "MANUAL_BUSY", "UNKNOWN"}
 PROGRESS_EVENT_CLASSES = {
     "REPOSITORY_WRITE_ACTIVITY": "REPOSITORY_WRITE_ACTIVITY",
     "COMMIT_MUTATION": "COMMIT_MUTATION",
@@ -262,6 +264,8 @@ def record_beacon(
     checkpoint_ref: str | None = None,
     evidence_ref: str | None = None,
     interruption_code: str | None = None,
+    availability_state: str | None = None,
+    availability_reason_code: str | None = None,
 ) -> dict:
     store = read_json(BEACONS_PATH, {"schema_version": "1.0.0", "revision": 0, "items": []})
     timestamp = observed_at or now_iso()
@@ -269,6 +273,10 @@ def record_beacon(
         raise ValueError("unsupported action phase")
     if interruption_code and interruption_code not in INTERRUPTION_CODES:
         raise ValueError("unsupported interruption code")
+    if availability_state and availability_state not in AVAILABILITY_STATES:
+        raise ValueError("unsupported availability state")
+    if availability_reason_code and availability_reason_code not in AVAILABILITY_REASON_CODES:
+        raise ValueError("unsupported availability reason code")
     relay = (session or {}).get("relay") or {}
     resolved_provider = provider or (session or {}).get("provider")
     resolved_provider_ref = (
@@ -319,6 +327,8 @@ def record_beacon(
         "checkpoint_ref": checkpoint_ref,
         "evidence_ref": evidence_ref,
         "interruption_code": interruption_code,
+        "availability_state": availability_state,
+        "availability_reason_code": availability_reason_code,
         "github_actor": resolved_actor,
         "github_installation_id": resolved_installation,
         "github_workflow": github_env.get("GITHUB_WORKFLOW"),
@@ -1694,6 +1704,8 @@ def command_beacon(a: argparse.Namespace) -> None:
         checkpoint_ref=a.checkpoint_ref,
         evidence_ref=a.evidence_ref,
         interruption_code=a.interruption_code,
+        availability_state=a.availability_state,
+        availability_reason_code=a.availability_reason_code,
     )
     print(json.dumps({"status":"BEACON_RECORDED","beacon":item},indent=2,ensure_ascii=False))
 
@@ -1756,6 +1768,8 @@ def parser() -> argparse.ArgumentParser:
     b.add_argument("--action-id"); b.add_argument("--action-label"); b.add_argument("--action-phase",choices=sorted(ACTION_PHASES))
     b.add_argument("--tool-name"); b.add_argument("--tool-call-id"); b.add_argument("--outcome"); b.add_argument("--written-head")
     b.add_argument("--checkpoint-ref"); b.add_argument("--evidence-ref"); b.add_argument("--interruption-code",choices=sorted(INTERRUPTION_CODES))
+    b.add_argument("--availability-state", choices=sorted(AVAILABILITY_STATES))
+    b.add_argument("--availability-reason-code", choices=sorted(AVAILABILITY_REASON_CODES))
     b.set_defaults(fn=command_beacon)
 
     c=sub.add_parser("correlate")
