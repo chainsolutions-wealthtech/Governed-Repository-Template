@@ -4,17 +4,17 @@
   "authority_type": "CANONICAL_TARGET_ARCHITECTURE",
   "scope": "CONTROL_PLANE_SOURCE_ONLY",
   "status": "ACCEPTED_TARGET_ARCHITECTURE",
-  "current_revision": 7,
+  "current_revision": 8,
   "canonical_path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
   "revision": {
-    "revision_id": "CP-ARCH-001-R7",
-    "revision_number": 7,
-    "subject_head_sha": "6a7eb182ce0b1648d17429cfd1eb6285cebd71a3",
-    "supersedes_revision_id": "CP-ARCH-001-R6",
+    "revision_id": "CP-ARCH-001-R8",
+    "revision_number": 8,
+    "subject_head_sha": "6566bd0574ce74c4bc73809164188864e9e35924",
+    "supersedes_revision_id": "CP-ARCH-001-R7",
     "source_decision_ids": [
-      "CPD-071"
+      "CPD-072"
     ],
-    "reason": "Add a single whole-system master navigation map and requirements/roadmap traceability contract while preserving existing authorities and current programme ordering.",
+    "reason": "Register the deployable Governance Platform SaaS target: complete admin cockpit, REST API/backend services, PostgreSQL runtime and governed production deployment.",
     "approval_eligible_from_imported_memory": false
   },
   "source_provenance": {
@@ -46,14 +46,17 @@
     "NO_PARALLEL_CANONICAL_DATABASE",
     "SEMANTIC_COMPARISON_NE_FILENAME_COMPARISON",
     "MASTER_MAP_NE_PARALLEL_AUTHORITY",
-    "STATUS_MUST_DISTINGUISH_LIVE_IMPLEMENTED_PLANNED_FUTURE"
+    "STATUS_MUST_DISTINGUISH_LIVE_IMPLEMENTED_PLANNED_FUTURE",
+    "UI_API_NE_AUTHORITY_GENERATOR",
+    "SAAS_PRODUCT_REUSES_CANONICAL_GOVERNANCE_SEMANTICS"
   ],
   "live_execution_reference": {
     "current_state": "docs/control-plane/CURRENT_STATE.md",
     "tasks": "docs/control-plane/TASKS.md",
     "next_action": "docs/control-plane/NEXT_ACTION.md",
     "master_system_map": "docs/control-plane/MASTER_SYSTEM_MAP.md",
-    "requirements_roadmap": "docs/control-plane/REQUIREMENTS_ROADMAP.md"
+    "requirements_roadmap": "docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "saas_platform_program": "docs/control-plane/SAAS_PLATFORM_PROGRAM.md"
   },
   "structuring_cases": [
     "CREATE_NEW_REPOSITORY",
@@ -224,5 +227,12 @@
     ],
     "real_client_state_mutated": false,
     "subprocess_diagnostics": "STDOUT_STDERR_REQUIRED"
+  },
+  "product_deployment_target": {
+    "authority_id": "CP-SAAS-001",
+    "status": "PLANNED_DEPENDENCY_BOUND",
+    "public_url": "https://mcp.wealthtechinnovations.com/template",
+    "task_range": "SAA-001..SAA-015",
+    "actual_production_mutation_authorized": false
   }
 }
