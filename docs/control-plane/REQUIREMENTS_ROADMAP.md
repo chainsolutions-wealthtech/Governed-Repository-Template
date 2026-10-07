@@ -65,6 +65,8 @@ Every completed capability must satisfy:
 | RQ-34 | Production URL `https://mcp.wealthtechinnovations.com/template` | CP-SAAS-001 | target registered | live deployment not yet authorized | PLANNED | SAA-013 |
 | RQ-35 | Operational backup/restore/upgrade/rollback | CP-SAAS-001 | not implemented | recovery/upgrade drills required | PLANNED | SAA-010 + SAA-015 |
 
+| RQ-36 | Availability-aware parallel agent dispatch with explicit idle/block/limit state | CP-AGENT-RELAY-001-R7 / CPD-074 | scheduler + roster + telemetry + client/issue transport implemented | CI + post-merge roster proof required | IMPLEMENTED_PENDING_VALIDATION | merge R7, prove roster refresh, then opt-in canonical task groups as dependency graph permits |
+
 ## 4. Current validated baseline
 
 ### Proven in LIVE
