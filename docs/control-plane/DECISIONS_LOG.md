@@ -566,3 +566,18 @@ Append-only durable decisions for the source/control-plane repository.
 - The post-release junction resolves or asks only missing fields and must not replay First Touch or create a second GACR session.
 - CAP 1.0.0 must prove this exact handoff on a second repository and across a second/generic provider adapter.
 - This reconciliation does not advance P12-S6, GMC, RTE, ARCH or CAP execution status.
+
+
+### CPD-071 — Master system map and requirements/roadmap traceability
+
+- Date: 2026-10-07.
+- The platform now exposes one whole-system navigation map at `docs/control-plane/MASTER_SYSTEM_MAP.md`.
+- A durable cahier-des-charges / traceability / roadmap synthesis is exposed at `docs/control-plane/REQUIREMENTS_ROADMAP.md`.
+- These files are synthesis/navigation surfaces and are explicitly **not** parallel authorities.
+- Normative ownership remains with CP-ARCH-001, PROGRAM/TASKS/NEXT_ACTION, DATA_MODEL, policies, decisions and runtime authorities.
+- README, 00_START_HERE, AGENTS, CANONICAL_ARCHITECTURE, DATA_MODEL and the reusable capsule must all point to the same master map and requirements roadmap.
+- Documentation status must distinguish `LIVE_PROVEN`, `IMPLEMENTED`, `PARTIAL`, `PLANNED_NOT_ACTIVE` and `FUTURE`; planned behavior must never be described as active.
+- The Data Model must distinguish the LIVE GSCC/GSE/GACR identity/session chain from the broader normalized principal/agent/connection/session/role/authority registry that remains planned.
+- Architecture authority advances to `CP-ARCH-001-R7`.
+- CI must fail on link drift, architecture revision drift, silent activation of the two-stage purpose router, or CAP dependency drift.
+- Global execution order is unchanged; `P12-S6` remains the unique executable task.
