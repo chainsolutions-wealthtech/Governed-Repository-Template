@@ -636,3 +636,32 @@ R7 is merged and CI-green.
 At the first post-merge read-only observation, the repository exposed non-terminal GACR sessions but no explicit `AVAILABLE`/`WAITING` capacity signal. Therefore no `WORK_OFFER` was emitted. This is expected fail-closed behavior and proves that mere session presence/silence is not treated as dispatch capacity.
 
 The first live capacity assignment proof remains event-dependent: it occurs only when a real agent/provider emits a supported availability signal and a compatible READY work item exists.
+
+
+## R8 — canonical work-role / capacity declaration junction
+
+R8 closes the gap between a post-F1 agent declaration and capacity-aware work dispatch.
+
+Canonical work roles:
+- `CODE_AGENT`;
+- `INTAKER`;
+- `SUPERVISOR`;
+- `REVIEWER`.
+
+An explicit role/capability declaration may enrich the already-bound GACR session. It must not create a duplicate session and must not rewrite entry action or connection intent implicitly.
+
+An explicit post-release outcome containing `WAITING_FOR_WORK` is normalized to:
+- `availability_state = WAITING`;
+- `availability_reason_code = WAITING_FOR_WORK`.
+
+The capability remains explicit; it is not inferred from the role.
+
+Automatic parallel work dispatch fails closed for a READY work-item that has no explicit compatibility scope. At least one of these must be present:
+- `allowed_agent_roles`;
+- `required_capabilities`;
+- `required_authorities`;
+- `target_session_id`.
+
+This prevents an available agent from receiving an unrelated generic/stale task solely because it is idle.
+
+Reusable role prompts: `docs/control-plane/AGENT_ENTRY_PROMPTS.md`.
