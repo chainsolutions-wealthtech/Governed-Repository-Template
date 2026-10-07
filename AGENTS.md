@@ -10,7 +10,7 @@ Ce fichier s'applique à toute intervention sur `{{REPOSITORY}}`.
 ## Démarrage obligatoire
 
 0. lire et satisfaire `00_GSCC_ENTRY.md`; aucun agent ou nouvelle conversation ne peut entrer directement par `00_START_HERE.md`;
-1. après release/handoff GSCC → GSE → GACR, lire `00_START_HERE.md` et l'ordre de lecture ;
+1. après release/handoff GSCC → GSE → GACR, lire `00_START_HERE.md`, puis `docs/control-plane/MASTER_SYSTEM_MAP.md` pour la vue de bout en bout et `docs/control-plane/REQUIREMENTS_ROADMAP.md` pour l'état des exigences ;
 2. confirmer dépôt, branche, HEAD et état du worktree ;
 3. lire les fichiers directement concernés ;
 4. rechercher les travaux existants ;
@@ -185,3 +185,12 @@ Required behavior for hosts using this fallback:
 - after a stalled/takeover state, obey the existing exact-HEAD reconciliation path instead of using the bridge to bypass takeover safety.
 
 The bridge auto-attaches or resolves the GACR session, renews the lease for heartbeat/action events, records a safe Beacon, refreshes Correlator and Interruption Forensics, and persists state through the existing GACR workflow.
+
+
+## Séparation des dimensions de jonction
+
+Après release de la capsule, ne jamais confondre :
+
+`IDENTITY != ROLE != AUTHORITY != CONNECTION_INTENT != ENTRY_PURPOSE != WORK_KIND_OR_CASE != ENTRY_ACTION != MUTATION_AUTHORITY`.
+
+Ne rejoue pas First Touch et ne recrée pas une session GACR si l'arrivée courante est déjà corrélée. Résous ou demande uniquement la première dimension réellement manquante. Tant que le routeur `entry_purpose` reste `PLANNED_NOT_ACTIVE`, n'invente pas son activation : applique les routes actives documentées par les policies existantes.
