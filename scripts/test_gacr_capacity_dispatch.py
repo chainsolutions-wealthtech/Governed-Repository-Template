@@ -25,7 +25,7 @@ def live_signal(state: str = "ACTIVE") -> dict:
     }
 
 
-def session(session_id: str, *, capabilities=None, role="CODE_AGENT", relay_state="ACTIVE") -> dict:
+def session(session_id: str, *, capabilities=None, role="qualification-client", relay_state="ACTIVE") -> dict:
     return {
         "session_id": session_id,
         "repository": "example/repo",
@@ -39,72 +39,139 @@ def session(session_id: str, *, capabilities=None, role="CODE_AGENT", relay_stat
     }
 
 
-def availability_beacon(session_id: str, state: str, reason: str = "WAITING_FOR_WORK") -> dict:
+def release_beacon(
+    session_id: str,
+    *,
+    role: str = "CODE_AGENT",
+    purpose: str = "WORK_ON_CONTROL_PLANE",
+    work_kind: str = "CODE_IMPLEMENTATION",
+    observed_at: str = "2026-10-07T01:00:00+00:00",
+) -> dict:
     return {
-        "beacon_id": "b-" + session_id + "-" + state,
+        "beacon_id": "b-" + session_id + "-f1",
         "session_id": session_id,
-        "observed_at": "2026-10-07T01:00:00+00:00",
+        "observed_at": observed_at,
+        "event_type": "F1_RELEASED",
+        "evidence_ref": "gscc-exposure:test",
+        "agent_role": role,
+        "agent_role_provenance": "DECLARED_BY_EVENT",
+        "entry_purpose": purpose,
+        "entry_purpose_provenance": "DECLARED_BY_EVENT",
+        "work_kind": work_kind,
+        "work_kind_provenance": "DECLARED_BY_EVENT",
+        "capabilities": [],
+        "capabilities_provenance": "SESSION_SNAPSHOT",
+    }
+
+
+def availability_beacon(
+    session_id: str,
+    state: str,
+    reason: str = "WAITING_FOR_WORK",
+    observed_at: str = "2026-10-07T01:01:00+00:00",
+) -> dict:
+    return {
+        "beacon_id": "b-" + session_id + "-" + state + "-" + observed_at,
+        "session_id": session_id,
+        "observed_at": observed_at,
         "event_type": "AVAILABILITY_UPDATE",
         "availability_state": state,
         "availability_reason_code": reason,
     }
 
 
+def interruption_beacon(session_id: str, code: str, observed_at: str) -> dict:
+    return {
+        "beacon_id": "b-" + session_id + "-" + code,
+        "session_id": session_id,
+        "observed_at": observed_at,
+        "event_type": "INTERRUPTION_SIGNAL",
+        "interruption_code": code,
+    }
+
+
 def main() -> None:
-    sessions = {"sessions": [session("s1", capabilities=["CODE"]), session("s2", capabilities=["REVIEW"], role="REVIEWER")]}
+    sessions = {"sessions": [session("s1", capabilities=["CODE"]), session("s2", capabilities=["REVIEW"])]}
     empty_claims = {"claims": []}
     empty_correlations = {"items": []}
 
+    released_available_beacons={"items":[release_beacon("s1"),availability_beacon("s1","AVAILABLE")]}
     available = g.session_capacity_projection(
         "s1",
         sessions_doc=sessions,
         claims_doc=empty_claims,
-        beacons_doc={"items": [availability_beacon("s1", "AVAILABLE")]},
+        beacons_doc=released_available_beacons,
         correlations_doc=empty_correlations,
         signal_projection=live_signal(),
     )
     assert_true(available["availability_state"] == "AVAILABLE", "explicit available state preserved")
-    assert_true(available["eligible_for_new_work"] is True, "explicit available live session eligible")
+    assert_true(available["f1_release_verified"] is True, "F1 release must be recognized")
+    assert_true(available["agent_role"] == "CODE_AGENT", "declared canonical role overrides qualification role")
+    assert_true(available["declared_work_profile"]["entry_purpose"] == "WORK_ON_CONTROL_PLANE", "entry purpose recorded")
+    assert_true(available["eligible_for_new_work"] is True, "released explicitly available session eligible")
+
+    pre_f1 = g.session_capacity_projection(
+        "s1",
+        sessions_doc=sessions,
+        claims_doc=empty_claims,
+        beacons_doc={"items":[availability_beacon("s1","AVAILABLE")]},
+        correlations_doc=empty_correlations,
+        signal_projection=live_signal(),
+    )
+    if g.TEMPLATE_SOURCE:
+        assert_true(pre_f1["eligible_for_new_work"] is False, "pre-F1 source session cannot receive work")
+        assert_true("F1_RELEASE_NOT_VERIFIED" in pre_f1["dispatch_blockers"], "pre-F1 blocker explicit")
 
     silent = g.session_capacity_projection(
         "s1",
         sessions_doc=sessions,
         claims_doc=empty_claims,
-        beacons_doc={"items": []},
+        beacons_doc={"items": [release_beacon("s1")]},
         correlations_doc=empty_correlations,
         signal_projection=live_signal(),
     )
-    assert_true(silent["availability_state"] == "UNKNOWN", "silence must not imply availability")
+    assert_true(silent["availability_state"] == "UNKNOWN", "F1 release alone must not imply availability")
     assert_true(silent["eligible_for_new_work"] is False, "silent session not dispatch eligible")
 
     quota = g.session_capacity_projection(
         "s1",
         sessions_doc=sessions,
         claims_doc=empty_claims,
-        beacons_doc={"items": [{
-            "beacon_id": "b-quota",
-            "session_id": "s1",
-            "observed_at": "2026-10-07T01:01:00+00:00",
-            "event_type": "INTERRUPTION_SIGNAL",
-            "interruption_code": "PROVIDER_QUOTA_EXHAUSTED",
-        }]},
+        beacons_doc={"items": [
+            release_beacon("s1"),
+            availability_beacon("s1","AVAILABLE",observed_at="2026-10-07T01:01:00+00:00"),
+            interruption_beacon("s1","PROVIDER_QUOTA_EXHAUSTED","2026-10-07T01:02:00+00:00"),
+        ]},
         correlations_doc=empty_correlations,
         signal_projection=live_signal(),
     )
     assert_true(quota["availability_state"] == "QUOTA_BLOCKED", "quota signal blocks capacity")
     assert_true(quota["eligible_for_new_work"] is False, "quota-blocked agent not eligible")
 
+    recovered = g.session_capacity_projection(
+        "s1",
+        sessions_doc=sessions,
+        claims_doc=empty_claims,
+        beacons_doc={"items": [
+            release_beacon("s1"),
+            interruption_beacon("s1","DEPENDENCY_BLOCKED","2026-10-07T01:02:00+00:00"),
+            availability_beacon("s1","WAITING",observed_at="2026-10-07T01:03:00+00:00"),
+        ]},
+        correlations_doc=empty_correlations,
+        signal_projection=live_signal(),
+    )
+    assert_true(recovered["availability_state"] == "WAITING", "new explicit availability clears older interruption")
+    assert_true(recovered["eligible_for_new_work"] is True, "recovered released agent becomes eligible")
+
     rate = g.session_capacity_projection(
         "s1",
         sessions_doc=sessions,
         claims_doc=empty_claims,
-        beacons_doc={"items": [{
-            "beacon_id": "b-rate",
-            "session_id": "s1",
-            "observed_at": "2026-10-07T01:02:00+00:00",
-            "event_type": "INTERRUPTION_SIGNAL",
-            "interruption_code": "PROVIDER_RATE_LIMIT",
-        }]},
+        beacons_doc={"items": [
+            release_beacon("s1"),
+            availability_beacon("s1","AVAILABLE",observed_at="2026-10-07T01:01:00+00:00"),
+            interruption_beacon("s1","PROVIDER_RATE_LIMIT","2026-10-07T01:02:00+00:00"),
+        ]},
         correlations_doc=empty_correlations,
         signal_projection=live_signal(),
     )
@@ -120,7 +187,7 @@ def main() -> None:
             "status": "ACTIVE",
             "collision_domains": ["domain-0"],
         }]},
-        beacons_doc={"items": [availability_beacon("s1", "AVAILABLE")]},
+        beacons_doc=released_available_beacons,
         correlations_doc=empty_correlations,
         signal_projection=live_signal(),
     )
@@ -150,6 +217,7 @@ def main() -> None:
         ]
     }
     work = {
+        "source":"TEST",
         "items": [
             {
                 "work_item_id": "W1",
@@ -193,7 +261,7 @@ def main() -> None:
     assert_true(plan["claim_transfer_performed"] is False, "dispatch plan never creates/transfers claim")
 
     claimed_plan = g.parallel_work_dispatch_plan(
-        work_doc={"items": [{
+        work_doc={"source":"TEST","items": [{
             "work_item_id": "W4",
             "status": "READY",
             "priority": 1,
@@ -212,6 +280,17 @@ def main() -> None:
     )
     assert_true(not claimed_plan["assignments"], "active collision-domain claim blocks assignment")
     assert_true(claimed_plan["unassigned"][0]["reason"] == "COLLISION_DOMAIN_BUSY", "claim collision reason")
+
+    if g.TEMPLATE_SOURCE:
+        canonical=g.canonical_work_document()
+        assert_true(canonical["source"]=="CONTROL_PLANE_CANONICAL_TASK_GRAPH", "source control plane must use canonical graph")
+        assert_true(canonical["global_task_id"]=="GMC-01", f"unexpected global task: {canonical}")
+        assert_true(canonical["work_package_id"]=="GMC-G01", f"unexpected work package: {canonical}")
+        ready=[x for x in canonical["items"] if x["status"]=="READY"]
+        assert_true([x["work_item_id"] for x in ready]==["GMC-G01-T01"], f"only GMC-G01-T01 should be ready: {ready}")
+        assert_true(all(x["work_item_id"]!="WORK-INIT-001" for x in canonical["items"]), "source queue must exclude bootstrap WORK-INIT-001")
+        assert_true(ready[0]["allowed_agent_roles"]==["CODE_AGENT"], "GMC atomic task must target code agent lane")
+        assert_true(ready[0]["implementation_authorized"] is False, "planning-only task must not imply implementation authority")
 
     print("GACR_CAPACITY_PARALLEL_DISPATCH_TEST_PASS")
 
