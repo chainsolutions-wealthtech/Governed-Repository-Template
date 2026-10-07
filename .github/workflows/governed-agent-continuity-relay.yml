@@ -29,6 +29,10 @@ on:
           - context
           - forensics
           - telemetry-status
+          - pool
+          - plan-work
+          - dispatch-work
+          - work-offer-accept
           - control-challenge
       agent:
         required: false
@@ -103,6 +107,15 @@ on:
       reconciled_head:
         required: false
         type: string
+      dispatch_id:
+        required: false
+        type: string
+      availability_state:
+        required: false
+        type: string
+      availability_reason_code:
+        required: false
+        type: string
   repository_dispatch:
     types:
       - gacr_auto-attach
@@ -118,6 +131,10 @@ on:
       - gacr_context
       - gacr_forensics
       - gacr_telemetry-status
+      - gacr_pool
+      - gacr_plan-work
+      - gacr_dispatch-work
+      - gacr_work-offer-accept
       - gacr_control-challenge
 
 permissions:
@@ -161,6 +178,9 @@ jobs:
         id: relay
         run: python3 scripts/gacr_workflow_bridge.py
 
+      - name: Refresh capacity-aware work offers
+        run: python3 scripts/gacr_capacity_dispatch.py dispatch-work
+
       - name: Deliver pending GSCC issue control challenges
         if: ${{ steps.relay.outputs.command == 'control-challenge' || (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/gscc-control ')) }}
         env:
@@ -169,7 +189,7 @@ jobs:
 
       - name: Validate GACR state
         run: |
-          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py scripts/gacr_bridge_notifier.py scripts/gacr_auto_attach.py scripts/gacr_client_emitter.py scripts/gacr_host_issue_ingress.py scripts/gscc_control_issue_ingress.py scripts/gscc_gacr/issue_control_bridge.py
+          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py scripts/gacr_capacity_dispatch.py scripts/gacr_bridge_notifier.py scripts/gacr_auto_attach.py scripts/gacr_client_emitter.py scripts/gacr_host_issue_ingress.py scripts/gscc_control_issue_ingress.py scripts/gscc_gacr/issue_control_bridge.py
           python3 scripts/validate_governance.py
 
       - name: Persist changed relay state
