@@ -185,7 +185,7 @@
     "GACR_FORENSICS_EXTERNAL_CAUSE_OBSERVED_ONLY",
     "GACR_FORENSICS_INFLIGHT_REPLAY_REQUIRES_EXACT_HEAD_RECONCILIATION",
     "GACR_FORENSICS_NE_EXECUTION_AUTHORITY",
-    "DO_NOT_RESUME_P12_S6_UNTIL_EXPLICIT_OWNER_OK_AFTER_GACR_FINALIZATION",
+    "P12_S6_COMPLETED_DO_NOT_REOPEN_WITHOUT_NEW_GOVERNED_DECISION",
     "GACR_AUTO_ATTACH_ON_OBSERVABLE_GOVERNED_ARRIVAL",
     "GACR_PROVIDER_CONVERSATION_REF_NE_ATTACHMENT_PREREQUISITE",
     "GACR_LATE_PROVIDER_BINDING_REUSES_CONNECTION_SESSION",
@@ -236,7 +236,7 @@
       "C1-13-C",
       "C1-13-D"
     ],
-    "active_dependency": "P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+    "active_dependency": null,
     "external_intake": "Patricked-code/MCP#201",
     "failed_discovery_run": 36644247227,
     "active_corrective_task": null,
@@ -368,7 +368,8 @@
       "duplicate_baseline": false,
       "duplicate_session": false,
       "product_work_executed": false
-    }
+    },
+    "historical_active_dependency": "P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE"
   },
   "mcp_capability_snapshot": {
     "authority_id": "CP-MCP-CAP-001",
@@ -429,7 +430,7 @@
       "F1_RELEASE_BINDS_RUNTIME_CONNECTION_SESSION_GRANT_AND_EXACT_HEAD",
       "RELEASE_TO_00_START_HERE_ONLY_AFTER_F1_VERIFIED"
     ],
-    "next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+    "next_action": "GMC_01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES",
     "stop_point": "IDN_006_CLOSED_NORMAL_GOVERNANCE_RELEASED_RETURN_TO_GLOBAL_PROGRAMME",
     "read_first": [
       "00_GSCC_ENTRY.md",
