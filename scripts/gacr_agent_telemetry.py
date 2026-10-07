@@ -282,8 +282,6 @@ def record_beacon(
         raise ValueError("unsupported availability state")
     if availability_reason_code and availability_reason_code not in AVAILABILITY_REASON_CODES:
         raise ValueError("unsupported availability reason code")
-    if agent_role and agent_role not in AGENT_ROLES:
-        raise ValueError("unsupported canonical agent role")
     if entry_purpose and entry_purpose not in ENTRY_PURPOSES:
         raise ValueError("unsupported entry purpose")
     if work_kind and work_kind not in CONTROL_PLANE_WORK_KINDS:
@@ -323,7 +321,11 @@ def record_beacon(
         "presence_event": presence_event,
         "agent_identity": (session or {}).get("agent_identity"),
         "agent_role": agent_role or (session or {}).get("agent_role"),
-        "agent_role_provenance": "DECLARED_BY_EVENT" if agent_role else "SESSION_SNAPSHOT",
+        "agent_role_provenance": (
+            "DECLARED_BY_EVENT" if agent_role in AGENT_ROLES
+            else "DECLARED_BY_EVENT_NONCANONICAL" if agent_role
+            else "SESSION_SNAPSHOT"
+        ),
         "entry_purpose": entry_purpose,
         "entry_purpose_provenance": "DECLARED_BY_EVENT" if entry_purpose else "UNAVAILABLE",
         "work_kind": work_kind,
@@ -1782,7 +1784,7 @@ def parser() -> argparse.ArgumentParser:
     b.add_argument("--task-id")
     b.add_argument("--branch")
     b.add_argument("--pull-request",type=int)
-    b.add_argument("--agent-role",choices=sorted(AGENT_ROLES))
+    b.add_argument("--agent-role")
     b.add_argument("--entry-purpose",choices=sorted(ENTRY_PURPOSES))
     b.add_argument("--work-kind",choices=sorted(CONTROL_PLANE_WORK_KINDS))
     b.add_argument("--capability",action="append")
