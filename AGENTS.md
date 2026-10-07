@@ -194,3 +194,14 @@ Après release de la capsule, ne jamais confondre :
 `IDENTITY != ROLE != AUTHORITY != CONNECTION_INTENT != ENTRY_PURPOSE != WORK_KIND_OR_CASE != ENTRY_ACTION != MUTATION_AUTHORITY`.
 
 Ne rejoue pas First Touch et ne recrée pas une session GACR si l'arrivée courante est déjà corrélée. Résous ou demande uniquement la première dimension réellement manquante. Tant que le routeur `entry_purpose` reste `PLANNED_NOT_ACTIVE`, n'invente pas son activation : applique les routes actives documentées par les policies existantes.
+
+
+## Agent role / capacity declaration
+
+Canonical reusable prompts for new work agents are maintained at:
+
+`docs/control-plane/AGENT_ENTRY_PROMPTS.md`.
+
+After GSCC→GSE→GACR→F1 release, a work agent must declare its canonical role/capabilities and explicit capacity state. New canonical work roles are `CODE_AGENT`, `INTAKER`, `SUPERVISOR`, and `REVIEWER`.
+
+Role/capability declaration never grants mutation authority. Silence never means availability. Automatic work dispatch requires explicit compatibility scope on the work item.
