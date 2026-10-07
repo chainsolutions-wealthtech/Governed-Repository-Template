@@ -69,6 +69,9 @@ PROGRESS_STATES = {"ADVANCING", "NO_RECENT_PROGRESS_EVIDENCE", "BLOCKED_IF_EXPLI
 LIVENESS_CHALLENGE_RESPONSES = {"ACK", "BUSY", "IDLE", "WAITING", "BLOCKED", "RATE_LIMITED", "QUOTA_BLOCKED", "CHECKPOINTING", "TERMINATING"}
 AVAILABILITY_STATES = {"AVAILABLE", "WAITING", "BUSY", "BLOCKED", "RATE_LIMITED", "QUOTA_BLOCKED", "CHECKPOINTING", "TERMINATING", "UNKNOWN"}
 AVAILABILITY_REASON_CODES = {"WAITING_FOR_WORK", "WAITING_FOR_INPUT", "DEPENDENCY_BLOCKED", "PROVIDER_RATE_LIMIT", "PROVIDER_QUOTA_EXHAUSTED", "CONTEXT_LIMIT", "CHECKPOINTING", "TERMINATING", "MANUAL_BUSY", "UNKNOWN"}
+AGENT_ROLES = {"INTAKER", "SUPERVISOR", "CODE_AGENT", "REVIEWER"}
+ENTRY_PURPOSES = {"WORK_ON_CONTROL_PLANE", "APPLY_GOVERNANCE_CASE"}
+CONTROL_PLANE_WORK_KINDS = {"CODE_IMPLEMENTATION", "EXECUTE_EXISTING_TASK", "ADD_OR_ENRICH_INFORMATION"}
 PROGRESS_EVENT_CLASSES = {
     "REPOSITORY_WRITE_ACTIVITY": "REPOSITORY_WRITE_ACTIVITY",
     "COMMIT_MUTATION": "COMMIT_MUTATION",
@@ -251,6 +254,8 @@ def record_beacon(
     branch: str | None = None,
     pull_request: int | None = None,
     agent_role: str | None = None,
+    entry_purpose: str | None = None,
+    work_kind: str | None = None,
     capabilities: list[str] | None = None,
     source: str | None = None,
     observed_at: str | None = None,
@@ -277,6 +282,12 @@ def record_beacon(
         raise ValueError("unsupported availability state")
     if availability_reason_code and availability_reason_code not in AVAILABILITY_REASON_CODES:
         raise ValueError("unsupported availability reason code")
+    if agent_role and agent_role not in AGENT_ROLES:
+        raise ValueError("unsupported canonical agent role")
+    if entry_purpose and entry_purpose not in ENTRY_PURPOSES:
+        raise ValueError("unsupported entry purpose")
+    if work_kind and work_kind not in CONTROL_PLANE_WORK_KINDS:
+        raise ValueError("unsupported control-plane work kind")
     relay = (session or {}).get("relay") or {}
     resolved_provider = provider or (session or {}).get("provider")
     resolved_provider_ref = (
@@ -312,7 +323,13 @@ def record_beacon(
         "presence_event": presence_event,
         "agent_identity": (session or {}).get("agent_identity"),
         "agent_role": agent_role or (session or {}).get("agent_role"),
+        "agent_role_provenance": "DECLARED_BY_EVENT" if agent_role else "SESSION_SNAPSHOT",
+        "entry_purpose": entry_purpose,
+        "entry_purpose_provenance": "DECLARED_BY_EVENT" if entry_purpose else "UNAVAILABLE",
+        "work_kind": work_kind,
+        "work_kind_provenance": "DECLARED_BY_EVENT" if work_kind else "UNAVAILABLE",
         "capabilities": sorted(set(capabilities or (session or {}).get("capabilities") or [])),
+        "capabilities_provenance": "DECLARED_BY_EVENT" if capabilities else "SESSION_SNAPSHOT",
         "task_id": resolved_task,
         "branch": resolved_branch,
         "pull_request": resolved_pr,
@@ -1693,6 +1710,8 @@ def command_beacon(a: argparse.Namespace) -> None:
         branch=a.branch,
         pull_request=a.pull_request,
         agent_role=a.agent_role,
+        entry_purpose=a.entry_purpose,
+        work_kind=a.work_kind,
         capabilities=capabilities,
         source=a.source,
         action_id=a.action_id,
@@ -1763,7 +1782,9 @@ def parser() -> argparse.ArgumentParser:
     b.add_argument("--task-id")
     b.add_argument("--branch")
     b.add_argument("--pull-request",type=int)
-    b.add_argument("--agent-role")
+    b.add_argument("--agent-role",choices=sorted(AGENT_ROLES))
+    b.add_argument("--entry-purpose",choices=sorted(ENTRY_PURPOSES))
+    b.add_argument("--work-kind",choices=sorted(CONTROL_PLANE_WORK_KINDS))
     b.add_argument("--capability",action="append")
     b.add_argument("--source",choices=["GITHUB_ACTIONS","LOCAL_AGENT","EXTERNAL_BRIDGE","CLIENT_EMITTER","UNKNOWN"])
     b.add_argument("--action-id"); b.add_argument("--action-label"); b.add_argument("--action-phase",choices=sorted(ACTION_PHASES))
