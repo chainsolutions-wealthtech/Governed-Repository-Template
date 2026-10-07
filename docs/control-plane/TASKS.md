@@ -104,6 +104,33 @@ This backlog captures the missing automation required so an arriving agent can b
 IDN-001..IDN-012 are now implemented/validated; IDN-013 remains future UI/API work. The IDN lane does not supersede the global programme: `P12-S6` remains the unique executable task.
 
 
+## Reusable GSCC → GSE → GACR capsule productization backlog
+
+Authority: `CP-CAPSULE-001`.
+
+Status: `PLANNED_DEPENDENCY_BOUND`.
+
+This work package productizes the LIVE-proven pre-entry capsule without changing its semantics. It is blocked by the current global task `P12-S6` and consumes the completed `IDN-006` proof.
+
+| ID | Task | Status | Dependency / note |
+|---|---|---|---|
+| CAP-001 | Define reusable capsule boundary and public contract | PLANNED | after P12-S6 + IDN-006 |
+| CAP-002 | Map reusable core vs Template/provider-specific coupling | PLANNED | after CAP-001 |
+| CAP-003 | Freeze versioned public schemas/interfaces | PLANNED | after CAP-002 |
+| CAP-004 | Extract reusable core layout without semantic change | PLANNED | after CAP-003 |
+| CAP-005 | Define provider/repository/persistence/session adapter SPI | PLANNED | after CAP-004 |
+| CAP-006 | Refactor GitHub/ChatGPT path into reference adapter | PLANNED | after CAP-005 |
+| CAP-007 | Abstract persistence with current SQLite/artifact/Git parity | PLANNED | after CAP-006 |
+| CAP-008 | Add install/upgrade/rollback/version compatibility mechanics | PLANNED | after CAP-007 |
+| CAP-009 | Build portability/security/fail-closed regression matrix | PLANNED | after CAP-008 |
+| CAP-010 | LIVE-prove installation on a second clean repository | PLANNED | after CAP-009 |
+| CAP-011 | LIVE-prove a second/generic provider transport adapter | PLANNED | after CAP-010 |
+| CAP-012 | Release reusable capsule 1.0.0 | PLANNED | after CAP-011 |
+
+Canonical productization authority: `docs/control-plane/GSCC_GSE_GACR_REUSABLE_CAPSULE.md`.
+
+Registration of this backlog does **not** advance the global programme. `P12-S6` remains the unique executable task.
+
 ## Two-stage agent purpose routing backlog
 
 After identity/session/role/authority resolution, an arriving agent on the control-plane source must enter a two-stage automated purpose router.
