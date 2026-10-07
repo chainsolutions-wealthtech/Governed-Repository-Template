@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 44,
+  "source_state_revision": 45,
   "template_version": "2.8.27",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
@@ -25,7 +25,7 @@
   },
   "canonical_architecture": {
     "authority_id": "CP-ARCH-001",
-    "revision": 6,
+    "revision": 7,
     "path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
     "status": "ACCEPTED_TARGET_ARCHITECTURE",
     "target_ne_current": true
@@ -374,6 +374,14 @@
       "merge_commit": "abefcfccbf822fa2fcf590e592ad51c767e32937",
       "post_merge_ci": 36921331490,
       "post_merge_ci_result": "PASS"
+    },
+    "master_architecture_documentation": {
+      "status": "MATERIALIZED",
+      "decision_id": "CPD-071",
+      "master_map": "docs/control-plane/MASTER_SYSTEM_MAP.md",
+      "requirements_roadmap": "docs/control-plane/REQUIREMENTS_ROADMAP.md",
+      "navigation_only_no_parallel_authority": true,
+      "current_unique_executable_item_unchanged": "P12-S6"
     }
   },
   "framework_product_boundary": {
