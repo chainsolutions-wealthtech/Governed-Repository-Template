@@ -125,3 +125,29 @@ A bridge must never infer quota/rate-limit state from silence. When the provider
 Clients that poll the canonical dispatch store may receive `dispatch_kind = WORK_OFFER`. A work offer is accepted with `gacr_work-offer-accept`, after which the record becomes `ACCEPTED_PENDING_CLAIM`. Acceptance grants no write authority and does not create a claim.
 
 The legacy external webhook notifier remains takeover-only until a dedicated WORK_OFFER bridge contract is explicitly configured. This prevents a work offer from being rendered as a takeover wake event.
+
+
+## Provider endpoint / resumability capability matrix
+
+This matrix is a discovery aid, not an authority source. A provider-specific endpoint is usable only when the current session or an installed adapter supplies a real, bounded reference.
+
+| Provider/surface | Durable resume identity | Direct inbound wake endpoint | Current governed behavior |
+| --- | --- | --- | --- |
+| ChatGPT UI / ChatGPT GitHub connector | Provider conversation reference only when actually exposed by the client; otherwise UNAVAILABLE | No private ChatGPT callback is assumed. The live-proven GitHub issue control bridge is a repository control surface, not a ChatGPT callback. | Registered EXTERNAL_BRIDGE when present; otherwise POLL_REPOSITORY / issue-control fallback. |
+| OpenAI Agents API / Codex API session | API session identifiers and reconnect metadata may be supplied by an API adapter | OpenAI session webhooks can call a webhook endpoint controlled by the integrator. Self-hosted session events may also provide reconnect metadata. This is distinct from a ChatGPT UI conversation. | Adapter may register an opaque bridge/session endpoint reference; never infer one for a ChatGPT UI session. |
+| Claude Code | Claude Code can expose a session ID that can be resumed by a compatible client/adapter | No generic inbound callback to an existing Claude web conversation is assumed. | Adapter may persist the supplied session reference and launch/resume through its own bridge; otherwise POLL_REPOSITORY. |
+| Claude web / generic Anthropic API | Only references actually exposed by the client are accepted | UNAVAILABLE unless an external bridge is explicitly registered | EXTERNAL_BRIDGE when registered; otherwise POLL_REPOSITORY. |
+| GitHub Actions | Workflow/repository events are observable transport surfaces, not an external conversational provider session | Repository/workflow dispatch is infrastructure transport, not a user-conversation wake endpoint | Internal transport identity policy remains NEVER_CREATE_SESSION for pure GACR internal workflows. |
+| human / other | Supplied stable reference only | UNAVAILABLE unless explicitly registered | EXTERNAL_BRIDGE when registered; otherwise POLL_REPOSITORY. |
+
+Public provider capabilities are advisory inputs for adapter design. They never cause GACR to synthesize a provider conversation ID, endpoint URL, API token, webhook secret or session authority.
+
+### Endpoint evidence classes
+
+A session endpoint projection uses only:
+
+- `OBSERVED`: a live session/adapter supplied a concrete safe bridge registration reference;
+- `CONFIGURED`: repository configuration proves a control surface exists, but not that a specific provider conversation is reachable;
+- `UNAVAILABLE`: the provider/client did not expose an inbound endpoint.
+
+A repository-side issue comment, workflow or polling channel may be a valid control path while the provider-private endpoint remains `UNAVAILABLE`. These facts must not be conflated.
