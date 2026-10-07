@@ -1403,3 +1403,25 @@ Reconciliation performed:
 - `GMC-01` becomes the unique `IN_PROGRESS` global task.
 
 GMC release is planning/knowledge extraction only. No Governance Model implementation mutation, CAP, SaaS, server, DNS, TLS or database deployment authority is granted by this closure.
+
+
+## 2026-10-07 — GACR availability-aware parallel dispatch lane
+
+Owner-authorized cross-cutting lane started after CASE 1 closure while `GMC-01` remains the unique global task.
+
+Implemented on dedicated branch:
+- explicit workload/blocker/capacity telemetry;
+- availability roster projection;
+- scheduler states ACTIVE / AVAILABLE / UNCONFIRMED_AVAILABLE / WAITING / LIMITED / STALLED / TERMINAL / UNKNOWN;
+- dependency/collision/capability-safe work planning;
+- canonical task opt-in for automatic dispatch;
+- explicit task operator dispatch path;
+- GMC atomic blueprint task visibility without task duplication;
+- work offers require claims and grant no mutation authority;
+- client emitter + GitHub issue bridge transport support;
+- portable upgrader/manifest/workflow integration;
+- CI regression tests.
+
+Decision: `CPD-074`.
+
+The lane does not change the global next action `GMC_01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES`.
