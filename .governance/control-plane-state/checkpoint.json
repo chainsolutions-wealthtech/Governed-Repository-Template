@@ -350,5 +350,30 @@
     "released_head": "f768268bf1a3f62c2e6741aecfba20d86545969c",
     "next_authority": "00_START_HERE.md",
     "next_action": "RETURN_TO_GLOBAL_PROGRAMME_P12_S6"
+  },
+  "reusable_capsule_program": {
+    "authority_id": "CP-CAPSULE-001",
+    "decision_id": "CPD-069",
+    "status": "PLANNED_DEPENDENCY_BOUND",
+    "task_range": "CAP-001..CAP-012",
+    "depends_on": [
+      "P12-S6",
+      "IDN-006"
+    ],
+    "current_unique_executable_item_unchanged": "P12-S6",
+    "first_task_after_gate": "CAP-001",
+    "target_release": "1.0.0",
+    "acceptance": [
+      "SECOND_CLEAN_REPOSITORY_LIVE_PROOF",
+      "SECOND_GENERIC_PROVIDER_ADAPTER_LIVE_PROOF",
+      "PER_ARRIVAL_ISOLATION",
+      "NO_PROVIDER_ID_FABRICATION",
+      "Q9_CORRELATED_LIVENESS",
+      "Q10_BEFORE_Q2",
+      "CANONICAL_GACR_DURABILITY",
+      "F1_ACTUAL_FUNCTION_VALIDATION",
+      "EXACT_CORRELATED_RELEASE",
+      "INSTALL_UPGRADE_ROLLBACK"
+    ]
   }
 }
