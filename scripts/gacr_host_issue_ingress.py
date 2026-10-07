@@ -19,10 +19,11 @@ CONFIG_PATH = ROOT / ".governance" / "agent-relay" / "config.json"
 AUTO_ATTACH = ROOT / "scripts" / "gacr_auto_attach.py"
 CORE = ROOT / "scripts" / "governed_agent_continuity_relay.py"
 TELEMETRY = ROOT / "scripts" / "gacr_agent_telemetry.py"
+CAPACITY = ROOT / "scripts" / "gacr_capacity_dispatch.py"
 
 PREFIX = "/gacr-host "
 SCHEMA = "gacr-host-event/v1"
-EVENTS = {"attach", "heartbeat", "action", "interrupt", "availability", "command_ack", "challenge_response"}
+EVENTS = {"attach", "heartbeat", "action", "interrupt", "availability", "work_offer_accept", "command_ack", "challenge_response"}
 ACTION_PHASES = {"STARTED", "COMPLETED", "FAILED", "CANCELLED"}
 INTERRUPTION_CODES = {
     "CLIENT_DISCONNECTED",
@@ -197,6 +198,10 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
     if connection_intent is not None and connection_intent not in CONNECTION_INTENTS:
         raise ValueError("unsupported host-event connection_intent")
 
+    if kind == "work_offer_accept":
+        for key in ("session_id", "dispatch_id"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host work_offer_accept requires {key}")
     if kind == "command_ack":
         for key in ("session_id", "dispatch_id", "command_id", "correlation_id", "delivery_state"):
             if payload.get(key) in (None, ""):
@@ -424,7 +429,14 @@ def process(payload: dict, repository: str) -> dict:
     session = ensure_session(payload, repository)
     session_id = session["session_id"]
 
-    if kind == "attach":
+    if kind == "work_offer_accept":
+        run_script(CAPACITY, [
+            "accept-work",
+            "--dispatch-id", str(payload["dispatch_id"]),
+            "--session-id", session_id,
+        ])
+        marker_beacon(session_id, payload, "WORK_OFFER_ACCEPT")
+    elif kind == "attach":
         marker_beacon(session_id, payload, "HOST_ATTACH_RECEIPT")
     elif kind == "heartbeat":
         args = [
