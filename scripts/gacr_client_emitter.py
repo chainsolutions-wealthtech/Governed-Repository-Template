@@ -264,14 +264,19 @@ class ClientEmitter:
             },
         )
 
-    def accept_work_offer(self, session_id: str, dispatch_id: str) -> dict:
-        return self.emit(
-            "gacr_work-offer-accept",
-            {
-                "session_id": session_id,
-                "dispatch_id": dispatch_id,
-            },
-        )
+    def accept_work_offer(
+        self,
+        session_id: str,
+        dispatch_id: str,
+        observed_head: str | None = None,
+    ) -> dict:
+        payload = {
+            "session_id": session_id,
+            "dispatch_id": dispatch_id,
+        }
+        if observed_head:
+            payload["observed_head"] = observed_head
+        return self.emit("gacr_work-offer-accept", payload)
 
     def fetch(self, path: str, *, ref: str = "main") -> dict:
         return fetch_json_file(
@@ -427,6 +432,7 @@ def parser() -> argparse.ArgumentParser:
     add_transport_args(accept_offer)
     accept_offer.add_argument("--session-id", required=True)
     accept_offer.add_argument("--dispatch-id", required=True)
+    accept_offer.add_argument("--observed-head")
 
     daemon = sub.add_parser("daemon")
     add_transport_args(daemon)
@@ -519,6 +525,7 @@ def main() -> None:
         output(emitter.accept_work_offer(
             args.session_id,
             args.dispatch_id,
+            observed_head=args.observed_head,
         ))
     elif args.command == "daemon":
         daemon_loop(
