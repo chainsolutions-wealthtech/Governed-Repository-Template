@@ -1,0 +1,26 @@
+{
+  "schema": "gacr-contextual-task-pool/v1",
+  "revision": 0,
+  "process": "GACR",
+  "model": "CONTEXTUAL_CONTINUOUS_TASK_POOL",
+  "revision_authority": "CP-AGENT-RELAY-001-R9",
+  "generated_at": null,
+  "work_source": null,
+  "work_source_status": null,
+  "global_task_id": null,
+  "work_package_id": null,
+  "counts": {},
+  "dispatchable_work_item_ids": [],
+  "recovery_work_item_ids": [],
+  "collision_free_waves": [],
+  "items": [],
+  "authority": {
+    "projection_only": true,
+    "dispatcher_authority": "CP-AGENT-RELAY-001-R8",
+    "canonical_task_sources_unchanged": true,
+    "grants_write_authority": false,
+    "claim_required": true,
+    "exact_head_required": true
+  },
+  "semantic_digest": null
+}
