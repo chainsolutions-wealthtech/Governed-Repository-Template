@@ -1083,3 +1083,32 @@ GACR programme state:
 - Ultimate live acceptance: NOT YET PASSED.
 
 The historical owner sequencing remains: finish GACR first; resume the global programme only after explicit owner OK.
+
+
+## SaaS platform / autonomous admin cockpit backlog
+
+Authority: `CP-SAAS-001`.
+
+Target production surface: `https://mcp.wealthtechinnovations.com/template`.
+
+This programme is downstream of stabilized governance semantics and does not change the current unique executable task.
+
+| ID | Task | Status |
+|---|---|---|
+| SAA-001 | Freeze product scope / tenancy / deployment / NFRs | PLANNED |
+| SAA-002 | Define full REST/OpenAPI v1 contract | PLANNED |
+| SAA-003 | Define backend microservice/service boundaries | PLANNED |
+| SAA-004 | Bind authentication/RBAC to governance authority | PLANNED |
+| SAA-005 | Implement PostgreSQL runtime/migrations/reconciliation | PLANNED |
+| SAA-006 | Implement API gateway/backend services/workers | PLANNED |
+| SAA-007 | Define complete cockpit IA/design/action contracts | PLANNED |
+| SAA-008 | Implement full cockpit read/monitor surfaces | PLANNED |
+| SAA-009 | Implement governed admin operational actions | PLANNED |
+| SAA-010 | Security/audit/observability/operations hardening | PLANNED |
+| SAA-011 | Package reproducible frontend/backend/workers/DB deployment | PLANNED |
+| SAA-012 | Production-equivalent staging deployment | PLANNED |
+| SAA-013 | Production deploy to mcp.wealthtechinnovations.com/template | PLANNED |
+| SAA-014 | Full production acceptance matrix | PLANNED |
+| SAA-015 | Release SaaS platform 1.0.0 + runbooks/recovery/upgrade | PLANNED |
+
+Canonical detailed programme: `docs/control-plane/SAAS_PLATFORM_PROGRAM.md`.
