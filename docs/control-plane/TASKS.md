@@ -14,7 +14,7 @@ Objective: V2.7.0 Self-Governed Control Plane.
 | SG-006 Release V2.7.0 and reconcile source checkpoint | DONE | release subject `d11b72956e68526edf9b17aec472163a4e49a585` |
 | SG-007 Resume framework program #12 | DONE | program authority restored |
 
-## Active program — CREATE_NEW_REPOSITORY_COMPLETION
+## Completed program — CREATE_NEW_REPOSITORY_COMPLETION
 
 | Task | Status | Dependency | Exit evidence |
 |---|---|---|---|
@@ -23,13 +23,13 @@ Objective: V2.7.0 Self-Governed Control Plane.
 | P12-S3 Setup approval + APPLY_BASELINE | DONE | P12-S2 | baseline commit + first-agent handoff |
 | P12-S4 Prove subsequent NORMAL_GOVERNED_ENTRY on external CASE 1 pilot (current pilot: Gouvern) | DONE | P12-S3 | `Gouvern#4` NORMAL_GOVERNED_ENTRY + LOCAL_HANDOFF_READY; no baseline reset |
 | P12-S5 Second fresh repository E2E | DONE | P12-S4 | Ekyc fresh baseline + subsequent NORMAL_GOVERNED_ENTRY `LOCAL_HANDOFF_READY`; no target-specific repair |
-| P12-S6 Close CASE 1 and release next macro case | IN_PROGRESS | P12-S5 | reconcile final CASE 1 evidence and release GMC-A |
+| P12-S6 Close CASE 1 and release next macro case | DONE | P12-S5 | CASE 1 closed; GMC-A released |
 
 ## Unique executable task
 
-`P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`
+`GMC-01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES`
 
-`P12-S5` exit gate is PASS. `P12-S6` is the single IN_PROGRESS/executable task; GMC remains dependency-bound behind CASE 1 closure.
+CASE 1 is closed. `GMC-01` is now the single IN_PROGRESS/executable global task and maps to work package `GMC-G01`.
 
 ### C1-12 discovered sub-tasks
 
@@ -59,7 +59,17 @@ Objective: V2.7.0 Self-Governed Control Plane.
 | C1-12-P-A | Remove hard-coded `C1-12` relational active-phase validation | DONE | RED `36293227831`; GREEN `36293287750` |
 | C1-12-P | Reconcile canonical relational memory with completed C1-12 evidence | DONE | human/machine/relational projections reconciled |
 
-Current unique executable task: `P12-S5_SECOND_FRESH_REPOSITORY_E2E`.
+Historical note: this section described the prior CASE 1 phase. Current unique executable task is `GMC-01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES`.
+
+## CASE 1 closure reconciliation
+
+- `C1-13-I-B`: DONE as parent reconciled through completed children `C1-13-I-B-A..G`.
+- `C1-14`: DONE.
+- `P12-S6`: DONE.
+- `CREATE_NEW_REPOSITORY`: COMPLETE.
+- No executable CASE 1 task remains orphaned.
+- External MCP evidence/intakes remain external.
+- Next task: `GMC-01 / GMC-G01`.
 
 ## Canonical architecture hardening backlog
 
@@ -101,7 +111,7 @@ This backlog captures the missing automation required so an arriving agent can b
 | IDN-012 | Add source-control-plane entry adapter so the template source can use the same identity/session model | DONE | source mode remains distinct from client local-entry |
 | IDN-013 | Expose identity/session state to future Governance API/Admin UI | FUTURE | only after workflow semantics validated |
 
-IDN-001..IDN-012 are now implemented/validated; IDN-013 remains future UI/API work. The IDN lane does not supersede the global programme: `P12-S6` remains the unique executable task.
+IDN-001..IDN-012 are now implemented/validated; IDN-013 remains future UI/API work. The IDN lane does not supersede the global programme. After validated CASE 1 closure, `GMC-01` is the unique executable task.
 
 
 ## Reusable GSCC → GSE → GACR capsule productization backlog
@@ -133,7 +143,7 @@ The capsule release hands the same arrival into the existing post-entry junction
 
 Canonical productization authority: `docs/control-plane/GSCC_GSE_GACR_REUSABLE_CAPSULE.md`.
 
-Registration of this backlog does **not** advance the global programme. `P12-S6` remains the unique executable task.
+Registration of this backlog does **not** bypass the global programme. Current unique executable task is `GMC-01`; CAP remains dependency-bound behind its stated gate.
 
 ## Two-stage agent purpose routing backlog
 
