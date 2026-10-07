@@ -83,7 +83,7 @@
     "continuous_background_heartbeat_proven": false,
     "github_issue_control_channel_candidate": true
   },
-  "revision_authority_id": "CP-AGENT-RELAY-001-R8",
+  "revision_authority_id": "CP-AGENT-RELAY-001-R9",
   "forensics": {
     "enabled": true,
     "projection_only": true,
@@ -136,14 +136,16 @@
       "INTERRUPTION_SIGNAL",
       "WAKE_POLL",
       "AVAILABILITY_UPDATE",
-      "WORK_OFFER_ACCEPT"
+      "WORK_OFFER_ACCEPT",
+      "WORK_RELINQUISH"
     ],
     "runtime_credential_policy": "MEMORY_ONLY_NEVER_PERSIST",
     "repository_dispatch_events": [
       "gacr_auto-attach",
       "gacr_heartbeat",
       "gacr_beacon",
-      "gacr_work-offer-accept"
+      "gacr_work-offer-accept",
+      "gacr_work-relinquish"
     ],
     "interruption_signal_policy": "EXPLICIT_OBSERVATION_ONLY",
     "wake_poll_may_accept_takeover": false,
@@ -173,7 +175,8 @@
       "command_ack",
       "challenge_response",
       "availability",
-      "work_offer_accept"
+      "work_offer_accept",
+      "work_relinquish"
     ],
     "auto_attach_before_event": true,
     "auto_resolve_session": true,
@@ -476,5 +479,38 @@
       "SOURCE_CONTROL_PLANE_CANONICAL_TASK_GRAPH_ONLY",
       "WORK_OFFER_NE_CLAIM_NE_WRITE_AUTHORITY"
     ]
+  },
+  "contextual_task_pool": {
+    "enabled": true,
+    "authority_revision": "CP-AGENT-RELAY-001-R9",
+    "decision_id": "CPD-076",
+    "extends_dispatcher_revision": "CP-AGENT-RELAY-001-R8",
+    "projection_only": true,
+    "source_projection_path": ".governance/control-plane-state/gacr-task-pool.json",
+    "client_projection_path": ".governance/agent-relay/task-pool.json",
+    "canonical_work_source": "R8_CANONICAL_WORK_DOCUMENT",
+    "auto_refresh_after_dispatch": true,
+    "context_packet_required_on_offer": true,
+    "exact_head_required_before_claim": true,
+    "one_active_claim_per_session": true,
+    "collision_domain_exclusion": true,
+    "responsive_requeue_requires": [
+      "checkpoint_ref",
+      "handoff_ref",
+      "evidence_ref",
+      "observed_head"
+    ],
+    "abrupt_recovery": [
+      "forensics",
+      "takeover",
+      "exact_head_reconciliation"
+    ],
+    "grants_write_authority": false,
+    "grants_business_authority": false,
+    "privacy": {
+      "raw_conversation_content_persisted": false,
+      "assistant_internal_workings_persisted": false,
+      "provider_private_identity_inference": false
+    }
   }
 }
