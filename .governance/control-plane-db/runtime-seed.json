@@ -392,6 +392,25 @@
       "status": "ACCEPTED",
       "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "decided_at": "2026-10-07"
+    },
+    {
+      "decision_id": "CPD-074",
+      "scope_type": "AGENT_CONTINUITY",
+      "scope_id": "CP-AGENT-RELAY-001",
+      "decision_key": "AVAILABILITY_AWARE_PARALLEL_WORK_DISPATCH",
+      "value": {
+        "revision": "CP-AGENT-RELAY-001-R7",
+        "roster_projection": "gacr-agent-roster/v1",
+        "explicit_idle_required_for_auto_assignment": true,
+        "provider_limit_policy": "EXPLICIT_OBSERVATION_ONLY_NEVER_INFER",
+        "canonical_task_opt_in_required": true,
+        "claim_required_before_execution": true,
+        "dispatch_offer_grants_mutation_authority": false,
+        "global_programme_task_unchanged": "GMC-01"
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "decided_at": "2026-10-07"
     }
   ],
   "checkpoints": [
@@ -2279,6 +2298,19 @@
         "public_url": "https://mcp.wealthtechinnovations.com/template"
       },
       "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+      "occurred_at": "2026-10-07"
+    },
+    {
+      "event_id": "CME-20261007-GACR-R7",
+      "event_type": "DECISION_ACCEPTED",
+      "scope_type": "AUTHORITY",
+      "scope_id": "CP-AGENT-RELAY-001",
+      "payload": {
+        "decision_id": "CPD-074",
+        "revision": "R7",
+        "capability": "AVAILABILITY_AWARE_PARALLEL_WORK_DISPATCH"
+      },
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "occurred_at": "2026-10-07"
     }
   ]
