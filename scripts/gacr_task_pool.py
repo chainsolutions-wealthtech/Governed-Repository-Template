@@ -518,9 +518,8 @@ def _context_packet(
         },
         "trace_contract": trace_contract(),
         "privacy": {
-            "raw_prompts_included": False,
-            "transcripts_included": False,
-            "private_reasoning_included": False,
+            "raw_conversation_content_persisted": False,
+            "assistant_internal_workings_persisted": False,
             "provider_private_identity_inference": False,
         },
     }
