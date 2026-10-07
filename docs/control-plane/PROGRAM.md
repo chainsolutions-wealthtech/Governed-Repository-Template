@@ -289,4 +289,4 @@ CASE 1 live discovery has now produced enough evidence to refine the reusable co
 
 The capability snapshot is not a second execution engine and does not authorize writes. It lets the Template reuse a dated last-known MCP image, refresh it through read-only discovery when freshness/need requires it, and prepare existing work-items with the correct tools, dependencies and authority gates.
 
-P12-S6 and GMC remain downstream of P12-S5 exactly as before.
+Historical note: at that point, P12-S6 and GMC remained downstream of P12-S5. This dependency is now satisfied by CPD-073.
