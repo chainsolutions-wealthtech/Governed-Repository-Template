@@ -446,5 +446,34 @@
     "global_programme_advanced": false,
     "global_next_action_preserved": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
     "ultimate_live_acceptance": "NOT_PASSED"
+  },
+  "r8": {
+    "authority_revision": "CP-AGENT-RELAY-001-R8",
+    "decision_id": "CPD-075",
+    "status": "IMPLEMENTED_PENDING_CI_MERGE",
+    "extends": "CP-AGENT-RELAY-001-R7",
+    "model": "CONTEXTUAL_CONTINUOUS_TASK_POOL",
+    "source_projection": ".governance/control-plane-state/gacr-task-pool.json",
+    "client_projection": ".governance/agent-relay/task-pool.json",
+    "runtime": "scripts/gacr_task_pool.py",
+    "schema": "schemas/gacr-task-pool.schema.json",
+    "portable_doc": "docs/GACR_TASK_POOL.md",
+    "source_doc": "docs/control-plane/GACR_CONTEXTUAL_TASK_POOL.md",
+    "invariants": [
+      "POOL_IS_PROJECTION_NOT_TASK_AUTHORITY",
+      "CANONICAL_TASK_SOURCES_REMAIN_UNCHANGED",
+      "PARALLEL_WAVES_REQUIRE_NON_OVERLAPPING_COLLISION_DOMAINS",
+      "EXPLICIT_AGENT_CAPACITY_REQUIRED",
+      "WORK_OFFER_NE_CLAIM_NE_MUTATION_AUTHORITY",
+      "ACCEPTANCE_PLUS_EXACT_HEAD_REQUIRED_BEFORE_CLAIM",
+      "ONE_ACTIVE_CLAIM_PER_SESSION",
+      "RESPONSIVE_INTERRUPTION_REQUIRES_CHECKPOINT_HANDOFF_EVIDENCE_BEFORE_REQUEUE",
+      "ABRUPT_INTERRUPTION_USES_FORENSICS_TAKEOVER_AND_EXACT_HEAD",
+      "SUCCESSOR_READS_REFERENCED_CANONICAL_HISTORY_BEFORE_MUTATION",
+      "NO_RAW_CONVERSATION_OR_INTERNAL_REASONING_PERSISTENCE"
+    ],
+    "global_programme_task_unchanged": "GMC-01",
+    "gmc_task_completion_performed": false,
+    "gmc_implementation_authority_granted": false
   }
 }
