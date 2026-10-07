@@ -17,22 +17,24 @@
 If `.template-source` exists, this repository is the source/control plane itself. Before using the distributed project-state templates below, read the source-only authorities in this order:
 
 1. `docs/control-plane/CURRENT_STATE.md`
-2. `docs/control-plane/CANONICAL_ARCHITECTURE.md`
-3. `docs/control-plane/PROGRAM.md`
-4. `docs/control-plane/TASKS.md`
-5. `docs/control-plane/NEXT_ACTION.md`
-6. `docs/control-plane/DECISIONS_LOG.md`
-7. `docs/control-plane/SUIVI.md`
-8. `docs/control-plane/CASE1_REPLAY_LEDGER.md`
-9. `docs/control-plane/DATA_MODEL.md`
-10. `docs/control-plane/AGENT_ACTIVITY_LOG.md`
-11. `.governance/control-plane-state/current.json`
-12. `.governance/control-plane-state/canonical-architecture.json`
-13. `.governance/control-plane-state/checkpoint.json`
-14. `.governance/control-plane-state/handoff.json`
-15. `.governance/control-plane-state/tasks.json`
-16. `.governance/control-plane-state/case1-replay.json`
-17. `.governance/control-plane-state/agent-activity.json`
+2. `docs/control-plane/MASTER_SYSTEM_MAP.md`
+3. `docs/control-plane/REQUIREMENTS_ROADMAP.md`
+4. `docs/control-plane/CANONICAL_ARCHITECTURE.md`
+5. `docs/control-plane/PROGRAM.md`
+6. `docs/control-plane/TASKS.md`
+7. `docs/control-plane/NEXT_ACTION.md`
+8. `docs/control-plane/DECISIONS_LOG.md`
+9. `docs/control-plane/SUIVI.md`
+10. `docs/control-plane/CASE1_REPLAY_LEDGER.md`
+11. `docs/control-plane/DATA_MODEL.md`
+12. `docs/control-plane/AGENT_ACTIVITY_LOG.md`
+13. `.governance/control-plane-state/current.json`
+14. `.governance/control-plane-state/canonical-architecture.json`
+15. `.governance/control-plane-state/checkpoint.json`
+16. `.governance/control-plane-state/handoff.json`
+17. `.governance/control-plane-state/tasks.json`
+18. `.governance/control-plane-state/case1-replay.json`
+19. `.governance/control-plane-state/agent-activity.json`
 
 Reobserve `main` HEAD before any write and reconcile it with the source checkpoint. The root files containing template placeholders remain distributed client templates and are not the source repository's live project state.
 
@@ -107,3 +109,12 @@ Dans un repository cible déjà remis par handoff, suivre la gouvernance locale 
 ## Local governed entry
 
 Dans un repository cible initialisé, le point d'entrée préféré d'un agent est le workflow local décrit dans `docs/LOCAL_GOVERNED_ENTRY.md`. Le premier agent après bootstrap doit terminer `FIRST_AGENT_BOOTSTRAP` avant tout travail fonctionnel mutable.
+
+
+## Jonction après release
+
+Après la release GSCC→GSE→GACR→F1, ne pas recréer First Touch, GSE ou GACR. Reprendre la même arrivée/session et suivre la carte maître :
+
+`docs/control-plane/MASTER_SYSTEM_MAP.md`.
+
+La jonction distingue obligatoirement rôle/type, authority snapshot, connection intent, entry purpose, work kind/case, entry action et mutation authority. Le routeur `entry_purpose` à deux étages reste `PLANNED_NOT_ACTIVE` tant que son gate RTE n'est pas validé ; utiliser jusque-là les politiques d'entry action et de connection intent réellement actives.
