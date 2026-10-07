@@ -142,6 +142,15 @@
             "USER_CANCELLED",
             "NETWORK_LOSS",
             "PROCESS_EXITED",
+            "PROVIDER_RATE_LIMIT",
+            "TOOL_RATE_LIMIT",
+            "USAGE_LIMIT",
+            "QUOTA_LIMIT",
+            "CONTEXT_LIMIT",
+            "WAITING_FOR_AUTHORITY",
+            "WAITING_FOR_INPUT",
+            "WAITING_FOR_REVIEW",
+            "EXTERNAL_DEPENDENCY",
             "UNKNOWN",
             null
           ]
@@ -228,6 +237,72 @@
           ]
         },
         "github_job": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "workload_state": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "WORKING",
+            "IDLE",
+            "WAITING_FOR_WORK",
+            "WAITING_FOR_INPUT",
+            "WAITING_FOR_AUTHORITY",
+            "WAITING_FOR_REVIEW",
+            "BLOCKED",
+            "RATE_LIMITED",
+            "QUOTA_LIMITED",
+            "CONTEXT_LIMITED",
+            "CHECKPOINTING",
+            "TERMINATING",
+            "UNKNOWN",
+            null
+          ]
+        },
+        "blocker_code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "NONE",
+            "DEPENDENCY",
+            "COLLISION_DOMAIN",
+            "WAITING_FOR_INPUT",
+            "WAITING_FOR_AUTHORITY",
+            "WAITING_FOR_REVIEW",
+            "PROVIDER_RATE_LIMIT",
+            "TOOL_RATE_LIMIT",
+            "USAGE_LIMIT",
+            "QUOTA_LIMIT",
+            "CONTEXT_LIMIT",
+            "EXTERNAL_DEPENDENCY",
+            "TOOL_FAILURE",
+            "NETWORK_LOSS",
+            "UNKNOWN",
+            null
+          ]
+        },
+        "capacity_slots": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "max_parallel_tasks": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "retry_after_at": {
           "type": [
             "string",
             "null"
