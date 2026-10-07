@@ -192,7 +192,11 @@ def select_wake_events(
 ) -> list[dict]:
     values = []
     for item in dispatches_doc.get("items", []):
-        if item.get("status") not in {"READY", "ACTIVATED"}:
+        status = item.get("status")
+        schema = item.get("schema")
+        takeover_wake = status in {"READY", "ACTIVATED"}
+        work_offer_wake = schema == "gacr-work-dispatch/v1" and status == "OFFERED"
+        if not (takeover_wake or work_offer_wake):
             continue
         if session_id and item.get("target_session_id") == session_id:
             values.append(item)
