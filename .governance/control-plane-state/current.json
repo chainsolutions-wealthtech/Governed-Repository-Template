@@ -394,6 +394,33 @@
       "runtime_projection": "POSTGRESQL_AFTER_ARCH_009",
       "production_mutation_authority_granted": false,
       "current_unique_executable_item_unchanged": "GMC-01"
+    },
+    "gacr_capacity_parallel_dispatch": {
+      "authority_id": "CP-AGENT-RELAY-001-R7",
+      "decision_id": "CPD-074",
+      "status": "IMPLEMENTED_PENDING_CI_AND_MERGE",
+      "model": "EXPLICIT_CAPACITY_POOL_OVER_EXISTING_GACR_STORES",
+      "states": [
+        "AVAILABLE",
+        "WAITING",
+        "BUSY",
+        "BLOCKED",
+        "RATE_LIMITED",
+        "QUOTA_BLOCKED",
+        "CHECKPOINTING",
+        "TERMINATING",
+        "STALLED",
+        "TERMINAL",
+        "UNKNOWN"
+      ],
+      "silence_means_available": false,
+      "work_offer_grants_claim": false,
+      "work_offer_grants_write_authority": false,
+      "acceptance_requires_canonical_claim": true,
+      "acceptance_requires_exact_head": true,
+      "collision_domains_enforced": true,
+      "provider_limit_inference": "OBSERVED_ONLY_NEVER_INFER",
+      "global_programme_task_unchanged": "GMC-01"
     }
   },
   "framework_product_boundary": {
