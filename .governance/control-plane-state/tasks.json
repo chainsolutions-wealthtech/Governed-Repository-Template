@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 55,
+  "revision": 56,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -517,7 +517,7 @@
     },
     {
       "id": "C1-13-I-B",
-      "status": "BLOCKED",
+      "status": "DONE",
       "depends_on": [
         "C1-13-I-A",
         "C1-13-I-B-A"
@@ -525,16 +525,22 @@
       "blocks": [
         "P12-S5"
       ],
-      "next_action": "WAIT_FOR_SETUP_APPROVAL_THEN_APPLY_BASELINE",
-      "gate_code": "OWNER_SETUP_APPROVAL_REQUIRED",
+      "next_action": null,
+      "gate_code": null,
       "evidence": [
         "Ekyc HEAD 9ace9f9882a06df69c9466cec633bd191f7cad12",
         "Ekyc#1 revision 39 Q_DOMAIN_BINDING",
         "Authorized discovery contains no Ekyc/KYC domain",
         "MCP scoped-project registry contains no Ekyc project entry",
         "Domain intent chain completed through CREATE_NEW_ROOT_DOMAIN / DISCOVER_AVAILABLE_NAMES",
-        "Ekyc#1 revision 45 is Q_WORKFLOW_MODEL"
-      ]
+        "Ekyc#1 revision 45 is Q_WORKFLOW_MODEL",
+        "Parent reconciled at P12-S6 closure: C1-13-I-B-A through C1-13-I-B-G are all DONE",
+        "Owner setup approval comment 5936330817",
+        "Baseline materialization Ekyc 3e889a2bdac78312ebcc7e31d1388ead65c9fceb",
+        "Ekyc#2 LOCAL-000002 NORMAL_GOVERNED_ENTRY → LOCAL_HANDOFF_READY revision 6",
+        "P12-S5 exit gate PASS"
+      ],
+      "completion_mode": "ABSORBED_BY_COMPLETED_CHILD_PATH"
     },
     {
       "id": "C1-13-I",
@@ -560,11 +566,21 @@
     },
     {
       "id": "P12-S6",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "P12-S5"
       ],
-      "next_action": "CLOSE_CREATE_NEW_REPOSITORY_CASE"
+      "next_action": null,
+      "evidence": [
+        "P12-S5 second fresh E2E PASS",
+        "Gouvern NORMAL_GOVERNED_ENTRY PASS with no baseline/session/work duplication",
+        "Ekyc fresh baseline + NORMAL_GOVERNED_ENTRY PASS with no target-specific repair",
+        "C1-13-I-B historical parent reconciled from completed child path A..G",
+        "No unresolved executable CASE 1 task remains",
+        "External MCP dependencies preserved as intake/history only",
+        "CASE 1 relational run closed and C1-14 marked DONE",
+        "GMC-01 released as the next unique global task"
+      ]
     },
     {
       "id": "C1-12-A",
@@ -1592,11 +1608,13 @@
     },
     {
       "id": "GMC-01",
-      "status": "PLANNED",
+      "status": "IN_PROGRESS",
       "depends_on": [
         "P12-S6"
       ],
-      "next_action": "SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES"
+      "next_action": "SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES",
+      "release_gate": "P12-S6_VALIDATED_EXIT",
+      "execution_mode": "PLANNING_ONLY_KNOWLEDGE_EXTRACTION_UNTIL_SEPARATELY_AUTHORIZED"
     },
     {
       "id": "GMC-02",
@@ -1743,7 +1761,7 @@
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
     }
   ],
-  "unique_executable_item": "P12-S6",
+  "unique_executable_item": "GMC-01",
   "gmc_work_package_contract": {
     "decision_id": "CPD-028",
     "interpretation": "GMC-Gxx_WORK_PACKAGE__GMC-Gxx-Tyy_ATOMIC_TASK",
@@ -1775,7 +1793,7 @@
     ],
     "atomic_task_id_pattern": "GMC-Gxx-Tyy",
     "dependency_rule": "VALIDATED_OUTPUTS_AND_EVIDENCE_REQUIRED",
-    "active_unique_executable_item_unchanged": "C1-12-J-C",
+    "active_unique_executable_item_unchanged": "GMC-01",
     "human_blueprint": "docs/control-plane/GOVERNANCE_MODEL_EXECUTION_BLUEPRINT.md",
     "machine_blueprint": ".governance/control-plane-state/governance-model-execution-blueprint.json",
     "work_package_count": 19,
@@ -1814,6 +1832,7 @@
       "CPD-028",
       "CPD-029"
     ],
-    "final_assembly_work_package": "GMC-G19"
+    "final_assembly_work_package": "GMC-G19",
+    "release_gate": "P12-S6_VALIDATED_EXIT"
   }
 }
