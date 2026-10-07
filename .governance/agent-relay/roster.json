@@ -1,0 +1,12 @@
+{
+  "schema_version": "1.0.0",
+  "schema": "gacr-agent-roster/v1",
+  "revision": 0,
+  "generated_at": "2026-10-07T01:30:38+00:00",
+  "projection_only": true,
+  "authority_granted": false,
+  "summary": {},
+  "code_agents_total": 0,
+  "code_agents_available": 0,
+  "agents": []
+}
