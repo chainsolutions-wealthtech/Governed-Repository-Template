@@ -1,13 +1,13 @@
 {
   "schema_version": "1.0.0",
-  "handoff_id": "CP-HANDOFF-20261001-008",
+  "handoff_id": "CP-HANDOFF-20261007-023",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "canonical_branch": "main",
   "baseline_subject_head": "5172f8b9cf5ce560a1d55af65e7b7916a77df86b",
   "active_branch": "governance/checkpoint-ekyc-second-fresh-e2e-pass",
-  "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "current_task": "P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
-  "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+  "active_work_package": "GMC-A / GMC-G01",
+  "current_task": "GMC-01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES",
+  "unique_next_action": "GMC_01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES",
   "read_first": [
     "docs/control-plane/CURRENT_STATE.md",
     ".governance/control-plane-state/canonical-architecture.json",
@@ -412,7 +412,7 @@
     "lane_id": "IDN_PER_ARRIVAL_SESSION_RUNTIME_20261007",
     "status": "CLOSED_LIVE_RELEASE_PROVEN",
     "authorization_scope": "IDENTITY_SESSION_RUNTIME_ONLY",
-    "global_programme_task_unchanged": "P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+    "global_programme_task_unchanged": "GMC-01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES",
     "p12_s6_resumed": false,
     "branch": "governance/per-arrival-identity-full-session-runtime",
     "pull_request": 229,
@@ -460,7 +460,7 @@
     "decision": "CPD-069",
     "tasks": "CAP-001..CAP-012",
     "execution_gate": "GMC-19 DONE + RTE-012 DONE + ARCH-006 DONE + IDN-006 DONE",
-    "current_global_task": "P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+    "current_global_task": "GMC-01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES",
     "next_when_unblocked": "CAP-001 / DEFINE_REUSABLE_CAPSULE_BOUNDARY_AND_PUBLIC_CONTRACT",
     "do_not_start_before_gate": true,
     "junction_handoff": "00_START_HERE.md → role/authority → connection_intent → entry_purpose → work_kind_or_case",
@@ -483,7 +483,7 @@
     ],
     "status_contract": "DISTINGUISH_LIVE_PROVEN_IMPLEMENTED_PARTIAL_PLANNED_NOT_ACTIVE_FUTURE",
     "no_parallel_authority": true,
-    "current_global_task": "P12-S6"
+    "current_global_task": "GMC-01"
   },
   "saas_platform_program": {
     "authority": "docs/control-plane/SAAS_PLATFORM_PROGRAM.md",
@@ -500,6 +500,11 @@
     ],
     "do_not_start_before_dependencies": true,
     "production_mutation_requires_live_authority": true,
-    "current_global_task": "P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE"
+    "current_global_task": "GMC-01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES"
+  },
+  "case1_closure": {
+    "status": "DONE",
+    "decision_id": "CPD-073",
+    "checkpoint": "CREATE_NEW_REPOSITORY_CASE_COMPLETE"
   }
 }
