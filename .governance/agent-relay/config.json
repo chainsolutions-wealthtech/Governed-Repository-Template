@@ -172,7 +172,8 @@
       "interrupt",
       "command_ack",
       "challenge_response",
-      "availability"
+      "availability",
+      "work_offer_accept"
     ],
     "auto_attach_before_event": true,
     "auto_resolve_session": true,
