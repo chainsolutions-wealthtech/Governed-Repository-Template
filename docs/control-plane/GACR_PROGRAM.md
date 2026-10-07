@@ -445,3 +445,26 @@ Tests-first lineage after exact-HEAD reconciliation onto `main@8686f8d21f18f6392
 - prior semantically identical candidate proof before the latest runtime-state-only rebase: Governance CI `37393238645 = SUCCESS`, Function Exposure Gate `37393238765 = SUCCESS`, Observable Arrival Gateway `37393238550 = SUCCESS`.
 
 The branch must still pass its final CI after this durable-attestation commit before merge. No P12-S6, CASE 1 or GMC work is executed by this reconciliation. Step 13B status is unchanged by this correction.
+
+
+## R8 — Contextual continuous task pool
+
+Authority revision: `CP-AGENT-RELAY-001-R8`. Decision: `CPD-075`.
+
+R8 extends R7 from capacity-aware offers into continuous contextual work orchestration.
+
+It adds:
+- canonical-task projection rather than a parallel task database;
+- source Control Plane projection of currently released atomic blueprint tasks;
+- collision-free task waves;
+- safe context packets with canonical history/method/evidence references;
+- exact-HEAD acceptance→claim activation;
+- one active claim per agent session;
+- responsive checkpoint/handoff/evidence requeue;
+- abrupt interruption recovery through existing forensics/takeover;
+- role/capability/authority-aware dispatch;
+- portable client task-pool projection.
+
+The authoritative design is `docs/control-plane/GACR_CONTEXTUAL_TASK_POOL.md`.
+
+R8 is cross-cutting coordination infrastructure. It does not advance `GMC-01`, does not complete any GMC atomic task and does not grant Governance Model mutation authority.
