@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### GACR R8 role/capacity dispatch junction
+
+- Added canonical CODE_AGENT / INTAKER / SUPERVISOR / REVIEWER post-release role declarations.
+- Existing GACR sessions are enriched instead of duplicated.
+- Explicit WAITING_FOR_WORK outcomes become dispatchable WAITING capacity evidence.
+- Unscoped READY work is no longer automatically dispatched.
+- Added canonical reusable agent entry prompts.
+- Preserved role/capability/authority separation.
+
+
 ### GACR R7 capacity-aware parallel dispatch
 
 - Added explicit AVAILABLE/WAITING/BUSY/BLOCKED/RATE_LIMITED/QUOTA_BLOCKED agent capacity states.
