@@ -398,7 +398,7 @@
     "gacr_capacity_parallel_dispatch": {
       "authority_id": "CP-AGENT-RELAY-001-R7",
       "decision_id": "CPD-074",
-      "status": "IMPLEMENTED_PENDING_CI_AND_MERGE",
+      "status": "MERGED_CI_GREEN_AWAITING_EXPLICIT_CAPACITY_SIGNAL",
       "model": "EXPLICIT_CAPACITY_POOL_OVER_EXISTING_GACR_STORES",
       "states": [
         "AVAILABLE",
@@ -420,7 +420,21 @@
       "acceptance_requires_exact_head": true,
       "collision_domains_enforced": true,
       "provider_limit_inference": "OBSERVED_ONLY_NEVER_INFER",
-      "global_programme_task_unchanged": "GMC-01"
+      "global_programme_task_unchanged": "GMC-01",
+      "merge_pr": 252,
+      "merge_commit": "819c5f48c1cbb9b7e24a5eb1976e4d16ac1ac31a",
+      "post_merge_governance_ci": 37560232192,
+      "post_merge_governance_ci_result": "PASS",
+      "post_merge_relay_run": 37560232214,
+      "post_merge_relay_result": "PASS",
+      "observed_beacon_revision": 559,
+      "observed_session_revision": 522,
+      "observed_active_session_count": 93,
+      "explicit_capacity_signal_count": 0,
+      "observed_active_claim_count": 0,
+      "observed_work_offer_count": 0,
+      "no_idle_inference_from_silence": true,
+      "live_capacity_dispatch_status": "READY_WAITING_FOR_REAL_AGENT_AVAILABLE_OR_WAITING_SIGNAL"
     }
   },
   "framework_product_boundary": {
