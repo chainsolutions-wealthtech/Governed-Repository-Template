@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsolutions.local/schemas/gacr-continuity-coordination.schema.json",
+  "title": "GACR shared continuity coordination projection",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "authority",
+    "projection_only",
+    "grants_task_authority",
+    "grants_claim",
+    "grants_mutation_authority",
+    "revision",
+    "items"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "authority": {
+      "const": "DERIVED_GACR_COORDINATION_PROJECTION"
+    },
+    "projection_only": {
+      "const": true
+    },
+    "grants_task_authority": {
+      "const": false
+    },
+    "grants_claim": {
+      "const": false
+    },
+    "grants_mutation_authority": {
+      "const": false
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "continuity_id",
+          "repository",
+          "coordination_issue",
+          "projection_only",
+          "participants"
+        ],
+        "properties": {
+          "continuity_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 192
+          },
+          "repository": {
+            "type": "string",
+            "minLength": 1
+          },
+          "coordination_issue": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "projection_only": {
+            "const": true
+          },
+          "grants_task_authority": {
+            "const": false
+          },
+          "grants_claim": {
+            "const": false
+          },
+          "grants_mutation_authority": {
+            "const": false
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "participant_id",
+                "session_id",
+                "scope_id",
+                "work_mode",
+                "collision_domains",
+                "observed_head_sha",
+                "coordination_state_ref",
+                "status",
+                "grants_task_authority",
+                "grants_claim",
+                "grants_mutation_authority"
+              ],
+              "properties": {
+                "participant_id": {
+                  "type": "string",
+                  "pattern": "^GACR-P-[0-9a-f]{12}$"
+                },
+                "session_id": {
+                  "type": "string"
+                },
+                "declared_role": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "scope_id": {
+                  "type": "string"
+                },
+                "work_mode": {
+                  "enum": [
+                    "READ_ONLY",
+                    "WRITE",
+                    "REVIEW"
+                  ]
+                },
+                "collision_domains": {
+                  "type": "array",
+                  "minItems": 1,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "observed_head_sha": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{40}$"
+                },
+                "coordination_state_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "status": {
+                  "enum": [
+                    "ACTIVE",
+                    "YIELDED"
+                  ]
+                },
+                "grants_task_authority": {
+                  "const": false
+                },
+                "grants_claim": {
+                  "const": false
+                },
+                "grants_mutation_authority": {
+                  "const": false
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "last_handoff": {
+            "type": [
+              "object",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

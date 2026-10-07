@@ -236,3 +236,48 @@ Canonical role behavior:
 The role is a routing attribute, never mutation authority.
 
 The source Control Plane does not dispatch from `.governance/work/work-items.json` when that surface is only generic bootstrap state. It projects the currently released global programme/work package. Unsupported or ambiguous global task state fails closed with no offer.
+
+
+## Shared continuity coordination projection
+
+GACR may maintain an additive, machine-readable coordination projection keyed by a stable `continuity_id` when several governed sessions contribute to the same long-running objective.
+
+This projection is deliberately **not** a task authority, claim authority, mutation grant, queue, dispatcher or second source of truth.
+
+```text
+CANONICAL TASK / AUTHORITY
++ GACR SESSION / CLAIM / COLLISION DOMAIN
++ EXACT HEAD
++ SHARED CONTINUITY PROJECTION
+→ SAFE PARALLEL COORDINATION
+```
+
+Before a session declares a work scope under a shared continuity ID it must provide:
+- the canonical GACR session ID;
+- the shared `continuity_id`;
+- a receipt/reference proving the latest shared coordination state was read;
+- the exact observed repository HEAD;
+- an explicit `scope_id`;
+- `READ_ONLY`, `WRITE` or `REVIEW` coordination mode;
+- explicit collision domains;
+- its declared role as routing metadata when known.
+
+The projection enforces:
+- a stalled or takeover-ready predecessor cannot silently resume;
+- stale HEAD declarations fail closed;
+- the same scope cannot be independently occupied by two sessions;
+- overlapping `WRITE` collision domains fail closed;
+- a foreign active canonical claim on an overlapping collision domain rejects a `WRITE` declaration;
+- yielding a coordination scope records a handoff but never transfers or releases a canonical claim.
+
+The stored projection carries explicit negative authority facts:
+
+```text
+grants_task_authority = false
+grants_claim = false
+grants_mutation_authority = false
+```
+
+Canonical authority remains in the existing source/program/task/claim/approval gates. The projection only prevents agents sharing a continuity ID from losing the thread or acting on overlapping scopes.
+
+For the source Control Plane, runtime projection state is source-only under `.governance/control-plane-state/`. Instantiated repositories use their repository-local `.governance/agent-relay/` projection. These stores must never be confused or copied as live source runtime state.

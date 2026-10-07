@@ -20,10 +20,11 @@ AUTO_ATTACH = ROOT / "scripts" / "gacr_auto_attach.py"
 CORE = ROOT / "scripts" / "governed_agent_continuity_relay.py"
 TELEMETRY = ROOT / "scripts" / "gacr_agent_telemetry.py"
 CAPACITY = ROOT / "scripts" / "gacr_capacity_dispatch.py"
+CONTINUITY = ROOT / "scripts" / "gacr_continuity_coordination.py"
 
 PREFIX = "/gacr-host "
 SCHEMA = "gacr-host-event/v1"
-EVENTS = {"attach", "heartbeat", "action", "interrupt", "availability", "work_offer_accept", "command_ack", "challenge_response"}
+EVENTS = {"attach", "heartbeat", "action", "interrupt", "availability", "work_offer_accept", "command_ack", "challenge_response", "continuity_scope", "continuity_yield"}
 ACTION_PHASES = {"STARTED", "COMPLETED", "FAILED", "CANCELLED"}
 INTERRUPTION_CODES = {
     "CLIENT_DISCONNECTED",
@@ -86,6 +87,13 @@ ALLOWED_KEYS = {
     "work_kind",
     "capabilities",
     "wake_channels",
+    "continuity_id",
+    "coordination_issue",
+    "coordination_state_ref",
+    "scope_id",
+    "work_mode",
+    "collision_domains",
+    "handoff_ref",
     "action_id",
     "action_label",
     "action_phase",
@@ -208,6 +216,23 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
     if work_kind is not None and work_kind not in CONTROL_PLANE_WORK_KINDS:
         raise ValueError("unsupported host-event work_kind")
 
+    if kind == "continuity_scope":
+        for key in ("session_id", "continuity_id", "coordination_issue", "coordination_state_ref", "scope_id", "work_mode", "observed_head"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host continuity_scope requires {key}")
+        if payload.get("work_mode") not in {"READ_ONLY", "WRITE", "REVIEW"}:
+            raise ValueError("host continuity_scope requires a supported work_mode")
+        domains = payload.get("collision_domains")
+        if not isinstance(domains, list) or not domains:
+            raise ValueError("host continuity_scope requires non-empty collision_domains")
+        if not all(isinstance(item, str) and item.strip() for item in domains):
+            raise ValueError("host continuity_scope collision_domains must be non-empty strings")
+        if not isinstance(payload.get("coordination_issue"), int) or int(payload["coordination_issue"]) <= 0:
+            raise ValueError("host continuity_scope requires a positive coordination_issue")
+    if kind == "continuity_yield":
+        for key in ("session_id", "continuity_id", "scope_id", "handoff_ref", "observed_head"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host continuity_yield requires {key}")
     if kind == "work_offer_accept":
         for key in ("session_id", "dispatch_id"):
             if payload.get(key) in (None, ""):
@@ -220,13 +245,15 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
         for key in ("session_id", "dispatch_id", "command_id", "correlation_id", "challenge_id", "nonce", "challenge_status"):
             if payload.get(key) in (None, ""):
                 raise ValueError(f"host challenge_response requires {key}")
-    for list_field in ("capabilities", "wake_channels"):
+    for list_field in ("capabilities", "wake_channels", "collision_domains"):
         if list_field in payload and not isinstance(payload.get(list_field), list):
             raise ValueError(f"{list_field} must be a JSON array")
     if isinstance(payload.get("capabilities"), list) and len(payload["capabilities"]) > 32:
         raise ValueError("too many host-event capabilities")
     if isinstance(payload.get("wake_channels"), list) and len(payload["wake_channels"]) > 8:
         raise ValueError("too many host-event wake channels")
+    if isinstance(payload.get("collision_domains"), list) and len(payload["collision_domains"]) > 32:
+        raise ValueError("too many host-event collision domains")
 
     comment_id = comment.get("id")
     if not comment_id:
@@ -441,8 +468,60 @@ def process(payload: dict, repository: str) -> dict:
 
     session = ensure_session(payload, repository)
     session_id = session["session_id"]
+    coordination_result = None
 
-    if kind == "work_offer_accept":
+    if kind == "continuity_scope":
+        args = [
+            "declare",
+            "--session-id", session_id,
+            "--continuity-id", str(payload["continuity_id"]),
+            "--coordination-issue", str(payload["coordination_issue"]),
+            "--coordination-state-ref", str(payload["coordination_state_ref"]),
+            "--scope-id", str(payload["scope_id"]),
+            "--work-mode", str(payload["work_mode"]),
+            "--observed-head", str(payload["observed_head"]),
+            "--evidence-ref", evidence_ref,
+        ]
+        add(args, "--declared-role", payload.get("agent_role"))
+        for domain in payload.get("collision_domains") or []:
+            add(args, "--collision-domain", domain)
+        coordination_result = json.loads(run_script(CONTINUITY, args))
+        hb = [
+            "heartbeat",
+            "--session-id", session_id,
+            "--source", "CLIENT_EMITTER",
+            "--action", "CONTINUITY_SCOPE_DECLARED",
+            "--evidence", evidence_ref,
+            "--observed-head", str(payload["observed_head"]),
+        ]
+        run_script(CORE, hb)
+        marker_payload = dict(payload)
+        marker_payload["checkpoint_ref"] = str(payload["continuity_id"])
+        marker_beacon(session_id, marker_payload, "CONTINUITY_SCOPE_DECLARED")
+    elif kind == "continuity_yield":
+        args = [
+            "yield",
+            "--session-id", session_id,
+            "--continuity-id", str(payload["continuity_id"]),
+            "--scope-id", str(payload["scope_id"]),
+            "--observed-head", str(payload["observed_head"]),
+            "--handoff-ref", str(payload["handoff_ref"]),
+            "--evidence-ref", evidence_ref,
+        ]
+        coordination_result = json.loads(run_script(CONTINUITY, args))
+        hb = [
+            "heartbeat",
+            "--session-id", session_id,
+            "--source", "CLIENT_EMITTER",
+            "--action", "CONTINUITY_SCOPE_YIELDED",
+            "--evidence", evidence_ref,
+            "--observed-head", str(payload["observed_head"]),
+        ]
+        run_script(CORE, hb)
+        marker_payload = dict(payload)
+        marker_payload["checkpoint_ref"] = str(payload["continuity_id"])
+        marker_beacon(session_id, marker_payload, "CONTINUITY_SCOPE_YIELDED")
+    elif kind == "work_offer_accept":
         run_script(CAPACITY, [
             "accept-work",
             "--dispatch-id", str(payload["dispatch_id"]),
@@ -487,6 +566,7 @@ def process(payload: dict, repository: str) -> dict:
         "evidence_ref": evidence_ref,
         "transport": "GITHUB_ISSUE_COMMENT",
         "provenance": "CLIENT_EMITTER",
+        "coordination": coordination_result,
     }
 
 

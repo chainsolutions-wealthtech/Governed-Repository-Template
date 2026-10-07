@@ -1,0 +1,413 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import re
+import subprocess
+from datetime import datetime, timezone
+from pathlib import Path
+
+ROOT = Path(os.environ.get("GACR_ROOT") or Path(__file__).resolve().parents[1]).resolve()
+GOV = ROOT / ".governance"
+TEMPLATE_SOURCE = (ROOT / ".template-source").exists()
+
+if TEMPLATE_SOURCE:
+    STATE_PATH = GOV / "control-plane-state" / "gacr-continuities.json"
+    SESSIONS_PATH = GOV / "control-plane-state" / "gacr-sessions.json"
+    CLAIMS_PATH = GOV / "control-plane-state" / "gacr-claims.json"
+else:
+    STATE_PATH = GOV / "agent-relay" / "continuities.json"
+    SESSIONS_PATH = GOV / "sessions" / "sessions.json"
+    CLAIMS_PATH = GOV / "work" / "claims.json"
+
+WORK_MODES = {"READ_ONLY", "WRITE", "REVIEW"}
+ACTIVE_SESSION_STATES = {"ACTIVE"}
+ACTIVE_RELAY_STATES = {"ACTIVE"}
+SAFE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,191}$")
+SHA40 = re.compile(r"^[0-9a-f]{40}$")
+
+
+def now_iso() -> str:
+    return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
+
+
+def read_json(path: Path, default: dict | None = None) -> dict:
+    if not path.exists():
+        return default or {}
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def write_json(path: Path, value: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+
+def git_head() -> str | None:
+    cp = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, capture_output=True, check=False)
+    return cp.stdout.strip() if cp.returncode == 0 and cp.stdout.strip() else None
+
+
+def default_state() -> dict:
+    return {
+        "schema_version": "1.0.0",
+        "authority": "DERIVED_GACR_COORDINATION_PROJECTION",
+        "projection_only": True,
+        "grants_task_authority": False,
+        "grants_claim": False,
+        "grants_mutation_authority": False,
+        "revision": 0,
+        "items": [],
+    }
+
+
+def participant_id(continuity_id: str, session_id: str, scope_id: str) -> str:
+    raw = f"{continuity_id}|{session_id}|{scope_id}".encode("utf-8")
+    return "GACR-P-" + hashlib.sha256(raw).hexdigest()[:12]
+
+
+def normalize_domains(values: list[str] | None) -> list[str]:
+    domains = sorted({str(value).strip() for value in (values or []) if str(value).strip()})
+    if not domains:
+        raise ValueError("CONTINUITY_COORDINATION_FAILED: collision_domains required")
+    for value in domains:
+        if not SAFE_ID.fullmatch(value):
+            raise ValueError(f"CONTINUITY_COORDINATION_FAILED: unsafe collision domain {value!r}")
+    return domains
+
+
+def require_id(name: str, value: str) -> str:
+    value = str(value or "").strip()
+    if not SAFE_ID.fullmatch(value):
+        raise ValueError(f"CONTINUITY_COORDINATION_FAILED: invalid {name}")
+    return value
+
+
+def require_exact_head(observed_head: str, current_head: str | None) -> None:
+    if not SHA40.fullmatch(str(observed_head or "")):
+        raise ValueError("CONTINUITY_COORDINATION_FAILED: observed_head must be a 40-hex SHA")
+    if not current_head or not SHA40.fullmatch(current_head):
+        raise ValueError("CONTINUITY_COORDINATION_FAILED: current repository HEAD unavailable")
+    if observed_head != current_head:
+        raise ValueError(f"HEAD_MOVED: observed={observed_head} current={current_head}")
+
+
+def canonical_session(sessions_doc: dict, session_id: str) -> dict:
+    session = next((item for item in sessions_doc.get("sessions", []) if item.get("session_id") == session_id), None)
+    if not session:
+        raise ValueError("CONTINUITY_COORDINATION_FAILED: canonical session not found")
+    relay = session.get("relay") or {}
+    if session.get("status") not in ACTIVE_SESSION_STATES or relay.get("state") not in ACTIVE_RELAY_STATES:
+        raise ValueError(
+            "CONTINUITY_COORDINATION_FAILED: session must be ACTIVE; stalled/takeover/standby sessions require governed reconciliation"
+        )
+    return session
+
+
+def foreign_claim_conflicts(claims_doc: dict, session_id: str, domains: set[str]) -> list[dict]:
+    conflicts = []
+    for claim in claims_doc.get("claims", []):
+        if claim.get("status") != "ACTIVE" or claim.get("session_id") == session_id:
+            continue
+        claim_domains = set(claim.get("collision_domains") or [])
+        overlap = sorted(domains & claim_domains)
+        if overlap:
+            conflicts.append({
+                "claim_id": claim.get("claim_id"),
+                "session_id": claim.get("session_id"),
+                "work_item_id": claim.get("work_item_id"),
+                "collision_domains": overlap,
+            })
+    return conflicts
+
+
+def continuity_item(state: dict, continuity_id: str, repository: str, coordination_issue: int, timestamp: str) -> dict:
+    item = next((entry for entry in state.setdefault("items", []) if entry.get("continuity_id") == continuity_id), None)
+    if item:
+        if item.get("repository") not in {None, repository}:
+            raise ValueError("CONTINUITY_COORDINATION_FAILED: continuity_id belongs to another repository")
+        existing_issue = item.get("coordination_issue")
+        if existing_issue not in {None, coordination_issue}:
+            raise ValueError("CONTINUITY_COORDINATION_FAILED: continuity coordination issue mismatch")
+        return item
+    item = {
+        "continuity_id": continuity_id,
+        "repository": repository,
+        "coordination_issue": coordination_issue,
+        "created_at": timestamp,
+        "updated_at": timestamp,
+        "projection_only": True,
+        "grants_task_authority": False,
+        "grants_claim": False,
+        "grants_mutation_authority": False,
+        "participants": [],
+        "last_handoff": None,
+    }
+    state["items"].append(item)
+    return item
+
+
+def declare_scope_docs(
+    state: dict,
+    sessions_doc: dict,
+    claims_doc: dict,
+    *,
+    repository: str,
+    continuity_id: str,
+    coordination_issue: int,
+    coordination_state_ref: str,
+    session_id: str,
+    declared_role: str | None,
+    scope_id: str,
+    work_mode: str,
+    collision_domains: list[str],
+    observed_head: str,
+    current_head: str | None,
+    evidence_ref: str,
+    timestamp: str,
+) -> dict:
+    continuity_id = require_id("continuity_id", continuity_id)
+    scope_id = require_id("scope_id", scope_id)
+    if not isinstance(coordination_issue, int) or coordination_issue <= 0:
+        raise ValueError("CONTINUITY_COORDINATION_FAILED: positive coordination_issue required")
+    coordination_state_ref = str(coordination_state_ref or "").strip()
+    if not coordination_state_ref:
+        raise ValueError("CONTINUITY_COORDINATION_FAILED: coordination_state_ref required")
+    if work_mode not in WORK_MODES:
+        raise ValueError("CONTINUITY_COORDINATION_FAILED: unsupported work_mode")
+    domains = normalize_domains(collision_domains)
+    require_exact_head(observed_head, current_head)
+    canonical_session(sessions_doc, session_id)
+
+    item = continuity_item(state, continuity_id, repository, coordination_issue, timestamp)
+    participants = item.setdefault("participants", [])
+    active = [p for p in participants if p.get("status") == "ACTIVE"]
+    same = next((p for p in active if p.get("session_id") == session_id and p.get("scope_id") == scope_id), None)
+
+    for other in active:
+        if same is other:
+            continue
+        if other.get("session_id") != session_id and other.get("scope_id") == scope_id:
+            raise ValueError(
+                f"CONTINUITY_SCOPE_COLLISION: scope_id {scope_id} already active in session {other.get('session_id')}"
+            )
+        if work_mode == "WRITE" and other.get("work_mode") == "WRITE":
+            overlap = sorted(set(domains) & set(other.get("collision_domains") or []))
+            if overlap:
+                raise ValueError(
+                    "CONTINUITY_WRITER_COLLISION: overlapping active writer domains " + ",".join(overlap)
+                )
+
+    claim_conflicts = []
+    if work_mode == "WRITE":
+        claim_conflicts = foreign_claim_conflicts(claims_doc, session_id, set(domains))
+        if claim_conflicts:
+            raise ValueError(
+                "FOREIGN_CANONICAL_CLAIM_COLLISION: " +
+                ",".join(sorted({d for item in claim_conflicts for d in item["collision_domains"]}))
+            )
+
+    record = {
+        "participant_id": participant_id(continuity_id, session_id, scope_id),
+        "session_id": session_id,
+        "declared_role": declared_role,
+        "scope_id": scope_id,
+        "work_mode": work_mode,
+        "collision_domains": domains,
+        "observed_head_sha": observed_head,
+        "coordination_state_ref": coordination_state_ref,
+        "status": "ACTIVE",
+        "declared_at": same.get("declared_at") if same else timestamp,
+        "last_updated_at": timestamp,
+        "evidence_ref": evidence_ref,
+        "handoff_ref": None,
+        "grants_task_authority": False,
+        "grants_claim": False,
+        "grants_mutation_authority": False,
+    }
+    if same:
+        same.clear()
+        same.update(record)
+    else:
+        participants.append(record)
+
+    item["updated_at"] = timestamp
+    state["revision"] = int(state.get("revision", 0)) + 1
+    return {
+        "status": "CONTINUITY_SCOPE_DECLARED",
+        "continuity_id": continuity_id,
+        "participant": record,
+        "canonical_claim_conflicts": claim_conflicts,
+        "authority_preserved": True,
+        "grants_task_authority": False,
+        "grants_claim": False,
+        "grants_mutation_authority": False,
+    }
+
+
+def yield_scope_docs(
+    state: dict,
+    sessions_doc: dict,
+    *,
+    continuity_id: str,
+    session_id: str,
+    scope_id: str,
+    observed_head: str,
+    current_head: str | None,
+    handoff_ref: str,
+    evidence_ref: str,
+    timestamp: str,
+) -> dict:
+    continuity_id = require_id("continuity_id", continuity_id)
+    scope_id = require_id("scope_id", scope_id)
+    require_exact_head(observed_head, current_head)
+    canonical_session(sessions_doc, session_id)
+    handoff_ref = str(handoff_ref or "").strip()
+    if not handoff_ref:
+        raise ValueError("CONTINUITY_COORDINATION_FAILED: handoff_ref required")
+
+    item = next((entry for entry in state.get("items", []) if entry.get("continuity_id") == continuity_id), None)
+    if not item:
+        raise ValueError("CONTINUITY_COORDINATION_FAILED: continuity_id not found")
+    participant = next((
+        p for p in item.get("participants", [])
+        if p.get("session_id") == session_id and p.get("scope_id") == scope_id and p.get("status") == "ACTIVE"
+    ), None)
+    if not participant:
+        raise ValueError("CONTINUITY_COORDINATION_FAILED: active participant scope not found")
+
+    participant["status"] = "YIELDED"
+    participant["yielded_at"] = timestamp
+    participant["last_updated_at"] = timestamp
+    participant["observed_head_sha"] = observed_head
+    participant["handoff_ref"] = handoff_ref
+    participant["evidence_ref"] = evidence_ref
+    item["last_handoff"] = {
+        "session_id": session_id,
+        "scope_id": scope_id,
+        "handoff_ref": handoff_ref,
+        "observed_head_sha": observed_head,
+        "yielded_at": timestamp,
+        "evidence_ref": evidence_ref,
+    }
+    item["updated_at"] = timestamp
+    state["revision"] = int(state.get("revision", 0)) + 1
+    return {
+        "status": "CONTINUITY_SCOPE_YIELDED",
+        "continuity_id": continuity_id,
+        "session_id": session_id,
+        "scope_id": scope_id,
+        "handoff_ref": handoff_ref,
+        "claims_changed": False,
+        "authority_transferred": False,
+        "grants_mutation_authority": False,
+    }
+
+
+def load_runtime() -> tuple[dict, dict, dict]:
+    return (
+        read_json(STATE_PATH, default_state()),
+        read_json(SESSIONS_PATH, {"sessions": []}),
+        read_json(CLAIMS_PATH, {"claims": []}),
+    )
+
+
+def command_declare(a: argparse.Namespace) -> None:
+    state, sessions, claims = load_runtime()
+    result = declare_scope_docs(
+        state,
+        sessions,
+        claims,
+        repository=a.repository or os.environ.get("GITHUB_REPOSITORY") or "UNKNOWN_REPOSITORY",
+        continuity_id=a.continuity_id,
+        coordination_issue=a.coordination_issue,
+        coordination_state_ref=a.coordination_state_ref,
+        session_id=a.session_id,
+        declared_role=a.declared_role,
+        scope_id=a.scope_id,
+        work_mode=a.work_mode,
+        collision_domains=a.collision_domain,
+        observed_head=a.observed_head,
+        current_head=git_head(),
+        evidence_ref=a.evidence_ref,
+        timestamp=now_iso(),
+    )
+    write_json(STATE_PATH, state)
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+
+
+def command_yield(a: argparse.Namespace) -> None:
+    state, sessions, _ = load_runtime()
+    result = yield_scope_docs(
+        state,
+        sessions,
+        continuity_id=a.continuity_id,
+        session_id=a.session_id,
+        scope_id=a.scope_id,
+        observed_head=a.observed_head,
+        current_head=git_head(),
+        handoff_ref=a.handoff_ref,
+        evidence_ref=a.evidence_ref,
+        timestamp=now_iso(),
+    )
+    write_json(STATE_PATH, state)
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+
+
+def command_status(a: argparse.Namespace) -> None:
+    state, _, _ = load_runtime()
+    item = next((entry for entry in state.get("items", []) if entry.get("continuity_id") == a.continuity_id), None)
+    print(json.dumps({
+        "status": "FOUND" if item else "NOT_FOUND",
+        "continuity": item,
+        "projection_authority": {
+            "projection_only": True,
+            "grants_task_authority": False,
+            "grants_claim": False,
+            "grants_mutation_authority": False,
+        },
+    }, indent=2, ensure_ascii=False))
+
+
+def parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(description="GACR shared continuity coordination projection")
+    sub = p.add_subparsers(dest="command", required=True)
+
+    declare = sub.add_parser("declare")
+    declare.add_argument("--repository")
+    declare.add_argument("--session-id", required=True)
+    declare.add_argument("--continuity-id", required=True)
+    declare.add_argument("--coordination-issue", required=True, type=int)
+    declare.add_argument("--coordination-state-ref", required=True)
+    declare.add_argument("--declared-role")
+    declare.add_argument("--scope-id", required=True)
+    declare.add_argument("--work-mode", choices=sorted(WORK_MODES), required=True)
+    declare.add_argument("--collision-domain", action="append", required=True)
+    declare.add_argument("--observed-head", required=True)
+    declare.add_argument("--evidence-ref", required=True)
+    declare.set_defaults(fn=command_declare)
+
+    release = sub.add_parser("yield")
+    release.add_argument("--session-id", required=True)
+    release.add_argument("--continuity-id", required=True)
+    release.add_argument("--scope-id", required=True)
+    release.add_argument("--observed-head", required=True)
+    release.add_argument("--handoff-ref", required=True)
+    release.add_argument("--evidence-ref", required=True)
+    release.set_defaults(fn=command_yield)
+
+    status = sub.add_parser("status")
+    status.add_argument("--continuity-id", required=True)
+    status.set_defaults(fn=command_status)
+    return p
+
+
+def main() -> None:
+    args = parser().parse_args()
+    args.fn(args)
+
+
+if __name__ == "__main__":
+    main()

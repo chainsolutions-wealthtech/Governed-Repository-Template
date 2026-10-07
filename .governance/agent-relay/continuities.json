@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0.0",
+  "authority": "DERIVED_GACR_COORDINATION_PROJECTION",
+  "projection_only": true,
+  "grants_task_authority": false,
+  "grants_claim": false,
+  "grants_mutation_authority": false,
+  "revision": 0,
+  "items": []
+}
