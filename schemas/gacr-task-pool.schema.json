@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gacr-task-pool.schema.json",
+  "title": "GACR Contextual Continuous Task Pool",
+  "type": "object",
+  "required": [
+    "schema",
+    "revision",
+    "model",
+    "items",
+    "authority"
+  ],
+  "properties": {
+    "schema": {
+      "const": "gacr-contextual-task-pool/v1"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "process": {
+      "const": "GACR"
+    },
+    "model": {
+      "const": "CONTEXTUAL_CONTINUOUS_TASK_POOL"
+    },
+    "generated_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_mode": {
+      "type": "string"
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "dispatchable_subject_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "recovery_subject_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "collision_free_waves": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "wave",
+          "subject_ids",
+          "collision_domains"
+        ],
+        "properties": {
+          "wave": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "subject_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "collision_domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "subject_id",
+          "source_kind",
+          "source_ref",
+          "pool_state",
+          "collision_domains",
+          "context_packet_id",
+          "context_packet"
+        ],
+        "properties": {
+          "subject_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "task_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "source_kind": {
+            "enum": [
+              "CANONICAL_WORK_ITEM",
+              "CONTROL_PLANE_BLUEPRINT_TASK"
+            ]
+          },
+          "source_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "pool_state": {
+            "enum": [
+              "READY",
+              "OFFERED",
+              "ACCEPTED_PENDING_CLAIM",
+              "ACTIVE",
+              "RECOVERY_READY",
+              "BLOCKED"
+            ]
+          },
+          "collision_domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "context_packet_id": {
+            "type": "string",
+            "pattern": "^GACR-CTX-"
+          },
+          "context_packet": {
+            "type": "object"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "authority": {
+      "type": "object",
+      "required": [
+        "projection_only",
+        "canonical_task_sources_unchanged",
+        "grants_write_authority",
+        "claim_required",
+        "exact_head_required"
+      ],
+      "properties": {
+        "projection_only": {
+          "const": true
+        },
+        "canonical_task_sources_unchanged": {
+          "const": true
+        },
+        "grants_write_authority": {
+          "const": false
+        },
+        "claim_required": {
+          "const": true
+        },
+        "exact_head_required": {
+          "const": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "semantic_digest": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": true
+}
