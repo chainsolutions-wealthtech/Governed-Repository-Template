@@ -33,6 +33,20 @@ UNKNOWN
 → OVERWRITE
 ```
 
+## 1A. Master system map
+
+The canonical target architecture is rendered end-to-end in:
+
+`docs/control-plane/MASTER_SYSTEM_MAP.md`.
+
+That map is a navigation/synthesis surface, not a competing authority. This file remains the normative target-architecture authority. Implementation status and requirement traceability are materialized in:
+
+`docs/control-plane/REQUIREMENTS_ROADMAP.md`.
+
+The master map must always show the uninterrupted relationship:
+
+`GSCC → GSE → GACR → F1 → RELEASE → 00_START_HERE → role/authority/intent/purpose junction → question/action flow → checkpoint/handoff → continuation`.
+
 ## 2. Platform identity
 
 The repository is not merely a set of template files. Its target is a multi-repository governance platform:
