@@ -430,7 +430,12 @@
     "offer_requires_acceptance": true,
     "claim_required_after_acceptance": true,
     "exact_head_reconciliation_required": true,
-    "grants_write_authority": false
+    "grants_write_authority": false,
+    "require_f1_release_for_source_work": true,
+    "require_canonical_role_for_source_work": true,
+    "canonical_source_work_queue": true,
+    "source_work_authority": ".governance/control-plane-state/tasks.json",
+    "source_work_blueprint": ".governance/control-plane-state/governance-model-execution-blueprint.json"
   },
   "capacity_dispatch_contract": {
     "states": [
@@ -458,6 +463,18 @@
     "no_write_authority_on_offer_or_accept": true,
     "collision_domains_enforced": true,
     "dependencies_enforced": true,
-    "capabilities_roles_authorities_enforced": true
+    "capabilities_roles_authorities_enforced": true,
+    "f1_release_required_before_source_work_offer": true,
+    "canonical_role_declaration_required_before_source_work_offer": true,
+    "source_control_plane_uses_global_task_graph_not_bootstrap_work_item": true,
+    "entry_purpose_and_work_kind_are_recorded_but_not_authority_while_router_planned": true,
+    "stale_generic_source_offers_cancelled": true,
+    "invariants": [
+      "F1_RELEASE_REQUIRED_BEFORE_SOURCE_WORK_OFFER",
+      "EXPLICIT_CANONICAL_ROLE_REQUIRED_BEFORE_SOURCE_WORK_OFFER",
+      "EXPLICIT_AVAILABILITY_REQUIRED",
+      "SOURCE_CONTROL_PLANE_CANONICAL_TASK_GRAPH_ONLY",
+      "WORK_OFFER_NE_CLAIM_NE_WRITE_AUTHORITY"
+    ]
   }
 }
