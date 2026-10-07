@@ -507,5 +507,18 @@
     "status": "DONE",
     "decision_id": "CPD-073",
     "checkpoint": "CREATE_NEW_REPOSITORY_CASE_COMPLETE"
+  },
+  "gacr_parallel_dispatch_lane": {
+    "status": "OWNER_AUTHORIZED_PARALLEL_IMPLEMENTATION",
+    "decision_id": "CPD-074",
+    "global_task_unchanged": "GMC-01",
+    "next_lane_gate": "CI_GREEN_THEN_POST_MERGE_ROSTER_PROOF",
+    "no_global_task_status_mutation": true,
+    "read_first": [
+      "docs/GACR_AGENT_CONTINUITY_RELAY.md",
+      "docs/MULTI_AGENT_COORDINATION.md",
+      "scripts/gacr_parallel_dispatch.py",
+      ".governance/agent-relay/config.json"
+    ]
   }
 }
