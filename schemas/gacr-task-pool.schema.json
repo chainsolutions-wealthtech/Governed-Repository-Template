@@ -1,0 +1,204 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "gacr-task-pool.schema.json",
+  "title": "GACR Contextual Continuous Task Pool",
+  "type": "object",
+  "required": [
+    "schema",
+    "revision",
+    "model",
+    "revision_authority",
+    "items",
+    "authority"
+  ],
+  "properties": {
+    "schema": {
+      "const": "gacr-contextual-task-pool/v1"
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "process": {
+      "const": "GACR"
+    },
+    "model": {
+      "const": "CONTEXTUAL_CONTINUOUS_TASK_POOL"
+    },
+    "revision_authority": {
+      "const": "CP-AGENT-RELAY-001-R9"
+    },
+    "generated_at": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "work_source": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "work_source_status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "global_task_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "work_package_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "counts": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 0
+      }
+    },
+    "dispatchable_work_item_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "recovery_work_item_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "collision_free_waves": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "wave",
+          "work_item_ids",
+          "collision_domains"
+        ],
+        "properties": {
+          "wave": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "work_item_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "collision_domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "work_item_id",
+          "pool_state",
+          "collision_domains",
+          "context_packet_id",
+          "context_packet"
+        ],
+        "properties": {
+          "work_item_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "task_id": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "pool_state": {
+            "enum": [
+              "READY",
+              "OFFERED",
+              "ACCEPTED_PENDING_CLAIM",
+              "ACTIVE",
+              "RECOVERY_READY",
+              "BLOCKED"
+            ]
+          },
+          "collision_domains": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "uniqueItems": true
+          },
+          "context_packet_id": {
+            "type": "string",
+            "pattern": "^GACR-CTX-"
+          },
+          "context_packet": {
+            "type": "object"
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "authority": {
+      "type": "object",
+      "required": [
+        "projection_only",
+        "dispatcher_authority",
+        "canonical_task_sources_unchanged",
+        "grants_write_authority",
+        "claim_required",
+        "exact_head_required"
+      ],
+      "properties": {
+        "projection_only": {
+          "const": true
+        },
+        "dispatcher_authority": {
+          "const": "CP-AGENT-RELAY-001-R8"
+        },
+        "canonical_task_sources_unchanged": {
+          "const": true
+        },
+        "grants_write_authority": {
+          "const": false
+        },
+        "claim_required": {
+          "const": true
+        },
+        "exact_head_required": {
+          "const": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "semantic_digest": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "additionalProperties": true
+}
