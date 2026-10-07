@@ -196,3 +196,43 @@ WAITING AGENTS
 ```
 
 A work offer is a scheduling proposal, not work ownership and not mutation authority.
+
+
+## R8 — F1-gated declaration-driven dispatch
+
+A connected agent does not enter the new-work pool merely because a GACR session exists.
+
+For the source Control Plane:
+
+```text
+GSCC → GSE → GACR → Q12 → F1 → RELEASE
+                                  ↓
+                         F1_RELEASED beacon
+                                  +
+                         explicit declaration
+                         ROLE + AVAILABILITY
+                                  ↓
+                         CAPACITY POOL
+                                  ↓
+                 canonical global task graph
+                                  ↓
+                      safe WORK_OFFER
+                                  ↓
+                         ACCEPTANCE
+                                  ↓
+                            CLAIM
+                                  ↓
+                         EXACT HEAD
+                                  ↓
+                          EXECUTION
+```
+
+Canonical role behavior:
+- `CODE_AGENT` — may receive compatible executable/planning work offers;
+- `INTAKER` — contributes context/information through intake routes and is not treated as a code worker merely because it is available;
+- `SUPERVISOR` — observes/coordinates pool, blocks, collisions and recovery; mutable execution still requires a compatible claimed task and authority;
+- `REVIEWER` — receives review work only when the canonical work item explicitly allows the reviewer role.
+
+The role is a routing attribute, never mutation authority.
+
+The source Control Plane does not dispatch from `.governance/work/work-items.json` when that surface is only generic bootstrap state. It projects the currently released global programme/work package. Unsupported or ambiguous global task state fails closed with no offer.
