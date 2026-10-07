@@ -1337,3 +1337,17 @@ Registered:
 - release target `capsule 1.0.0`.
 
 No implementation is started by this registration. `P12-S6` remains the unique `IN_PROGRESS` global task.
+
+
+## 2026-10-07 — CAP linked to global junction
+
+Owner correction: the reusable capsule programme must not become an isolated lane after P12-S6.
+
+Reconciliation:
+- CAP-001 now depends on `GMC-19 + RTE-012 + ARCH-006 + IDN-006`;
+- P12-S6 closure still releases GMC-A first;
+- the capsule terminal release is explicitly upstream of the existing agent-purpose junction;
+- agent role/type, authority, connection intent, entry purpose, work kind/case, entry action and mutation authority remain separate dimensions;
+- `CONTINUE_GOVERNED_WORK` remains an existing entry action and is not promoted to a fifth governance case;
+- no First Touch/GACR replay occurs at the junction;
+- unresolved junction fields are asked/resolved one at a time and fail closed when required.
