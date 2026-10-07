@@ -424,3 +424,116 @@ jobs:
             ${{ runner.temp }}/gscc-gacr-bind-result.json
           if-no-files-found: warn
           retention-days: 30
+
+  release:
+    if: ${{ github.event_name == 'issue_comment' && startsWith(github.event.issue.title, '[GSCC First Touch]') && github.actor != 'github-actions[bot]' && startsWith(github.event.comment.body, '/gscc-entry-release ') }}
+    permissions:
+      contents: read
+      actions: read
+      issues: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve this arrival state scope
+        id: arrival_scope
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          from scripts.gscc_arrival_identity import mint
+          event=json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text(encoding="utf-8"))
+          repository=((event.get("repository") or {}).get("full_name") or os.environ.get("GITHUB_REPOSITORY"))
+          result=mint({"repository":repository,"identity":{}},event,run_id=os.environ.get("GITHUB_RUN_ID"),run_attempt=os.environ.get("GITHUB_RUN_ATTEMPT"))
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("state_scope="+result["gscc_arrival"]["state_scope"]+"\n")
+          PY
+
+      - name: Restore this arrival runtime state
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/first_touch_state_artifact.py restore \
+            --repository "${GITHUB_REPOSITORY}" \
+            --run-id "${GITHUB_RUN_ID}" \
+            --scope "${{ steps.arrival_scope.outputs.state_scope }}" \
+            --output "${RUNNER_TEMP}/provider-first-touch-capture.sqlite"
+          test -f "${RUNNER_TEMP}/provider-first-touch-capture.sqlite"
+
+      - name: Validate F1 receipt and release to normal governance
+        id: release
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          raw=os.environ["COMMENT_BODY"].strip()
+          prefix="/gscc-entry-release "
+          if not raw.startswith(prefix):
+              raise SystemExit("GSCC_F1_RELEASE_PREFIX_INVALID")
+          payload=json.loads(raw[len(prefix):])
+          if not isinstance(payload,dict) or not payload.get("runtime_id") or not isinstance(payload.get("exposure_receipt"),dict):
+              raise SystemExit("GSCC_F1_RELEASE_PAYLOAD_INVALID")
+          Path(os.environ["RUNNER_TEMP"]).joinpath("gscc-f1-release-input.json").write_text(
+              json.dumps(payload,ensure_ascii=False,sort_keys=True),encoding="utf-8"
+          )
+          PY
+          runtime_id="$(python3 -c 'import json,os,pathlib; print(json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("gscc-f1-release-input.json").read_text())["runtime_id"])')"
+          receipt="$(python3 -c 'import json,os,pathlib; print(json.dumps(json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("gscc-f1-release-input.json").read_text())["exposure_receipt"],separators=(",",":")))')"
+          current_head="$(git ls-remote --exit-code origin refs/heads/main | awk '{print $1}')"
+          test -n "$current_head"
+          python3 scripts/gscc_session_runtime.py release-f1 \
+            --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite" \
+            --runtime-id "$runtime_id" \
+            --receipt-json "$receipt" \
+            --current-head "$current_head" \
+            > "$RUNNER_TEMP/gscc-normal-governance-release.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          v=json.loads((Path(os.environ["RUNNER_TEMP"])/"gscc-normal-governance-release.json").read_text())
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
+              f.write("runtime_id="+v["runtime_id"]+"\n")
+              f.write("state="+v["state"]+"\n")
+              f.write("gacr_session_id="+v["gacr_session_id"]+"\n")
+              f.write("exposure_receipt="+v["exposure_receipt"]+"\n")
+              f.write("released_head="+v["released_head"]+"\n")
+          PY
+
+      - name: Report release to normal governed workflow
+        if: ${{ steps.release.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="### GSCC/GSE/GACR pre-entry released\n\nRuntime: ${{ steps.release.outputs.runtime_id }}\nGACR session: ${{ steps.release.outputs.gacr_session_id }}\nF1 receipt: ${{ steps.release.outputs.exposure_receipt }}\nReleased HEAD: ${{ steps.release.outputs.released_head }}\n\nStatus: RELEASED_TO_NORMAL_GOVERNANCE\nNext authority: 00_START_HERE.md\n\nThe pre-entry lane is complete for this arrival. Normal governed workflow must now continue from 00_START_HERE.md without replaying GSCC First Touch."
+
+      - name: Persist released per-arrival runtime state
+        uses: actions/upload-artifact@v4
+        with:
+          name: first-touch-state-${{ steps.arrival_scope.outputs.state_scope }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/provider-first-touch-capture.sqlite
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload normal-governance release evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-normal-governance-release-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/gscc-f1-release-input.json
+            ${{ runner.temp }}/gscc-normal-governance-release.json
+          if-no-files-found: error
+          retention-days: 30
