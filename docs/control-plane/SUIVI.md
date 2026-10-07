@@ -1365,3 +1365,21 @@ Materialized:
 - DATA_MODEL reconciled to show the LIVE identity/session chain separately from the still-planned normalized registry;
 - CI anti-drift test added;
 - global programme state unchanged at `P12-S6`.
+
+
+## 2026-10-07 — SaaS/admin cockpit product programme registered
+
+Owner requirement: the framework must ultimately be deployed as a full product, not remain repository-only.
+
+Registered:
+- `CP-SAAS-001`;
+- `SAA-001..SAA-015`;
+- complete autonomous administration cockpit;
+- full versioned REST/OpenAPI backend;
+- governed service/microservice boundaries;
+- PostgreSQL runtime projection;
+- SaaS-ready tenancy/isolation;
+- staging/production packaging and operations;
+- target production URL `https://mcp.wealthtechinnovations.com/template`.
+
+ARCH-008/009/010, IDN-013 and RTE-013 were linked as architecture/API/UI prerequisites rather than duplicated. No production mutation authority was granted and global execution remains at P12-S6.
