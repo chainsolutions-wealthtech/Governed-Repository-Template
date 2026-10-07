@@ -75,14 +75,6 @@ on:
       agent_role:
         required: false
         type: string
-      entry_purpose:
-        description: WORK_ON_CONTROL_PLANE or APPLY_GOVERNANCE_CASE
-        required: false
-        type: string
-      work_kind:
-        description: CODE_IMPLEMENTATION, EXECUTE_EXISTING_TASK, or ADD_OR_ENRICH_INFORMATION
-        required: false
-        type: string
       capabilities:
         description: Comma-separated declared capabilities
         required: false
