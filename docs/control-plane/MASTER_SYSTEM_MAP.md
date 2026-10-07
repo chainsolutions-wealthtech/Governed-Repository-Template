@@ -387,3 +387,4 @@ Forbidden:
 - Tasks: `docs/control-plane/TASKS.md`
 - Unique next action: `docs/control-plane/NEXT_ACTION.md`
 - Capsule: `docs/control-plane/GSCC_GSE_GACR_REUSABLE_CAPSULE.md`
+- Agent role/capacity prompts: `docs/control-plane/AGENT_ENTRY_PROMPTS.md`
