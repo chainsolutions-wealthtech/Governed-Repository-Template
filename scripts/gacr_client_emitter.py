@@ -16,7 +16,7 @@ from typing import Callable
 
 DEFAULT_API_BASE = "https://api.github.com"
 DEFAULT_HEARTBEAT_SECONDS = 300
-EVENTS = {"gacr_auto-attach", "gacr_heartbeat", "gacr_beacon", "gacr_work-offer-accept"}
+EVENTS = {"gacr_auto-attach", "gacr_heartbeat", "gacr_beacon", "gacr_work-offer-accept", "gacr_work-relinquish"}
 ACTION_PHASES = {"STARTED", "COMPLETED", "FAILED", "CANCELLED"}
 INTERRUPTION_CODES = {
     "CLIENT_DISCONNECTED",
@@ -267,12 +267,42 @@ class ClientEmitter:
             },
         )
 
-    def accept_work_offer(self, session_id: str, dispatch_id: str) -> dict:
+    def accept_work_offer(
+        self,
+        session_id: str,
+        dispatch_id: str,
+        *,
+        observed_head: str | None = None,
+    ) -> dict:
+        payload = {
+            "session_id": session_id,
+            "dispatch_id": dispatch_id,
+        }
+        if observed_head:
+            payload["observed_head"] = observed_head
+        return self.emit("gacr_work-offer-accept", payload)
+
+    def relinquish_work(
+        self,
+        session_id: str,
+        claim_id: str,
+        *,
+        reason_code: str,
+        observed_head: str,
+        checkpoint_ref: str,
+        handoff_ref: str,
+        evidence_ref: str,
+    ) -> dict:
         return self.emit(
-            "gacr_work-offer-accept",
+            "gacr_work-relinquish",
             {
                 "session_id": session_id,
-                "dispatch_id": dispatch_id,
+                "claim_id": claim_id,
+                "reason_code": reason_code,
+                "observed_head": observed_head,
+                "checkpoint_ref": checkpoint_ref,
+                "handoff_ref": handoff_ref,
+                "evidence_ref": evidence_ref,
             },
         )
 
@@ -433,6 +463,17 @@ def parser() -> argparse.ArgumentParser:
     add_transport_args(accept_offer)
     accept_offer.add_argument("--session-id", required=True)
     accept_offer.add_argument("--dispatch-id", required=True)
+    accept_offer.add_argument("--observed-head")
+
+    relinquish = sub.add_parser("relinquish-work")
+    add_transport_args(relinquish)
+    relinquish.add_argument("--session-id", required=True)
+    relinquish.add_argument("--claim-id", required=True)
+    relinquish.add_argument("--reason-code", required=True)
+    relinquish.add_argument("--observed-head", required=True)
+    relinquish.add_argument("--checkpoint-ref", required=True)
+    relinquish.add_argument("--handoff-ref", required=True)
+    relinquish.add_argument("--evidence-ref", required=True)
 
     daemon = sub.add_parser("daemon")
     add_transport_args(daemon)
@@ -528,6 +569,17 @@ def main() -> None:
         output(emitter.accept_work_offer(
             args.session_id,
             args.dispatch_id,
+            observed_head=args.observed_head,
+        ))
+    elif args.command == "relinquish-work":
+        output(emitter.relinquish_work(
+            args.session_id,
+            args.claim_id,
+            reason_code=args.reason_code,
+            observed_head=args.observed_head,
+            checkpoint_ref=args.checkpoint_ref,
+            handoff_ref=args.handoff_ref,
+            evidence_ref=args.evidence_ref,
         ))
     elif args.command == "daemon":
         daemon_loop(
