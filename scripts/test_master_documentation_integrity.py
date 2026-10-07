@@ -46,7 +46,8 @@ def main()->None:
         "CREATE_NEW_REPOSITORY","ADOPT_EXISTING_REPOSITORY",
         "MAP_EXISTING_PROJECT","LAB_EVOLUTION",
         "run_answers","checkpoints","handoffs",
-        "P12-S6","GMC-01..GMC-19","RTE-001..RTE-012","CAP-001..CAP-012",
+        "P12-S6","GMC-01..GMC-19","RTE-001..RTE-012","CAP-001..CAP-012","SAA-001..SAA-015",
+        "https://mcp.wealthtechinnovations.com/template",
         "PLANNED_NOT_ACTIVE",
     ]
     for token in required_master:
@@ -58,9 +59,9 @@ def main()->None:
             fail(f"requirements roadmap missing {token}")
 
     arch=load(".governance/control-plane-state/canonical-architecture.json")
-    if arch.get("current_revision") != 7:
-        fail("canonical architecture current revision must be 7")
-    if (arch.get("revision") or {}).get("revision_id") != "CP-ARCH-001-R7":
+    if arch.get("current_revision") != 8:
+        fail("canonical architecture current revision must be 8")
+    if (arch.get("revision") or {}).get("revision_id") != "CP-ARCH-001-R8":
         fail("canonical architecture revision id mismatch")
     if (arch.get("live_execution_reference") or {}).get("master_system_map") != MASTER:
         fail("canonical architecture machine projection missing master map")
@@ -68,7 +69,7 @@ def main()->None:
         fail("canonical architecture machine projection missing requirements roadmap")
 
     current=load(".governance/control-plane-state/current.json")
-    if ((current.get("canonical_architecture") or {}).get("revision")) != 7:
+    if ((current.get("canonical_architecture") or {}).get("revision")) != 8:
         fail("current projection architecture revision mismatch")
     docs=((current.get("knowledge_enrichment") or {}).get("master_architecture_documentation") or {})
     if docs.get("navigation_only_no_parallel_authority") is not True:
@@ -84,6 +85,11 @@ def main()->None:
     expected={"GMC-19","RTE-012","ARCH-006","IDN-006"}
     if set(cap.get("depends_on") or []) != expected:
         fail("CAP-001 dependency gate drift")
+    saa=next((x for x in tasks.get("items",[]) if x.get("id")=="SAA-013"),None)
+    if not saa or saa.get("next_action") != "DEPLOY_PRODUCTION_MCP_WEALTHTECHINNOVATIONS_TEMPLATE":
+        fail("SAA-013 production deployment task missing or drifted")
+    if "https://mcp.wealthtechinnovations.com/template" not in str(saa.get("objective") or ""):
+        fail("SAA-013 production URL drift")
 
     policy=load(".governance/control-plane-policy.json")
     routing=(policy.get("agent_purpose_routing") or {})
