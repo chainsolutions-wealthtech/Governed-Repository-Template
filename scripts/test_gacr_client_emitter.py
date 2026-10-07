@@ -77,6 +77,21 @@ def main() -> None:
     assert_true(interrupted["client_payload"]["event_type"] == "INTERRUPTION_SIGNAL", "interrupt event")
     assert_true(interrupted["client_payload"]["interruption_code"] == "NETWORK_LOSS", "interrupt code")
 
+    availability = emitter.availability(
+        "session-1",
+        state="WAITING",
+        reason_code="WAITING_FOR_WORK",
+        observed_head="c"*40,
+    )
+    assert_true(availability["client_payload"]["event_type"] == "AVAILABILITY_UPDATE", "availability event")
+    assert_true(availability["client_payload"]["availability_state"] == "WAITING", "availability state")
+    assert_true(sent[-1]["body"]["event_type"] == "gacr_beacon", "availability uses canonical beacon transport")
+
+    accepted = emitter.accept_work_offer("session-1", "GACR-W-demo")
+    assert_true(accepted["status"] == "SENT", "work offer accept sent")
+    assert_true(sent[-1]["body"]["event_type"] == "gacr_work-offer-accept", "work offer accept dispatch event")
+    assert_true(sent[-1]["body"]["client_payload"]["dispatch_id"] == "GACR-W-demo", "dispatch id forwarded")
+
     try:
         g.assert_safe_payload({"api_token": "x"})
         raise AssertionError("unsafe key accepted")
