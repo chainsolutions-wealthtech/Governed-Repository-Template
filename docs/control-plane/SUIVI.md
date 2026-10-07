@@ -1424,3 +1424,18 @@ Implemented as a cross-cutting GACR extension:
 - takeover dispatches remain distinct.
 
 Global programme ordering is unchanged: `GMC-01 / GMC-G01` remains current.
+
+
+## 2026-10-07 — GACR R7 merged and live-capacity boundary observed
+
+- PR #252 merged at `819c5f48c1cbb9b7e24a5eb1976e4d16ac1ac31a`.
+- Post-merge Governance CI `37560232192`: PASS.
+- Post-merge Governed Agent Continuity Relay run `37560232214`: PASS.
+- GACR Beacon store observed at revision 559; session store at revision 522.
+- 93 non-terminal sessions were observable at the inspection point.
+- Explicit R7 capacity signals observed: 0.
+- Active canonical claims observed: 0.
+- WORK_OFFER dispatches observed: 0.
+- Therefore R7 is operationally installed and green, but no agent is classified AVAILABLE/WAITING until a real explicit capacity signal is emitted.
+- Silence remains UNKNOWN, never AVAILABLE.
+- Global programme remains `GMC-01 / GMC-G01`.
