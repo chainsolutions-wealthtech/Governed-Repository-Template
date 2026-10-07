@@ -58,3 +58,22 @@ The pre-entry lane must not be replayed for this arrival. The source/control-pla
 
 `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`
 
+
+
+## Queued reusable capsule programme
+
+The reusable GSCC→GSE→GACR capsule productization programme is now registered as `CAP-001..CAP-012` under `CP-CAPSULE-001`.
+
+It is **not executable yet**.
+
+Entry gate:
+
+`P12-S6 = DONE` and `IDN-006 = DONE`.
+
+Current unique executable action remains unchanged:
+
+`P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+
+After the dependency gate opens, the first capsule task is:
+
+`CAP-001 / DEFINE_REUSABLE_CAPSULE_BOUNDARY_AND_PUBLIC_CONTRACT`.

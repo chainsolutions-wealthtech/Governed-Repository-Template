@@ -444,3 +444,12 @@ The fix is implemented and validated in `chainsolutions-wealthtech/Governed-Repo
 ### Architecture
 
 Adds `CPD-024` and canonical architecture revision `CP-ARCH-001-R5` for the portable self-test isolation contract.
+
+
+## 2026-10-07 — Reusable capsule programme CP-CAPSULE-001
+
+- Registered `CAP-001..CAP-012` in the canonical global task projection.
+- Target: productize the LIVE-proven GSCC→GSE→GACR→F1→release chain as a reusable versioned module.
+- Added second-repository and second/generic-adapter LIVE acceptance requirements.
+- Preserved the global execution order: `P12-S6` remains the sole `IN_PROGRESS` task.
+- No capsule implementation began in this registration change.

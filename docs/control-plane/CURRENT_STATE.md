@@ -988,3 +988,16 @@ Final acceptance:
 - next authority `00_START_HERE.md`.
 
 IDN-006 is complete. The next global programme action is unchanged: `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+
+
+## Reusable capsule programme registered — 2026-10-07
+
+- Authority: `CP-CAPSULE-001`.
+- Machine tasks: `CAP-001..CAP-012`.
+- Status: `PLANNED_DEPENDENCY_BOUND`.
+- Existing LIVE-proven capsule baseline: `IDN-006 = DONE`.
+- Productization target: reusable/versioned/installable GSCC→GSE→GACR→F1→release module.
+- First execution dependency: `P12-S6 = DONE`.
+- Cross-repository acceptance: required before capsule 1.0.0.
+- Second/generic provider adapter acceptance: required before capsule 1.0.0.
+- Current unique executable task remains `P12-S6`; this registration creates no parallel execution lane.

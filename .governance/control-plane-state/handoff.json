@@ -453,5 +453,15 @@
     "final_release_comment": 6027880258,
     "released_head": "f768268bf1a3f62c2e6741aecfba20d86545969c",
     "next_authority": "00_START_HERE.md"
+  },
+  "reusable_capsule_program": {
+    "status": "PLANNED_DEPENDENCY_BOUND",
+    "authority": "docs/control-plane/GSCC_GSE_GACR_REUSABLE_CAPSULE.md",
+    "decision": "CPD-069",
+    "tasks": "CAP-001..CAP-012",
+    "execution_gate": "P12-S6 DONE + IDN-006 DONE",
+    "current_global_task": "P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+    "next_when_unblocked": "CAP-001 / DEFINE_REUSABLE_CAPSULE_BOUNDARY_AND_PUBLIC_CONTRACT",
+    "do_not_start_before_gate": true
   }
 }

@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 52,
+  "revision": 53,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -1012,6 +1012,115 @@
       "status": "FUTURE",
       "depends_on": [],
       "next_action": "EXPOSE_IDENTITY_SESSION_TO_API_UI"
+    },
+    {
+      "id": "CAP-001",
+      "status": "PLANNED",
+      "depends_on": [
+        "P12-S6",
+        "IDN-006"
+      ],
+      "next_action": "DEFINE_REUSABLE_CAPSULE_BOUNDARY_AND_PUBLIC_CONTRACT",
+      "objective": "Define the reusable GSCC→GSE→GACR→F1→release module boundary, invariants, non-goals and authority contract."
+    },
+    {
+      "id": "CAP-002",
+      "status": "PLANNED",
+      "depends_on": [
+        "CAP-001"
+      ],
+      "next_action": "MAP_CORE_VS_TEMPLATE_PROVIDER_COUPLING",
+      "objective": "Inventory every coupling between reusable core semantics and Template/GitHub/ChatGPT-specific runtime surfaces."
+    },
+    {
+      "id": "CAP-003",
+      "status": "PLANNED",
+      "depends_on": [
+        "CAP-002"
+      ],
+      "next_action": "FREEZE_VERSIONED_CAPSULE_SCHEMAS_AND_INTERFACES",
+      "objective": "Freeze versioned public contracts for arrival, evidence, identity, gates, session, exposure and release."
+    },
+    {
+      "id": "CAP-004",
+      "status": "PLANNED",
+      "depends_on": [
+        "CAP-003"
+      ],
+      "next_action": "EXTRACT_REUSABLE_CORE_WITHOUT_SEMANTIC_CHANGE",
+      "objective": "Extract a reusable module layout while keeping the existing LIVE-proven path regression-equivalent."
+    },
+    {
+      "id": "CAP-005",
+      "status": "PLANNED",
+      "depends_on": [
+        "CAP-004"
+      ],
+      "next_action": "DEFINE_CAPSULE_ADAPTER_SPI",
+      "objective": "Define provider, repository, transport/control, persistence, session and release adapter interfaces."
+    },
+    {
+      "id": "CAP-006",
+      "status": "PLANNED",
+      "depends_on": [
+        "CAP-005"
+      ],
+      "next_action": "REFACTOR_GITHUB_CHATGPT_AS_REFERENCE_ADAPTER",
+      "objective": "Move current GitHub/ChatGPT integration behind the adapter contract without widening authority."
+    },
+    {
+      "id": "CAP-007",
+      "status": "PLANNED",
+      "depends_on": [
+        "CAP-006"
+      ],
+      "next_action": "ABSTRACT_PERSISTENCE_WITH_CURRENT_BACKEND_PARITY",
+      "objective": "Abstract persistence while preserving SQLite/artifact/Git state semantics and per-arrival isolation."
+    },
+    {
+      "id": "CAP-008",
+      "status": "PLANNED",
+      "depends_on": [
+        "CAP-007"
+      ],
+      "next_action": "ADD_INSTALL_UPGRADE_ROLLBACK_VERSIONING",
+      "objective": "Provide idempotent install, governed upgrade, compatibility checks and rollback behavior."
+    },
+    {
+      "id": "CAP-009",
+      "status": "PLANNED",
+      "depends_on": [
+        "CAP-008"
+      ],
+      "next_action": "BUILD_CAPSULE_PORTABILITY_SECURITY_REGRESSION_MATRIX",
+      "objective": "Prove fail-closed identity, state isolation, exact-head, no-secret, no-fabrication and authority invariants."
+    },
+    {
+      "id": "CAP-010",
+      "status": "PLANNED",
+      "depends_on": [
+        "CAP-009"
+      ],
+      "next_action": "LIVE_PROVE_CAPSULE_ON_SECOND_CLEAN_REPOSITORY",
+      "objective": "Install outside the full Template and prove fresh arrival, continuation and multi-arrival isolation LIVE."
+    },
+    {
+      "id": "CAP-011",
+      "status": "PLANNED",
+      "depends_on": [
+        "CAP-010"
+      ],
+      "next_action": "LIVE_PROVE_SECOND_GENERIC_PROVIDER_ADAPTER",
+      "objective": "Implement and LIVE-prove a second/generic transport/provider adapter with semantic parity."
+    },
+    {
+      "id": "CAP-012",
+      "status": "PLANNED",
+      "depends_on": [
+        "CAP-011"
+      ],
+      "next_action": "RELEASE_REUSABLE_CAPSULE_1_0_0",
+      "objective": "Release the reusable capsule 1.0.0 with versioned package, install/runbook and reproducible acceptance evidence."
     },
     {
       "id": "RTE-001",
