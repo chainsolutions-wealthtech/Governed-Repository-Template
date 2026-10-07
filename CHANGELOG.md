@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### IDN pre-entry closure
+
+- Live fresh-arrival acceptance now proves the complete `GSCC → GSE → GACR → Q12 → F1 → release → 00_START_HERE.md` path.
+- F1 release is persisted only when runtime, connection, GACR session, Access Grant, exposure receipt and exact HEAD all correlate.
+- Final acceptance evidence is issue `#244`, F1 run `37550409710`, release run `37550477009`, and release state `RELEASED_TO_NORMAL_GOVERNANCE`.
+- The temporary IDN lane is closed; global programme order remains unchanged at `P12-S6`.
+
 ### Added
 
 - Governed Repository baseline.
