@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import subprocess
 from pathlib import Path
 
@@ -888,9 +889,9 @@ def relinquish_claim(
         raise ValueError("unsupported requeue reason")
     if not checkpoint_ref or not handoff_ref or not evidence_ref:
         raise ValueError("requeue requires checkpoint_ref, handoff_ref and evidence_ref")
-    current_head = git_head()
-    if observed_head != current_head:
-        raise ValueError("requeue exact-head reconciliation failed")
+    if not re.fullmatch(r"[0-9a-f]{40}", observed_head):
+        raise ValueError("requeue requires a valid observed git SHA")
+    control_head = git_head()
 
     claims = read_json(capacity.CLAIMS_PATH, {"schema_version": "1.0.0", "revision": 0, "claims": []})
     claim = next((x for x in claims.get("claims", []) if x.get("claim_id") == claim_id_value), None)
@@ -902,7 +903,9 @@ def relinquish_claim(
     claim["status"] = "RELEASED_FOR_REQUEUE"
     claim["released_at"] = telemetry.now_iso()
     claim["release_reason"] = reason_code
-    claim["final_head_sha"] = current_head
+    claim["final_head_sha"] = observed_head
+    claim["control_plane_head_at_requeue"] = control_head
+    claim["successor_exact_head_reconciliation_required"] = True
     claim["checkpoint_ref"] = checkpoint_ref
     claim["handoff_ref"] = handoff_ref
     claim["evidence_ref"] = evidence_ref
@@ -938,6 +941,9 @@ def relinquish_claim(
         "checkpoint_ref": checkpoint_ref,
         "handoff_ref": handoff_ref,
         "evidence_ref": evidence_ref,
+        "observed_head_sha": observed_head,
+        "control_plane_head_at_requeue": control_head,
+        "successor_exact_head_reconciliation_required": True,
         "pool_revision": refresh.get("revision"),
     }
 
