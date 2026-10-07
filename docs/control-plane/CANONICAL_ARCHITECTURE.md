@@ -4,7 +4,7 @@
 > Authority type: `CANONICAL_TARGET_ARCHITECTURE`  
 > Scope: `CONTROL_PLANE_SOURCE_ONLY`  
 > Status: `ACCEPTED_TARGET_ARCHITECTURE`  
-> Revision: `6`  
+> Revision: `7`  
 > Repository: `chainsolutions-wealthtech/Governed-Repository-Template`  
 > Distribution: `SOURCE_ONLY / DO_NOT_COPY_TO_CLIENTS`
 
@@ -46,6 +46,15 @@ That map is a navigation/synthesis surface, not a competing authority. This file
 The master map must always show the uninterrupted relationship:
 
 `GSCC → GSE → GACR → F1 → RELEASE → 00_START_HERE → role/authority/intent/purpose junction → question/action flow → checkpoint/handoff → continuation`.
+
+## 1B. Documentation consolidation contract
+
+Revision R7 formalizes a single whole-system navigation surface and a requirements/roadmap traceability surface:
+
+- `docs/control-plane/MASTER_SYSTEM_MAP.md`;
+- `docs/control-plane/REQUIREMENTS_ROADMAP.md`.
+
+They are synthesis/navigation artifacts. They cannot override this authority, PROGRAM/TASKS/NEXT_ACTION, DATA_MODEL, or runtime policies. Their purpose is to prevent architectural fragmentation and make DONE / LIVE_PROVEN / PLANNED / FUTURE status explicit without creating parallel truth.
 
 ## 2. Platform identity
 
