@@ -113,6 +113,7 @@ def session_capacity_projection(
     claims_doc: dict | None = None,
     beacons_doc: dict | None = None,
     correlations_doc: dict | None = None,
+    signal_projection: dict | None = None,
 ) -> dict:
     sessions_doc = sessions_doc or read_json(SESSIONS_PATH, {"sessions": []})
     claims_doc = claims_doc or read_json(CLAIMS_PATH, {"claims": []})
@@ -122,7 +123,7 @@ def session_capacity_projection(
     if not session:
         raise ValueError("session not found")
 
-    signal = telemetry.session_signal_projection(session_id, generated_at=generated_at)
+    signal = signal_projection or telemetry.session_signal_projection(session_id, generated_at=generated_at)
     related = _related_beacons(session_id, beacons_doc, correlations_doc)
     actions = telemetry._action_projection(related)
     explicit = _latest_explicit_availability(related)
