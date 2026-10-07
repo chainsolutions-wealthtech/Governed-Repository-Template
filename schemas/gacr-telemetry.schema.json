@@ -142,6 +142,11 @@
             "USER_CANCELLED",
             "NETWORK_LOSS",
             "PROCESS_EXITED",
+            "PROVIDER_RATE_LIMIT",
+            "PROVIDER_QUOTA_EXHAUSTED",
+            "CONTEXT_LIMIT",
+            "WAITING_FOR_INPUT",
+            "DEPENDENCY_BLOCKED",
             "UNKNOWN",
             null
           ]
@@ -231,6 +236,43 @@
           "type": [
             "string",
             "null"
+          ]
+        },
+        "availability_state": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "AVAILABLE",
+            "WAITING",
+            "BUSY",
+            "BLOCKED",
+            "RATE_LIMITED",
+            "QUOTA_BLOCKED",
+            "CHECKPOINTING",
+            "TERMINATING",
+            "UNKNOWN",
+            null
+          ]
+        },
+        "availability_reason_code": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "WAITING_FOR_WORK",
+            "WAITING_FOR_INPUT",
+            "DEPENDENCY_BLOCKED",
+            "PROVIDER_RATE_LIMIT",
+            "PROVIDER_QUOTA_EXHAUSTED",
+            "CONTEXT_LIMIT",
+            "CHECKPOINTING",
+            "TERMINATING",
+            "MANUAL_BUSY",
+            "UNKNOWN",
+            null
           ]
         }
       },
