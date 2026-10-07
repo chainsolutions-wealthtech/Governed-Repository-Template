@@ -47,6 +47,7 @@ def eligible(items:list[dict])->list[dict]:
     return [
         item for item in items
         if item.get("status")=="READY"
+        and item.get("dispatch_kind") in {None, "TAKEOVER"}
         and "EXTERNAL_BRIDGE" in (item.get("delivery_modes") or [])
     ]
 
