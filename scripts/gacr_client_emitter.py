@@ -26,7 +26,26 @@ INTERRUPTION_CODES = {
     "USER_CANCELLED",
     "NETWORK_LOSS",
     "PROCESS_EXITED",
+    "PROVIDER_RATE_LIMIT",
+    "TOOL_RATE_LIMIT",
+    "USAGE_LIMIT",
+    "QUOTA_LIMIT",
+    "CONTEXT_LIMIT",
+    "WAITING_FOR_AUTHORITY",
+    "WAITING_FOR_INPUT",
+    "WAITING_FOR_REVIEW",
+    "EXTERNAL_DEPENDENCY",
     "UNKNOWN",
+}
+WORKLOAD_STATES = {
+    "WORKING","IDLE","WAITING_FOR_WORK","WAITING_FOR_INPUT","WAITING_FOR_AUTHORITY",
+    "WAITING_FOR_REVIEW","BLOCKED","RATE_LIMITED","QUOTA_LIMITED","CONTEXT_LIMITED",
+    "CHECKPOINTING","TERMINATING","UNKNOWN"
+}
+BLOCKER_CODES = {
+    "NONE","DEPENDENCY","COLLISION_DOMAIN","WAITING_FOR_INPUT","WAITING_FOR_AUTHORITY",
+    "WAITING_FOR_REVIEW","PROVIDER_RATE_LIMIT","TOOL_RATE_LIMIT","USAGE_LIMIT","QUOTA_LIMIT",
+    "CONTEXT_LIMIT","EXTERNAL_DEPENDENCY","TOOL_FAILURE","NETWORK_LOSS","UNKNOWN"
 }
 FORBIDDEN_KEY_FRAGMENTS = ("token", "secret", "password", "private_key", "cookie", "authorization")
 
@@ -362,6 +381,11 @@ def parser() -> argparse.ArgumentParser:
     heartbeat.add_argument("--observed-head")
     heartbeat.add_argument("--action-label")
     heartbeat.add_argument("--evidence")
+    heartbeat.add_argument("--workload-state", choices=sorted(WORKLOAD_STATES))
+    heartbeat.add_argument("--blocker-code", choices=sorted(BLOCKER_CODES))
+    heartbeat.add_argument("--capacity-slots", type=int)
+    heartbeat.add_argument("--max-parallel-tasks", type=int)
+    heartbeat.add_argument("--retry-after-at")
 
     trace = sub.add_parser("trace")
     add_transport_args(trace)
@@ -442,6 +466,11 @@ def main() -> None:
             observed_head=args.observed_head,
             action_label=args.action_label or "CLIENT_HEARTBEAT",
             evidence=args.evidence,
+            workload_state=args.workload_state,
+            blocker_code=args.blocker_code,
+            capacity_slots=args.capacity_slots,
+            max_parallel_tasks=args.max_parallel_tasks,
+            retry_after_at=args.retry_after_at,
         ))
     elif args.command == "trace":
         output(emitter.trace(
