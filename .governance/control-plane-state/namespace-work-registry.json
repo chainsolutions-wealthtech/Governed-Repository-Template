@@ -85,6 +85,12 @@
       "canonical_source": ".governance/control-plane-state/tasks.json"
     },
     {
+      "id": "CAP",
+      "pattern": "^CAP-\\d{3}$",
+      "kind": "REUSABLE_CAPSULE_PRODUCTIZATION_BACKLOG",
+      "canonical_source": ".governance/control-plane-state/tasks.json"
+    },
+    {
       "id": "AQ",
       "pattern": "^AQ-\\d{3}[A-Z]?$",
       "kind": "ADAPTIVE_QUESTION",
@@ -198,6 +204,7 @@
     "CP-IDENTITY-SECRET-001",
     "CP-EXECUTION-001",
     "CP-NAMESPACE-001",
+    "CP-CAPSULE-001",
     "CP-AGENT-RELAY-001",
     "CP-AGENT-RELAY-001-R2",
     "CP-AGENT-RELAY-001-R3",
