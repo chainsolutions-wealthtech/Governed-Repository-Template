@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### GACR R8 contextual continuous task pool
+
+- Added continuously derived source/client task-pool projections.
+- Added collision-free multi-agent work waves and context packets with canonical history/method/evidence references.
+- Added exact-HEAD acceptance-to-claim activation and one-active-claim-per-session protection.
+- Added checkpoint/handoff/evidence requeue for responsive interruptions and existing forensics/takeover recovery for abrupt stalls.
+- Added portable schema/runtime/tests/docs and governed client upgrade preservation.
+- Advanced Template manifest to 2.8.44.
+
+
 ### GACR R7 capacity-aware parallel dispatch
 
 - Added explicit AVAILABLE/WAITING/BUSY/BLOCKED/RATE_LIMITED/QUOTA_BLOCKED agent capacity states.
