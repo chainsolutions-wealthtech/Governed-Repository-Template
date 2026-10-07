@@ -573,7 +573,7 @@ def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0,
     print("cases=4")
     print(f"questions={conn.execute('SELECT COUNT(*) FROM questions').fetchone()[0]}")
     print(f"activities={conn.execute('SELECT COUNT(*) FROM activities').fetchone()[0]}")
-    print(f"current_phase={active[0][0]}")
+    print(f"current_phase={active[0][0] if active else 'NONE'}")
     print(f"server_inventory_slots={facts_count}")
     print(f"server_identity_secret_facts={identity_secret_count}")
     print(f"first_touch_probes={probe_count}")
