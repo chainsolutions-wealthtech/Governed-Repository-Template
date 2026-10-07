@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 56,
+  "revision": 57,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -575,10 +575,9 @@
         "P12-S5 second fresh E2E PASS",
         "Gouvern NORMAL_GOVERNED_ENTRY PASS with no baseline/session/work duplication",
         "Ekyc fresh baseline + NORMAL_GOVERNED_ENTRY PASS with no target-specific repair",
-        "C1-13-I-B historical parent reconciled from completed child path A..G",
+        "C1-13-I-B parent reconciled from completed child path A..G",
         "No unresolved executable CASE 1 task remains",
         "External MCP dependencies preserved as intake/history only",
-        "CASE 1 relational run closed and C1-14 marked DONE",
         "GMC-01 released as the next unique global task"
       ]
     },
