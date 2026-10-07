@@ -110,11 +110,15 @@ Authority: `CP-CAPSULE-001`.
 
 Status: `PLANNED_DEPENDENCY_BOUND`.
 
-This work package productizes the LIVE-proven pre-entry capsule without changing its semantics. It is blocked by the current global task `P12-S6` and consumes the completed `IDN-006` proof.
+This work package productizes the LIVE-proven pre-entry capsule without changing its semantics. It is deliberately downstream of the global model/routing consistency work and consumes the completed `IDN-006` proof.
+
+Execution gate: `GMC-19 + RTE-012 + ARCH-006 + IDN-006 = DONE`.
+
+The capsule release hands the same arrival into the existing post-entry junction: agent role/type → authority snapshot → connection intent → entry purpose → work kind or one of the four canonical governance cases.
 
 | ID | Task | Status | Dependency / note |
 |---|---|---|---|
-| CAP-001 | Define reusable capsule boundary and public contract | PLANNED | after P12-S6 + IDN-006 |
+| CAP-001 | Define reusable capsule boundary and public contract | PLANNED | after GMC-19 + RTE-012 + ARCH-006 + IDN-006 |
 | CAP-002 | Map reusable core vs Template/provider-specific coupling | PLANNED | after CAP-001 |
 | CAP-003 | Freeze versioned public schemas/interfaces | PLANNED | after CAP-002 |
 | CAP-004 | Extract reusable core layout without semantic change | PLANNED | after CAP-003 |
