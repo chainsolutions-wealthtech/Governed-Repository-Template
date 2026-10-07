@@ -192,6 +192,24 @@ def main() -> None:
     assert_true(plan["write_authority_granted"] is False, "dispatch plan never grants write authority")
     assert_true(plan["claim_transfer_performed"] is False, "dispatch plan never creates/transfers claim")
 
+    unscoped_plan = g.parallel_work_dispatch_plan(
+        work_doc={"items": [{
+            "work_item_id": "W-UNSCOPED",
+            "status": "READY",
+            "priority": 1,
+            "sequence": 99,
+            "dependencies": [],
+            "collision_domains": ["domain-unscoped"],
+        }]},
+        claims_doc=empty_claims,
+        pool=pool,
+    )
+    assert_true(not unscoped_plan["assignments"], "unscoped work must not auto-dispatch")
+    assert_true(
+        unscoped_plan["unassigned"][0]["reason"] == "WORK_COMPATIBILITY_SCOPE_UNDECLARED",
+        "unscoped work fail-closed reason",
+    )
+
     claimed_plan = g.parallel_work_dispatch_plan(
         work_doc={"items": [{
             "work_item_id": "W4",
