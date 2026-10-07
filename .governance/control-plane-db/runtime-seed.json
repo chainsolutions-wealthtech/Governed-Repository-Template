@@ -334,6 +334,28 @@
       "status": "ACCEPTED",
       "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "decided_at": "2026-09-27"
+    },
+    {
+      "decision_id": "CPD-071",
+      "scope_type": "ARCHITECTURE_DOCUMENTATION",
+      "scope_id": "CP-ARCH-001",
+      "decision_key": "MASTER_SYSTEM_MAP_AND_REQUIREMENTS_TRACEABILITY",
+      "value": {
+        "master_map": "docs/control-plane/MASTER_SYSTEM_MAP.md",
+        "requirements_roadmap": "docs/control-plane/REQUIREMENTS_ROADMAP.md",
+        "parallel_authority": false,
+        "required_link_surfaces": [
+          "README.md",
+          "00_START_HERE.md",
+          "AGENTS.md",
+          "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+          "docs/control-plane/DATA_MODEL.md",
+          "docs/control-plane/GSCC_GSE_GACR_REUSABLE_CAPSULE.md"
+        ]
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "decided_at": "2026-10-07"
     }
   ],
   "checkpoints": [
@@ -1254,7 +1276,7 @@
       "canonical_path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
       "scope": "CONTROL_PLANE_SOURCE_ONLY",
       "status": "ACCEPTED_TARGET_ARCHITECTURE",
-      "current_revision": 6,
+      "current_revision": 7,
       "source_decision_id": "CPD-014",
       "created_at": "2026-09-26"
     },
@@ -1365,6 +1387,18 @@
       "source_decision_id": "CPD-029",
       "source_ref": ".governance/control-plane-state/governance-model-catalogue.json",
       "created_at": "2026-09-27"
+    },
+    {
+      "revision_id": "CP-ARCH-001-R7",
+      "authority_id": "CP-ARCH-001",
+      "revision_number": 7,
+      "subject_head_sha": "6a7eb182ce0b1648d17429cfd1eb6285cebd71a3",
+      "content_sha": null,
+      "supersedes_revision_id": "CP-ARCH-001-R6",
+      "reason": "Add master whole-system navigation and requirements/roadmap traceability without creating a parallel authority.",
+      "source_decision_id": "CPD-071",
+      "source_ref": ".governance/control-plane-state/canonical-architecture.json",
+      "created_at": "2026-10-07"
     }
   ],
   "canonical_memory_events": [
@@ -2116,6 +2150,19 @@
       },
       "source_ref": "Patricked-code/MCP#201",
       "occurred_at": "2026-09-29"
+    },
+    {
+      "event_id": "CME-20261007-ARCH-007",
+      "event_type": "ARCHITECTURE_REVISION_ACCEPTED",
+      "scope_type": "AUTHORITY",
+      "scope_id": "CP-ARCH-001",
+      "payload": {
+        "revision": 7,
+        "decision_id": "CPD-071",
+        "master_map": "docs/control-plane/MASTER_SYSTEM_MAP.md"
+      },
+      "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+      "occurred_at": "2026-10-07"
     }
   ]
 }
