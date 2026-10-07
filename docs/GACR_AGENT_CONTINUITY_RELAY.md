@@ -636,3 +636,27 @@ R7 is merged and CI-green.
 At the first post-merge read-only observation, the repository exposed non-terminal GACR sessions but no explicit `AVAILABLE`/`WAITING` capacity signal. Therefore no `WORK_OFFER` was emitted. This is expected fail-closed behavior and proves that mere session presence/silence is not treated as dispatch capacity.
 
 The first live capacity assignment proof remains event-dependent: it occurs only when a real agent/provider emits a supported availability signal and a compatible READY work item exists.
+
+
+## R8 — Contextual continuous task pool
+
+R7 detects explicit capacity and emits collision-safe offers. R8 adds a continuously refreshed task projection with history-aware context and unfinished-work recovery.
+
+Use `docs/GACR_TASK_POOL.md` for the portable contract.
+
+Key rule:
+
+```text
+task becomes available
+→ contextual packet
+→ compatible available agent
+→ WORK_OFFER
+→ acceptance with observed HEAD
+→ exact-HEAD claim activation
+→ governed work + traces
+→ completion
+   OR checkpoint/handoff/requeue
+   OR stall→forensics→takeover
+```
+
+No offer, role, claim or UI/API surface grants mutation authority by itself.
