@@ -20,6 +20,7 @@ if TEMPLATE_SOURCE:
     DISPATCHES_PATH = GOV / "control-plane-state" / "gacr-dispatches.json"
     ROSTER_PATH = GOV / "control-plane-state" / "gacr-agent-roster.json"
     TASKS_PATH = GOV / "control-plane-state" / "tasks.json"
+    BLUEPRINT_PATH = GOV / "control-plane-state" / "governance-model-execution-blueprint.json"
 else:
     SESSIONS_PATH = GOV / "sessions" / "sessions.json"
     CLAIMS_PATH = GOV / "work" / "claims.json"
@@ -27,6 +28,7 @@ else:
     DISPATCHES_PATH = GOV / "agent-relay" / "dispatches.json"
     ROSTER_PATH = GOV / "agent-relay" / "roster.json"
     TASKS_PATH = GOV / "work" / "work-items.json"
+    BLUEPRINT_PATH = None
 
 CODE_AGENT_ROLES = {"CODE_AGENT", "CODER", "CODE-AGENT", "IMPLEMENTER", "DEVELOPER"}
 OPEN_CLAIM_STATES = {"ACTIVE", "CLAIMED", "IN_PROGRESS"}
@@ -635,13 +637,44 @@ def persist_dispatch_plan(plan: dict[str, Any], dispatches: dict[str, Any], sess
     }
 
 
+def source_task_store() -> dict[str, Any]:
+    global_tasks = read_json(TASKS_PATH, {"items": []})
+    combined = [dict(item) for item in _items(global_tasks, "items")]
+    if BLUEPRINT_PATH is not None and BLUEPRINT_PATH.exists():
+        blueprint = read_json(BLUEPRINT_PATH, {"groups": []})
+        for group in blueprint.get("groups") or []:
+            group_id = group.get("group_id")
+            group_dependencies = [str(x) for x in (group.get("depends_on") or []) if x]
+            group_policy = group.get("dispatch_policy") if isinstance(group.get("dispatch_policy"), dict) else {}
+            for atomic in group.get("atomic_tasks") or []:
+                task_id = atomic.get("task_id")
+                if not task_id:
+                    continue
+                atomic_dependencies = [str(x) for x in (atomic.get("depends_on") or []) if x]
+                policy = atomic.get("dispatch_policy") if isinstance(atomic.get("dispatch_policy"), dict) else group_policy
+                combined.append({
+                    "id": task_id,
+                    "status": atomic.get("status") or "PLANNED",
+                    "depends_on": list(dict.fromkeys([*group_dependencies, *atomic_dependencies])),
+                    "next_action": atomic.get("action") or atomic.get("title"),
+                    "objective": atomic.get("title"),
+                    "parent_or_program": group_id,
+                    "kind": "GOVERNANCE_MODEL_ATOMIC_TASK",
+                    "planning_only": atomic.get("planning_only"),
+                    "implementation_authorized": atomic.get("implementation_authorized"),
+                    "dispatch_policy": policy,
+                    "canonical_source": str(BLUEPRINT_PATH.relative_to(ROOT)),
+                })
+    return {"items": combined}
+
+
 def load_all() -> tuple[dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any], dict[str, Any]]:
     sessions = read_json(SESSIONS_PATH, {"sessions": []})
     beacons = read_json(BEACONS_PATH, {"items": []})
     claims = read_json(CLAIMS_PATH, {"claims": []})
     dispatches = read_json(DISPATCHES_PATH, {"items": []})
     if TEMPLATE_SOURCE:
-        task_store = read_json(TASKS_PATH, {"items": []})
+        task_store = source_task_store()
     else:
         task_store = read_json(TASKS_PATH, {"work_items": []})
     return sessions, beacons, claims, dispatches, task_store
