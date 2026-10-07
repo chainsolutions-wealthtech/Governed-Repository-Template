@@ -135,6 +135,7 @@ on:
       - gacr_plan-work
       - gacr_dispatch-work
       - gacr_work-offer-accept
+      - gacr_work-relinquish
       - gacr_control-challenge
 
 permissions:
@@ -181,6 +182,9 @@ jobs:
       - name: Refresh capacity-aware work offers
         run: python3 scripts/gacr_capacity_dispatch.py dispatch-work
 
+      - name: Refresh contextual continuous task pool
+        run: python3 scripts/gacr_task_pool.py cycle
+
       - name: Deliver pending GSCC issue control challenges
         if: ${{ steps.relay.outputs.command == 'control-challenge' || (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/gscc-control ')) }}
         env:
@@ -189,7 +193,7 @@ jobs:
 
       - name: Validate GACR state
         run: |
-          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py scripts/gacr_capacity_dispatch.py scripts/gacr_bridge_notifier.py scripts/gacr_auto_attach.py scripts/gacr_client_emitter.py scripts/gacr_host_issue_ingress.py scripts/gscc_control_issue_ingress.py scripts/gscc_gacr/issue_control_bridge.py
+          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py scripts/gacr_capacity_dispatch.py scripts/gacr_task_pool.py scripts/gacr_bridge_notifier.py scripts/gacr_auto_attach.py scripts/gacr_client_emitter.py scripts/gacr_host_issue_ingress.py scripts/gscc_control_issue_ingress.py scripts/gscc_gacr/issue_control_bridge.py
           python3 scripts/validate_governance.py
 
       - name: Persist changed relay state
@@ -208,6 +212,7 @@ jobs:
               .governance/control-plane-state/gacr-correlations.json
               .governance/control-plane-state/gacr-dispatches.json
               .governance/control-plane-state/gacr-forensics.json
+              .governance/control-plane-state/gacr-task-pool.json
             )
           else
             paths=(
@@ -218,6 +223,7 @@ jobs:
               .governance/agent-relay/correlations.json
               .governance/agent-relay/dispatches.json
               .governance/agent-relay/forensics.json
+              .governance/agent-relay/task-pool.json
             )
           fi
           if git diff --quiet -- "${paths[@]}"; then
