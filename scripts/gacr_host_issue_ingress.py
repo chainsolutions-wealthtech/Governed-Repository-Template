@@ -430,11 +430,14 @@ def process(payload: dict, repository: str) -> dict:
     session_id = session["session_id"]
 
     if kind == "work_offer_accept":
-        run_script(CAPACITY, [
+        args = [
             "accept-work",
             "--dispatch-id", str(payload["dispatch_id"]),
             "--session-id", session_id,
-        ])
+            "--evidence-ref", evidence_ref,
+        ]
+        add(args, "--observed-head", payload.get("observed_head"))
+        run_script(CAPACITY, args)
         marker_beacon(session_id, payload, "WORK_OFFER_ACCEPT")
     elif kind == "attach":
         marker_beacon(session_id, payload, "HOST_ATTACH_RECEIPT")
