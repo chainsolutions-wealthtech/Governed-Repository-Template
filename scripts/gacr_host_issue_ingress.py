@@ -61,6 +61,8 @@ CONNECTION_INTENTS = {
     "INFRASTRUCTURE",
     "UNKNOWN",
 }
+ENTRY_PURPOSES = {"WORK_ON_CONTROL_PLANE", "APPLY_GOVERNANCE_CASE"}
+CONTROL_PLANE_WORK_KINDS = {"CODE_IMPLEMENTATION", "EXECUTE_EXISTING_TASK", "ADD_OR_ENRICH_INFORMATION"}
 FORBIDDEN_KEY_FRAGMENTS = ("token", "secret", "password", "private_key", "cookie", "authorization")
 ALLOWED_KEYS = {
     "schema",
@@ -80,6 +82,8 @@ ALLOWED_KEYS = {
     "agent_role",
     "entry_action",
     "connection_intent",
+    "entry_purpose",
+    "work_kind",
     "capabilities",
     "wake_channels",
     "action_id",
@@ -197,6 +201,12 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
     connection_intent = payload.get("connection_intent")
     if connection_intent is not None and connection_intent not in CONNECTION_INTENTS:
         raise ValueError("unsupported host-event connection_intent")
+    entry_purpose = payload.get("entry_purpose")
+    if entry_purpose is not None and entry_purpose not in ENTRY_PURPOSES:
+        raise ValueError("unsupported host-event entry_purpose")
+    work_kind = payload.get("work_kind")
+    if work_kind is not None and work_kind not in CONTROL_PLANE_WORK_KINDS:
+        raise ValueError("unsupported host-event work_kind")
 
     if kind == "work_offer_accept":
         for key in ("session_id", "dispatch_id"):
@@ -377,6 +387,9 @@ def marker_beacon(session_id: str, payload: dict, event_type: str) -> None:
     add(args, "--interruption-code", payload.get("interruption_code"))
     add(args, "--availability-state", payload.get("availability_state"))
     add(args, "--availability-reason-code", payload.get("availability_reason_code"))
+    add(args, "--agent-role", payload.get("agent_role"))
+    add(args, "--entry-purpose", payload.get("entry_purpose"))
+    add(args, "--work-kind", payload.get("work_kind"))
     run_script(TELEMETRY, args)
 
 

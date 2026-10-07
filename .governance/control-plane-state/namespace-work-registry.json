@@ -187,6 +187,12 @@
       "canonical_source": ".governance/agent-relay/dispatches.json"
     },
     {
+      "id": "GACR-WORK-OFFER",
+      "pattern": "^GACR-W-[0-9a-f]{12}$",
+      "kind": "AGENT_WORK_OFFER_RUNTIME_ID",
+      "canonical_source": ".governance/agent-relay/dispatches.json"
+    },
+    {
       "id": "GSCC-CONTROL-DISPATCH",
       "pattern": "^GSCC-CTRL-[0-9a-f]{24}$",
       "kind": "GSCC_CONTROL_CHALLENGE_DISPATCH_RUNTIME_ID",
@@ -215,7 +221,10 @@
     "CP-AGENT-RELAY-001-R2",
     "CP-AGENT-RELAY-001-R3",
     "CP-AGENT-RELAY-001-R4",
-    "CP-AGENT-RELAY-001-R5"
+    "CP-AGENT-RELAY-001-R5",
+    "CP-AGENT-RELAY-001-R8",
+    "CP-AGENT-RELAY-001-R7",
+    "CP-AGENT-RELAY-001-R6"
   ],
   "definition_sources": [
     {

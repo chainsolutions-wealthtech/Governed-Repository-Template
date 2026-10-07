@@ -445,3 +445,21 @@ Tests-first lineage after exact-HEAD reconciliation onto `main@8686f8d21f18f6392
 - prior semantically identical candidate proof before the latest runtime-state-only rebase: Governance CI `37393238645 = SUCCESS`, Function Exposure Gate `37393238765 = SUCCESS`, Observable Arrival Gateway `37393238550 = SUCCESS`.
 
 The branch must still pass its final CI after this durable-attestation commit before merge. No P12-S6, CASE 1 or GMC work is executed by this reconciliation. Step 13B status is unchanged by this correction.
+
+
+## 2026-10-07 — R8 F1-gated auto-dispatch correction
+
+Owner requirement: agents that have actually completed F1/release and explicitly declare themselves available must automatically receive compatible governed work without self-selecting tasks.
+
+Authority: `CP-AGENT-RELAY-001-R8 / CPD-075`.
+
+The correction:
+- repairs stale per-arrival artifact restore discovered by live issue #254;
+- requires F1 release before source work offers;
+- requires explicit canonical role and availability;
+- records declared purpose/work-kind without treating them as authority;
+- projects source work from the released global programme/work package;
+- cancels stale generic bootstrap offers;
+- preserves offer → accept → claim → exact-HEAD → execute ordering.
+
+This cross-cutting GACR work does not change the global current task `GMC-01`.

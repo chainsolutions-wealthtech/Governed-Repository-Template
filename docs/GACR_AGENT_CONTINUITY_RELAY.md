@@ -636,3 +636,30 @@ R7 is merged and CI-green.
 At the first post-merge read-only observation, the repository exposed non-terminal GACR sessions but no explicit `AVAILABLE`/`WAITING` capacity signal. Therefore no `WORK_OFFER` was emitted. This is expected fail-closed behavior and proves that mere session presence/silence is not treated as dispatch capacity.
 
 The first live capacity assignment proof remains event-dependent: it occurs only when a real agent/provider emits a supported availability signal and a compatible READY work item exists.
+
+
+## R8 — F1 release and canonical programme dispatch gate
+
+Revision authority: `CP-AGENT-RELAY-001-R8`. Decision: `CPD-075`.
+
+R8 hardens R7 capacity dispatch around the pre-entry capsule and the global programme.
+
+New-work eligibility on the Template source requires:
+- successful F1 release evidence for the same canonical GACR session;
+- explicit canonical role declaration;
+- explicit available/waiting state;
+- current liveness;
+- no active claim/in-flight action;
+- dependency/collision/capability/role/authority compatibility.
+
+The F1 release workflow emits `F1_RELEASED` into the existing GACR Beacon store. It does not create a second session or second dispatcher.
+
+The source work source is the canonical programme graph. At the current programme point:
+
+`GMC-01 → GMC-G01 → GMC-G01-T01`.
+
+A stale source offer for `WORK-INIT-001` is cancelled instead of being accepted as programme work.
+
+R8 also fixes per-arrival GSCC artifact restore ordering: durable runtime progression outranks artifact creation time, preventing a newer stale Q9 artifact from replacing Q12/F1-ready state.
+
+Candidate status: `PENDING_CI_AND_POST_MERGE_LIVE_PROOF`.

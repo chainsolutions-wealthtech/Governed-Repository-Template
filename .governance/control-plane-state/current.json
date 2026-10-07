@@ -435,6 +435,19 @@
       "observed_work_offer_count": 0,
       "no_idle_inference_from_silence": true,
       "live_capacity_dispatch_status": "READY_WAITING_FOR_REAL_AGENT_AVAILABLE_OR_WAITING_SIGNAL"
+    },
+    "gacr_dispatch_r8": {
+      "authority_id": "CP-AGENT-RELAY-001-R8",
+      "decision_id": "CPD-075",
+      "status": "CANDIDATE_PENDING_CI_AND_LIVE_PROOF",
+      "live_issue": 254,
+      "defects": [
+        "STALE_Q9_ARTIFACT_RESTORED_OVER_Q12",
+        "PRE_F1_GENERIC_WORK_OFFER",
+        "SOURCE_DISPATCH_USED_WORK_INIT_INSTEAD_OF_GLOBAL_TASK_GRAPH"
+      ],
+      "target_flow": "F1_RELEASE → EXPLICIT_DECLARATION → CAPACITY_POOL → CANONICAL_TASK_OFFER → ACCEPT → CLAIM → EXACT_HEAD",
+      "current_global_task_unchanged": "GMC-01"
     }
   },
   "framework_product_boundary": {

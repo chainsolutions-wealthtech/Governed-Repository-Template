@@ -17,6 +17,8 @@ BEACONS_PATH = telemetry.BEACONS_PATH
 CORRELATIONS_PATH = telemetry.CORRELATIONS_PATH
 DISPATCHES_PATH = telemetry.DISPATCHES_PATH
 WORK_ITEMS_PATH = GOV / "work" / "work-items.json"
+CONTROL_TASKS_PATH = GOV / "control-plane-state" / "tasks.json"
+GMC_BLUEPRINT_PATH = GOV / "control-plane-state" / "governance-model-execution-blueprint.json"
 CONFIG_PATH = GOV / "agent-relay" / "config.json"
 
 AVAILABILITY_STATES = {
@@ -42,12 +44,17 @@ EXPLICIT_BLOCK_INTERRUPTION_MAP = {
 }
 TERMINAL_RELAY_STATES = {"CLOSED", "HANDOFF_STALLED"}
 DONE_WORK_STATUSES = {"DONE", "COMPLETED", "PASS", "CLOSED"}
+CANONICAL_AGENT_ROLES = {"INTAKER", "SUPERVISOR", "CODE_AGENT", "REVIEWER"}
+SOURCE_WORK_KIND = "CONTROL_PLANE_CANONICAL_TASK_GRAPH"
 
 
 def read_json(path: Path, default: dict | None = None) -> dict:
     if not path.exists():
         return default or {}
-    return json.loads(path.read_text(encoding="utf-8"))
+    text = path.read_text(encoding="utf-8")
+    if not text.strip():
+        return default or {}
+    return json.loads(text)
 
 
 def write_json(path: Path, value: dict) -> None:
@@ -62,6 +69,9 @@ def config() -> dict:
         "max_parallel_offers_per_session": int(dispatch.get("max_parallel_offers_per_session", 1)),
         "available_states": list(dispatch.get("available_states") or sorted(DISPATCHABLE_STATES)),
         "require_explicit_availability": bool(dispatch.get("require_explicit_availability", True)),
+        "require_f1_release_for_source_work": bool(dispatch.get("require_f1_release_for_source_work", True)),
+        "require_canonical_role_for_source_work": bool(dispatch.get("require_canonical_role_for_source_work", True)),
+        "canonical_source_work_queue": bool(dispatch.get("canonical_source_work_queue", True)),
     }
 
 
@@ -105,6 +115,57 @@ def _latest_interruption(items: list[dict]) -> dict | None:
     return None
 
 
+def _latest_f1_release(items: list[dict]) -> dict | None:
+    for item in reversed(items):
+        if item.get("event_type") == "F1_RELEASED" and item.get("evidence_ref"):
+            return {
+                "beacon_id": item.get("beacon_id"),
+                "observed_at": item.get("observed_at"),
+                "evidence_ref": item.get("evidence_ref"),
+                "checkpoint_ref": item.get("checkpoint_ref"),
+            }
+    return None
+
+
+def _latest_declared_work_profile(items: list[dict]) -> dict:
+    role = purpose = work_kind = None
+    role_ref = purpose_ref = work_ref = None
+    for item in reversed(items):
+        if role is None and item.get("agent_role_provenance") == "DECLARED_BY_EVENT":
+            value = item.get("agent_role")
+            if value in CANONICAL_AGENT_ROLES:
+                role, role_ref = value, item.get("beacon_id")
+        if purpose is None and item.get("entry_purpose_provenance") == "DECLARED_BY_EVENT":
+            purpose, purpose_ref = item.get("entry_purpose"), item.get("beacon_id")
+        if work_kind is None and item.get("work_kind_provenance") == "DECLARED_BY_EVENT":
+            work_kind, work_ref = item.get("work_kind"), item.get("beacon_id")
+        if role is not None and purpose is not None and work_kind is not None:
+            break
+    return {
+        "agent_role": role,
+        "entry_purpose": purpose,
+        "work_kind": work_kind,
+        "role_evidence_ref": role_ref,
+        "purpose_evidence_ref": purpose_ref,
+        "work_kind_evidence_ref": work_ref,
+    }
+
+
+def _latest_declared_capabilities(items: list[dict]) -> list[str]:
+    for item in reversed(items):
+        if item.get("capabilities_provenance") == "DECLARED_BY_EVENT":
+            return sorted(set(item.get("capabilities") or []))
+    return []
+
+
+def _interruption_is_current(interruption: dict | None, availability: dict | None) -> bool:
+    if not interruption:
+        return False
+    if not availability:
+        return True
+    return str(interruption.get("observed_at") or "") >= str(availability.get("observed_at") or "")
+
+
 def session_capacity_projection(
     session_id: str,
     *,
@@ -128,6 +189,10 @@ def session_capacity_projection(
     actions = telemetry._action_projection(related)
     explicit = _latest_explicit_availability(related)
     interruption = _latest_interruption(related)
+    interruption_current = interruption if _interruption_is_current(interruption, explicit) else None
+    f1_release = _latest_f1_release(related)
+    declaration = _latest_declared_work_profile(related)
+    declared_capabilities = _latest_declared_capabilities(related)
     active_claims = _active_claims(claims_doc, session_id)
     relay = session.get("relay") or {}
     liveness = (signal.get("liveness") or {}).get("state") or "UNKNOWN"
@@ -139,9 +204,9 @@ def session_capacity_projection(
     if session.get("status") == "CLOSED" or relay.get("state") in TERMINAL_RELAY_STATES or liveness == "TERMINAL":
         state = "TERMINAL"
         reason = "SESSION_TERMINAL"
-    elif interruption and interruption.get("code") in EXPLICIT_BLOCK_INTERRUPTION_MAP:
-        state = EXPLICIT_BLOCK_INTERRUPTION_MAP[interruption["code"]]
-        reason = interruption["code"]
+    elif interruption_current and interruption_current.get("code") in EXPLICIT_BLOCK_INTERRUPTION_MAP:
+        state = EXPLICIT_BLOCK_INTERRUPTION_MAP[interruption_current["code"]]
+        reason = interruption_current["code"]
     elif explicit and explicit.get("state") in {"RATE_LIMITED", "QUOTA_BLOCKED", "BLOCKED", "CHECKPOINTING", "TERMINATING"}:
         state = explicit["state"]
         reason = explicit.get("reason_code") or "EXPLICIT_CAPACITY_SIGNAL"
@@ -163,22 +228,33 @@ def session_capacity_projection(
     explicit_required = cfg["require_explicit_availability"]
     explicit_available = bool(explicit and explicit.get("state") in set(cfg["available_states"]))
     standby_available = relay.get("state") == "STANDBY"
+
+    blockers=[]
+    if TEMPLATE_SOURCE and cfg["require_f1_release_for_source_work"] and not f1_release:
+        blockers.append("F1_RELEASE_NOT_VERIFIED")
+    if TEMPLATE_SOURCE and cfg["require_canonical_role_for_source_work"] and not declaration.get("agent_role"):
+        blockers.append("CANONICAL_AGENT_ROLE_NOT_DECLARED")
+
     eligible = (
         state in set(cfg["available_states"])
         and live_enough
         and not active_claims
         and not actions.get("in_flight_action")
         and (explicit_available or standby_available or not explicit_required)
+        and not blockers
     )
 
+    effective_capabilities = sorted(set(session.get("capabilities") or []) | set(declared_capabilities))
+    effective_role = declaration.get("agent_role") or session.get("agent_role")
     value = {
         "session_id": session_id,
         "generated_at": generated_at or telemetry.now_iso(),
         "repository": session.get("repository"),
         "provider": session.get("provider"),
         "client_instance_id": session.get("client_instance_id"),
-        "agent_role": session.get("agent_role"),
-        "capabilities": sorted(set(session.get("capabilities") or [])),
+        "agent_role": effective_role,
+        "declared_work_profile": declaration,
+        "capabilities": effective_capabilities,
         "authority_grants": sorted(set(session.get("authority_grants") or [])),
         "relay_state": relay.get("state"),
         "task_id": relay.get("task_id"),
@@ -190,6 +266,10 @@ def session_capacity_projection(
         "availability_reason": reason,
         "explicit_availability": explicit,
         "latest_interruption": interruption,
+        "effective_interruption": interruption_current,
+        "f1_release_verified": bool(f1_release),
+        "f1_release_evidence": f1_release,
+        "dispatch_blockers": blockers,
         "active_claim_count": len(active_claims),
         "active_claims": [
             {
@@ -239,6 +319,111 @@ def agent_pool_projection(*, generated_at: str | None = None) -> dict:
         "eligible_session_ids": [x["session_id"] for x in items if x.get("eligible_for_new_work")],
         "items": items,
         "provider_private_limit_inference": False,
+        "source_f1_release_required": TEMPLATE_SOURCE and config()["require_f1_release_for_source_work"],
+    }
+
+
+def _source_control_plane_work_document() -> dict:
+    tasks=read_json(CONTROL_TASKS_PATH, {"items":[]})
+    active=[x for x in tasks.get("items",[]) if x.get("status")=="IN_PROGRESS"]
+    if len(active)!=1:
+        return {
+            "schema_version":"1.0.0",
+            "source":SOURCE_WORK_KIND,
+            "source_status":"AMBIGUOUS_ACTIVE_GLOBAL_TASK",
+            "items":[],
+            "active_task_ids":[x.get("id") for x in active],
+        }
+
+    global_task=active[0]
+    if global_task.get("id")!="GMC-01":
+        return {
+            "schema_version":"1.0.0",
+            "source":SOURCE_WORK_KIND,
+            "source_status":"ACTIVE_GLOBAL_TASK_NOT_YET_PROJECTABLE",
+            "items":[],
+            "global_task_id":global_task.get("id"),
+        }
+
+    blueprint=read_json(GMC_BLUEPRINT_PATH, {})
+    release=blueprint.get("release_state") or {}
+    package_id=release.get("released_work_package")
+    if release.get("status")!="GMC_A_RELEASED" or package_id!="GMC-G01":
+        return {
+            "schema_version":"1.0.0",
+            "source":SOURCE_WORK_KIND,
+            "source_status":"GMC_WORK_PACKAGE_NOT_RELEASED",
+            "items":[],
+            "global_task_id":"GMC-01",
+        }
+
+    group=next((x for x in blueprint.get("groups",[]) if x.get("group_id")==package_id),None)
+    if not group:
+        return {
+            "schema_version":"1.0.0",
+            "source":SOURCE_WORK_KIND,
+            "source_status":"RELEASED_GMC_WORK_PACKAGE_MISSING",
+            "items":[],
+            "global_task_id":"GMC-01",
+            "work_package_id":package_id,
+        }
+
+    raw_tasks=group.get("atomic_tasks") or []
+    done={x.get("task_id") for x in raw_tasks if x.get("status") in DONE_WORK_STATUSES}
+    items=[]
+    for sequence, raw in enumerate(raw_tasks, start=1):
+        task_id=raw.get("task_id")
+        dependencies=list(raw.get("depends_on") or [])
+        if raw.get("status") in DONE_WORK_STATUSES:
+            status="DONE"
+        elif all(dep in done for dep in dependencies):
+            status="READY"
+        else:
+            status="BLOCKED"
+        items.append({
+            "work_item_id":task_id,
+            "task_id":task_id,
+            "title":raw.get("title") or raw.get("action"),
+            "status":status,
+            "priority":1000-sequence,
+            "sequence":sequence,
+            "dependencies":dependencies,
+            "collision_domains":[f"governance-model:{package_id}"],
+            "required_capabilities":list(raw.get("required_capabilities") or []),
+            "required_authorities":list(raw.get("required_authorities") or []),
+            "allowed_agent_roles":list(raw.get("allowed_agent_roles") or ["CODE_AGENT"]),
+            "repository":telemetry.repository_name(),
+            "global_task_id":"GMC-01",
+            "work_package_id":package_id,
+            "planning_only":bool(group.get("planning_only",True)),
+            "implementation_authorized":bool(group.get("implementation_authorized",False)),
+            "hold_if":raw.get("hold_if"),
+            "done_when":raw.get("done_when"),
+            "evidence_required":raw.get("evidence_required") or [],
+            "work_source":SOURCE_WORK_KIND,
+        })
+
+    return {
+        "schema_version":"1.0.0",
+        "source":SOURCE_WORK_KIND,
+        "source_status":"READY",
+        "global_task_id":"GMC-01",
+        "work_package_id":package_id,
+        "planning_only":bool(group.get("planning_only",True)),
+        "implementation_authorized":bool(group.get("implementation_authorized",False)),
+        "items":items,
+    }
+
+
+def canonical_work_document() -> dict:
+    cfg=config()
+    if TEMPLATE_SOURCE and cfg["canonical_source_work_queue"]:
+        return _source_control_plane_work_document()
+    doc=read_json(WORK_ITEMS_PATH, {"items":[]})
+    return {
+        **doc,
+        "source":"REPOSITORY_LOCAL_WORK_ITEMS",
+        "source_status":"READY",
     }
 
 
@@ -291,7 +476,7 @@ def parallel_work_dispatch_plan(
     claims_doc: dict | None = None,
     pool: dict | None = None,
 ) -> dict:
-    work_doc = work_doc or read_json(WORK_ITEMS_PATH, {"items": []})
+    work_doc = work_doc or canonical_work_document()
     claims_doc = claims_doc or read_json(CLAIMS_PATH, {"claims": []})
     pool = pool or agent_pool_projection(generated_at=generated_at)
     by_id = {item.get("work_item_id"): item for item in work_doc.get("items", []) if item.get("work_item_id")}
@@ -367,6 +552,11 @@ def parallel_work_dispatch_plan(
             "required_capabilities": sorted(set(item.get("required_capabilities") or [])),
             "required_authorities": sorted(set(item.get("required_authorities") or [])),
             "allowed_agent_roles": sorted(set(item.get("allowed_agent_roles") or [])),
+            "global_task_id":item.get("global_task_id"),
+            "work_package_id":item.get("work_package_id"),
+            "planning_only":item.get("planning_only"),
+            "implementation_authorized":item.get("implementation_authorized"),
+            "work_source":item.get("work_source") or work_doc.get("source"),
             "evaluations": evaluations,
             "requires_offer_acceptance": True,
             "requires_claim_after_acceptance": True,
@@ -378,6 +568,10 @@ def parallel_work_dispatch_plan(
         "process": "GACR",
         "model": "PARALLEL_WORK_DISPATCH_PLAN",
         "generated_at": generated_at or telemetry.now_iso(),
+        "work_source":work_doc.get("source"),
+        "work_source_status":work_doc.get("source_status"),
+        "global_task_id":work_doc.get("global_task_id"),
+        "work_package_id":work_doc.get("work_package_id"),
         "assignments": assignments,
         "unassigned": unassigned,
         "parallel_assignment_count": len(assignments),
@@ -398,16 +592,38 @@ def _delivery_modes(session: dict) -> list[str]:
     return modes
 
 
-def dispatch_ready_work(*, generated_at: str | None = None) -> dict:
-    plan = parallel_work_dispatch_plan(generated_at=generated_at)
-    if not plan.get("assignments"):
-        return {"changed": 0, "items": [], "plan": plan}
+def _cancel_stale_source_offers(store:dict, canonical_doc:dict, timestamp:str)->list[dict]:
+    if not TEMPLATE_SOURCE:
+        return []
+    valid={x.get("work_item_id") for x in canonical_doc.get("items",[]) if x.get("status")=="READY"}
+    cancelled=[]
+    for item in store.get("items",[]):
+        if item.get("dispatch_kind")!="WORK_OFFER":
+            continue
+        if item.get("status") not in {"READY","ACCEPTED_PENDING_CLAIM"}:
+            continue
+        if item.get("work_source")!=SOURCE_WORK_KIND or item.get("work_item_id") not in valid:
+            item["status"]="CANCELLED"
+            item["offer_status"]="CANCELLED"
+            item["cancelled_at"]=timestamp
+            item["cancellation_reason"]="SOURCE_CONTROL_PLANE_CANONICAL_TASK_SOURCE_REQUIRED"
+            item["claim_created"]=False
+            item["grants_write_authority"]=False
+            cancelled.append(item)
+    return cancelled
 
+
+def dispatch_ready_work(*, generated_at: str | None = None) -> dict:
+    timestamp=generated_at or telemetry.now_iso()
+    canonical_doc=canonical_work_document()
+    plan = parallel_work_dispatch_plan(generated_at=timestamp,work_doc=canonical_doc)
     sessions = read_json(SESSIONS_PATH, {"sessions": []})
     store = read_json(DISPATCHES_PATH, {"schema_version": "1.0.0", "revision": 0, "items": []})
-    changes = []
+    changes=[]
+    cancelled=_cancel_stale_source_offers(store,canonical_doc,timestamp)
+    changes.extend(cancelled)
 
-    for assignment in plan["assignments"]:
+    for assignment in plan.get("assignments",[]):
         work_item_id = assignment["work_item_id"]
         target_session_id = assignment["target_session_id"]
         existing = next((
@@ -425,23 +641,29 @@ def dispatch_ready_work(*, generated_at: str | None = None) -> dict:
         dispatch_id = telemetry.runtime_id("GACR-W-", {
             "work_item_id": work_item_id,
             "target_session_id": target_session_id,
-            "generated_at": generated_at or telemetry.now_iso(),
+            "generated_at": timestamp,
         })
         item = {
             "dispatch_id": dispatch_id,
             "dispatch_kind": "WORK_OFFER",
             "status": "READY",
             "offer_status": "PENDING_ACCEPTANCE",
-            "created_at": generated_at or telemetry.now_iso(),
+            "created_at": timestamp,
             "target_session_id": target_session_id,
             "target_client_instance_id": session.get("client_instance_id"),
             "work_item_id": work_item_id,
             "task_id": assignment.get("task_id"),
+            "global_task_id":assignment.get("global_task_id"),
+            "work_package_id":assignment.get("work_package_id"),
+            "planning_only":assignment.get("planning_only"),
+            "implementation_authorized":assignment.get("implementation_authorized"),
+            "work_source":assignment.get("work_source"),
             "collision_domains": assignment.get("collision_domains") or [],
             "required_capabilities": assignment.get("required_capabilities") or [],
             "required_authorities": assignment.get("required_authorities") or [],
             "allowed_agent_roles": assignment.get("allowed_agent_roles") or [],
             "delivery_modes": _delivery_modes(session),
+            "requires_f1_release":TEMPLATE_SOURCE,
             "requires_offer_acceptance": True,
             "requires_claim_after_acceptance": True,
             "requires_exact_head_reconciliation": True,
@@ -455,7 +677,13 @@ def dispatch_ready_work(*, generated_at: str | None = None) -> dict:
     if changes:
         store["revision"] = int(store.get("revision", 0)) + 1
         write_json(DISPATCHES_PATH, store)
-    return {"changed": len(changes), "items": changes, "plan": plan}
+    return {
+        "changed":len(changes),
+        "items":changes,
+        "cancelled_count":len(cancelled),
+        "created_offer_count":len(changes)-len(cancelled),
+        "plan":plan,
+    }
 
 
 def accept_work_offer(dispatch_id: str, session_id: str) -> dict:
@@ -475,6 +703,14 @@ def accept_work_offer(dispatch_id: str, session_id: str) -> dict:
         raise ValueError(f"session no longer available: {capacity.get('availability_state')}")
     if not capacity.get("eligible_for_new_work"):
         raise ValueError("session no longer eligible for new work")
+
+    if TEMPLATE_SOURCE:
+        current=canonical_work_document()
+        work=next((x for x in current.get("items",[]) if x.get("work_item_id")==item.get("work_item_id")),None)
+        if not work or work.get("status")!="READY":
+            raise ValueError("canonical source work item no longer READY")
+        if item.get("work_source")!=SOURCE_WORK_KIND:
+            raise ValueError("source work offer does not originate from canonical task graph")
 
     item["status"] = "ACCEPTED_PENDING_CLAIM"
     item["offer_status"] = "ACCEPTED"

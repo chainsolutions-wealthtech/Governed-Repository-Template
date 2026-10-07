@@ -418,5 +418,13 @@
     "status": "DONE",
     "decision_id": "CPD-073",
     "no_orphan_executable_tasks": true
+  },
+  "gacr_dispatch_r8": {
+    "status": "CANDIDATE_PENDING_CI_AND_LIVE_PROOF",
+    "authority_id": "CP-AGENT-RELAY-001-R8",
+    "decision_id": "CPD-075",
+    "live_issue": 254,
+    "global_task_unchanged": "GMC-01",
+    "next_validation": "MERGE_THEN_RECOVER_SAME_ARRIVAL_F1_RELEASE_AND_VERIFY_GMC_G01_T01_AUTO_OFFER"
   }
 }

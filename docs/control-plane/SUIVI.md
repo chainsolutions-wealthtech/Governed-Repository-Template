@@ -1439,3 +1439,21 @@ Global programme ordering is unchanged: `GMC-01 / GMC-G01` remains current.
 - Therefore R7 is operationally installed and green, but no agent is classified AVAILABLE/WAITING until a real explicit capacity signal is emitted.
 - Silence remains UNKNOWN, never AVAILABLE.
 - Global programme remains `GMC-01 / GMC-G01`.
+
+
+## 2026-10-07 — GACR R8 F1-gated auto-dispatch candidate
+
+Live observation of waiting coding agents showed:
+- issue #251 had a successful F1/release and received an automatic offer;
+- issue #254 declared `CODE_AGENT / CODE_CHANGE / WORK_ON_CONTROL_PLANE / CODE_IMPLEMENTATION` but remained blocked because per-arrival restore selected a stale Q9 artifact;
+- R7 nonetheless created a generic `WORK-INIT-001` offer for #254 before successful release.
+
+R8 candidate corrects both defects:
+- restore selects the most advanced durable GSCC runtime state;
+- dispatch requires `F1_RELEASED`;
+- canonical role declaration and explicit availability are required;
+- source work is projected from `GMC-01 / GMC-G01`, beginning with `GMC-G01-T01`;
+- stale generic source offers are cancelled;
+- work offers still grant no claim or write authority.
+
+Status: candidate pending full CI, merge and live recovery/release/dispatch proof on #254.

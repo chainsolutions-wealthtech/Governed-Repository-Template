@@ -6,13 +6,24 @@ import io
 import json
 import os
 import sqlite3
+import tempfile
+import urllib.error
 import urllib.parse
 import urllib.request
-import urllib.error
 import zipfile
 from pathlib import Path
 
 STATE_NAME_PREFIX="first-touch-state-"
+
+RUNTIME_STATE_RANK={
+    "WAITING_Q9_ACK":10,
+    "WAITING_Q9_RESPONSE":20,
+    "Q9_VERIFIED":30,
+    "GSE_VERIFIED_WAITING_GACR":40,
+    "READY_FOR_F1":50,
+    "RELEASED_TO_NORMAL_GOVERNANCE":60,
+}
+
 
 def _request_json(url:str, token:str):
     req=urllib.request.Request(url,headers={
@@ -28,6 +39,7 @@ def _request_json(url:str, token:str):
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         return None
+
 
 def _artifact_blob(download_url:str, token:str)->bytes:
     req=urllib.request.Request(download_url,headers={
@@ -52,6 +64,63 @@ def _artifact_blob(download_url:str, token:str)->bytes:
     with urllib.request.urlopen(clean,timeout=30) as response:
         return response.read()
 
+
+def _state_db_from_blob(blob:bytes)->bytes|None:
+    with zipfile.ZipFile(io.BytesIO(blob)) as archive:
+        candidate=next((n for n in archive.namelist() if n.endswith("first-touch-capture.sqlite")),None)
+        return archive.read(candidate) if candidate else None
+
+
+def _runtime_snapshot(db_blob:bytes|None)->dict:
+    if not db_blob:
+        return {"inspectable":False,"reason":"NO_STATE_DB","rank":-1}
+    tmp=None
+    try:
+        with tempfile.NamedTemporaryFile(prefix="gscc-state-",suffix=".sqlite",delete=False) as fh:
+            fh.write(db_blob)
+            tmp=Path(fh.name)
+        conn=sqlite3.connect(tmp)
+        try:
+            tables={row[0] for row in conn.execute("SELECT name FROM sqlite_master WHERE type='table'")}
+            if "gscc_session_runtime" not in tables:
+                return {"inspectable":False,"reason":"NO_SESSION_RUNTIME_TABLE","rank":-1}
+            row=conn.execute(
+                "SELECT runtime_id,state,COALESCE(updated_at,created_at,''),last_gate "
+                "FROM gscc_session_runtime "
+                "ORDER BY COALESCE(updated_at,created_at,'') DESC, runtime_id DESC LIMIT 1"
+            ).fetchone()
+            if not row:
+                return {"inspectable":False,"reason":"NO_SESSION_RUNTIME_ROW","rank":-1}
+            runtime_id,state,updated_at,last_gate=row
+            return {
+                "inspectable":True,
+                "runtime_id":runtime_id,
+                "state":state,
+                "updated_at":updated_at or "",
+                "last_gate":last_gate,
+                "rank":RUNTIME_STATE_RANK.get(state,0),
+            }
+        finally:
+            conn.close()
+    except (sqlite3.DatabaseError, zipfile.BadZipFile, OSError) as exc:
+        return {"inspectable":False,"reason":"STATE_DB_INSPECTION_FAILED","error":str(exc),"rank":-1}
+    finally:
+        if tmp is not None:
+            tmp.unlink(missing_ok=True)
+
+
+def _candidate_key(candidate:dict)->tuple:
+    snap=candidate.get("runtime_snapshot") or {}
+    # Runtime progression outranks artifact creation order. This prevents a later
+    # workflow retry carrying stale Q9 state from replacing a prior Q12/F1 state.
+    return (
+        int(snap.get("rank",-1)),
+        str(snap.get("updated_at") or ""),
+        str(candidate.get("created_at") or ""),
+        int(candidate.get("id") or 0),
+    )
+
+
 def restore_latest(repository:str, current_run_id:str, output:Path, token:str, *, scope:str|None=None)->dict:
     encoded=urllib.parse.quote(repository,safe="/")
     url=f"https://api.github.com/repos/{encoded}/actions/artifacts?per_page=100"
@@ -63,18 +132,43 @@ def restore_latest(repository:str, current_run_id:str, output:Path, token:str, *
         and not x.get("expired")
         and str((x.get("workflow_run") or {}).get("id") or "") != str(current_run_id)
     ]
-    artifacts.sort(key=lambda x:str(x.get("created_at") or ""),reverse=True)
     if not artifacts:
         return {"status":"NO_PRIOR_STATE"}
-    selected=artifacts[0]
-    blob=_artifact_blob(selected["archive_download_url"],token)
-    with zipfile.ZipFile(io.BytesIO(blob)) as archive:
-        names=archive.namelist()
-        candidate=next((n for n in names if n.endswith("first-touch-capture.sqlite")),None)
-        if not candidate:
-            return {"status":"PRIOR_ARTIFACT_HAS_NO_STATE_DB","artifact_id":selected.get("id")}
-        output.write_bytes(archive.read(candidate))
-    return {"status":"RESTORED","artifact_id":selected.get("id"),"artifact_name":selected.get("name")}
+
+    evaluated=[]
+    for artifact in artifacts:
+        blob=_artifact_blob(artifact["archive_download_url"],token)
+        db_blob=_state_db_from_blob(blob)
+        evaluated.append({
+            **artifact,
+            "_db_blob":db_blob,
+            "runtime_snapshot":_runtime_snapshot(db_blob),
+        })
+
+    inspectable=[x for x in evaluated if (x.get("runtime_snapshot") or {}).get("inspectable")]
+    selectable=inspectable or [x for x in evaluated if x.get("_db_blob") is not None]
+    if not selectable:
+        return {
+            "status":"PRIOR_ARTIFACTS_HAVE_NO_STATE_DB",
+            "evaluated_artifact_ids":[x.get("id") for x in evaluated],
+        }
+
+    selected=max(selectable,key=_candidate_key)
+    output.write_bytes(selected["_db_blob"])
+    snapshot=selected.get("runtime_snapshot") or {}
+    return {
+        "status":"RESTORED",
+        "artifact_id":selected.get("id"),
+        "artifact_name":selected.get("name"),
+        "selection_policy":"MOST_ADVANCED_RUNTIME_STATE_THEN_RUNTIME_UPDATED_AT",
+        "runtime_id":snapshot.get("runtime_id"),
+        "runtime_state":snapshot.get("state"),
+        "runtime_last_gate":snapshot.get("last_gate"),
+        "runtime_updated_at":snapshot.get("updated_at"),
+        "runtime_state_rank":snapshot.get("rank"),
+        "candidate_count":len(evaluated),
+    }
+
 
 def merge_previous(current:Path, previous:Path)->dict:
     if not previous.exists():
@@ -125,6 +219,7 @@ def merge_previous(current:Path, previous:Path)->dict:
     finally:
         conn.close()
 
+
 def main():
     p=argparse.ArgumentParser()
     sub=p.add_subparsers(dest="command",required=True)
@@ -140,6 +235,7 @@ def main():
     else:
         result=merge_previous(Path(a.current),Path(a.previous))
     print(json.dumps(result,indent=2,sort_keys=True))
+
 
 if __name__=="__main__":
     main()

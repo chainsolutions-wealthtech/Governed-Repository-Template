@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import io
 import json
 import sqlite3
 import tempfile
+import zipfile
 from pathlib import Path
 
+import first_touch_state_artifact as artifact_state
 from first_touch_field_block_gate import install_schema
 from first_touch_state_artifact import merge_previous
 
 ROOT=Path(__file__).resolve().parents[1]
+
 
 def install_all(path:Path):
     conn=sqlite3.connect(path)
@@ -20,6 +24,7 @@ def install_all(path:Path):
         conn.commit()
     finally:
         conn.close()
+
 
 def seed_previous(path:Path):
     conn=sqlite3.connect(path)
@@ -54,6 +59,77 @@ def seed_previous(path:Path):
     finally:
         conn.close()
 
+
+def zipped_runtime_state(root:Path,name:str,state:str,updated_at:str)->bytes:
+    db=root/f"{name}.sqlite"
+    conn=sqlite3.connect(db)
+    try:
+        conn.execute(
+            "CREATE TABLE gscc_session_runtime("
+            "runtime_id TEXT PRIMARY KEY,state TEXT,last_gate TEXT,created_at TEXT,updated_at TEXT)"
+        )
+        gate={
+            "WAITING_Q9_ACK":"Q9",
+            "READY_FOR_F1":"Q12",
+            "RELEASED_TO_NORMAL_GOVERNANCE":"00_START_HERE.md",
+        }.get(state,state)
+        conn.execute(
+            "INSERT INTO gscc_session_runtime(runtime_id,state,last_gate,created_at,updated_at) VALUES(?,?,?,?,?)",
+            ("GSCC-RUNTIME-test",state,gate,"2026-10-07T00:00:00+00:00",updated_at),
+        )
+        conn.commit()
+    finally:
+        conn.close()
+    out=io.BytesIO()
+    with zipfile.ZipFile(out,"w",zipfile.ZIP_DEFLATED) as archive:
+        archive.write(db,arcname="provider-first-touch-capture.sqlite")
+    return out.getvalue()
+
+
+def test_restore_prefers_advanced_runtime_state(root:Path)->None:
+    q12=zipped_runtime_state(root,"q12","READY_FOR_F1","2026-10-07T02:20:00+00:00")
+    stale_q9=zipped_runtime_state(root,"q9","WAITING_Q9_ACK","2026-10-07T02:30:00+00:00")
+    artifacts={
+        "artifacts":[
+            {
+                "id":1,
+                "name":"first-touch-state-arrival-test-q12",
+                "created_at":"2026-10-07T02:21:00Z",
+                "expired":False,
+                "archive_download_url":"memory://q12",
+                "workflow_run":{"id":101},
+            },
+            {
+                "id":2,
+                "name":"first-touch-state-arrival-test-q9",
+                "created_at":"2026-10-07T02:31:00Z",
+                "expired":False,
+                "archive_download_url":"memory://q9",
+                "workflow_run":{"id":102},
+            },
+        ]
+    }
+    old_request=artifact_state._request_json
+    old_blob=artifact_state._artifact_blob
+    try:
+        artifact_state._request_json=lambda _url,_token: artifacts
+        artifact_state._artifact_blob=lambda url,_token: {"memory://q12":q12,"memory://q9":stale_q9}[url]
+        output=root/"restored.sqlite"
+        result=artifact_state.restore_latest("owner/repo","999",output,"token",scope="arrival-test")
+        assert result["status"]=="RESTORED",result
+        assert result["artifact_id"]==1,result
+        assert result["runtime_state"]=="READY_FOR_F1",result
+        assert result["selection_policy"]=="MOST_ADVANCED_RUNTIME_STATE_THEN_RUNTIME_UPDATED_AT",result
+        conn=sqlite3.connect(output)
+        try:
+            assert conn.execute("SELECT state FROM gscc_session_runtime").fetchone()[0]=="READY_FOR_F1"
+        finally:
+            conn.close()
+    finally:
+        artifact_state._request_json=old_request
+        artifact_state._artifact_blob=old_blob
+
+
 def main():
     with tempfile.TemporaryDirectory() as td:
         root=Path(td)
@@ -73,7 +149,9 @@ def main():
             assert conn.execute("SELECT COUNT(*) FROM gscc_gate_route_runs").fetchone()[0]==1
         finally:
             conn.close()
+        test_restore_prefers_advanced_runtime_state(root)
     print("FIRST_TOUCH_STATE_ARTIFACT_PERSISTENCE_TEST_PASS")
+
 
 if __name__=="__main__":
     main()

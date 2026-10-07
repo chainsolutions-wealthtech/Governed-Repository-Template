@@ -428,7 +428,7 @@ jobs:
   release:
     if: ${{ github.event_name == 'issue_comment' && startsWith(github.event.issue.title, '[GSCC First Touch]') && github.actor != 'github-actions[bot]' && startsWith(github.event.comment.body, '/gscc-entry-release ') }}
     permissions:
-      contents: read
+      contents: write
       actions: read
       issues: write
     runs-on: ubuntu-latest
@@ -519,6 +519,76 @@ jobs:
         run: |
           gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
             -f body="### GSCC/GSE/GACR pre-entry released\n\nRuntime: ${{ steps.release.outputs.runtime_id }}\nGACR session: ${{ steps.release.outputs.gacr_session_id }}\nF1 receipt: ${{ steps.release.outputs.exposure_receipt }}\nReleased HEAD: ${{ steps.release.outputs.released_head }}\n\nStatus: RELEASED_TO_NORMAL_GOVERNANCE\nNext authority: 00_START_HERE.md\n\nThe pre-entry lane is complete for this arrival. Normal governed workflow must now continue from 00_START_HERE.md without replaying GSCC First Touch."
+
+      - name: Publish F1 release and declared work profile to GACR
+        if: ${{ steps.release.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          GACR_SESSION_ID: ${{ steps.release.outputs.gacr_session_id }}
+          EXPOSURE_RECEIPT: ${{ steps.release.outputs.exposure_receipt }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+
+          body=os.environ.get("ISSUE_BODY") or ""
+          start=body.find("{")
+          envelope={}
+          if start>=0:
+              try:
+                  envelope=json.loads(body[start:])
+              except json.JSONDecodeError:
+                  envelope={}
+
+          declared=envelope.get("declared_work_profile") or {}
+          desired=envelope.get("desired_logical_intent") or {}
+          provider_agent=((envelope.get("provider_context") or {}).get("agent") or {})
+
+          roles={"INTAKER","SUPERVISOR","CODE_AGENT","REVIEWER"}
+          purposes={"WORK_ON_CONTROL_PLANE","APPLY_GOVERNANCE_CASE"}
+          work_kinds={"CODE_IMPLEMENTATION","EXECUTE_EXISTING_TASK","ADD_OR_ENRICH_INFORMATION"}
+          availability_states={"AVAILABLE","WAITING","BUSY","BLOCKED","RATE_LIMITED","QUOTA_BLOCKED","CHECKPOINTING","TERMINATING"}
+
+          role=declared.get("ROLE")
+          if role not in roles:
+              candidate=provider_agent.get("agent_role")
+              role=candidate if candidate in roles else None
+          purpose=desired.get("ENTRY_PURPOSE")
+          if purpose not in purposes:
+              purpose=None
+          work_kind=desired.get("WORK_KIND")
+          if work_kind not in work_kinds:
+              work_kind=None
+          availability=declared.get("AVAILABILITY_STATE") or desired.get("AVAILABILITY_STATE")
+          if availability not in availability_states:
+              availability=None
+
+          payload={
+              "session_id":os.environ["GACR_SESSION_ID"],
+              "event_type":"F1_RELEASED",
+              "source":"GITHUB_ACTIONS",
+              "evidence_ref":"gscc-exposure:"+os.environ["EXPOSURE_RECEIPT"],
+              "checkpoint_ref":"RELEASED_TO_NORMAL_GOVERNANCE",
+          }
+          if role:
+              payload["agent_role"]=role
+          if purpose:
+              payload["entry_purpose"]=purpose
+          if work_kind:
+              payload["work_kind"]=work_kind
+          if availability:
+              payload["availability_state"]=availability
+              payload["availability_reason_code"]="WAITING_FOR_WORK" if availability in {"AVAILABLE","WAITING"} else "UNKNOWN"
+
+          if len(payload)>10:
+              raise SystemExit("GACR_F1_RELEASE_PAYLOAD_TOO_WIDE")
+          out={"event_type":"gacr_beacon","client_payload":payload}
+          Path(os.environ["RUNNER_TEMP"]).joinpath("gacr-f1-release-dispatch.json").write_text(
+              json.dumps(out,ensure_ascii=False,separators=(",",":")),encoding="utf-8"
+          )
+          PY
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches"             --input "$RUNNER_TEMP/gacr-f1-release-dispatch.json"
 
       - name: Persist released per-arrival runtime state
         uses: actions/upload-artifact@v4
