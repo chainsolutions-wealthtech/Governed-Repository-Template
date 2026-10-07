@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.6.0",
+  "schema_version": "1.7.0",
   "process_name": "GACR",
   "process_title": "Governed Agent Continuity Relay",
   "authority_id": "CP-AGENT-RELAY-001",
@@ -65,7 +65,12 @@
       "written_head_sha",
       "checkpoint_ref",
       "evidence_ref",
-      "interruption_code"
+      "interruption_code",
+      "workload_state",
+      "blocker_code",
+      "capacity_slots",
+      "max_parallel_tasks",
+      "retry_after_at"
     ]
   },
   "external_bridge": {
@@ -83,7 +88,7 @@
     "continuous_background_heartbeat_proven": false,
     "github_issue_control_channel_candidate": true
   },
-  "revision_authority_id": "CP-AGENT-RELAY-001-R6",
+  "revision_authority_id": "CP-AGENT-RELAY-001-R7",
   "forensics": {
     "enabled": true,
     "projection_only": true,
@@ -134,7 +139,10 @@
       "HEARTBEAT",
       "ACTION_TRACE",
       "INTERRUPTION_SIGNAL",
-      "WAKE_POLL"
+      "WAKE_POLL",
+      "WORKLOAD_STATE",
+      "CAPACITY_SIGNAL",
+      "LIMIT_SIGNAL"
     ],
     "runtime_credential_policy": "MEMORY_ONLY_NEVER_PERSIST",
     "repository_dispatch_events": [
@@ -216,7 +224,15 @@
       "replay_renews_liveness": false,
       "invocation_authority_granted": false,
       "mutation_authority_granted": false
-    }
+    },
+    "availability_fields": [
+      "workload_state",
+      "blocker_code",
+      "capacity_slots",
+      "max_parallel_tasks",
+      "retry_after_at"
+    ],
+    "availability_transport_event": "heartbeat"
   },
   "presence_fabric": {
     "enabled": true,
@@ -411,5 +427,47 @@
       "invocation_authority_granted": false,
       "mutation_authority_granted": false
     }
+  },
+  "work_dispatch": {
+    "enabled": true,
+    "projection_only_until_claim": true,
+    "roster_projection": "gacr-agent-roster/v1",
+    "roster_is_authority": false,
+    "auto_dispatch_requires_task_opt_in": true,
+    "auto_dispatch_task_flag": "dispatch_policy.enabled=true",
+    "explicit_idle_signal_required_for_auto_assignment": true,
+    "implicit_alive_without_claim_state": "UNCONFIRMED_AVAILABLE",
+    "provider_limit_policy": "EXPLICIT_OBSERVATION_ONLY_NEVER_INFER",
+    "blocker_policy": "EXPLICIT_OBSERVATION_OR_CANONICAL_DEPENDENCY_ONLY",
+    "eligible_agent_role": "CODE_AGENT",
+    "availability_states": [
+      "AVAILABLE"
+    ],
+    "visible_states": [
+      "ACTIVE",
+      "AVAILABLE",
+      "UNCONFIRMED_AVAILABLE",
+      "WAITING",
+      "LIMITED",
+      "STALLED",
+      "TERMINAL",
+      "UNKNOWN"
+    ],
+    "claim_required_before_execution": true,
+    "collision_domain_check_required": true,
+    "dependency_check_required": true,
+    "required_capability_check": true,
+    "exact_head_reobservation_before_mutation": true,
+    "dispatch_offer_grants_invocation_authority": false,
+    "dispatch_offer_grants_mutation_authority": false,
+    "task_sources": [
+      ".governance/control-plane-state/tasks.json",
+      ".governance/control-plane-state/governance-model-execution-blueprint.json",
+      ".governance/work/work-items.json"
+    ],
+    "dispatch_store": "EXISTING_GACR_DISPATCHES",
+    "parallel_task_store": false,
+    "parallel_claim_store": false,
+    "current_automatic_assignment_status": "ENABLED_FOR_EXPLICITLY_OPTED_IN_TASKS_ONLY"
   }
 }
