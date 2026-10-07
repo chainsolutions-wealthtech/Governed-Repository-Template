@@ -101,6 +101,7 @@ def main() -> None:
     )
     assert_true(first["status"] == "CONTINUITY_SCOPE_DECLARED", "first scope declared")
     assert_true(first["grants_mutation_authority"] is False, "scope grants no mutation authority")
+    assert_true(first["participant"]["membership_state"] == "PERSISTENT", "continuity membership is durable")
 
     second = c.declare_scope_docs(
         state, sessions, claims,
@@ -259,6 +260,8 @@ def main() -> None:
     )
     assert_true(yielded["claims_changed"] is False, "yield never changes claims")
     assert_true(yielded["authority_transferred"] is False, "yield never transfers canonical authority")
+    yielded_participant = next(p for p in state["items"][0]["participants"] if p["session_id"] == "session-a" and p["scope_id"] == "gmc-g01")
+    assert_true(yielded_participant["membership_state"] == "PERSISTENT", "yield preserves durable membership identity")
 
     replacement = c.declare_scope_docs(
         state, sessions, claims,

@@ -13,6 +13,7 @@ from pathlib import Path
 ROOT = Path(os.environ.get("GACR_ROOT") or Path(__file__).resolve().parents[1]).resolve()
 GOV = ROOT / ".governance"
 TEMPLATE_SOURCE = (ROOT / ".template-source").exists()
+CONFIG_PATH = GOV / "agent-relay" / "config.json"
 
 if TEMPLATE_SOURCE:
     STATE_PATH = GOV / "control-plane-state" / "gacr-continuities.json"
@@ -150,6 +151,168 @@ def session_signal_time(session: dict) -> datetime | None:
     candidates = [parse_time(relay.get("last_heartbeat_at")), parse_time(session.get("last_seen_at"))]
     values = [x for x in candidates if x is not None]
     return max(values) if values else None
+
+
+def derive_liveness_state(
+    session: dict,
+    timestamp: datetime,
+    *,
+    quiet_after_seconds: int = EARLY_SUPERVISION_AFTER_SECONDS,
+) -> str:
+    relay = session.get("relay") or {}
+    status = str(session.get("status") or "UNKNOWN")
+    relay_state = str(relay.get("state") or "UNKNOWN")
+    if status == "CLOSED" or relay_state == "CLOSED":
+        return "UNREACHABLE"
+    if status == "STALLED" or relay_state in {"STALLED", "TAKEOVER_READY", "HANDOFF_STALLED"}:
+        return "STALLED"
+    if status == "SUSPECTED_STALL" or relay_state == "SUSPECTED_STALL":
+        return "SUSPECTED_STALL"
+    if status == "STANDBY" or relay_state == "STANDBY":
+        return "QUIET"
+    if status == "ACTIVE" and relay_state == "ACTIVE":
+        signal = session_signal_time(session)
+        if signal is None:
+            return "UNKNOWN"
+        return "LIVE" if (timestamp - signal).total_seconds() <= quiet_after_seconds else "QUIET"
+    return "UNKNOWN"
+
+
+def provider_endpoint_descriptor(session: dict, config: dict | None = None) -> dict:
+    config = config or {}
+    provider = str(session.get("provider") or "other")
+    provider_ref = session.get("provider_conversation_ref")
+    wake_channels = sorted(set(session.get("wake_channels") or []))
+    bridge_ref = session.get("bridge_registration_ref")
+    external_bridge = config.get("external_bridge") or {}
+    host_bridge = config.get("host_issue_bridge") or {}
+
+    push_capable = "EXTERNAL_BRIDGE" in wake_channels and bool(str(bridge_ref or "").strip())
+    if push_capable:
+        inbound = {
+            "status": "OBSERVED",
+            "kind": "EXTERNAL_BRIDGE",
+            "endpoint_ref": bridge_ref,
+            "provenance": "SESSION_REGISTRATION",
+            "reason": None,
+        }
+    else:
+        inbound = {
+            "status": "UNAVAILABLE",
+            "kind": None,
+            "endpoint_ref": None,
+            "provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+            "reason": "NO_REGISTERED_PROVIDER_INBOUND_ENDPOINT",
+        }
+
+    repository_control = {
+        "status": "AVAILABLE",
+        "kind": "POLL_REPOSITORY",
+        "endpoint_ref": None,
+        "provenance": "GACR_CANONICAL_FALLBACK",
+    }
+    if provider == "chatgpt" and external_bridge.get("chatgpt_issue_bridge_live_proven") and host_bridge.get("enabled"):
+        issue_number = host_bridge.get("issue_number")
+        repository_control = {
+            "status": "PROVEN",
+            "kind": "GITHUB_ISSUE_CONTROL_CHANNEL",
+            "endpoint_ref": f"issue:{issue_number}" if issue_number else None,
+            "provenance": "GACR_HOST_ISSUE_BRIDGE_LIVE_PROOF",
+        }
+
+    return {
+        "provider": provider,
+        "provider_conversation_ref_status": "PRESENT" if provider_ref else "UNAVAILABLE",
+        "provider_conversation_ref": provider_ref if provider_ref else None,
+        "provider_inbound_endpoint": inbound,
+        "repository_control_surface": repository_control,
+        "wake_route": {
+            "preferred": "EXTERNAL_BRIDGE" if push_capable else "POLL_REPOSITORY",
+            "push_capable": push_capable,
+            "wake_channels": wake_channels,
+        },
+        "connection_ref": session.get("connection_ref"),
+        "bridge_registration_ref": bridge_ref,
+        "provider_private_values_invented": False,
+    }
+
+
+def project_participant_runtime_docs(
+    state: dict,
+    sessions_doc: dict,
+    *,
+    timestamp: datetime,
+    config: dict | None = None,
+    quiet_after_seconds: int = EARLY_SUPERVISION_AFTER_SECONDS,
+) -> list[dict]:
+    changes = []
+    session_index = {s.get("session_id"): s for s in sessions_doc.get("sessions", []) if s.get("session_id")}
+    for item in state.get("items", []):
+        for participant in item.get("participants", []):
+            session = session_index.get(participant.get("session_id"))
+            participant["membership_state"] = "PERSISTENT"
+            if not session:
+                projection = {
+                    "liveness_state": "UNKNOWN",
+                    "canonical_session_status": "UNAVAILABLE",
+                    "canonical_relay_state": "UNAVAILABLE",
+                    "lease_expires_at": None,
+                    "last_signal_at": None,
+                    "provider_endpoint": {
+                        "provider": "other",
+                        "provider_conversation_ref_status": "UNAVAILABLE",
+                        "provider_conversation_ref": None,
+                        "provider_inbound_endpoint": {
+                            "status": "UNAVAILABLE",
+                            "kind": None,
+                            "endpoint_ref": None,
+                            "provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+                            "reason": "CANONICAL_SESSION_NOT_FOUND",
+                        },
+                        "repository_control_surface": {
+                            "status": "AVAILABLE",
+                            "kind": "POLL_REPOSITORY",
+                            "endpoint_ref": None,
+                            "provenance": "GACR_CANONICAL_FALLBACK",
+                        },
+                        "wake_route": {
+                            "preferred": "POLL_REPOSITORY",
+                            "push_capable": False,
+                            "wake_channels": [],
+                        },
+                        "connection_ref": None,
+                        "bridge_registration_ref": None,
+                        "provider_private_values_invented": False,
+                    },
+                }
+            else:
+                relay = session.get("relay") or {}
+                signal = session_signal_time(session)
+                projection = {
+                    "liveness_state": derive_liveness_state(session, timestamp, quiet_after_seconds=quiet_after_seconds),
+                    "canonical_session_status": session.get("status"),
+                    "canonical_relay_state": relay.get("state"),
+                    "lease_expires_at": relay.get("lease_expires_at"),
+                    "last_signal_at": iso(signal) if signal else None,
+                    "provider_endpoint": provider_endpoint_descriptor(session, config),
+                }
+
+            changed = False
+            for key, value in projection.items():
+                if participant.get(key) != value:
+                    participant[key] = value
+                    changed = True
+            if changed:
+                participant["runtime_projection_observed_at"] = iso(timestamp)
+                changes.append({
+                    "participant_id": participant.get("participant_id"),
+                    "session_id": participant.get("session_id"),
+                    "state": "PARTICIPANT_RUNTIME_PROJECTED",
+                    "membership_state": "PERSISTENT",
+                    "liveness_state": participant.get("liveness_state"),
+                    "provider_endpoint_status": (participant.get("provider_endpoint") or {}).get("provider_inbound_endpoint", {}).get("status"),
+                })
+    return changes
 
 
 def normalize_targets(values: list[str]) -> list[str]:
@@ -530,14 +693,22 @@ def tick_docs(
     *,
     timestamp: datetime,
     early_supervision_after_seconds: int = EARLY_SUPERVISION_AFTER_SECONDS,
+    config: dict | None = None,
 ) -> dict:
-    changes = reconcile_early_supervision_docs(
+    changes = project_participant_runtime_docs(
+        state,
+        sessions_doc,
+        timestamp=timestamp,
+        config=config,
+        quiet_after_seconds=early_supervision_after_seconds,
+    )
+    changes.extend(reconcile_early_supervision_docs(
         state,
         sessions_doc,
         dispatches_doc,
         timestamp=timestamp,
         early_supervision_after_seconds=early_supervision_after_seconds,
-    )
+    ))
     for item in state.get("items", []):
         for event in item.get("events", []):
             if event.get("state") in FINAL_EVENT_STATES:
@@ -609,12 +780,14 @@ def command_respond(a):
 
 def command_tick(a):
     state, sessions, dispatches = load_runtime()
+    config = read_json(CONFIG_PATH, {})
     result = tick_docs(
         state,
         sessions,
         dispatches,
         timestamp=now_utc(),
         early_supervision_after_seconds=a.early_supervision_after_seconds,
+        config=config,
     )
     save_runtime(state, dispatches)
     print(json.dumps(result, indent=2, ensure_ascii=False))

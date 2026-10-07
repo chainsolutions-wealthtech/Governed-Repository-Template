@@ -317,3 +317,26 @@ This alert is intentionally earlier than the canonical GACR suspected-stall/stal
 - it is deduplicated until a fresh signal resolves it or canonical GACR liveness state supersedes it.
 
 Canonical STALLED / TAKEOVER_READY remains exclusively owned by existing GACR rules.
+
+
+## Persistent continuity membership and provider endpoint truth
+
+Continuity membership is durable and must not be conflated with heartbeat freshness.
+
+```text
+membership_state = PERSISTENT
+liveness_state   = LIVE / QUIET / SUSPECTED_STALL / STALLED / UNREACHABLE / UNKNOWN
+```
+
+Lease expiry changes liveness evidence only. It does not delete the canonical GACR session, remove continuity membership, transfer authority or create a new session. A yielded scope also remains part of the durable continuity history. Terminal membership requires an explicit governed terminal/supersession event.
+
+Each continuity participant may carry a derived `provider_endpoint` descriptor. This descriptor is capability-truthful:
+
+- a real registered `EXTERNAL_BRIDGE` is `OBSERVED` and may be used for PUSH;
+- a provider-private callback/conversation endpoint that is not exposed is `UNAVAILABLE`;
+- ChatGPT's repository-side issue control channel may be recorded as a proven repository control surface when the existing live proof is configured, but it is not misrepresented as a private ChatGPT callback;
+- without a real inbound endpoint, wake delivery remains `POLL_REPOSITORY`;
+- provider conversation references are persisted only when actually supplied;
+- no provider URL, conversation ID or endpoint is synthesized.
+
+The endpoint descriptor is a derived projection of the canonical session/bridge facts. It is not a second endpoint registry or authority source.

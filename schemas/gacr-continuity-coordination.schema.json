@@ -88,7 +88,8 @@
                 "status",
                 "grants_task_authority",
                 "grants_claim",
-                "grants_mutation_authority"
+                "grants_mutation_authority",
+                "membership_state"
               ],
               "properties": {
                 "participant_id": {
@@ -144,6 +145,189 @@
                 },
                 "grants_mutation_authority": {
                   "const": false
+                },
+                "membership_state": {
+                  "enum": [
+                    "PERSISTENT",
+                    "TERMINAL"
+                  ]
+                },
+                "liveness_state": {
+                  "enum": [
+                    "LIVE",
+                    "QUIET",
+                    "SUSPECTED_STALL",
+                    "STALLED",
+                    "UNREACHABLE",
+                    "UNKNOWN"
+                  ]
+                },
+                "canonical_session_status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "canonical_relay_state": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "lease_expires_at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "last_signal_at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "runtime_projection_observed_at": {
+                  "type": "string"
+                },
+                "provider_endpoint": {
+                  "type": "object",
+                  "required": [
+                    "provider",
+                    "provider_conversation_ref_status",
+                    "provider_inbound_endpoint",
+                    "repository_control_surface",
+                    "wake_route",
+                    "provider_private_values_invented"
+                  ],
+                  "properties": {
+                    "provider": {
+                      "type": "string"
+                    },
+                    "provider_conversation_ref_status": {
+                      "enum": [
+                        "PRESENT",
+                        "UNAVAILABLE"
+                      ]
+                    },
+                    "provider_conversation_ref": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "provider_inbound_endpoint": {
+                      "type": "object",
+                      "required": [
+                        "status",
+                        "kind",
+                        "endpoint_ref",
+                        "provenance"
+                      ],
+                      "properties": {
+                        "status": {
+                          "enum": [
+                            "OBSERVED",
+                            "CONFIGURED",
+                            "UNAVAILABLE"
+                          ]
+                        },
+                        "kind": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "endpoint_ref": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "provenance": {
+                          "type": "string"
+                        },
+                        "reason": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "repository_control_surface": {
+                      "type": "object",
+                      "required": [
+                        "status",
+                        "kind",
+                        "provenance"
+                      ],
+                      "properties": {
+                        "status": {
+                          "enum": [
+                            "PROVEN",
+                            "AVAILABLE",
+                            "UNAVAILABLE"
+                          ]
+                        },
+                        "kind": {
+                          "type": "string"
+                        },
+                        "endpoint_ref": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "provenance": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "wake_route": {
+                      "type": "object",
+                      "required": [
+                        "preferred",
+                        "push_capable",
+                        "wake_channels"
+                      ],
+                      "properties": {
+                        "preferred": {
+                          "enum": [
+                            "EXTERNAL_BRIDGE",
+                            "POLL_REPOSITORY"
+                          ]
+                        },
+                        "push_capable": {
+                          "type": "boolean"
+                        },
+                        "wake_channels": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "connection_ref": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "bridge_registration_ref": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "provider_private_values_invented": {
+                      "const": false
+                    }
+                  },
+                  "additionalProperties": true
                 }
               },
               "additionalProperties": true

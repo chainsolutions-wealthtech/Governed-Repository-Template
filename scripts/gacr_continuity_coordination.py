@@ -219,6 +219,7 @@ def declare_scope_docs(
         "observed_head_sha": observed_head,
         "coordination_state_ref": coordination_state_ref,
         "status": "ACTIVE",
+        "membership_state": "PERSISTENT",
         "declared_at": same.get("declared_at") if same else timestamp,
         "last_updated_at": timestamp,
         "evidence_ref": evidence_ref,
@@ -279,6 +280,7 @@ def yield_scope_docs(
         raise ValueError("CONTINUITY_COORDINATION_FAILED: active participant scope not found")
 
     participant["status"] = "YIELDED"
+    participant["membership_state"] = "PERSISTENT"
     participant["yielded_at"] = timestamp
     participant["last_updated_at"] = timestamp
     participant["observed_head_sha"] = observed_head

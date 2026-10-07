@@ -8,11 +8,14 @@ NOW = datetime(2026, 10, 7, 22, 0, tzinfo=timezone.utc)
 HEAD = "a" * 40
 
 
-def session(session_id, *, bridge=False, live=True, silence_seconds=0):
+def session(session_id, *, bridge=False, live=True, silence_seconds=0, provider="chatgpt", provider_ref=None):
     heartbeat = NOW - timedelta(seconds=silence_seconds)
     return {
         "session_id": session_id,
         "status": "ACTIVE",
+        "provider": provider,
+        "provider_conversation_ref": provider_ref,
+        "connection_ref": "connection-" + session_id,
         "client_instance_id": "client-" + session_id,
         "wake_channels": ["EXTERNAL_BRIDGE", "POLL_REPOSITORY"] if bridge else ["POLL_REPOSITORY"],
         "bridge_registration_ref": "bridge-" + session_id if bridge else None,
@@ -47,6 +50,7 @@ def base_state():
                     "work_mode": "WRITE",
                     "collision_domains": ["gacr:continuity:projection", "gacr:continuity:delivery"],
                     "status": "ACTIVE",
+                    "membership_state": "PERSISTENT",
                 },
                 {
                     "participant_id": "GACR-P-demo-b",
@@ -55,6 +59,7 @@ def base_state():
                     "work_mode": "REVIEW",
                     "collision_domains": ["gacr:continuity:delivery"],
                     "status": "ACTIVE",
+                    "membership_state": "PERSISTENT",
                 },
                 {
                     "participant_id": "GACR-P-demo-c",
@@ -63,6 +68,7 @@ def base_state():
                     "work_mode": "READ_ONLY",
                     "collision_domains": ["gacr:continuity:delivery"],
                     "status": "YIELDED",
+                    "membership_state": "PERSISTENT",
                 },
             ],
             "events": [],
@@ -202,6 +208,45 @@ def main():
         ),
         "TARGET_NOT_MEMBER_OF_CONTINUITY",
     )
+
+    projection_state = base_state()
+    projection_sessions = {"sessions": [
+        session("session-a", silence_seconds=121, provider="chatgpt"),
+        session("session-b", bridge=True, provider="claude", provider_ref="claude-conversation-1"),
+        session("session-c", live=False, provider="codex"),
+    ]}
+    projection_sessions["sessions"][2]["status"] = "STALLED"
+    projection_sessions["sessions"][2]["relay"]["state"] = "TAKEOVER_READY"
+    projection_dispatches = {"schema_version": "1.0.0", "revision": 0, "items": []}
+    projection_tick = bus.tick_docs(
+        projection_state,
+        projection_sessions,
+        projection_dispatches,
+        timestamp=NOW,
+        early_supervision_after_seconds=120,
+        config={
+            "external_bridge": {"chatgpt_issue_bridge_live_proven": True},
+            "host_issue_bridge": {"enabled": True, "issue_number": 115},
+        },
+    )
+    pa, pb, pc = projection_state["items"][0]["participants"]
+    assert pa["membership_state"] == "PERSISTENT"
+    assert pa["liveness_state"] == "QUIET"
+    assert pa["provider_endpoint"]["provider"] == "chatgpt"
+    assert pa["provider_endpoint"]["provider_inbound_endpoint"]["status"] == "UNAVAILABLE"
+    assert pa["provider_endpoint"]["repository_control_surface"]["status"] == "PROVEN"
+    assert pa["provider_endpoint"]["repository_control_surface"]["kind"] == "GITHUB_ISSUE_CONTROL_CHANNEL"
+    assert pb["membership_state"] == "PERSISTENT"
+    assert pb["liveness_state"] == "LIVE"
+    assert pb["provider_endpoint"]["provider"] == "claude"
+    assert pb["provider_endpoint"]["provider_conversation_ref_status"] == "PRESENT"
+    assert pb["provider_endpoint"]["provider_inbound_endpoint"]["status"] == "OBSERVED"
+    assert pb["provider_endpoint"]["wake_route"]["push_capable"] is True
+    assert pc["membership_state"] == "PERSISTENT"
+    assert pc["liveness_state"] == "STALLED"
+    assert pc["provider_endpoint"]["provider"] == "codex"
+    assert pc["provider_endpoint"]["provider_inbound_endpoint"]["status"] == "UNAVAILABLE"
+    assert any(x.get("state") == "PARTICIPANT_RUNTIME_PROJECTED" for x in projection_tick["changes"])
 
     supervision_state = base_state()
     supervision_sessions = {"sessions": [
