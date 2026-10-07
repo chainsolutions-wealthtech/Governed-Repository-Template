@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import sqlite3, tempfile
+import json, sqlite3, tempfile
 from datetime import datetime, timedelta
 from pathlib import Path
 
 from provider_first_tool_hook import build_envelope
 from gscc_arrival_identity import mint
 from gscc_persisted_entry_pipeline import run_pipeline
-from gscc_session_runtime import prepare, control
+from gscc_session_runtime import prepare, control, release_f1
 
 REPO="chainsolutions-wealthtech/Governed-Repository-Template"
 HEAD="a"*40
@@ -106,6 +106,64 @@ def main():
         assert g1["state"]=="GSE_VERIFIED_WAITING_GACR",g1
         assert g2["state"]=="GSE_VERIFIED_WAITING_GACR",g2
         assert g1["gacr_attach"]["connection_ref"] != g2["gacr_attach"]["connection_ref"]
+
+        # F1 release is bound to the same arrival, exact GACR session, grant and HEAD.
+        gacr_session_id="session-final-release"
+        grant={
+          "schema":"gscc-access-grant/v1",
+          "grant_id":"GSCC-GRANT-test-release",
+          "status":"AUTHORIZED",
+          "connection_ref":g1["gacr_attach"]["connection_ref"],
+          "session_id":gacr_session_id,
+          "bound_head":HEAD,
+        }
+        conn=sqlite3.connect(db)
+        try:
+            conn.execute(
+              "UPDATE gscc_session_bindings SET gacr_session_id=?,binding_status='GACR_BOUND',binding_level='EXACT' WHERE arrival_ref=?",
+              (gacr_session_id,e1["gscc_arrival"]["arrival_ref"]),
+            )
+            conn.execute(
+              "UPDATE gscc_session_runtime SET state='READY_FOR_F1',access_grant_json=?,last_gate='Q12',next_gate='F1' WHERE runtime_id=?",
+              (json.dumps(grant,sort_keys=True),r1["runtime_id"]),
+            )
+            conn.commit()
+        finally:
+            conn.close()
+        receipt={
+          "schema":"gscc-function-exposure-receipt/v1",
+          "status":"VALIDATED",
+          "reason_code":"EXPOSURE_VALIDATED",
+          "exposable":True,
+          "connection_ref":g1["gacr_attach"]["connection_ref"],
+          "session_id":gacr_session_id,
+          "access_grant_id":grant["grant_id"],
+          "requested_head":HEAD,
+          "tool_name":"github_get_repository_state",
+          "surface":"read",
+          "exposure_receipt":"GSCC-EXPOSURE-test-release",
+          "route_authority":{"session_id":gacr_session_id},
+        }
+        released=release_f1(db,r1["runtime_id"],receipt,HEAD)
+        assert released["state"]=="RELEASED_TO_NORMAL_GOVERNANCE",released
+        assert released["start_here_status"]=="APPLICABLE",released
+        assert released["last_gate"]=="00_START_HERE.md",released
+        assert released["next_gate"] is None,released
+
+        conn=sqlite3.connect(db)
+        try:
+            runtime_state=conn.execute(
+              "SELECT state,last_gate,next_gate FROM gscc_session_runtime WHERE runtime_id=?",
+              (r1["runtime_id"],),
+            ).fetchone()
+            assert runtime_state==("RELEASED_TO_NORMAL_GOVERNANCE","00_START_HERE.md",None),runtime_state
+            routes=dict(conn.execute(
+              "SELECT current_gate,route_status FROM gscc_gate_route_runs WHERE route_run_id IN (?,?)",
+              (f"{r1['runtime_id']}:F1",f"{r1['runtime_id']}:00_START_HERE.md"),
+            ).fetchall())
+            assert routes=={"F1":"ADVANCED","00_START_HERE.md":"RELEASED"},routes
+        finally:
+            conn.close()
 
         p1c=run_pipeline(e1_repeat,GITHUB,db,run_id="arrival-1-cont",observed_at="2026-10-07T01:01:00+00:00")
         assert p1c["classification"]=="CONTINUATION",p1c
