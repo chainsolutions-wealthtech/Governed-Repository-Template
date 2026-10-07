@@ -1439,3 +1439,18 @@ Global programme ordering is unchanged: `GMC-01 / GMC-G01` remains current.
 - Therefore R7 is operationally installed and green, but no agent is classified AVAILABLE/WAITING until a real explicit capacity signal is emitted.
 - Silence remains UNKNOWN, never AVAILABLE.
 - Global programme remains `GMC-01 / GMC-G01`.
+
+
+## 2026-10-07 — GACR R8 role/capacity dispatch junction
+
+Live observation found an admitted ChatGPT session whose last action was `POST_F1_CODE_AGENT_DECLARATION` and whose explicit host comments declared `CODE_AGENT` / waiting for work, while the canonical session still retained the pre-release `qualification-client` role.
+
+Generic correction:
+- enrich the same session with an explicitly declared canonical work role/capabilities;
+- normalize explicit `WAITING_FOR_WORK` post-release outcome into capacity state;
+- retain legacy role compatibility;
+- require explicit compatibility scope before automatic work dispatch;
+- add reusable prompts for CODE_AGENT, INTAKER and SUPERVISOR;
+- preserve no-authority-on-role/no-authority-on-offer invariants.
+
+No global programme task status is changed by this cross-cutting correction.
