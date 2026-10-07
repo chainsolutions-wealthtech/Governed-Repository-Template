@@ -269,5 +269,31 @@ class DispatchPlanTests(unittest.TestCase):
         self.assertIn("OPEN_DISPATCH_EXISTS", plan["task_evaluations"][0]["reasons"])
 
 
+class BridgeContractTests(unittest.TestCase):
+    def test_repository_dispatch_heartbeat_preserves_workload_fields(self):
+        root = scheduler.ROOT
+        bridge = (root / "scripts" / "gacr_workflow_bridge.py").read_text(encoding="utf-8")
+        relay = (root / "scripts" / "governed_agent_continuity_relay.py").read_text(encoding="utf-8")
+        for field in (
+            "workload_state", "blocker_code", "capacity_slots",
+            "max_parallel_tasks", "retry_after_at",
+        ):
+            self.assertIn(f"payload.get('{field}')", bridge)
+        for flag in (
+            "--workload-state", "--blocker-code", "--capacity-slots",
+            "--max-parallel-tasks", "--retry-after-at",
+        ):
+            self.assertIn(flag, relay)
+        self.assertIn("workload_state=a.workload_state", relay)
+        self.assertIn("capacity_slots=a.capacity_slots", relay)
+        self.assertIn("retry_after_at=a.retry_after_at", relay)
+
+    def test_relay_workflow_runs_safe_auto_dispatch(self):
+        workflow = (scheduler.ROOT / ".github" / "workflows" / "governed-agent-continuity-relay.yml").read_text(encoding="utf-8")
+        self.assertIn("gacr_parallel_dispatch.py dispatch --auto --persist-roster", workflow)
+        self.assertIn("gacr-agent-roster.json", workflow)
+        self.assertIn("agent-relay/roster.json", workflow)
+
+
 if __name__ == "__main__":
     unittest.main(verbosity=2)
