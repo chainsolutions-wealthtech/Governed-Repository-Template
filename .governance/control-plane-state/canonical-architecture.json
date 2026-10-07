@@ -4,19 +4,17 @@
   "authority_type": "CANONICAL_TARGET_ARCHITECTURE",
   "scope": "CONTROL_PLANE_SOURCE_ONLY",
   "status": "ACCEPTED_TARGET_ARCHITECTURE",
-  "current_revision": 6,
+  "current_revision": 7,
   "canonical_path": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
   "revision": {
-    "revision_id": "CP-ARCH-001-R6",
-    "revision_number": 6,
-    "subject_head_sha": "76fae0dc132ef7e91e659c4dad44cd3522d2c8c4",
-    "supersedes_revision_id": "CP-ARCH-001-R5",
+    "revision_id": "CP-ARCH-001-R7",
+    "revision_number": 7,
+    "subject_head_sha": "6a7eb182ce0b1648d17429cfd1eb6285cebd71a3",
+    "supersedes_revision_id": "CP-ARCH-001-R6",
     "source_decision_ids": [
-      "CPD-025",
-      "CPD-026",
-      "CPD-027"
+      "CPD-071"
     ],
-    "reason": "Make the central Governance Model a first-class reusable authority before application strategies and bind its catalogue to the existing relational control-plane memory.",
+    "reason": "Add a single whole-system master navigation map and requirements/roadmap traceability contract while preserving existing authorities and current programme ordering.",
     "approval_eligible_from_imported_memory": false
   },
   "source_provenance": {
@@ -46,12 +44,16 @@
     "GOVERNANCE_MODEL_PRECEDES_APPLICATION_STRATEGIES",
     "CASES_CONSUME_SHARED_MODEL",
     "NO_PARALLEL_CANONICAL_DATABASE",
-    "SEMANTIC_COMPARISON_NE_FILENAME_COMPARISON"
+    "SEMANTIC_COMPARISON_NE_FILENAME_COMPARISON",
+    "MASTER_MAP_NE_PARALLEL_AUTHORITY",
+    "STATUS_MUST_DISTINGUISH_LIVE_IMPLEMENTED_PLANNED_FUTURE"
   ],
   "live_execution_reference": {
     "current_state": "docs/control-plane/CURRENT_STATE.md",
     "tasks": "docs/control-plane/TASKS.md",
-    "next_action": "docs/control-plane/NEXT_ACTION.md"
+    "next_action": "docs/control-plane/NEXT_ACTION.md",
+    "master_system_map": "docs/control-plane/MASTER_SYSTEM_MAP.md",
+    "requirements_roadmap": "docs/control-plane/REQUIREMENTS_ROADMAP.md"
   },
   "structuring_cases": [
     "CREATE_NEW_REPOSITORY",
