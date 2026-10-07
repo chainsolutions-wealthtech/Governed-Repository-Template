@@ -323,6 +323,62 @@ def _generic_work_units(work: dict) -> list[dict]:
     return units
 
 
+def _source_program_units(tasks: dict, blueprint: dict) -> list[dict]:
+    if not TEMPLATE_SOURCE:
+        return []
+    blueprint_legacy_ids = {
+        str(group.get("legacy_id"))
+        for group in blueprint.get("groups", [])
+        if group.get("legacy_id")
+    }
+    statuses = {
+        str(item.get("id")): str(item.get("status") or "")
+        for item in tasks.get("items", [])
+        if item.get("id")
+    }
+    units = []
+    for item in tasks.get("items", []):
+        subject_id = item.get("id")
+        if not subject_id or subject_id in blueprint_legacy_ids:
+            continue
+        if item.get("status") not in {"IN_PROGRESS", "READY"}:
+            continue
+        deps = list(item.get("depends_on") or [])
+        deps_ok, unresolved = _dependencies_satisfied(deps, statuses)
+        raw_domains = item.get("collision_domains")
+        if raw_domains is None:
+            raw_domains = [item.get("collision_domain")] if item.get("collision_domain") else [f"control-plane:{subject_id}:serial"]
+        units.append({
+            "subject_id": subject_id,
+            "task_id": subject_id,
+            "source_kind": "CONTROL_PLANE_PROGRAM_TASK",
+            "source_ref": ".governance/control-plane-state/tasks.json",
+            "parent_id": item.get("parent_or_program"),
+            "title": item.get("title") or subject_id,
+            "action": item.get("next_action"),
+            "objective": item.get("objective"),
+            "canonical_status": item.get("status"),
+            "dependencies": deps,
+            "dependencies_satisfied": deps_ok,
+            "unresolved_dependencies": unresolved,
+            "collision_domains": sorted(set(raw_domains)),
+            "required_capabilities": sorted(set(item.get("required_capabilities") or [])),
+            "required_authorities": sorted(set(item.get("required_authorities") or [])),
+            "allowed_agent_roles": sorted(set(item.get("allowed_agent_roles") or ["CODE_AGENT", "SUPERVISOR", "REVIEWER"])),
+            "planning_only": bool(item.get("planning_only", False)),
+            "implementation_authorized": bool(item.get("implementation_authorized", False)),
+            "method": item.get("method") or "Read canonical task/history authorities → reobserve HEAD → claim → execute only authorized scope → validate → trace → handoff.",
+            "evidence_required": list(item.get("evidence_required") or []),
+            "done_when": item.get("done_when"),
+            "hold_if": item.get("hold_if") or "Contradiction, missing authority, dependency regression, collision or stale HEAD.",
+            "where_to_look": list(item.get("where_to_look") or []),
+            "search_order": list(item.get("search_order") or []),
+            "entry_purpose": "WORK_ON_CONTROL_PLANE",
+            "work_kind": "EXECUTE_EXISTING_TASK",
+        })
+    return units
+
+
 def _source_blueprint_units(tasks: dict, blueprint: dict) -> list[dict]:
     if not TEMPLATE_SOURCE:
         return []
@@ -538,7 +594,7 @@ def build_task_pool_projection(*, generated_at: str | None = None) -> dict:
     tasks = read_json(TASKS_PATH, {"items": []}) if TEMPLATE_SOURCE else {"items": []}
     blueprint = read_json(BLUEPRINT_PATH, {"groups": []}) if TEMPLATE_SOURCE else {"groups": []}
 
-    units = _generic_work_units(work) + _source_blueprint_units(tasks, blueprint)
+    units = _generic_work_units(work) + _source_program_units(tasks, blueprint) + _source_blueprint_units(tasks, blueprint)
     items = []
     for unit in units:
         state, active_claim = _state_for_unit(
@@ -690,7 +746,7 @@ def dispatch_contextual_source_tasks() -> dict:
 
     changes = []
     for item in pool.get("items", []):
-        if item.get("source_kind") != "CONTROL_PLANE_BLUEPRINT_TASK" or item.get("pool_state") != "READY":
+        if not str(item.get("source_kind") or "").startswith("CONTROL_PLANE_") or item.get("pool_state") != "READY":
             continue
         subject_id = item["subject_id"]
         existing = _latest_open_dispatch(dispatches, subject_id)
