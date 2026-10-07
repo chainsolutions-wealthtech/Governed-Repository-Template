@@ -622,3 +622,17 @@ python3 scripts/gacr_client_emitter.py availability --session-id <id> --state QU
 ```
 
 The scheduled GACR relay refreshes safe work offers automatically, but only from explicit/eligible capacity evidence.
+
+
+### R7 merge / live-capacity attestation
+
+R7 is merged and CI-green.
+
+- merge PR: `#252`;
+- merge commit: `819c5f48c1cbb9b7e24a5eb1976e4d16ac1ac31a`;
+- post-merge Governance CI: `37560232192 / PASS`;
+- post-merge relay: `37560232214 / PASS`.
+
+At the first post-merge read-only observation, the repository exposed non-terminal GACR sessions but no explicit `AVAILABLE`/`WAITING` capacity signal. Therefore no `WORK_OFFER` was emitted. This is expected fail-closed behavior and proves that mere session presence/silence is not treated as dispatch capacity.
+
+The first live capacity assignment proof remains event-dependent: it occurs only when a real agent/provider emits a supported availability signal and a compatible READY work item exists.
