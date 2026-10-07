@@ -72,6 +72,8 @@
       "scripts/test_governed_agent_continuity_relay.py",
       ".github/workflows/governed-agent-continuity-relay.yml",
       "scripts/gacr_agent_telemetry.py",
+      "scripts/test_gacr_parallel_dispatch.py",
+      "scripts/gacr_parallel_dispatch.py",
       "scripts/gacr_bridge_notifier.py",
       "scripts/test_gacr_agent_telemetry.py",
       "scripts/gacr_auto_attach.py",
@@ -124,7 +126,8 @@
       ".governance/agent-relay/beacons.json",
       ".governance/agent-relay/correlations.json",
       ".governance/agent-relay/dispatches.json",
-      ".governance/agent-relay/forensics.json"
+      ".governance/agent-relay/forensics.json",
+      ".governance/agent-relay/roster.json"
     ],
     "coordination_docs": [
       "docs/AUTOMATION.md",
@@ -155,6 +158,7 @@
       "schemas/mcp-binding.schema.json",
       "schemas/gacr-state.schema.json",
       "schemas/gacr-telemetry.schema.json",
+      "schemas/gacr-agent-roster.schema.json",
       "schemas/gacr-bridge-contract.schema.json",
       "schemas/gscc-admission-envelope.schema.json",
       "schemas/gscc-admission-receipt.schema.json",
