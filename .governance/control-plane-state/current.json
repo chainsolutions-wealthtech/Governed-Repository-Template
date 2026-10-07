@@ -394,6 +394,18 @@
       "runtime_projection": "POSTGRESQL_AFTER_ARCH_009",
       "production_mutation_authority_granted": false,
       "current_unique_executable_item_unchanged": "GMC-01"
+    },
+    "gacr_parallel_dispatch": {
+      "authority_id": "CP-AGENT-RELAY-001-R7",
+      "decision_id": "CPD-074",
+      "status": "IMPLEMENTED_PENDING_CI_AND_POST_MERGE_ROSTER_PROOF",
+      "owner_authorized_parallel_lane": true,
+      "global_programme_task_unchanged": "GMC-01",
+      "roster_projection": ".governance/control-plane-state/gacr-agent-roster.json",
+      "scheduler": "scripts/gacr_parallel_dispatch.py",
+      "auto_dispatch_policy": "EXPLICIT_CANONICAL_TASK_OPT_IN_ONLY",
+      "provider_limit_policy": "EXPLICIT_OBSERVATION_ONLY_NEVER_INFER",
+      "dispatch_offer_grants_mutation_authority": false
     }
   },
   "framework_product_boundary": {
