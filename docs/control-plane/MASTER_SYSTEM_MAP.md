@@ -249,6 +249,32 @@ API / PostgreSQL if justified / Admin UI
 
 CAP does not duplicate GMC, RTE, ARCH or IDN. It packages their stabilized semantics.
 
+## 9A. SaaS product / deployment target
+
+The downstream product programme is `CP-SAAS-001` / `SAA-001..SAA-015`.
+
+```text
+validated governance semantics
++ reusable capsule 1.0.0
++ Governance API architecture
++ PostgreSQL projection architecture
++ identity/router API/UI contracts
++ admin cockpit architecture
+        ↓
+full backend REST/API + governed services
+        ↓
+full autonomous admin cockpit
+        ↓
+security / audit / observability
+        ↓
+reproducible staging
+        ↓
+production:
+https://mcp.wealthtechinnovations.com/template
+```
+
+The cockpit must expose identity/session, GSCC/GSE/GACR, questions/answers, four cases, programmes/tasks/claims, evidence/decisions, checkpoints/handoffs, repositories/integrations, infrastructure/knowledge and deployment operations. Mutable controls must execute the same governance gates as non-UI workflows.
+
 ## 10. What is implemented, proven, planned and future
 
 ### LIVE PROVEN
@@ -284,8 +310,9 @@ CAP does not duplicate GMC, RTE, ARCH or IDN. It packages their stabilized seman
 ### FUTURE
 - Governance API;
 - PostgreSQL runtime projection if justified;
-- Admin Web Application;
-- identity/router API/UI exposure.
+- Admin Web Application architecture/control surface;
+- identity/router API/UI exposure;
+- full SaaS platform implementation and production deployment under `CP-SAAS-001`.
 
 ## 11. How an agent must use the system
 
