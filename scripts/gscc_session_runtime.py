@@ -338,16 +338,106 @@ def bind_gacr(db:Path,runtime_id:str,sessions_path:Path,current_head:str)->dict[
       "authority_granted":False,
     }
 
+
+def release_f1(db:Path,runtime_id:str,receipt:dict[str,Any],current_head:str)->dict[str,Any]:
+    conn=sqlite3.connect(db)
+    try:
+      rt=_load_runtime(conn,runtime_id)
+      if rt["state"]!="READY_FOR_F1":
+          raise ValueError("runtime is not ready for F1 release")
+      if receipt.get("schema")!="gscc-function-exposure-receipt/v1":
+          raise ValueError("F1 receipt schema invalid")
+      if receipt.get("status")!="VALIDATED" or receipt.get("exposable") is not True:
+          raise ValueError("F1 exposure not validated")
+      if receipt.get("reason_code")!="EXPOSURE_VALIDATED":
+          raise ValueError("F1 exposure reason invalid")
+      if receipt.get("connection_ref")!=rt["connection_ref"]:
+          raise ValueError("F1 connection_ref mismatch")
+      grant=json.loads(rt["access_grant_json"] or "{}")
+      if receipt.get("access_grant_id")!=grant.get("grant_id"):
+          raise ValueError("F1 access grant mismatch")
+      if receipt.get("requested_head")!=current_head:
+          raise ValueError("F1 current head mismatch")
+      if grant.get("bound_head")!=current_head:
+          raise ValueError("F1 grant head mismatch")
+      row=conn.execute(
+          "SELECT gacr_session_id,binding_status,binding_level FROM gscc_session_bindings WHERE arrival_ref=?",
+          (rt["arrival_ref"],),
+      ).fetchone()
+      if not row or row[1]!="GACR_BOUND" or row[2]!="EXACT":
+          raise ValueError("exact GACR binding required for release")
+      gacr_session_id=row[0]
+      if not gacr_session_id or receipt.get("session_id")!=gacr_session_id or grant.get("session_id")!=gacr_session_id:
+          raise ValueError("F1 GACR session mismatch")
+      route_authority=receipt.get("route_authority") or {}
+      if route_authority.get("session_id")!=gacr_session_id:
+          raise ValueError("F1 route authority session mismatch")
+      exposure_ref=receipt.get("exposure_receipt")
+      if not isinstance(exposure_ref,str) or not exposure_ref.startswith("GSCC-EXPOSURE-"):
+          raise ValueError("F1 exposure receipt reference missing")
+      evidence={
+        "exposure_receipt":exposure_ref,
+        "tool_name":receipt.get("tool_name"),
+        "surface":receipt.get("surface"),
+        "connection_ref":rt["connection_ref"],
+        "gacr_session_id":gacr_session_id,
+        "access_grant_id":grant.get("grant_id"),
+        "head":current_head,
+      }
+    finally:
+      conn.close()
+
+    _route(db,runtime_id,"F1","F1_VERIFIED",evidence,rt["identity_id"])
+    release_evidence={
+      "schema":"gscc-normal-governance-release/v1",
+      "runtime_id":runtime_id,
+      "arrival_ref":rt["arrival_ref"],
+      "identity_id":rt["identity_id"],
+      "connection_ref":rt["connection_ref"],
+      "gacr_session_id":gacr_session_id,
+      "f1_exposure_receipt":exposure_ref,
+      "released_head":current_head,
+      "next_authority":"00_START_HERE.md",
+      "status":"RELEASED",
+    }
+    _route(db,runtime_id,"00_START_HERE.md","RELEASED",release_evidence,rt["identity_id"])
+
+    conn=sqlite3.connect(db)
+    try:
+      conn.execute(
+        "UPDATE gscc_session_runtime SET state='RELEASED_TO_NORMAL_GOVERNANCE',last_gate='00_START_HERE.md',next_gate=NULL,updated_at=? WHERE runtime_id=?",
+        (now_iso(),runtime_id),
+      )
+      conn.commit()
+    finally:
+      conn.close()
+    return {
+      "schema":"gscc-normal-governance-release/v1",
+      "runtime_id":runtime_id,
+      "state":"RELEASED_TO_NORMAL_GOVERNANCE",
+      "last_gate":"00_START_HERE.md",
+      "next_gate":None,
+      "start_here_status":"APPLICABLE",
+      "gacr_session_id":gacr_session_id,
+      "connection_ref":rt["connection_ref"],
+      "exposure_receipt":exposure_ref,
+      "released_head":current_head,
+      "release_evidence":release_evidence,
+      "authority_granted":False,
+    }
+
 def main()->None:
     p=argparse.ArgumentParser(); sub=p.add_subparsers(dest="command",required=True)
     a=sub.add_parser("prepare"); a.add_argument("--db",required=True); a.add_argument("--run-id",required=True); a.add_argument("--issue-number",required=True,type=int)
     b=sub.add_parser("control"); b.add_argument("--db",required=True); b.add_argument("--runtime-id",required=True); b.add_argument("--payload-json",required=True); b.add_argument("--observed-at",required=True)
     g=sub.add_parser("bind-gacr"); g.add_argument("--db",required=True); g.add_argument("--runtime-id",required=True); g.add_argument("--sessions",required=True); g.add_argument("--current-head",required=True)
+    r=sub.add_parser("release-f1"); r.add_argument("--db",required=True); r.add_argument("--runtime-id",required=True); r.add_argument("--receipt-json",required=True); r.add_argument("--current-head",required=True)
     s=sub.add_parser("status"); s.add_argument("--db",required=True); s.add_argument("--runtime-id",required=True)
     args=p.parse_args()
     if args.command=="prepare": result=prepare(Path(args.db),args.run_id,args.issue_number)
     elif args.command=="control": result=control(Path(args.db),args.runtime_id,json.loads(args.payload_json),args.observed_at)
     elif args.command=="bind-gacr": result=bind_gacr(Path(args.db),args.runtime_id,Path(args.sessions),args.current_head)
+    elif args.command=="release-f1": result=release_f1(Path(args.db),args.runtime_id,json.loads(args.receipt_json),args.current_head)
     else:
         conn=sqlite3.connect(args.db)
         try: result=_load_runtime(conn,args.runtime_id)
