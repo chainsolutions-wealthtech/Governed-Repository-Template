@@ -198,6 +198,8 @@ def main():
         add(args,'--branch',payload.get('branch'))
         add(args,'--pull-request',payload.get('pull_request'))
         add(args,'--agent-role',payload.get('agent_role'))
+        add(args,'--entry-purpose',payload.get('entry_purpose'))
+        add(args,'--work-kind',payload.get('work_kind'))
         for capability in str(payload.get('capabilities') or '').split(','):
             capability=capability.strip()
             if capability:
