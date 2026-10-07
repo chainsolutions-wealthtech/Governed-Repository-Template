@@ -2,21 +2,21 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 46,
+  "source_state_revision": 47,
   "template_version": "2.8.27",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
-  "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
+  "active_program": "GOVERNANCE_MODEL_CATALOGUE",
   "program_issue": 12,
-  "current_checkpoint": "C1-13_SECOND_FRESH_E2E_PASS",
-  "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+  "current_checkpoint": "CREATE_NEW_REPOSITORY_CASE_COMPLETE",
+  "active_work_package": "GMC-A / GMC-G01",
+  "unique_next_action": "GMC_01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES",
   "blockers": [],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
-  "freshness": "SOURCE_STATE_RECONCILED_WITH_EKYC_SECOND_FRESH_NORMAL_ENTRY_PASS",
+  "freshness": "CASE1_CLOSED_GMC_A_RELEASED",
   "last_ci_run": 36881131383,
   "last_ci_result": "PASS",
   "release_subject_head": "8b3a1ac4abf250820558ba873110581f8607a2b3",
-  "last_verified_main_head": "5172f8b9cf5ce560a1d55af65e7b7916a77df86b",
+  "last_verified_main_head": "63e67d76970dc4b7e8b9864567a07e7445e84bfc",
   "canonical_memory_database": {
     "schema_version": "1.0.0",
     "status": "ACTIVE",
@@ -393,7 +393,7 @@
       "backend": "VERSIONED_FULL_REST_API_AND_GOVERNED_SERVICE_BOUNDARIES",
       "runtime_projection": "POSTGRESQL_AFTER_ARCH_009",
       "production_mutation_authority_granted": false,
-      "current_unique_executable_item_unchanged": "P12-S6"
+      "current_unique_executable_item_unchanged": "GMC-01"
     }
   },
   "framework_product_boundary": {
@@ -792,5 +792,13 @@
       "question_resolution": "OBSERVE_AND_REUSE_BEFORE_ASK",
       "missing_capability_policy": "PREPARE_SCOPED_CAPABILITY_REQUEST_ONLY_WHEN_CONCRETE_OPERATION_REQUIRES_IT"
     }
+  },
+  "case1_closure": {
+    "status": "DONE",
+    "decision_id": "CPD-073",
+    "closure_task": "P12-S6",
+    "checkpoint": "CREATE_NEW_REPOSITORY_CASE_COMPLETE",
+    "no_orphan_executable_tasks": true,
+    "next_task": "GMC-01"
   }
 }
