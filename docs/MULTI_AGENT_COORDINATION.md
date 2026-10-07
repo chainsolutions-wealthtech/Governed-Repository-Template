@@ -163,3 +163,44 @@ CLIENT_EMITTER
 ```
 
 If the emitter stops without an explicit interruption signal, WATCH treats the missing heartbeat as absence only; Forensics must not infer a provider or network cause.
+
+
+## Availability-aware parallel dispatch
+
+GACR R7 separates **liveness**, **availability**, **blocking**, and **authority**.
+
+```text
+ALIVE != AVAILABLE
+AVAILABLE != AUTHORIZED
+DISPATCH_OFFER != CLAIM
+CLAIM != MUTATION_AUTHORITY
+```
+
+A code agent may report:
+- `WORKING`;
+- `IDLE`;
+- `WAITING_FOR_WORK`;
+- `WAITING_FOR_INPUT`;
+- `WAITING_FOR_AUTHORITY`;
+- `WAITING_FOR_REVIEW`;
+- `BLOCKED`;
+- `RATE_LIMITED`;
+- `QUOTA_LIMITED`;
+- `CONTEXT_LIMITED`;
+- `CHECKPOINTING`;
+- `TERMINATING`.
+
+The availability roster shows active and waiting code agents, their current claims, capacity slots, explicit blockers and retry time when supplied.
+
+Automatic parallel assignment requires:
+1. canonical task opt-in via `dispatch_policy.enabled=true`;
+2. dependencies satisfied;
+3. no overlapping active collision domain;
+4. an explicitly available `CODE_AGENT`;
+5. required capabilities present;
+6. free capacity;
+7. canonical claim before actual execution.
+
+Tasks that share a collision domain are serialized even when several agents are available.
+
+Provider rate/quota/context limits are recorded only when explicitly reported by an agent/provider adapter. They are never inferred from silence or stale heartbeats.
