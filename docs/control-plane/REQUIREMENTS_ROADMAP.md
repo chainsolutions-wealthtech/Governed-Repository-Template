@@ -65,6 +65,11 @@ Every completed capability must satisfy:
 | RQ-34 | Production URL `https://mcp.wealthtechinnovations.com/template` | CP-SAAS-001 | target registered | live deployment not yet authorized | PLANNED | SAA-013 |
 | RQ-35 | Operational backup/restore/upgrade/rollback | CP-SAAS-001 | not implemented | recovery/upgrade drills required | PLANNED | SAA-010 + SAA-015 |
 
+| RQ-36 | Continuous collision-safe multi-agent task pool | CP-AGENT-RELAY-001-R8 | R8 contextual task-pool runtime | unit/integration/relay CI required | IMPLEMENTED_PENDING_CI | merge + postmerge relay attestation |
+| RQ-37 | Every assigned task carries canonical history/method/evidence references | CPD-075 | context packet | R8 tests | IMPLEMENTED_PENDING_CI | postmerge observation |
+| RQ-38 | Unfinished responsive work can be relinquished/requeued with checkpoint/handoff/evidence | CPD-075 | R8 claim lifecycle | R8 tests | IMPLEMENTED_PENDING_CI | postmerge observation |
+| RQ-39 | Abruptly interrupted claimed work resumes through forensics/takeover/exact-HEAD | CP-AGENT-RELAY-001 | R6/R8 integration | R8 + takeover tests | IMPLEMENTED_PENDING_CI | postmerge observation |
+
 ## 4. Current validated baseline
 
 ### Proven in LIVE
