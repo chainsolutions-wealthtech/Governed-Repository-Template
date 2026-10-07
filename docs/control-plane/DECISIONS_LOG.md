@@ -548,3 +548,21 @@ Append-only durable decisions for the source/control-plane repository.
 - Capsule 1.0.0 requires a clean second-repository LIVE proof and a second/generic provider transport adapter proof.
 - Existing `IDN-013` and `RTE-013` remain downstream API/UI consumers rather than prerequisites for core capsule 1.0.0.
 - This programme is dependency-bound behind `P12-S6`; registration does not change the current unique executable action `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+
+
+### CPD-070 — Capsule productization is downstream of the global routing/model junction
+
+- Date: 2026-10-07.
+- Owner correction: the reusable capsule must not become a parallel programme released directly by P12-S6.
+- P12-S6 closure continues to release GMC-A first.
+- CAP-001 is dependency-bound by `GMC-19 + RTE-012 + ARCH-006 + IDN-006`.
+- The reusable capsule ends at an exact F1-correlated release and hands the same arrival into the existing post-entry junction; it does not replace that router.
+- Canonical junction dimensions are distinct: `IDENTITY != ROLE != AUTHORITY != CONNECTION_INTENT != ENTRY_PURPOSE != WORK_KIND_OR_CASE != ENTRY_ACTION != MUTATION_AUTHORITY`.
+- Role/type uses the existing identity/session role model (`INTAKER / SUPERVISOR / CODE_AGENT / REVIEWER`) and never grants authority.
+- Stage 1 purpose remains `WORK_ON_CONTROL_PLANE` vs `APPLY_GOVERNANCE_CASE`.
+- Stage 2A remains `CODE_IMPLEMENTATION / EXECUTE_EXISTING_TASK / ADD_OR_ENRICH_INFORMATION`.
+- Stage 2B remains exactly the four canonical cases: `CREATE_NEW_REPOSITORY / ADOPT_EXISTING_REPOSITORY / MAP_EXISTING_PROJECT / LAB_EVOLUTION`.
+- Existing connection-intent and entry-action policies remain authoritative and separate. `CONTINUE_GOVERNED_WORK` is not a fifth structuring case.
+- The post-release junction resolves or asks only missing fields and must not replay First Touch or create a second GACR session.
+- CAP 1.0.0 must prove this exact handoff on a second repository and across a second/generic provider adapter.
+- This reconciliation does not advance P12-S6, GMC, RTE, ARCH or CAP execution status.
