@@ -52,10 +52,15 @@ def main() -> None:
         "session-1",
         observed_head="b"*40,
         action_label="CLIENT_HEARTBEAT",
+        workload_state="WAITING_FOR_WORK",
+        capacity_slots=1,
+        max_parallel_tasks=1,
     )
     assert_true(hb["status"] == "SENT", "heartbeat sent")
     assert_true(sent[-1]["body"]["event_type"] == "gacr_heartbeat", "heartbeat event")
     assert_true(sent[-1]["body"]["client_payload"]["session_id"] == "session-1", "heartbeat session")
+    assert_true(sent[-1]["body"]["client_payload"]["workload_state"] == "WAITING_FOR_WORK", "heartbeat workload state")
+    assert_true(sent[-1]["body"]["client_payload"]["capacity_slots"] == 1, "heartbeat capacity")
 
     trace = emitter.trace(
         "session-1",
