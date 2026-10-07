@@ -122,6 +122,10 @@ def active_participant(item: dict, session_id: str, scope_id: str | None) -> dic
     return candidates[0] if candidates else None
 
 
+def continuity_member(item: dict, session_id: str) -> dict | None:
+    return next((p for p in item.get("participants", []) if p.get("session_id") == session_id), None)
+
+
 def make_event_id(continuity_id: str, sequence: int, from_session_id: str, created_at: str) -> str:
     raw = f"{continuity_id}|{sequence}|{from_session_id}|{created_at}".encode()
     return "GACR-E-" + hashlib.sha256(raw).hexdigest()[:16]
@@ -206,6 +210,8 @@ def emit_event_docs(
     routes = []
 
     for target_id in normalize_targets(target_session_ids):
+        if continuity_member(item, target_id) is None:
+            raise ValueError(f"TARGET_NOT_MEMBER_OF_CONTINUITY: {target_id}")
         target = session_by_id(sessions_doc, target_id)
         preferred, target_live = delivery_choice(target, timestamp)
         did = make_dispatch_id(eid, target_id)

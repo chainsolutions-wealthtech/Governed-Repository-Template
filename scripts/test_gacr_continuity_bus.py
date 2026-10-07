@@ -37,14 +37,32 @@ def base_state():
             "repository": "example/governed",
             "coordination_issue": 259,
             "projection_only": True,
-            "participants": [{
-                "participant_id": "GACR-P-demo",
-                "session_id": "session-a",
-                "scope_id": "lab",
-                "work_mode": "WRITE",
-                "collision_domains": ["gacr:continuity:projection", "gacr:continuity:delivery"],
-                "status": "ACTIVE",
-            }],
+            "participants": [
+                {
+                    "participant_id": "GACR-P-demo-a",
+                    "session_id": "session-a",
+                    "scope_id": "lab",
+                    "work_mode": "WRITE",
+                    "collision_domains": ["gacr:continuity:projection", "gacr:continuity:delivery"],
+                    "status": "ACTIVE",
+                },
+                {
+                    "participant_id": "GACR-P-demo-b",
+                    "session_id": "session-b",
+                    "scope_id": "review",
+                    "work_mode": "REVIEW",
+                    "collision_domains": ["gacr:continuity:delivery"],
+                    "status": "ACTIVE",
+                },
+                {
+                    "participant_id": "GACR-P-demo-c",
+                    "session_id": "session-c",
+                    "scope_id": "recovery",
+                    "work_mode": "READ_ONLY",
+                    "collision_domains": ["gacr:continuity:delivery"],
+                    "status": "YIELDED",
+                },
+            ],
             "events": [],
             "last_sequence": 0,
         }],
@@ -161,6 +179,26 @@ def main():
             collision_domains=["gacr:continuity:delivery"],
         ),
         "HEAD_MOVED",
+    )
+
+    outsider_sessions = deepcopy(sessions)
+    outsider_sessions["sessions"].append(session("session-outsider", bridge=True))
+    expect_error(
+        lambda: bus.emit_event_docs(
+            base_state(), outsider_sessions, {"items": []},
+            continuity_id="GRT-CONT-DEMO-01",
+            from_session_id="session-a",
+            target_session_ids=["session-outsider"],
+            event_kind="REQUEST",
+            payload_ref="ref-outsider",
+            observed_head=HEAD,
+            current_head=HEAD,
+            evidence_ref="evidence-outsider",
+            timestamp=NOW,
+            scope_id="lab",
+            collision_domains=["gacr:continuity:delivery"],
+        ),
+        "TARGET_NOT_MEMBER_OF_CONTINUITY",
     )
 
     timeout_state = base_state()
