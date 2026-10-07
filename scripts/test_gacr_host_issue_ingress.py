@@ -148,6 +148,24 @@ def main() -> None:
         "availability_state",
     )
 
+    work_offer_payload = {
+        "schema": g.SCHEMA,
+        "event": "work_offer_accept",
+        "session_id": "session-1",
+        "dispatch_id": "GACR-W-demo",
+    }
+    parsed_work_offer = g.parse_issue_comment_event(
+        event(body(work_offer_payload), comment_id=9006),
+        config(),
+    )
+    assert_true(parsed_work_offer["dispatch_id"] == "GACR-W-demo", "work offer dispatch id parsed")
+    missing_dispatch = dict(work_offer_payload)
+    del missing_dispatch["dispatch_id"]
+    expect_error(
+        lambda: g.parse_issue_comment_event(event(body(missing_dispatch), comment_id=9007), config()),
+        "dispatch_id",
+    )
+
     sessions = [
         {
             "session_id": "session-1",
