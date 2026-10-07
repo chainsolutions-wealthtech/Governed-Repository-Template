@@ -534,3 +534,17 @@ Append-only durable decisions for the source/control-plane repository.
 - Provider-private conversation/session identifiers remained `UNAVAILABLE`; repository-controlled GSCC references do not impersonate provider identifiers.
 - This closes IDN-006 and the temporary IDN lane. It does not execute or reorder the global programme. `P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE` remains the unique next global action.
 
+
+
+### CPD-069 — The LIVE-proven GSCC/GSE/GACR chain becomes a reusable capsule programme
+
+- Date: 2026-10-07.
+- The completed pre-entry chain `GSCC → GSE → GACR → F1 → RELEASED_TO_NORMAL_GOVERNANCE` is accepted as a reusable module candidate rather than a Template-only implementation detail.
+- Canonical productization authority is `CP-CAPSULE-001` at `docs/control-plane/GSCC_GSE_GACR_REUSABLE_CAPSULE.md`.
+- Canonical global backlog is `CAP-001..CAP-012`.
+- Productization is extraction/packaging of already-proven semantics, not permission to redesign or weaken identity, admission, liveness, exact-HEAD, GACR, access, exposure or release gates.
+- Provider-private identity remains supplied-only. Missing provider facts remain explicit `UNAVAILABLE`.
+- Per-arrival state isolation, Q9 correlated liveness, Q10-before-Q2 ordering, canonical GACR durability, F1 actual-function validation and exact correlated release are mandatory portable invariants.
+- Capsule 1.0.0 requires a clean second-repository LIVE proof and a second/generic provider transport adapter proof.
+- Existing `IDN-013` and `RTE-013` remain downstream API/UI consumers rather than prerequisites for core capsule 1.0.0.
+- This programme is dependency-bound behind `P12-S6`; registration does not change the current unique executable action `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
