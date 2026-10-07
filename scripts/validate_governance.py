@@ -172,6 +172,7 @@ SOURCE_ONLY_REQUIRED = {
     "docs/control-plane/PROGRAM.md",
     "docs/control-plane/CASE1_REPLAY_LEDGER.md",
     "docs/control-plane/AGENT_ACTIVITY_LOG.md",
+    "docs/control-plane/AGENT_ENTRY_PROMPTS.md",
     "docs/control-plane/CANONICAL_ARCHITECTURE.md",
     "docs/control-plane/MASTER_SYSTEM_MAP.md",
     "docs/control-plane/REQUIREMENTS_ROADMAP.md",
