@@ -1,0 +1,93 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsolutions.local/schemas/gacr-agent-roster.schema.json",
+  "title": "GACR Agent Availability Roster Projection",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "schema",
+    "revision",
+    "generated_at",
+    "projection_only",
+    "authority_granted",
+    "summary",
+    "code_agents_total",
+    "code_agents_available",
+    "agents"
+  ],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "schema": {"const": "gacr-agent-roster/v1"},
+    "revision": {"type": "integer", "minimum": 0},
+    "generated_at": {"type": "string"},
+    "projection_only": {"type": "boolean", "const": true},
+    "authority_granted": {"type": "boolean", "const": false},
+    "summary": {
+      "type": "object",
+      "additionalProperties": {"type": "integer", "minimum": 0}
+    },
+    "code_agents_total": {"type": "integer", "minimum": 0},
+    "code_agents_available": {"type": "integer", "minimum": 0},
+    "agents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "session_id",
+          "code_agent",
+          "session_status",
+          "relay_state",
+          "workload_state",
+          "scheduler_state",
+          "eligible_for_new_work",
+          "availability_provenance",
+          "reasons",
+          "active_claim_count",
+          "max_parallel_tasks",
+          "free_capacity_slots"
+        ],
+        "properties": {
+          "session_id": {"type": "string"},
+          "agent_identity": {"type": ["string","null"]},
+          "provider": {"type": ["string","null"]},
+          "agent_role": {"type": ["string","null"]},
+          "code_agent": {"type": "boolean"},
+          "session_status": {"type": "string"},
+          "relay_state": {"type": "string"},
+          "workload_state": {"type": "string"},
+          "scheduler_state": {
+            "enum": [
+              "ACTIVE",
+              "AVAILABLE",
+              "UNCONFIRMED_AVAILABLE",
+              "WAITING",
+              "LIMITED",
+              "STALLED",
+              "TERMINAL",
+              "UNKNOWN"
+            ]
+          },
+          "eligible_for_new_work": {"type": "boolean"},
+          "availability_provenance": {"type": "string"},
+          "reasons": {"type": "array", "items": {"type": "string"}},
+          "blocker_code": {"type": ["string","null"]},
+          "interruption_code": {"type": ["string","null"]},
+          "retry_after_at": {"type": ["string","null"]},
+          "active_claim_count": {"type": "integer", "minimum": 0},
+          "active_claim_ids": {"type": "array", "items": {"type": "string"}},
+          "active_work_item_ids": {"type": "array", "items": {"type": "string"}},
+          "max_parallel_tasks": {"type": "integer", "minimum": 0},
+          "free_capacity_slots": {"type": "integer", "minimum": 0},
+          "wake_channels": {"type": "array", "items": {"type": "string"}},
+          "bridge_registration_ref": {"type": ["string","null"]},
+          "last_seen_at": {"type": ["string","null"]},
+          "last_heartbeat_at": {"type": ["string","null"]},
+          "last_beacon_at": {"type": ["string","null"]},
+          "last_beacon_id": {"type": ["string","null"]}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}
