@@ -342,7 +342,7 @@ def main() -> None:
         g.evidence_processed = lambda evidence_ref: False
         g.ensure_session = lambda payload, repository: {"session_id": "session-1"}
         g.run_script = lambda path, args: calls.append((path.name, list(args))) or ""
-        g.marker_beacon = lambda session_id, payload, event_type: calls.append(("marker", [session_id, event_type, payload["_evidence_ref"]]))
+        g.marker_beacon = lambda session_id, payload, event_type: calls.append(("marker", [session_id, event_type, payload["_evidence_ref"], payload.get("availability_state"), payload.get("availability_reason_code")]))
         payload = dict(parsed)
         result = g.process(payload, "example/governed")
         assert_true(result["status"] == "GACR_HOST_EVENT_PROCESSED", "action processed")
@@ -364,7 +364,8 @@ def main() -> None:
         assert_true(waiting_result["status"] == "GACR_HOST_EVENT_PROCESSED", "waiting action processed")
         waiting_marker = next(args for name, args in calls if name == "marker" and args[1] == "ACTION_TRACE")
         assert_true(waiting_payload["agent_role"] == "CODE_AGENT", "waiting action retains declared role")
-        assert_true(any(name == "marker" and args[1] == "ACTION_TRACE" for name, args in calls), "normalized waiting action emits explicit capacity through action trace")
+        assert_true(waiting_marker[3] == "WAITING", "normalized waiting action projects WAITING availability")
+        assert_true(waiting_marker[4] == "WAITING_FOR_WORK", "normalized waiting action projects canonical waiting reason")
         assert_true(any(name == "gacr_agent_telemetry.py" and args[0] == "correlate" for name, args in calls), "correlation refreshed")
         assert_true(any(name == "gacr_agent_telemetry.py" and args[0] == "forensics" for name, args in calls), "forensics refreshed")
 
