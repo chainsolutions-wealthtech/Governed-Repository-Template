@@ -23,10 +23,11 @@
       "run_id": "CASE1-PILOT-GOUVERN",
       "case_id": "CREATE_NEW_REPOSITORY",
       "repository_id": "repo-gouvern",
-      "status": "IN_PROGRESS",
-      "current_phase_id": "C1-14",
+      "status": "DONE",
+      "current_phase_id": null,
       "source_issue": "Patricked-code/Gouvern#2",
-      "started_at": "2026-09-26"
+      "started_at": "2026-09-26",
+      "completed_at": "2026-10-07"
     }
   ],
   "decisions": [
@@ -374,6 +375,23 @@
       "status": "ACCEPTED",
       "source_ref": "docs/control-plane/DECISIONS_LOG.md",
       "decided_at": "2026-10-07"
+    },
+    {
+      "decision_id": "CPD-073",
+      "scope_type": "PROGRAM_CASE",
+      "scope_id": "CREATE_NEW_REPOSITORY",
+      "decision_key": "CASE1_VALIDATED_EXIT_AND_GMC_RELEASE",
+      "value": {
+        "closure_task": "P12-S6",
+        "case_status": "DONE",
+        "no_orphan_executable_case1_tasks": true,
+        "next_programme": "GMC-A",
+        "next_task": "GMC-01",
+        "gmc_implementation_authorized": false
+      },
+      "status": "ACCEPTED",
+      "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+      "decided_at": "2026-10-07"
     }
   ],
   "checkpoints": [
@@ -543,6 +561,23 @@
         "discovery_retry_run": 36621624763,
         "mcp_intake": "Patricked-code/MCP#201"
       }
+    },
+    {
+      "checkpoint_id": "CP-CHECKPOINT-20261007-023",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-14",
+      "subject_head_sha": "63e67d76970dc4b7e8b9864567a07e7445e84bfc",
+      "state": "CREATE_NEW_REPOSITORY_CASE_COMPLETE",
+      "next_action": "GMC_01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES",
+      "source_ref": ".governance/control-plane-state/checkpoint.json",
+      "created_at": "2026-10-07",
+      "payload": {
+        "p12_s6": "DONE",
+        "p12_s5": "PASS",
+        "orphan_case1_tasks": false,
+        "next_programme": "GMC-A",
+        "next_task": "GMC-01"
+      }
     }
   ],
   "intakes": [
@@ -554,6 +589,16 @@
       "status": "OPEN_EXTERNAL",
       "summary": "Repository-SSH OIDC certificate broker returned 403 during pilot; intake only, no MCP implementation from this workstream.",
       "source_ref": "Patricked-code/MCP#192"
+    },
+    {
+      "intake_id": "MCP-201",
+      "originating_case_id": "CREATE_NEW_REPOSITORY",
+      "originating_run_id": "CASE1-PILOT-GOUVERN",
+      "target_system": "Patricked-code/MCP",
+      "status": "HISTORICAL_REMEDIATED_EXTERNAL",
+      "summary": "Ekyc second-fresh discovery exposed MCP TLS expiry. Remediation was completed in the independently governed MCP programme; retained here as external CASE 1 evidence only.",
+      "source_ref": "Patricked-code/MCP#201",
+      "created_at": "2026-09-29"
     }
   ],
   "run_answers": [],
@@ -601,6 +646,19 @@
       },
       "source_ref": "Template issue #12 supervision continuity note + live GitHub verification",
       "occurred_at": "2026-09-27"
+    },
+    {
+      "event_id": "CASE1-EVT-CLOSURE-20261007",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "phase_id": "C1-14",
+      "event_type": "CASE_COMPLETED",
+      "payload": {
+        "case_id": "CREATE_NEW_REPOSITORY",
+        "closure_task": "P12-S6",
+        "next_task": "GMC-01"
+      },
+      "source_ref": "docs/control-plane/CASE1_REPLAY_LEDGER.md",
+      "occurred_at": "2026-10-07"
     }
   ],
   "evidence": [
@@ -1129,6 +1187,21 @@
       },
       "source_ref": ".governance/control-plane-state/handoff.json",
       "created_at": "2026-09-27"
+    },
+    {
+      "handoff_id": "CP-HANDOFF-20261007-023",
+      "run_id": "CASE1-PILOT-GOUVERN",
+      "checkpoint_id": "CP-CHECKPOINT-20261007-023",
+      "status": "GMC_A_RELEASED",
+      "next_action": "GMC_01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES",
+      "payload": {
+        "case1_closed": true,
+        "next_work_package": "GMC-G01",
+        "implementation_authorized": false,
+        "planning_only": true
+      },
+      "source_ref": ".governance/control-plane-state/handoff.json",
+      "created_at": "2026-10-07"
     }
   ],
   "owner_feedback": [

@@ -5,7 +5,7 @@
   "kind": "GOVERNANCE_MODEL_EXECUTION_BLUEPRINT",
   "status": "PLANNING_ONLY",
   "implementation_authorized": false,
-  "current_case1_gate_unchanged": "C1-12-J-C",
+  "current_case1_gate_unchanged": "P12-S6_VALIDATED_EXIT",
   "interpretation": "GMC-01..GMC-19_ARE_CHRONOLOGICAL_WORK_PACKAGES_NOT_ATOMIC_TASKS",
   "common_source_surface": [
     "docs/control-plane/CANONICAL_ARCHITECTURE.md",
@@ -13146,5 +13146,13 @@
       "CPD-029"
     ],
     "reconciliation_subject_head": "2c70fc82aed4fa8f7eebb7f49b2573e6c57e9e59"
+  },
+  "release_state": {
+    "status": "GMC_A_RELEASED",
+    "released_work_package": "GMC-G01",
+    "legacy_task": "GMC-01",
+    "implementation_authorized": false,
+    "planning_only": true,
+    "source_decision_id": "CPD-073"
   }
 }

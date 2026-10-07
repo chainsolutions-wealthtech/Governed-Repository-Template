@@ -1,10 +1,10 @@
 {
   "schema_version": "1.0.0",
-  "checkpoint_id": "CP-CHECKPOINT-20261001-008",
+  "checkpoint_id": "CP-CHECKPOINT-20261007-023",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-  "subject_head": "5172f8b9cf5ce560a1d55af65e7b7916a77df86b",
+  "subject_head": "63e67d76970dc4b7e8b9864567a07e7445e84bfc",
   "template_version_before": "2.8.27",
-  "state": "P12_S5_SECOND_FRESH_E2E_PASS",
+  "state": "CREATE_NEW_REPOSITORY_CASE_COMPLETE_GMC_A_RELEASED",
   "completed_evidence": {
     "case1_pilot_repository": "Patricked-code/Gouvern",
     "case1_pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
@@ -259,13 +259,13 @@
     "c1_13_i_b_g_no_target_git_mutation": true,
     "p12_s5_status": "DONE"
   },
-  "next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+  "next_action": "GMC_01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES",
   "reconciliation_required_before_write": true,
   "ci_run": 36881131383,
   "ci_result": "PASS",
   "client_source_memory_removal": "PASS",
   "self_governance": "PASS",
-  "reconciliation_reason": "EKYC_SECOND_FRESH_BASELINE_AND_NORMAL_ENTRY_PROVEN_P12_S5_EXIT_PASS",
+  "reconciliation_reason": "P12-S6 validated CASE 1 closure and released GMC-A",
   "canonical_memory_database": "PASS",
   "blocker": null,
   "knowledge_enrichment": {
@@ -284,10 +284,10 @@
       "authority_id": "CP-GOVMODEL-001",
       "revision": 2,
       "programme": "GMC-01..GMC-19",
-      "dependency": "P12-S6",
-      "status": "MERGED_CANONICAL_BACKLOG",
+      "dependency": "P12-S6_DONE",
+      "status": "RELEASED_TO_GMC_G01",
       "relational_projection": "PENDING_SCHEMA_EXTENSION",
-      "execution_gate_unchanged": true,
+      "execution_gate_unchanged": false,
       "merge_pr": 39,
       "merge_subject_head": "6fb12122d5a0812f6ceca063b1d7af13511003bc",
       "integrity_fix_task": "C1-12-J-C-A",
@@ -296,7 +296,8 @@
       "integrity_fix_status": "DONE",
       "integrity_fix_pr": 43,
       "integrity_fix_merge_subject_head": "113c50aa765ae886cd7a085637b8d5dbb5c2766b",
-      "review_threads_resolved": true
+      "review_threads_resolved": true,
+      "historical_dependency": "P12-S6"
     },
     "adaptive_questionnaire": {
       "decision_ids": [
@@ -349,7 +350,7 @@
     "final_release_comment": 6027880258,
     "released_head": "f768268bf1a3f62c2e6741aecfba20d86545969c",
     "next_authority": "00_START_HERE.md",
-    "next_action": "RETURN_TO_GLOBAL_PROGRAMME_P12_S6"
+    "next_action": "GMC_01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES"
   },
   "reusable_capsule_program": {
     "authority_id": "CP-CAPSULE-001",
@@ -362,7 +363,7 @@
       "ARCH-006",
       "IDN-006"
     ],
-    "current_unique_executable_item_unchanged": "P12-S6",
+    "current_unique_executable_item_unchanged": "GMC-01",
     "first_task_after_gate": "CAP-001",
     "target_release": "1.0.0",
     "acceptance": [
@@ -402,7 +403,7 @@
     "architecture_revision": "CP-ARCH-001-R7",
     "master_map": "docs/control-plane/MASTER_SYSTEM_MAP.md",
     "requirements_roadmap": "docs/control-plane/REQUIREMENTS_ROADMAP.md",
-    "global_task_unchanged": "P12-S6"
+    "global_task_unchanged": "GMC-01"
   },
   "saas_platform_program": {
     "status": "PLANNED_DEPENDENCY_BOUND",
@@ -410,7 +411,12 @@
     "decision_id": "CPD-072",
     "task_range": "SAA-001..SAA-015",
     "target_url": "https://mcp.wealthtechinnovations.com/template",
-    "current_global_task_unchanged": "P12-S6",
+    "current_global_task_unchanged": "GMC-01",
     "production_mutation_authority_granted": false
+  },
+  "case1_closure": {
+    "status": "DONE",
+    "decision_id": "CPD-073",
+    "no_orphan_executable_tasks": true
   }
 }

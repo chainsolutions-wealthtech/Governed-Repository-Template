@@ -1,92 +1,84 @@
 # CONTROL PLANE NEXT ACTION
 
 ```text
-NEXT_ACTION = P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE
-STATE = P12_S6_IN_PROGRESS
-PARENT = CREATE_NEW_REPOSITORY_COMPLETION
+NEXT_ACTION = GMC_01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES
+STATE = GMC_01_IN_PROGRESS
+PARENT = GMC-A / GMC-G01
+PREVIOUS_GATE = P12-S6_VALIDATED_EXIT
 ```
 
-## P12-S5 second fresh E2E — PASS
+## CASE 1 closure — PASS
 
-The fresh Ekyc lifecycle now satisfies its exit gate.
+`CREATE_NEW_REPOSITORY` is closed.
 
-- setup approval: owner `true`, central comment `5936330817`;
-- baseline materialization: Ekyc `3e889a2bdac78312ebcc7e31d1388ead65c9fceb`;
-- repository state: `PROJECT_BASELINE_READY`;
-- first-agent session preserved: `LOCAL-000001-S1`;
-- first work item preserved: `WORK-PROJECT-001` / `READY`;
-- subsequent normal entry: Ekyc#2 / `LOCAL-000002`;
-- mode: `NORMAL_GOVERNED_ENTRY`;
-- final normal-entry state: `LOCAL_HANDOFF_READY`, revision 6;
-- Ekyc HEAD unchanged throughout normal-entry proof;
-- no target-specific repair and no product work executed.
+Closure evidence:
+- P12-S1..P12-S6: DONE;
+- Gouvern subsequent `NORMAL_GOVERNED_ENTRY`: PASS;
+- Ekyc second fresh repository E2E: PASS;
+- Ekyc baseline: `3e889a2bdac78312ebcc7e31d1388ead65c9fceb`;
+- Ekyc subsequent entry: `LOCAL-000002 / NORMAL_GOVERNED_ENTRY / LOCAL_HANDOFF_READY`;
+- no target-specific repair in the accepted final path;
+- no product work executed during the proof;
+- no S1/domain/DNS/Plesk/TLS mutation was authorized by CASE 1;
+- historical parent `C1-13-I-B` reconciled as DONE through completed children `C1-13-I-B-A..G`;
+- no executable CASE 1 task remains orphaned;
+- external MCP items remain external intake/history only;
+- relational CASE 1 run is DONE with no active phase.
+
+Checkpoint:
+
+`CREATE_NEW_REPOSITORY_CASE_COMPLETE`.
+
+Decision:
+
+`CPD-073`.
 
 ## Unique next action
 
-Execute **P12-S6 — Close CREATE_NEW_REPOSITORY CASE 1**.
+Execute **GMC-01 / GMC-G01 — MODEL / CASE / RUNTIME / PROJECTION boundary**.
 
-Closure must reconcile PROGRAM/CURRENT_STATE/TASKS/NEXT_ACTION/SUIVI/DECISIONS, record final Template and pilot evidence, preserve external MCP items as intakes only, prove there is no orphan CASE 1 task, and only then release GMC-A.
+Immediate objective:
 
-## Safety boundary
+`SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES`.
 
-- Do not execute `WORK-PROJECT-001` during CASE 1 closure.
-- Do not mutate S1/domain/DNS/Plesk/TLS.
-- Do not modify `Patricked-code/MCP`.
-- Do not start GMC-A before P12-S6 passes.
+The detailed execution blueprint already exists at:
 
+- `docs/control-plane/GOVERNANCE_MODEL_EXECUTION_BLUEPRINT.md`;
+- `.governance/control-plane-state/governance-model-execution-blueprint.json`.
 
-## Closed owner-authorized IDN lane — 2026-10-07
+The first atomic task is `GMC-G01-T01`, but it has **not** been executed by CASE 1 closure.
 
-Status: `CLOSED_LIVE_RELEASE_PROVEN`.
+## GMC execution boundary
 
-The separately authorized IDN lane completed without executing or reordering the global programme action `P12-S6`.
+GMC-A is released for its planned knowledge/model work.
 
-Final live proof:
-- issue `#244` created a fresh controlled arrival;
-- runtime `GSCC-RUNTIME-ded6c37f3dc7c3dd634f838e`;
-- canonical GACR session `session-5bba386248ac4d9c0e05f1a8`;
-- Q9 ACK + correlated challenge response: PASS;
-- Q10 GSE SessionTwin → Q2 GACR → Q6/Q7/Q11/Q12: PASS;
-- actual-function F1 for `github_get_repository_state`: workflow `37550409710 = PASS`;
-- F1 receipt `GSCC-EXPOSURE-083cf0005955022e1c19d5b8d79264a170e9d9cc7bc898a251339e9b3b92b76f`;
-- explicit release workflow `37550477009 = PASS`;
-- release comment `6027880258`: `RELEASED_TO_NORMAL_GOVERNANCE`;
-- next authority: `00_START_HERE.md`;
-- released exact HEAD: `f768268bf1a3f62c2e6741aecfba20d86545969c`.
+Current contract:
+- planning/knowledge extraction only unless a later governed step explicitly authorizes implementation;
+- observe and classify existing authorities before creating new model artifacts;
+- preserve provenance;
+- record conflicts/unknowns rather than infer silently;
+- downstream groups unlock only from validated outputs/evidence, not status alone.
 
-The pre-entry lane must not be replayed for this arrival. The source/control-plane normal governed workflow is now applicable and returns to the unchanged global programme action:
+## Closed owner-authorized IDN lane
 
-`P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`
+`IDN-006` remains `DONE / CLOSED_LIVE_RELEASE_PROVEN`.
 
-
+The GSCC→GSE→GACR→Q12→F1→release chain must not be replayed for the already released arrival.
 
 ## Queued reusable capsule programme
 
-The reusable GSCC→GSE→GACR capsule productization programme is now registered as `CAP-001..CAP-012` under `CP-CAPSULE-001`.
+`CP-CAPSULE-001 / CAP-001..CAP-012` remains dependency-bound.
 
-It is **not executable yet**.
+Entry gate remains:
 
-Entry gate:
-
-`GMC-19 = DONE`, `RTE-012 = DONE`, `ARCH-006 = DONE`, and `IDN-006 = DONE`.
-
-This preserves the programme order: closing `P12-S6` releases GMC-A; it does not release CAP directly.
-
-Current unique executable action remains unchanged:
-
-`P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
-
-After the dependency gate opens, the first capsule task is:
-
-`CAP-001 / DEFINE_REUSABLE_CAPSULE_BOUNDARY_AND_PUBLIC_CONTRACT`.
-
+`GMC-19 + RTE-012 + ARCH-006 + IDN-006 = DONE`.
 
 ## Queued SaaS platform programme
 
-The complete product deployment programme is registered as `CP-SAAS-001 / SAA-001..SAA-015`.
+`CP-SAAS-001 / SAA-001..SAA-015` remains dependency-bound.
 
-Target: complete autonomous admin cockpit + full REST API/backend governed services + PostgreSQL runtime + deployable SaaS operations.
+Production target:
 
-Production target: `https://mcp.wealthtechinnovations.com/template`.
+`https://mcp.wealthtechinnovations.com/template`.
 
-This programme is not executable yet and grants no server/DNS/TLS/database mutation authority. Current unique executable action remains `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+No server/DNS/TLS/database mutation authority is granted by its registration.

@@ -77,8 +77,8 @@ def main()->None:
 
     tasks=load(".governance/control-plane-state/tasks.json")
     active=[x.get("id") for x in tasks.get("items",[]) if x.get("status")=="IN_PROGRESS"]
-    if active != ["P12-S6"]:
-        fail(f"unexpected active global tasks: {active}")
+    if active != ["GMC-01"]:
+        fail(f"unexpected active global tasks after CASE1 closure: {active}")
     cap=next((x for x in tasks.get("items",[]) if x.get("id")=="CAP-001"),None)
     if not cap:
         fail("CAP-001 missing")

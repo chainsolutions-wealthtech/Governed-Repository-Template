@@ -345,13 +345,26 @@ def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0,
     if cases != 4:
         raise SystemExit(f"CONTROL_PLANE_DB_FAILED: expected 4 structuring cases, got {cases}")
     active = conn.execute("SELECT phase_id FROM case_phases WHERE case_id='CREATE_NEW_REPOSITORY' AND status='IN_PROGRESS'").fetchall()
-    if len(active) != 1:
-        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: expected exactly one active CASE1 phase, got {active}")
-    next_phase = conn.execute("SELECT current_phase_id FROM runs WHERE run_id='CASE1-PILOT-GOUVERN'").fetchone()
-    if next_phase is None:
-        raise SystemExit("CONTROL_PLANE_DB_FAILED: pilot run current phase missing")
-    if active[0] != next_phase:
-        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: CASE1 active phase/run mismatch: active={active[0]} run={next_phase}")
+    run_state = conn.execute(
+        "SELECT status,current_phase_id FROM runs WHERE run_id='CASE1-PILOT-GOUVERN'"
+    ).fetchone()
+    if run_state is None:
+        raise SystemExit("CONTROL_PLANE_DB_FAILED: pilot run missing")
+    run_status, current_phase_id = run_state
+    if run_status == "IN_PROGRESS":
+        if len(active) != 1 or current_phase_id is None or active[0][0] != current_phase_id:
+            raise SystemExit(
+                "CONTROL_PLANE_DB_FAILED: active CASE1 phase/run mismatch: "
+                f"active={active} run_status={run_status} current_phase={current_phase_id}"
+            )
+    elif run_status == "DONE":
+        if active or current_phase_id is not None:
+            raise SystemExit(
+                "CONTROL_PLANE_DB_FAILED: completed CASE1 run must have zero active phases "
+                f"and null current_phase_id: active={active} current_phase={current_phase_id}"
+            )
+    else:
+        raise SystemExit(f"CONTROL_PLANE_DB_FAILED: unsupported CASE1 run status: {run_status}")
     mcp_choices = [json.loads(r[0]) for r in conn.execute(
         "SELECT value_json FROM question_options WHERE question_id='C1-Q-MCP-TRANSPORT' ORDER BY ordinal"
     ).fetchall()]
@@ -560,7 +573,7 @@ def validate(conn, expected_inventory_count=0, expected_identity_secret_count=0,
     print("cases=4")
     print(f"questions={conn.execute('SELECT COUNT(*) FROM questions').fetchone()[0]}")
     print(f"activities={conn.execute('SELECT COUNT(*) FROM activities').fetchone()[0]}")
-    print(f"current_phase={active[0][0]}")
+    print(f"current_phase={active[0][0] if active else 'NONE'}")
     print(f"server_inventory_slots={facts_count}")
     print(f"server_identity_secret_facts={identity_secret_count}")
     print(f"first_touch_probes={probe_count}")

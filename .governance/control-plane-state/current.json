@@ -2,21 +2,21 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 46,
+  "source_state_revision": 48,
   "template_version": "2.8.27",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
-  "active_program": "CREATE_NEW_REPOSITORY_COMPLETION",
+  "active_program": "GOVERNANCE_MODEL_CATALOGUE",
   "program_issue": 12,
-  "current_checkpoint": "C1-13_SECOND_FRESH_E2E_PASS",
-  "active_work_package": "CREATE_NEW_REPOSITORY_COMPLETION",
-  "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+  "current_checkpoint": "CREATE_NEW_REPOSITORY_CASE_COMPLETE",
+  "active_work_package": "GMC-A / GMC-G01",
+  "unique_next_action": "GMC_01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES",
   "blockers": [],
   "mcp_boundary": "READ_OBSERVE_INTAKE_ONLY_FROM_THIS_PROGRAM",
-  "freshness": "SOURCE_STATE_RECONCILED_WITH_EKYC_SECOND_FRESH_NORMAL_ENTRY_PASS",
+  "freshness": "CASE1_CLOSED_GMC_A_RELEASED",
   "last_ci_run": 36881131383,
   "last_ci_result": "PASS",
   "release_subject_head": "8b3a1ac4abf250820558ba873110581f8607a2b3",
-  "last_verified_main_head": "5172f8b9cf5ce560a1d55af65e7b7916a77df86b",
+  "last_verified_main_head": "63e67d76970dc4b7e8b9864567a07e7445e84bfc",
   "canonical_memory_database": {
     "schema_version": "1.0.0",
     "status": "ACTIVE",
@@ -43,12 +43,12 @@
     },
     "governance_model_catalogue": {
       "authority_id": "CP-GOVMODEL-001",
-      "status": "POST_MERGE_INTEGRITY_RECONCILED",
+      "status": "RELEASED_TO_GMC_G01",
       "observed_main_head_before_enrichment": "76fae0dc132ef7e91e659c4dad44cd3522d2c8c4",
       "programme": "GMC-01..GMC-19",
-      "dependency": "P12-S6",
+      "dependency": "P12-S6_DONE",
       "relational_projection": "PENDING_SCHEMA_EXTENSION",
-      "unique_next_action_unchanged": "C1_12_J_C_RELEASE_AND_REUPGRADE_CASE1_PILOT",
+      "unique_next_action_unchanged": "GMC_01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES",
       "merge_pr": 39,
       "merge_subject_head": "6fb12122d5a0812f6ceca063b1d7af13511003bc",
       "ci_run": 36284616415,
@@ -303,7 +303,7 @@
         "RTE-008",
         "RTE-012"
       ],
-      "current_unique_executable_item_unchanged": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+      "current_unique_executable_item_unchanged": "GMC-01",
       "merge_pr": 98,
       "merge_commit": "0d0c595be7f6833bb36778a0cdac46c82abbd2ab",
       "post_merge_ci": 36915276875,
@@ -368,7 +368,7 @@
         "RTE-008",
         "RTE-012"
       ],
-      "current_unique_executable_item_unchanged": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+      "current_unique_executable_item_unchanged": "GMC-01",
       "template_version": "2.8.31",
       "merge_pr": 102,
       "merge_commit": "abefcfccbf822fa2fcf590e592ad51c767e32937",
@@ -381,7 +381,7 @@
       "master_map": "docs/control-plane/MASTER_SYSTEM_MAP.md",
       "requirements_roadmap": "docs/control-plane/REQUIREMENTS_ROADMAP.md",
       "navigation_only_no_parallel_authority": true,
-      "current_unique_executable_item_unchanged": "P12-S6"
+      "current_unique_executable_item_unchanged": "GMC-01"
     },
     "saas_platform_productization": {
       "authority_id": "CP-SAAS-001",
@@ -393,7 +393,7 @@
       "backend": "VERSIONED_FULL_REST_API_AND_GOVERNED_SERVICE_BOUNDARIES",
       "runtime_projection": "POSTGRESQL_AFTER_ARCH_009",
       "production_mutation_authority_granted": false,
-      "current_unique_executable_item_unchanged": "P12-S6"
+      "current_unique_executable_item_unchanged": "GMC-01"
     }
   },
   "framework_product_boundary": {
@@ -473,7 +473,7 @@
     "mcp_retry_run": 36621624763,
     "mcp_retry_failure": "SSL_CERTIFICATE_VERIFY_FAILED_CERTIFICATE_EXPIRED",
     "mcp_intake": "Patricked-code/MCP#201",
-    "active_dependency_task": "P12-S6",
+    "active_dependency_task": null,
     "preserved_external_dependency": {
       "task": "C1-13-E",
       "intake": "Patricked-code/MCP#201",
@@ -759,7 +759,8 @@
       "target_git_mutation": false,
       "duplicate_baseline": false,
       "duplicate_session": false
-    }
+    },
+    "historical_active_dependency_task": "P12-S6"
   },
   "mcp_capability_snapshot_program": {
     "last_refresh_attempt": {
@@ -792,5 +793,13 @@
       "question_resolution": "OBSERVE_AND_REUSE_BEFORE_ASK",
       "missing_capability_policy": "PREPARE_SCOPED_CAPABILITY_REQUEST_ONLY_WHEN_CONCRETE_OPERATION_REQUIRES_IT"
     }
+  },
+  "case1_closure": {
+    "status": "DONE",
+    "decision_id": "CPD-073",
+    "closure_task": "P12-S6",
+    "checkpoint": "CREATE_NEW_REPOSITORY_CASE_COMPLETE",
+    "no_orphan_executable_tasks": true,
+    "next_task": "GMC-01"
   }
 }

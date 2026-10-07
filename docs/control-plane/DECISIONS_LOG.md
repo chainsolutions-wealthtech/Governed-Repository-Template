@@ -597,3 +597,21 @@ Append-only durable decisions for the source/control-plane repository.
 - SaaS readiness requires tenant/workspace isolation before multi-tenant release.
 - Production deployment requires live server/DNS/TLS/database observation and explicit governed mutation authority; this decision registers the target but grants no production mutation authority.
 - Global execution ordering remains unchanged: `P12-S6` is still the unique executable task.
+
+
+### CPD-073 — Close CREATE_NEW_REPOSITORY and release GMC-A
+
+- Date: 2026-10-07.
+- `CREATE_NEW_REPOSITORY` CASE 1 satisfies its validated exit.
+- `P12-S1..P12-S6 = DONE`.
+- `C1-14 = DONE`.
+- Historical parent `C1-13-I-B` is reconciled as DONE because its decomposed path `C1-13-I-B-A..G` is complete through server choice, domain intent, workflow choice, setup approval, baseline and subsequent normal-entry proof.
+- Gouvern normal governed entry is PASS with no first-agent/baseline/work duplication.
+- Ekyc second fresh repository E2E is PASS with no target-specific repair in the accepted final path.
+- The canonical CASE 1 relational run is closed as `DONE`, with `current_phase_id = null` and no active CASE 1 phase.
+- External MCP dependencies remain external intake/history only; this closure performs no MCP implementation.
+- No executable CASE 1 task remains orphaned.
+- GMC-A is released.
+- `GMC-01 / GMC-G01` becomes the unique current work package.
+- Release mode is planning/knowledge extraction only. This decision does not grant Governance Model implementation mutation authority.
+- The detailed GMC execution blueprint remains authoritative for work-package/atomic-task sequencing and evidence gates.

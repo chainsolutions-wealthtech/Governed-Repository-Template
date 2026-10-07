@@ -805,3 +805,38 @@ baseline not applied
 ```
 
 The next gate is explicit owner approval because the SSH target changed materially after signed-broker recovery.
+
+
+## CASE 1 closure — validated exit
+
+Date: 2026-10-07.
+
+Final state:
+
+```text
+CREATE_NEW_REPOSITORY
+→ C1-00..C1-14 complete
+→ P12-S1..P12-S6 complete
+→ CASE1-PILOT-GOUVERN run DONE
+→ no active CASE 1 phase
+→ checkpoint CREATE_NEW_REPOSITORY_CASE_COMPLETE
+→ GMC-A released
+→ GMC-01 / GMC-G01 next
+```
+
+Closure evidence:
+- Gouvern subsequent `NORMAL_GOVERNED_ENTRY`: PASS;
+- second fresh Ekyc lifecycle: PASS;
+- Ekyc baseline: `3e889a2bdac78312ebcc7e31d1388ead65c9fceb`;
+- Ekyc subsequent entry: `LOCAL-000002 / NORMAL_GOVERNED_ENTRY / LOCAL_HANDOFF_READY`;
+- first-agent session preserved;
+- first project work item preserved and not executed during proof;
+- no target-specific repair in accepted final E2E;
+- no infrastructure mutation authority inferred from setup/domain choices;
+- historical parent `C1-13-I-B` reconciled through completed children `A..G`;
+- no executable CASE 1 task remains orphaned;
+- external MCP references remain intake/history, including MCP#192 and MCP#201.
+
+Closure decision: `CPD-073`.
+
+The replay remains historical evidence for future model extraction. It must not be treated as the active programme after this closure.

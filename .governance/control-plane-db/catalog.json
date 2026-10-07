@@ -6,7 +6,7 @@
       "label": "Créer un nouveau repository Git",
       "ordinal": 1,
       "kind": "STRUCTURING_CASE",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "source_authority": "docs/control-plane/PROGRAM.md"
     },
     {

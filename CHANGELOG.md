@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### CASE 1 closure / GMC-A release
+
+- Closed `CREATE_NEW_REPOSITORY` through `P12-S6`.
+- Reconciled the historical `C1-13-I-B` parent through completed child path A..G.
+- Closed the relational CASE 1 run with no active phase.
+- Recorded CPD-073, closure checkpoint and GMC handoff.
+- Released `GMC-01 / GMC-G01` as the unique next global task.
+- Preserved external MCP references as intake/history only.
+
+
 ### SaaS platform / autonomous cockpit target
 
 - Registered `CP-SAAS-001` and `SAA-001..SAA-015`.

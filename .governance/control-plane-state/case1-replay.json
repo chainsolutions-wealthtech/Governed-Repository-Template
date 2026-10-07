@@ -6,8 +6,8 @@
   "historical_pilot": "Patricked-code/Gouvern",
   "pilot_baseline_commit": "23975e0435e63fb45d7436d1f23ce8ce0a450a5f",
   "current_phase": "C1-14",
-  "current_status": "IN_PROGRESS",
-  "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+  "current_status": "DONE",
+  "unique_next_action": "GMC_01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES",
   "phases": [
     {
       "id": "C1-00",
@@ -378,11 +378,18 @@
     {
       "id": "C1-14",
       "name": "case closure",
-      "status": "IN_PROGRESS",
+      "status": "DONE",
       "depends_on": [
         "C1-13"
       ],
-      "next_action": "CLOSE_CREATE_NEW_REPOSITORY_CASE"
+      "next_action": null,
+      "closure_evidence": {
+        "p12_s6": "DONE",
+        "second_fresh_e2e": "PASS",
+        "orphan_case1_tasks": false,
+        "external_mcp_intakes_preserved": true,
+        "next_programme": "GMC-A / GMC-01"
+      }
     }
   ],
   "change_protocol": {
@@ -393,5 +400,12 @@
     "generic_framework_defect": "FIX_TEMPLATE_TEST_MERGE_UPGRADE_RESUME",
     "mcp_dependency_defect": "INTAKE_ONLY_NO_MCP_IMPLEMENTATION",
     "configuration_vs_execution": "CONFIGURATION_INTENT_NE_EXECUTION_AUTHORITY"
+  },
+  "case_completion": {
+    "status": "CREATE_NEW_REPOSITORY_CASE_COMPLETE",
+    "completed_at": "2026-10-07",
+    "closure_task": "P12-S6",
+    "next_programme": "GMC-A",
+    "next_task": "GMC-01"
   }
 }

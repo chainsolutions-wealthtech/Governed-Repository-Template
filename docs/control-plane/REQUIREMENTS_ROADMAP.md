@@ -95,18 +95,27 @@ Every completed capability must satisfy:
 
 ## 5. Current roadmap
 
-### Stage 0 — current unique action
+### Stage 0 — CASE 1 closure
+
+Status: `DONE`.
+
+Evidence:
+- P12-S6 validated exit;
+- CASE 1 run closed;
+- no executable orphan CASE 1 task;
+- external MCP items preserved as intake/history;
+- GMC-A released.
+
+### Stage 1 — current unique action / common Governance Model
+
 ```text
-P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE
+GMC-01 / GMC-G01
+→ SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES
 ```
 
-Exit:
-- reconcile CASE 1 authorities/evidence;
-- prove no orphan CASE 1 work;
-- preserve external MCP items as intakes;
-- release GMC-A only after closure.
+The detailed blueprint is already materialized. Current execution mode is planning/knowledge extraction only until a later governed step authorizes implementation.
 
-### Stage 1 — common Governance Model
+
 ```text
 GMC-01 → ... → GMC-19
 ```
