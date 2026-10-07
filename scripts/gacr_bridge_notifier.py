@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from gacr_continuity_bus import STATE_PATH as CONTINUITY_PATH
-from gacr_continuity_bus import mark_delivery_docs, read_json as read_continuity_json, write_json as write_continuity_json
+from gacr_continuity_bus import mark_delivery_docs, mark_supervision_delivery_docs, read_json as read_continuity_json, write_json as write_continuity_json
 
 ROOT=Path(__file__).resolve().parents[1]
 GOV=ROOT/".governance"
@@ -34,6 +34,27 @@ def write_json(path:Path,value:dict)->None:
 
 
 def build_payload(repository:str, item:dict)->dict:
+    if item.get("dispatch_kind")=="CONTINUITY_SUPERVISION_ALERT":
+        return {
+            "schema_version":"1.0.0",
+            "event":"GACR_CONTINUITY_EARLY_SUPERVISION_ALERT",
+            "dispatch_id":item["dispatch_id"],
+            "repository":repository,
+            "target_session_id":item["target_session_id"],
+            "target_client_instance_id":item.get("target_client_instance_id"),
+            "bridge_registration_ref":item.get("bridge_registration_ref"),
+            "continuity":{
+                "continuity_id":item.get("continuity_id"),
+                "supervision_alert_id":item.get("supervision_alert_id"),
+                "scope_id":item.get("scope_id"),
+                "payload_ref":item.get("payload_ref"),
+                "projection_only":True,
+                "changes_session_status":False,
+                "changes_lease":False,
+                "grants_mutation_authority":False,
+            },
+            "delivery":{"idempotency_key":item["dispatch_id"],"requires_context_fetch":True,"may_write":False},
+        }
     if item.get("dispatch_kind")=="CONTINUITY_EVENT":
         return {
             "schema_version":"1.0.0",
@@ -86,7 +107,7 @@ def eligible(items:list[dict])->list[dict]:
     return [
         item for item in items
         if item.get("status")=="READY"
-        and item.get("dispatch_kind") in {None,"TAKEOVER","CONTINUITY_EVENT"}
+        and item.get("dispatch_kind") in {None,"TAKEOVER","CONTINUITY_EVENT","CONTINUITY_SUPERVISION_ALERT"}
         and "EXTERNAL_BRIDGE" in (item.get("delivery_modes") or [])
     ]
 
@@ -133,19 +154,29 @@ def main()->None:
             if status<200 or status>=300:
                 raise RuntimeError(f"GACR bridge returned HTTP {status}")
         except RuntimeError:
-            if item.get("dispatch_kind")!="CONTINUITY_EVENT":
+            if item.get("dispatch_kind") not in {"CONTINUITY_EVENT","CONTINUITY_SUPERVISION_ALERT"}:
                 raise
             item["status"]="FALLBACK_POLL_REQUIRED"
             item["fallback_mode"]="POLL_REPOSITORY"
-            mark_delivery_docs(
-                continuity,
-                continuity_id=item["continuity_id"],
-                event_id=item["continuity_event_id"],
-                target_session_id=item["target_session_id"],
-                delivery_state="FALLBACK_POLL_REQUIRED",
-                timestamp=now_utc(),
-                evidence_ref="external-bridge:delivery-failed",
-            )
+            if item.get("dispatch_kind")=="CONTINUITY_EVENT":
+                mark_delivery_docs(
+                    continuity,
+                    continuity_id=item["continuity_id"],
+                    event_id=item["continuity_event_id"],
+                    target_session_id=item["target_session_id"],
+                    delivery_state="FALLBACK_POLL_REQUIRED",
+                    timestamp=now_utc(),
+                    evidence_ref="external-bridge:delivery-failed",
+                )
+            else:
+                mark_supervision_delivery_docs(
+                    continuity,
+                    continuity_id=item["continuity_id"],
+                    alert_id=item["supervision_alert_id"],
+                    delivery_state="FALLBACK_POLL_REQUIRED",
+                    timestamp=now_utc(),
+                    evidence_ref="external-bridge:delivery-failed",
+                )
             fallback.append(item["dispatch_id"])
             changed=True
             continue
@@ -160,6 +191,15 @@ def main()->None:
                 continuity_id=item["continuity_id"],
                 event_id=item["continuity_event_id"],
                 target_session_id=item["target_session_id"],
+                delivery_state="DELIVERED",
+                timestamp=now_utc(),
+                evidence_ref="external-bridge:delivered",
+            )
+        elif item.get("dispatch_kind")=="CONTINUITY_SUPERVISION_ALERT":
+            mark_supervision_delivery_docs(
+                continuity,
+                continuity_id=item["continuity_id"],
+                alert_id=item["supervision_alert_id"],
                 delivery_state="DELIVERED",
                 timestamp=now_utc(),
                 evidence_ref="external-bridge:delivered",

@@ -300,3 +300,20 @@ CREATED/ROUTED -> DELIVERED -> ACKED -> RESPONDED
 with failure/recovery states FALLBACK_POLL_REQUIRED, ACK_TIMEOUT and EXPIRED.
 
 The mini-loop only updates derived delivery state and reuses the existing GACR dispatch store. It grants no task, claim or mutation authority. Exact-HEAD and declared continuity scope remain mandatory before emission.
+
+
+## Early supervision without lease mutation
+
+The continuity mini-loop may emit a derived early-supervision alert when an ACTIVE continuity participant has no fresh session signal for 120 seconds.
+
+This alert is intentionally earlier than the canonical GACR suspected-stall/stalled thresholds. It is observational only:
+
+- it does not change session status;
+- it does not shorten, extend or refresh the canonical lease;
+- it does not create a claim or task authority;
+- it does not trigger takeover;
+- it reuses the existing GACR dispatch store;
+- it prefers EXTERNAL_BRIDGE only when a real registered bridge exists, otherwise it records POLL_REPOSITORY fallback;
+- it is deduplicated until a fresh signal resolves it or canonical GACR liveness state supersedes it.
+
+Canonical STALLED / TAKEOVER_READY remains exclusively owned by existing GACR rules.

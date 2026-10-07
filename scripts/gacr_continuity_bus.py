@@ -32,6 +32,7 @@ FINAL_EVENT_STATES = {"RESPONDED", "EXPIRED", "CANCELLED"}
 FINAL_ROUTE_STATES = {"RESPONDED", "EXPIRED", "CANCELLED"}
 PUSH_MODE = "EXTERNAL_BRIDGE"
 FALLBACK_MODE = "POLL_REPOSITORY"
+EARLY_SUPERVISION_AFTER_SECONDS = 120
 SAFE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,191}$")
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
 
@@ -133,6 +134,22 @@ def make_event_id(continuity_id: str, sequence: int, from_session_id: str, creat
 
 def make_dispatch_id(event_id: str, target_session_id: str) -> str:
     return "GACR-D-" + hashlib.sha256(f"{event_id}|{target_session_id}".encode()).hexdigest()[:16]
+
+
+def make_supervision_alert_id(continuity_id: str, target_session_id: str, last_signal_at: str) -> str:
+    raw = f"{continuity_id}|{target_session_id}|{last_signal_at}".encode()
+    return "GACR-SA-" + hashlib.sha256(raw).hexdigest()[:16]
+
+
+def make_supervision_dispatch_id(alert_id: str) -> str:
+    return "GACR-D-" + hashlib.sha256(f"supervision|{alert_id}".encode()).hexdigest()[:16]
+
+
+def session_signal_time(session: dict) -> datetime | None:
+    relay = session.get("relay") or {}
+    candidates = [parse_time(relay.get("last_heartbeat_at")), parse_time(session.get("last_seen_at"))]
+    values = [x for x in candidates if x is not None]
+    return max(values) if values else None
 
 
 def normalize_targets(values: list[str]) -> list[str]:
@@ -369,8 +386,158 @@ def respond_event_docs(state: dict, sessions_doc: dict, *, continuity_id: str, e
     return {"status": "CONTINUITY_EVENT_RESPONDED", "event_id": event_id, "session_id": session_id, "heartbeat_transferred": False}
 
 
-def tick_docs(state: dict, dispatches_doc: dict, *, timestamp: datetime) -> dict:
+def mark_supervision_delivery_docs(
+    state: dict,
+    *,
+    continuity_id: str,
+    alert_id: str,
+    delivery_state: str,
+    timestamp: datetime,
+    evidence_ref: str | None = None,
+) -> dict:
+    item = continuity_item(state, continuity_id)
+    alert = next((x for x in item.get("supervision_alerts", []) if x.get("alert_id") == alert_id), None)
+    if not alert:
+        raise ValueError("CONTINUITY_BUS_FAILED: supervision alert not found")
+    alert["delivery_state"] = delivery_state
+    alert["delivery_evidence_ref"] = evidence_ref or alert.get("delivery_evidence_ref")
+    if delivery_state == "DELIVERED":
+        alert["delivered_at"] = iso(timestamp)
+    elif delivery_state == "FALLBACK_POLL_REQUIRED":
+        alert["fallback_at"] = iso(timestamp)
+    state["revision"] = int(state.get("revision", 0)) + 1
+    return {"status": "CONTINUITY_SUPERVISION_DELIVERY_UPDATED", "alert_id": alert_id, "delivery_state": delivery_state}
+
+
+def reconcile_early_supervision_docs(
+    state: dict,
+    sessions_doc: dict,
+    dispatches_doc: dict,
+    *,
+    timestamp: datetime,
+    early_supervision_after_seconds: int = EARLY_SUPERVISION_AFTER_SECONDS,
+) -> list[dict]:
     changes = []
+    if early_supervision_after_seconds <= 0:
+        raise ValueError("CONTINUITY_BUS_FAILED: early supervision threshold must be positive")
+    session_index = {s.get("session_id"): s for s in sessions_doc.get("sessions", []) if s.get("session_id")}
+
+    for item in state.get("items", []):
+        alerts = item.setdefault("supervision_alerts", [])
+        for participant in item.get("participants", []):
+            if participant.get("status") != "ACTIVE":
+                continue
+            target_id = participant.get("session_id")
+            session = session_index.get(target_id)
+            if not session:
+                continue
+
+            open_alert = next((a for a in alerts if a.get("target_session_id") == target_id and a.get("state") == "OPEN"), None)
+            relay = session.get("relay") or {}
+            canonical_active = session.get("status") == "ACTIVE" and relay.get("state") == "ACTIVE"
+            last_signal = session_signal_time(session)
+
+            if not canonical_active:
+                if open_alert:
+                    open_alert["state"] = "SUPERSEDED_BY_CANONICAL_LIVENESS_STATE"
+                    open_alert["resolved_at"] = iso(timestamp)
+                    open_alert["resolution"] = "CANONICAL_GACR_STATE_OWNS_RECOVERY"
+                    for dispatch in dispatches_doc.get("items", []):
+                        if dispatch.get("supervision_alert_id") == open_alert.get("alert_id") and dispatch.get("status") not in {"DELIVERED", "RESOLVED", "CANCELLED"}:
+                            dispatch["status"] = "CANCELLED"
+                    changes.append({"alert_id": open_alert.get("alert_id"), "target_session_id": target_id, "state": open_alert["state"]})
+                continue
+
+            if last_signal is None:
+                continue
+            silence_seconds = max(0, int((timestamp - last_signal).total_seconds()))
+
+            if silence_seconds <= early_supervision_after_seconds:
+                if open_alert and last_signal > parse_time(open_alert.get("detected_at")):
+                    open_alert["state"] = "RESOLVED"
+                    open_alert["resolved_at"] = iso(timestamp)
+                    open_alert["resolution"] = "FRESH_SESSION_SIGNAL_OBSERVED"
+                    for dispatch in dispatches_doc.get("items", []):
+                        if dispatch.get("supervision_alert_id") == open_alert.get("alert_id") and dispatch.get("status") not in {"DELIVERED", "RESOLVED", "CANCELLED"}:
+                            dispatch["status"] = "RESOLVED"
+                    changes.append({"alert_id": open_alert.get("alert_id"), "target_session_id": target_id, "state": "RESOLVED"})
+                continue
+
+            if open_alert:
+                continue
+
+            preferred, target_live = delivery_choice(session, timestamp)
+            alert_id = make_supervision_alert_id(item["continuity_id"], target_id, iso(last_signal))
+            dispatch_id = make_supervision_dispatch_id(alert_id)
+            delivery_modes = [FALLBACK_MODE] if preferred == FALLBACK_MODE else [PUSH_MODE, FALLBACK_MODE]
+            dispatch_status = "READY" if preferred == PUSH_MODE else "FALLBACK_POLL_REQUIRED"
+            alert = {
+                "alert_id": alert_id,
+                "target_session_id": target_id,
+                "participant_id": participant.get("participant_id"),
+                "scope_id": participant.get("scope_id"),
+                "detected_at": iso(timestamp),
+                "last_signal_at": iso(last_signal),
+                "silence_seconds_at_detection": silence_seconds,
+                "threshold_seconds": int(early_supervision_after_seconds),
+                "canonical_lease_expires_at": relay.get("lease_expires_at"),
+                "state": "OPEN",
+                "action": "EARLY_SUPERVISION_ALERT",
+                "dispatch_id": dispatch_id,
+                "preferred_delivery_mode": preferred,
+                "delivery_modes": delivery_modes,
+                "delivery_state": dispatch_status,
+                "target_live_at_detection": target_live,
+                "projection_only": True,
+                "changes_session_status": False,
+                "changes_lease": False,
+                "grants_task_authority": False,
+                "grants_claim": False,
+                "grants_mutation_authority": False,
+            }
+            alerts.append(alert)
+            dispatches_doc.setdefault("items", []).append({
+                "dispatch_id": dispatch_id,
+                "dispatch_kind": "CONTINUITY_SUPERVISION_ALERT",
+                "status": dispatch_status,
+                "repository": item.get("repository"),
+                "target_session_id": target_id,
+                "target_client_instance_id": session.get("client_instance_id"),
+                "bridge_registration_ref": session.get("bridge_registration_ref"),
+                "delivery_modes": delivery_modes,
+                "continuity_id": item.get("continuity_id"),
+                "supervision_alert_id": alert_id,
+                "scope_id": participant.get("scope_id"),
+                "payload_ref": f"continuity:{item.get('continuity_id')}:supervision:{alert_id}",
+                "created_at": iso(timestamp),
+                "expires_at": relay.get("lease_expires_at"),
+                "idempotency_key": dispatch_id,
+                "projection_only": True,
+                "changes_session_status": False,
+                "changes_lease": False,
+                "grants_task_authority": False,
+                "grants_claim": False,
+                "grants_mutation_authority": False,
+            })
+            changes.append({"alert_id": alert_id, "target_session_id": target_id, "state": "EARLY_SUPERVISION_ALERT", "delivery_mode": preferred})
+    return changes
+
+
+def tick_docs(
+    state: dict,
+    sessions_doc: dict,
+    dispatches_doc: dict,
+    *,
+    timestamp: datetime,
+    early_supervision_after_seconds: int = EARLY_SUPERVISION_AFTER_SECONDS,
+) -> dict:
+    changes = reconcile_early_supervision_docs(
+        state,
+        sessions_doc,
+        dispatches_doc,
+        timestamp=timestamp,
+        early_supervision_after_seconds=early_supervision_after_seconds,
+    )
     for item in state.get("items", []):
         for event in item.get("events", []):
             if event.get("state") in FINAL_EVENT_STATES:
@@ -440,9 +607,15 @@ def command_respond(a):
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
 
-def command_tick(_):
-    state, _, dispatches = load_runtime()
-    result = tick_docs(state, dispatches, timestamp=now_utc())
+def command_tick(a):
+    state, sessions, dispatches = load_runtime()
+    result = tick_docs(
+        state,
+        sessions,
+        dispatches,
+        timestamp=now_utc(),
+        early_supervision_after_seconds=a.early_supervision_after_seconds,
+    )
     save_runtime(state, dispatches)
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
@@ -489,6 +662,7 @@ def parser():
     respond.add_argument("--evidence-ref", required=True)
     respond.set_defaults(fn=command_respond)
     tick = sub.add_parser("tick")
+    tick.add_argument("--early-supervision-after-seconds", type=int, default=EARLY_SUPERVISION_AFTER_SECONDS)
     tick.set_defaults(fn=command_tick)
     status = sub.add_parser("status")
     status.add_argument("--continuity-id", required=True)

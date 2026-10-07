@@ -8,7 +8,8 @@ NOW = datetime(2026, 10, 7, 22, 0, tzinfo=timezone.utc)
 HEAD = "a" * 40
 
 
-def session(session_id, *, bridge=False, live=True):
+def session(session_id, *, bridge=False, live=True, silence_seconds=0):
+    heartbeat = NOW - timedelta(seconds=silence_seconds)
     return {
         "session_id": session_id,
         "status": "ACTIVE",
@@ -17,9 +18,10 @@ def session(session_id, *, bridge=False, live=True):
         "bridge_registration_ref": "bridge-" + session_id if bridge else None,
         "relay": {
             "state": "ACTIVE",
-            "last_heartbeat_at": bus.iso(NOW),
+            "last_heartbeat_at": bus.iso(heartbeat),
             "lease_expires_at": bus.iso(NOW + timedelta(minutes=30) if live else NOW - timedelta(minutes=1)),
         },
+        "last_seen_at": bus.iso(heartbeat),
     }
 
 
@@ -201,6 +203,74 @@ def main():
         "TARGET_NOT_MEMBER_OF_CONTINUITY",
     )
 
+    supervision_state = base_state()
+    supervision_sessions = {"sessions": [
+        session("session-a", silence_seconds=121),
+        session("session-b", bridge=True),
+        session("session-c", live=False),
+    ]}
+    original_supervision_sessions = deepcopy(supervision_sessions)
+    supervision_dispatches = {"schema_version": "1.0.0", "revision": 0, "items": []}
+    supervision_tick = bus.tick_docs(
+        supervision_state,
+        supervision_sessions,
+        supervision_dispatches,
+        timestamp=NOW,
+        early_supervision_after_seconds=120,
+    )
+    supervision_changes = [x for x in supervision_tick["changes"] if x.get("state") == "EARLY_SUPERVISION_ALERT"]
+    assert len(supervision_changes) == 1
+    alert = supervision_state["items"][0]["supervision_alerts"][0]
+    assert alert["target_session_id"] == "session-a"
+    assert alert["changes_session_status"] is False
+    assert alert["changes_lease"] is False
+    assert alert["delivery_state"] == "FALLBACK_POLL_REQUIRED"
+    assert supervision_dispatches["items"][0]["dispatch_kind"] == "CONTINUITY_SUPERVISION_ALERT"
+    assert supervision_sessions == original_supervision_sessions
+
+    second_tick = bus.tick_docs(
+        supervision_state,
+        supervision_sessions,
+        supervision_dispatches,
+        timestamp=NOW + timedelta(seconds=30),
+        early_supervision_after_seconds=120,
+    )
+    assert not [x for x in second_tick["changes"] if x.get("state") == "EARLY_SUPERVISION_ALERT"]
+    assert len(supervision_state["items"][0]["supervision_alerts"]) == 1
+
+    refreshed_sessions = deepcopy(supervision_sessions)
+    refreshed_sessions["sessions"][0]["relay"]["last_heartbeat_at"] = bus.iso(NOW + timedelta(seconds=31))
+    refreshed_sessions["sessions"][0]["last_seen_at"] = bus.iso(NOW + timedelta(seconds=31))
+    resolve_tick = bus.tick_docs(
+        supervision_state,
+        refreshed_sessions,
+        supervision_dispatches,
+        timestamp=NOW + timedelta(seconds=31),
+        early_supervision_after_seconds=120,
+    )
+    assert any(x.get("state") == "RESOLVED" for x in resolve_tick["changes"])
+    assert alert["state"] == "RESOLVED"
+    assert refreshed_sessions["sessions"][0]["relay"]["lease_expires_at"] == original_supervision_sessions["sessions"][0]["relay"]["lease_expires_at"]
+
+    stalled_state = base_state()
+    stalled_sessions = {"sessions": [
+        session("session-a"),
+        session("session-b", bridge=True),
+        session("session-c", live=False),
+    ]}
+    stalled_sessions["sessions"][0]["status"] = "STALLED"
+    stalled_sessions["sessions"][0]["relay"]["state"] = "TAKEOVER_READY"
+    stalled_sessions["sessions"][0]["relay"]["last_heartbeat_at"] = bus.iso(NOW - timedelta(minutes=10))
+    stalled_dispatches = {"items": []}
+    stalled_tick = bus.tick_docs(
+        stalled_state,
+        stalled_sessions,
+        stalled_dispatches,
+        timestamp=NOW,
+        early_supervision_after_seconds=120,
+    )
+    assert not [x for x in stalled_tick["changes"] if x.get("state") == "EARLY_SUPERVISION_ALERT"]
+
     timeout_state = base_state()
     timeout_dispatch = {"items": []}
     timeout_event = bus.emit_event_docs(
@@ -226,7 +296,7 @@ def main():
         delivery_state="DELIVERED",
         timestamp=NOW,
     )
-    tick = bus.tick_docs(timeout_state, timeout_dispatch, timestamp=NOW + timedelta(seconds=6))
+    tick = bus.tick_docs(timeout_state, sessions, timeout_dispatch, timestamp=NOW + timedelta(seconds=6))
     assert tick["changes"][0]["state"] == "ACK_TIMEOUT"
     assert timeout_event["routes"][0]["delivery_state"] == "ACK_TIMEOUT"
     assert "POLL_REPOSITORY" in timeout_event["routes"][0]["delivery_modes"]
