@@ -9,27 +9,28 @@
 - Role: `CENTRAL_GOVERNANCE_CONTROL_PLANE`
 - Canonical branch: `main`
 - Template baseline before this self-governance migration: `2d51b21f266726624ec7ac16072ccca4623b9b4a`
-- Template version: `2.8.6`
+- Template version: `2.8.27`
 - V2.7.0 release subject HEAD: `d11b72956e68526edf9b17aec472163a4e49a585`
-- Source-state revision: `26`
+- Source-state revision: `48`
 
-## Current framework program
+## Current programme
 
-- Active macro case: `CREATE_NEW_REPOSITORY`
-- Canonical program issue: `#12`
-- Current case checkpoint: `STEP_5_SECOND_FRESH_REPOSITORY_E2E`
-- CASE 1 pilot `Patricked-code/Gouvern`: baseline/handoff proven
-- Pilot baseline commit: `23975e0435e63fb45d7436d1f23ce8ce0a450a5f`
-- Pilot local-entry state: `LOCAL_HANDOFF_READY`
-- Pilot first governed session: `LOCAL-000002-S1`
+- Active programme: `GOVERNANCE_MODEL_CATALOGUE`.
+- Active work package: `GMC-A / GMC-G01`.
+- Previous macro case: `CREATE_NEW_REPOSITORY` — `DONE`.
+- CASE 1 closure decision: `CPD-073`.
+- CASE 1 checkpoint: `CREATE_NEW_REPOSITORY_CASE_COMPLETE`.
+- `P12-S1..P12-S6`: `DONE`.
+- `GMC-01`: `IN_PROGRESS`.
+- Detailed work package: `GMC-G01`.
+- First atomic task available to the next operation: `GMC-G01-T01`.
+- GMC implementation authority remains false; the released mode is planning/knowledge extraction only.
 
 ## Current control-plane hardening
 
-State: `SELF_GOVERNED`
+State: `SELF_GOVERNED`.
 
-Objective: make the template source obey the same persistent-memory principles that it imposes on generated repositories, without leaking source-project history into clients.
-
-Required boundary:
+Required boundary remains:
 
 ```text
 SOURCE CONTROL PLANE MEMORY
@@ -39,32 +40,46 @@ DISTRIBUTED TEMPLATE PROJECT STATE
 
 ## External dependency boundary
 
-`Patricked-code/MCP` is an independently governed project.
+`Patricked-code/MCP` remains independently governed.
 
-From this framework program:
-- READ / OBSERVE is allowed when required for integration evidence;
-- missing capabilities become INTAKE items for the MCP program;
-- no MCP implementation work is performed here;
-- no MCP branch/task/session is created here unless separately authorized by the MCP program.
+From this programme:
+- READ / OBSERVE is allowed when required for evidence;
+- external MCP needs remain intake/history;
+- no MCP implementation is performed here without separate MCP-program authorization.
+
+Preserved CASE 1 external references include:
+- `Patricked-code/MCP#192`;
+- `Patricked-code/MCP#201` (historical remediated external TLS dependency).
 
 ## Current blockers
 
-- Framework product V2.8.6 is released; Template Governance CI run `36275324940`: PASS.
-- Canonical `main` observed before the Governance Model catalogue enrichment: `76fae0dc132ef7e91e659c4dad44cd3522d2c8c4`.
-- STEP 4 subsequent-agent proof is complete: `Patricked-code/Gouvern#4` reached `NORMAL_GOVERNED_ENTRY` / `LOCAL_HANDOFF_READY` on exact pilot HEAD `671774dfc8e8be8eac2b50d5fb8f0928591694b3` with no baseline/session/work duplication.
-- The Governance Model Catalogue programme is accepted canonical backlog but dependency-bound behind CASE 1 closure; it is not an executable bypass.
+None for CASE 1 closure.
+
+GMC-G01 must still fail closed on contradictory/missing authority or provenance according to its blueprint.
 
 ## Unique next action
 
-`C1_13_H_VALIDATE_PERSISTENT_MCP_CAPABILITY_SNAPSHOT`
+`GMC_01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES`
+
+Execution authority:
+- planning/knowledge extraction: released;
+- Governance Model implementation mutation: not yet authorized by this closure;
+- CAP/SaaS programmes: still dependency-bound.
 
 ## Latest proof
 
-- Template Governance CI run `36275324940`: PASS.
-- V2.8.6 release subject: `02173120acfa3941e84bf69c89dac0e8d74b47ce`.
-- Post-release canonical main observed: `76fae0dc132ef7e91e659c4dad44cd3522d2c8c4`.
-- Complete portable connection-intent fixture: PASS.
-- New canonical knowledge enrichment: `CP-GOVMODEL-001` accepted, execution gate unchanged.
+- CASE 1 second fresh E2E: PASS.
+- Gouvern subsequent normal entry: PASS.
+- Ekyc fresh baseline: `3e889a2bdac78312ebcc7e31d1388ead65c9fceb`.
+- Ekyc subsequent `NORMAL_GOVERNED_ENTRY`: `LOCAL_HANDOFF_READY`.
+- historical parent `C1-13-I-B` reconciled through children `A..G`.
+- no executable CASE 1 task remains orphaned.
+- relational CASE 1 run: `DONE`, active phase count target: zero.
+- next programme released: `GMC-A / GMC-G01`.
+
+## Historical record below
+
+The sections below preserve earlier candidate/release chronology. Any historical “current/next” wording in those sections is superseded by the authoritative current snapshot above.
 
 ## V2.7.0 release attestation
 
