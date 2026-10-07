@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### GACR R7 capacity-aware parallel dispatch
+
+- Added explicit AVAILABLE/WAITING/BUSY/BLOCKED/RATE_LIMITED/QUOTA_BLOCKED agent capacity states.
+- Added safe parallel work planning over canonical work-items, claims, dependencies and collision domains.
+- Added WORK_OFFER dispatch + acceptance-before-claim contract.
+- Preserved exact-HEAD and authority gates; offers never grant write authority.
+- Added client/issue transport and portable distribution support.
+
+
 ### CASE 1 closure / GMC-A release
 
 - Closed `CREATE_NEW_REPOSITORY` through `P12-S6`.
