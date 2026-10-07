@@ -615,3 +615,18 @@ Append-only durable decisions for the source/control-plane repository.
 - `GMC-01 / GMC-G01` becomes the unique current work package.
 - Release mode is planning/knowledge extraction only. This decision does not grant Governance Model implementation mutation authority.
 - The detailed GMC execution blueprint remains authoritative for work-package/atomic-task sequencing and evidence gates.
+
+
+### CPD-074 — GACR availability-aware parallel work dispatcher
+
+- Date: 2026-10-07.
+- Owner explicitly authorized a parallel GACR enhancement lane while the global programme remains on `GMC-01`.
+- GACR R7 adds a derived availability roster and dependency/collision-safe work assignment offers.
+- A live session with no claim is not assumed available; auto-assignment requires explicit `IDLE`, `WAITING_FOR_WORK` or equivalent fresh IDLE challenge evidence.
+- Provider/tool rate, quota and context limits are explicit-observation-only and are never inferred from silence.
+- The roster is projection-only and is not a new session/task/claim authority.
+- Automatic work scheduling requires canonical task opt-in via `dispatch_policy.enabled=true`.
+- Global tasks and canonical GMC atomic blueprint tasks remain the task authorities; no parallel task queue is created.
+- Every offer requires a canonical claim before execution and grants neither invocation nor mutation authority.
+- Dependency checks, collision-domain checks, role/capability checks and exact-HEAD-before-mutation remain mandatory.
+- Current global programme task remains `GMC-01`; this lane must not advance GMC status.
