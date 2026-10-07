@@ -16,7 +16,7 @@ from typing import Callable
 
 DEFAULT_API_BASE = "https://api.github.com"
 DEFAULT_HEARTBEAT_SECONDS = 300
-EVENTS = {"gacr_auto-attach", "gacr_heartbeat", "gacr_beacon"}
+EVENTS = {"gacr_auto-attach", "gacr_heartbeat", "gacr_beacon", "gacr_work-offer-accept"}
 ACTION_PHASES = {"STARTED", "COMPLETED", "FAILED", "CANCELLED"}
 INTERRUPTION_CODES = {
     "CLIENT_DISCONNECTED",
@@ -26,8 +26,15 @@ INTERRUPTION_CODES = {
     "USER_CANCELLED",
     "NETWORK_LOSS",
     "PROCESS_EXITED",
+    "PROVIDER_RATE_LIMIT",
+    "PROVIDER_QUOTA_EXHAUSTED",
+    "CONTEXT_LIMIT",
+    "WAITING_FOR_INPUT",
+    "DEPENDENCY_BLOCKED",
     "UNKNOWN",
 }
+AVAILABILITY_STATES = {"AVAILABLE", "WAITING", "BUSY", "BLOCKED", "RATE_LIMITED", "QUOTA_BLOCKED", "CHECKPOINTING", "TERMINATING", "UNKNOWN"}
+AVAILABILITY_REASON_CODES = {"WAITING_FOR_WORK", "WAITING_FOR_INPUT", "DEPENDENCY_BLOCKED", "PROVIDER_RATE_LIMIT", "PROVIDER_QUOTA_EXHAUSTED", "CONTEXT_LIMIT", "CHECKPOINTING", "TERMINATING", "MANUAL_BUSY", "UNKNOWN"}
 FORBIDDEN_KEY_FRAGMENTS = ("token", "secret", "password", "private_key", "cookie", "authorization")
 
 
@@ -241,6 +248,31 @@ class ClientEmitter:
             },
         )
 
+    def availability(self, session_id: str, *, state: str, reason_code: str = "UNKNOWN", **payload) -> dict:
+        if state not in AVAILABILITY_STATES:
+            raise ValueError("unsupported availability state")
+        if reason_code not in AVAILABILITY_REASON_CODES:
+            raise ValueError("unsupported availability reason code")
+        return self.emit(
+            "gacr_beacon",
+            {
+                "session_id": session_id,
+                "event_type": "AVAILABILITY_UPDATE",
+                "availability_state": state,
+                "availability_reason_code": reason_code,
+                **payload,
+            },
+        )
+
+    def accept_work_offer(self, session_id: str, dispatch_id: str) -> dict:
+        return self.emit(
+            "gacr_work-offer-accept",
+            {
+                "session_id": session_id,
+                "dispatch_id": dispatch_id,
+            },
+        )
+
     def fetch(self, path: str, *, ref: str = "main") -> dict:
         return fetch_json_file(
             self.repository,
@@ -384,6 +416,18 @@ def parser() -> argparse.ArgumentParser:
     interrupt.add_argument("--action-label")
     interrupt.add_argument("--evidence-ref")
 
+    availability = sub.add_parser("availability")
+    add_transport_args(availability)
+    availability.add_argument("--session-id", required=True)
+    availability.add_argument("--state", choices=sorted(AVAILABILITY_STATES), required=True)
+    availability.add_argument("--reason-code", choices=sorted(AVAILABILITY_REASON_CODES), default="UNKNOWN")
+    availability.add_argument("--observed-head")
+
+    accept_offer = sub.add_parser("accept-work-offer")
+    add_transport_args(accept_offer)
+    accept_offer.add_argument("--session-id", required=True)
+    accept_offer.add_argument("--dispatch-id", required=True)
+
     daemon = sub.add_parser("daemon")
     add_transport_args(daemon)
     daemon.add_argument("--session-id", required=True)
@@ -463,6 +507,18 @@ def main() -> None:
             interruption_code=args.interruption_code,
             action_label=args.action_label or "CLIENT_INTERRUPTION",
             evidence_ref=args.evidence_ref,
+        ))
+    elif args.command == "availability":
+        output(emitter.availability(
+            args.session_id,
+            state=args.state,
+            reason_code=args.reason_code,
+            observed_head=args.observed_head,
+        ))
+    elif args.command == "accept-work-offer":
+        output(emitter.accept_work_offer(
+            args.session_id,
+            args.dispatch_id,
         ))
     elif args.command == "daemon":
         daemon_loop(
