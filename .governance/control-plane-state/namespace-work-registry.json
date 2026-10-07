@@ -91,6 +91,12 @@
       "canonical_source": ".governance/control-plane-state/tasks.json"
     },
     {
+      "id": "SAA",
+      "pattern": "^SAA-\\d{3}$",
+      "kind": "SAAS_PLATFORM_PRODUCTIZATION_BACKLOG",
+      "canonical_source": ".governance/control-plane-state/tasks.json"
+    },
+    {
       "id": "AQ",
       "pattern": "^AQ-\\d{3}[A-Z]?$",
       "kind": "ADAPTIVE_QUESTION",
@@ -336,6 +342,13 @@
     {
       "id": "CP-CAPSULE-001",
       "purpose": "reusable pre-entry capsule productization consuming stabilized IDN/GMC/RTE/ARCH semantics"
+    },
+    {
+      "id": "CP-SAAS-001",
+      "purpose": "full SaaS/admin cockpit/API/backend/deployment productization programme"
     }
+  ],
+  "authorities": [
+    "CP-SAAS-001"
   ]
 }
