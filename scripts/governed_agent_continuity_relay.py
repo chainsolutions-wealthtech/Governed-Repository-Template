@@ -19,6 +19,8 @@ from gacr_agent_telemetry import (
     select_compatible_standby,
     evaluate_standby_candidate,
     safe_github_context,
+    WORKLOAD_STATES,
+    BLOCKER_CODES,
 )
 
 ROOT = Path(os.environ.get("GACR_ROOT") or Path(__file__).resolve().parents[1]).resolve()
@@ -672,7 +674,16 @@ def command_heartbeat(a: argparse.Namespace) -> None:
         timestamp=now_utc(),
     )
     save(sessions, claims, takeovers)
-    record_beacon(session=session, event_type="HEARTBEAT", source=a.source)
+    record_beacon(
+        session=session,
+        event_type="HEARTBEAT",
+        source=a.source,
+        workload_state=a.workload_state,
+        blocker_code=a.blocker_code,
+        capacity_slots=a.capacity_slots,
+        max_parallel_tasks=a.max_parallel_tasks,
+        retry_after_at=a.retry_after_at,
+    )
     correlate_all()
     print(json.dumps({"status": "HEARTBEAT_RECORDED", "session": session}, indent=2, ensure_ascii=False))
 
@@ -819,6 +830,11 @@ def parser() -> argparse.ArgumentParser:
     hb.add_argument("--action")
     hb.add_argument("--evidence")
     hb.add_argument("--source", choices=["GITHUB_ACTIONS","LOCAL_AGENT","EXTERNAL_BRIDGE","CLIENT_EMITTER","UNKNOWN"])
+    hb.add_argument("--workload-state", choices=sorted(WORKLOAD_STATES))
+    hb.add_argument("--blocker-code", choices=sorted(BLOCKER_CODES))
+    hb.add_argument("--capacity-slots", type=int)
+    hb.add_argument("--max-parallel-tasks", type=int)
+    hb.add_argument("--retry-after-at")
     hb.set_defaults(fn=command_heartbeat)
 
     scan = sub.add_parser("scan")
