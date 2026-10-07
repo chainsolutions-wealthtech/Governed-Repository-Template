@@ -161,6 +161,9 @@ jobs:
         id: relay
         run: python3 scripts/gacr_workflow_bridge.py
 
+      - name: Refresh GACR availability roster and safe parallel dispatch
+        run: python3 scripts/gacr_parallel_dispatch.py dispatch --auto --persist-roster
+
       - name: Deliver pending GSCC issue control challenges
         if: ${{ steps.relay.outputs.command == 'control-challenge' || (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/gscc-control ')) }}
         env:
@@ -169,7 +172,7 @@ jobs:
 
       - name: Validate GACR state
         run: |
-          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py scripts/gacr_bridge_notifier.py scripts/gacr_auto_attach.py scripts/gacr_client_emitter.py scripts/gacr_host_issue_ingress.py scripts/gscc_control_issue_ingress.py scripts/gscc_gacr/issue_control_bridge.py
+          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py scripts/gacr_parallel_dispatch.py scripts/gacr_bridge_notifier.py scripts/gacr_auto_attach.py scripts/gacr_client_emitter.py scripts/gacr_host_issue_ingress.py scripts/gscc_control_issue_ingress.py scripts/gscc_gacr/issue_control_bridge.py
           python3 scripts/validate_governance.py
 
       - name: Persist changed relay state
@@ -188,6 +191,7 @@ jobs:
               .governance/control-plane-state/gacr-correlations.json
               .governance/control-plane-state/gacr-dispatches.json
               .governance/control-plane-state/gacr-forensics.json
+              .governance/control-plane-state/gacr-agent-roster.json
             )
           else
             paths=(
@@ -198,6 +202,7 @@ jobs:
               .governance/agent-relay/correlations.json
               .governance/agent-relay/dispatches.json
               .governance/agent-relay/forensics.json
+              .governance/agent-relay/roster.json
             )
           fi
           if git diff --quiet -- "${paths[@]}"; then
