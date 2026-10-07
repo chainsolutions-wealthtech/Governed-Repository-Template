@@ -62,11 +62,26 @@ SAFE_GITHUB_ENV = (
 )
 FORBIDDEN_KEY_FRAGMENTS = ("token", "secret", "password", "private_key", "cookie", "authorization", "transcript", "prompt", "private_reasoning", "chain_of_thought", "raw_response", "response_body", "page_content")
 ACTION_PHASES = {"STARTED", "COMPLETED", "FAILED", "CANCELLED"}
-INTERRUPTION_CODES = {"CLIENT_DISCONNECTED","PROVIDER_TIMEOUT","TOOL_FAILURE","AGENT_ERROR","USER_CANCELLED","NETWORK_LOSS","PROCESS_EXITED","UNKNOWN"}
+INTERRUPTION_CODES = {
+    "CLIENT_DISCONNECTED","PROVIDER_TIMEOUT","TOOL_FAILURE","AGENT_ERROR","USER_CANCELLED",
+    "NETWORK_LOSS","PROCESS_EXITED","PROVIDER_RATE_LIMIT","TOOL_RATE_LIMIT","USAGE_LIMIT",
+    "QUOTA_LIMIT","CONTEXT_LIMIT","WAITING_FOR_AUTHORITY","WAITING_FOR_INPUT",
+    "WAITING_FOR_REVIEW","EXTERNAL_DEPENDENCY","UNKNOWN"
+}
 UNAVAILABLE = "UNAVAILABLE"
 LIVENESS_STATES = {"ACTIVE", "QUIET", "SUSPECTED_STALL", "STALLED", "UNKNOWN", "TERMINAL"}
 PROGRESS_STATES = {"ADVANCING", "NO_RECENT_PROGRESS_EVIDENCE", "BLOCKED_IF_EXPLICITLY_OBSERVED", "UNKNOWN"}
 LIVENESS_CHALLENGE_RESPONSES = {"ACK", "BUSY", "IDLE", "CHECKPOINTING", "TERMINATING"}
+WORKLOAD_STATES = {
+    "WORKING","IDLE","WAITING_FOR_WORK","WAITING_FOR_INPUT","WAITING_FOR_AUTHORITY",
+    "WAITING_FOR_REVIEW","BLOCKED","RATE_LIMITED","QUOTA_LIMITED","CONTEXT_LIMITED",
+    "CHECKPOINTING","TERMINATING","UNKNOWN"
+}
+BLOCKER_CODES = {
+    "NONE","DEPENDENCY","COLLISION_DOMAIN","WAITING_FOR_INPUT","WAITING_FOR_AUTHORITY",
+    "WAITING_FOR_REVIEW","PROVIDER_RATE_LIMIT","TOOL_RATE_LIMIT","USAGE_LIMIT","QUOTA_LIMIT",
+    "CONTEXT_LIMIT","EXTERNAL_DEPENDENCY","TOOL_FAILURE","NETWORK_LOSS","UNKNOWN"
+}
 PROGRESS_EVENT_CLASSES = {
     "REPOSITORY_WRITE_ACTIVITY": "REPOSITORY_WRITE_ACTIVITY",
     "COMMIT_MUTATION": "COMMIT_MUTATION",
@@ -262,6 +277,11 @@ def record_beacon(
     checkpoint_ref: str | None = None,
     evidence_ref: str | None = None,
     interruption_code: str | None = None,
+    workload_state: str | None = None,
+    blocker_code: str | None = None,
+    capacity_slots: int | None = None,
+    max_parallel_tasks: int | None = None,
+    retry_after_at: str | None = None,
 ) -> dict:
     store = read_json(BEACONS_PATH, {"schema_version": "1.0.0", "revision": 0, "items": []})
     timestamp = observed_at or now_iso()
@@ -269,6 +289,16 @@ def record_beacon(
         raise ValueError("unsupported action phase")
     if interruption_code and interruption_code not in INTERRUPTION_CODES:
         raise ValueError("unsupported interruption code")
+    if workload_state and workload_state not in WORKLOAD_STATES:
+        raise ValueError("unsupported workload state")
+    if blocker_code and blocker_code not in BLOCKER_CODES:
+        raise ValueError("unsupported blocker code")
+    if capacity_slots is not None and capacity_slots < 0:
+        raise ValueError("capacity_slots must be >= 0")
+    if max_parallel_tasks is not None and max_parallel_tasks < 0:
+        raise ValueError("max_parallel_tasks must be >= 0")
+    if retry_after_at and parse_iso(retry_after_at) is None:
+        raise ValueError("retry_after_at must be ISO-8601")
     relay = (session or {}).get("relay") or {}
     resolved_provider = provider or (session or {}).get("provider")
     resolved_provider_ref = (
@@ -319,6 +349,11 @@ def record_beacon(
         "checkpoint_ref": checkpoint_ref,
         "evidence_ref": evidence_ref,
         "interruption_code": interruption_code,
+        "workload_state": workload_state,
+        "blocker_code": blocker_code,
+        "capacity_slots": capacity_slots,
+        "max_parallel_tasks": max_parallel_tasks,
+        "retry_after_at": retry_after_at,
         "github_actor": resolved_actor,
         "github_installation_id": resolved_installation,
         "github_workflow": github_env.get("GITHUB_WORKFLOW"),
@@ -1694,6 +1729,11 @@ def command_beacon(a: argparse.Namespace) -> None:
         checkpoint_ref=a.checkpoint_ref,
         evidence_ref=a.evidence_ref,
         interruption_code=a.interruption_code,
+        workload_state=a.workload_state,
+        blocker_code=a.blocker_code,
+        capacity_slots=a.capacity_slots,
+        max_parallel_tasks=a.max_parallel_tasks,
+        retry_after_at=a.retry_after_at,
     )
     print(json.dumps({"status":"BEACON_RECORDED","beacon":item},indent=2,ensure_ascii=False))
 
@@ -1756,6 +1796,11 @@ def parser() -> argparse.ArgumentParser:
     b.add_argument("--action-id"); b.add_argument("--action-label"); b.add_argument("--action-phase",choices=sorted(ACTION_PHASES))
     b.add_argument("--tool-name"); b.add_argument("--tool-call-id"); b.add_argument("--outcome"); b.add_argument("--written-head")
     b.add_argument("--checkpoint-ref"); b.add_argument("--evidence-ref"); b.add_argument("--interruption-code",choices=sorted(INTERRUPTION_CODES))
+    b.add_argument("--workload-state", choices=sorted(WORKLOAD_STATES))
+    b.add_argument("--blocker-code", choices=sorted(BLOCKER_CODES))
+    b.add_argument("--capacity-slots", type=int)
+    b.add_argument("--max-parallel-tasks", type=int)
+    b.add_argument("--retry-after-at")
     b.set_defaults(fn=command_beacon)
 
     c=sub.add_parser("correlate")
