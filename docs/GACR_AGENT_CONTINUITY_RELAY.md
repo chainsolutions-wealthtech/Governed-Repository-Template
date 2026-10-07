@@ -529,3 +529,100 @@ The workflow `.github/workflows/gscc-function-exposure-gate.yml` runs an arrival
 The gate does not infer authority and does not grant mutation authority. It validates evidence that another authority source has actually supplied. A mutation tool without current live preflight remains withheld.
 
 Provider/private surfaces that bypass this governed catalogue/wrapper cannot be made compliant by repository code alone; they must integrate the GSCC exposure API/workflow. Such an unintegrated surface is reported as outside the governed exposure boundary, never silently treated as validated.
+
+
+## R7 — Availability-aware parallel work dispatch
+
+Revision authority: `CP-AGENT-RELAY-001-R7`. Decision: `CPD-074`.
+
+R7 extends GACR from stalled-work takeover into a safe **availability roster + parallel work offer** layer. It remains additive to the existing task graph, claims and collision domains.
+
+```text
+SESSION / BEACON / CLAIM
+→ AVAILABILITY ROSTER
+   ├─ ACTIVE
+   ├─ AVAILABLE
+   ├─ UNCONFIRMED_AVAILABLE
+   ├─ WAITING
+   ├─ LIMITED
+   ├─ STALLED
+   ├─ TERMINAL
+   └─ UNKNOWN
+→ DEPENDENCY + COLLISION + CAPABILITY CHECK
+→ WORK ASSIGNMENT OFFER
+→ CLAIM REQUIRED
+→ EXACT-HEAD REOBSERVATION
+→ governed execution
+```
+
+### Availability is evidence, not inference
+
+A live session with no active claim is **not automatically considered free**. Without an explicit signal, it is projected as `UNCONFIRMED_AVAILABLE`.
+
+Automatic new-work eligibility requires an explicit observable signal such as:
+- `workload_state = IDLE`;
+- `workload_state = WAITING_FOR_WORK`;
+- a fresh liveness challenge response `IDLE`.
+
+Provider/tool limits are also explicit-only. GACR may project `LIMITED` when a client/adapter reports `RATE_LIMITED`, `QUOTA_LIMITED`, `CONTEXT_LIMITED` or a corresponding interruption code. Silence alone never becomes a fabricated quota/rate-limit cause.
+
+Heartbeat metadata may include:
+- `workload_state`;
+- `blocker_code`;
+- `capacity_slots`;
+- `max_parallel_tasks`;
+- `retry_after_at`.
+
+### Scheduler safety
+
+Automatic scheduling only considers tasks whose canonical source explicitly opts in:
+
+```json
+{
+  "dispatch_policy": {
+    "enabled": true,
+    "collision_domains": ["example-domain"],
+    "allowed_agent_roles": ["CODE_AGENT"],
+    "required_capabilities": ["OPTIONAL_CAPABILITY"],
+    "priority": 100
+  }
+}
+```
+
+The scheduler:
+- reads canonical task authorities directly;
+- also reads GMC atomic tasks from the canonical Governance Model execution blueprint;
+- does not create a parallel task queue;
+- verifies dependencies;
+- verifies active claims/collision domains;
+- verifies role/capability compatibility;
+- respects declared free capacity;
+- prevents duplicate open dispatch offers.
+
+A work dispatch is only an **offer**:
+- it does not create a claim;
+- it does not change task status;
+- it grants no invocation authority;
+- it grants no mutation authority;
+- a canonical claim is required before execution;
+- mutable work still requires exact-HEAD reconciliation.
+
+Commands:
+
+```bash
+python3 scripts/gacr_parallel_dispatch.py roster --persist
+python3 scripts/gacr_parallel_dispatch.py plan --auto
+python3 scripts/gacr_parallel_dispatch.py dispatch --auto --persist-roster
+
+# Explicit operator-selected task:
+python3 scripts/gacr_parallel_dispatch.py plan --task-id <TASK_ID>
+python3 scripts/gacr_parallel_dispatch.py dispatch --task-id <TASK_ID> --persist-roster
+```
+
+The distributed GACR workflow refreshes the roster and runs safe auto-dispatch after each relay event. If no canonical task has `dispatch_policy.enabled=true`, no automatic work assignment is created.
+
+The roster is a derived projection only:
+- source: `.governance/control-plane-state/gacr-agent-roster.json`;
+- client: `.governance/agent-relay/roster.json`.
+
+It is never an authority source.
