@@ -489,3 +489,14 @@ Adds `CPD-024` and canonical architecture revision `CP-ARCH-001-R5` for the port
 - Added second-repository and second/generic-adapter LIVE acceptance requirements.
 - Preserved the global execution order: `P12-S6` remains the sole `IN_PROGRESS` task.
 - No capsule implementation began in this registration change.
+
+
+## Governance Automation V2.8.43
+
+### GACR R7
+
+- adds explicit agent capacity states and observed-only provider limitation signals;
+- adds capacity-aware parallel work planning over canonical work items, dependencies, claims and collision domains;
+- adds `WORK_OFFER` dispatch and acceptance-before-claim semantics;
+- preserves exact-HEAD, claim and mutation-authority gates;
+- distributes the R7 runtime, schemas, tests and documentation to governed clients.
