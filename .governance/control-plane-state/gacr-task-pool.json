@@ -1,0 +1,21 @@
+{
+  "schema": "gacr-contextual-task-pool/v1",
+  "revision": 0,
+  "process": "GACR",
+  "model": "CONTEXTUAL_CONTINUOUS_TASK_POOL",
+  "generated_at": null,
+  "source_mode": "UNMATERIALIZED",
+  "counts": {},
+  "dispatchable_subject_ids": [],
+  "recovery_subject_ids": [],
+  "collision_free_waves": [],
+  "items": [],
+  "authority": {
+    "projection_only": true,
+    "canonical_task_sources_unchanged": true,
+    "grants_write_authority": false,
+    "claim_required": true,
+    "exact_head_required": true
+  },
+  "semantic_digest": null
+}
