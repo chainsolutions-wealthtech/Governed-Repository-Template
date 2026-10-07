@@ -166,6 +166,28 @@ def main() -> None:
         "dispatch_id",
     )
 
+    work_relinquish_payload = {
+        "schema": g.SCHEMA,
+        "event": "work_relinquish",
+        "session_id": "session-1",
+        "claim_id": "GACR-C-demo",
+        "reason_code": "CONTEXT_LIMIT",
+        "observed_head": "f" * 40,
+        "checkpoint_ref": "CHK-demo",
+        "handoff_ref": "HANDOFF-demo",
+    }
+    parsed_relinquish = g.parse_issue_comment_event(
+        event(body(work_relinquish_payload), comment_id=9008),
+        config(),
+    )
+    assert_true(parsed_relinquish["claim_id"] == "GACR-C-demo", "relinquish claim parsed")
+    missing_handoff = dict(work_relinquish_payload)
+    del missing_handoff["handoff_ref"]
+    expect_error(
+        lambda: g.parse_issue_comment_event(event(body(missing_handoff), comment_id=9009), config()),
+        "handoff_ref",
+    )
+
     sessions = [
         {
             "session_id": "session-1",
