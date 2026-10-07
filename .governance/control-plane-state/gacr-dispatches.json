@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 27,
+  "revision": 28,
   "items": [
     {
       "schema": "gscc-control-dispatch/v1",
@@ -348,8 +348,8 @@
     {
       "dispatch_id": "GACR-W-459aad82ea1f",
       "dispatch_kind": "WORK_OFFER",
-      "status": "READY",
-      "offer_status": "PENDING_ACCEPTANCE",
+      "status": "ACCEPTED_PENDING_CLAIM",
+      "offer_status": "ACCEPTED",
       "created_at": "2026-10-07T02:26:41+00:00",
       "target_session_id": "session-a2a8bd62dd27b64f92ae4cfe",
       "target_client_instance_id": "GSCC-CLIENT-da9c7f48ffd3bf11970efb51",
@@ -369,7 +369,9 @@
       "requires_exact_head_reconciliation": true,
       "may_write_before_acceptance": false,
       "claim_created": false,
-      "grants_write_authority": false
+      "grants_write_authority": false,
+      "accepted_at": "2026-10-07T02:33:00+00:00",
+      "accepted_by_session_id": "session-a2a8bd62dd27b64f92ae4cfe"
     },
     {
       "dispatch_id": "GACR-W-5ed2e5354237",
