@@ -87,10 +87,28 @@ def main() -> None:
     assert_true(availability["client_payload"]["availability_state"] == "WAITING", "availability state")
     assert_true(sent[-1]["body"]["event_type"] == "gacr_beacon", "availability uses canonical beacon transport")
 
-    accepted = emitter.accept_work_offer("session-1", "GACR-W-demo")
+    accepted = emitter.accept_work_offer("session-1", "GACR-W-demo", observed_head="d"*40)
     assert_true(accepted["status"] == "SENT", "work offer accept sent")
     assert_true(sent[-1]["body"]["event_type"] == "gacr_work-offer-accept", "work offer accept dispatch event")
     assert_true(sent[-1]["body"]["client_payload"]["dispatch_id"] == "GACR-W-demo", "dispatch id forwarded")
+    assert_true(sent[-1]["body"]["client_payload"]["observed_head"] == "d"*40, "acceptance observed HEAD forwarded")
+
+    relinquished = emitter.relinquish_work(
+        "session-1",
+        "GACR-C-demo",
+        reason_code="CONTEXT_LIMIT",
+        observed_head="e"*40,
+        checkpoint_ref="CHK-demo",
+        handoff_ref="HANDOFF-demo",
+        evidence_ref="EVIDENCE-demo",
+    )
+    assert_true(relinquished["status"] == "SENT", "work relinquish sent")
+    assert_true(sent[-1]["body"]["event_type"] == "gacr_work-relinquish", "work relinquish dispatch event")
+    payload = sent[-1]["body"]["client_payload"]
+    assert_true(payload["claim_id"] == "GACR-C-demo", "relinquish claim forwarded")
+    assert_true(payload["checkpoint_ref"] == "CHK-demo", "checkpoint forwarded")
+    assert_true(payload["handoff_ref"] == "HANDOFF-demo", "handoff forwarded")
+    assert_true(payload["evidence_ref"] == "EVIDENCE-demo", "evidence forwarded")
 
     try:
         g.assert_safe_payload({"api_token": "x"})
