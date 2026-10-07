@@ -1321,3 +1321,19 @@ The release is fail-closed and bound to the same per-arrival runtime, connection
 
 Continuity is recorded in both machine and human ledgers. The IDN pre-entry lane must not be replayed for this completed arrival. Normal source/control-plane governance is now applicable and returns to the unchanged programme action `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
 
+
+
+## 2026-10-07 — Reusable capsule productization registered
+
+The owner confirmed that the completed GSCC→GSE→GACR→F1→release chain must become a reusable module deployable outside the full Governed-Repository-Template.
+
+Registered:
+- authority `CP-CAPSULE-001`;
+- tasks `CAP-001..CAP-012`;
+- dependency gate `P12-S6 + IDN-006`;
+- second clean repository LIVE proof;
+- second/generic provider adapter LIVE proof;
+- install/upgrade/rollback/versioning acceptance;
+- release target `capsule 1.0.0`.
+
+No implementation is started by this registration. `P12-S6` remains the unique `IN_PROGRESS` global task.
