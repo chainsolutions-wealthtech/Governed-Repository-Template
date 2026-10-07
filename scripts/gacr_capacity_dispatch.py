@@ -62,6 +62,7 @@ def config() -> dict:
         "max_parallel_offers_per_session": int(dispatch.get("max_parallel_offers_per_session", 1)),
         "available_states": list(dispatch.get("available_states") or sorted(DISPATCHABLE_STATES)),
         "require_explicit_availability": bool(dispatch.get("require_explicit_availability", True)),
+        "require_explicit_work_compatibility": bool(dispatch.get("require_explicit_work_compatibility", True)),
     }
 
 
@@ -260,8 +261,18 @@ def _active_collision_domains(claims_doc: dict) -> set[str]:
     }
 
 
+def _work_has_explicit_compatibility_scope(item: dict) -> bool:
+    return any(
+        item.get(field)
+        for field in ("allowed_agent_roles", "required_capabilities", "required_authorities", "target_session_id")
+    )
+
+
 def _candidate_compatible(candidate: dict, item: dict) -> tuple[bool, list[str]]:
     reasons = []
+    target_session_id = item.get("target_session_id")
+    if target_session_id and target_session_id != candidate.get("session_id"):
+        reasons.append("TARGET_SESSION_MISMATCH")
     required_capabilities = set(item.get("required_capabilities") or [])
     missing_capabilities = sorted(required_capabilities - set(candidate.get("capabilities") or []))
     if missing_capabilities:
@@ -315,6 +326,13 @@ def parallel_work_dispatch_plan(
             continue
         if work_item_id in claimed_work:
             unassigned.append({"work_item_id": work_item_id, "reason": "ALREADY_CLAIMED"})
+            continue
+
+        if cfg["require_explicit_work_compatibility"] and not _work_has_explicit_compatibility_scope(item):
+            unassigned.append({
+                "work_item_id": work_item_id,
+                "reason": "WORK_COMPATIBILITY_SCOPE_UNDECLARED",
+            })
             continue
 
         deps_ok, unresolved = _dependencies_satisfied(item, by_id)
