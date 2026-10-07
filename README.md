@@ -17,6 +17,15 @@
 
 Template générique de gouvernance pour les dépôts de l'organisation `chainsolutions-wealthtech`.
 
+## Architecture maître et état du programme
+
+Pour comprendre l'ensemble du système sans reconstruire l'architecture à partir de fichiers dispersés :
+
+- carte architecturale maître : `docs/control-plane/MASTER_SYSTEM_MAP.md`;
+- cahier des charges / état / feuille de route : `docs/control-plane/REQUIREMENTS_ROADMAP.md`.
+
+Ces fichiers sont des cartes de synthèse. Ils pointent vers les autorités canoniques existantes et ne les remplacent pas.
+
 ## Objectif
 
 Fournir dès la création d'un dépôt :
