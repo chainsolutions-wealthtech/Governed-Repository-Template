@@ -1018,3 +1018,19 @@ IDN-006 is complete. The next global programme action is unchanged: `P12_S6_CLOS
 - Cross-repository acceptance: required before capsule 1.0.0.
 - Second/generic provider adapter acceptance: required before capsule 1.0.0.
 - Current unique executable task remains `P12-S6`; this registration creates no parallel execution lane.
+
+
+## GACR R7 availability-aware parallel dispatch
+
+Owner-authorized cross-cutting implementation lane.
+
+- Authority revision: `CP-AGENT-RELAY-001-R7`.
+- Decision: `CPD-074`.
+- Global programme remains `GMC-01 / GMC-G01`.
+- Availability roster: implemented, projection-only.
+- Explicit workload/blocker/capacity telemetry: implemented.
+- Dependency/collision/capability-safe scheduler: implemented.
+- Auto dispatch: only for canonical tasks with `dispatch_policy.enabled=true`.
+- Work offers require canonical claims and grant no mutation authority.
+- Provider/tool limits are explicit-observation-only.
+- Status before merge: `IMPLEMENTED_PENDING_CI_AND_POST_MERGE_ROSTER_PROOF`.
