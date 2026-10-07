@@ -67,7 +67,8 @@ EVREQ-*              evidence requirements
 GACR-T-*              runtime takeover IDs
 GACR-B-*              runtime Beacon IDs
 GACR-C-*              runtime Correlator IDs
-GACR-D-*              runtime Dispatcher IDs
+GACR-D-*              runtime Dispatcher/takeover wake IDs
+GACR-W-*              runtime Work Offer IDs
 GACR-F-*              runtime Interruption Forensics IDs
 ```
 
@@ -118,3 +119,15 @@ The source-only validator fails closed when it finds:
 - duplicate canonical authority IDs.
 
 Legacy missing lineage metadata is not retroactively made fatal in this first slice; future GMC-G02/G13 hardening can backfill it without destabilizing current work.
+
+
+## GACR R8 runtime identifiers
+
+`GACR-W-*` is the canonical runtime namespace for new-work offers created by the capacity-aware dispatcher.
+
+It is distinct from:
+- `GACR-D-*` takeover/wake dispatch records;
+- canonical programme/task IDs such as `GMC-G01-T01`;
+- claims, which remain the mutable ownership record.
+
+Current authority chain includes `CP-AGENT-RELAY-001-R6`, `R7`, and `R8`. R8 adds F1/release and canonical-declaration gates before source-programme work offers.
