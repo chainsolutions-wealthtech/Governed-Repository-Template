@@ -303,7 +303,7 @@
         "RTE-008",
         "RTE-012"
       ],
-      "current_unique_executable_item_unchanged": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+      "current_unique_executable_item_unchanged": "GMC-01",
       "merge_pr": 98,
       "merge_commit": "0d0c595be7f6833bb36778a0cdac46c82abbd2ab",
       "post_merge_ci": 36915276875,
@@ -368,7 +368,7 @@
         "RTE-008",
         "RTE-012"
       ],
-      "current_unique_executable_item_unchanged": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+      "current_unique_executable_item_unchanged": "GMC-01",
       "template_version": "2.8.31",
       "merge_pr": 102,
       "merge_commit": "abefcfccbf822fa2fcf590e592ad51c767e32937",
@@ -381,7 +381,7 @@
       "master_map": "docs/control-plane/MASTER_SYSTEM_MAP.md",
       "requirements_roadmap": "docs/control-plane/REQUIREMENTS_ROADMAP.md",
       "navigation_only_no_parallel_authority": true,
-      "current_unique_executable_item_unchanged": "P12-S6"
+      "current_unique_executable_item_unchanged": "GMC-01"
     },
     "saas_platform_productization": {
       "authority_id": "CP-SAAS-001",
@@ -473,7 +473,7 @@
     "mcp_retry_run": 36621624763,
     "mcp_retry_failure": "SSL_CERTIFICATE_VERIFY_FAILED_CERTIFICATE_EXPIRED",
     "mcp_intake": "Patricked-code/MCP#201",
-    "active_dependency_task": "P12-S6",
+    "active_dependency_task": null,
     "preserved_external_dependency": {
       "task": "C1-13-E",
       "intake": "Patricked-code/MCP#201",
@@ -759,7 +759,8 @@
       "target_git_mutation": false,
       "duplicate_baseline": false,
       "duplicate_session": false
-    }
+    },
+    "historical_active_dependency_task": "P12-S6"
   },
   "mcp_capability_snapshot_program": {
     "last_refresh_attempt": {
