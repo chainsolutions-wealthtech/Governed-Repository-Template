@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 589,
+  "revision": 590,
   "items": [
     {
       "beacon_id": "GACR-B-6e9a2275ea04",
@@ -51935,6 +51935,105 @@
       },
       "context_digest": "c0c086d52774a920e1b28ac7d8b0cbafda8ddaba60a4259eaae88820b9fa08cd",
       "dedupe_key": "a1a89600ad8d696a4742714a9a2ff8fbafe5f9d3643ed3185f6733256b4376c2"
+    },
+    {
+      "beacon_id": "GACR-B-f424d661f9b6",
+      "observed_at": "2026-10-07T22:42:27+00:00",
+      "source": "CLIENT_EMITTER",
+      "event_type": "AVAILABILITY_UPDATE",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "session_id": "session-3320926e66a52ff8f4396ed2",
+      "provider": "chatgpt",
+      "provider_conversation_ref": null,
+      "client_instance_id": "GSCC-CLIENT-b292bc2e55699afc86d3c56d",
+      "connection_ref": "GSCC-CONN-bbcf230ab2aadb503a07017987e391d5",
+      "connection_fingerprint": "GACR-FP1-c9a118ba7326cd862d335477cef627bbb2e916037b9f9f0ec06bdc23ddc629e3",
+      "claim_id": null,
+      "connection_envelope_digest": null,
+      "surface_class": "CONTROLLED_INSTRUMENTABLE",
+      "presence_event": null,
+      "agent_identity": "GSCC-ID-21df6eb30456b56be12144bf",
+      "agent_role": "SUPERVISOR",
+      "agent_role_provenance": "DECLARED_BY_EVENT",
+      "entry_purpose": null,
+      "entry_purpose_provenance": "UNAVAILABLE",
+      "work_kind": null,
+      "work_kind_provenance": "UNAVAILABLE",
+      "capabilities": [
+        "CHALLENGE_RESPONSE",
+        "COMMAND_ACK",
+        "COMMAND_RECEIVE",
+        "GACR_AUTO_ATTACH",
+        "GACR_PRESENCE_FIRST"
+      ],
+      "capabilities_provenance": "SESSION_SNAPSHOT",
+      "task_id": null,
+      "branch": "main",
+      "pull_request": null,
+      "observed_head_sha": "016fcb4f6403e27a05a0baba4ca23ad24a6e487f",
+      "action_id": null,
+      "action_label": null,
+      "action_phase": null,
+      "tool_name": null,
+      "tool_call_id": null,
+      "outcome": null,
+      "written_head_sha": null,
+      "checkpoint_ref": null,
+      "evidence_ref": "github-issue-comment:6048348975",
+      "interruption_code": null,
+      "availability_state": "BUSY",
+      "availability_reason_code": "MANUAL_BUSY",
+      "github_actor": "Wealthtechinnovations",
+      "github_installation_id": null,
+      "github_workflow": "Governed Agent Continuity Relay",
+      "github_run_id": "37697841591",
+      "github_run_attempt": "1",
+      "github_job": "relay",
+      "github": {
+        "environment": {
+          "GITHUB_REPOSITORY": "chainsolutions-wealthtech/Governed-Repository-Template",
+          "GITHUB_REPOSITORY_ID": "1386478935",
+          "GITHUB_REPOSITORY_OWNER": "chainsolutions-wealthtech",
+          "GITHUB_REPOSITORY_OWNER_ID": "299685687",
+          "GITHUB_ACTOR": "Wealthtechinnovations",
+          "GITHUB_ACTOR_ID": "94637590",
+          "GITHUB_TRIGGERING_ACTOR": "Wealthtechinnovations",
+          "GITHUB_EVENT_NAME": "issue_comment",
+          "GITHUB_REF": "refs/heads/main",
+          "GITHUB_REF_NAME": "main",
+          "GITHUB_REF_TYPE": "branch",
+          "GITHUB_SHA": "016fcb4f6403e27a05a0baba4ca23ad24a6e487f",
+          "GITHUB_WORKFLOW": "Governed Agent Continuity Relay",
+          "GITHUB_WORKFLOW_REF": "chainsolutions-wealthtech/Governed-Repository-Template/.github/workflows/governed-agent-continuity-relay.yml@refs/heads/main",
+          "GITHUB_RUN_ID": "37697841591",
+          "GITHUB_RUN_NUMBER": "1320",
+          "GITHUB_RUN_ATTEMPT": "1",
+          "GITHUB_JOB": "relay",
+          "GITHUB_ACTION": "relay",
+          "GITHUB_SERVER_URL": "https://github.com",
+          "GITHUB_API_URL": "https://api.github.com",
+          "GITHUB_GRAPHQL_URL": "https://api.github.com/graphql"
+        },
+        "event": {
+          "sender": {
+            "login": "Wealthtechinnovations",
+            "id": 94637590,
+            "type": "User"
+          },
+          "installation_id": null,
+          "repository": {
+            "id": 1386478935,
+            "full_name": "chainsolutions-wealthtech/Governed-Repository-Template",
+            "owner_login": "chainsolutions-wealthtech",
+            "owner_id": 299685687,
+            "default_branch": "main"
+          },
+          "pull_request": null,
+          "issue_number": 115
+        }
+      },
+      "context_digest": "56786533fff89620a88cd7bcd421115c095c06af5bd61f8d6b8aac125f80d001",
+      "dedupe_key": "92a0c03e3a415409d86664d5dc0d6112a2330149fd8a4482fd6e521550aa2fb4"
     }
   ]
 }
