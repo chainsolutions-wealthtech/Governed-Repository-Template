@@ -395,5 +395,13 @@
       "replay_first_touch": false,
       "recreate_gacr_session": false
     }
+  },
+  "master_documentation": {
+    "status": "MATERIALIZED_CI_GUARDED",
+    "decision_id": "CPD-071",
+    "architecture_revision": "CP-ARCH-001-R7",
+    "master_map": "docs/control-plane/MASTER_SYSTEM_MAP.md",
+    "requirements_roadmap": "docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "global_task_unchanged": "P12-S6"
   }
 }
