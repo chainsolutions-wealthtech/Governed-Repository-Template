@@ -145,10 +145,20 @@ def main() -> None:
                 "target_session_id": "session-1",
                 "created_at": "2026-10-02T00:01:00+00:00",
             },
+            {
+                "schema": "gacr-work-dispatch/v1",
+                "dispatch_id": "GACR-WORK-000000000003",
+                "status": "OFFERED",
+                "target_session_id": "session-1",
+                "task_id": "TASK-3",
+                "created_at": "2026-10-02T00:02:00+00:00",
+            },
         ]
     }
     wakes = g.select_wake_events(dispatches, session_id="session-1", client_instance_id=None)
-    assert_true(len(wakes) == 1 and wakes[0]["dispatch_id"].endswith("1"), "only actionable wake returned")
+    assert_true(len(wakes) == 2, "takeover and work-offer wakes returned")
+    assert_true(wakes[0]["dispatch_id"].endswith("1"), "takeover wake preserved")
+    assert_true(wakes[1]["dispatch_id"].startswith("GACR-WORK-"), "parallel work offer wake returned")
 
     content_doc = {"items": [{"dispatch_id": "GACR-D-test"}]}
     contents_api = json.dumps({
