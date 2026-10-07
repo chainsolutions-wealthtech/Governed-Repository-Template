@@ -42,7 +42,9 @@ INTERRUPTION_CODES = {
 }
 AVAILABILITY_STATES = {"AVAILABLE", "WAITING", "BUSY", "BLOCKED", "RATE_LIMITED", "QUOTA_BLOCKED", "CHECKPOINTING", "TERMINATING", "UNKNOWN"}
 AVAILABILITY_REASON_CODES = {"WAITING_FOR_WORK", "WAITING_FOR_INPUT", "DEPENDENCY_BLOCKED", "PROVIDER_RATE_LIMIT", "PROVIDER_QUOTA_EXHAUSTED", "CONTEXT_LIMIT", "CHECKPOINTING", "TERMINATING", "MANUAL_BUSY", "UNKNOWN"}
-DECLARABLE_AGENT_ROLES = {"CODE_AGENT", "INTAKER", "SUPERVISOR", "REVIEWER"}
+CANONICAL_WORK_AGENT_ROLES = {"CODE_AGENT", "INTAKER", "SUPERVISOR", "REVIEWER"}
+LEGACY_AGENT_ROLES = {"implementer", "continuation-supervisor", "qualification-client"}
+DECLARABLE_AGENT_ROLES = CANONICAL_WORK_AGENT_ROLES | LEGACY_AGENT_ROLES
 AUTHORIZED_ASSOCIATIONS = {"OWNER", "MEMBER", "COLLABORATOR"}
 ENTRY_ACTIONS = {
     "CREATE_NEW_REPOSITORY",
@@ -306,7 +308,7 @@ def normalize_role_capacity_declaration(payload: dict) -> dict:
     if (
         normalized.get("event") == "action"
         and normalized.get("action_phase") == "COMPLETED"
-        and normalized.get("agent_role") in DECLARABLE_AGENT_ROLES
+        and normalized.get("agent_role") in CANONICAL_WORK_AGENT_ROLES
         and "WAITING_FOR_WORK" in str(normalized.get("outcome") or "").upper()
     ):
         normalized.setdefault("availability_state", "WAITING")
