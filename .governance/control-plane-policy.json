@@ -199,7 +199,30 @@
     ],
     "human_interaction": "ANSWERS_CHOICES_AND_EXPLICIT_APPROVALS_ONLY",
     "technical_execution": "AUTOMATED_WHEN_AUTHORIZED",
-    "activation_gate": "IMPLEMENT_AND_PASS_ROUTER_REGRESSION_MATRIX"
+    "activation_gate": "IMPLEMENT_AND_PASS_ROUTER_REGRESSION_MATRIX",
+    "upstream_entry_chain": "GSCC_GSE_GACR_F1_RELEASE",
+    "release_authority": "CP-CAPSULE-001",
+    "release_target": "00_START_HERE.md",
+    "identity_role_authority_sources": [
+      "IDN-006",
+      "IDN-007",
+      "IDN-008",
+      "IDN-009"
+    ],
+    "distinct_dimensions": [
+      "IDENTITY",
+      "ROLE",
+      "AUTHORITY",
+      "CONNECTION_INTENT",
+      "ENTRY_PURPOSE",
+      "WORK_KIND_OR_CASE",
+      "ENTRY_ACTION",
+      "MUTATION_AUTHORITY"
+    ],
+    "existing_entry_action_policy": ".governance/entry-action-policy.json",
+    "existing_connection_intent_policy": ".governance/connection-intent-policy.json",
+    "continue_governed_work_is_fifth_case": false,
+    "post_release_rule": "RESOLVE_OR_ASK_ONLY_MISSING_JUNCTION_DIMENSIONS_WITHOUT_REPLAYING_FIRST_TOUCH_OR_RECREATING_GACR_SESSION"
   },
   "client_upgrade_contract": {
     "version_source": ".governance/TEMPLATE_MANIFEST.json",

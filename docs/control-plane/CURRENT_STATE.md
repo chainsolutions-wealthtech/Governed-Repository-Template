@@ -997,7 +997,9 @@ IDN-006 is complete. The next global programme action is unchanged: `P12_S6_CLOS
 - Status: `PLANNED_DEPENDENCY_BOUND`.
 - Existing LIVE-proven capsule baseline: `IDN-006 = DONE`.
 - Productization target: reusable/versioned/installable GSCC→GSE→GACR→F1→release module.
-- First execution dependency: `P12-S6 = DONE`.
+- First execution gate: `GMC-19 + RTE-012 + ARCH-006 + IDN-006 = DONE`.
+- `P12-S6` closure releases GMC-A, not CAP directly.
+- Post-capsule junction is preserved: role/type → authority → connection intent → entry purpose → work kind/case.
 - Cross-repository acceptance: required before capsule 1.0.0.
 - Second/generic provider adapter acceptance: required before capsule 1.0.0.
 - Current unique executable task remains `P12-S6`; this registration creates no parallel execution lane.

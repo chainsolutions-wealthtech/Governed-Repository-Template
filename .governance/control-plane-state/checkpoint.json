@@ -357,7 +357,9 @@
     "status": "PLANNED_DEPENDENCY_BOUND",
     "task_range": "CAP-001..CAP-012",
     "depends_on": [
-      "P12-S6",
+      "GMC-19",
+      "RTE-012",
+      "ARCH-006",
       "IDN-006"
     ],
     "current_unique_executable_item_unchanged": "P12-S6",
@@ -374,6 +376,24 @@
       "F1_ACTUAL_FUNCTION_VALIDATION",
       "EXACT_CORRELATED_RELEASE",
       "INSTALL_UPGRADE_ROLLBACK"
-    ]
+    ],
+    "post_capsule_junction": {
+      "release_target": "00_START_HERE.md",
+      "role_model": "IDN-007",
+      "authority_model": "IDN-008",
+      "routing_model": "RTE-001..RTE-012",
+      "dimensions": [
+        "IDENTITY",
+        "ROLE",
+        "AUTHORITY",
+        "CONNECTION_INTENT",
+        "ENTRY_PURPOSE",
+        "WORK_KIND_OR_CASE",
+        "ENTRY_ACTION",
+        "MUTATION_AUTHORITY"
+      ],
+      "replay_first_touch": false,
+      "recreate_gacr_session": false
+    }
   }
 }

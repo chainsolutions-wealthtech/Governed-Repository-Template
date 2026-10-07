@@ -68,7 +68,9 @@ It is **not executable yet**.
 
 Entry gate:
 
-`P12-S6 = DONE` and `IDN-006 = DONE`.
+`GMC-19 = DONE`, `RTE-012 = DONE`, `ARCH-006 = DONE`, and `IDN-006 = DONE`.
+
+This preserves the programme order: closing `P12-S6` releases GMC-A; it does not release CAP directly.
 
 Current unique executable action remains unchanged:
 

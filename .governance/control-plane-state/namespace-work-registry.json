@@ -328,6 +328,14 @@
     {
       "id": "RTE-006",
       "purpose": "existing-task versus new-intake resolution"
+    },
+    {
+      "id": "RTE-012",
+      "purpose": "post-capsule exact resume and agent-purpose routing handoff"
+    },
+    {
+      "id": "CP-CAPSULE-001",
+      "purpose": "reusable pre-entry capsule productization consuming stabilized IDN/GMC/RTE/ARCH semantics"
     }
   ]
 }

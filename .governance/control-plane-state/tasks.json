@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 53,
+  "revision": 54,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -1017,11 +1017,18 @@
       "id": "CAP-001",
       "status": "PLANNED",
       "depends_on": [
-        "P12-S6",
+        "GMC-19",
+        "RTE-012",
+        "ARCH-006",
         "IDN-006"
       ],
       "next_action": "DEFINE_REUSABLE_CAPSULE_BOUNDARY_AND_PUBLIC_CONTRACT",
-      "objective": "Define the reusable GSCC→GSE→GACR→F1→release module boundary, invariants, non-goals and authority contract."
+      "objective": "Define the reusable GSCC→GSE→GACR→F1→release module boundary and its exact handoff into the canonical agent-role/authority/intent/purpose junction.",
+      "kind": "REUSABLE_CAPSULE_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-CAPSULE-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH",
+      "integration_slot": "RTE-012"
     },
     {
       "id": "CAP-002",
@@ -1030,7 +1037,11 @@
         "CAP-001"
       ],
       "next_action": "MAP_CORE_VS_TEMPLATE_PROVIDER_COUPLING",
-      "objective": "Inventory every coupling between reusable core semantics and Template/GitHub/ChatGPT-specific runtime surfaces."
+      "objective": "Inventory every coupling between reusable core semantics and Template/GitHub/ChatGPT-specific runtime surfaces.",
+      "kind": "REUSABLE_CAPSULE_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-CAPSULE-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
     },
     {
       "id": "CAP-003",
@@ -1039,7 +1050,12 @@
         "CAP-002"
       ],
       "next_action": "FREEZE_VERSIONED_CAPSULE_SCHEMAS_AND_INTERFACES",
-      "objective": "Freeze versioned public contracts for arrival, evidence, identity, gates, session, exposure and release."
+      "objective": "Freeze versioned public contracts for arrival, evidence, identity, gates, session, exposure, release and release-to-junction handoff.",
+      "kind": "REUSABLE_CAPSULE_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-CAPSULE-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH",
+      "integration_slot": "RTE-012"
     },
     {
       "id": "CAP-004",
@@ -1048,7 +1064,11 @@
         "CAP-003"
       ],
       "next_action": "EXTRACT_REUSABLE_CORE_WITHOUT_SEMANTIC_CHANGE",
-      "objective": "Extract a reusable module layout while keeping the existing LIVE-proven path regression-equivalent."
+      "objective": "Extract a reusable module layout while keeping the existing LIVE-proven path regression-equivalent.",
+      "kind": "REUSABLE_CAPSULE_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-CAPSULE-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
     },
     {
       "id": "CAP-005",
@@ -1057,7 +1077,12 @@
         "CAP-004"
       ],
       "next_action": "DEFINE_CAPSULE_ADAPTER_SPI",
-      "objective": "Define provider, repository, transport/control, persistence, session and release adapter interfaces."
+      "objective": "Define provider, repository, transport/control, persistence, session and release adapter interfaces without duplicating global router semantics.",
+      "kind": "REUSABLE_CAPSULE_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-CAPSULE-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH",
+      "integration_slot": "ARCH-006"
     },
     {
       "id": "CAP-006",
@@ -1066,7 +1091,11 @@
         "CAP-005"
       ],
       "next_action": "REFACTOR_GITHUB_CHATGPT_AS_REFERENCE_ADAPTER",
-      "objective": "Move current GitHub/ChatGPT integration behind the adapter contract without widening authority."
+      "objective": "Move current GitHub/ChatGPT integration behind the adapter contract without widening authority.",
+      "kind": "REUSABLE_CAPSULE_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-CAPSULE-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
     },
     {
       "id": "CAP-007",
@@ -1075,7 +1104,11 @@
         "CAP-006"
       ],
       "next_action": "ABSTRACT_PERSISTENCE_WITH_CURRENT_BACKEND_PARITY",
-      "objective": "Abstract persistence while preserving SQLite/artifact/Git state semantics and per-arrival isolation."
+      "objective": "Abstract persistence while preserving SQLite/artifact/Git state semantics and per-arrival isolation.",
+      "kind": "REUSABLE_CAPSULE_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-CAPSULE-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
     },
     {
       "id": "CAP-008",
@@ -1084,7 +1117,11 @@
         "CAP-007"
       ],
       "next_action": "ADD_INSTALL_UPGRADE_ROLLBACK_VERSIONING",
-      "objective": "Provide idempotent install, governed upgrade, compatibility checks and rollback behavior."
+      "objective": "Provide idempotent install, governed upgrade, compatibility checks and rollback behavior.",
+      "kind": "REUSABLE_CAPSULE_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-CAPSULE-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
     },
     {
       "id": "CAP-009",
@@ -1093,7 +1130,12 @@
         "CAP-008"
       ],
       "next_action": "BUILD_CAPSULE_PORTABILITY_SECURITY_REGRESSION_MATRIX",
-      "objective": "Prove fail-closed identity, state isolation, exact-head, no-secret, no-fabrication and authority invariants."
+      "objective": "Prove fail-closed identity/state/authority invariants and exact preservation of the post-capsule role/intent/purpose junction.",
+      "kind": "REUSABLE_CAPSULE_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-CAPSULE-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH",
+      "integration_slot": "ARCH-006"
     },
     {
       "id": "CAP-010",
@@ -1102,7 +1144,12 @@
         "CAP-009"
       ],
       "next_action": "LIVE_PROVE_CAPSULE_ON_SECOND_CLEAN_REPOSITORY",
-      "objective": "Install outside the full Template and prove fresh arrival, continuation and multi-arrival isolation LIVE."
+      "objective": "Install outside the full Template and prove fresh arrival, continuation, multi-arrival isolation and correct handoff into the canonical junction.",
+      "kind": "REUSABLE_CAPSULE_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-CAPSULE-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH",
+      "integration_slot": "RTE-012"
     },
     {
       "id": "CAP-011",
@@ -1111,7 +1158,11 @@
         "CAP-010"
       ],
       "next_action": "LIVE_PROVE_SECOND_GENERIC_PROVIDER_ADAPTER",
-      "objective": "Implement and LIVE-prove a second/generic transport/provider adapter with semantic parity."
+      "objective": "Implement and LIVE-prove a second/generic transport/provider adapter with semantic parity.",
+      "kind": "REUSABLE_CAPSULE_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-CAPSULE-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
     },
     {
       "id": "CAP-012",
@@ -1120,7 +1171,12 @@
         "CAP-011"
       ],
       "next_action": "RELEASE_REUSABLE_CAPSULE_1_0_0",
-      "objective": "Release the reusable capsule 1.0.0 with versioned package, install/runbook and reproducible acceptance evidence."
+      "objective": "Release capsule 1.0.0 only after cross-repository, cross-adapter and post-capsule junction semantic parity are proven.",
+      "kind": "REUSABLE_CAPSULE_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-CAPSULE-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH",
+      "integration_slot": "GMC-19"
     },
     {
       "id": "RTE-001",
