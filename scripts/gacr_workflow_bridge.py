@@ -210,6 +210,8 @@ def main():
     elif command=='work-offer-accept':
         add(args,'--dispatch-id',payload.get('dispatch_id'))
         add(args,'--session-id',payload.get('session_id'))
+        add(args,'--observed-head',payload.get('observed_head'))
+        add(args,'--evidence-ref',payload.get('evidence_ref'))
     elif command=='context':
         add(args,'--session-id',payload.get('session_id'))
     elif command=='forensics':
