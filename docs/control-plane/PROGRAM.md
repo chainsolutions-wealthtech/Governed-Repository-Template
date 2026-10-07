@@ -6,11 +6,13 @@ This file is the durable source-only program authority for development of `Gover
 
 It does not replace the generic entry-action policy distributed to clients.
 
-## Active macro case
+## Active programme
 
-`CREATE_NEW_REPOSITORY`
+`GOVERNANCE_MODEL_CATALOGUE / GMC-A / GMC-G01`
 
-Operational issue: `#12`.
+Previous macro case `CREATE_NEW_REPOSITORY` is closed under `CPD-073`.
+
+Historical operational issue: `#12`.
 
 ## Canonical six-step completion program
 
@@ -168,13 +170,26 @@ External intake `Patricked-code/MCP#201` records the blocker. C1-13 resumes only
 - Exit gate: `PASS`.
 
 ### STEP 6 — Close CREATE_NEW_REPOSITORY and release next macro case
-State: `IN_PROGRESS`
+State: `DONE`
 
 Goal:
 - reconcile documentation, manifest/version, tests and durable evidence;
 - ensure all external MCP needs are represented only as intakes;
 - close CASE 1 only after STEP 5 passes;
 - release the next macro case according to the framework roadmap.
+
+### STEP 6 completion evidence
+
+- CASE 1 checkpoint: `CREATE_NEW_REPOSITORY_CASE_COMPLETE`.
+- `P12-S6 = DONE`.
+- `C1-14 = DONE`.
+- historical parent `C1-13-I-B` reconciled through children `A..G`.
+- relational run `CASE1-PILOT-GOUVERN = DONE` with no active phase.
+- `CREATE_NEW_REPOSITORY` catalogue status = `DONE`.
+- external MCP items remain intake/history only.
+- no executable CASE 1 task remains orphaned.
+- `GMC-01 / GMC-G01` released as the next work package.
+- GMC remains planning/knowledge extraction only until a later governed step authorizes implementation.
 
 ## Anti-deviation rules
 
@@ -233,9 +248,9 @@ This target authority defines the durable platform shape and roadmap. It does no
 
 Authority: `CP-GOVMODEL-001` — `docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md`.
 
-State: `QUEUED_DEPENDENCY_BOUND`.
+State: `ACTIVE_GMC_G01_PLANNING_ONLY`.
 
-Dependency: `P12-S6 CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+Dependency `P12-S6 CLOSE_CREATE_NEW_REPOSITORY_CASE`: `VALIDATED_EXIT`.
 
 This programme formalizes the central governance model before the remaining cases are industrialized. It does not change the current unique executable task.
 
