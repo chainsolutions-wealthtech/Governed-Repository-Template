@@ -113,6 +113,7 @@
           "source_kind": {
             "enum": [
               "CANONICAL_WORK_ITEM",
+              "CONTROL_PLANE_PROGRAM_TASK",
               "CONTROL_PLANE_BLUEPRINT_TASK"
             ]
           },
