@@ -589,6 +589,16 @@
       "status": "OPEN_EXTERNAL",
       "summary": "Repository-SSH OIDC certificate broker returned 403 during pilot; intake only, no MCP implementation from this workstream.",
       "source_ref": "Patricked-code/MCP#192"
+    },
+    {
+      "intake_id": "MCP-201",
+      "originating_case_id": "CREATE_NEW_REPOSITORY",
+      "originating_run_id": "CASE1-PILOT-GOUVERN",
+      "target_system": "Patricked-code/MCP",
+      "status": "HISTORICAL_REMEDIATED_EXTERNAL",
+      "summary": "Ekyc second-fresh discovery exposed MCP TLS expiry. Remediation was completed in the independently governed MCP programme; retained here as external CASE 1 evidence only.",
+      "source_ref": "Patricked-code/MCP#201",
+      "created_at": "2026-09-29"
     }
   ],
   "run_answers": [],
