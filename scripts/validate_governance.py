@@ -173,6 +173,7 @@ SOURCE_ONLY_REQUIRED = {
     "docs/control-plane/CANONICAL_ARCHITECTURE.md",
     "docs/control-plane/MASTER_SYSTEM_MAP.md",
     "docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "docs/control-plane/SAAS_PLATFORM_PROGRAM.md",
     "docs/control-plane/IMPORTED_MEMORY_VERIFICATION.md",
     ".governance/control-plane-state/current.json",
     ".governance/control-plane-state/checkpoint.json",
