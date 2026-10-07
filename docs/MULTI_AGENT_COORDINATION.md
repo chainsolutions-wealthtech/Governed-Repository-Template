@@ -163,3 +163,36 @@ CLIENT_EMITTER
 ```
 
 If the emitter stops without an explicit interruption signal, WATCH treats the missing heartbeat as absence only; Forensics must not infer a provider or network cause.
+
+
+## Capacity-aware parallel dispatch
+
+GACR R7 adds a dispatcher view of agents that are actually available for new work.
+
+Use the existing work-item and claim model. Do not create a separate queue.
+
+An agent can be observed as:
+- `AVAILABLE` / `WAITING` — eligible if liveness and claim checks pass;
+- `BUSY` — current claim or in-flight action;
+- `BLOCKED` — explicit dependency/input/context block;
+- `RATE_LIMITED` — provider rate limit explicitly observed;
+- `QUOTA_BLOCKED` — provider quota exhaustion explicitly observed;
+- `STALLED`, `TERMINAL`, `UNKNOWN` — not eligible for new work.
+
+Parallel allocation is legal only for dependency-safe, collision-free work. Two tasks sharing a collision domain are never offered concurrently, even when two agents are idle.
+
+```text
+WAITING AGENTS
++ READY TASKS
++ DEPENDENCIES
++ CLAIMS
++ COLLISION DOMAINS
++ CAPABILITIES / ROLE / AUTHORITY
+→ SAFE WORK OFFERS
+→ ACCEPTANCE
+→ CLAIM
+→ EXACT HEAD
+→ EXECUTE
+```
+
+A work offer is a scheduling proposal, not work ownership and not mutation authority.
