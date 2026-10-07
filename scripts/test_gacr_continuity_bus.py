@@ -209,6 +209,37 @@ def main():
         "TARGET_NOT_MEMBER_OF_CONTINUITY",
     )
 
+    endpoint_config = {
+        "external_bridge": {"chatgpt_issue_bridge_live_proven": True},
+        "host_issue_bridge": {"enabled": True, "issue_number": 115},
+    }
+    for provider in ("chatgpt", "claude", "codex", "github-actions", "human", "other"):
+        without_bridge = bus.provider_endpoint_descriptor(
+            session("session-provider-" + provider, provider=provider),
+            endpoint_config,
+        )
+        assert without_bridge["provider"] == provider
+        assert without_bridge["provider_inbound_endpoint"]["status"] == "UNAVAILABLE"
+        assert without_bridge["wake_route"]["preferred"] == "POLL_REPOSITORY"
+        assert without_bridge["wake_route"]["push_capable"] is False
+        assert without_bridge["provider_private_values_invented"] is False
+
+        with_bridge = bus.provider_endpoint_descriptor(
+            session("session-provider-bridge-" + provider, provider=provider, bridge=True),
+            endpoint_config,
+        )
+        assert with_bridge["provider_inbound_endpoint"]["status"] == "OBSERVED"
+        assert with_bridge["provider_inbound_endpoint"]["kind"] == "EXTERNAL_BRIDGE"
+        assert with_bridge["wake_route"]["preferred"] == "EXTERNAL_BRIDGE"
+        assert with_bridge["wake_route"]["push_capable"] is True
+
+    chatgpt_surface = bus.provider_endpoint_descriptor(
+        session("session-chatgpt-surface", provider="chatgpt"),
+        endpoint_config,
+    )
+    assert chatgpt_surface["repository_control_surface"]["status"] == "PROVEN"
+    assert chatgpt_surface["repository_control_surface"]["kind"] == "GITHUB_ISSUE_CONTROL_CHANNEL"
+
     projection_state = base_state()
     projection_sessions = {"sessions": [
         session("session-a", silence_seconds=121, provider="chatgpt"),
@@ -224,10 +255,7 @@ def main():
         projection_dispatches,
         timestamp=NOW,
         early_supervision_after_seconds=120,
-        config={
-            "external_bridge": {"chatgpt_issue_bridge_live_proven": True},
-            "host_issue_bridge": {"enabled": True, "issue_number": 115},
-        },
+        config=endpoint_config,
     )
     pa, pb, pc = projection_state["items"][0]["participants"]
     assert pa["membership_state"] == "PERSISTENT"
