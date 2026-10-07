@@ -2,7 +2,7 @@
   "schema_version": "1.0.0",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "role": "CENTRAL_GOVERNANCE_CONTROL_PLANE",
-  "source_state_revision": 48,
+  "source_state_revision": 49,
   "template_version": "2.8.27",
   "baseline_subject_head": "2d51b21f266726624ec7ac16072ccca4623b9b4a",
   "active_program": "GOVERNANCE_MODEL_CATALOGUE",
@@ -435,6 +435,21 @@
       "observed_work_offer_count": 0,
       "no_idle_inference_from_silence": true,
       "live_capacity_dispatch_status": "READY_WAITING_FOR_REAL_AGENT_AVAILABLE_OR_WAITING_SIGNAL"
+    },
+    "gacr_contextual_task_pool": {
+      "authority_revision": "CP-AGENT-RELAY-001-R8",
+      "decision_id": "CPD-075",
+      "status": "IMPLEMENTED_PENDING_CI_MERGE",
+      "projection": ".governance/control-plane-state/gacr-task-pool.json",
+      "runtime": "scripts/gacr_task_pool.py",
+      "client_projection": ".governance/agent-relay/task-pool.json",
+      "continuous_cycle": true,
+      "contextual_history_required": true,
+      "unfinished_work_requeue": true,
+      "abrupt_stall_takeover": true,
+      "exact_head_claim_activation": true,
+      "global_programme_task_unchanged": "GMC-01",
+      "gmc_implementation_authority_granted": false
     }
   },
   "framework_product_boundary": {
