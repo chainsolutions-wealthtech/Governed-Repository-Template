@@ -57,6 +57,14 @@ Every completed capability must satisfy:
 | RQ-27 | New information enriches existing programme, never creates untracked parallel work | programme/namespace authorities | tasks/namespace/intake | CI | IMPLEMENTED | continuous enforcement |
 | RQ-28 | Every meaningful interruption leaves a reconstructible checkpoint/handoff | continuity authorities | checkpoint/handoff/GACR | CI + practice | IMPLEMENTED | expose later via API/UI |
 
+| RQ-29 | Complete autonomous admin cockpit | CP-SAAS-001 / ARCH-010 | not implemented | future UI/E2E | PLANNED | SAA-007..SAA-009 |
+| RQ-30 | Full versioned REST/OpenAPI API | CP-SAAS-001 / ARCH-008 | not implemented | contract/integration tests required | PLANNED | SAA-002 + SAA-006 |
+| RQ-31 | Governed backend service/microservice architecture | CP-SAAS-001 | not implemented | service-boundary + integration proof required | PLANNED | SAA-003..SAA-006 |
+| RQ-32 | SaaS-ready tenancy/isolation | CP-SAAS-001 | not implemented | tenant isolation/security tests required | PLANNED | SAA-001 + SAA-004 + SAA-010 |
+| RQ-33 | Reproducible production deployment | CP-SAAS-001 | not implemented | staging + production smoke/E2E | PLANNED | SAA-011..SAA-014 |
+| RQ-34 | Production URL `https://mcp.wealthtechinnovations.com/template` | CP-SAAS-001 | target registered | live deployment not yet authorized | PLANNED | SAA-013 |
+| RQ-35 | Operational backup/restore/upgrade/rollback | CP-SAAS-001 | not implemented | recovery/upgrade drills required | PLANNED | SAA-010 + SAA-015 |
+
 ## 4. Current validated baseline
 
 ### Proven in LIVE
@@ -196,3 +204,28 @@ This file summarizes the roadmap. The actual executable order remains:
 - `NEXT_ACTION.md`
 
 If this synthesis says a task is next but `NEXT_ACTION.md` disagrees, `NEXT_ACTION.md` wins until reconciliation.
+
+
+### Stage 5 — deployable SaaS platform
+
+```text
+ARCH-008 / ARCH-009 / ARCH-010
++ IDN-013 / RTE-013
++ CAP-012
+        ↓
+SAA-001 → ... → SAA-015
+        ↓
+https://mcp.wealthtechinnovations.com/template
+```
+
+Outcome:
+- full REST/OpenAPI backend;
+- explicit microservice/service boundaries;
+- PostgreSQL runtime;
+- complete autonomous admin cockpit;
+- governed operational actions;
+- security/audit/observability;
+- reproducible deployment;
+- staging proof;
+- production deployment;
+- SaaS platform 1.0.0 operations/runbooks.
