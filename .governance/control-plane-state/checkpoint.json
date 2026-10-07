@@ -418,5 +418,11 @@
     "status": "DONE",
     "decision_id": "CPD-073",
     "no_orphan_executable_tasks": true
+  },
+  "gacr_parallel_dispatch_lane": {
+    "status": "IMPLEMENTED_PENDING_CI",
+    "decision_id": "CPD-074",
+    "global_task_unchanged": "GMC-01",
+    "authority": "CP-AGENT-RELAY-001-R7"
   }
 }
