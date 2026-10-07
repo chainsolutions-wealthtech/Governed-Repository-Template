@@ -79,3 +79,14 @@ Current unique executable action remains unchanged:
 After the dependency gate opens, the first capsule task is:
 
 `CAP-001 / DEFINE_REUSABLE_CAPSULE_BOUNDARY_AND_PUBLIC_CONTRACT`.
+
+
+## Queued SaaS platform programme
+
+The complete product deployment programme is registered as `CP-SAAS-001 / SAA-001..SAA-015`.
+
+Target: complete autonomous admin cockpit + full REST API/backend governed services + PostgreSQL runtime + deployable SaaS operations.
+
+Production target: `https://mcp.wealthtechinnovations.com/template`.
+
+This programme is not executable yet and grants no server/DNS/TLS/database mutation authority. Current unique executable action remains `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
