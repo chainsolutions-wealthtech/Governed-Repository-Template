@@ -632,3 +632,25 @@ Append-only durable decisions for the source/control-plane repository.
 - External webhook delivery remains takeover-only until an explicit work-offer bridge contract exists.
 - The relay may refresh safe work offers on normal/scheduled GACR cycles.
 - This cross-cutting GACR change does not alter the global programme; `GMC-01 / GMC-G01` remains the unique current work package.
+
+
+### CPD-075 — F1-gated declaration-driven canonical auto-dispatch
+
+- Date: 2026-10-07.
+- GACR advances to `CP-AGENT-RELAY-001-R8`.
+- Live agent #254 exposed two R7 defects that are corrected additively:
+  1. capacity dispatch could offer work before a successful F1 release;
+  2. the source Control Plane dispatcher consumed generic `WORK-INIT-001` instead of the released global task/work-package graph.
+- On the Template source, a session is eligible for a new work offer only after:
+  - the same governed arrival has a persisted `F1_RELEASED` beacon/evidence;
+  - a canonical agent role is explicitly declared as `INTAKER / SUPERVISOR / CODE_AGENT / REVIEWER`;
+  - availability is explicitly `AVAILABLE / WAITING`;
+  - liveness, claim, in-flight action, dependency and collision checks pass.
+- F1 release publishes a GACR beacon automatically. Role, entry purpose, work kind and availability are copied only when explicitly present in the controlled arrival; missing values remain absent/UNAVAILABLE.
+- A later explicit availability signal may clear an older interruption/block signal; silence never clears it.
+- The source Control Plane work queue must project the actual canonical global task graph. While `GMC-01 / GMC-G01` is released, `GMC-G01-T01` is the first eligible atomic work item. Generic bootstrap `WORK-INIT-001` must never be offered as source-programme work.
+- Existing open source work offers that do not originate from the canonical task graph are cancelled before fresh offers are created.
+- `ENTRY_PURPOSE` and `WORK_KIND` are recorded for routing continuity but do not become authorization while the two-stage RTE router remains `PLANNED_NOT_ACTIVE`.
+- A work offer remains only a scheduling proposal. Acceptance remains `ACCEPTED_PENDING_CLAIM`; claim creation, exact-HEAD reconciliation and applicable authority gates remain mandatory before mutation.
+- The per-arrival GSCC artifact restore must select the most advanced durable runtime state, then runtime update time, rather than blindly selecting the newest Actions artifact. A stale later Q9 artifact may not replace an earlier Q12/F1-ready state.
+- This R8 correction does not advance or replace `GMC-01`.
