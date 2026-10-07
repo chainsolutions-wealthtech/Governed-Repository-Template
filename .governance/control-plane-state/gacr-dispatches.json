@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 29,
+  "revision": 30,
   "items": [
     {
       "schema": "gscc-control-dispatch/v1",
@@ -348,8 +348,8 @@
     {
       "dispatch_id": "GACR-W-459aad82ea1f",
       "dispatch_kind": "WORK_OFFER",
-      "status": "ACCEPTED_PENDING_CLAIM",
-      "offer_status": "ACCEPTED",
+      "status": "CANCELLED",
+      "offer_status": "CANCELLED",
       "created_at": "2026-10-07T02:26:41+00:00",
       "target_session_id": "session-a2a8bd62dd27b64f92ae4cfe",
       "target_client_instance_id": "GSCC-CLIENT-da9c7f48ffd3bf11970efb51",
@@ -371,13 +371,15 @@
       "claim_created": false,
       "grants_write_authority": false,
       "accepted_at": "2026-10-07T02:33:00+00:00",
-      "accepted_by_session_id": "session-a2a8bd62dd27b64f92ae4cfe"
+      "accepted_by_session_id": "session-a2a8bd62dd27b64f92ae4cfe",
+      "cancelled_at": "2026-10-07T03:10:06+00:00",
+      "cancellation_reason": "SOURCE_CONTROL_PLANE_CANONICAL_TASK_SOURCE_REQUIRED"
     },
     {
       "dispatch_id": "GACR-W-5ed2e5354237",
       "dispatch_kind": "WORK_OFFER",
-      "status": "READY",
-      "offer_status": "PENDING_ACCEPTANCE",
+      "status": "CANCELLED",
+      "offer_status": "CANCELLED",
       "created_at": "2026-10-07T02:32:43+00:00",
       "target_session_id": "session-2fbe108e344b40ea7ce1d286",
       "target_client_instance_id": "GSCC-CLIENT-31e457ce2a4684c2ef9c0844",
@@ -397,13 +399,15 @@
       "requires_exact_head_reconciliation": true,
       "may_write_before_acceptance": false,
       "claim_created": false,
-      "grants_write_authority": false
+      "grants_write_authority": false,
+      "cancelled_at": "2026-10-07T03:10:06+00:00",
+      "cancellation_reason": "SOURCE_CONTROL_PLANE_CANONICAL_TASK_SOURCE_REQUIRED"
     },
     {
       "dispatch_id": "GACR-W-7b57a3a40790",
       "dispatch_kind": "WORK_OFFER",
-      "status": "READY",
-      "offer_status": "PENDING_ACCEPTANCE",
+      "status": "CANCELLED",
+      "offer_status": "CANCELLED",
       "created_at": "2026-10-07T03:05:09+00:00",
       "target_session_id": "session-c5cca0cd8a2e0b30b76fd254",
       "target_client_instance_id": "GSCC-CLIENT-05d155633f596cb194170caf",
@@ -423,7 +427,9 @@
       "requires_exact_head_reconciliation": true,
       "may_write_before_acceptance": false,
       "claim_created": false,
-      "grants_write_authority": false
+      "grants_write_authority": false,
+      "cancelled_at": "2026-10-07T03:10:06+00:00",
+      "cancellation_reason": "SOURCE_CONTROL_PLANE_CANONICAL_TASK_SOURCE_REQUIRED"
     }
   ]
 }
