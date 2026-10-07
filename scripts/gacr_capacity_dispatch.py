@@ -328,13 +328,6 @@ def parallel_work_dispatch_plan(
             unassigned.append({"work_item_id": work_item_id, "reason": "ALREADY_CLAIMED"})
             continue
 
-        if cfg["require_explicit_work_compatibility"] and not _work_has_explicit_compatibility_scope(item):
-            unassigned.append({
-                "work_item_id": work_item_id,
-                "reason": "WORK_COMPATIBILITY_SCOPE_UNDECLARED",
-            })
-            continue
-
         deps_ok, unresolved = _dependencies_satisfied(item, by_id)
         if not deps_ok:
             unassigned.append({"work_item_id": work_item_id, "reason": "DEPENDENCIES_UNRESOLVED", "dependencies": unresolved})
@@ -344,6 +337,13 @@ def parallel_work_dispatch_plan(
         collision = sorted(domains & (occupied_domains | planned_domains))
         if collision:
             unassigned.append({"work_item_id": work_item_id, "reason": "COLLISION_DOMAIN_BUSY", "collision_domains": collision})
+            continue
+
+        if cfg["require_explicit_work_compatibility"] and not _work_has_explicit_compatibility_scope(item):
+            unassigned.append({
+                "work_item_id": work_item_id,
+                "reason": "WORK_COMPATIBILITY_SCOPE_UNDECLARED",
+            })
             continue
 
         evaluations = []
