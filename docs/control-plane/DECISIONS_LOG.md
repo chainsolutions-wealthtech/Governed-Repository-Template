@@ -632,3 +632,22 @@ Append-only durable decisions for the source/control-plane repository.
 - External webhook delivery remains takeover-only until an explicit work-offer bridge contract exists.
 - The relay may refresh safe work offers on normal/scheduled GACR cycles.
 - This cross-cutting GACR change does not alter the global programme; `GMC-01 / GMC-G01` remains the unique current work package.
+
+
+### CPD-075 — GACR contextual continuous multi-agent task pool
+
+- Date: 2026-10-07.
+- GACR advances to authority revision `CP-AGENT-RELAY-001-R8`.
+- R8 continuously derives dispatchable task projections from existing canonical task authorities; it does not create a second task truth.
+- R7 explicit capacity semantics remain authoritative: silence is never treated as availability.
+- Parallel task waves require non-overlapping collision domains and satisfied dependencies.
+- Each offer carries a safe context packet containing canonical history/method/evidence/checkpoint/handoff references.
+- A receiving agent must read referenced canonical history before mutable work.
+- `WORK_OFFER` and acceptance do not grant mutation authority.
+- Claim activation requires acceptance with observed HEAD, repository reobservation of the same exact HEAD, free collision domains and no existing active claim for the target session.
+- A responsive interrupted agent may requeue only after leaving checkpoint, handoff and evidence references.
+- Abrupt interruption remains under existing GACR liveness/forensics/takeover semantics and exact-HEAD reconciliation.
+- Rate limit, quota exhaustion, context limit and blockers are accepted only when explicitly observed; they are never inferred from silence.
+- Source Control Plane atomic tasks remain owned by their programme/blueprint authorities. Client work remains owned by `.governance/work/work-items.json`.
+- R8 may coordinate `GMC-01/GMC-G01` but does not complete its atomic tasks or grant Governance Model implementation authority.
+- Raw conversation content, transcripts and private/internal reasoning remain outside persisted task context.
