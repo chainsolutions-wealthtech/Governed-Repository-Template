@@ -19,10 +19,11 @@ CONFIG_PATH = ROOT / ".governance" / "agent-relay" / "config.json"
 AUTO_ATTACH = ROOT / "scripts" / "gacr_auto_attach.py"
 CORE = ROOT / "scripts" / "governed_agent_continuity_relay.py"
 TELEMETRY = ROOT / "scripts" / "gacr_agent_telemetry.py"
+CAPACITY = ROOT / "scripts" / "gacr_capacity_dispatch.py"
 
 PREFIX = "/gacr-host "
 SCHEMA = "gacr-host-event/v1"
-EVENTS = {"attach", "heartbeat", "action", "interrupt", "command_ack", "challenge_response"}
+EVENTS = {"attach", "heartbeat", "action", "interrupt", "availability", "work_offer_accept", "command_ack", "challenge_response"}
 ACTION_PHASES = {"STARTED", "COMPLETED", "FAILED", "CANCELLED"}
 INTERRUPTION_CODES = {
     "CLIENT_DISCONNECTED",
@@ -32,8 +33,15 @@ INTERRUPTION_CODES = {
     "USER_CANCELLED",
     "NETWORK_LOSS",
     "PROCESS_EXITED",
+    "PROVIDER_RATE_LIMIT",
+    "PROVIDER_QUOTA_EXHAUSTED",
+    "CONTEXT_LIMIT",
+    "WAITING_FOR_INPUT",
+    "DEPENDENCY_BLOCKED",
     "UNKNOWN",
 }
+AVAILABILITY_STATES = {"AVAILABLE", "WAITING", "BUSY", "BLOCKED", "RATE_LIMITED", "QUOTA_BLOCKED", "CHECKPOINTING", "TERMINATING", "UNKNOWN"}
+AVAILABILITY_REASON_CODES = {"WAITING_FOR_WORK", "WAITING_FOR_INPUT", "DEPENDENCY_BLOCKED", "PROVIDER_RATE_LIMIT", "PROVIDER_QUOTA_EXHAUSTED", "CONTEXT_LIMIT", "CHECKPOINTING", "TERMINATING", "MANUAL_BUSY", "UNKNOWN"}
 AUTHORIZED_ASSOCIATIONS = {"OWNER", "MEMBER", "COLLABORATOR"}
 ENTRY_ACTIONS = {
     "CREATE_NEW_REPOSITORY",
@@ -83,6 +91,8 @@ ALLOWED_KEYS = {
     "written_head",
     "checkpoint_ref",
     "interruption_code",
+    "availability_state",
+    "availability_reason_code",
     "dispatch_id",
     "command_id",
     "correlation_id",
@@ -175,6 +185,12 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
         raise ValueError("host action requires a supported action_phase")
     if kind == "interrupt" and payload.get("interruption_code") not in INTERRUPTION_CODES:
         raise ValueError("host interrupt requires a supported interruption_code")
+    if kind == "availability":
+        if payload.get("availability_state") not in AVAILABILITY_STATES:
+            raise ValueError("host availability requires a supported availability_state")
+        reason = payload.get("availability_reason_code")
+        if reason is not None and reason not in AVAILABILITY_REASON_CODES:
+            raise ValueError("host availability requires a supported availability_reason_code")
     entry_action = payload.get("entry_action")
     if entry_action is not None and entry_action not in ENTRY_ACTIONS:
         raise ValueError("unsupported host-event entry_action")
@@ -182,6 +198,10 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
     if connection_intent is not None and connection_intent not in CONNECTION_INTENTS:
         raise ValueError("unsupported host-event connection_intent")
 
+    if kind == "work_offer_accept":
+        for key in ("session_id", "dispatch_id"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host work_offer_accept requires {key}")
     if kind == "command_ack":
         for key in ("session_id", "dispatch_id", "command_id", "correlation_id", "delivery_state"):
             if payload.get(key) in (None, ""):
@@ -355,6 +375,8 @@ def marker_beacon(session_id: str, payload: dict, event_type: str) -> None:
     add(args, "--written-head", payload.get("written_head"))
     add(args, "--checkpoint-ref", payload.get("checkpoint_ref"))
     add(args, "--interruption-code", payload.get("interruption_code"))
+    add(args, "--availability-state", payload.get("availability_state"))
+    add(args, "--availability-reason-code", payload.get("availability_reason_code"))
     run_script(TELEMETRY, args)
 
 
@@ -407,7 +429,14 @@ def process(payload: dict, repository: str) -> dict:
     session = ensure_session(payload, repository)
     session_id = session["session_id"]
 
-    if kind == "attach":
+    if kind == "work_offer_accept":
+        run_script(CAPACITY, [
+            "accept-work",
+            "--dispatch-id", str(payload["dispatch_id"]),
+            "--session-id", session_id,
+        ])
+        marker_beacon(session_id, payload, "WORK_OFFER_ACCEPT")
+    elif kind == "attach":
         marker_beacon(session_id, payload, "HOST_ATTACH_RECEIPT")
     elif kind == "heartbeat":
         args = [
@@ -433,6 +462,8 @@ def process(payload: dict, repository: str) -> dict:
         marker_beacon(session_id, payload, "ACTION_TRACE")
     elif kind == "interrupt":
         marker_beacon(session_id, payload, "INTERRUPTION_SIGNAL")
+    elif kind == "availability":
+        marker_beacon(session_id, payload, "AVAILABILITY_UPDATE")
 
     run_script(TELEMETRY, ["correlate"])
     run_script(TELEMETRY, ["forensics", "--session-id", session_id])

@@ -615,3 +615,20 @@ Append-only durable decisions for the source/control-plane repository.
 - `GMC-01 / GMC-G01` becomes the unique current work package.
 - Release mode is planning/knowledge extraction only. This decision does not grant Governance Model implementation mutation authority.
 - The detailed GMC execution blueprint remains authoritative for work-package/atomic-task sequencing and evidence gates.
+
+
+### CPD-074 — GACR capacity-aware parallel work dispatch
+
+- Date: 2026-10-07.
+- GACR advances to `CP-AGENT-RELAY-001-R7`.
+- GACR must expose an explicit capacity pool for new parallel work without creating a second task engine.
+- Silence never means idle/available.
+- New-work eligibility requires explicit `AVAILABLE`/`WAITING` evidence or canonical `STANDBY`, sufficient liveness, no active claim/in-flight action, and compatibility with the work item.
+- Explicit provider/runtime limitations are observed-only: `PROVIDER_RATE_LIMIT`, `PROVIDER_QUOTA_EXHAUSTED`, `CONTEXT_LIMIT`, `WAITING_FOR_INPUT`, `DEPENDENCY_BLOCKED`.
+- Parallel planning reuses canonical work items, dependencies, claims, collision domains, capabilities, role and authority evidence.
+- A `WORK_OFFER` grants no claim and no mutation authority.
+- Acceptance produces only `ACCEPTED_PENDING_CLAIM`; canonical claim creation and exact-HEAD reconciliation remain mandatory before mutation.
+- Existing takeover dispatch semantics remain separate under `dispatch_kind = TAKEOVER`.
+- External webhook delivery remains takeover-only until an explicit work-offer bridge contract exists.
+- The relay may refresh safe work offers on normal/scheduled GACR cycles.
+- This cross-cutting GACR change does not alter the global programme; `GMC-01 / GMC-G01` remains the unique current work package.

@@ -529,3 +529,96 @@ The workflow `.github/workflows/gscc-function-exposure-gate.yml` runs an arrival
 The gate does not infer authority and does not grant mutation authority. It validates evidence that another authority source has actually supplied. A mutation tool without current live preflight remains withheld.
 
 Provider/private surfaces that bypass this governed catalogue/wrapper cannot be made compliant by repository code alone; they must integrate the GSCC exposure API/workflow. Such an unintegrated surface is reported as outside the governed exposure boundary, never silently treated as validated.
+
+
+## R7 — Capacity-aware parallel work dispatch
+
+Revision authority: `CP-AGENT-RELAY-001-R7`. Decision: `CPD-074`.
+
+R7 extends the existing Beacon / Correlator / Dispatcher with an explicit **agent capacity pool** for new governed work. It does not replace the canonical work-item, claim or execution engines.
+
+```text
+GACR session + liveness + explicit availability
+        ↓
+capacity projection
+        ↓
+AVAILABLE / WAITING / BUSY / BLOCKED
+RATE_LIMITED / QUOTA_BLOCKED / STALLED / TERMINAL / UNKNOWN
+        ↓
+READY work-items
++ dependencies
++ active claims
++ collision domains
++ required capabilities
++ required authorities
++ allowed agent roles
+        ↓
+parallel dispatch plan
+        ↓
+WORK_OFFER
+        ↓
+agent accepts
+        ↓
+ACCEPTED_PENDING_CLAIM
+        ↓
+canonical claim + exact-HEAD reconciliation
+        ↓
+only then normal governed execution
+```
+
+### Availability is observed, never guessed
+
+Silence is **not** availability.
+
+A session is eligible for new work only when it is live enough and has either:
+- explicitly declared `AVAILABLE` or `WAITING`; or
+- is already in canonical `STANDBY` state.
+
+Explicit provider/runtime limitation codes include:
+- `PROVIDER_RATE_LIMIT`;
+- `PROVIDER_QUOTA_EXHAUSTED`;
+- `CONTEXT_LIMIT`;
+- `WAITING_FOR_INPUT`;
+- `DEPENDENCY_BLOCKED`.
+
+These facts are accepted only when an agent/provider/bridge emits them. GACR never infers a rate limit, quota exhaustion or context limit from missing heartbeats.
+
+### Parallelism safety
+
+R7 may plan multiple tasks concurrently only when:
+- every task is `READY`;
+- dependencies are complete;
+- no active claim owns the task;
+- no active or planned task overlaps a collision domain;
+- the candidate session has the required capabilities;
+- required authorities are already observed;
+- the candidate role is allowed;
+- the repository scope matches when the work item specifies one.
+
+A `WORK_OFFER`:
+- creates no claim;
+- transfers no existing claim;
+- grants no mutation authority;
+- requires explicit acceptance;
+- still requires canonical claim creation and exact-HEAD reconciliation before mutation.
+
+The default limit is one outstanding parallel offer per session.
+
+Commands:
+
+```bash
+python3 scripts/gacr_capacity_dispatch.py pool
+python3 scripts/gacr_capacity_dispatch.py plan-work
+python3 scripts/gacr_capacity_dispatch.py dispatch-work
+python3 scripts/gacr_capacity_dispatch.py accept-work --dispatch-id <id> --session-id <id>
+```
+
+Client agents can explicitly report capacity:
+
+```bash
+python3 scripts/gacr_client_emitter.py availability --session-id <id> --state WAITING --reason-code WAITING_FOR_WORK
+python3 scripts/gacr_client_emitter.py availability --session-id <id> --state RATE_LIMITED --reason-code PROVIDER_RATE_LIMIT
+python3 scripts/gacr_client_emitter.py availability --session-id <id> --state QUOTA_BLOCKED --reason-code PROVIDER_QUOTA_EXHAUSTED
+```
+
+The scheduled GACR relay refreshes safe work offers automatically, but only from explicit/eligible capacity evidence.

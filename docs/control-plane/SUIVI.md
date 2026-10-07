@@ -1403,3 +1403,24 @@ Reconciliation performed:
 - `GMC-01` becomes the unique `IN_PROGRESS` global task.
 
 GMC release is planning/knowledge extraction only. No Governance Model implementation mutation, CAP, SaaS, server, DNS, TLS or database deployment authority is granted by this closure.
+
+
+## 2026-10-07 — GACR R7 capacity-aware parallel dispatch
+
+Owner requested dispatch awareness of waiting/active coding agents and explicit blocked states such as provider rate limits or quota exhaustion.
+
+Implemented as a cross-cutting GACR extension:
+- explicit agent capacity states;
+- observed-only provider limit/block signals;
+- no silence→idle inference;
+- capacity pool over existing sessions/beacons/claims;
+- READY-task matching by dependencies, collision domains, capabilities, authorities and roles;
+- parallel work planning for non-conflicting tasks;
+- `WORK_OFFER` records in the existing dispatch store;
+- explicit offer acceptance before claim;
+- canonical claim + exact-HEAD still required before execution;
+- client emitter, issue bridge and repository_dispatch transport support;
+- portable client-upgrader/manifest inclusion;
+- takeover dispatches remain distinct.
+
+Global programme ordering is unchanged: `GMC-01 / GMC-G01` remains current.

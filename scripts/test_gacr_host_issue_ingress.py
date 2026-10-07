@@ -129,6 +129,43 @@ def main() -> None:
         "connection_intent",
     )
 
+    availability_payload = {
+        "schema": g.SCHEMA,
+        "event": "availability",
+        "session_id": "session-1",
+        "availability_state": "RATE_LIMITED",
+        "availability_reason_code": "PROVIDER_RATE_LIMIT",
+    }
+    parsed_availability = g.parse_issue_comment_event(
+        event(body(availability_payload), comment_id=9004),
+        config(),
+    )
+    assert_true(parsed_availability["availability_state"] == "RATE_LIMITED", "availability state parsed")
+    invalid_availability = dict(availability_payload)
+    invalid_availability["availability_state"] = "MAYBE"
+    expect_error(
+        lambda: g.parse_issue_comment_event(event(body(invalid_availability), comment_id=9005), config()),
+        "availability_state",
+    )
+
+    work_offer_payload = {
+        "schema": g.SCHEMA,
+        "event": "work_offer_accept",
+        "session_id": "session-1",
+        "dispatch_id": "GACR-W-demo",
+    }
+    parsed_work_offer = g.parse_issue_comment_event(
+        event(body(work_offer_payload), comment_id=9006),
+        config(),
+    )
+    assert_true(parsed_work_offer["dispatch_id"] == "GACR-W-demo", "work offer dispatch id parsed")
+    missing_dispatch = dict(work_offer_payload)
+    del missing_dispatch["dispatch_id"]
+    expect_error(
+        lambda: g.parse_issue_comment_event(event(body(missing_dispatch), comment_id=9007), config()),
+        "dispatch_id",
+    )
+
     sessions = [
         {
             "session_id": "session-1",

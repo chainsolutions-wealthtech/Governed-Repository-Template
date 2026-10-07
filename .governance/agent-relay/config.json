@@ -1,5 +1,5 @@
 {
-  "schema_version": "1.6.0",
+  "schema_version": "1.7.0",
   "process_name": "GACR",
   "process_title": "Governed Agent Continuity Relay",
   "authority_id": "CP-AGENT-RELAY-001",
@@ -83,7 +83,7 @@
     "continuous_background_heartbeat_proven": false,
     "github_issue_control_channel_candidate": true
   },
-  "revision_authority_id": "CP-AGENT-RELAY-001-R6",
+  "revision_authority_id": "CP-AGENT-RELAY-001-R7",
   "forensics": {
     "enabled": true,
     "projection_only": true,
@@ -134,13 +134,16 @@
       "HEARTBEAT",
       "ACTION_TRACE",
       "INTERRUPTION_SIGNAL",
-      "WAKE_POLL"
+      "WAKE_POLL",
+      "AVAILABILITY_UPDATE",
+      "WORK_OFFER_ACCEPT"
     ],
     "runtime_credential_policy": "MEMORY_ONLY_NEVER_PERSIST",
     "repository_dispatch_events": [
       "gacr_auto-attach",
       "gacr_heartbeat",
-      "gacr_beacon"
+      "gacr_beacon",
+      "gacr_work-offer-accept"
     ],
     "interruption_signal_policy": "EXPLICIT_OBSERVATION_ONLY",
     "wake_poll_may_accept_takeover": false,
@@ -168,7 +171,9 @@
       "action",
       "interrupt",
       "command_ack",
-      "challenge_response"
+      "challenge_response",
+      "availability",
+      "work_offer_accept"
     ],
     "auto_attach_before_event": true,
     "auto_resolve_session": true,
@@ -411,5 +416,48 @@
       "invocation_authority_granted": false,
       "mutation_authority_granted": false
     }
+  },
+  "capacity_dispatch": {
+    "enabled": true,
+    "require_explicit_availability": true,
+    "max_parallel_offers_per_session": 1,
+    "available_states": [
+      "AVAILABLE",
+      "WAITING"
+    ],
+    "auto_refresh_on_relay_cycle": true,
+    "provider_limit_inference": "OBSERVED_ONLY_NEVER_INFER",
+    "offer_requires_acceptance": true,
+    "claim_required_after_acceptance": true,
+    "exact_head_reconciliation_required": true,
+    "grants_write_authority": false
+  },
+  "capacity_dispatch_contract": {
+    "states": [
+      "AVAILABLE",
+      "WAITING",
+      "BUSY",
+      "BLOCKED",
+      "RATE_LIMITED",
+      "QUOTA_BLOCKED",
+      "CHECKPOINTING",
+      "TERMINATING",
+      "STALLED",
+      "TERMINAL",
+      "UNKNOWN"
+    ],
+    "explicit_block_codes": [
+      "PROVIDER_RATE_LIMIT",
+      "PROVIDER_QUOTA_EXHAUSTED",
+      "CONTEXT_LIMIT",
+      "WAITING_FOR_INPUT",
+      "DEPENDENCY_BLOCKED"
+    ],
+    "no_idle_inference_from_silence": true,
+    "no_claim_on_offer": true,
+    "no_write_authority_on_offer_or_accept": true,
+    "collision_domains_enforced": true,
+    "dependencies_enforced": true,
+    "capabilities_roles_authorities_enforced": true
   }
 }

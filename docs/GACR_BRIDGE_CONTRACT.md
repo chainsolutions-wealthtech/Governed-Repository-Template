@@ -103,3 +103,25 @@ The transport credential is runtime-only and is never part of the emitted `clien
 Provider-specific adapters may call the Python API or CLI. They do not need to reimplement GACR semantics.
 
 The emitter cannot make an uninstrumented provider UI expose events that the host does not provide. In that case, unsupported client facts remain unavailable and GACR continues to rely on the observable repository/session evidence.
+
+
+## R7 availability and work-offer transport
+
+Provider/client bridges may enrich GACR with explicit capacity facts.
+
+Safe availability fields:
+
+```text
+session_id
+availability_state
+availability_reason_code
+observed_head (optional)
+```
+
+Supported states include `AVAILABLE`, `WAITING`, `BUSY`, `BLOCKED`, `RATE_LIMITED`, `QUOTA_BLOCKED`, `CHECKPOINTING` and `TERMINATING`.
+
+A bridge must never infer quota/rate-limit state from silence. When the provider does not expose the cause, keep it `UNKNOWN`.
+
+Clients that poll the canonical dispatch store may receive `dispatch_kind = WORK_OFFER`. A work offer is accepted with `gacr_work-offer-accept`, after which the record becomes `ACCEPTED_PENDING_CLAIM`. Acceptance grants no write authority and does not create a claim.
+
+The legacy external webhook notifier remains takeover-only until a dedicated WORK_OFFER bridge contract is explicitly configured. This prevents a work offer from being rendered as a takeover wake event.

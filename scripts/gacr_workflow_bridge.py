@@ -10,6 +10,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 CORE=ROOT/'scripts'/'governed_agent_continuity_relay.py'
 TELEMETRY=ROOT/'scripts'/'gacr_agent_telemetry.py'
+CAPACITY=ROOT/'scripts'/'gacr_capacity_dispatch.py'
 AUTO_ATTACH=ROOT/'scripts'/'gacr_auto_attach.py'
 HOST_INGRESS=ROOT/'scripts'/'gacr_host_issue_ingress.py'
 CONTROL_INGRESS=ROOT/'scripts'/'gscc_control_issue_ingress.py'
@@ -81,9 +82,10 @@ def main():
 
     core_commands={'register','heartbeat','scan','status','takeover-plan','takeover-accept'}
     telemetry_commands={'beacon','correlate','dispatch','context','forensics','telemetry-status'}
+    capacity_commands={'pool','plan-work','dispatch-work','work-offer-accept'}
     auto_attach_commands={'auto-attach'}
     control_commands={'control-challenge'}
-    if command not in core_commands | telemetry_commands | auto_attach_commands | control_commands:
+    if command not in core_commands | telemetry_commands | capacity_commands | auto_attach_commands | control_commands:
         raise SystemExit(f'GACR_WORKFLOW_BRIDGE_FAILED: unsupported command {command}')
 
     if command in control_commands:
@@ -91,6 +93,9 @@ def main():
     elif command in telemetry_commands:
         telemetry_command='status' if command=='telemetry-status' else command
         args=[sys.executable,str(TELEMETRY),telemetry_command]
+    elif command in capacity_commands:
+        capacity_command='accept-work' if command=='work-offer-accept' else command
+        args=[sys.executable,str(CAPACITY),capacity_command]
     elif command in auto_attach_commands:
         args=[sys.executable,str(AUTO_ATTACH)]
     else:
@@ -200,6 +205,11 @@ def main():
         add(args,'--action-id',payload.get('action_id')); add(args,'--action-label',payload.get('action_label')); add(args,'--action-phase',payload.get('action_phase'))
         add(args,'--tool-name',payload.get('tool_name')); add(args,'--tool-call-id',payload.get('tool_call_id')); add(args,'--outcome',payload.get('outcome')); add(args,'--written-head',payload.get('written_head'))
         add(args,'--checkpoint-ref',payload.get('checkpoint_ref')); add(args,'--evidence-ref',payload.get('evidence_ref')); add(args,'--interruption-code',payload.get('interruption_code'))
+        add(args,'--availability-state',payload.get('availability_state'))
+        add(args,'--availability-reason-code',payload.get('availability_reason_code'))
+    elif command=='work-offer-accept':
+        add(args,'--dispatch-id',payload.get('dispatch_id'))
+        add(args,'--session-id',payload.get('session_id'))
     elif command=='context':
         add(args,'--session-id',payload.get('session_id'))
     elif command=='forensics':
