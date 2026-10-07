@@ -11,6 +11,7 @@ ROOT=Path(__file__).resolve().parents[1]
 CORE=ROOT/'scripts'/'governed_agent_continuity_relay.py'
 TELEMETRY=ROOT/'scripts'/'gacr_agent_telemetry.py'
 CAPACITY=ROOT/'scripts'/'gacr_capacity_dispatch.py'
+TASK_POOL=ROOT/'scripts'/'gacr_task_pool.py'
 AUTO_ATTACH=ROOT/'scripts'/'gacr_auto_attach.py'
 HOST_INGRESS=ROOT/'scripts'/'gacr_host_issue_ingress.py'
 CONTROL_INGRESS=ROOT/'scripts'/'gscc_control_issue_ingress.py'
@@ -83,9 +84,10 @@ def main():
     core_commands={'register','heartbeat','scan','status','takeover-plan','takeover-accept'}
     telemetry_commands={'beacon','correlate','dispatch','context','forensics','telemetry-status'}
     capacity_commands={'pool','plan-work','dispatch-work','work-offer-accept'}
+    task_pool_commands={'work-relinquish'}
     auto_attach_commands={'auto-attach'}
     control_commands={'control-challenge'}
-    if command not in core_commands | telemetry_commands | capacity_commands | auto_attach_commands | control_commands:
+    if command not in core_commands | telemetry_commands | capacity_commands | task_pool_commands | auto_attach_commands | control_commands:
         raise SystemExit(f'GACR_WORKFLOW_BRIDGE_FAILED: unsupported command {command}')
 
     if command in control_commands:
@@ -96,6 +98,8 @@ def main():
     elif command in capacity_commands:
         capacity_command='accept-work' if command=='work-offer-accept' else command
         args=[sys.executable,str(CAPACITY),capacity_command]
+    elif command in task_pool_commands:
+        args=[sys.executable,str(TASK_POOL),'relinquish']
     elif command in auto_attach_commands:
         args=[sys.executable,str(AUTO_ATTACH)]
     else:
@@ -211,6 +215,14 @@ def main():
         add(args,'--dispatch-id',payload.get('dispatch_id'))
         add(args,'--session-id',payload.get('session_id'))
         add(args,'--observed-head',payload.get('observed_head'))
+        add(args,'--evidence-ref',payload.get('evidence_ref'))
+    elif command=='work-relinquish':
+        add(args,'--claim-id',payload.get('claim_id'))
+        add(args,'--session-id',payload.get('session_id'))
+        add(args,'--reason-code',payload.get('reason_code'))
+        add(args,'--observed-head',payload.get('observed_head'))
+        add(args,'--checkpoint-ref',payload.get('checkpoint_ref'))
+        add(args,'--handoff-ref',payload.get('handoff_ref'))
         add(args,'--evidence-ref',payload.get('evidence_ref'))
     elif command=='context':
         add(args,'--session-id',payload.get('session_id'))
