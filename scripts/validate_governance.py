@@ -205,6 +205,7 @@ SOURCE_ONLY_REQUIRED = {
     "scripts/control_plane_server_recipe_capabilities.py",
     "scripts/test_control_plane_server_recipe_capabilities.py",
     "scripts/test_master_documentation_integrity.py",
+    "scripts/test_case1_closure_integrity.py",
     "scripts/control_plane_github_secret_metadata.py",
     "scripts/test_control_plane_github_secret_metadata.py",
     "docs/control-plane/MCP_CAPABILITY_MODEL.md",
