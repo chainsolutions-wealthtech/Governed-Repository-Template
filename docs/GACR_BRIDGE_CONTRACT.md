@@ -103,3 +103,36 @@ The transport credential is runtime-only and is never part of the emitted `clien
 Provider-specific adapters may call the Python API or CLI. They do not need to reimplement GACR semantics.
 
 The emitter cannot make an uninstrumented provider UI expose events that the host does not provide. In that case, unsupported client facts remain unavailable and GACR continues to rely on the observable repository/session evidence.
+
+
+## Availability / workload signals
+
+A provider/client may enrich a safe GACR heartbeat with explicit scheduler metadata:
+
+- `workload_state`;
+- `blocker_code`;
+- `capacity_slots`;
+- `max_parallel_tasks`;
+- `retry_after_at`.
+
+These fields are observations only. They do not grant task, claim, invocation, or mutation authority.
+
+Recommended examples:
+
+```json
+{
+  "workload_state": "WAITING_FOR_WORK",
+  "capacity_slots": 1,
+  "max_parallel_tasks": 1
+}
+```
+
+```json
+{
+  "workload_state": "RATE_LIMITED",
+  "blocker_code": "PROVIDER_RATE_LIMIT",
+  "retry_after_at": "2026-10-07T04:00:00+02:00"
+}
+```
+
+A missing signal is never interpreted as availability or as a provider limit. The repository may classify a live session without an explicit idle signal as `UNCONFIRMED_AVAILABLE`, which is not auto-dispatch eligible.
