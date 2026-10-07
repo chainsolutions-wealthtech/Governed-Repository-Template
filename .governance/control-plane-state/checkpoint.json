@@ -284,10 +284,10 @@
       "authority_id": "CP-GOVMODEL-001",
       "revision": 2,
       "programme": "GMC-01..GMC-19",
-      "dependency": "P12-S6",
-      "status": "MERGED_CANONICAL_BACKLOG",
+      "dependency": "P12-S6_DONE",
+      "status": "RELEASED_TO_GMC_G01",
       "relational_projection": "PENDING_SCHEMA_EXTENSION",
-      "execution_gate_unchanged": true,
+      "execution_gate_unchanged": false,
       "merge_pr": 39,
       "merge_subject_head": "6fb12122d5a0812f6ceca063b1d7af13511003bc",
       "integrity_fix_task": "C1-12-J-C-A",
@@ -296,7 +296,8 @@
       "integrity_fix_status": "DONE",
       "integrity_fix_pr": 43,
       "integrity_fix_merge_subject_head": "113c50aa765ae886cd7a085637b8d5dbb5c2766b",
-      "review_threads_resolved": true
+      "review_threads_resolved": true,
+      "historical_dependency": "P12-S6"
     },
     "adaptive_questionnaire": {
       "decision_ids": [
@@ -349,7 +350,7 @@
     "final_release_comment": 6027880258,
     "released_head": "f768268bf1a3f62c2e6741aecfba20d86545969c",
     "next_authority": "00_START_HERE.md",
-    "next_action": "RETURN_TO_GLOBAL_PROGRAMME_P12_S6"
+    "next_action": "GMC_01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES"
   },
   "reusable_capsule_program": {
     "authority_id": "CP-CAPSULE-001",
