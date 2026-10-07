@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### GACR availability-aware parallel dispatch
+
+- Added explicit workload/blocker/capacity telemetry and an availability roster projection.
+- Added dependency/collision/capability-safe parallel work planning and OFFER dispatches.
+- Added explicit-only rate/quota/context limit handling.
+- Added source/client workflow, upgrader, manifest and schema integration.
+- Preserved claims and exact-HEAD gates; dispatch offers grant no mutation authority.
+- Global programme remains on GMC-01.
+
+
 ### CASE 1 closure / GMC-A release
 
 - Closed `CREATE_NEW_REPOSITORY` through `P12-S6`.
