@@ -564,6 +564,7 @@ def dispatch_open_takeovers() -> dict:
         )
         item = {
             "dispatch_id": runtime_id("GACR-D-", {"takeover_id": takeover.get("takeover_id"), "target_session_id": target_id}),
+            "dispatch_kind": "TAKEOVER",
             "takeover_id": takeover.get("takeover_id"),
             "stalled_session_id": takeover.get("stalled_session_id"),
             "target_session_id": target_id,
