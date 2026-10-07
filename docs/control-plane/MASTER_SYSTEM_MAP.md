@@ -202,7 +202,7 @@ The SQLite binary never outranks Git authorities.
 
 | Path | Status | Meaning |
 |---|---|---|
-| CREATE_NEW_REPOSITORY | current macro case / P12-S6 closing | create + bootstrap + baseline + handoff + normal-entry proof |
+| CREATE_NEW_REPOSITORY | DONE / CASE1 closure validated | create + bootstrap + baseline + handoff + normal-entry proof |
 | ADOPT_EXISTING_REPOSITORY | planned | additive adoption of an existing repository |
 | MAP_EXISTING_PROJECT | planned | read-only current/target architecture mapping |
 | LAB_EVOLUTION | planned | isolated branch/PR evolution |
@@ -218,12 +218,14 @@ P12-S2 DONE
 P12-S3 DONE
 P12-S4 DONE
 P12-S5 DONE
-P12-S6 IN_PROGRESS  ← unique executable global task
+P12-S6 DONE
+      ↓
+GMC-01 / GMC-G01 IN_PROGRESS  ← unique executable global task
 ```
 
-P12-S6 must close CREATE_NEW_REPOSITORY CASE 1 and only then release GMC-A.
+CASE 1 is closed under CPD-073. GMC-A is released and GMC-01 / GMC-G01 is the current unique work package.
 
-The closed IDN lane proved the capsule without changing this global ordering.
+The closed IDN lane proved the capsule without bypassing this global ordering.
 
 ## 9. Downstream programme graph
 
