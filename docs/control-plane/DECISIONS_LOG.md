@@ -581,3 +581,19 @@ Append-only durable decisions for the source/control-plane repository.
 - Architecture authority advances to `CP-ARCH-001-R7`.
 - CI must fail on link drift, architecture revision drift, silent activation of the two-stage purpose router, or CAP dependency drift.
 - Global execution order is unchanged; `P12-S6` remains the unique executable task.
+
+
+### CPD-072 — Deployable SaaS platform and autonomous administration cockpit
+
+- Date: 2026-10-07.
+- The Governed Repository Platform must be productized as a deployable SaaS-ready application, not only a repository/workflow framework.
+- Canonical product authority: `CP-SAAS-001` at `docs/control-plane/SAAS_PLATFORM_PROGRAM.md`.
+- Canonical product backlog: `SAA-001..SAA-015`.
+- Target public deployment URL: `https://mcp.wealthtechinnovations.com/template`.
+- The frontend target is a complete autonomous administration cockpit covering identity/session, GSCC/GSE/GACR, cases/runs/questions, programme/tasks/claims, evidence/decisions/audit, checkpoints/handoffs, repositories/integrations, knowledge/infrastructure and deployment operations.
+- The backend target is a complete versioned REST/OpenAPI API with governed service/microservice boundaries, workers/event processing where justified and PostgreSQL runtime projection after its architectural gate.
+- `ARCH-008`, `ARCH-009`, `ARCH-010`, `IDN-013` and `RTE-013` are architectural/API/UI prerequisites and are reused rather than duplicated.
+- The UI/API cannot create governance authority. Authentication, role, authority, access grant, F1 exposure and mutation authority remain distinct.
+- SaaS readiness requires tenant/workspace isolation before multi-tenant release.
+- Production deployment requires live server/DNS/TLS/database observation and explicit governed mutation authority; this decision registers the target but grants no production mutation authority.
+- Global execution ordering remains unchanged: `P12-S6` is still the unique executable task.

@@ -403,5 +403,14 @@
     "master_map": "docs/control-plane/MASTER_SYSTEM_MAP.md",
     "requirements_roadmap": "docs/control-plane/REQUIREMENTS_ROADMAP.md",
     "global_task_unchanged": "P12-S6"
+  },
+  "saas_platform_program": {
+    "status": "PLANNED_DEPENDENCY_BOUND",
+    "authority_id": "CP-SAAS-001",
+    "decision_id": "CPD-072",
+    "task_range": "SAA-001..SAA-015",
+    "target_url": "https://mcp.wealthtechinnovations.com/template",
+    "current_global_task_unchanged": "P12-S6",
+    "production_mutation_authority_granted": false
   }
 }

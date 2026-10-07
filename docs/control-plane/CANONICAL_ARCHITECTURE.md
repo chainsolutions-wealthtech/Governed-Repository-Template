@@ -4,7 +4,7 @@
 > Authority type: `CANONICAL_TARGET_ARCHITECTURE`  
 > Scope: `CONTROL_PLANE_SOURCE_ONLY`  
 > Status: `ACCEPTED_TARGET_ARCHITECTURE`  
-> Revision: `7`  
+> Revision: `8`  
 > Repository: `chainsolutions-wealthtech/Governed-Repository-Template`  
 > Distribution: `SOURCE_ONLY / DO_NOT_COPY_TO_CLIENTS`
 
@@ -703,6 +703,40 @@ The test mutates only the temporary copy. Real client project state is evidence,
 
 Subprocess failures must expose enough stdout/stderr to identify the failing governance gate instead of collapsing into an opaque `CalledProcessError`.
 
+## 24B. Product SaaS / autonomous administration cockpit target
+
+Authority `CP-SAAS-001` defines the downstream productization target once governance semantics are stabilized.
+
+Target product:
+
+```text
+Governed Repository Platform
+→ complete autonomous administration cockpit
+→ versioned full REST API
+→ governed backend service/microservice boundaries
+→ PostgreSQL runtime projection
+→ background/event workers where justified
+→ audit / observability / backup / recovery
+→ SaaS-ready tenancy and isolation
+→ reproducible server deployment
+→ https://mcp.wealthtechinnovations.com/template
+```
+
+The web/API layer is a control surface, never an authority generator.
+
+```text
+AUTHENTICATION
+!= ROLE
+!= GOVERNANCE AUTHORITY
+!= MUTATION AUTHORITY
+```
+
+The product must reuse the canonical question/answer/event/evidence/checkpoint/handoff model, GSCC/GSE/GACR continuity, programme/task/claim model, and all existing authority gates. No frontend-only or backend-only parallel truth is permitted.
+
+`ARCH-008`, `ARCH-009` and `ARCH-010` are architecture gates for API, PostgreSQL projection and cockpit control-surface design. Implementation and deployment are tracked by `SAA-001..SAA-015` under `CP-SAAS-001`.
+
+Production mutation remains governed by observed infrastructure state, exact target context, existing execution capabilities and explicit authority.
+
 ## 25. Construction roadmap
 
 The architectural roadmap is:
@@ -719,7 +753,9 @@ The architectural roadmap is:
 10. strengthen reconciliation / upgrade / repair;
 11. expose a Governance API;
 12. move runtime projection to PostgreSQL if justified;
-13. build the Admin Web Application.
+13. build the Admin Web Application architecture/control surface;
+14. implement and release the SaaS platform programme `SAA-001..SAA-015`;
+15. deploy the governed product to `https://mcp.wealthtechinnovations.com/template` after explicit production gates pass.
 
 ```text
 WORKFLOW SEMANTICS FIRST

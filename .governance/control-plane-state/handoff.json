@@ -484,5 +484,22 @@
     "status_contract": "DISTINGUISH_LIVE_PROVEN_IMPLEMENTED_PARTIAL_PLANNED_NOT_ACTIVE_FUTURE",
     "no_parallel_authority": true,
     "current_global_task": "P12-S6"
+  },
+  "saas_platform_program": {
+    "authority": "docs/control-plane/SAAS_PLATFORM_PROGRAM.md",
+    "tasks": "SAA-001..SAA-015",
+    "target_url": "https://mcp.wealthtechinnovations.com/template",
+    "prerequisite_surfaces": [
+      "GMC-19",
+      "ARCH-008",
+      "ARCH-009",
+      "ARCH-010",
+      "IDN-013",
+      "RTE-013",
+      "CAP-012"
+    ],
+    "do_not_start_before_dependencies": true,
+    "production_mutation_requires_live_authority": true,
+    "current_global_task": "P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE"
   }
 }

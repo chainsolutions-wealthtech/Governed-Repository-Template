@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 54,
+  "revision": 55,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -809,20 +809,39 @@
     {
       "id": "ARCH-008",
       "status": "FUTURE",
-      "depends_on": [],
-      "next_action": "EXPOSE_GOVERNANCE_API"
+      "depends_on": [
+        "GMC-19",
+        "RTE-012",
+        "ARCH-006",
+        "IDN-013"
+      ],
+      "next_action": "DEFINE_AND_EXPOSE_VERSIONED_GOVERNANCE_API_ARCHITECTURE",
+      "objective": "Establish the validated Governance API contract over canonical semantics, including OpenAPI/versioning and authority-preserving mutation contracts.",
+      "integration_slot": "CP-SAAS-001"
     },
     {
       "id": "ARCH-009",
       "status": "FUTURE",
-      "depends_on": [],
-      "next_action": "ADD_POSTGRES_RUNTIME_PROJECTION"
+      "depends_on": [
+        "GMC-19",
+        "ARCH-006"
+      ],
+      "next_action": "ESTABLISH_POSTGRES_RUNTIME_PROJECTION_ARCHITECTURE",
+      "objective": "Establish PostgreSQL runtime projection and reconciliation architecture while Git-versioned authorities remain foundational.",
+      "integration_slot": "CP-SAAS-001"
     },
     {
       "id": "ARCH-010",
       "status": "FUTURE",
-      "depends_on": [],
-      "next_action": "BUILD_ADMIN_WEB_APPLICATION"
+      "depends_on": [
+        "ARCH-008",
+        "ARCH-009",
+        "IDN-013",
+        "RTE-013"
+      ],
+      "next_action": "ESTABLISH_ADMIN_COCKPIT_ARCHITECTURE_AND_CONTROL_SURFACE",
+      "objective": "Define the complete autonomous administration cockpit architecture and governed control-surface contract consumed by the SaaS implementation programme.",
+      "integration_slot": "CP-SAAS-001"
     },
     {
       "id": "IDN-001",
@@ -1010,8 +1029,13 @@
     {
       "id": "IDN-013",
       "status": "FUTURE",
-      "depends_on": [],
-      "next_action": "EXPOSE_IDENTITY_SESSION_TO_API_UI"
+      "depends_on": [
+        "IDN-012",
+        "ARCH-005"
+      ],
+      "next_action": "EXPOSE_IDENTITY_SESSION_AUTHORITY_TO_API_UI",
+      "objective": "Expose normalized identity/session/role/authority semantics to API/UI without creating a second identity or session truth.",
+      "integration_slot": "CP-SAAS-001"
     },
     {
       "id": "CAP-001",
@@ -1179,6 +1203,221 @@
       "integration_slot": "GMC-19"
     },
     {
+      "id": "SAA-001",
+      "status": "PLANNED",
+      "depends_on": [
+        "ARCH-010",
+        "CAP-012",
+        "IDN-013",
+        "RTE-013"
+      ],
+      "next_action": "FREEZE_SAAS_PRODUCT_SCOPE_TENANCY_DEPLOYMENT_NFRS",
+      "objective": "Freeze SaaS product scope, tenancy/isolation model, deployment contract, NFRs and canonical production URL.",
+      "integration_slot": "CP-SAAS-001",
+      "kind": "SAAS_PLATFORM_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-SAAS-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
+    },
+    {
+      "id": "SAA-002",
+      "status": "PLANNED",
+      "depends_on": [
+        "SAA-001"
+      ],
+      "next_action": "DEFINE_COMPLETE_REST_OPENAPI_V1_CONTRACT",
+      "objective": "Define complete versioned REST/OpenAPI v1 resources, actions, errors, pagination, filtering, event/audit and authority contracts.",
+      "integration_slot": "ARCH-008",
+      "kind": "SAAS_PLATFORM_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-SAAS-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
+    },
+    {
+      "id": "SAA-003",
+      "status": "PLANNED",
+      "depends_on": [
+        "SAA-002"
+      ],
+      "next_action": "DEFINE_BACKEND_MICROSERVICE_BOUNDARIES",
+      "objective": "Define backend service/microservice boundaries, ownership, synchronous/asynchronous contracts and transaction boundaries.",
+      "integration_slot": "CP-SAAS-001",
+      "kind": "SAAS_PLATFORM_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-SAAS-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
+    },
+    {
+      "id": "SAA-004",
+      "status": "PLANNED",
+      "depends_on": [
+        "SAA-003"
+      ],
+      "next_action": "BIND_AUTHENTICATION_RBAC_TO_GOVERNANCE_AUTHORITY",
+      "objective": "Bind authentication and RBAC to existing role/authority/access semantics without auth-to-authority shortcuts.",
+      "integration_slot": "IDN-013",
+      "kind": "SAAS_PLATFORM_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-SAAS-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
+    },
+    {
+      "id": "SAA-005",
+      "status": "PLANNED",
+      "depends_on": [
+        "SAA-004",
+        "ARCH-009"
+      ],
+      "next_action": "IMPLEMENT_POSTGRES_RUNTIME_AND_MIGRATIONS",
+      "objective": "Implement PostgreSQL runtime repositories, migrations, transactions, reconciliation and compatibility with Git canonical authorities.",
+      "integration_slot": "ARCH-009",
+      "kind": "SAAS_PLATFORM_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-SAAS-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
+    },
+    {
+      "id": "SAA-006",
+      "status": "PLANNED",
+      "depends_on": [
+        "SAA-005"
+      ],
+      "next_action": "IMPLEMENT_REST_API_GATEWAY_BACKEND_SERVICES_WORKERS",
+      "objective": "Implement complete REST backend/API gateway, governed services and background/event workers with contract and integration tests.",
+      "integration_slot": "ARCH-008",
+      "kind": "SAAS_PLATFORM_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-SAAS-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
+    },
+    {
+      "id": "SAA-007",
+      "status": "PLANNED",
+      "depends_on": [
+        "SAA-006",
+        "ARCH-010"
+      ],
+      "next_action": "DEFINE_COMPLETE_ADMIN_COCKPIT_IA_DESIGN_ACTION_CONTRACTS",
+      "objective": "Define full cockpit information architecture, navigation, design system, screens and governed admin action contracts.",
+      "integration_slot": "ARCH-010",
+      "kind": "SAAS_PLATFORM_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-SAAS-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
+    },
+    {
+      "id": "SAA-008",
+      "status": "PLANNED",
+      "depends_on": [
+        "SAA-007"
+      ],
+      "next_action": "IMPLEMENT_FULL_ADMIN_COCKPIT_READ_MONITOR_SURFACES",
+      "objective": "Implement full autonomous admin cockpit read/monitor surfaces across identity, sessions, GSCC/GSE/GACR, cases, questions, tasks, evidence, infrastructure and deployment.",
+      "integration_slot": "ARCH-010",
+      "kind": "SAAS_PLATFORM_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-SAAS-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
+    },
+    {
+      "id": "SAA-009",
+      "status": "PLANNED",
+      "depends_on": [
+        "SAA-008"
+      ],
+      "next_action": "IMPLEMENT_GOVERNED_ADMIN_OPERATIONAL_ACTIONS",
+      "objective": "Implement cockpit operational actions through real governance gates, exact-HEAD/claim/access/F1 controls and auditable confirmation flows.",
+      "integration_slot": "CP-SAAS-001",
+      "kind": "SAAS_PLATFORM_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-SAAS-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
+    },
+    {
+      "id": "SAA-010",
+      "status": "PLANNED",
+      "depends_on": [
+        "SAA-009"
+      ],
+      "next_action": "HARDEN_SECURITY_AUDIT_OBSERVABILITY_OPERATIONS",
+      "objective": "Add security hardening, audit, logs, metrics, tracing, alerts, health/readiness and operational diagnostics.",
+      "integration_slot": "CP-SAAS-001",
+      "kind": "SAAS_PLATFORM_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-SAAS-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
+    },
+    {
+      "id": "SAA-011",
+      "status": "PLANNED",
+      "depends_on": [
+        "SAA-010"
+      ],
+      "next_action": "PACKAGE_REPRODUCIBLE_FRONTEND_BACKEND_WORKERS_DB_DEPLOYMENT",
+      "objective": "Package frontend, backend services, workers and database integration into reproducible container/server deployment artifacts.",
+      "integration_slot": "CP-SAAS-001",
+      "kind": "SAAS_PLATFORM_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-SAAS-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
+    },
+    {
+      "id": "SAA-012",
+      "status": "PLANNED",
+      "depends_on": [
+        "SAA-011"
+      ],
+      "next_action": "DEPLOY_PRODUCTION_EQUIVALENT_STAGING_BASE_PATH",
+      "objective": "Deploy production-equivalent staging with TLS/base-path routing, migrations, probes, secrets injection and smoke/E2E validation.",
+      "integration_slot": "CP-SAAS-001",
+      "kind": "SAAS_PLATFORM_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-SAAS-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
+    },
+    {
+      "id": "SAA-013",
+      "status": "PLANNED",
+      "depends_on": [
+        "SAA-012"
+      ],
+      "next_action": "DEPLOY_PRODUCTION_MCP_WEALTHTECHINNOVATIONS_TEMPLATE",
+      "objective": "Perform governed production deployment to https://mcp.wealthtechinnovations.com/template after live infrastructure observation and explicit mutation authority.",
+      "integration_slot": "CP-SAAS-001",
+      "kind": "SAAS_PLATFORM_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-SAAS-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
+    },
+    {
+      "id": "SAA-014",
+      "status": "PLANNED",
+      "depends_on": [
+        "SAA-013"
+      ],
+      "next_action": "RUN_FULL_PRODUCTION_ACCEPTANCE_MATRIX",
+      "objective": "Prove production multi-agent continuity, questions/resume, four-case representation, admin operations, API, security, observability and recovery end-to-end.",
+      "integration_slot": "CP-SAAS-001",
+      "kind": "SAAS_PLATFORM_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-SAAS-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
+    },
+    {
+      "id": "SAA-015",
+      "status": "PLANNED",
+      "depends_on": [
+        "SAA-014"
+      ],
+      "next_action": "RELEASE_GOVERNANCE_SAAS_PLATFORM_1_0_0",
+      "objective": "Release SaaS platform 1.0.0 with operation runbooks, backup/restore, upgrade/rollback, deployment attestation and API/UI documentation.",
+      "integration_slot": "CP-SAAS-001",
+      "kind": "SAAS_PLATFORM_PRODUCTIZATION_BACKLOG",
+      "parent_or_program": "CP-SAAS-001",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "collision_domain": "PROGRAM_TASK_GRAPH"
+    },
+    {
       "id": "RTE-001",
       "status": "PLANNED",
       "depends_on": [
@@ -1278,9 +1517,13 @@
       "id": "RTE-013",
       "status": "FUTURE",
       "depends_on": [
-        "IDN-006"
+        "RTE-012",
+        "ARCH-008",
+        "IDN-013"
       ],
-      "next_action": "EXPOSE_ROUTER_API_UI"
+      "next_action": "EXPOSE_ROUTER_API_UI",
+      "objective": "Expose the validated two-stage router and exact-resume semantics through API/UI without silently activating unvalidated routes.",
+      "integration_slot": "CP-SAAS-001"
     },
     {
       "id": "C1-12-I-A",
