@@ -639,8 +639,21 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
         if case1_replay.get("current_phase") not in {p.get("id") for p in case1_replay.get("phases", [])}:
             fail("CASE 1 replay current phase missing from phases")
         active_case_phases = [p for p in case1_replay.get("phases", []) if p.get("status") == "IN_PROGRESS"]
-        if len(active_case_phases) != 1 or active_case_phases[0].get("id") != case1_replay.get("current_phase"):
-            fail("CASE 1 replay must have exactly one active phase matching current_phase")
+        replay_status = case1_replay.get("current_status")
+        if replay_status == "IN_PROGRESS":
+            if len(active_case_phases) != 1 or active_case_phases[0].get("id") != case1_replay.get("current_phase"):
+                fail("active CASE 1 replay must have exactly one active phase matching current_phase")
+        elif replay_status == "DONE":
+            if active_case_phases:
+                fail("completed CASE 1 replay must have zero active phases")
+            current_phase = next(
+                (p for p in case1_replay.get("phases", []) if p.get("id") == case1_replay.get("current_phase")),
+                None,
+            )
+            if current_phase is None or current_phase.get("status") != "DONE":
+                fail("completed CASE 1 replay current_phase must identify the completed terminal phase")
+        else:
+            fail(f"unsupported CASE 1 replay current_status: {replay_status!r}")
         source_docs = [
             "docs/control-plane/CURRENT_STATE.md",
             "docs/control-plane/SUIVI.md",
