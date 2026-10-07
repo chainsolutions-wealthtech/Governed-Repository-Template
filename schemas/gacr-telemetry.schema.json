@@ -725,6 +725,92 @@
         }
       },
       "additionalProperties": true
+    },
+    "work_dispatch": {
+      "type": "object",
+      "required": [
+        "schema",
+        "dispatch_id",
+        "kind",
+        "status",
+        "target_session_id",
+        "task_id",
+        "created_at",
+        "requires_claim_before_execution",
+        "mutation_authority_granted"
+      ],
+      "properties": {
+        "schema": {
+          "const": "gacr-work-dispatch/v1"
+        },
+        "dispatch_id": {
+          "type": "string",
+          "pattern": "^GACR-WORK-[0-9a-f]{24}$"
+        },
+        "kind": {
+          "const": "WORK_ASSIGNMENT_OFFER"
+        },
+        "status": {
+          "enum": [
+            "OFFERED",
+            "ACKNOWLEDGED",
+            "CLAIMED",
+            "CANCELLED",
+            "EXPIRED",
+            "COMPLETED"
+          ]
+        },
+        "target_session_id": {
+          "type": "string"
+        },
+        "task_id": {
+          "type": "string"
+        },
+        "group_id": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "collision_domains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "required_capabilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "delivery_modes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "requires_claim_before_execution": {
+          "type": "boolean",
+          "const": true
+        },
+        "requires_exact_head_reobservation_before_mutation": {
+          "type": "boolean",
+          "const": true
+        },
+        "invocation_authority_granted": {
+          "type": "boolean",
+          "const": false
+        },
+        "mutation_authority_granted": {
+          "type": "boolean",
+          "const": false
+        }
+      },
+      "additionalProperties": true
     }
   },
   "additionalProperties": false
