@@ -281,3 +281,22 @@ grants_mutation_authority = false
 Canonical authority remains in the existing source/program/task/claim/approval gates. The projection only prevents agents sharing a continuity ID from losing the thread or acting on overlapping scopes.
 
 For the source Control Plane, runtime projection state is source-only under `.governance/control-plane-state/`. Instantiated repositories use their repository-local `.governance/agent-relay/` projection. These stores must never be confused or copied as live source runtime state.
+
+
+## Push-first shared continuity bus
+
+The shared continuity projection may carry bounded model-to-model coordination events. It remains a projection only and does not become a second dispatcher, queue, task authority, session authority or mutation grant.
+
+The delivery preference is:
+
+PUSH-capable external bridge when the target session explicitly advertises EXTERNAL_BRIDGE and a bridge registration exists; otherwise POLL_REPOSITORY fallback.
+
+A continuity event never refreshes another session's heartbeat. ACK/RESPONSE emitted by a session may count only as evidence of that emitting session's own activity.
+
+The derived event lifecycle is:
+
+CREATED/ROUTED -> DELIVERED -> ACKED -> RESPONDED
+
+with failure/recovery states FALLBACK_POLL_REQUIRED, ACK_TIMEOUT and EXPIRED.
+
+The mini-loop only updates derived delivery state and reuses the existing GACR dispatch store. It grants no task, claim or mutation authority. Exact-HEAD and declared continuity scope remain mandatory before emission.

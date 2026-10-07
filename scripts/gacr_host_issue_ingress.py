@@ -20,11 +20,11 @@ AUTO_ATTACH = ROOT / "scripts" / "gacr_auto_attach.py"
 CORE = ROOT / "scripts" / "governed_agent_continuity_relay.py"
 TELEMETRY = ROOT / "scripts" / "gacr_agent_telemetry.py"
 CAPACITY = ROOT / "scripts" / "gacr_capacity_dispatch.py"
-CONTINUITY = ROOT / "scripts" / "gacr_continuity_coordination.py"
+CONTINUITY = ROOT / "scripts" / "gacr_continuity_coordination.py"\nBUS = ROOT / "scripts" / "gacr_continuity_bus.py"
 
 PREFIX = "/gacr-host "
 SCHEMA = "gacr-host-event/v1"
-EVENTS = {"attach", "heartbeat", "action", "interrupt", "availability", "work_offer_accept", "command_ack", "challenge_response", "continuity_scope", "continuity_yield"}
+EVENTS = {"attach", "heartbeat", "action", "interrupt", "availability", "work_offer_accept", "command_ack", "challenge_response", "continuity_scope", "continuity_yield", "continuity_event", "continuity_ack", "continuity_response"}
 ACTION_PHASES = {"STARTED", "COMPLETED", "FAILED", "CANCELLED"}
 INTERRUPTION_CODES = {
     "CLIENT_DISCONNECTED",
@@ -245,7 +245,7 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
         for key in ("session_id", "dispatch_id", "command_id", "correlation_id", "challenge_id", "nonce", "challenge_status"):
             if payload.get(key) in (None, ""):
                 raise ValueError(f"host challenge_response requires {key}")
-    for list_field in ("capabilities", "wake_channels", "collision_domains"):
+    for list_field in ("capabilities", "wake_channels", "collision_domains", "target_session_ids"):
         if list_field in payload and not isinstance(payload.get(list_field), list):
             raise ValueError(f"{list_field} must be a JSON array")
     if isinstance(payload.get("capabilities"), list) and len(payload["capabilities"]) > 32:
