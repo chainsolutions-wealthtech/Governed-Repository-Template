@@ -141,6 +141,22 @@ def main() -> None:
         config(),
     )
     assert_true(parsed_availability["availability_state"] == "RATE_LIMITED", "availability state parsed")
+
+    post_f1_waiting = {
+        "schema": g.SCHEMA,
+        "event": "action",
+        "session_id": "session-1",
+        "agent_role": "CODE_AGENT",
+        "capabilities": ["CODE"],
+        "action_label": "POST_F1_CODE_AGENT_DECLARATION",
+        "action_phase": "COMPLETED",
+        "outcome": "CODE_AGENT_WAITING_FOR_WORK_F1_RELEASED",
+    }
+    normalized_waiting = g.normalize_role_capacity_declaration(post_f1_waiting)
+    assert_true(normalized_waiting["agent_role"] == "CODE_AGENT", "canonical work role preserved")
+    assert_true(normalized_waiting["capabilities"] == ["CODE"], "explicit capability preserved")
+    assert_true(normalized_waiting["availability_state"] == "WAITING", "post-F1 waiting outcome becomes WAITING")
+    assert_true(normalized_waiting["availability_reason_code"] == "WAITING_FOR_WORK", "post-F1 waiting reason canonicalized")
     invalid_availability = dict(availability_payload)
     invalid_availability["availability_state"] = "MAYBE"
     expect_error(
@@ -270,6 +286,53 @@ def main() -> None:
         g.active_sessions = original_active_sessions_provider
         g.run_script = original_run_provider
 
+    role_calls = []
+    original_active_sessions_role = g.active_sessions
+    original_run_role = g.run_script
+    try:
+        qualification_session = {
+            "session_id": "session-role-enrichment",
+            "repository": "example/governed",
+            "provider": "chatgpt",
+            "provider_conversation_ref": None,
+            "connection_ref": "chronicle:demo:role",
+            "client_instance_id": "chronicle:demo-role",
+            "agent_identity": "GSCC-ID-demo",
+            "agent_role": "qualification-client",
+            "capabilities": ["GACR_AUTO_ATTACH"],
+            "wake_channels": ["POLL_REPOSITORY"],
+            "status": "ACTIVE",
+            "relay": {"state": "ACTIVE", "branch": "main"},
+        }
+        enriched_role_session = dict(qualification_session)
+        enriched_role_session["agent_role"] = "CODE_AGENT"
+        enriched_role_session["capabilities"] = ["CODE", "GACR_AUTO_ATTACH"]
+        role_reads = {"count": 0}
+
+        def role_sessions():
+            role_reads["count"] += 1
+            return [qualification_session] if role_reads["count"] == 1 else [enriched_role_session]
+
+        g.active_sessions = role_sessions
+        g.run_script = lambda path, args: role_calls.append((path.name, list(args))) or ""
+        role_payload = {
+            "session_id": "session-role-enrichment",
+            "provider": "chatgpt",
+            "agent_role": "CODE_AGENT",
+            "capabilities": ["CODE"],
+            "observed_head": "f" * 40,
+        }
+        resolved_role = g.ensure_session(role_payload, "example/governed")
+        assert_true(resolved_role["agent_role"] == "CODE_AGENT", "same session role enriched after F1")
+        role_auto_args = next(args for name, args in role_calls if name == "gacr_auto_attach.py")
+        assert_true("--agent-role" in role_auto_args and "CODE_AGENT" in role_auto_args, "role enrichment forwarded")
+        assert_true("--capability" in role_auto_args and "CODE" in role_auto_args, "capability enrichment forwarded")
+        assert_true("--entry-action" not in role_auto_args, "role enrichment does not mutate entry action")
+        assert_true("--connection-intent" not in role_auto_args, "role enrichment does not mutate connection intent")
+    finally:
+        g.active_sessions = original_active_sessions_role
+        g.run_script = original_run_role
+
     calls = []
     original_processed = g.evidence_processed
     original_ensure = g.ensure_session
@@ -286,6 +349,22 @@ def main() -> None:
         assert_true(result["session_id"] == "session-1", "action stays on resolved session")
         assert_true(any(name == "governed_agent_continuity_relay.py" and args[0] == "heartbeat" for name, args in calls), "action renews heartbeat")
         assert_true(any(name == "marker" and args[1] == "ACTION_TRACE" for name, args in calls), "action trace emitted")
+
+        calls.clear()
+        waiting_payload = dict(parsed)
+        waiting_payload.update({
+            "agent_role": "CODE_AGENT",
+            "capabilities": ["CODE"],
+            "action_label": "POST_F1_CODE_AGENT_DECLARATION",
+            "action_phase": "COMPLETED",
+            "outcome": "CODE_AGENT_WAITING_FOR_WORK_F1_RELEASED",
+            "_evidence_ref": "github-issue-comment:9010",
+        })
+        waiting_result = g.process(waiting_payload, "example/governed")
+        assert_true(waiting_result["status"] == "GACR_HOST_EVENT_PROCESSED", "waiting action processed")
+        waiting_marker = next(args for name, args in calls if name == "marker" and args[1] == "ACTION_TRACE")
+        assert_true(waiting_payload["agent_role"] == "CODE_AGENT", "waiting action retains declared role")
+        assert_true(any(name == "marker" and args[1] == "ACTION_TRACE" for name, args in calls), "normalized waiting action emits explicit capacity through action trace")
         assert_true(any(name == "gacr_agent_telemetry.py" and args[0] == "correlate" for name, args in calls), "correlation refreshed")
         assert_true(any(name == "gacr_agent_telemetry.py" and args[0] == "forensics" for name, args in calls), "forensics refreshed")
 
