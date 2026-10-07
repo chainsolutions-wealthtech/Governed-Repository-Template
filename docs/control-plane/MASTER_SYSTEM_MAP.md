@@ -198,6 +198,32 @@ Git-versioned authorities + SQL migrations + JSON seeds/events
 
 The SQLite binary never outranks Git authorities.
 
+## 6A. Continuous multi-agent task pool
+
+GACR R8 adds a derived coordination layer between canonical tasks and available agents:
+
+```text
+canonical tasks / atomic blueprint
+→ dependency + collision analysis
+→ contextual task pool
+→ collision-free waves
+→ explicit AVAILABLE / WAITING agents
+→ role/capability/authority compatibility
+→ WORK_OFFER + context packet
+→ acceptance with observed HEAD
+→ exact-HEAD canonical claim
+→ traced governed work
+→ completion
+   OR checkpoint/handoff/requeue
+   OR stall/forensics/takeover
+```
+
+Authority: `CP-AGENT-RELAY-001-R8 / CPD-075`.
+
+The pool is a projection only. It never replaces `tasks.json`, the Governance Model execution blueprint, client `work-items.json`, claims, decisions or checkpoints.
+
+Context packets point to canonical history/method/evidence authorities. They do not persist raw conversation content or private/internal reasoning.
+
 ## 7. Four cases and continuation
 
 | Path | Status | Meaning |
