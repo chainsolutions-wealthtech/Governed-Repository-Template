@@ -1293,3 +1293,31 @@ Current candidate stop point:
 - implementation through Q12 is CI-proven;
 - live fresh-conversation proof through Q12 is still required after merge;
 - F1 / `00_START_HERE.md` release remains intentionally unproven until an actual governed function request is validated.
+
+## 2026-10-07 — IDN-006 live closure and release to normal governance
+
+Owner-authorized IDN infrastructure lane is now closed. It did not execute or reorder the global programme task `P12-S6`.
+
+Live closure chain:
+- implementation baseline: PR `#229`;
+- live Q10→GACR payload-limit defect discovered on issue `#238`, fixed by PR `#239`;
+- F1/GACR connection-method mismatch discovered live, fixed by PR `#241`;
+- explicit verified F1→normal-governance release implemented by PR `#243`, merged at `4a71b8c0aa0d2b08462e62d884241fd9b3dd910e`;
+- final fresh arrival: issue `#244`;
+- runtime: `GSCC-RUNTIME-ded6c37f3dc7c3dd634f838e`;
+- connection: `GSCC-CONN-6d1caad58d77dbd3b164344efc04f6aa`;
+- canonical GACR session: `session-5bba386248ac4d9c0e05f1a8`;
+- Q9 ACK + challenge response: PASS;
+- Q10 GSE SessionTwin → Q2 GACR → Q6/Q7/Q11/Q12: PASS;
+- actual-function F1 `github_get_repository_state`: run `37550409710 = SUCCESS`;
+- F1 receipt: `GSCC-EXPOSURE-083cf0005955022e1c19d5b8d79264a170e9d9cc7bc898a251339e9b3b92b76f`;
+- release run `37550477009 = SUCCESS`;
+- release comment `6027880258`;
+- released HEAD `f768268bf1a3f62c2e6741aecfba20d86545969c`;
+- final state: `RELEASED_TO_NORMAL_GOVERNANCE`;
+- next authority: `00_START_HERE.md`.
+
+The release is fail-closed and bound to the same per-arrival runtime, connection_ref, exact canonical GACR session, Access Grant, validated F1 exposure receipt and current HEAD. Provider-private conversation/session identifiers remained `UNAVAILABLE` and were never synthesized.
+
+Continuity is recorded in both machine and human ledgers. The IDN pre-entry lane must not be replayed for this completed arrival. Normal source/control-plane governance is now applicable and returns to the unchanged programme action `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+

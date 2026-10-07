@@ -315,25 +315,40 @@
     }
   },
   "owner_authorized_identity_session_lane": {
-    "status": "CANDIDATE_GREEN_LIVE_Q12_PENDING",
+    "status": "LIVE_COMPLETE_RELEASED_TO_NORMAL_GOVERNANCE",
     "p12_s6_unchanged": true,
     "pull_request": 229,
     "branch": "governance/per-arrival-identity-full-session-runtime",
     "governance_ci_run": 37543670685,
     "proofs": {
-      "per_arrival_connection_identity": "PASS_CI",
-      "same_arrival_continuation": "PASS_CI",
-      "gse_session_isolation": "PASS_CI",
-      "q9_ack_before_response": "PASS_CI",
-      "q10_before_q2": "PASS_CI"
+      "per_arrival_connection_identity": "PASS_LIVE",
+      "same_arrival_continuation": "PASS_LIVE",
+      "gse_session_isolation": "PASS_LIVE",
+      "q9_ack_before_response": "PASS_LIVE",
+      "q10_before_q2": "PASS_LIVE",
+      "q10_gse_session_twin": "PASS_LIVE",
+      "q2_gacr_binding": "PASS_LIVE",
+      "q12_access_grant": "PASS_LIVE",
+      "f1_actual_function_exposure": "PASS_LIVE",
+      "release_to_start_here": "PASS_LIVE"
     },
-    "live_pending": [
-      "FRESH_CONVERSATION_FIRST_TOUCH_WITH_GSCC_MINTED_IDENTITY",
-      "LIVE_Q9_ACK_RESPONSE",
-      "LIVE_Q10_GSE_SESSION_TWIN",
-      "LIVE_Q2_GACR_BINDING",
-      "LIVE_Q12_ACCESS_GRANT",
-      "LIVE_F1_ACTUAL_FUNCTION_EXPOSURE"
-    ]
+    "live_pending": [],
+    "p12_s6_resumed": false,
+    "implementation_pull_request": 229,
+    "q10_dispatch_fix_pull_request": 239,
+    "f1_surface_fix_pull_request": 241,
+    "release_pull_request": 243,
+    "release_merge": "4a71b8c0aa0d2b08462e62d884241fd9b3dd910e",
+    "final_issue": 244,
+    "final_runtime_id": "GSCC-RUNTIME-ded6c37f3dc7c3dd634f838e",
+    "final_connection_ref": "GSCC-CONN-6d1caad58d77dbd3b164344efc04f6aa",
+    "final_gacr_session_id": "session-5bba386248ac4d9c0e05f1a8",
+    "final_f1_run": 37550409710,
+    "final_f1_receipt": "GSCC-EXPOSURE-083cf0005955022e1c19d5b8d79264a170e9d9cc7bc898a251339e9b3b92b76f",
+    "final_release_run": 37550477009,
+    "final_release_comment": 6027880258,
+    "released_head": "f768268bf1a3f62c2e6741aecfba20d86545969c",
+    "next_authority": "00_START_HERE.md",
+    "next_action": "RETURN_TO_GLOBAL_PROGRAMME_P12_S6"
   }
 }

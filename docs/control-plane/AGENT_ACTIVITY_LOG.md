@@ -454,3 +454,31 @@
 - Global programme remains parked: P12-S6 not advanced; CASE 1 untouched; GMC untouched.
 - Last completed action at this checkpoint: runtime correction + durable GACR/activity attestation prepared on the governed branch.
 - Next action: validate final PR #185 head, reconcile any new runtime-only main movement, then merge only if all governed checks remain green.
+
+## Entry AAL-20261007-IDN-006-001
+
+- Agent identity: ChatGPT.
+- Workstream: `IDN_PER_ARRIVAL_SESSION_RUNTIME_LIVE_CLOSURE`.
+- Source repository: `chainsolutions-wealthtech/Governed-Repository-Template`.
+- Observed source HEAD for final release: `f768268bf1a3f62c2e6741aecfba20d86545969c`.
+- Objective: close IDN-006 with a fresh-arrival live proof through Q12, actual-function F1 and explicit release to normal governance.
+- Final fresh-arrival issue: `#244`.
+- Runtime: `GSCC-RUNTIME-ded6c37f3dc7c3dd634f838e`.
+- Connection: `GSCC-CONN-6d1caad58d77dbd3b164344efc04f6aa`.
+- Canonical GACR session: `session-5bba386248ac4d9c0e05f1a8`.
+- First Touch run: `37550225527`.
+- Q9 ACK run: `37550266592`.
+- Q9/Q10/Q12 run: `37550300562`.
+- GACR auto-attach relay: `37550326114`.
+- Q12 completion comment: `6027860755`.
+- F1 workflow: `37550409710 = SUCCESS`.
+- F1 exposure receipt: `GSCC-EXPOSURE-083cf0005955022e1c19d5b8d79264a170e9d9cc7bc898a251339e9b3b92b76f`.
+- Explicit normal-governance release workflow: `37550477009 = SUCCESS`.
+- Release comment: `6027880258`.
+- Final release state: `RELEASED_TO_NORMAL_GOVERNANCE`.
+- Next authority: `00_START_HERE.md`.
+- Provider-private conversation/session identifiers: `UNAVAILABLE`, not invented.
+- PR #243 introduced the exact-correlated release and merged at `4a71b8c0aa0d2b08462e62d884241fd9b3dd910e` after all governed checks passed.
+- IDN-006 is complete. The IDN lane is closed and must not be replayed for this arrival.
+- Unique next global action: `P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE`.
+

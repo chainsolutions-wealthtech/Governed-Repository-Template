@@ -410,7 +410,7 @@
   },
   "owner_authorized_parallel_lane": {
     "lane_id": "IDN_PER_ARRIVAL_SESSION_RUNTIME_20261007",
-    "status": "CANDIDATE_GREEN_LIVE_Q12_PENDING",
+    "status": "CLOSED_LIVE_RELEASE_PROVEN",
     "authorization_scope": "IDENTITY_SESSION_RUNTIME_ONLY",
     "global_programme_task_unchanged": "P12-S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
     "p12_s6_resumed": false,
@@ -425,10 +425,12 @@
       "ONE_GSCC_IDENTITY_ONE_GSE_SESSION_TWIN",
       "GACR_DURABLE_SESSION_ONLY_AFTER_Q10",
       "AMBIGUITY_FAILS_CLOSED",
-      "F1_REQUIRES_ACTUAL_REQUESTED_GOVERNED_FUNCTION"
+      "F1_REQUIRES_ACTUAL_REQUESTED_GOVERNED_FUNCTION",
+      "F1_RELEASE_BINDS_RUNTIME_CONNECTION_SESSION_GRANT_AND_EXACT_HEAD",
+      "RELEASE_TO_00_START_HERE_ONLY_AFTER_F1_VERIFIED"
     ],
-    "next_action": "MERGE_PR_229_AFTER_FINAL_GREEN_THEN_LIVE_PROVE_Q9_Q10_Q2_Q12_AND_F1",
-    "stop_point": "PR_229_CANDIDATE_GREEN_LIVE_Q12_NOT_YET_PROVEN",
+    "next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE",
+    "stop_point": "IDN_006_CLOSED_NORMAL_GOVERNANCE_RELEASED_RETURN_TO_GLOBAL_PROGRAMME",
     "read_first": [
       "00_GSCC_ENTRY.md",
       "docs/control-plane/CURRENT_STATE.md",
@@ -437,6 +439,19 @@
       "scripts/gscc_arrival_identity.py",
       "scripts/gscc_session_runtime.py",
       ".github/workflows/gscc-provider-first-touch-ingress.yml"
-    ]
+    ],
+    "implementation_pull_request": 229,
+    "closure_pull_request": 243,
+    "closure_merge": "4a71b8c0aa0d2b08462e62d884241fd9b3dd910e",
+    "final_issue": 244,
+    "final_runtime_id": "GSCC-RUNTIME-ded6c37f3dc7c3dd634f838e",
+    "final_connection_ref": "GSCC-CONN-6d1caad58d77dbd3b164344efc04f6aa",
+    "final_gacr_session_id": "session-5bba386248ac4d9c0e05f1a8",
+    "final_f1_run": 37550409710,
+    "final_f1_receipt": "GSCC-EXPOSURE-083cf0005955022e1c19d5b8d79264a170e9d9cc7bc898a251339e9b3b92b76f",
+    "final_release_run": 37550477009,
+    "final_release_comment": 6027880258,
+    "released_head": "f768268bf1a3f62c2e6741aecfba20d86545969c",
+    "next_authority": "00_START_HERE.md"
   }
 }

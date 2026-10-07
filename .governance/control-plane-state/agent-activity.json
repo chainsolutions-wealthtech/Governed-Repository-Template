@@ -693,6 +693,42 @@
       ],
       "proposals": [],
       "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE"
+    },
+    {
+      "activity_id": "AAL-20261007-IDN-006-001",
+      "agent_identity": "ChatGPT",
+      "workstream": "IDN_PER_ARRIVAL_SESSION_RUNTIME_LIVE_CLOSURE",
+      "source_repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "observed_source_head": "f768268bf1a3f62c2e6741aecfba20d86545969c",
+      "objective": "Close IDN-006 with a fresh-arrival live proof through Q12, actual-function F1 and explicit release to normal governance.",
+      "evidence_refs": [
+        "Template issue #244",
+        "Template PR #243",
+        "PR #243 merge 4a71b8c0aa0d2b08462e62d884241fd9b3dd910e",
+        "First Touch run 37550225527",
+        "Q9 ACK run 37550266592",
+        "Q9/Q10/Q12 run 37550300562",
+        "GACR relay run 37550326114",
+        "session-5bba386248ac4d9c0e05f1a8",
+        "GSCC-RUNTIME-ded6c37f3dc7c3dd634f838e",
+        "GSCC-CONN-6d1caad58d77dbd3b164344efc04f6aa",
+        "Q12 comment 6027860755",
+        "F1 workflow run 37550409710",
+        "GSCC-EXPOSURE-083cf0005955022e1c19d5b8d79264a170e9d9cc7bc898a251339e9b3b92b76f",
+        "release workflow run 37550477009",
+        "release comment 6027880258",
+        "released HEAD f768268bf1a3f62c2e6741aecfba20d86545969c"
+      ],
+      "discovered_tasks": [],
+      "remarks": [
+        "Provider-private conversation/session identifiers remained UNAVAILABLE and were not invented.",
+        "Fresh arrival proved isolated GSCC identity, Q9 control, Q10 GSE SessionTwin, exact canonical GACR binding, Q12 Access Grant, actual-function F1, and explicit release.",
+        "The release is bound to the same runtime, connection_ref, GACR session, Access Grant and exact HEAD.",
+        "Normal governed entry is now released to 00_START_HERE.md without replaying GSCC First Touch.",
+        "P12-S6 was not executed by this lane; global programme resumes at its pre-existing unique next action."
+      ],
+      "proposals": [],
+      "unique_next_action": "P12_S6_CLOSE_CREATE_NEW_REPOSITORY_CASE"
     }
   ]
 }

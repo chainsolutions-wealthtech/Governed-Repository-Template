@@ -87,21 +87,21 @@ This backlog captures the missing automation required so an arriving agent can b
 
 | ID | Task | Status | Dependency / note |
 |---|---|---|---|
-| IDN-001 | Define canonical identity model: PRINCIPAL ≠ AGENT ≠ CONNECTION ≠ SESSION | PLANNED | preserve current session model compatibility |
-| IDN-002 | Auto-capture authenticated GitHub actor/login/user-id and repository permission snapshot when available | PLANNED | no permission inference from memory |
-| IDN-003 | Add principal registry and stable principal identifiers | PLANNED | GitHub external identity first; extensible to other providers |
-| IDN-004 | Add connection-event registry with repository/branch/HEAD/provider/conversation-ref/timestamp | PLANNED | every arrival becomes traceable |
-| IDN-005 | Define stable governed session identity/resume rules using strongest available refs | PLANNED | preserve existing stable_session_id semantics |
-| IDN-006 | Auto-create or resume governed session after identity capture | PLANNED | fail closed on ambiguity |
-| IDN-007 | Bind session to agent role: INTAKER / SUPERVISOR / CODE_AGENT / REVIEWER | PLANNED | role never bypasses authority |
-| IDN-008 | Capture authority snapshot separately from identity/role | PLANNED | permission/authority is observed, not assumed |
-| IDN-009 | Route chronologically: identity → session → role → authority → entry action → intent → questionnaire/action flow | PLANNED | one applicable question/action at a time |
-| IDN-010 | Persist session/connection events and resume history into canonical relational memory | PLANNED | compatible with future Admin UI |
-| IDN-011 | Add CI/self-tests for create/resume/ambiguous-session/fail-closed behavior | PLANNED | non-regression gate |
-| IDN-012 | Add source-control-plane entry adapter so the template source can use the same identity/session model | PLANNED | source mode remains distinct from client local-entry |
+| IDN-001 | Define canonical identity model: PRINCIPAL ≠ AGENT ≠ CONNECTION ≠ SESSION | DONE | preserve current session model compatibility |
+| IDN-002 | Auto-capture authenticated GitHub actor/login/user-id and repository permission snapshot when available | DONE | no permission inference from memory |
+| IDN-003 | Add principal registry and stable principal identifiers | DONE | GitHub external identity first; extensible to other providers |
+| IDN-004 | Add connection-event registry with repository/branch/HEAD/provider/conversation-ref/timestamp | DONE | every arrival becomes traceable |
+| IDN-005 | Define stable governed session identity/resume rules using strongest available refs | DONE | preserve existing stable_session_id semantics |
+| IDN-006 | Auto-create or resume governed session after identity capture | DONE | live issue #244: Q9→Q10/GSE→GACR→Q12→F1→00_START_HERE release PASS |
+| IDN-007 | Bind session to agent role: INTAKER / SUPERVISOR / CODE_AGENT / REVIEWER | DONE | role never bypasses authority |
+| IDN-008 | Capture authority snapshot separately from identity/role | DONE | permission/authority is observed, not assumed |
+| IDN-009 | Route chronologically: identity → session → role → authority → entry action → intent → questionnaire/action flow | DONE | one applicable question/action at a time |
+| IDN-010 | Persist session/connection events and resume history into canonical relational memory | DONE | compatible with future Admin UI |
+| IDN-011 | Add CI/self-tests for create/resume/ambiguous-session/fail-closed behavior | DONE | non-regression gate |
+| IDN-012 | Add source-control-plane entry adapter so the template source can use the same identity/session model | DONE | source mode remains distinct from client local-entry |
 | IDN-013 | Expose identity/session state to future Governance API/Admin UI | FUTURE | only after workflow semantics validated |
 
-These items are architecture/backlog work only. They do not supersede `C1-12-F` as the unique executable task.
+IDN-001..IDN-012 are now implemented/validated; IDN-013 remains future UI/API work. The IDN lane does not supersede the global programme: `P12-S6` remains the unique executable task.
 
 
 ## Two-stage agent purpose routing backlog
