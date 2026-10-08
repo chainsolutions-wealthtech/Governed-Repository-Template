@@ -394,11 +394,54 @@ def provider_context_descriptors(session: dict) -> list[dict]:
 def project_logical_agents_docs(state: dict, sessions_doc: dict) -> list[dict]:
     changes = []
     session_index = {s.get("session_id"): s for s in sessions_doc.get("sessions", []) if s.get("session_id")}
+    sessions_by_logical_agent: dict[str, list[dict]] = {}
+    for session in sessions_doc.get("sessions", []):
+        logical_agent_id = session.get("logical_agent_id") or session.get("agent_identity")
+        if logical_agent_id:
+            sessions_by_logical_agent.setdefault(str(logical_agent_id), []).append(session)
+
     for item in state.get("items", []):
         groups: dict[str, dict] = {}
+
+        # Owner aliases are durable logical-agent metadata in the existing
+        # continuity projection. Preserve them even with zero active participants.
+        for existing in item.get("logical_agents") or []:
+            if (
+                existing.get("human_alias")
+                and existing.get("human_alias_provenance") == "OWNER_ASSIGNED"
+                and existing.get("logical_agent_id")
+            ):
+                logical_agent_id = str(existing["logical_agent_id"])
+                groups[logical_agent_id] = {
+                    "logical_agent_id": logical_agent_id,
+                    "logical_agent_id_provenance": (
+                        existing.get("logical_agent_id_provenance")
+                        or "CANONICAL_GACR_SESSION_AGENT_IDENTITY"
+                    ),
+                    "human_alias": existing.get("human_alias"),
+                    "human_alias_provenance": "OWNER_ASSIGNED",
+                    "alias_evidence_ref": existing.get("alias_evidence_ref"),
+                    "routing_evidence_ref": existing.get("routing_evidence_ref"),
+                    "reference_session_ids": sorted({
+                        str(x) for x in (existing.get("reference_session_ids") or [])
+                        if str(x).strip()
+                    }),
+                    "session_ids": [],
+                    "participant_ids": [],
+                    "scope_ids": [],
+                    "provider_contexts": [],
+                    "projection_only": True,
+                    "grants_task_authority": False,
+                    "grants_claim": False,
+                    "grants_mutation_authority": False,
+                }
+
         for participant in item.get("participants", []):
             session = session_index.get(participant.get("session_id"))
-            logical_agent_id = (session or {}).get("agent_identity")
+            logical_agent_id = (
+                (session or {}).get("logical_agent_id")
+                or (session or {}).get("agent_identity")
+            )
             if logical_agent_id:
                 participant["logical_agent_id"] = logical_agent_id
                 participant["logical_agent_id_provenance"] = "CANONICAL_GACR_SESSION_AGENT_IDENTITY"
@@ -409,6 +452,7 @@ def project_logical_agents_docs(state: dict, sessions_doc: dict) -> list[dict]:
             participant["provider_contexts"] = contexts
             if not logical_agent_id:
                 continue
+            logical_agent_id = str(logical_agent_id)
             group = groups.setdefault(logical_agent_id, {
                 "logical_agent_id": logical_agent_id,
                 "logical_agent_id_provenance": "CANONICAL_GACR_SESSION_AGENT_IDENTITY",
@@ -426,6 +470,16 @@ def project_logical_agents_docs(state: dict, sessions_doc: dict) -> list[dict]:
             group["scope_ids"].append(participant.get("scope_id"))
             group["provider_contexts"].extend(contexts)
 
+        # Once an owner alias identifies a logical agent, reconstruct all of its
+        # canonical sessions/provider contexts on cold start without promoting
+        # those sessions to continuity participants or granting authority.
+        for logical_agent_id, group in groups.items():
+            if group.get("human_alias_provenance") != "OWNER_ASSIGNED":
+                continue
+            for session in sessions_by_logical_agent.get(logical_agent_id, []):
+                group["session_ids"].append(session.get("session_id"))
+                group["provider_contexts"].extend(provider_context_descriptors(session))
+
         projected = []
         for logical_agent_id in sorted(groups):
             group = groups[logical_agent_id]
@@ -434,7 +488,8 @@ def project_logical_agents_docs(state: dict, sessions_doc: dict) -> list[dict]:
             group["scope_ids"] = sorted({x for x in group["scope_ids"] if x})
             dedup = {}
             for context in group["provider_contexts"]:
-                dedup[context["provider_context_id"]] = context
+                if context.get("provider_context_id"):
+                    dedup[context["provider_context_id"]] = context
             group["provider_contexts"] = [dedup[key] for key in sorted(dedup)]
             group["session_count"] = len(group["session_ids"])
             group["provider_context_count"] = len(group["provider_contexts"])

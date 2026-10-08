@@ -86,6 +86,99 @@ def main() -> None:
     original_claims = copy.deepcopy(claims)
     state = c.default_state()
 
+    alias_state = c.default_state()
+    alias_state["items"] = [{
+        "continuity_id": "GRT-CONT-ALIAS-01",
+        "repository": "example/governed",
+        "coordination_issue": 259,
+        "projection_only": True,
+        "participants": [],
+        "logical_agents": [
+            {
+                "logical_agent_id": "logical-forge",
+                "logical_agent_id_provenance": "CANONICAL_GACR_SESSION_AGENT_IDENTITY",
+                "human_alias": "FORGE",
+                "human_alias_provenance": "OWNER_ASSIGNED",
+                "alias_evidence_ref": "github-issue-comment:owner-forge",
+                "routing_evidence_ref": "github-issue-comment:owner-routing",
+                "reference_session_ids": ["session-forge-old"],
+                "session_ids": ["session-forge-old"],
+                "provider_contexts": [],
+                "projection_only": True,
+                "grants_task_authority": False,
+                "grants_claim": False,
+                "grants_mutation_authority": False,
+            }
+        ],
+    }]
+    alias_sessions = {
+        "sessions": [
+            {
+                "session_id": "session-forge-old",
+                "agent_identity": "logical-forge",
+                "status": "STALLED",
+                "provider": "chatgpt",
+                "provider_conversation_ref": None,
+                "connection_ref": "conn-forge-old",
+                "client_instance_id": "client-forge-old",
+                "provider_contexts": [{
+                    "provider_context_id": "GACR-PC-aaaaaaaaaaaaaaaa",
+                    "provider": "chatgpt",
+                    "connection_ref": "conn-forge-old",
+                    "provider_native_identity_status": "UNAVAILABLE",
+                    "provider_private_values_invented": False,
+                }],
+                "relay": {"state": "TAKEOVER_READY"},
+            },
+            {
+                "session_id": "session-forge-new",
+                "agent_identity": "logical-forge",
+                "status": "ACTIVE",
+                "provider": "chatgpt",
+                "provider_conversation_ref": None,
+                "connection_ref": "conn-forge-new",
+                "client_instance_id": "client-forge-new",
+                "provider_contexts": [],
+                "relay": {"state": "ACTIVE"},
+            },
+        ]
+    }
+    resolved_alias = c.resolve_logical_agent_alias_docs(
+        alias_state,
+        alias_sessions,
+        alias="forge",
+    )
+    assert_true(resolved_alias["logical_agent_id"] == "logical-forge", "owner alias resolves canonical logical agent")
+    assert_true(resolved_alias["human_alias"] == "FORGE", "alias normalization is stable")
+    assert_true(
+        [item["session_id"] for item in resolved_alias["sessions"]]
+        == ["session-forge-new", "session-forge-old"],
+        "cold-start alias resolution reconstructs all canonical sessions",
+    )
+    assert_true(resolved_alias["provider_context_count"] == 1, "provider context history follows the logical agent")
+    assert_true(resolved_alias["grants_mutation_authority"] is False, "alias resolution grants no authority")
+    expect_error(
+        lambda: c.resolve_logical_agent_alias_docs(alias_state, alias_sessions, alias="UNKNOWN"),
+        "LOGICAL_AGENT_ALIAS_UNKNOWN",
+    )
+    ambiguous_alias_state = copy.deepcopy(alias_state)
+    ambiguous_alias_state["items"][0]["logical_agents"].append({
+        "logical_agent_id": "logical-other",
+        "human_alias": "FORGE",
+        "human_alias_provenance": "OWNER_ASSIGNED",
+        "reference_session_ids": ["session-other"],
+        "session_ids": ["session-other"],
+        "provider_contexts": [],
+        "projection_only": True,
+        "grants_task_authority": False,
+        "grants_claim": False,
+        "grants_mutation_authority": False,
+    })
+    expect_error(
+        lambda: c.resolve_logical_agent_alias_docs(ambiguous_alias_state, alias_sessions, alias="FORGE"),
+        "LOGICAL_AGENT_ALIAS_AMBIGUOUS",
+    )
+
     first = c.declare_scope_docs(
         state, sessions, claims,
         repository="example/governed",

@@ -5,6 +5,92 @@
   "grants_task_authority": false,
   "grants_claim": false,
   "grants_mutation_authority": false,
-  "revision": 0,
-  "items": []
+  "revision": 1,
+  "items": [
+    {
+      "continuity_id": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "coordination_issue": 259,
+      "projection_only": true,
+      "grants_task_authority": false,
+      "grants_claim": false,
+      "grants_mutation_authority": false,
+      "participants": [],
+      "logical_agents": [
+        {
+          "logical_agent_id": "GSCC-ID-16b1f46fbab319f97b7ec43f",
+          "logical_agent_id_provenance": "CANONICAL_GACR_SESSION_AGENT_IDENTITY",
+          "human_alias": "ATLAS",
+          "human_alias_provenance": "OWNER_ASSIGNED",
+          "alias_evidence_ref": "github-issue-comment:6049566115",
+          "routing_evidence_ref": "github-issue-comment:6049593649",
+          "reference_session_ids": [
+            "session-1bb68ac942a69a77dfbb8d24"
+          ],
+          "session_ids": [
+            "session-1bb68ac942a69a77dfbb8d24"
+          ],
+          "participant_ids": [],
+          "scope_ids": [],
+          "provider_contexts": [],
+          "session_count": 1,
+          "provider_context_count": 0,
+          "projection_only": true,
+          "grants_task_authority": false,
+          "grants_claim": false,
+          "grants_mutation_authority": false
+        },
+        {
+          "logical_agent_id": "GSCC-ID-b484944fc30fe55b88948f9f",
+          "logical_agent_id_provenance": "CANONICAL_GACR_SESSION_AGENT_IDENTITY",
+          "human_alias": "FORGE",
+          "human_alias_provenance": "OWNER_ASSIGNED",
+          "alias_evidence_ref": "github-issue-comment:6049566115",
+          "routing_evidence_ref": "github-issue-comment:6049593649",
+          "reference_session_ids": [
+            "session-ba6f8db786eb9a8aa11865f2"
+          ],
+          "session_ids": [
+            "session-ba6f8db786eb9a8aa11865f2"
+          ],
+          "participant_ids": [],
+          "scope_ids": [],
+          "provider_contexts": [],
+          "session_count": 1,
+          "provider_context_count": 0,
+          "projection_only": true,
+          "grants_task_authority": false,
+          "grants_claim": false,
+          "grants_mutation_authority": false
+        },
+        {
+          "logical_agent_id": "GSCC-ID-21df6eb30456b56be12144bf",
+          "logical_agent_id_provenance": "CANONICAL_GACR_SESSION_AGENT_IDENTITY",
+          "human_alias": "SENTINEL",
+          "human_alias_provenance": "OWNER_ASSIGNED",
+          "alias_evidence_ref": "github-issue-comment:6049566115",
+          "routing_evidence_ref": "github-issue-comment:6049593649",
+          "reference_session_ids": [
+            "session-3320926e66a52ff8f4396ed2"
+          ],
+          "session_ids": [
+            "session-3320926e66a52ff8f4396ed2"
+          ],
+          "participant_ids": [],
+          "scope_ids": [],
+          "provider_contexts": [],
+          "session_count": 1,
+          "provider_context_count": 0,
+          "projection_only": true,
+          "grants_task_authority": false,
+          "grants_claim": false,
+          "grants_mutation_authority": false
+        }
+      ],
+      "events": [],
+      "last_sequence": 0,
+      "owner_alias_requirement_ref": "github-issue-comment:6049566115",
+      "owner_alias_routing_requirement_ref": "github-issue-comment:6049593649"
+    }
+  ]
 }

@@ -371,6 +371,61 @@ def main():
     assert any(x.get("state") == "PARTICIPANT_RUNTIME_PROJECTED" for x in projection_tick["changes"])
     assert any(x.get("state") == "LOGICAL_AGENT_PROJECTION_UPDATED" for x in projection_tick["changes"])
 
+    cold_alias_state = {
+        "schema_version": "1.0.0",
+        "authority": "DERIVED_GACR_COORDINATION_PROJECTION",
+        "projection_only": True,
+        "grants_task_authority": False,
+        "grants_claim": False,
+        "grants_mutation_authority": False,
+        "revision": 1,
+        "items": [{
+            "continuity_id": "GRT-CONT-ALIAS-COLD",
+            "repository": "example/governed",
+            "coordination_issue": 259,
+            "projection_only": True,
+            "participants": [],
+            "logical_agents": [{
+                "logical_agent_id": "agent-shared",
+                "logical_agent_id_provenance": "CANONICAL_GACR_SESSION_AGENT_IDENTITY",
+                "human_alias": "FORGE",
+                "human_alias_provenance": "OWNER_ASSIGNED",
+                "alias_evidence_ref": "github-issue-comment:owner",
+                "routing_evidence_ref": "github-issue-comment:routing",
+                "reference_session_ids": ["session-a"],
+                "session_ids": ["session-a"],
+                "provider_contexts": [],
+                "projection_only": True,
+                "grants_task_authority": False,
+                "grants_claim": False,
+                "grants_mutation_authority": False,
+            }],
+            "events": [],
+            "last_sequence": 0,
+        }],
+    }
+    cold_sessions = {
+        "sessions": [
+            session("session-a", agent="agent-shared"),
+            session("session-a2", agent="agent-shared"),
+        ]
+    }
+    cold_sessions["sessions"][1]["provider_contexts"] = [{
+        "provider_context_id": "GACR-PC-bbbbbbbbbbbbbbbb",
+        "provider": "chatgpt",
+        "connection_ref": "connection-history-a2",
+        "provider_native_identity_status": "UNAVAILABLE",
+        "provider_private_values_invented": False,
+    }]
+    bus.project_logical_agents_docs(cold_alias_state, cold_sessions)
+    cold_group = cold_alias_state["items"][0]["logical_agents"][0]
+    assert cold_group["human_alias"] == "FORGE"
+    assert cold_group["human_alias_provenance"] == "OWNER_ASSIGNED"
+    assert cold_group["session_ids"] == ["session-a", "session-a2"]
+    assert cold_group["session_count"] == 2
+    assert cold_group["provider_context_count"] >= 2
+    assert cold_group["grants_mutation_authority"] is False
+
     supervision_state = base_state()
     supervision_sessions = {"sessions": [
         session("session-a", silence_seconds=121),

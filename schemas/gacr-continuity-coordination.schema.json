@@ -448,6 +448,34 @@
                 "logical_agent_id_provenance": {
                   "type": "string"
                 },
+                "human_alias": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_-]{1,63}$"
+                },
+                "human_alias_provenance": {
+                  "enum": [
+                    "OWNER_ASSIGNED"
+                  ]
+                },
+                "alias_evidence_ref": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "routing_evidence_ref": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "reference_session_ids": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                },
                 "session_ids": {
                   "type": "array",
                   "uniqueItems": true,

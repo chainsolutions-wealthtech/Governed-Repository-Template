@@ -28,6 +28,8 @@ ACTIVE_SESSION_STATES = {"ACTIVE"}
 ACTIVE_RELAY_STATES = {"ACTIVE"}
 SAFE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,191}$")
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
+LOGICAL_AGENT_ALIAS = re.compile(r"^[A-Za-z][A-Za-z0-9_-]{1,63}$")
+OWNER_ALIAS_PROVENANCE = "OWNER_ASSIGNED"
 
 
 def now_iso() -> str:
@@ -73,6 +75,142 @@ def coordination_state_ref(state: dict, continuity_id: str) -> str:
     revision = int(state.get("revision", 0))
     raw = f"{continuity_id}|revision:{revision}".encode("utf-8")
     return "GACR-CS-" + hashlib.sha256(raw).hexdigest()[:16]
+
+
+def normalize_logical_agent_alias(value: str) -> str:
+    alias = str(value or "").strip()
+    if not LOGICAL_AGENT_ALIAS.fullmatch(alias):
+        raise ValueError("CONTINUITY_COORDINATION_FAILED: invalid logical_agent_alias")
+    return alias.upper()
+
+
+def resolve_logical_agent_alias_docs(
+    state: dict,
+    sessions_doc: dict,
+    *,
+    alias: str,
+    continuity_id: str | None = None,
+) -> dict:
+    alias_key = normalize_logical_agent_alias(alias)
+    scoped_continuity_id = require_id("continuity_id", continuity_id) if continuity_id else None
+    matches: list[dict] = []
+    invalid_provenance = []
+
+    for item in state.get("items", []):
+        if scoped_continuity_id and item.get("continuity_id") != scoped_continuity_id:
+            continue
+        for logical_agent in item.get("logical_agents") or []:
+            stored_alias = logical_agent.get("human_alias")
+            if not stored_alias:
+                continue
+            try:
+                stored_key = normalize_logical_agent_alias(stored_alias)
+            except ValueError:
+                continue
+            if stored_key != alias_key:
+                continue
+            provenance = logical_agent.get("human_alias_provenance")
+            if provenance != OWNER_ALIAS_PROVENANCE:
+                invalid_provenance.append({
+                    "continuity_id": item.get("continuity_id"),
+                    "logical_agent_id": logical_agent.get("logical_agent_id"),
+                    "human_alias_provenance": provenance,
+                })
+                continue
+            logical_agent_id = str(logical_agent.get("logical_agent_id") or "").strip()
+            if not logical_agent_id:
+                continue
+            matches.append({
+                "continuity_id": item.get("continuity_id"),
+                "coordination_issue": item.get("coordination_issue"),
+                "repository": item.get("repository"),
+                "logical_agent_id": logical_agent_id,
+                "logical_agent_id_provenance": logical_agent.get("logical_agent_id_provenance"),
+                "human_alias": stored_key,
+                "human_alias_provenance": provenance,
+                "alias_evidence_ref": logical_agent.get("alias_evidence_ref"),
+                "routing_evidence_ref": logical_agent.get("routing_evidence_ref"),
+                "reference_session_ids": sorted({
+                    str(x) for x in (logical_agent.get("reference_session_ids") or [])
+                    if str(x).strip()
+                }),
+            })
+
+    if invalid_provenance and not matches:
+        raise ValueError("LOGICAL_AGENT_ALIAS_UNTRUSTED: owner-assigned provenance required")
+    if not matches:
+        raise ValueError(f"LOGICAL_AGENT_ALIAS_UNKNOWN: {alias_key}")
+
+    logical_ids = sorted({item["logical_agent_id"] for item in matches})
+    if len(logical_ids) != 1:
+        raise ValueError(
+            "LOGICAL_AGENT_ALIAS_AMBIGUOUS: "
+            + alias_key
+            + " -> "
+            + ",".join(logical_ids)
+        )
+
+    logical_agent_id = logical_ids[0]
+    canonical_sessions = []
+    provider_contexts = []
+    for session in sessions_doc.get("sessions", []):
+        session_logical_id = session.get("logical_agent_id") or session.get("agent_identity")
+        if session_logical_id != logical_agent_id:
+            continue
+        contexts = [
+            dict(context)
+            for context in (session.get("provider_contexts") or [])
+            if isinstance(context, dict)
+        ]
+        canonical_sessions.append({
+            "session_id": session.get("session_id"),
+            "status": session.get("status"),
+            "relay_state": (session.get("relay") or {}).get("state"),
+            "provider": session.get("provider"),
+            "provider_conversation_ref_status": (
+                "PRESENT" if session.get("provider_conversation_ref") else "UNAVAILABLE"
+            ),
+            "connection_ref": session.get("connection_ref"),
+            "client_instance_id": session.get("client_instance_id"),
+            "provider_context_count": len(contexts),
+        })
+        for context in contexts:
+            value = dict(context)
+            value["session_id"] = session.get("session_id")
+            value["provider_private_values_invented"] = False
+            provider_contexts.append(value)
+
+    canonical_sessions.sort(key=lambda item: str(item.get("session_id") or ""))
+    provider_contexts.sort(
+        key=lambda item: (
+            str(item.get("session_id") or ""),
+            str(item.get("provider_context_id") or ""),
+        )
+    )
+    reference_session_ids = sorted({
+        ref
+        for match in matches
+        for ref in match.get("reference_session_ids") or []
+    })
+    return {
+        "status": "LOGICAL_AGENT_ALIAS_RESOLVED",
+        "human_alias": alias_key,
+        "human_alias_provenance": OWNER_ALIAS_PROVENANCE,
+        "logical_agent_id": logical_agent_id,
+        "continuity_memberships": sorted(
+            matches,
+            key=lambda item: (str(item.get("continuity_id") or ""), int(item.get("coordination_issue") or 0)),
+        ),
+        "reference_session_ids": reference_session_ids,
+        "sessions": canonical_sessions,
+        "provider_contexts": provider_contexts,
+        "session_count": len(canonical_sessions),
+        "provider_context_count": len(provider_contexts),
+        "projection_only": True,
+        "grants_task_authority": False,
+        "grants_claim": False,
+        "grants_mutation_authority": False,
+    }
 
 
 def normalize_domains(values: list[str] | None) -> list[str]:
@@ -392,6 +530,18 @@ def command_status(a: argparse.Namespace) -> None:
     }, indent=2, ensure_ascii=False))
 
 
+def command_resolve_alias(a: argparse.Namespace) -> None:
+    state = read_json(STATE_PATH, default_state())
+    sessions = read_json(SESSIONS_PATH, {"sessions": []})
+    result = resolve_logical_agent_alias_docs(
+        state,
+        sessions,
+        alias=a.alias,
+        continuity_id=a.continuity_id,
+    )
+    print(json.dumps(result, indent=2, ensure_ascii=False))
+
+
 def parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="GACR shared continuity coordination projection")
     sub = p.add_subparsers(dest="command", required=True)
@@ -422,6 +572,11 @@ def parser() -> argparse.ArgumentParser:
     status = sub.add_parser("status")
     status.add_argument("--continuity-id", required=True)
     status.set_defaults(fn=command_status)
+
+    resolve_alias = sub.add_parser("resolve-alias")
+    resolve_alias.add_argument("--alias", required=True)
+    resolve_alias.add_argument("--continuity-id")
+    resolve_alias.set_defaults(fn=command_resolve_alias)
     return p
 
 
