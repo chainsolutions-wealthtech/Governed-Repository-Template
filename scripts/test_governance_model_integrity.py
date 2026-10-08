@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
+import copy
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -14,6 +16,150 @@ def load(path: Path) -> dict:
 
 def fail(message: str) -> None:
     raise SystemExit(f"GOVERNANCE_MODEL_INTEGRITY_FAILED: {message}")
+
+
+def validate_g01_materialized(blueprint: dict, artifact_by_id: dict, produced_copy: dict) -> None:
+    decisions = (ROOT / "docs/control-plane/DECISIONS_LOG.md").read_text(encoding="utf-8")
+    if "### CPD-076 —" not in decisions:
+        fail("CPD-076 missing for GMC-G01 materialization")
+
+    g01 = next((g for g in blueprint.get("groups") or [] if g.get("group_id") == "GMC-G01"), None)
+    if not g01:
+        fail("GMC-G01 missing")
+    if g01.get("knowledge_materialization_authorized") is not True:
+        fail("GMC-G01 materialization authorization missing")
+    if g01.get("knowledge_materialization_decision_id") != "CPD-076":
+        fail("GMC-G01 materialization decision must be CPD-076")
+    if g01.get("implementation_authorized") is not False:
+        fail("GMC-G01 general implementation authority must remain false")
+
+    docs = {}
+    for artifact_id, path in G01_GMA_PATHS.items():
+        if not path.exists():
+            fail(f"materialized GMA body missing: {path.relative_to(ROOT)}")
+        doc = load(path)
+        docs[artifact_id] = doc
+
+        if doc.get("schema_version") != "gma-artifact/v1":
+            fail(f"{artifact_id} schema_version invalid")
+        if doc.get("artifact_id") != artifact_id:
+            fail(f"{artifact_id} body identity mismatch")
+        if doc.get("artifact_version") != "v1":
+            fail(f"{artifact_id} initial artifact_version must be v1")
+        if doc.get("producer") != "GMC-G01":
+            fail(f"{artifact_id} producer mismatch")
+        if doc.get("content_ref") != str(path.relative_to(ROOT)):
+            fail(f"{artifact_id} content_ref mismatch")
+        if doc.get("status") not in {"PRODUCED", "VALIDATED"}:
+            fail(f"{artifact_id} body status invalid")
+        if doc.get("validation_state") not in {"PENDING_VALIDATION", "VALIDATED"}:
+            fail(f"{artifact_id} validation_state invalid")
+
+        representation = doc.get("representation") or {}
+        if representation.get("decision_id") != "CPD-076":
+            fail(f"{artifact_id} representation decision mismatch")
+        if representation.get("class") != "SOURCE_ONLY_VERSIONED_BODY_WITH_EXISTING_REFERENCE_PROJECTION":
+            fail(f"{artifact_id} representation class invalid")
+        if representation.get("encoding") != "JSON" or representation.get("package_unit") != "ONE_DOCUMENT_PER_GMA_ARTIFACT":
+            fail(f"{artifact_id} packaging contract invalid")
+        if representation.get("authority_scope") != "SOURCE_ONLY":
+            fail(f"{artifact_id} must remain SOURCE_ONLY")
+        if representation.get("implementation_authority_granted") is not False:
+            fail(f"{artifact_id} must not grant implementation authority")
+
+        subject = doc.get("subject") or {}
+        if subject.get("repository") != "chainsolutions-wealthtech/Governed-Repository-Template":
+            fail(f"{artifact_id} subject repository mismatch")
+        if not re.fullmatch(r"[0-9a-f]{40}", str(subject.get("head_sha") or "")):
+            fail(f"{artifact_id} subject HEAD invalid")
+        if subject.get("work_package") != "GMC-G01":
+            fail(f"{artifact_id} work package mismatch")
+
+        digest = doc.get("content_digest") or {}
+        if digest.get("algorithm") != "sha256":
+            fail(f"{artifact_id} digest algorithm invalid")
+        digest_doc = copy.deepcopy(doc)
+        digest_doc.setdefault("content_digest", {})["value"] = None
+        canonical = json.dumps(digest_doc, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+        actual_digest = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+        if digest.get("value") != actual_digest:
+            fail(f"{artifact_id} content digest mismatch")
+
+        registry = artifact_by_id.get(artifact_id) or {}
+        produced = produced_copy.get(artifact_id) or {}
+        for projection_name, projection in (("knowledge_artifacts", registry), ("produced_artifacts", produced)):
+            if projection.get("content_ref") != str(path.relative_to(ROOT)):
+                fail(f"{artifact_id} {projection_name} content_ref mismatch")
+            if projection.get("status") != doc.get("status"):
+                fail(f"{artifact_id} {projection_name} status mismatch")
+            if projection.get("validation_state") != doc.get("validation_state"):
+                fail(f"{artifact_id} {projection_name} validation state mismatch")
+            if projection.get("artifact_version") != doc.get("artifact_version"):
+                fail(f"{artifact_id} {projection_name} version mismatch")
+            if (projection.get("content_digest") or {}).get("value") != digest.get("value"):
+                fail(f"{artifact_id} {projection_name} digest mismatch")
+            if projection.get("materialization_decision_id") != "CPD-076":
+                fail(f"{artifact_id} {projection_name} materialization decision mismatch")
+
+        if sorted(doc.get("consumed_by") or []) != sorted(registry.get("consumed_by") or []):
+            fail(f"{artifact_id} body consumers diverge from blueprint")
+        if doc.get("validation_state") == "VALIDATED" and not (doc.get("validation_evidence") or []):
+            fail(f"{artifact_id} VALIDATED requires validation evidence")
+
+    matrix = docs["GMA-MODEL-BOUNDARY-MATRIX"]
+    taxonomy = docs["GMA-MODEL-CLASSIFICATION-TAXONOMY"]
+    unresolved = docs["GMA-UNRESOLVED-BOUNDARY-ITEMS"]
+
+    entries = (matrix.get("body") or {}).get("entries") or []
+    if not entries:
+        fail("GMA boundary matrix has no entries")
+    matrix_ids = [entry.get("boundary_item_id") for entry in entries]
+    if len(matrix_ids) != len(set(matrix_ids)):
+        fail("GMA boundary matrix has duplicate boundary_item_id")
+
+    unresolved_refs = set()
+    for entry in entries:
+        classes = set(entry.get("classifications") or [])
+        if not classes or not classes <= G01_ALLOWED_CLASSES:
+            fail(f"invalid GMA classifications for {entry.get('boundary_item_id')}: {sorted(classes)}")
+        state = entry.get("resolution_state")
+        if state not in G01_ALLOWED_RESOLUTION_STATES:
+            fail(f"invalid GMA resolution state for {entry.get('boundary_item_id')}: {state}")
+        if not (entry.get("provenance") or []):
+            fail(f"GMA matrix provenance missing for {entry.get('boundary_item_id')}")
+        if state == "UNRESOLVED":
+            ref = entry.get("unresolved_ref")
+            prefix = "GMA-UNRESOLVED-BOUNDARY-ITEMS#"
+            if not isinstance(ref, str) or not ref.startswith(prefix):
+                fail(f"unresolved matrix entry lacks reciprocal unresolved_ref: {entry.get('boundary_item_id')}")
+            unresolved_refs.add(ref[len(prefix):])
+
+    classes = (taxonomy.get("body") or {}).get("classes") or []
+    class_names = {item.get("name") for item in classes}
+    if class_names != G01_ALLOWED_CLASSES:
+        fail(f"GMA taxonomy classes invalid: {sorted(class_names)}")
+    if any(not (item.get("provenance") or []) for item in classes):
+        fail("GMA taxonomy class provenance incomplete")
+
+    resolution_states = {
+        item.get("name") for item in (taxonomy.get("body") or {}).get("resolution_states") or []
+    }
+    if resolution_states != G01_ALLOWED_RESOLUTION_STATES:
+        fail(f"GMA taxonomy resolution states invalid: {sorted(resolution_states)}")
+    if len((taxonomy.get("body") or {}).get("cross_cutting_invariants") or []) < 12:
+        fail("GMA taxonomy must preserve all established cross-cutting invariants")
+
+    unresolved_items = (unresolved.get("body") or {}).get("items") or []
+    unresolved_ids = {item.get("unresolved_id") for item in unresolved_items}
+    if None in unresolved_ids or len(unresolved_ids) != len(unresolved_items):
+        fail("GMA unresolved IDs missing or duplicated")
+    if unresolved_refs != unresolved_ids:
+        fail(f"GMA unresolved reciprocity mismatch matrix={sorted(unresolved_refs)} items={sorted(unresolved_ids)}")
+    for item in unresolved_items:
+        if not (item.get("provenance") or []):
+            fail(f"GMA unresolved provenance missing for {item.get('unresolved_id')}")
+        if item.get("blocking_effect") == "EXIT_BLOCKING":
+            fail(f"GMC-G01 critical unresolved blocker remains: {item.get('unresolved_id')}")
 
 def main() -> None:
     if not (ROOT/".template-source").exists():
@@ -95,6 +241,8 @@ def main() -> None:
         fail("projection integrity canonical source is invalid")
     if integrity.get("fail_closed_on_divergence") is not True:
         fail("projection integrity must fail closed")
+
+    validate_g01_materialized(blueprint, artifact_by_id, produced_copy)
 
     current_revision = catalogue.get("current_revision")
     revision = catalogue.get("revision") or {}
