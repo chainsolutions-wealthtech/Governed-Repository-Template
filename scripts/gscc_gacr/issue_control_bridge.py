@@ -34,6 +34,7 @@ VERIFIED_CONTROL_CAPABILITIES = ["COMMAND_RECEIVE", "COMMAND_ACK", "CHALLENGE_RE
 CONTROL_MODE = "GSCC_CONTROL_CHANNEL"
 CONTINUITY_DISPATCH_KINDS = {"CONTINUITY_EVENT", "CONTINUITY_SUPERVISION_ALERT"}
 CHALLENGE_STATUSES = {"ACK", "BUSY", "IDLE", "CHECKPOINTING", "TERMINATING", "UNSUPPORTED"}
+MONOTONIC_TERMINAL_STATUSES = {"ACK_TIMEOUT", "EXPIRED", "FALLBACK_POLL_REQUIRED"}
 
 
 def _now() -> datetime:
@@ -290,11 +291,46 @@ def _validate_common(item: dict[str, Any], payload: dict[str, Any], observed: da
     for key in ("command_id", "correlation_id"):
         if payload.get(key) != command.get(key):
             raise ValueError(f"{key} mismatch")
+    if item.get("status") in MONOTONIC_TERMINAL_STATUSES:
+        return command
     expiry = _parse(item.get("expires_at") or command.get("expires_at"))
     if expiry is None or observed > expiry:
         item["status"] = "EXPIRED"
         raise ValueError("control challenge expired")
     return command
+
+
+def _record_late_control_event(
+    store: dict[str, Any],
+    item: dict[str, Any],
+    *,
+    event: str,
+    evidence_ref: str,
+    observed: datetime,
+    payload: dict[str, Any],
+) -> dict[str, Any]:
+    audit = {
+        "event": event,
+        "terminal_status": item.get("status"),
+        "evidence_ref": evidence_ref,
+        "observed_at": _iso(observed),
+        "authoritative": False,
+        "fresh_liveness": False,
+    }
+    if event == "command_ack":
+        audit["delivery_state"] = payload.get("delivery_state")
+    elif event == "challenge_response":
+        audit["challenge_status"] = payload.get("challenge_status")
+    item.setdefault("late_control_events", []).append(audit)
+    store["revision"] = int(store.get("revision", 0)) + 1
+    return {
+        "status": item.get("status"),
+        "dispatch_id": item.get("dispatch_id"),
+        "late": True,
+        "authoritative": False,
+        "fresh_liveness": False,
+        "audit": deepcopy(audit),
+    }
 
 
 def apply_host_control_event(
@@ -317,6 +353,15 @@ def apply_host_control_event(
         state = str(payload.get("delivery_state") or "")
         if state not in {"ACKNOWLEDGED", "UNSUPPORTED"}:
             raise ValueError("unsupported command ACK delivery state")
+        if item.get("status") in MONOTONIC_TERMINAL_STATUSES:
+            return _record_late_control_event(
+                store,
+                item,
+                event=event,
+                evidence_ref=evidence_ref,
+                observed=observed,
+                payload=payload,
+            )
         ack = {
             "delivery_state": state,
             "evidence_ref": evidence_ref,
@@ -340,6 +385,15 @@ def apply_host_control_event(
     status = str(payload.get("challenge_status") or "")
     if status not in CHALLENGE_STATUSES:
         raise ValueError("unsupported challenge status")
+    if item.get("status") in MONOTONIC_TERMINAL_STATUSES:
+        return _record_late_control_event(
+            store,
+            item,
+            event=event,
+            evidence_ref=evidence_ref,
+            observed=observed,
+            payload=payload,
+        )
     if item.get("response"):
         return {
             "status": "ALREADY_COMPLETED",
