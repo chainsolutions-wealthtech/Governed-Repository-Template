@@ -85,7 +85,7 @@
         {
           "task_id": "GMC-G01-T01",
           "title": "Recenser toutes les autorités et artefacts de gouvernance connus.",
-          "status": "DONE",
+          "status": "PLANNED",
           "planning_only": true,
           "implementation_authorized": false,
           "depends_on": [],
@@ -101,21 +101,19 @@
           "control": {
             "control_id": "GMC-G01-T01-CONTROL",
             "pass_condition": "Task scope is complete; provenance is complete; conflicts/unknowns are explicit; no silent inference; task result is usable by the next task or exit gate.",
-            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER",
-            "result": "PASS"
+            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER"
           },
           "intermediate_result": {
             "result_id": "GMC-G01-T01-RESULT",
             "persistent_by_default": false,
             "promotion_rule": "Promote into a declared work-package knowledge artifact only after group validation.",
             "required_provenance": true
-          },
-          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
+          }
         },
         {
           "task_id": "GMC-G01-T02",
           "title": "Classifier chaque artefact/règle en MODEL, APPLICATION_STRATEGY, RUNTIME_EXECUTION, PROJECTION ou UNRESOLVED.",
-          "status": "DONE",
+          "status": "PLANNED",
           "planning_only": true,
           "implementation_authorized": false,
           "depends_on": [
@@ -133,21 +131,19 @@
           "control": {
             "control_id": "GMC-G01-T02-CONTROL",
             "pass_condition": "Task scope is complete; provenance is complete; conflicts/unknowns are explicit; no silent inference; task result is usable by the next task or exit gate.",
-            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER",
-            "result": "PASS"
+            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER"
           },
           "intermediate_result": {
             "result_id": "GMC-G01-T02-RESULT",
             "persistent_by_default": false,
             "promotion_rule": "Promote into a declared work-package knowledge artifact only after group validation.",
             "required_provenance": true
-          },
-          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
+          }
         },
         {
           "task_id": "GMC-G01-T03",
           "title": "Inventorier les sémantiques communes enfermées ou dupliquées dans un seul cas.",
-          "status": "DONE",
+          "status": "PLANNED",
           "planning_only": true,
           "implementation_authorized": false,
           "depends_on": [
@@ -165,21 +161,19 @@
           "control": {
             "control_id": "GMC-G01-T03-CONTROL",
             "pass_condition": "Task scope is complete; provenance is complete; conflicts/unknowns are explicit; no silent inference; task result is usable by the next task or exit gate.",
-            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER",
-            "result": "PASS"
+            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER"
           },
           "intermediate_result": {
             "result_id": "GMC-G01-T03-RESULT",
             "persistent_by_default": false,
             "promotion_rule": "Promote into a declared work-package knowledge artifact only after group validation.",
             "required_provenance": true
-          },
-          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
+          }
         },
         {
           "task_id": "GMC-G01-T04",
           "title": "Cartographier la frontière source-control-plane versus surface distribuée aux clients.",
-          "status": "DONE",
+          "status": "PLANNED",
           "planning_only": true,
           "implementation_authorized": false,
           "depends_on": [
@@ -197,21 +191,19 @@
           "control": {
             "control_id": "GMC-G01-T04-CONTROL",
             "pass_condition": "Task scope is complete; provenance is complete; conflicts/unknowns are explicit; no silent inference; task result is usable by the next task or exit gate.",
-            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER",
-            "result": "PASS"
+            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER"
           },
           "intermediate_result": {
             "result_id": "GMC-G01-T04-RESULT",
             "persistent_by_default": false,
             "promotion_rule": "Promote into a declared work-package knowledge artifact only after group validation.",
             "required_provenance": true
-          },
-          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
+          }
         },
         {
           "task_id": "GMC-G01-T05",
           "title": "Séparer données de définition réutilisables et données d'exécution concrètes.",
-          "status": "DONE",
+          "status": "PLANNED",
           "planning_only": true,
           "implementation_authorized": false,
           "depends_on": [
@@ -229,21 +221,19 @@
           "control": {
             "control_id": "GMC-G01-T05-CONTROL",
             "pass_condition": "Task scope is complete; provenance is complete; conflicts/unknowns are explicit; no silent inference; task result is usable by the next task or exit gate.",
-            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER",
-            "result": "PASS"
+            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER"
           },
           "intermediate_result": {
             "result_id": "GMC-G01-T05-RESULT",
             "persistent_by_default": false,
             "promotion_rule": "Promote into a declared work-package knowledge artifact only after group validation.",
             "required_provenance": true
-          },
-          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
+          }
         },
         {
           "task_id": "GMC-G01-T06",
           "title": "Identifier contradictions, chevauchements et éléments sans propriétaire canonique.",
-          "status": "DONE",
+          "status": "PLANNED",
           "planning_only": true,
           "implementation_authorized": false,
           "depends_on": [
@@ -261,21 +251,19 @@
           "control": {
             "control_id": "GMC-G01-T06-CONTROL",
             "pass_condition": "Task scope is complete; provenance is complete; conflicts/unknowns are explicit; no silent inference; task result is usable by the next task or exit gate.",
-            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER",
-            "result": "PASS"
+            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER"
           },
           "intermediate_result": {
             "result_id": "GMC-G01-T06-RESULT",
             "persistent_by_default": false,
             "promotion_rule": "Promote into a declared work-package knowledge artifact only after group validation.",
             "required_provenance": true
-          },
-          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
+          }
         },
         {
           "task_id": "GMC-G01-T07",
           "title": "Produire MODEL_BOUNDARY_MATRIX avec provenance.",
-          "status": "DONE",
+          "status": "PLANNED",
           "planning_only": true,
           "implementation_authorized": false,
           "depends_on": [
@@ -293,21 +281,19 @@
           "control": {
             "control_id": "GMC-G01-T07-CONTROL",
             "pass_condition": "Task scope is complete; provenance is complete; conflicts/unknowns are explicit; no silent inference; task result is usable by the next task or exit gate.",
-            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER",
-            "result": "PASS"
+            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER"
           },
           "intermediate_result": {
             "result_id": "GMC-G01-T07-RESULT",
             "persistent_by_default": false,
             "promotion_rule": "Promote into a declared work-package knowledge artifact only after group validation.",
             "required_provenance": true
-          },
-          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
+          }
         },
         {
           "task_id": "GMC-G01-T08",
           "title": "Valider la matrice contre CP-ARCH-001, CP-GOVMODEL-001 et les décisions.",
-          "status": "DONE",
+          "status": "PLANNED",
           "planning_only": true,
           "implementation_authorized": false,
           "depends_on": [
@@ -325,16 +311,14 @@
           "control": {
             "control_id": "GMC-G01-T08-CONTROL",
             "pass_condition": "Task scope is complete; provenance is complete; conflicts/unknowns are explicit; no silent inference; task result is usable by the next task or exit gate.",
-            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER",
-            "result": "PASS"
+            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER"
           },
           "intermediate_result": {
             "result_id": "GMC-G01-T08-RESULT",
             "persistent_by_default": false,
             "promotion_rule": "Promote into a declared work-package knowledge artifact only after group validation.",
             "required_provenance": true
-          },
-          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
+          }
         }
       ],
       "expected_results": [
@@ -527,7 +511,9 @@
           "result": "PASS",
           "evidence_ref": "github-actions:37712711922/job/113102076849"
         }
-      ]
+      ],
+      "validated_analysis_promoted_via": "CPD-076",
+      "atomic_task_status_semantics": "BLUEPRINT_PLANNING_DEFINITION_PRESERVED_UNTIL_CANONICAL_WORK_POINTER_TRANSITION"
     },
     {
       "group_id": "GMC-G02",
