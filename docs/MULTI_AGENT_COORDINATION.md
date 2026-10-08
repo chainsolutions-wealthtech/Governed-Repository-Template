@@ -429,3 +429,31 @@ keeps its own connection/runtime surface and, when actually supplied, separate c
 facts such as connector app id, public client id, installation id and connector slug.
 Provider-native conversation references remain separate fields and remain `UNAVAILABLE`
 when the provider does not expose them.
+
+
+### Logical-agent capacity aggregation
+
+Capacity dispatch does not treat every canonical session as an automatically independent
+worker when several sessions belong to the same logical agent.
+
+The capacity key is derived only from canonical GACR identity evidence:
+
+```text
+session.logical_agent_id
+or session.agent_identity
+→ shared logical-agent capacity key
+
+no canonical logical identity
+→ session-local capacity key
+```
+
+Provider family, GitHub actor, connector app/installation, repository, continuity ID, or
+runtime surface alone never establish logical-agent sameness.
+
+Claims and leases remain session-scoped. However, for automatic work offers, sibling
+sessions sharing one canonical logical-agent identity also share the existing automatic
+parallel-offer ceiling. An active claim or in-flight action on one sibling therefore
+consumes logical-agent automatic capacity and cannot be bypassed by opening another
+chat/runtime session. The dispatcher may still choose the compatible sibling session
+whose declared role/capabilities fit a work item; this aggregation grants no claim,
+mutation authority, or provider-level limit inference.
