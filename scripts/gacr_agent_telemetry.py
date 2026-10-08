@@ -1216,6 +1216,21 @@ def _correlation_result(
         "evaluations": evaluated or [],
     }
 
+def _session_direct_values(session: dict, key: str) -> set[str]:
+    values: set[str] = set()
+    primary = session.get(key)
+    if primary not in (None, ""):
+        values.add(str(primary))
+    if key in {"provider_conversation_ref", "client_instance_id", "connection_ref"}:
+        for context in session.get("provider_contexts") or []:
+            if not isinstance(context, dict):
+                continue
+            value = context.get(key)
+            if value not in (None, "", UNAVAILABLE):
+                values.add(str(value))
+    return values
+
+
 def correlate_beacon(beacon: dict, sessions_doc: dict, claims_doc: dict | None = None) -> dict:
     """Categorical, fail-closed Correlator.
 
@@ -1250,7 +1265,7 @@ def correlate_beacon(beacon: dict, sessions_doc: dict, claims_doc: dict | None =
         supplied_direct.append((beacon_key, session_key, value, reason))
         matches = {
             session.get("session_id") for session in live
-            if session.get(session_key) not in (None, "") and str(session.get(session_key)) == str(value)
+            if str(value) in _session_direct_values(session, session_key)
         }
         matches.discard(None)
         if matches:
@@ -1282,8 +1297,8 @@ def correlate_beacon(beacon: dict, sessions_doc: dict, claims_doc: dict | None =
         if _specific_provider_conflict(beacon.get("provider"), target):
             conflicts.append("PROVIDER_CONFLICT")
         for beacon_key, session_key, value, _ in supplied_direct:
-            target_value = target.get(session_key)
-            if target_value not in (None, "") and str(target_value) != str(value):
+            target_values = _session_direct_values(target, session_key)
+            if target_values and str(value) not in target_values:
                 conflicts.append(f"{beacon_key.upper()}_CONFLICT")
         if conflicts:
             candidates = sorted(set([sid] + [

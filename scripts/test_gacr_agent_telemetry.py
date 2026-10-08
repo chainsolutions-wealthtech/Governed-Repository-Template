@@ -140,6 +140,46 @@ def main():
         assert_true(correlations[0]["level"] == "EXACT", "explicit session beacon should correlate EXACT")
         assert_true(correlations[0]["selected_session_id"] == "session-a", "exact session selected")
 
+        # A canonical session may preserve multiple provider/runtime contexts.
+        # An exact beacon from a secondary stored context must still correlate
+        # to that session rather than becoming a false explicit-anchor conflict.
+        sessions_doc = json.loads(g.SESSIONS_PATH.read_text(encoding="utf-8"))
+        stored_a = next(x for x in sessions_doc["sessions"] if x["session_id"] == "session-a")
+        stored_a["provider_contexts"] = [
+            {
+                "provider_context_id": "GACR-PC-aaaaaaaaaaaaaaaa",
+                "provider": "chatgpt",
+                "provider_conversation_ref": "conv-a",
+                "client_instance_id": "client-a",
+                "connection_ref": "conn-a",
+                "provider_private_values_invented": False,
+            },
+            {
+                "provider_context_id": "GACR-PC-bbbbbbbbbbbbbbbb",
+                "provider": "chatgpt",
+                "provider_conversation_ref": "conv-a",
+                "client_instance_id": "client-a-secondary",
+                "connection_ref": "conn-a-secondary",
+                "provider_private_values_invented": False,
+            },
+        ]
+        write(g.SESSIONS_PATH, sessions_doc)
+        secondary = g.record_beacon(
+            session=stored_a,
+            event_type="AUTO_ATTACH",
+            provider="chatgpt",
+            provider_ref="conv-a",
+            client_instance_id="client-a-secondary",
+            connection_ref="conn-a-secondary",
+        )
+        g.correlate_all()
+        secondary_corr = next(
+            x for x in json.loads(g.CORRELATIONS_PATH.read_text(encoding="utf-8"))["items"]
+            if x["beacon_id"] == secondary["beacon_id"]
+        )
+        assert_true(secondary_corr["level"] == "EXACT", "secondary provider context remains exact")
+        assert_true(secondary_corr["selected_session_id"] == "session-a", "secondary context selects canonical session")
+
         anonymous = g.record_beacon(
             session=None,
             event_type="OBSERVED_GITHUB_ACTIVITY",
