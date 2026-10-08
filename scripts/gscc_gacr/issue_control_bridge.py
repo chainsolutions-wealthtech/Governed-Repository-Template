@@ -374,9 +374,6 @@ def apply_host_control_event(
 
     if command.get("command_type") != "LIVENESS_CHALLENGE":
         raise ValueError("challenge response requires LIVENESS_CHALLENGE command")
-    ack = item.get("ack")
-    if not isinstance(ack, dict) or ack.get("delivery_state") != "ACKNOWLEDGED":
-        raise ValueError("challenge response requires prior ACKNOWLEDGED")
     challenge = command.get("payload") or {}
     if payload.get("challenge_id") != challenge.get("challenge_id"):
         raise ValueError("challenge_id mismatch")
@@ -394,6 +391,9 @@ def apply_host_control_event(
             observed=observed,
             payload=payload,
         )
+    ack = item.get("ack")
+    if not isinstance(ack, dict) or ack.get("delivery_state") != "ACKNOWLEDGED":
+        raise ValueError("challenge response requires prior ACKNOWLEDGED")
     if item.get("response"):
         return {
             "status": "ALREADY_COMPLETED",
