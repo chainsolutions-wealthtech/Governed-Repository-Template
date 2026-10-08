@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "revision": 12,
-  "last_scan_at": "2026-10-07T20:00:36+00:00",
+  "revision": 13,
+  "last_scan_at": "2026-10-08T00:09:08+00:00",
   "items": [
     {
       "takeover_id": "GACR-T-84209d225086",
@@ -1536,6 +1536,38 @@
       "branch": "main",
       "pull_request": null,
       "last_observed_head_sha": "345fc685924b9be5f18a0f39fc6a12f9e973dc45",
+      "reconciled_head_sha": null,
+      "active_claim_count": 0
+    },
+    {
+      "takeover_id": "GACR-T-55f1462df00c",
+      "stalled_session_id": "session-ba6f8db786eb9a8aa11865f2",
+      "offered_to_session_id": null,
+      "accepted_by_session_id": null,
+      "status": "READY_FOR_RECONCILIATION",
+      "created_at": "2026-10-08T00:09:08+00:00",
+      "accepted_at": null,
+      "work_item_id": null,
+      "task_id": null,
+      "branch": "main",
+      "pull_request": null,
+      "last_observed_head_sha": "7cf85c9b3fd772dc13d95cc24cdb5af077a640f8",
+      "reconciled_head_sha": null,
+      "active_claim_count": 0
+    },
+    {
+      "takeover_id": "GACR-T-43fb700a3c37",
+      "stalled_session_id": "session-3320926e66a52ff8f4396ed2",
+      "offered_to_session_id": null,
+      "accepted_by_session_id": null,
+      "status": "READY_FOR_RECONCILIATION",
+      "created_at": "2026-10-08T00:09:08+00:00",
+      "accepted_at": null,
+      "work_item_id": null,
+      "task_id": null,
+      "branch": "main",
+      "pull_request": null,
+      "last_observed_head_sha": "016fcb4f6403e27a05a0baba4ca23ad24a6e487f",
       "reconciled_head_sha": null,
       "active_claim_count": 0
     }

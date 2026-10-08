@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 155,
+  "revision": 157,
   "items": [
     {
       "forensic_id": "GACR-F-9e71238bc954",
@@ -8282,13 +8282,13 @@
     },
     {
       "forensic_id": "GACR-F-5d51b9fa8b58",
-      "generated_at": "2026-10-07T23:16:44+00:00",
+      "generated_at": "2026-10-08T00:09:10+00:00",
       "process": "GACR",
       "authority": "CP-AGENT-RELAY-001-R3",
       "session_id": "session-ba6f8db786eb9a8aa11865f2",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-      "classification": "NO_INTERRUPTION_OBSERVED",
-      "recoverability": "CONTINUE_CURRENT_SESSION",
+      "classification": "LEASE_EXPIRED_STALL",
+      "recoverability": "TAKEOVER_RECONCILIATION_REQUIRED",
       "cause": {
         "status": "UNOBSERVED",
         "code": "UNOBSERVED_EXTERNAL_CAUSE",
@@ -8296,13 +8296,13 @@
         "note": "GACR never infers browser crash, provider timeout, network loss or tool failure from missing heartbeat alone."
       },
       "liveness": {
-        "session_status": "ACTIVE",
-        "relay_state": "ACTIVE",
+        "session_status": "STALLED",
+        "relay_state": "TAKEOVER_READY",
         "last_seen_at": "2026-10-07T23:16:44+00:00",
         "last_heartbeat_at": "2026-10-07T23:16:44+00:00",
         "lease_expires_at": "2026-10-07T23:46:44+00:00",
-        "lease_expired_at_analysis": false,
-        "stalled_at": null
+        "lease_expired_at_analysis": true,
+        "stalled_at": "2026-10-08T00:09:08+00:00"
       },
       "work": {
         "task_id": null,
@@ -8346,10 +8346,25 @@
       },
       "last_checkpoint_ref": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
       "last_evidence_ref": "github-issue-comment:6048783772",
-      "last_takeover": null,
+      "last_takeover": {
+        "takeover_id": "GACR-T-55f1462df00c",
+        "stalled_session_id": "session-ba6f8db786eb9a8aa11865f2",
+        "offered_to_session_id": null,
+        "accepted_by_session_id": null,
+        "status": "READY_FOR_RECONCILIATION",
+        "created_at": "2026-10-08T00:09:08+00:00",
+        "accepted_at": null,
+        "work_item_id": null,
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "7cf85c9b3fd772dc13d95cc24cdb5af077a640f8",
+        "reconciled_head_sha": null,
+        "active_claim_count": 0
+      },
       "last_dispatch": {
         "schema": "gscc-control-dispatch/v1",
-        "dispatch_id": "GSCC-CTRL-28fac58b5f2bd2488367f285",
+        "dispatch_id": "GSCC-CTRL-83f86c4dd76188b14f2ae27c",
         "kind": "CONTROL_CHALLENGE",
         "status": "DISPATCHED",
         "target_session_id": "session-ba6f8db786eb9a8aa11865f2",
@@ -8360,31 +8375,31 @@
         "delivery_modes": [
           "GITHUB_ISSUE_COMMENT"
         ],
-        "created_at": "2026-10-07T21:57:14+00:00",
-        "expires_at": "2026-10-07T22:02:14+00:00",
+        "created_at": "2026-10-07T23:34:33+00:00",
+        "expires_at": "2026-10-07T23:35:33+00:00",
         "command": {
           "schema": "gscc-control-command/v1",
-          "message_id": "GSCC-MSG-c1ff36cea12974793b3854a8",
-          "command_id": "GSCC-CMD-c44fd833b63f5da86cbbb761",
-          "correlation_id": "GSCC-CORR-3eb74e41f52139c9ddb62858",
+          "message_id": "GSCC-MSG-0a412217f94a76dda5c40e0e",
+          "command_id": "GSCC-CMD-0fa61367e8d3830d13fbc515",
+          "correlation_id": "GSCC-CORR-b1e73060a8ee55a548046bbb",
           "command_type": "LIVENESS_CHALLENGE",
           "target_session_id": "session-ba6f8db786eb9a8aa11865f2",
-          "issued_at": "2026-10-07T21:57:14+00:00",
-          "expires_at": "2026-10-07T22:02:14+00:00",
+          "issued_at": "2026-10-07T23:34:33+00:00",
+          "expires_at": "2026-10-07T23:35:33+00:00",
           "requires_ack": true,
           "payload": {
-            "challenge_id": "GSCC-CH-0958795de9bb31cebf88efe9",
-            "nonce": "CW5ouO8izkNdU1sKnOIVVg-RIKtT50Ib",
-            "issued_at": "2026-10-07T21:57:14+00:00",
-            "expires_at": "2026-10-07T22:02:14+00:00"
+            "challenge_id": "GSCC-CH-8f3d1baa6f3b3c08ed8f8206",
+            "nonce": "5a1dYmupJNC4je7O75ohRi8MgiWtsZuo",
+            "issued_at": "2026-10-07T23:34:33+00:00",
+            "expires_at": "2026-10-07T23:35:33+00:00"
           }
         },
         "ack": null,
         "response": null,
         "invocation_authority_granted": false,
         "mutation_authority_granted": false,
-        "delivered_at": "2026-10-07T21:57:16+00:00",
-        "delivery_evidence_ref": "github-issue-comment:6047663890"
+        "delivered_at": "2026-10-07T23:34:35+00:00",
+        "delivery_evidence_ref": "github-issue-comment:6048997483"
       },
       "resume_point": {
         "task_id": null,
@@ -8420,21 +8435,21 @@
       },
       "evidence_counts": {
         "beacons": 12,
-        "takeovers": 0,
-        "dispatches": 1,
+        "takeovers": 1,
+        "dispatches": 2,
         "active_claims": 0
       },
-      "analysis_digest": "eb0295aa90bc45fe1611f88d83441f732a5400a3e4d3d7de2cb8a73e4b0feb94"
+      "analysis_digest": "8059c544cdee5bb9453af72ee0215a5a816bb3a5a7500a449908c8c61743fa25"
     },
     {
       "forensic_id": "GACR-F-f279fcd4f24c",
-      "generated_at": "2026-10-07T22:42:27+00:00",
+      "generated_at": "2026-10-08T00:09:10+00:00",
       "process": "GACR",
       "authority": "CP-AGENT-RELAY-001-R3",
       "session_id": "session-3320926e66a52ff8f4396ed2",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-      "classification": "NO_INTERRUPTION_OBSERVED",
-      "recoverability": "CONTINUE_CURRENT_SESSION",
+      "classification": "LEASE_EXPIRED_STALL",
+      "recoverability": "TAKEOVER_RECONCILIATION_REQUIRED",
       "cause": {
         "status": "UNOBSERVED",
         "code": "UNOBSERVED_EXTERNAL_CAUSE",
@@ -8442,13 +8457,13 @@
         "note": "GACR never infers browser crash, provider timeout, network loss or tool failure from missing heartbeat alone."
       },
       "liveness": {
-        "session_status": "ACTIVE",
-        "relay_state": "ACTIVE",
+        "session_status": "STALLED",
+        "relay_state": "TAKEOVER_READY",
         "last_seen_at": "2026-10-07T22:42:13+00:00",
         "last_heartbeat_at": "2026-10-07T22:42:13+00:00",
         "lease_expires_at": "2026-10-07T23:12:13+00:00",
-        "lease_expired_at_analysis": false,
-        "stalled_at": null
+        "lease_expired_at_analysis": true,
+        "stalled_at": "2026-10-08T00:09:08+00:00"
       },
       "work": {
         "task_id": null,
@@ -8468,7 +8483,22 @@
       },
       "last_checkpoint_ref": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
       "last_evidence_ref": "github-issue-comment:6048348975",
-      "last_takeover": null,
+      "last_takeover": {
+        "takeover_id": "GACR-T-43fb700a3c37",
+        "stalled_session_id": "session-3320926e66a52ff8f4396ed2",
+        "offered_to_session_id": null,
+        "accepted_by_session_id": null,
+        "status": "READY_FOR_RECONCILIATION",
+        "created_at": "2026-10-08T00:09:08+00:00",
+        "accepted_at": null,
+        "work_item_id": null,
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "016fcb4f6403e27a05a0baba4ca23ad24a6e487f",
+        "reconciled_head_sha": null,
+        "active_claim_count": 0
+      },
       "last_dispatch": null,
       "resume_point": {
         "task_id": null,
@@ -8487,11 +8517,11 @@
       },
       "evidence_counts": {
         "beacons": 5,
-        "takeovers": 0,
+        "takeovers": 1,
         "dispatches": 0,
         "active_claims": 0
       },
-      "analysis_digest": "d804943f395404706aa9ad774114c23916adeb63030da9b17128b8bee76fd524"
+      "analysis_digest": "f31b67d943fa9a256df863797a02609d3f76ad68c0d5d9d2d42be008d317914a"
     }
   ]
 }
