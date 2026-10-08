@@ -109,6 +109,10 @@ def eligible(items:list[dict])->list[dict]:
         if item.get("status")=="READY"
         and item.get("dispatch_kind") in {None,"TAKEOVER","CONTINUITY_EVENT","CONTINUITY_SUPERVISION_ALERT"}
         and "EXTERNAL_BRIDGE" in (item.get("delivery_modes") or [])
+        and (
+            item.get("dispatch_kind") not in {"CONTINUITY_EVENT","CONTINUITY_SUPERVISION_ALERT"}
+            or item.get("preferred_delivery_mode") in {None,"EXTERNAL_BRIDGE"}
+        )
     ]
 
 

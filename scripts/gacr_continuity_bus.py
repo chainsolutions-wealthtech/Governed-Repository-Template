@@ -31,8 +31,11 @@ EVENT_KINDS = {
 }
 FINAL_EVENT_STATES = {"RESPONDED", "EXPIRED", "CANCELLED"}
 FINAL_ROUTE_STATES = {"RESPONDED", "EXPIRED", "CANCELLED"}
+CONTROL_MODE = "GSCC_CONTROL_CHANNEL"
 PUSH_MODE = "EXTERNAL_BRIDGE"
 FALLBACK_MODE = "POLL_REPOSITORY"
+CONTROL_REQUIRED_CAPABILITIES = {"COMMAND_RECEIVE", "COMMAND_ACK"}
+CONTROL_EVIDENCE_FRESHNESS_SECONDS = 900
 EARLY_SUPERVISION_AFTER_SECONDS = 120
 SAFE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,191}$")
 SHA40 = re.compile(r"^[0-9a-f]{40}$")
@@ -95,6 +98,81 @@ def session_live(session: dict, timestamp: datetime) -> bool:
     relay = session.get("relay") or {}
     expiry = parse_time(relay.get("lease_expires_at"))
     return session.get("status") == "ACTIVE" and relay.get("state") == "ACTIVE" and expiry is not None and expiry > timestamp
+
+
+def canonical_control_evidence_for_session(
+    dispatches_doc: dict,
+    session_id: str,
+    timestamp: datetime,
+    *,
+    freshness_seconds: int = CONTROL_EVIDENCE_FRESHNESS_SECONDS,
+) -> dict:
+    candidates = []
+    for item in dispatches_doc.get("items", []):
+        if not isinstance(item, dict) or item.get("target_session_id") != session_id:
+            continue
+        command = item.get("command") or {}
+        if command.get("command_type") != "LIVENESS_CHALLENGE":
+            continue
+        if item.get("status") != "COMPLETED":
+            continue
+        ack = item.get("ack") or {}
+        response = item.get("response") or {}
+        if ack.get("delivery_state") != "ACKNOWLEDGED" or response.get("fresh_liveness") is not True:
+            continue
+        observed = parse_time(response.get("observed_at"))
+        if observed is None or (timestamp - observed).total_seconds() > int(freshness_seconds):
+            continue
+        candidates.append(item)
+    candidates.sort(key=lambda item: ((item.get("response") or {}).get("observed_at") or "", item.get("dispatch_id") or ""))
+    if not candidates:
+        return {
+            "status": "UNAVAILABLE",
+            "session_reachability": "UNVERIFIED",
+            "evidence_ref": None,
+            "dispatch_id": None,
+        }
+    item = candidates[-1]
+    response = item.get("response") or {}
+    return {
+        "status": "VERIFIED",
+        "session_reachability": "VERIFIED",
+        "evidence_ref": response.get("evidence_ref"),
+        "dispatch_id": item.get("dispatch_id"),
+        "observed_at": response.get("observed_at"),
+    }
+
+
+def control_channel_route_evidence(
+    target: dict,
+    dispatches_doc: dict,
+    config: dict | None,
+    timestamp: datetime,
+) -> dict:
+    config = config or {}
+    host_bridge = config.get("host_issue_bridge") or {}
+    control = host_bridge.get("control_channel") or {}
+    external_bridge = config.get("external_bridge") or {}
+    declared = set(target.get("capabilities") or [])
+    transport_proven = (
+        target.get("provider") == "chatgpt"
+        and bool(host_bridge.get("enabled"))
+        and bool(control.get("enabled"))
+        and bool(external_bridge.get("chatgpt_issue_bridge_live_proven"))
+    )
+    capability_ready = CONTROL_REQUIRED_CAPABILITIES <= declared
+    session_evidence = canonical_control_evidence_for_session(dispatches_doc, str(target.get("session_id") or ""), timestamp)
+    return {
+        "status": "AVAILABLE" if transport_proven and capability_ready else "UNAVAILABLE",
+        "transport_proven": transport_proven,
+        "declared_capabilities_sufficient": capability_ready,
+        "required_capabilities": sorted(CONTROL_REQUIRED_CAPABILITIES),
+        "session_reachability": session_evidence.get("session_reachability"),
+        "session_evidence_ref": session_evidence.get("evidence_ref"),
+        "session_dispatch_id": session_evidence.get("dispatch_id"),
+        "provenance": "GACR_HOST_ISSUE_BRIDGE_LIVE_PROOF" if transport_proven else "UNAVAILABLE",
+        "provider_private_endpoint": False,
+    }
 
 
 def require_live_emitter(sessions_doc: dict, session_id: str, timestamp: datetime) -> dict:
@@ -170,6 +248,9 @@ def derive_liveness_state(
         return "SUSPECTED_STALL"
     if status == "STANDBY" or relay_state == "STANDBY":
         return "QUIET"
+    expiry = parse_time(relay.get("lease_expires_at"))
+    if status == "ACTIVE" and relay_state == "ACTIVE" and expiry is not None and expiry <= timestamp:
+        return "STALLED"
     if status == "ACTIVE" and relay_state == "ACTIVE":
         signal = session_signal_time(session)
         if signal is None:
@@ -211,6 +292,8 @@ def provider_endpoint_descriptor(session: dict, config: dict | None = None) -> d
         "endpoint_ref": None,
         "provenance": "GACR_CANONICAL_FALLBACK",
     }
+    control_cfg = host_bridge.get("control_channel") or {}
+    control_capable = False
     if provider == "chatgpt" and external_bridge.get("chatgpt_issue_bridge_live_proven") and host_bridge.get("enabled"):
         issue_number = host_bridge.get("issue_number")
         repository_control = {
@@ -219,6 +302,7 @@ def provider_endpoint_descriptor(session: dict, config: dict | None = None) -> d
             "endpoint_ref": f"issue:{issue_number}" if issue_number else None,
             "provenance": "GACR_HOST_ISSUE_BRIDGE_LIVE_PROOF",
         }
+        control_capable = bool(control_cfg.get("enabled")) and CONTROL_REQUIRED_CAPABILITIES <= set(session.get("capabilities") or [])
 
     return {
         "provider": provider,
@@ -227,14 +311,121 @@ def provider_endpoint_descriptor(session: dict, config: dict | None = None) -> d
         "provider_inbound_endpoint": inbound,
         "repository_control_surface": repository_control,
         "wake_route": {
-            "preferred": "EXTERNAL_BRIDGE" if push_capable else "POLL_REPOSITORY",
-            "push_capable": push_capable,
+            "preferred": CONTROL_MODE if control_capable else "EXTERNAL_BRIDGE" if push_capable else "POLL_REPOSITORY",
+            "push_capable": bool(control_capable or push_capable),
             "wake_channels": wake_channels,
+            "control_capable": control_capable,
         },
         "connection_ref": session.get("connection_ref"),
         "bridge_registration_ref": bridge_ref,
         "provider_private_values_invented": False,
     }
+
+
+def provider_context_descriptor(session: dict) -> dict:
+    envelope = session.get("connection_envelope") or {}
+    fields = envelope.get("fields") or {}
+
+    def field_value(name: str):
+        value = (fields.get(name) or {}).get("value")
+        return None if value in {None, "", "UNAVAILABLE"} else value
+
+    provider = str(session.get("provider") or "other")
+    provider_ref = session.get("provider_conversation_ref")
+    connection_ref = session.get("connection_ref")
+    client_instance_id = session.get("client_instance_id")
+    raw = json.dumps(
+        {
+            "session_id": session.get("session_id"),
+            "provider": provider,
+            "provider_conversation_ref": provider_ref,
+            "connection_ref": connection_ref,
+            "client_instance_id": client_instance_id,
+        },
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    )
+    context_id = "GACR-PC-" + hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
+    repository_surface_ref = field_value("github_app_or_installation")
+    runtime_surface_ref = connection_ref if str(connection_ref or "").startswith("GRT-SURFACE-") else None
+    return {
+        "provider_context_id": context_id,
+        "provider_context_id_provenance": "DERIVED_GACR_PROJECTION",
+        "session_id": session.get("session_id"),
+        "provider": provider,
+        "provider_conversation_ref": provider_ref if provider_ref else None,
+        "provider_conversation_ref_status": "PRESENT" if provider_ref else "UNAVAILABLE",
+        "client_instance_id": client_instance_id,
+        "connection_ref": connection_ref,
+        "runtime_surface_ref": runtime_surface_ref,
+        "runtime_surface_ref_provenance": "REPOSITORY_MINTED" if runtime_surface_ref else None,
+        "repository_surface_ref": repository_surface_ref,
+        "repository_surface_ref_provenance": (
+            (fields.get("github_app_or_installation") or {}).get("provenance")
+            if repository_surface_ref else None
+        ),
+        "provider_native_identity_status": "PRESENT" if provider_ref else "UNAVAILABLE",
+        "provider_private_values_invented": False,
+    }
+
+
+def project_logical_agents_docs(state: dict, sessions_doc: dict) -> list[dict]:
+    changes = []
+    session_index = {s.get("session_id"): s for s in sessions_doc.get("sessions", []) if s.get("session_id")}
+    for item in state.get("items", []):
+        groups: dict[str, dict] = {}
+        for participant in item.get("participants", []):
+            session = session_index.get(participant.get("session_id"))
+            logical_agent_id = (session or {}).get("agent_identity")
+            if logical_agent_id:
+                participant["logical_agent_id"] = logical_agent_id
+                participant["logical_agent_id_provenance"] = "CANONICAL_GACR_SESSION_AGENT_IDENTITY"
+            else:
+                participant["logical_agent_id"] = "UNAVAILABLE"
+                participant["logical_agent_id_provenance"] = "CANONICAL_GACR_AGENT_IDENTITY_UNAVAILABLE"
+            contexts = [provider_context_descriptor(session)] if session else []
+            participant["provider_contexts"] = contexts
+            if not logical_agent_id:
+                continue
+            group = groups.setdefault(logical_agent_id, {
+                "logical_agent_id": logical_agent_id,
+                "logical_agent_id_provenance": "CANONICAL_GACR_SESSION_AGENT_IDENTITY",
+                "session_ids": [],
+                "participant_ids": [],
+                "scope_ids": [],
+                "provider_contexts": [],
+                "projection_only": True,
+                "grants_task_authority": False,
+                "grants_claim": False,
+                "grants_mutation_authority": False,
+            })
+            group["session_ids"].append(participant.get("session_id"))
+            group["participant_ids"].append(participant.get("participant_id"))
+            group["scope_ids"].append(participant.get("scope_id"))
+            group["provider_contexts"].extend(contexts)
+
+        projected = []
+        for logical_agent_id in sorted(groups):
+            group = groups[logical_agent_id]
+            group["session_ids"] = sorted({x for x in group["session_ids"] if x})
+            group["participant_ids"] = sorted({x for x in group["participant_ids"] if x})
+            group["scope_ids"] = sorted({x for x in group["scope_ids"] if x})
+            dedup = {}
+            for context in group["provider_contexts"]:
+                dedup[context["provider_context_id"]] = context
+            group["provider_contexts"] = [dedup[key] for key in sorted(dedup)]
+            group["session_count"] = len(group["session_ids"])
+            group["provider_context_count"] = len(group["provider_contexts"])
+            projected.append(group)
+        if item.get("logical_agents") != projected:
+            item["logical_agents"] = projected
+            changes.append({
+                "continuity_id": item.get("continuity_id"),
+                "state": "LOGICAL_AGENT_PROJECTION_UPDATED",
+                "logical_agent_count": len(projected),
+            })
+    return changes
 
 
 def project_participant_runtime_docs(
@@ -258,6 +449,9 @@ def project_participant_runtime_docs(
                     "canonical_relay_state": "UNAVAILABLE",
                     "lease_expires_at": None,
                     "last_signal_at": None,
+                    "logical_agent_id": participant.get("logical_agent_id") or "UNAVAILABLE",
+                    "logical_agent_id_provenance": "CANONICAL_SESSION_NOT_FOUND",
+                    "provider_contexts": [],
                     "provider_endpoint": {
                         "provider": "other",
                         "provider_conversation_ref_status": "UNAVAILABLE",
@@ -289,6 +483,12 @@ def project_participant_runtime_docs(
                 relay = session.get("relay") or {}
                 signal = session_signal_time(session)
                 projection = {
+                    "logical_agent_id": session.get("agent_identity") or "UNAVAILABLE",
+                    "logical_agent_id_provenance": (
+                        "CANONICAL_GACR_SESSION_AGENT_IDENTITY"
+                        if session.get("agent_identity") else "CANONICAL_GACR_AGENT_IDENTITY_UNAVAILABLE"
+                    ),
+                    "provider_contexts": [provider_context_descriptor(session)],
                     "liveness_state": derive_liveness_state(session, timestamp, quiet_after_seconds=quiet_after_seconds),
                     "canonical_session_status": session.get("status"),
                     "canonical_relay_state": relay.get("state"),
@@ -307,11 +507,13 @@ def project_participant_runtime_docs(
                 changes.append({
                     "participant_id": participant.get("participant_id"),
                     "session_id": participant.get("session_id"),
+                    "logical_agent_id": participant.get("logical_agent_id"),
                     "state": "PARTICIPANT_RUNTIME_PROJECTED",
                     "membership_state": "PERSISTENT",
                     "liveness_state": participant.get("liveness_state"),
                     "provider_endpoint_status": (participant.get("provider_endpoint") or {}).get("provider_inbound_endpoint", {}).get("status"),
                 })
+    changes.extend(project_logical_agents_docs(state, sessions_doc))
     return changes
 
 
@@ -331,12 +533,32 @@ def normalize_domains(values: list[str] | None) -> list[str]:
     return domains
 
 
-def delivery_choice(target: dict, timestamp: datetime) -> tuple[str, bool]:
+def delivery_choice(
+    target: dict,
+    timestamp: datetime,
+    dispatches_doc: dict | None = None,
+    config: dict | None = None,
+) -> tuple[str, bool, dict]:
     live = session_live(target, timestamp)
+    control_evidence = control_channel_route_evidence(target, dispatches_doc or {}, config, timestamp)
+    if live and control_evidence.get("status") == "AVAILABLE":
+        return CONTROL_MODE, live, control_evidence
     channels = set(target.get("wake_channels") or [])
     if live and PUSH_MODE in channels and str(target.get("bridge_registration_ref") or "").strip():
-        return PUSH_MODE, live
-    return FALLBACK_MODE, live
+        return PUSH_MODE, live, control_evidence
+    return FALLBACK_MODE, live, control_evidence
+
+
+def delivery_modes_for(preferred: str, target: dict) -> list[str]:
+    if preferred == CONTROL_MODE:
+        modes = [CONTROL_MODE]
+        if "EXTERNAL_BRIDGE" in set(target.get("wake_channels") or []) and str(target.get("bridge_registration_ref") or "").strip():
+            modes.append(PUSH_MODE)
+        modes.append(FALLBACK_MODE)
+        return modes
+    if preferred == PUSH_MODE:
+        return [PUSH_MODE, FALLBACK_MODE]
+    return [FALLBACK_MODE]
 
 
 def emit_event_docs(
@@ -360,6 +582,7 @@ def emit_event_docs(
     reply_to_event_id: str | None = None,
     expires_at: str | None = None,
     ack_timeout_seconds: int = 300,
+    config: dict | None = None,
 ) -> dict:
     continuity_id = require_safe_id("continuity_id", continuity_id)
     if event_kind not in EVENT_KINDS:
@@ -393,10 +616,10 @@ def emit_event_docs(
         if continuity_member(item, target_id) is None:
             raise ValueError(f"TARGET_NOT_MEMBER_OF_CONTINUITY: {target_id}")
         target = session_by_id(sessions_doc, target_id)
-        preferred, target_live = delivery_choice(target, timestamp)
+        preferred, target_live, control_evidence = delivery_choice(target, timestamp, dispatches_doc, config)
         did = make_dispatch_id(eid, target_id)
-        route_state = "ROUTED" if preferred == PUSH_MODE else "FALLBACK_POLL_REQUIRED"
-        modes = [FALLBACK_MODE] if preferred == FALLBACK_MODE else [PUSH_MODE, FALLBACK_MODE]
+        route_state = "FALLBACK_POLL_REQUIRED" if preferred == FALLBACK_MODE else "ROUTED"
+        modes = delivery_modes_for(preferred, target)
         route = {
             "target_session_id": target_id,
             "dispatch_id": did,
@@ -405,6 +628,7 @@ def emit_event_docs(
             "delivery_state": route_state,
             "target_live_at_route": target_live,
             "bridge_registration_ref": target.get("bridge_registration_ref"),
+            "control_evidence": control_evidence,
             "routed_at": created_at,
             "delivered_at": None,
             "ack_deadline_at": None,
@@ -416,8 +640,9 @@ def emit_event_docs(
         dispatches_doc.setdefault("items", []).append({
             "dispatch_id": did,
             "dispatch_kind": "CONTINUITY_EVENT",
-            "status": "READY" if preferred == PUSH_MODE else "FALLBACK_POLL_REQUIRED",
+            "status": "READY" if preferred != FALLBACK_MODE else "FALLBACK_POLL_REQUIRED",
             "repository": item.get("repository"),
+            "preferred_delivery_mode": preferred,
             "target_session_id": target_id,
             "target_client_instance_id": target.get("client_instance_id"),
             "bridge_registration_ref": target.get("bridge_registration_ref"),
@@ -460,7 +685,7 @@ def emit_event_docs(
         "collision_domains": domains,
         "payload_ref": str(payload_ref).strip(),
         "provenance": str(evidence_ref).strip(),
-        "state": "ROUTED" if any(r["preferred_delivery_mode"] == PUSH_MODE for r in routes) else "FALLBACK_POLL_REQUIRED",
+        "state": "ROUTED" if any(r["preferred_delivery_mode"] != FALLBACK_MODE for r in routes) else "FALLBACK_POLL_REQUIRED",
         "routes": routes,
         "responses": [],
         "projection_only": True,
@@ -579,6 +804,7 @@ def reconcile_early_supervision_docs(
     *,
     timestamp: datetime,
     early_supervision_after_seconds: int = EARLY_SUPERVISION_AFTER_SECONDS,
+    config: dict | None = None,
 ) -> list[dict]:
     changes = []
     if early_supervision_after_seconds <= 0:
@@ -597,7 +823,13 @@ def reconcile_early_supervision_docs(
 
             open_alert = next((a for a in alerts if a.get("target_session_id") == target_id and a.get("state") == "OPEN"), None)
             relay = session.get("relay") or {}
-            canonical_active = session.get("status") == "ACTIVE" and relay.get("state") == "ACTIVE"
+            lease_expiry = parse_time(relay.get("lease_expires_at"))
+            canonical_active = (
+                session.get("status") == "ACTIVE"
+                and relay.get("state") == "ACTIVE"
+                and lease_expiry is not None
+                and lease_expiry > timestamp
+            )
             last_signal = session_signal_time(session)
 
             if not canonical_active:
@@ -629,11 +861,11 @@ def reconcile_early_supervision_docs(
             if open_alert:
                 continue
 
-            preferred, target_live = delivery_choice(session, timestamp)
+            preferred, target_live, control_evidence = delivery_choice(session, timestamp, dispatches_doc, config)
             alert_id = make_supervision_alert_id(item["continuity_id"], target_id, iso(last_signal))
             dispatch_id = make_supervision_dispatch_id(alert_id)
-            delivery_modes = [FALLBACK_MODE] if preferred == FALLBACK_MODE else [PUSH_MODE, FALLBACK_MODE]
-            dispatch_status = "READY" if preferred == PUSH_MODE else "FALLBACK_POLL_REQUIRED"
+            delivery_modes = delivery_modes_for(preferred, session)
+            dispatch_status = "READY" if preferred != FALLBACK_MODE else "FALLBACK_POLL_REQUIRED"
             alert = {
                 "alert_id": alert_id,
                 "target_session_id": target_id,
@@ -651,6 +883,7 @@ def reconcile_early_supervision_docs(
                 "delivery_modes": delivery_modes,
                 "delivery_state": dispatch_status,
                 "target_live_at_detection": target_live,
+                "control_evidence": control_evidence,
                 "projection_only": True,
                 "changes_session_status": False,
                 "changes_lease": False,
@@ -664,6 +897,7 @@ def reconcile_early_supervision_docs(
                 "dispatch_kind": "CONTINUITY_SUPERVISION_ALERT",
                 "status": dispatch_status,
                 "repository": item.get("repository"),
+                "preferred_delivery_mode": preferred,
                 "target_session_id": target_id,
                 "target_client_instance_id": session.get("client_instance_id"),
                 "bridge_registration_ref": session.get("bridge_registration_ref"),
@@ -683,6 +917,57 @@ def reconcile_early_supervision_docs(
                 "grants_mutation_authority": False,
             })
             changes.append({"alert_id": alert_id, "target_session_id": target_id, "state": "EARLY_SUPERVISION_ALERT", "delivery_mode": preferred})
+    return changes
+
+
+def reconcile_dispatch_delivery_docs(state: dict, dispatches_doc: dict, *, timestamp: datetime) -> list[dict]:
+    changes = []
+    dispatch_index = {
+        item.get("dispatch_id"): item
+        for item in dispatches_doc.get("items", [])
+        if isinstance(item, dict) and item.get("dispatch_id")
+    }
+    for continuity in state.get("items", []):
+        for event in continuity.get("events", []):
+            for route in event.get("routes", []):
+                dispatch = dispatch_index.get(route.get("dispatch_id"))
+                if not dispatch:
+                    continue
+                status = dispatch.get("status")
+                if status == "DISPATCHED" and route.get("delivery_state") == "ROUTED":
+                    route["delivery_state"] = "DELIVERED"
+                    route["delivered_at"] = dispatch.get("delivered_at") or iso(timestamp)
+                    route["evidence_ref"] = dispatch.get("delivery_evidence_ref") or route.get("evidence_ref")
+                    if event.get("requires_ack"):
+                        route["ack_deadline_at"] = iso(
+                            (parse_time(route["delivered_at"]) or timestamp)
+                            + timedelta(seconds=int(event.get("ack_timeout_seconds") or 300))
+                        )
+                    changes.append({"event_id": event.get("event_id"), "target_session_id": route.get("target_session_id"), "state": "DELIVERED"})
+                elif status == "ACKNOWLEDGED" and route.get("delivery_state") in {"ROUTED", "DELIVERED"}:
+                    route["delivery_state"] = "ACKED"
+                    route["acknowledged_at"] = ((dispatch.get("ack") or {}).get("observed_at") or iso(timestamp))
+                    route["evidence_ref"] = ((dispatch.get("ack") or {}).get("evidence_ref") or route.get("evidence_ref"))
+                    changes.append({"event_id": event.get("event_id"), "target_session_id": route.get("target_session_id"), "state": "ACKED"})
+                elif status == "FALLBACK_POLL_REQUIRED" and route.get("delivery_state") != "FALLBACK_POLL_REQUIRED":
+                    route["delivery_state"] = "FALLBACK_POLL_REQUIRED"
+                    if FALLBACK_MODE not in route.setdefault("delivery_modes", []):
+                        route["delivery_modes"].append(FALLBACK_MODE)
+                    changes.append({"event_id": event.get("event_id"), "target_session_id": route.get("target_session_id"), "state": "FALLBACK_POLL_REQUIRED"})
+        alerts = continuity.get("supervision_alerts") or []
+        for alert in alerts:
+            dispatch = dispatch_index.get(alert.get("dispatch_id"))
+            if not dispatch:
+                continue
+            status = dispatch.get("status")
+            if status in {"DISPATCHED", "ACKNOWLEDGED", "COMPLETED"} and alert.get("delivery_state") in {"READY", "ROUTED"}:
+                alert["delivery_state"] = "DELIVERED"
+                alert["delivered_at"] = dispatch.get("delivered_at") or iso(timestamp)
+                alert["delivery_evidence_ref"] = dispatch.get("delivery_evidence_ref")
+                changes.append({"alert_id": alert.get("alert_id"), "target_session_id": alert.get("target_session_id"), "state": "DELIVERED"})
+            elif status == "FALLBACK_POLL_REQUIRED" and alert.get("delivery_state") != "FALLBACK_POLL_REQUIRED":
+                alert["delivery_state"] = "FALLBACK_POLL_REQUIRED"
+                changes.append({"alert_id": alert.get("alert_id"), "target_session_id": alert.get("target_session_id"), "state": "FALLBACK_POLL_REQUIRED"})
     return changes
 
 
@@ -708,7 +993,9 @@ def tick_docs(
         dispatches_doc,
         timestamp=timestamp,
         early_supervision_after_seconds=early_supervision_after_seconds,
+        config=config,
     ))
+    changes.extend(reconcile_dispatch_delivery_docs(state, dispatches_doc, timestamp=timestamp))
     for item in state.get("items", []):
         for event in item.get("events", []):
             if event.get("state") in FINAL_EVENT_STATES:
@@ -759,7 +1046,8 @@ def save_runtime(state: dict, dispatches: dict) -> None:
 
 def command_emit(a):
     state, sessions, dispatches = load_runtime()
-    result = emit_event_docs(state, sessions, dispatches, continuity_id=a.continuity_id, from_session_id=a.from_session_id, target_session_ids=a.target_session_id, event_kind=a.event_kind, payload_ref=a.payload_ref, observed_head=a.observed_head, current_head=git_head(), evidence_ref=a.evidence_ref, timestamp=now_utc(), scope_id=a.scope_id, collision_domains=a.collision_domain, requires_ack=a.requires_ack, correlation_id=a.correlation_id, reply_to_event_id=a.reply_to_event_id, expires_at=a.expires_at, ack_timeout_seconds=a.ack_timeout_seconds)
+    config = read_json(CONFIG_PATH, {})
+    result = emit_event_docs(state, sessions, dispatches, continuity_id=a.continuity_id, from_session_id=a.from_session_id, target_session_ids=a.target_session_id, event_kind=a.event_kind, payload_ref=a.payload_ref, observed_head=a.observed_head, current_head=git_head(), evidence_ref=a.evidence_ref, timestamp=now_utc(), scope_id=a.scope_id, collision_domains=a.collision_domain, requires_ack=a.requires_ack, correlation_id=a.correlation_id, reply_to_event_id=a.reply_to_event_id, expires_at=a.expires_at, ack_timeout_seconds=a.ack_timeout_seconds, config=config)
     save_runtime(state, dispatches)
     print(json.dumps(result, indent=2, ensure_ascii=False))
 

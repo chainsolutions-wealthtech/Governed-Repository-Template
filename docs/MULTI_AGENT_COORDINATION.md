@@ -340,3 +340,47 @@ Each continuity participant may carry a derived `provider_endpoint` descriptor. 
 - no provider URL, conversation ID or endpoint is synthesized.
 
 The endpoint descriptor is a derived projection of the canonical session/bridge facts. It is not a second endpoint registry or authority source.
+
+
+## Logical agent, sessions and provider contexts
+
+The continuity projection distinguishes four identities that MUST NOT be collapsed:
+
+```text
+logical_agent_id
+  -> 1..N canonical GACR session_id
+       -> 1..N provider/runtime contexts over time
+            -> provider-native conversation/session references only when actually observed
+```
+
+The current canonical source for `logical_agent_id` is the existing GACR session
+`agent_identity`. The continuity layer only projects and groups that authority; it does
+not create a second agent registry or grant claims, task authority, or mutation authority.
+
+A provider context is a typed projection of canonical session facts such as provider,
+`provider_conversation_ref`, `client_instance_id`, `connection_ref`, and observable
+repository-surface evidence. Its `provider_context_id` is repository-derived and MUST
+NOT be represented as a provider-native ChatGPT/Claude/Codex conversation identifier.
+Unknown provider-private identifiers remain `UNAVAILABLE`.
+
+This permits `NEW_SESSION_SAME_LOGICAL_AGENT` without implying
+`NEW_LOGICAL_AGENT`: multiple sessions with the same canonical `agent_identity` are
+grouped under one logical agent while their leases, liveness, claims, collision domains,
+and takeover state remain session-scoped.
+
+### Continuity delivery priority
+
+Continuity delivery reuses existing control surfaces in this order:
+
+```text
+1. GSCC_CONTROL_CHANNEL (B12; verified repository control transport / SessionEndpoint)
+2. EXTERNAL_BRIDGE (B29; only with a real registered bridge)
+3. POLL_REPOSITORY (durable final fallback)
+```
+
+The GitHub issue control channel is a repository control surface, not a private provider
+callback. Continuity requests/instructions/review requests are delivered as bounded
+`SUPERVISOR_INSTRUCTION` commands; early supervision uses
+`LIVENESS_CHALLENGE`. Neither path grants mutation authority or synthesizes heartbeat.
+A fresh challenge response may prove liveness through the existing GACR host-ingress
+rules; silence never does.

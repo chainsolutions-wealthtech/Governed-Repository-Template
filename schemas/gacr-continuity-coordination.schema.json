@@ -189,6 +189,100 @@
                 "runtime_projection_observed_at": {
                   "type": "string"
                 },
+                "logical_agent_id": {
+                  "type": "string"
+                },
+                "logical_agent_id_provenance": {
+                  "type": "string"
+                },
+                "provider_contexts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "provider_context_id",
+                      "provider",
+                      "provider_native_identity_status",
+                      "provider_private_values_invented"
+                    ],
+                    "properties": {
+                      "provider_context_id": {
+                        "type": "string",
+                        "pattern": "^GACR-PC-[0-9a-f]{16}$"
+                      },
+                      "provider_context_id_provenance": {
+                        "type": "string"
+                      },
+                      "session_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "provider": {
+                        "type": "string"
+                      },
+                      "provider_conversation_ref": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "provider_conversation_ref_status": {
+                        "enum": [
+                          "PRESENT",
+                          "UNAVAILABLE"
+                        ]
+                      },
+                      "client_instance_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "connection_ref": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "runtime_surface_ref": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "runtime_surface_ref_provenance": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "repository_surface_ref": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "repository_surface_ref_provenance": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "provider_native_identity_status": {
+                        "enum": [
+                          "PRESENT",
+                          "UNAVAILABLE"
+                        ]
+                      },
+                      "provider_private_values_invented": {
+                        "const": false
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
                 "provider_endpoint": {
                   "type": "object",
                   "required": [
@@ -295,6 +389,7 @@
                       "properties": {
                         "preferred": {
                           "enum": [
+                            "GSCC_CONTROL_CHANNEL",
                             "EXTERNAL_BRIDGE",
                             "POLL_REPOSITORY"
                           ]
@@ -328,6 +423,77 @@
                     }
                   },
                   "additionalProperties": true
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "logical_agents": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "logical_agent_id",
+                "session_ids",
+                "provider_contexts",
+                "projection_only",
+                "grants_task_authority",
+                "grants_claim",
+                "grants_mutation_authority"
+              ],
+              "properties": {
+                "logical_agent_id": {
+                  "type": "string"
+                },
+                "logical_agent_id_provenance": {
+                  "type": "string"
+                },
+                "session_ids": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "participant_ids": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "scope_ids": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "provider_contexts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "session_count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "provider_context_count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "projection_only": {
+                  "const": true
+                },
+                "grants_task_authority": {
+                  "const": false
+                },
+                "grants_claim": {
+                  "const": false
+                },
+                "grants_mutation_authority": {
+                  "const": false
                 }
               },
               "additionalProperties": true

@@ -184,17 +184,20 @@ jobs:
       - name: Run continuity mini-loop
         run: python3 scripts/gacr_continuity_bus.py tick
 
-      - name: Deliver pending GSCC issue control challenges
-        if: ${{ steps.relay.outputs.command == 'control-challenge' || (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/gscc-control ')) }}
+      - name: Deliver pending GSCC control commands
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python3 scripts/gscc_gacr/issue_control_bridge.py deliver
+
+      - name: Reconcile continuity delivery projection
+        run: python3 scripts/gacr_continuity_bus.py tick
 
       - name: Validate GACR state
         run: |
           python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py scripts/gacr_capacity_dispatch.py scripts/gacr_bridge_notifier.py scripts/gacr_auto_attach.py scripts/gacr_client_emitter.py scripts/gacr_host_issue_ingress.py scripts/gacr_continuity_coordination.py scripts/gacr_continuity_bus.py scripts/gscc_control_issue_ingress.py scripts/gscc_gacr/issue_control_bridge.py
           python3 scripts/test_gacr_continuity_coordination.py
           python3 scripts/test_gacr_continuity_bus.py
+          python3 scripts/test_gscc_issue_control_bridge.py
           python3 scripts/validate_governance.py
 
       - name: Persist changed relay state
