@@ -163,6 +163,7 @@ def main() -> None:
             ),
         ).stdout)
         assert_true(first["status"] == "CREATE", "TEST A: first controlled touch must CREATE")
+        assert_true(first["identity_resolution"] == "NEW_LOGICAL_AGENT", "TEST A: first touch creates logical agent")
         assert_true(first["presence_event"] == "PRESENCE_FIRST_TOUCH", "TEST A: first-touch evidence")
         assert_true(first["binding"]["state"] == "BOUND", "TEST A: deterministic first touch must bind")
         sid = first["session"]["session_id"]
@@ -178,6 +179,7 @@ def main() -> None:
             ),
         ).stdout)
         assert_true(resumed["status"] == "RESUME", "TEST A: repeated controlled touch must RESUME")
+        assert_true(resumed["identity_resolution"] == "SAME_SESSION_RESUME", "TEST A: repeated touch resumes same session")
         assert_true(resumed["session"]["session_id"] == sid, "TEST A: resume same canonical session")
         assert_true(resumed["presence_event"] == "PRESENCE_RESUME", "TEST A: resume evidence")
 
@@ -248,7 +250,8 @@ def main() -> None:
             ),
         ).stdout)
         assert_true(
-            unproven_same_agent["status"] == "UNBOUND_ACTIVITY",
+            unproven_same_agent["status"] == "UNBOUND_ACTIVITY"
+            and unproven_same_agent["identity_resolution"] == "UNRESOLVED_SURFACE",
             "TEST C: same agent on a new surface must fail closed without continuity proof",
         )
         assert_true(
@@ -285,6 +288,7 @@ def main() -> None:
             "--continuity-evidence-ref", "github-issue-comment:proof-same-agent",
         ).stdout)
         assert_true(proven_same_agent["status"] == "NEW_SESSION_SAME_LOGICAL_AGENT", "TEST C: canonical proof permits same logical agent new session")
+        assert_true(proven_same_agent["identity_resolution"] == "NEW_SESSION_SAME_LOGICAL_AGENT", "TEST C: identity classification explicit")
         assert_true(proven_same_agent["session"]["session_id"] != sid, "TEST C: new logical-agent surface gets a distinct session")
         assert_true(proven_same_agent["session"]["logical_agent_id"] == "fresh-agent", "TEST C: canonical logical agent id preserved")
         assert_true(proven_same_agent["session"]["logical_agent_reference_session_id"] == sid, "TEST C: reference session explicit")

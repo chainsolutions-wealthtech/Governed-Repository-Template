@@ -296,6 +296,31 @@ def main():
     assert control_route["control_evidence"]["transport_proven"] is True
     assert control_route["control_evidence"]["session_reachability"] == "VERIFIED"
 
+    context_history_session = session("session-context-history", provider="chatgpt")
+    current_context_id = bus.provider_context_descriptor(context_history_session)["provider_context_id"]
+    context_history_session["provider_contexts"] = [
+        {
+            "provider_context_id": current_context_id,
+            "provider": "chatgpt",
+            "connection_ref": context_history_session["connection_ref"],
+            "provider_native_identity_status": "UNAVAILABLE",
+            "provider_private_values_invented": False,
+        },
+        {
+            "provider_context_id": "GACR-PC-1111111111111111",
+            "provider": "chatgpt",
+            "connection_ref": "connection-history-2",
+            "provider_native_identity_status": "UNAVAILABLE",
+            "provider_private_values_invented": False,
+        },
+    ]
+    context_history = bus.provider_context_descriptors(context_history_session)
+    assert len(context_history) == 2
+    assert {item["connection_ref"] for item in context_history} == {
+        context_history_session["connection_ref"],
+        "connection-history-2",
+    }
+
     chatgpt_surface = bus.provider_endpoint_descriptor(
         session("session-chatgpt-surface", provider="chatgpt"),
         endpoint_config,

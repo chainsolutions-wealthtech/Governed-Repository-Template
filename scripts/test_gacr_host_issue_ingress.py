@@ -243,6 +243,10 @@ def main() -> None:
             "same_logical_agent_session_id": "session-old",
             "continuity_id": "GRT-CONT-DEMO-01",
             "continuity_evidence_ref": "github-issue-comment:8001",
+            "provider_connector_app_id": "1144995",
+            "provider_connector_client_id": "Iv23example",
+            "provider_connector_installation_id": "145098929",
+            "provider_connector_slug": "chatgpt-codex-connector",
         }
         resolved_route = g.ensure_session(route_payload, "example/governed")
         assert_true(resolved_route["session_id"] == "session-route", "new host route session attached")
@@ -254,6 +258,10 @@ def main() -> None:
         assert_true("--same-logical-agent-session-id" in auto_args and "session-old" in auto_args, "same logical reference forwarded")
         assert_true("--continuity-id" in auto_args and "GRT-CONT-DEMO-01" in auto_args, "same logical continuity forwarded")
         assert_true("--continuity-evidence-ref" in auto_args and "github-issue-comment:8001" in auto_args, "same logical evidence forwarded")
+        assert_true("--provider-connector-app-id" in auto_args and "1144995" in auto_args, "connector app id forwarded")
+        assert_true("--provider-connector-client-id" in auto_args and "Iv23example" in auto_args, "connector client id forwarded")
+        assert_true("--provider-connector-installation-id" in auto_args and "145098929" in auto_args, "connector installation id forwarded")
+        assert_true("--provider-connector-slug" in auto_args and "chatgpt-codex-connector" in auto_args, "connector slug forwarded")
     finally:
         g.active_sessions = original_active_sessions_route
         g.run_script = original_run_route

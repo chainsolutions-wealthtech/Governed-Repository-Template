@@ -414,3 +414,18 @@ governed takeover/reconciliation machinery explicitly resolves it.
 Repository-minted runtime surface identifiers are allowed only as typed repository
 identifiers with repository provenance. They MUST NOT be relabeled as provider-native
 conversation/session identifiers.
+
+
+### Identity-resolution result classes and provider-context history
+
+Presence correlation reports an explicit identity-resolution class independently from
+the lower-level session operation: `NEW_LOGICAL_AGENT`, `SAME_SESSION_RESUME`,
+`NEW_PROVIDER_CONTEXT_SAME_LOGICAL_AGENT`, `NEW_SESSION_SAME_LOGICAL_AGENT`,
+or `UNRESOLVED_SURFACE`.
+
+A canonical session may retain multiple `provider_contexts[]`. This is additive
+history inside the existing session record, not a new identity registry. Each context
+keeps its own connection/runtime surface and, when actually supplied, separate connector
+facts such as connector app id, public client id, installation id and connector slug.
+Provider-native conversation references remain separate fields and remain `UNAVAILABLE`
+when the provider does not expose them.

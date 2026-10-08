@@ -78,6 +78,7 @@ def main() -> None:
         ).stdout)
         sid = first["session"]["session_id"]
         assert_true(first["status"] == "CREATE", "first attach creates")
+        assert_true(first["identity_resolution"] == "NEW_LOGICAL_AGENT", "first attach creates a new logical agent")
         assert_true(first["attachment_source"] == "CONVERSATION_CHRONICLE", "chronicle selected")
         assert_true(first["session"]["connection_ref"] == "chronicle:CHAT-MEM-TEST:SESSION-TEST", "stable chronicle ref")
         assert_true(first["session"]["provider_conversation_ref"] is None, "conversation ref may be unavailable")
@@ -95,6 +96,7 @@ def main() -> None:
             "--branch", "main",
         ).stdout)
         assert_true(second["status"] == "RESUME", "late provider binding resumes")
+        assert_true(second["identity_resolution"] == "NEW_PROVIDER_CONTEXT_SAME_LOGICAL_AGENT", "late provider binding is a new provider context")
         assert_true(second["session"]["session_id"] == sid, "late binding must not duplicate session")
         assert_true(second["session"]["provider"] == "chatgpt", "provider promoted from other")
         assert_true(second["session"]["provider_conversation_ref"] == "conversation-123", "provider ref enriched")
@@ -127,11 +129,32 @@ def main() -> None:
             "--branch", "main",
         ).stdout)
         assert_true(third["status"] == "RESUME", "repeat attach resumes")
+        assert_true(third["identity_resolution"] == "SAME_SESSION_RESUME", "repeat same context resumes same session")
+        assert_true(len(third["session"]["provider_contexts"]) == 1, "same runtime surface enriches one provider context")
+        assert_true(third["session"]["provider_contexts"][0]["provider_conversation_ref"] == "conversation-123", "provider context preserves provider ref")
+        fourth = json.loads(run(
+            env,
+            "--provider", "chatgpt",
+            "--provider-ref", "conversation-123",
+            "--connection-ref", "chronicle:CHAT-MEM-TEST:SECOND-SURFACE",
+            "--client-instance-id", "chronicle:CHAT-MEM-TEST-SECOND",
+            "--observed-head", "b"*40,
+            "--branch", "main",
+        ).stdout)
+        assert_true(fourth["status"] == "RESUME", "same provider conversation may resume through a new transport surface")
+        assert_true(fourth["identity_resolution"] == "NEW_PROVIDER_CONTEXT_SAME_LOGICAL_AGENT", "new transport is a new provider context")
+        assert_true(len(fourth["session"]["provider_contexts"]) == 2, "one session may preserve multiple provider contexts")
+        assert_true(
+            {item["connection_ref"] for item in fourth["session"]["provider_contexts"]}
+            == {"chronicle:CHAT-MEM-TEST:SESSION-TEST", "chronicle:CHAT-MEM-TEST:SECOND-SURFACE"},
+            "provider context history preserves both transport surfaces",
+        )
+
         sessions = json.loads((root / ".governance" / "control-plane-state" / "gacr-sessions.json").read_text())
         beacons = json.loads((root / ".governance" / "control-plane-state" / "gacr-beacons.json").read_text())
         correlations = json.loads((root / ".governance" / "control-plane-state" / "gacr-correlations.json").read_text())
         assert_true(len(sessions["sessions"]) == 1, "one canonical session")
-        assert_true(len(beacons["items"]) == 3, "each attach emits beacon")
+        assert_true(len(beacons["items"]) == 4, "each successful attach emits beacon")
         assert_true(any(x.get("selected_session_id") == sid for x in correlations["items"]), "correlator binds canonical session")
 
 
@@ -232,6 +255,7 @@ def main() -> None:
             if x["session_id"] == "session-stalled-observable"
         )
         assert_true(stalled_result["status"] == "UNBOUND_ACTIVITY", "stalled match must become unbound activity")
+        assert_true(stalled_result["identity_resolution"] == "UNRESOLVED_SURFACE", "stalled match remains unresolved")
         assert_true(stalled_result["binding"]["state"] == "UNBOUND", "stalled match must not remain bound")
         assert_true(
             stalled_result["binding"]["reason"] == "STALLED_SESSION_REQUIRES_GOVERNED_RECONCILIATION",
