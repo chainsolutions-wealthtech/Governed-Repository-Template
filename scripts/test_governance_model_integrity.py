@@ -134,12 +134,14 @@ def validate_g01_materialized(blueprint: dict, artifact_by_id: dict, produced_co
             fail(f"invalid GMA resolution state for {entry.get('boundary_item_id')}: {state}")
         if not (entry.get("provenance") or []):
             fail(f"GMA matrix provenance missing for {entry.get('boundary_item_id')}")
-        if state == "UNRESOLVED":
-            ref = entry.get("unresolved_ref")
-            prefix = "GMA-UNRESOLVED-BOUNDARY-ITEMS#"
+        ref = entry.get("unresolved_ref")
+        prefix = "GMA-UNRESOLVED-BOUNDARY-ITEMS#"
+        if ref is not None:
             if not isinstance(ref, str) or not ref.startswith(prefix):
-                fail(f"unresolved matrix entry lacks reciprocal unresolved_ref: {entry.get('boundary_item_id')}")
+                fail(f"matrix unresolved_ref is invalid: {entry.get('boundary_item_id')}")
             unresolved_refs.add(ref[len(prefix):])
+        if state == "UNRESOLVED" and ref is None:
+            fail(f"unresolved matrix entry lacks reciprocal unresolved_ref: {entry.get('boundary_item_id')}")
 
     classes = (taxonomy.get("body") or {}).get("classes") or []
     class_names = {item.get("name") for item in classes}
