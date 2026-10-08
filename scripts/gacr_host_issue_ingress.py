@@ -77,6 +77,10 @@ ALLOWED_KEYS = {
     "connection_ref",
     "client_instance_id",
     "bridge_registration_ref",
+    "provider_connector_app_id",
+    "provider_connector_client_id",
+    "provider_connector_installation_id",
+    "provider_connector_slug",
     "same_logical_agent_session_id",
     "continuity_evidence_ref",
     "observed_head",
@@ -395,6 +399,10 @@ def ensure_session(payload: dict, repository: str) -> dict:
     add(args, "--connection-ref", payload.get("connection_ref"))
     add(args, "--client-instance-id", payload.get("client_instance_id"))
     add(args, "--bridge-registration-ref", payload.get("bridge_registration_ref"))
+    add(args, "--provider-connector-app-id", payload.get("provider_connector_app_id"))
+    add(args, "--provider-connector-client-id", payload.get("provider_connector_client_id"))
+    add(args, "--provider-connector-installation-id", payload.get("provider_connector_installation_id"))
+    add(args, "--provider-connector-slug", payload.get("provider_connector_slug"))
     add(args, "--same-logical-agent-session-id", payload.get("same_logical_agent_session_id"))
     add(args, "--continuity-id", payload.get("continuity_id"))
     add(args, "--continuity-evidence-ref", payload.get("continuity_evidence_ref"))

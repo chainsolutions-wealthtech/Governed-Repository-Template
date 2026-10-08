@@ -222,6 +222,10 @@ def build_presence_observation(args: argparse.Namespace, anchor: dict, config: d
 
     github_actor = args.github_actor or event.get("github_actor") or os.environ.get("GITHUB_ACTOR")
     github_app_or_installation = args.github_app_installation or event.get("github_app_or_installation")
+    provider_connector_app_id = args.provider_connector_app_id
+    provider_connector_client_id = args.provider_connector_client_id
+    provider_connector_installation_id = args.provider_connector_installation_id or event.get("github_app_or_installation")
+    provider_connector_slug = args.provider_connector_slug
 
     connection_method = _connection_method(args, anchor, surface_class)
     connection_method_provenance = "OBSERVABLE_BY_PLATFORM" if args.connection_method else "DERIVED_SAFE"
@@ -288,6 +292,14 @@ def build_presence_observation(args: argparse.Namespace, anchor: dict, config: d
         "git_provider": git_provider_provenance,
         "github_actor": "OBSERVABLE_BY_PLATFORM",
         "github_app_or_installation": "OBSERVABLE_BY_PLATFORM",
+        "provider_connector_app_id": "DECLARED_BY_AGENT_OR_CLIENT" if provider_connector_app_id else "PROVIDER_PRIVATE_UNAVAILABLE",
+        "provider_connector_client_id": "DECLARED_BY_AGENT_OR_CLIENT" if provider_connector_client_id else "PROVIDER_PRIVATE_UNAVAILABLE",
+        "provider_connector_installation_id": (
+            "DECLARED_BY_AGENT_OR_CLIENT" if args.provider_connector_installation_id
+            else "OBSERVABLE_BY_PLATFORM" if provider_connector_installation_id
+            else "PROVIDER_PRIVATE_UNAVAILABLE"
+        ),
+        "provider_connector_slug": "DECLARED_BY_AGENT_OR_CLIENT" if provider_connector_slug else "PROVIDER_PRIVATE_UNAVAILABLE",
         "connection_method": connection_method_provenance,
         "permissions": "DECLARED_BY_AGENT_OR_CLIENT" if permissions is not None else "OBSERVABLE_BY_PLATFORM",
         "capabilities": "DECLARED_BY_AGENT_OR_CLIENT",
@@ -324,6 +336,10 @@ def build_presence_observation(args: argparse.Namespace, anchor: dict, config: d
         "git_provider": git_provider,
         "github_actor": github_actor,
         "github_app_or_installation": github_app_or_installation,
+        "provider_connector_app_id": provider_connector_app_id,
+        "provider_connector_client_id": provider_connector_client_id,
+        "provider_connector_installation_id": provider_connector_installation_id,
+        "provider_connector_slug": provider_connector_slug,
         "connection_method": connection_method,
         "agent_identity": agent_identity,
         "agent_type_or_model": args.agent_type_model,
@@ -752,6 +768,74 @@ def _same_logical_agent_gate(
     }
 
 
+def _provider_context_id(session_id: str, connection_ref: str | None, provider_ref: str | None, client_instance_id: str | None) -> str:
+    if connection_ref:
+        anchor_kind, anchor_value = "connection_ref", connection_ref
+    elif provider_ref:
+        anchor_kind, anchor_value = "provider_conversation_ref", provider_ref
+    elif client_instance_id:
+        anchor_kind, anchor_value = "client_instance_id", client_instance_id
+    else:
+        anchor_kind, anchor_value = "session_id", session_id
+    raw = json.dumps(
+        {"session_id": session_id, "anchor_kind": anchor_kind, "anchor_value": anchor_value},
+        sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+    )
+    return "GACR-PC-" + hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
+
+
+def _record_provider_context(session: dict, observation: dict) -> dict:
+    provenance = observation.get("field_provenance") or {}
+    connection_ref = observation.get("connection_ref") or session.get("connection_ref")
+    provider_ref = observation.get("provider_ref") or session.get("provider_conversation_ref")
+    client_instance_id = observation.get("client_instance_id") or session.get("client_instance_id")
+    context_id = _provider_context_id(str(session.get("session_id") or ""), connection_ref, provider_ref, client_instance_id)
+    observed_at = observation.get("observed_at")
+    record = {
+        "provider_context_id": context_id,
+        "provider_context_id_provenance": "DERIVED_GACR_SESSION_CONTEXT",
+        "provider": observation.get("provider") or session.get("provider") or "other",
+        "provider_conversation_ref": provider_ref,
+        "provider_conversation_ref_status": "PRESENT" if provider_ref else "UNAVAILABLE",
+        "provider_conversation_ref_provenance": provenance.get("provider_conversation_ref") if provider_ref else "PROVIDER_PRIVATE_UNAVAILABLE",
+        "client_instance_id": client_instance_id,
+        "client_instance_id_provenance": provenance.get("client_instance_id") or "CORRELATED",
+        "connection_ref": connection_ref,
+        "connection_ref_provenance": provenance.get("connection_ref") or "CORRELATED",
+        "runtime_surface_ref": connection_ref if str(connection_ref or "").startswith("GRT-SURFACE-") else None,
+        "runtime_surface_ref_provenance": "REPOSITORY_MINTED" if str(connection_ref or "").startswith("GRT-SURFACE-") else None,
+        "provider_connector_app_id": observation.get("provider_connector_app_id"),
+        "provider_connector_app_id_provenance": provenance.get("provider_connector_app_id"),
+        "provider_connector_client_id": observation.get("provider_connector_client_id"),
+        "provider_connector_client_id_provenance": provenance.get("provider_connector_client_id"),
+        "provider_connector_installation_id": observation.get("provider_connector_installation_id"),
+        "provider_connector_installation_id_provenance": provenance.get("provider_connector_installation_id"),
+        "provider_connector_slug": observation.get("provider_connector_slug"),
+        "provider_connector_slug_provenance": provenance.get("provider_connector_slug"),
+        "provider_native_identity_status": "PRESENT" if provider_ref else "UNAVAILABLE",
+        "provider_private_values_invented": False,
+        "first_seen_at": observed_at,
+        "last_seen_at": observed_at,
+        "seen_count": 1,
+    }
+    contexts = session.setdefault("provider_contexts", [])
+    existing = next((item for item in contexts if item.get("provider_context_id") == context_id), None)
+    if existing is None:
+        contexts.append(record)
+        contexts.sort(key=lambda item: item.get("provider_context_id") or "")
+        return record
+    first_seen = existing.get("first_seen_at") or observed_at
+    seen_count = int(existing.get("seen_count") or 0) + 1
+    for key, value in record.items():
+        if value not in (None, "", "UNAVAILABLE"):
+            existing[key] = value
+    existing["first_seen_at"] = first_seen
+    existing["last_seen_at"] = observed_at
+    existing["seen_count"] = seen_count
+    existing["provider_private_values_invented"] = False
+    return existing
+
+
 def _claim_for_session(claims_doc: dict, session_id: str | None) -> dict | None:
     if not session_id:
         return None
@@ -824,6 +908,26 @@ def build_connection_envelope(
             observation.get("github_app_or_installation"),
             p("github_app_or_installation", "OBSERVABLE_BY_PLATFORM"),
             "GITHUB_EVENT_OR_GATEWAY",
+        ),
+        "provider_connector_app_id": _field(
+            observation.get("provider_connector_app_id"),
+            p("provider_connector_app_id", "PROVIDER_PRIVATE_UNAVAILABLE"),
+            "CLIENT_OR_CONNECTOR_SURFACE",
+        ),
+        "provider_connector_client_id": _field(
+            observation.get("provider_connector_client_id"),
+            p("provider_connector_client_id", "PROVIDER_PRIVATE_UNAVAILABLE"),
+            "CLIENT_OR_CONNECTOR_SURFACE",
+        ),
+        "provider_connector_installation_id": _field(
+            observation.get("provider_connector_installation_id"),
+            p("provider_connector_installation_id", "PROVIDER_PRIVATE_UNAVAILABLE"),
+            "CLIENT_OR_CONNECTOR_SURFACE",
+        ),
+        "provider_connector_slug": _field(
+            observation.get("provider_connector_slug"),
+            p("provider_connector_slug", "PROVIDER_PRIVATE_UNAVAILABLE"),
+            "CLIENT_OR_CONNECTOR_SURFACE",
         ),
         "connection_method": _field(observation.get("connection_method"), p("connection_method", "DERIVED_SAFE"), "PRESENCE_OBSERVER"),
         "permissions": _field(
@@ -953,6 +1057,7 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
         correlation = correlate_all()
         return {
             "status": "UNBOUND_ACTIVITY",
+            "identity_resolution": "UNRESOLVED_SURFACE",
             "process": "GACR",
             "authority": "CP-AGENT-RELAY-001-PRESENCE-FIRST",
             "presence_event": presence_event,
@@ -970,6 +1075,8 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
         }
 
     selected = binding.get("selected_session")
+    selected_provider_ref_before = (selected or {}).get("provider_conversation_ref")
+    selected_connection_ref_before = (selected or {}).get("connection_ref")
     fingerprint = binding["connection_fingerprint"]
     presence_anchor = binding["presence_anchor"]
 
@@ -1020,6 +1127,7 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
         session["logical_agent_takeover_accepted"] = False
     session["surface_class"] = observation.get("surface_class")
     session["connection_method"] = observation.get("connection_method")
+    provider_context = _record_provider_context(session, observation)
     if observation.get("github_actor"):
         session["github_actor"] = observation["github_actor"]
     for route_field in ("entry_action", "connection_intent"):
@@ -1037,9 +1145,24 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
             )
 
     if same_logical_agent is not None:
+        identity_resolution = "NEW_SESSION_SAME_LOGICAL_AGENT"
         presence_event = "PRESENCE_NEW_SESSION_SAME_LOGICAL_AGENT"
+    elif resolution == "CREATE":
+        identity_resolution = "NEW_LOGICAL_AGENT"
+        presence_event = "PRESENCE_FIRST_TOUCH"
+    elif (
+        (observation.get("provider_ref") and observation.get("provider_ref") != selected_provider_ref_before)
+        or (
+            observation.get("connection_ref")
+            and selected_connection_ref_before
+            and observation.get("connection_ref") != selected_connection_ref_before
+        )
+    ):
+        identity_resolution = "NEW_PROVIDER_CONTEXT_SAME_LOGICAL_AGENT"
+        presence_event = "PRESENCE_RESUME"
     else:
-        presence_event = "PRESENCE_FIRST_TOUCH" if resolution == "CREATE" else "PRESENCE_RESUME"
+        identity_resolution = "SAME_SESSION_RESUME"
+        presence_event = "PRESENCE_RESUME"
     envelope = build_connection_envelope(
         observation,
         session=session,
@@ -1081,6 +1204,7 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
     correlation = correlate_all()
     return {
         "status": "NEW_SESSION_SAME_LOGICAL_AGENT" if same_logical_agent is not None else resolution,
+        "identity_resolution": identity_resolution,
         "core_session_resolution": resolution,
         "process": "GACR",
         "authority": "CP-AGENT-RELAY-001-PRESENCE-FIRST",
@@ -1095,6 +1219,7 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
         },
         "connection_fingerprint": fingerprint,
         "connection_envelope": envelope,
+        "provider_context": provider_context,
         "session": session,
         "logical_agent_binding": (
             {
@@ -1228,6 +1353,10 @@ def main() -> None:
     p.add_argument("--git-provider")
     p.add_argument("--github-actor")
     p.add_argument("--github-app-installation")
+    p.add_argument("--provider-connector-app-id")
+    p.add_argument("--provider-connector-client-id")
+    p.add_argument("--provider-connector-installation-id")
+    p.add_argument("--provider-connector-slug")
     p.add_argument("--connection-method")
     p.add_argument("--surface-class", choices=sorted(SURFACE_CLASSES))
     p.add_argument("--agent-type-model")

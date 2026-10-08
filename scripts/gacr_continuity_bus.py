@@ -322,31 +322,33 @@ def provider_endpoint_descriptor(session: dict, config: dict | None = None) -> d
     }
 
 
+def _provider_context_projection_id(session_id: str, connection_ref: str | None, provider_ref: str | None, client_instance_id: str | None) -> str:
+    if connection_ref:
+        anchor_kind, anchor_value = "connection_ref", connection_ref
+    elif provider_ref:
+        anchor_kind, anchor_value = "provider_conversation_ref", provider_ref
+    elif client_instance_id:
+        anchor_kind, anchor_value = "client_instance_id", client_instance_id
+    else:
+        anchor_kind, anchor_value = "session_id", session_id
+    raw = json.dumps(
+        {"session_id": session_id, "anchor_kind": anchor_kind, "anchor_value": anchor_value},
+        sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+    )
+    return "GACR-PC-" + hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
+
+
 def provider_context_descriptor(session: dict) -> dict:
     envelope = session.get("connection_envelope") or {}
     fields = envelope.get("fields") or {}
-
     def field_value(name: str):
         value = (fields.get(name) or {}).get("value")
         return None if value in {None, "", "UNAVAILABLE"} else value
-
     provider = str(session.get("provider") or "other")
     provider_ref = session.get("provider_conversation_ref")
     connection_ref = session.get("connection_ref")
     client_instance_id = session.get("client_instance_id")
-    raw = json.dumps(
-        {
-            "session_id": session.get("session_id"),
-            "provider": provider,
-            "provider_conversation_ref": provider_ref,
-            "connection_ref": connection_ref,
-            "client_instance_id": client_instance_id,
-        },
-        sort_keys=True,
-        separators=(",", ":"),
-        ensure_ascii=False,
-    )
-    context_id = "GACR-PC-" + hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
+    context_id = _provider_context_projection_id(str(session.get("session_id") or ""), connection_ref, provider_ref, client_instance_id)
     repository_surface_ref = field_value("github_app_or_installation")
     runtime_surface_ref = connection_ref if str(connection_ref or "").startswith("GRT-SURFACE-") else None
     return {
@@ -361,14 +363,33 @@ def provider_context_descriptor(session: dict) -> dict:
         "runtime_surface_ref": runtime_surface_ref,
         "runtime_surface_ref_provenance": "REPOSITORY_MINTED" if runtime_surface_ref else None,
         "repository_surface_ref": repository_surface_ref,
-        "repository_surface_ref_provenance": (
-            (fields.get("github_app_or_installation") or {}).get("provenance")
-            if repository_surface_ref else None
-        ),
+        "repository_surface_ref_provenance": (fields.get("github_app_or_installation") or {}).get("provenance") if repository_surface_ref else None,
+        "provider_connector_app_id": field_value("provider_connector_app_id"),
+        "provider_connector_client_id": field_value("provider_connector_client_id"),
+        "provider_connector_installation_id": field_value("provider_connector_installation_id"),
+        "provider_connector_slug": field_value("provider_connector_slug"),
         "provider_native_identity_status": "PRESENT" if provider_ref else "UNAVAILABLE",
         "provider_private_values_invented": False,
     }
 
+
+def provider_context_descriptors(session: dict) -> list[dict]:
+    projected = provider_context_descriptor(session)
+    contexts: dict[str, dict] = {}
+    for item in session.get("provider_contexts") or []:
+        if not isinstance(item, dict) or not item.get("provider_context_id"):
+            continue
+        value = dict(item)
+        value["session_id"] = session.get("session_id")
+        value["provider_private_values_invented"] = False
+        contexts[value["provider_context_id"]] = value
+    if projected["provider_context_id"] in contexts:
+        merged = dict(projected)
+        merged.update(contexts[projected["provider_context_id"]])
+        contexts[projected["provider_context_id"]] = merged
+    else:
+        contexts[projected["provider_context_id"]] = projected
+    return [contexts[key] for key in sorted(contexts)]
 
 def project_logical_agents_docs(state: dict, sessions_doc: dict) -> list[dict]:
     changes = []
@@ -384,7 +405,7 @@ def project_logical_agents_docs(state: dict, sessions_doc: dict) -> list[dict]:
             else:
                 participant["logical_agent_id"] = "UNAVAILABLE"
                 participant["logical_agent_id_provenance"] = "CANONICAL_GACR_AGENT_IDENTITY_UNAVAILABLE"
-            contexts = [provider_context_descriptor(session)] if session else []
+            contexts = provider_context_descriptors(session) if session else []
             participant["provider_contexts"] = contexts
             if not logical_agent_id:
                 continue
@@ -488,7 +509,7 @@ def project_participant_runtime_docs(
                         "CANONICAL_GACR_SESSION_AGENT_IDENTITY"
                         if session.get("agent_identity") else "CANONICAL_GACR_AGENT_IDENTITY_UNAVAILABLE"
                     ),
-                    "provider_contexts": [provider_context_descriptor(session)],
+                    "provider_contexts": provider_context_descriptors(session),
                     "liveness_state": derive_liveness_state(session, timestamp, quiet_after_seconds=quiet_after_seconds),
                     "canonical_session_status": session.get("status"),
                     "canonical_relay_state": relay.get("state"),

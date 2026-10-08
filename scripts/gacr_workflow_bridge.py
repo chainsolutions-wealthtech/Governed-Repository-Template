@@ -23,7 +23,9 @@ def add(args:list[str], flag:str, value):
 
 AUTO_ATTACH_ARRIVAL_CONTEXT_KEYS={
     'repository','repository_id','organization','git_provider','github_actor',
-    'github_app_installation','observed_head','branch','base_branch','pull_request',
+    'github_app_installation','provider_connector_app_id','provider_connector_client_id',
+    'provider_connector_installation_id','provider_connector_slug',
+    'observed_head','branch','base_branch','pull_request',
     'workflow_run_id','job_id','run_attempt','event_type','delivery_correlation_id',
     'last_action','last_evidence','entry_action','connection_intent','task_id',
     'claim_id','heartbeat_seq','checkpoint','same_logical_agent_session_id',
@@ -122,6 +124,10 @@ def main():
         add(args,'--git-provider',payload.get('git_provider'))
         add(args,'--github-actor',payload.get('github_actor'))
         add(args,'--github-app-installation',payload.get('github_app_installation'))
+        add(args,'--provider-connector-app-id',payload.get('provider_connector_app_id'))
+        add(args,'--provider-connector-client-id',payload.get('provider_connector_client_id'))
+        add(args,'--provider-connector-installation-id',payload.get('provider_connector_installation_id'))
+        add(args,'--provider-connector-slug',payload.get('provider_connector_slug'))
         add(args,'--connection-method',payload.get('connection_method'))
         add(args,'--surface-class',payload.get('surface_class'))
         add(args,'--agent-type-model',payload.get('agent_type_model'))
