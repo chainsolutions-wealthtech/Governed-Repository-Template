@@ -38,7 +38,7 @@
       "legacy_id": "GMC-01",
       "phase": "GMC-A",
       "title": "BOUNDARY — MODEL / CASE / RUNTIME / PROJECTION",
-      "status": "PLANNED",
+      "status": "VALIDATED_EXIT",
       "planning_only": true,
       "implementation_authorized": false,
       "depends_on": [
@@ -85,7 +85,7 @@
         {
           "task_id": "GMC-G01-T01",
           "title": "Recenser toutes les autorités et artefacts de gouvernance connus.",
-          "status": "PLANNED",
+          "status": "DONE",
           "planning_only": true,
           "implementation_authorized": false,
           "depends_on": [],
@@ -101,19 +101,21 @@
           "control": {
             "control_id": "GMC-G01-T01-CONTROL",
             "pass_condition": "Task scope is complete; provenance is complete; conflicts/unknowns are explicit; no silent inference; task result is usable by the next task or exit gate.",
-            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER"
+            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER",
+            "result": "PASS"
           },
           "intermediate_result": {
             "result_id": "GMC-G01-T01-RESULT",
             "persistent_by_default": false,
             "promotion_rule": "Promote into a declared work-package knowledge artifact only after group validation.",
             "required_provenance": true
-          }
+          },
+          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
         },
         {
           "task_id": "GMC-G01-T02",
           "title": "Classifier chaque artefact/règle en MODEL, APPLICATION_STRATEGY, RUNTIME_EXECUTION, PROJECTION ou UNRESOLVED.",
-          "status": "PLANNED",
+          "status": "DONE",
           "planning_only": true,
           "implementation_authorized": false,
           "depends_on": [
@@ -131,19 +133,21 @@
           "control": {
             "control_id": "GMC-G01-T02-CONTROL",
             "pass_condition": "Task scope is complete; provenance is complete; conflicts/unknowns are explicit; no silent inference; task result is usable by the next task or exit gate.",
-            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER"
+            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER",
+            "result": "PASS"
           },
           "intermediate_result": {
             "result_id": "GMC-G01-T02-RESULT",
             "persistent_by_default": false,
             "promotion_rule": "Promote into a declared work-package knowledge artifact only after group validation.",
             "required_provenance": true
-          }
+          },
+          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
         },
         {
           "task_id": "GMC-G01-T03",
           "title": "Inventorier les sémantiques communes enfermées ou dupliquées dans un seul cas.",
-          "status": "PLANNED",
+          "status": "DONE",
           "planning_only": true,
           "implementation_authorized": false,
           "depends_on": [
@@ -161,19 +165,21 @@
           "control": {
             "control_id": "GMC-G01-T03-CONTROL",
             "pass_condition": "Task scope is complete; provenance is complete; conflicts/unknowns are explicit; no silent inference; task result is usable by the next task or exit gate.",
-            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER"
+            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER",
+            "result": "PASS"
           },
           "intermediate_result": {
             "result_id": "GMC-G01-T03-RESULT",
             "persistent_by_default": false,
             "promotion_rule": "Promote into a declared work-package knowledge artifact only after group validation.",
             "required_provenance": true
-          }
+          },
+          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
         },
         {
           "task_id": "GMC-G01-T04",
           "title": "Cartographier la frontière source-control-plane versus surface distribuée aux clients.",
-          "status": "PLANNED",
+          "status": "DONE",
           "planning_only": true,
           "implementation_authorized": false,
           "depends_on": [
@@ -191,19 +197,21 @@
           "control": {
             "control_id": "GMC-G01-T04-CONTROL",
             "pass_condition": "Task scope is complete; provenance is complete; conflicts/unknowns are explicit; no silent inference; task result is usable by the next task or exit gate.",
-            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER"
+            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER",
+            "result": "PASS"
           },
           "intermediate_result": {
             "result_id": "GMC-G01-T04-RESULT",
             "persistent_by_default": false,
             "promotion_rule": "Promote into a declared work-package knowledge artifact only after group validation.",
             "required_provenance": true
-          }
+          },
+          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
         },
         {
           "task_id": "GMC-G01-T05",
           "title": "Séparer données de définition réutilisables et données d'exécution concrètes.",
-          "status": "PLANNED",
+          "status": "DONE",
           "planning_only": true,
           "implementation_authorized": false,
           "depends_on": [
@@ -221,19 +229,21 @@
           "control": {
             "control_id": "GMC-G01-T05-CONTROL",
             "pass_condition": "Task scope is complete; provenance is complete; conflicts/unknowns are explicit; no silent inference; task result is usable by the next task or exit gate.",
-            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER"
+            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER",
+            "result": "PASS"
           },
           "intermediate_result": {
             "result_id": "GMC-G01-T05-RESULT",
             "persistent_by_default": false,
             "promotion_rule": "Promote into a declared work-package knowledge artifact only after group validation.",
             "required_provenance": true
-          }
+          },
+          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
         },
         {
           "task_id": "GMC-G01-T06",
           "title": "Identifier contradictions, chevauchements et éléments sans propriétaire canonique.",
-          "status": "PLANNED",
+          "status": "DONE",
           "planning_only": true,
           "implementation_authorized": false,
           "depends_on": [
@@ -251,19 +261,21 @@
           "control": {
             "control_id": "GMC-G01-T06-CONTROL",
             "pass_condition": "Task scope is complete; provenance is complete; conflicts/unknowns are explicit; no silent inference; task result is usable by the next task or exit gate.",
-            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER"
+            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER",
+            "result": "PASS"
           },
           "intermediate_result": {
             "result_id": "GMC-G01-T06-RESULT",
             "persistent_by_default": false,
             "promotion_rule": "Promote into a declared work-package knowledge artifact only after group validation.",
             "required_provenance": true
-          }
+          },
+          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
         },
         {
           "task_id": "GMC-G01-T07",
           "title": "Produire MODEL_BOUNDARY_MATRIX avec provenance.",
-          "status": "PLANNED",
+          "status": "DONE",
           "planning_only": true,
           "implementation_authorized": false,
           "depends_on": [
@@ -281,19 +293,21 @@
           "control": {
             "control_id": "GMC-G01-T07-CONTROL",
             "pass_condition": "Task scope is complete; provenance is complete; conflicts/unknowns are explicit; no silent inference; task result is usable by the next task or exit gate.",
-            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER"
+            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER",
+            "result": "PASS"
           },
           "intermediate_result": {
             "result_id": "GMC-G01-T07-RESULT",
             "persistent_by_default": false,
             "promotion_rule": "Promote into a declared work-package knowledge artifact only after group validation.",
             "required_provenance": true
-          }
+          },
+          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
         },
         {
           "task_id": "GMC-G01-T08",
           "title": "Valider la matrice contre CP-ARCH-001, CP-GOVMODEL-001 et les décisions.",
-          "status": "PLANNED",
+          "status": "DONE",
           "planning_only": true,
           "implementation_authorized": false,
           "depends_on": [
@@ -311,14 +325,16 @@
           "control": {
             "control_id": "GMC-G01-T08-CONTROL",
             "pass_condition": "Task scope is complete; provenance is complete; conflicts/unknowns are explicit; no silent inference; task result is usable by the next task or exit gate.",
-            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER"
+            "failure_behavior": "HOLD_TASK_AND_RECORD_BLOCKER",
+            "result": "PASS"
           },
           "intermediate_result": {
             "result_id": "GMC-G01-T08-RESULT",
             "persistent_by_default": false,
             "promotion_rule": "Promote into a declared work-package knowledge artifact only after group validation.",
             "required_provenance": true
-          }
+          },
+          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
         }
       ],
       "expected_results": [
@@ -399,8 +415,8 @@
           "artifact_type": "MATRIX",
           "persistent_knowledge_object": true,
           "produced_by": "GMC-G01",
-          "status": "PRODUCED",
-          "validation_state": "PENDING_VALIDATION",
+          "status": "VALIDATED",
+          "validation_state": "VALIDATED",
           "versioning": {
             "scheme": "MONOTONIC",
             "planned_initial_version": "v1"
@@ -417,9 +433,10 @@
           "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae",
           "content_digest": {
             "algorithm": "sha256",
-            "value": "8b73fceb97f19fe0f0d4de1bd7a82dc2c19fbcb7432bbe3fa83fc173d6611f53"
+            "value": "c825075ed7be5d531a854aad5fa8935b7c08dd1bc77ddca31f08b7c2f9db7d9c"
           },
-          "materialization_decision_id": "CPD-076"
+          "materialization_decision_id": "CPD-076",
+          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
         },
         {
           "artifact_id": "GMA-MODEL-CLASSIFICATION-TAXONOMY",
@@ -427,8 +444,8 @@
           "artifact_type": "MODEL",
           "persistent_knowledge_object": true,
           "produced_by": "GMC-G01",
-          "status": "PRODUCED",
-          "validation_state": "PENDING_VALIDATION",
+          "status": "VALIDATED",
+          "validation_state": "VALIDATED",
           "versioning": {
             "scheme": "MONOTONIC",
             "planned_initial_version": "v1"
@@ -444,9 +461,10 @@
           "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae",
           "content_digest": {
             "algorithm": "sha256",
-            "value": "b48c43cfc941022a070102920f53a4c4dd82a8680bb14e810c5b2c10fb417554"
+            "value": "0ca741423cf9a7bc2fb5aa98de56abd6a8f33aa2a2d3e1fc11985ff054e04c35"
           },
-          "materialization_decision_id": "CPD-076"
+          "materialization_decision_id": "CPD-076",
+          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
         },
         {
           "artifact_id": "GMA-UNRESOLVED-BOUNDARY-ITEMS",
@@ -454,8 +472,8 @@
           "artifact_type": "KNOWLEDGE_ARTIFACT",
           "persistent_knowledge_object": true,
           "produced_by": "GMC-G01",
-          "status": "PRODUCED",
-          "validation_state": "PENDING_VALIDATION",
+          "status": "VALIDATED",
+          "validation_state": "VALIDATED",
           "versioning": {
             "scheme": "MONOTONIC",
             "planned_initial_version": "v1"
@@ -469,9 +487,10 @@
           "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae",
           "content_digest": {
             "algorithm": "sha256",
-            "value": "591060a963f2b4ea95e62b1799b5c7dac4d11b25d1457c99b171bf16068e85b4"
+            "value": "ba185f25f63e670a357aad955b4a7bbc993afb95603692ecbf5baee548d5cc0c"
           },
-          "materialization_decision_id": "CPD-076"
+          "materialization_decision_id": "CPD-076",
+          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
         }
       ],
       "purpose": "Éviter de mélanger la définition réutilisable du modèle avec les stratégies de cas, l'état runtime ou les projections techniques.",
@@ -482,7 +501,33 @@
       ],
       "knowledge_materialization_authorized": true,
       "knowledge_materialization_decision_id": "CPD-076",
-      "knowledge_materialization_scope": "MATERIALIZE_G01_KNOWLEDGE_ARTIFACTS"
+      "knowledge_materialization_scope": "MATERIALIZE_G01_KNOWLEDGE_ARTIFACTS",
+      "validation_evidence": [
+        {
+          "evidence_type": "GITHUB_ACTIONS_CHECK",
+          "run_id": 37712711922,
+          "job_id": 113102076849,
+          "conclusion": "success",
+          "validated_head_sha": "6bc0d7c459b9b7dcebd145c12909c690fb8de50f"
+        }
+      ],
+      "exit_control_results": [
+        {
+          "control_id": "GMC-EXIT-G01-ARTIFACTS-PRESENT",
+          "result": "PASS",
+          "evidence_ref": "github-actions:37712711922/job/113102076849"
+        },
+        {
+          "control_id": "GMC-EXIT-G01-PROVENANCE-COMPLETE",
+          "result": "PASS",
+          "evidence_ref": "github-actions:37712711922/job/113102076849"
+        },
+        {
+          "control_id": "GMC-EXIT-G01-VALIDATION-PASS",
+          "result": "PASS",
+          "evidence_ref": "github-actions:37712711922/job/113102076849"
+        }
+      ]
     },
     {
       "group_id": "GMC-G02",
@@ -10395,8 +10440,8 @@
       "artifact_type": "MATRIX",
       "persistent_knowledge_object": true,
       "produced_by": "GMC-G01",
-      "status": "PRODUCED",
-      "validation_state": "PENDING_VALIDATION",
+      "status": "VALIDATED",
+      "validation_state": "VALIDATED",
       "versioning": {
         "scheme": "MONOTONIC",
         "planned_initial_version": "v1"
@@ -10413,9 +10458,10 @@
       "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae",
       "content_digest": {
         "algorithm": "sha256",
-        "value": "8b73fceb97f19fe0f0d4de1bd7a82dc2c19fbcb7432bbe3fa83fc173d6611f53"
+        "value": "c825075ed7be5d531a854aad5fa8935b7c08dd1bc77ddca31f08b7c2f9db7d9c"
       },
-      "materialization_decision_id": "CPD-076"
+      "materialization_decision_id": "CPD-076",
+      "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
     },
     {
       "artifact_id": "GMA-MODEL-CLASSIFICATION-TAXONOMY",
@@ -10423,8 +10469,8 @@
       "artifact_type": "MODEL",
       "persistent_knowledge_object": true,
       "produced_by": "GMC-G01",
-      "status": "PRODUCED",
-      "validation_state": "PENDING_VALIDATION",
+      "status": "VALIDATED",
+      "validation_state": "VALIDATED",
       "versioning": {
         "scheme": "MONOTONIC",
         "planned_initial_version": "v1"
@@ -10440,9 +10486,10 @@
       "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae",
       "content_digest": {
         "algorithm": "sha256",
-        "value": "b48c43cfc941022a070102920f53a4c4dd82a8680bb14e810c5b2c10fb417554"
+        "value": "0ca741423cf9a7bc2fb5aa98de56abd6a8f33aa2a2d3e1fc11985ff054e04c35"
       },
-      "materialization_decision_id": "CPD-076"
+      "materialization_decision_id": "CPD-076",
+      "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
     },
     {
       "artifact_id": "GMA-UNRESOLVED-BOUNDARY-ITEMS",
@@ -10450,8 +10497,8 @@
       "artifact_type": "KNOWLEDGE_ARTIFACT",
       "persistent_knowledge_object": true,
       "produced_by": "GMC-G01",
-      "status": "PRODUCED",
-      "validation_state": "PENDING_VALIDATION",
+      "status": "VALIDATED",
+      "validation_state": "VALIDATED",
       "versioning": {
         "scheme": "MONOTONIC",
         "planned_initial_version": "v1"
@@ -10465,9 +10512,10 @@
       "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae",
       "content_digest": {
         "algorithm": "sha256",
-        "value": "591060a963f2b4ea95e62b1799b5c7dac4d11b25d1457c99b171bf16068e85b4"
+        "value": "ba185f25f63e670a357aad955b4a7bbc993afb95603692ecbf5baee548d5cc0c"
       },
-      "materialization_decision_id": "CPD-076"
+      "materialization_decision_id": "CPD-076",
+      "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
     },
     {
       "artifact_id": "GMA-GOVERNANCE-MODEL-METAMODEL",
