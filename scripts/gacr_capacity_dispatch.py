@@ -574,7 +574,17 @@ def parallel_work_dispatch_plan(
     ready.sort(key=lambda item: (-int(item.get("priority") or 0), int(item.get("sequence") or 0), str(item.get("work_item_id") or "")))
 
     active_claims = _active_claims(claims_doc)
+    pending_offers = [
+        item for item in dispatches_doc.get("items", [])
+        if item.get("dispatch_kind") == "WORK_OFFER"
+        and item.get("status") in PENDING_WORK_OFFER_STATUSES
+    ]
     claimed_work = {item.get("work_item_id") for item in active_claims}
+    offered_work = {
+        item.get("work_item_id")
+        for item in pending_offers
+        if item.get("work_item_id")
+    }
     occupied_domains = _active_collision_domains(claims_doc)
     planned_domains: set[str] = set()
     cfg = config()
@@ -608,6 +618,9 @@ def parallel_work_dispatch_plan(
             continue
         if work_item_id in claimed_work:
             unassigned.append({"work_item_id": work_item_id, "reason": "ALREADY_CLAIMED"})
+            continue
+        if work_item_id in offered_work:
+            unassigned.append({"work_item_id": work_item_id, "reason": "OFFER_ALREADY_PENDING"})
             continue
 
         deps_ok, unresolved = _dependencies_satisfied(item, by_id)
@@ -850,6 +863,48 @@ def accept_work_offer(dispatch_id: str, session_id: str) -> dict:
         raise ValueError(f"session no longer available: {capacity.get('availability_state')}")
     if not capacity.get("eligible_for_new_work"):
         raise ValueError("session no longer eligible for new work")
+
+    pool = agent_pool_projection()
+    target_pool_item = next(
+        (entry for entry in pool.get("items", []) if entry.get("session_id") == session_id),
+        None,
+    )
+    if not target_pool_item:
+        raise ValueError("target session missing from canonical capacity pool")
+    target_capacity_key = _capacity_key(target_pool_item)
+    sibling_session_ids = {
+        entry.get("session_id")
+        for entry in pool.get("items", [])
+        if entry.get("session_id")
+        and _capacity_key(entry) == target_capacity_key
+    }
+
+    active_sibling_claims = [
+        claim for claim in _active_claims(read_json(CLAIMS_PATH, {"claims": []}))
+        if claim.get("session_id") in sibling_session_ids
+    ]
+    if active_sibling_claims:
+        raise ValueError("logical agent capacity already occupied by active canonical claim")
+
+    sibling_in_flight = [
+        entry.get("session_id")
+        for entry in pool.get("items", [])
+        if entry.get("session_id") in sibling_session_ids
+        and entry.get("session_id") != session_id
+        and entry.get("in_flight_action")
+    ]
+    if sibling_in_flight:
+        raise ValueError("logical agent capacity already occupied by sibling in-flight action")
+
+    other_pending_offers = [
+        offer for offer in store.get("items", [])
+        if offer.get("dispatch_kind") == "WORK_OFFER"
+        and offer.get("status") in PENDING_WORK_OFFER_STATUSES
+        and offer.get("dispatch_id") != dispatch_id
+        and offer.get("target_session_id") in sibling_session_ids
+    ]
+    if other_pending_offers:
+        raise ValueError("logical agent capacity already occupied by another pending work offer")
 
     if TEMPLATE_SOURCE:
         current=canonical_work_document()

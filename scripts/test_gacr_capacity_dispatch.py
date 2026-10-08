@@ -382,6 +382,42 @@ def main() -> None:
         "planner exposes pending logical-agent offer occupancy",
     )
 
+    duplicate_pending_work_plan = g.parallel_work_dispatch_plan(
+        work_doc={
+            "source": "TEST",
+            "items": [{
+                "work_item_id": "LW-PENDING",
+                "status": "READY",
+                "priority": 1,
+                "sequence": 1,
+                "dependencies": [],
+                "collision_domains": ["logical-domain-duplicate-work"],
+                "required_capabilities": ["CODE"],
+                "allowed_agent_roles": ["CODE_AGENT"],
+            }],
+        },
+        claims_doc=empty_claims,
+        pool={
+            "items": [
+                {
+                    **same_agent_pool["items"][0],
+                    "session_id": "other-agent-session",
+                    "logical_agent_id": "logical-other",
+                    "client_instance_id": "client-other-agent",
+                }
+            ]
+        },
+        dispatches_doc=pending_offer_dispatches,
+    )
+    assert_true(
+        not duplicate_pending_work_plan["assignments"],
+        "same work item cannot be offered to a second logical agent while an offer is pending",
+    )
+    assert_true(
+        duplicate_pending_work_plan["unassigned"][0]["reason"] == "OFFER_ALREADY_PENDING",
+        "duplicate work offer rejection is explicit",
+    )
+
     cancelled_offer_plan = g.parallel_work_dispatch_plan(
         work_doc={
             "source": "TEST",
@@ -441,6 +477,81 @@ def main() -> None:
         ),
         "sibling session cannot bypass logical-agent capacity through a new chat/runtime",
     )
+
+    original_read_json = g.read_json
+    original_write_json = g.write_json
+    original_session_capacity_projection = g.session_capacity_projection
+    original_agent_pool_projection = g.agent_pool_projection
+    original_template_source = g.TEMPLATE_SOURCE
+    try:
+        accept_store = {
+            "schema_version": "1.0.0",
+            "revision": 0,
+            "items": [
+                {
+                    "dispatch_id": "GACR-W-accept-target",
+                    "dispatch_kind": "WORK_OFFER",
+                    "status": "READY",
+                    "target_session_id": "same-a",
+                    "work_item_id": "LW-ACCEPT",
+                },
+                {
+                    "dispatch_id": "GACR-W-accept-sibling",
+                    "dispatch_kind": "WORK_OFFER",
+                    "status": "READY",
+                    "target_session_id": "same-b",
+                    "work_item_id": "LW-OTHER",
+                },
+            ],
+        }
+        accept_claims = {"claims": []}
+        def fake_read(path, default=None):
+            if path == g.DISPATCHES_PATH:
+                return accept_store
+            if path == g.CLAIMS_PATH:
+                return accept_claims
+            return default or {}
+        g.read_json = fake_read
+        g.write_json = lambda path, value: None
+        g.session_capacity_projection = lambda session_id: {
+            "availability_state": "AVAILABLE",
+            "eligible_for_new_work": True,
+        }
+        g.agent_pool_projection = lambda: same_agent_pool
+        g.TEMPLATE_SOURCE = False
+        try:
+            g.accept_work_offer("GACR-W-accept-target", "same-a")
+        except ValueError as exc:
+            assert_true(
+                "another pending work offer" in str(exc),
+                f"sibling pending offer rejection should be explicit: {exc}",
+            )
+        else:
+            raise AssertionError("accept must fail when sibling session already owns pending logical-agent offer")
+
+        accept_store["items"] = [accept_store["items"][0]]
+        accept_claims["claims"] = [{
+            "claim_id": "sibling-active-claim",
+            "session_id": "same-b",
+            "work_item_id": "LW-CLAIMED",
+            "status": "ACTIVE",
+            "collision_domains": ["other-domain"],
+        }]
+        try:
+            g.accept_work_offer("GACR-W-accept-target", "same-a")
+        except ValueError as exc:
+            assert_true(
+                "active canonical claim" in str(exc),
+                f"sibling active claim rejection should be explicit: {exc}",
+            )
+        else:
+            raise AssertionError("accept must fail when sibling session already owns active logical-agent claim")
+    finally:
+        g.read_json = original_read_json
+        g.write_json = original_write_json
+        g.session_capacity_projection = original_session_capacity_projection
+        g.agent_pool_projection = original_agent_pool_projection
+        g.TEMPLATE_SOURCE = original_template_source
 
     claimed_plan = g.parallel_work_dispatch_plan(
         work_doc={"source":"TEST","items": [{

@@ -452,8 +452,17 @@ runtime surface alone never establish logical-agent sameness.
 
 Claims and leases remain session-scoped. However, for automatic work offers, sibling
 sessions sharing one canonical logical-agent identity also share the existing automatic
-parallel-offer ceiling. An active claim or in-flight action on one sibling therefore
-consumes logical-agent automatic capacity and cannot be bypassed by opening another
-chat/runtime session. The dispatcher may still choose the compatible sibling session
-whose declared role/capabilities fit a work item; this aggregation grants no claim,
-mutation authority, or provider-level limit inference.
+parallel-offer ceiling. An active claim, in-flight action, or non-terminal persisted work offer
+(`READY` / `ACCEPTED_PENDING_CLAIM`) on one sibling therefore consumes
+logical-agent automatic capacity and cannot be bypassed by opening another chat/runtime
+session or by waiting for a later dispatcher run. The same ready work item also cannot
+receive a second concurrent pending offer on another logical agent.
+
+Pending offers are read from the existing canonical GACR dispatch store. Terminal or
+cancelled offers release this derived capacity; once a canonical claim is activated, the
+claim path remains the work authority. Work-offer acceptance revalidates sibling claims,
+in-flight activity, and other pending offers before changing offer state.
+
+The dispatcher may still choose the compatible sibling session whose declared
+role/capabilities fit a work item; this aggregation grants no claim, mutation authority,
+new queue, or provider-level limit inference.
