@@ -260,6 +260,8 @@ def main():
     assert_true(claims["claims"][0]["session_id"] == agent_b["session_id"], "active claim should transfer only after acceptance")
     assert_true(claims["claims"][0]["claimed_head_sha"] == "c" * 40, "transferred claim should use reconciled head")
     assert_true(takeover["status"] == "ACCEPTED", "takeover queue item should become accepted")
+    assert_true(result["may_continue_mutable_work"] is True, "transferred canonical claim preserves mutable continuation")
+    assert_true(result["recoverable_work_authority"]["status"] == "VERIFIED", "claim transfer is explicit recovery authority")
 
     try:
         gacr.heartbeat_docs(
@@ -274,6 +276,77 @@ def main():
         raise SystemExit("GACR_TEST_FAILED: predecessor must never resurrect after transferred takeover")
     except ValueError:
         pass
+
+    # A liveness takeover with zero canonical claims must never manufacture
+    # mutable work authority or synthesize a task binding.
+    zero_sessions = {
+        "schema_version": "1.0.0",
+        "revision": 0,
+        "sessions": [
+            {
+                "session_id": "session-zero-predecessor",
+                "repository": "owner/zero",
+                "status": "STALLED",
+                "relay": {
+                    "state": "TAKEOVER_READY",
+                    "task_id": None,
+                    "branch": "main",
+                    "pull_request": None,
+                },
+            },
+            {
+                "session_id": "session-zero-successor",
+                "repository": "owner/zero",
+                "status": "STANDBY",
+                "relay": {
+                    "state": "STANDBY",
+                    "task_id": None,
+                    "branch": "main",
+                    "pull_request": None,
+                },
+            },
+        ],
+    }
+    zero_claims = empty_claims()
+    zero_takeovers = {
+        "schema_version": "1.0.0",
+        "revision": 0,
+        "last_scan_at": None,
+        "items": [{
+            "takeover_id": "GACR-T-zero-claims",
+            "stalled_session_id": "session-zero-predecessor",
+            "offered_to_session_id": "session-zero-successor",
+            "accepted_by_session_id": None,
+            "status": "OFFERED",
+            "created_at": gacr.iso(t0),
+            "work_item_id": None,
+            "task_id": None,
+            "branch": "main",
+            "pull_request": None,
+            "last_observed_head_sha": "d" * 40,
+            "active_claim_count": 0,
+        }],
+    }
+    zero_result = gacr.accept_takeover_docs(
+        config,
+        zero_sessions,
+        zero_claims,
+        zero_takeovers,
+        stalled_session_id="session-zero-predecessor",
+        successor_session_id="session-zero-successor",
+        reconciled_head_sha="d" * 40,
+        actual_work_head_sha="d" * 40,
+        timestamp=t0 + timedelta(seconds=3200),
+        work_doc={"items": []},
+    )
+    zero_successor = next(x for x in zero_sessions["sessions"] if x["session_id"] == "session-zero-successor")
+    assert_true(zero_result["status"] == "TAKEOVER_ACCEPTED", "zero-claim liveness takeover may be recorded")
+    assert_true(zero_result["may_continue_mutable_work"] is False, "zero-claim takeover grants no mutable continuation")
+    assert_true(zero_result["recoverable_work_authority"]["status"] == "UNAVAILABLE", "zero-claim takeover has no work authority")
+    assert_true(zero_successor["relay"]["task_id"] is None, "zero-claim takeover must not synthesize task binding")
+    assert_true(zero_successor["relay"]["last_action"] == "TAKEOVER_ACCEPTED_NO_MUTABLE_WORK", "zero-claim takeover is explicitly non-mutable")
+    assert_true(zero_claims["revision"] == 0, "zero-claim takeover must not mutate claim revision")
+    assert_true(zero_takeovers["items"][0]["recoverable_work_authority"] == "NONE", "takeover record persists no-authority result")
 
     if (ROOT/".template-source").exists():
         assert_true(

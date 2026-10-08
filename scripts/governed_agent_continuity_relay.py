@@ -567,6 +567,8 @@ def accept_takeover_docs(
             claim["transferred_at"] = iso(timestamp)
             transferred.append(claim.get("work_item_id"))
 
+    recoverable_work_authority = bool(transferred)
+
     predecessor["status"] = "CLOSED"
     pr["state"] = "HANDOFF_STALLED"
     pr["handoff_at"] = iso(timestamp)
@@ -578,14 +580,15 @@ def accept_takeover_docs(
     sr["state"] = "ACTIVE"
     sr["last_heartbeat_at"] = iso(timestamp)
     sr["lease_expires_at"] = iso(timestamp + timedelta(seconds=int(config["stalled_after_seconds"])))
-    sr["last_action"] = "TAKEOVER_ACCEPTED"
+    sr["last_action"] = "TAKEOVER_ACCEPTED" if recoverable_work_authority else "TAKEOVER_ACCEPTED_NO_MUTABLE_WORK"
     sr["predecessor_session_id"] = stalled_session_id
-    if not sr.get("task_id"):
-        sr["task_id"] = pr.get("task_id")
-    if not sr.get("branch"):
-        sr["branch"] = pr.get("branch")
-    if sr.get("pull_request") is None:
-        sr["pull_request"] = pr.get("pull_request")
+    if recoverable_work_authority:
+        if not sr.get("task_id"):
+            sr["task_id"] = pr.get("task_id")
+        if not sr.get("branch"):
+            sr["branch"] = pr.get("branch")
+        if sr.get("pull_request") is None:
+            sr["pull_request"] = pr.get("pull_request")
 
     item["accepted_by_session_id"] = successor_session_id
     item["status"] = "ACCEPTED"
@@ -594,9 +597,12 @@ def accept_takeover_docs(
     item["reobserved_head_sha"] = actual_work_head_sha
     item["head_reconciled_at"] = iso(timestamp)
     item["exact_head_reconciliation"] = "PASS"
+    item["recoverable_work_authority"] = "ACTIVE_CANONICAL_CLAIM_TRANSFER" if recoverable_work_authority else "NONE"
+    item["may_continue_mutable_work"] = recoverable_work_authority
 
     sessions_doc["revision"] = int(sessions_doc.get("revision", 0)) + 1
-    claims_doc["revision"] = int(claims_doc.get("revision", 0)) + 1
+    if transferred:
+        claims_doc["revision"] = int(claims_doc.get("revision", 0)) + 1
     takeovers_doc["revision"] = int(takeovers_doc.get("revision", 0)) + 1
 
     return {
@@ -606,7 +612,12 @@ def accept_takeover_docs(
         "successor_session_id": successor_session_id,
         "reconciled_head_sha": actual_work_head_sha,
         "transferred_work_items": transferred,
-        "may_continue_mutable_work": True,
+        "recoverable_work_authority": (
+            {"status": "VERIFIED", "source": "ACTIVE_CANONICAL_CLAIM_TRANSFER", "work_item_ids": transferred}
+            if recoverable_work_authority
+            else {"status": "UNAVAILABLE", "source": "NONE", "work_item_ids": []}
+        ),
+        "may_continue_mutable_work": recoverable_work_authority,
     }
 
 
