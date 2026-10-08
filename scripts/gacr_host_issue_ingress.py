@@ -196,12 +196,16 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
     kind = str(payload.get("event") or "").lower()
     if kind not in EVENTS:
         raise ValueError("unsupported host-event type")
-    same_logical_fields = (
-        payload.get("same_logical_agent_session_id"),
-        payload.get("continuity_id"),
-        payload.get("continuity_evidence_ref"),
+    same_logical_requested = any(
+        payload.get(key) not in (None, "")
+        for key in ("same_logical_agent_session_id", "continuity_evidence_ref")
     )
-    if any(value not in (None, "") for value in same_logical_fields):
+    if same_logical_requested:
+        same_logical_fields = (
+            payload.get("same_logical_agent_session_id"),
+            payload.get("continuity_id"),
+            payload.get("continuity_evidence_ref"),
+        )
         if kind != "attach":
             raise ValueError("same-logical-agent proof is supported only for attach events")
         if any(value in (None, "") for value in same_logical_fields):
