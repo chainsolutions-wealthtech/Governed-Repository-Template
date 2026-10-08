@@ -1,0 +1,346 @@
+{
+  "schema_version": "gma-artifact/v1",
+  "artifact_version": "v1",
+  "producer": "GMC-G01",
+  "subject": {
+    "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+    "head_sha": "c4584616d7caff334b907b5eb71cc52149107dae",
+    "programme": "GOVERNANCE_MODEL_CATALOGUE",
+    "work_package": "GMC-G01"
+  },
+  "representation": {
+    "decision_id": "CPD-076",
+    "class": "SOURCE_ONLY_VERSIONED_BODY_WITH_EXISTING_REFERENCE_PROJECTION",
+    "encoding": "JSON",
+    "package_unit": "ONE_DOCUMENT_PER_GMA_ARTIFACT",
+    "authority_scope": "SOURCE_ONLY",
+    "implementation_authority_granted": false
+  },
+  "status": "PRODUCED",
+  "validation_state": "PENDING_VALIDATION",
+  "provenance_contract": {
+    "required_per_assertion": true,
+    "unknown_allowed_only_when_explicit": true
+  },
+  "supersedes": null,
+  "history": [
+    {
+      "event": "PRODUCED_V1",
+      "decision_id": "CPD-076",
+      "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+    }
+  ],
+  "validation_evidence": [],
+  "artifact_id": "GMA-UNRESOLVED-BOUNDARY-ITEMS",
+  "artifact_type": "KNOWLEDGE_ARTIFACT",
+  "content_ref": ".governance/control-plane-state/gma-unresolved-boundary-items.json",
+  "consumed_by": [],
+  "body": {
+    "items": [
+      {
+        "unresolved_id": "unresolved-001",
+        "subject_ref": "FIRST_TOUCH_INGRESS_DISTRIBUTION",
+        "source_refs": [
+          {
+            "source_ref": ".github/workflows/gscc-provider-first-touch-ingress.yml",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/TEMPLATE_MANIFEST.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "competing_classifications": [
+          "RUNTIME_EXECUTION",
+          "MODEL"
+        ],
+        "reason_unresolved": "Distribution/manifest ownership of ingress surfaces remains unresolved.",
+        "known_facts": [],
+        "missing_facts": [
+          "future owner/normalization detail"
+        ],
+        "decision_owner_or_future_group": "DOWNSTREAM_GOVERNANCE_MODEL_NORMALIZATION",
+        "blocking_effect": "LOCAL",
+        "affected_artifacts": [
+          "GMA-MODEL-BOUNDARY-MATRIX"
+        ],
+        "candidate_resolution_paths": [
+          "resolve in downstream owner without rewriting G01 evidence"
+        ],
+        "prohibited_shortcuts": [
+          "silently normalize unresolved semantics"
+        ],
+        "revalidation_triggers": [
+          "relevant authority revision"
+        ],
+        "provenance": [
+          {
+            "source_ref": ".github/workflows/gscc-provider-first-touch-ingress.yml",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/TEMPLATE_MANIFEST.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "unresolved_id": "unresolved-002",
+        "subject_ref": "WORKFLOW_MODEL_MIXED_CONCERNS",
+        "source_refs": [
+          {
+            "source_ref": ".governance/workflow-model.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "competing_classifications": [
+          "MODEL",
+          "APPLICATION_STRATEGY",
+          "RUNTIME_EXECUTION"
+        ],
+        "reason_unresolved": "workflow-model combines reusable flow semantics, case sequencing and runtime behavior.",
+        "known_facts": [],
+        "missing_facts": [
+          "future owner/normalization detail"
+        ],
+        "decision_owner_or_future_group": "DOWNSTREAM_GOVERNANCE_MODEL_NORMALIZATION",
+        "blocking_effect": "DOWNSTREAM",
+        "affected_artifacts": [
+          "GMA-MODEL-BOUNDARY-MATRIX"
+        ],
+        "candidate_resolution_paths": [
+          "resolve in downstream owner without rewriting G01 evidence"
+        ],
+        "prohibited_shortcuts": [
+          "silently normalize unresolved semantics"
+        ],
+        "revalidation_triggers": [
+          "relevant authority revision"
+        ],
+        "provenance": [
+          {
+            "source_ref": ".governance/workflow-model.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "unresolved_id": "unresolved-003",
+        "subject_ref": "GOVMODEL_CATALOGUE_STALE_PROGRAMME_POINTERS",
+        "source_refs": [
+          {
+            "source_ref": "docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/control-plane-state/current.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "competing_classifications": [
+          "MODEL",
+          "PROJECTION"
+        ],
+        "reason_unresolved": "Valid model semantics coexist with programme/current-state pointers whose freshness follows higher-precedence authorities.",
+        "known_facts": [],
+        "missing_facts": [
+          "future owner/normalization detail"
+        ],
+        "decision_owner_or_future_group": "DOWNSTREAM_GOVERNANCE_MODEL_NORMALIZATION",
+        "blocking_effect": "NONE",
+        "affected_artifacts": [
+          "GMA-MODEL-BOUNDARY-MATRIX"
+        ],
+        "candidate_resolution_paths": [
+          "resolve in downstream owner without rewriting G01 evidence"
+        ],
+        "prohibited_shortcuts": [
+          "silently normalize unresolved semantics"
+        ],
+        "revalidation_triggers": [
+          "relevant authority revision"
+        ],
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/control-plane-state/current.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "unresolved_id": "unresolved-004",
+        "subject_ref": "PRODUCTIZATION_DIMENSION",
+        "source_refs": [
+          {
+            "source_ref": "docs/control-plane/GSCC_GSE_GACR_REUSABLE_CAPSULE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/SAAS_PLATFORM_PROGRAM.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "competing_classifications": [
+          "MODEL"
+        ],
+        "reason_unresolved": "CAP/SaaS consume multiple semantic layers and need a later explicit productization relationship taxonomy.",
+        "known_facts": [],
+        "missing_facts": [
+          "future owner/normalization detail"
+        ],
+        "decision_owner_or_future_group": "DOWNSTREAM_GOVERNANCE_MODEL_NORMALIZATION",
+        "blocking_effect": "NONE",
+        "affected_artifacts": [
+          "GMA-MODEL-BOUNDARY-MATRIX",
+          "GMA-MODEL-CLASSIFICATION-TAXONOMY"
+        ],
+        "candidate_resolution_paths": [
+          "resolve in downstream owner without rewriting G01 evidence"
+        ],
+        "prohibited_shortcuts": [
+          "silently normalize unresolved semantics"
+        ],
+        "revalidation_triggers": [
+          "relevant authority revision"
+        ],
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/GSCC_GSE_GACR_REUSABLE_CAPSULE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/SAAS_PLATFORM_PROGRAM.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "unresolved_id": "unresolved-005",
+        "subject_ref": "ASSURANCE_TEST_CI_OWNERSHIP",
+        "source_refs": [
+          {
+            "source_ref": ".github/workflows/governance-ci.yml",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "scripts/test_governance_model_integrity.py",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "competing_classifications": [
+          "MODEL",
+          "RUNTIME_EXECUTION"
+        ],
+        "reason_unresolved": "Tests encode normative invariants while CI executes evidence; final assurance/test ownership is not normalized.",
+        "known_facts": [],
+        "missing_facts": [
+          "future owner/normalization detail"
+        ],
+        "decision_owner_or_future_group": "DOWNSTREAM_GOVERNANCE_MODEL_NORMALIZATION",
+        "blocking_effect": "LOCAL",
+        "affected_artifacts": [
+          "GMA-MODEL-BOUNDARY-MATRIX",
+          "GMA-MODEL-CLASSIFICATION-TAXONOMY"
+        ],
+        "candidate_resolution_paths": [
+          "resolve in downstream owner without rewriting G01 evidence"
+        ],
+        "prohibited_shortcuts": [
+          "silently normalize unresolved semantics"
+        ],
+        "revalidation_triggers": [
+          "relevant authority revision"
+        ],
+        "provenance": [
+          {
+            "source_ref": ".github/workflows/governance-ci.yml",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "scripts/test_governance_model_integrity.py",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "unresolved_id": "unresolved-006",
+        "subject_ref": "SOURCE_VS_GENERIC_WORK_SESSION_MAPPING",
+        "source_refs": [
+          {
+            "source_ref": ".governance/work/work-items.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/sessions/sessions.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/control-plane-state/tasks.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/control-plane-state/gacr-sessions.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "competing_classifications": [
+          "MODEL",
+          "RUNTIME_EXECUTION",
+          "PROJECTION"
+        ],
+        "reason_unresolved": "Generic client work/session primitives and source global task/GACR truth are both valid; their mapping must remain explicit.",
+        "known_facts": [],
+        "missing_facts": [
+          "future owner/normalization detail"
+        ],
+        "decision_owner_or_future_group": "DOWNSTREAM_GOVERNANCE_MODEL_NORMALIZATION",
+        "blocking_effect": "DOWNSTREAM",
+        "affected_artifacts": [
+          "GMA-MODEL-BOUNDARY-MATRIX"
+        ],
+        "candidate_resolution_paths": [
+          "resolve in downstream owner without rewriting G01 evidence"
+        ],
+        "prohibited_shortcuts": [
+          "silently normalize unresolved semantics"
+        ],
+        "revalidation_triggers": [
+          "relevant authority revision"
+        ],
+        "provenance": [
+          {
+            "source_ref": ".governance/work/work-items.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/sessions/sessions.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/control-plane-state/tasks.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/control-plane-state/gacr-sessions.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      }
+    ]
+  },
+  "content_digest": {
+    "algorithm": "sha256",
+    "canonicalization": "JSON_SORT_KEYS_COMPACT_WITH_DIGEST_VALUE_NULL",
+    "value": "591060a963f2b4ea95e62b1799b5c7dac4d11b25d1457c99b171bf16068e85b4"
+  }
+}
