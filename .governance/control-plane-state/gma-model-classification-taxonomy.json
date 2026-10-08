@@ -16,8 +16,8 @@
     "authority_scope": "SOURCE_ONLY",
     "implementation_authority_granted": false
   },
-  "status": "PRODUCED",
-  "validation_state": "PENDING_VALIDATION",
+  "status": "VALIDATED",
+  "validation_state": "VALIDATED",
   "provenance_contract": {
     "required_per_assertion": true,
     "unknown_allowed_only_when_explicit": true
@@ -28,9 +28,24 @@
       "event": "PRODUCED_V1",
       "decision_id": "CPD-076",
       "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+    },
+    {
+      "event": "VALIDATED_V1",
+      "decision_id": "CPD-076",
+      "validated_head_sha": "6bc0d7c459b9b7dcebd145c12909c690fb8de50f",
+      "evidence_ref": "github-actions:37712711922/job/113102076849"
     }
   ],
-  "validation_evidence": [],
+  "validation_evidence": [
+    {
+      "evidence_type": "GITHUB_ACTIONS_CHECK",
+      "workflow": "Governance CI",
+      "run_id": 37712711922,
+      "job_id": 113102076849,
+      "conclusion": "success",
+      "validated_head_sha": "6bc0d7c459b9b7dcebd145c12909c690fb8de50f"
+    }
+  ],
   "artifact_id": "GMA-MODEL-CLASSIFICATION-TAXONOMY",
   "artifact_type": "MODEL",
   "content_ref": ".governance/control-plane-state/gma-model-classification-taxonomy.json",
@@ -62,7 +77,7 @@
             "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
           }
         ],
-        "validation_state": "PENDING_VALIDATION"
+        "validation_state": "VALIDATED"
       },
       {
         "class_id": "class-application-strategy",
@@ -86,7 +101,7 @@
             "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
           }
         ],
-        "validation_state": "PENDING_VALIDATION"
+        "validation_state": "VALIDATED"
       },
       {
         "class_id": "class-runtime-execution",
@@ -110,7 +125,7 @@
             "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
           }
         ],
-        "validation_state": "PENDING_VALIDATION"
+        "validation_state": "VALIDATED"
       },
       {
         "class_id": "class-projection",
@@ -134,7 +149,7 @@
             "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
           }
         ],
-        "validation_state": "PENDING_VALIDATION"
+        "validation_state": "VALIDATED"
       }
     ],
     "resolution_states": [
@@ -328,6 +343,6 @@
   "content_digest": {
     "algorithm": "sha256",
     "canonicalization": "JSON_SORT_KEYS_COMPACT_WITH_DIGEST_VALUE_NULL",
-    "value": "b48c43cfc941022a070102920f53a4c4dd82a8680bb14e810c5b2c10fb417554"
+    "value": "0ca741423cf9a7bc2fb5aa98de56abd6a8f33aa2a2d3e1fc11985ff054e04c35"
   }
 }
