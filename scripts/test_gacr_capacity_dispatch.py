@@ -25,9 +25,10 @@ def live_signal(state: str = "ACTIVE") -> dict:
     }
 
 
-def session(session_id: str, *, capabilities=None, role="qualification-client", relay_state="ACTIVE") -> dict:
+def session(session_id: str, *, capabilities=None, role="qualification-client", relay_state="ACTIVE", agent_identity=None) -> dict:
     return {
         "session_id": session_id,
+        "agent_identity": agent_identity or ("agent-" + session_id),
         "repository": "example/repo",
         "provider": "chatgpt",
         "client_instance_id": "client-" + session_id,
@@ -109,6 +110,7 @@ def main() -> None:
     assert_true(available["agent_role"] == "CODE_AGENT", "declared canonical role overrides qualification role")
     assert_true(available["declared_work_profile"]["entry_purpose"] == "WORK_ON_CONTROL_PLANE", "entry purpose recorded")
     assert_true(available["eligible_for_new_work"] is True, "released explicitly available session eligible")
+    assert_true(available["logical_agent_id"] == "agent-s1", "capacity projection uses canonical agent identity")
 
     pre_f1 = g.session_capacity_projection(
         "s1",
@@ -259,6 +261,111 @@ def main() -> None:
     assert_true(blocked["reason"] == "COLLISION_DOMAIN_BUSY", "same collision domain must not parallelize")
     assert_true(plan["write_authority_granted"] is False, "dispatch plan never grants write authority")
     assert_true(plan["claim_transfer_performed"] is False, "dispatch plan never creates/transfers claim")
+
+    same_agent_pool = {
+        "items": [
+            {
+                "session_id": "same-a",
+                "logical_agent_id": "logical-shared",
+                "client_instance_id": "client-same-a",
+                "repository": "example/repo",
+                "agent_role": "CODE_AGENT",
+                "capabilities": ["CODE"],
+                "authority_grants": [],
+                "eligible_for_new_work": True,
+                "active_claim_count": 0,
+                "in_flight_action": None,
+            },
+            {
+                "session_id": "same-b",
+                "logical_agent_id": "logical-shared",
+                "client_instance_id": "client-same-b",
+                "repository": "example/repo",
+                "agent_role": "CODE_AGENT",
+                "capabilities": ["CODE"],
+                "authority_grants": [],
+                "eligible_for_new_work": True,
+                "active_claim_count": 0,
+                "in_flight_action": None,
+            },
+        ]
+    }
+    same_agent_work = {
+        "source": "TEST",
+        "items": [
+            {
+                "work_item_id": "LW1",
+                "status": "READY",
+                "priority": 100,
+                "sequence": 1,
+                "dependencies": [],
+                "collision_domains": ["logical-domain-a"],
+                "required_capabilities": ["CODE"],
+                "allowed_agent_roles": ["CODE_AGENT"],
+            },
+            {
+                "work_item_id": "LW2",
+                "status": "READY",
+                "priority": 90,
+                "sequence": 2,
+                "dependencies": [],
+                "collision_domains": ["logical-domain-b"],
+                "required_capabilities": ["CODE"],
+                "allowed_agent_roles": ["CODE_AGENT"],
+            },
+        ],
+    }
+    same_agent_plan = g.parallel_work_dispatch_plan(
+        work_doc=same_agent_work,
+        claims_doc=empty_claims,
+        pool=same_agent_pool,
+    )
+    assert_true(len(same_agent_plan["assignments"]) == 1, "two sessions of one logical agent must not create two automatic capacity units")
+    assert_true(
+        same_agent_plan["assignments"][0]["target_logical_agent_id"] == "logical-shared",
+        "assignment preserves logical-agent trace",
+    )
+    logical_blocked = next(item for item in same_agent_plan["unassigned"] if item["work_item_id"] == "LW2")
+    assert_true(logical_blocked["reason"] == "NO_COMPATIBLE_AVAILABLE_AGENT", "second logical-agent slot must be unavailable")
+    assert_true(
+        all(
+            "LOGICAL_AGENT_OFFER_CAPACITY_REACHED" in evaluation["reasons"]
+            for evaluation in logical_blocked["evaluations"]
+        ),
+        "all sibling sessions must share one default logical-agent offer ceiling",
+    )
+
+    same_agent_claimed = g.parallel_work_dispatch_plan(
+        work_doc={
+            "source": "TEST",
+            "items": [{
+                "work_item_id": "LW3",
+                "status": "READY",
+                "priority": 1,
+                "sequence": 1,
+                "dependencies": [],
+                "collision_domains": ["logical-domain-c"],
+                "required_capabilities": ["CODE"],
+                "allowed_agent_roles": ["CODE_AGENT"],
+            }],
+        },
+        claims_doc={"claims": [{
+            "claim_id": "logical-existing-claim",
+            "session_id": "same-a",
+            "work_item_id": "LW0",
+            "status": "ACTIVE",
+            "collision_domains": ["unrelated-logical-domain"],
+        }]},
+        pool=same_agent_pool,
+    )
+    assert_true(not same_agent_claimed["assignments"], "active claim on one sibling session consumes shared logical-agent capacity")
+    assert_true(
+        all(
+            "LOGICAL_AGENT_OFFER_CAPACITY_REACHED" in evaluation["reasons"]
+            for evaluation in same_agent_claimed["unassigned"][0]["evaluations"]
+        ),
+        "sibling session cannot bypass logical-agent capacity through a new chat/runtime",
+    )
 
     claimed_plan = g.parallel_work_dispatch_plan(
         work_doc={"source":"TEST","items": [{

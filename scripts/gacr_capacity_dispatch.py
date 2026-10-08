@@ -75,6 +75,19 @@ def config() -> dict:
     }
 
 
+def _logical_agent_id(session: dict) -> str | None:
+    value = session.get("logical_agent_id") or session.get("agent_identity")
+    value = str(value or "").strip()
+    return value or None
+
+
+def _capacity_key(item: dict) -> str:
+    logical_agent_id = str(item.get("logical_agent_id") or "").strip()
+    if logical_agent_id:
+        return "logical-agent:" + logical_agent_id
+    return "session:" + str(item.get("session_id") or "UNAVAILABLE")
+
+
 def _active_claims(claims_doc: dict, session_id: str | None = None) -> list[dict]:
     values = [
         item for item in claims_doc.get("claims", [])
@@ -246,8 +259,14 @@ def session_capacity_projection(
 
     effective_capabilities = sorted(set(session.get("capabilities") or []) | set(declared_capabilities))
     effective_role = declaration.get("agent_role") or session.get("agent_role")
+    logical_agent_id = _logical_agent_id(session)
     value = {
         "session_id": session_id,
+        "logical_agent_id": logical_agent_id,
+        "logical_agent_id_provenance": (
+            "CANONICAL_GACR_AGENT_IDENTITY"
+            if logical_agent_id else "UNAVAILABLE"
+        ),
         "generated_at": generated_at or telemetry.now_iso(),
         "repository": session.get("repository"),
         "provider": session.get("provider"),
@@ -308,15 +327,56 @@ def agent_pool_projection(*, generated_at: str | None = None) -> dict:
         ))
     items.sort(key=lambda item: (0 if item.get("eligible_for_new_work") else 1, str(item.get("session_id") or "")))
     counts: dict[str, int] = {}
+    logical_groups: dict[str, dict] = {}
+    cfg = config()
     for item in items:
         state = item.get("availability_state") or "UNKNOWN"
         counts[state] = counts.get(state, 0) + 1
+        key = _capacity_key(item)
+        group = logical_groups.setdefault(key, {
+            "capacity_key": key,
+            "logical_agent_id": item.get("logical_agent_id"),
+            "logical_agent_id_provenance": item.get("logical_agent_id_provenance"),
+            "session_ids": [],
+            "eligible_session_ids": [],
+            "active_claim_count": 0,
+            "in_flight_session_ids": [],
+            "automatic_offer_capacity_limit": cfg["max_parallel_offers_per_session"],
+            "provider_private_limit_inference": False,
+        })
+        group["session_ids"].append(item.get("session_id"))
+        if item.get("eligible_for_new_work"):
+            group["eligible_session_ids"].append(item.get("session_id"))
+        group["active_claim_count"] += int(item.get("active_claim_count") or 0)
+        if item.get("in_flight_action"):
+            group["in_flight_session_ids"].append(item.get("session_id"))
+
+    logical_agents = []
+    for key in sorted(logical_groups):
+        group = logical_groups[key]
+        group["session_ids"] = sorted(x for x in group["session_ids"] if x)
+        group["eligible_session_ids"] = sorted(x for x in group["eligible_session_ids"] if x)
+        group["in_flight_session_ids"] = sorted(x for x in group["in_flight_session_ids"] if x)
+        group["session_count"] = len(group["session_ids"])
+        occupied = len(set(group["in_flight_session_ids"])) + int(group["active_claim_count"])
+        group["automatic_offer_capacity_remaining"] = max(
+            0, int(group["automatic_offer_capacity_limit"]) - occupied
+        )
+        group["sessions_are_independent_capacity_units"] = not bool(
+            group.get("logical_agent_id") and group["session_count"] > 1
+        )
+        logical_agents.append(group)
+
     return {
         "process": "GACR",
         "model": "AGENT_CAPACITY_POOL",
         "generated_at": generated_at or telemetry.now_iso(),
         "counts": counts,
         "eligible_session_ids": [x["session_id"] for x in items if x.get("eligible_for_new_work")],
+        "eligible_capacity_keys": sorted({
+            _capacity_key(x) for x in items if x.get("eligible_for_new_work")
+        }),
+        "logical_agents": logical_agents,
         "items": items,
         "provider_private_limit_inference": False,
         "source_f1_release_required": TEMPLATE_SOURCE and config()["require_f1_release_for_source_work"],
@@ -489,6 +549,23 @@ def parallel_work_dispatch_plan(
     planned_domains: set[str] = set()
     cfg = config()
     planned_per_session: dict[str, int] = {}
+    planned_per_capacity: dict[str, int] = {}
+    pool_items = pool.get("items", [])
+    session_capacity_key = {
+        item.get("session_id"): _capacity_key(item)
+        for item in pool_items
+        if item.get("session_id")
+    }
+    occupied_sessions_per_capacity: dict[str, set[str]] = {}
+    for claim in active_claims:
+        claim_session_id = claim.get("session_id")
+        capacity_key = session_capacity_key.get(claim_session_id)
+        if capacity_key and claim_session_id:
+            occupied_sessions_per_capacity.setdefault(capacity_key, set()).add(claim_session_id)
+    for pool_item in pool_items:
+        if pool_item.get("in_flight_action") and pool_item.get("session_id"):
+            capacity_key = _capacity_key(pool_item)
+            occupied_sessions_per_capacity.setdefault(capacity_key, set()).add(pool_item["session_id"])
     assignments = []
     unassigned = []
 
@@ -517,12 +594,36 @@ def parallel_work_dispatch_plan(
         eligible = []
         for candidate in candidates:
             session_id = candidate.get("session_id")
+            capacity_key = _capacity_key(candidate)
+            occupied_logical_slots = len(occupied_sessions_per_capacity.get(capacity_key, set()))
+            if (
+                occupied_logical_slots + planned_per_capacity.get(capacity_key, 0)
+                >= cfg["max_parallel_offers_per_session"]
+            ):
+                reason = (
+                    "LOGICAL_AGENT_OFFER_CAPACITY_REACHED"
+                    if candidate.get("logical_agent_id")
+                    else "SESSION_OFFER_CAPACITY_REACHED"
+                )
+                evaluations.append({
+                    "session_id": session_id,
+                    "logical_agent_id": candidate.get("logical_agent_id"),
+                    "status": "INELIGIBLE",
+                    "reasons": [reason],
+                })
+                continue
             if planned_per_session.get(session_id, 0) >= cfg["max_parallel_offers_per_session"]:
-                evaluations.append({"session_id": session_id, "status": "INELIGIBLE", "reasons": ["SESSION_OFFER_CAPACITY_REACHED"]})
+                evaluations.append({
+                    "session_id": session_id,
+                    "logical_agent_id": candidate.get("logical_agent_id"),
+                    "status": "INELIGIBLE",
+                    "reasons": ["SESSION_OFFER_CAPACITY_REACHED"],
+                })
                 continue
             compatible, reasons = _candidate_compatible(candidate, item)
             evaluations.append({
                 "session_id": session_id,
+                "logical_agent_id": candidate.get("logical_agent_id"),
                 "status": "ELIGIBLE" if compatible else "INELIGIBLE",
                 "reasons": reasons,
             })
@@ -534,12 +635,15 @@ def parallel_work_dispatch_plan(
             continue
 
         eligible.sort(key=lambda candidate: (
+            planned_per_capacity.get(_capacity_key(candidate), 0),
             planned_per_session.get(candidate.get("session_id"), 0),
             str(candidate.get("session_id") or ""),
         ))
         selected = eligible[0]
         session_id = selected["session_id"]
+        capacity_key = _capacity_key(selected)
         planned_per_session[session_id] = planned_per_session.get(session_id, 0) + 1
+        planned_per_capacity[capacity_key] = planned_per_capacity.get(capacity_key, 0) + 1
         planned_domains.update(domains)
 
         assignments.append({
@@ -547,6 +651,8 @@ def parallel_work_dispatch_plan(
             "task_id": item.get("task_id") or work_item_id,
             "title": item.get("title"),
             "target_session_id": session_id,
+            "target_logical_agent_id": selected.get("logical_agent_id"),
+            "capacity_key": capacity_key,
             "target_client_instance_id": selected.get("client_instance_id"),
             "collision_domains": sorted(domains),
             "required_capabilities": sorted(set(item.get("required_capabilities") or [])),
