@@ -1,0 +1,703 @@
+{
+  "schema_version": "gma-artifact/v1",
+  "artifact_version": "v1",
+  "producer": "GMC-G01",
+  "subject": {
+    "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+    "head_sha": "c4584616d7caff334b907b5eb71cc52149107dae",
+    "programme": "GOVERNANCE_MODEL_CATALOGUE",
+    "work_package": "GMC-G01"
+  },
+  "representation": {
+    "decision_id": "CPD-076",
+    "class": "SOURCE_ONLY_VERSIONED_BODY_WITH_EXISTING_REFERENCE_PROJECTION",
+    "encoding": "JSON",
+    "package_unit": "ONE_DOCUMENT_PER_GMA_ARTIFACT",
+    "authority_scope": "SOURCE_ONLY",
+    "implementation_authority_granted": false
+  },
+  "status": "PRODUCED",
+  "validation_state": "PENDING_VALIDATION",
+  "provenance_contract": {
+    "required_per_assertion": true,
+    "unknown_allowed_only_when_explicit": true
+  },
+  "supersedes": null,
+  "history": [
+    {
+      "event": "PRODUCED_V1",
+      "decision_id": "CPD-076",
+      "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+    }
+  ],
+  "validation_evidence": [],
+  "artifact_id": "GMA-MODEL-BOUNDARY-MATRIX",
+  "artifact_type": "MATRIX",
+  "content_ref": ".governance/control-plane-state/gma-model-boundary-matrix.json",
+  "consumed_by": [
+    "GMC-G02",
+    "GMC-G03"
+  ],
+  "body": {
+    "entries": [
+      {
+        "boundary_item_id": "boundary-001",
+        "subject_ref": "CP-ARCH-001",
+        "subject_kind": "CANONICAL_AUTHORITY",
+        "classifications": [
+          "MODEL"
+        ],
+        "resolution_state": "RESOLVED",
+        "rationale": "Reusable target architecture and invariants define central model semantics.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-002",
+        "subject_ref": "CP-GOVMODEL-001",
+        "subject_kind": "CANONICAL_AUTHORITY",
+        "classifications": [
+          "MODEL"
+        ],
+        "resolution_state": "RESOLVED",
+        "rationale": "Governance Model catalogue/anatomy is reusable normative model authority.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/control-plane-state/governance-model-catalogue.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-003",
+        "subject_ref": "ENTRY_ACTION_SEMANTICS",
+        "subject_kind": "POLICY",
+        "classifications": [
+          "MODEL",
+          "APPLICATION_STRATEGY"
+        ],
+        "resolution_state": "MIXED",
+        "rationale": "Reusable entry-action vocabulary coexists with strategy selection.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": ".governance/entry-action-policy.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/ENTRY_ACTION_ROUTER.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-004",
+        "subject_ref": "CONNECTION_INTENT_SEMANTICS",
+        "subject_kind": "POLICY",
+        "classifications": [
+          "MODEL"
+        ],
+        "resolution_state": "RESOLVED",
+        "rationale": "Connection intent is reusable routing semantics and does not grant authority.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": ".governance/connection-intent-policy.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/CONNECTION_INTENT.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-005",
+        "subject_ref": "CREATE_NEW_REPOSITORY",
+        "subject_kind": "APPLICATION_STRATEGY",
+        "classifications": [
+          "APPLICATION_STRATEGY"
+        ],
+        "resolution_state": "RESOLVED",
+        "rationale": "Case-specific sequencing consumes shared model semantics.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-006",
+        "subject_ref": "ADOPT_EXISTING_REPOSITORY",
+        "subject_kind": "APPLICATION_STRATEGY",
+        "classifications": [
+          "APPLICATION_STRATEGY"
+        ],
+        "resolution_state": "RESOLVED",
+        "rationale": "Case-specific sequencing consumes shared model semantics.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": "docs/EXISTING_REPOSITORY_ADOPTION.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-007",
+        "subject_ref": "MAP_EXISTING_PROJECT",
+        "subject_kind": "APPLICATION_STRATEGY",
+        "classifications": [
+          "APPLICATION_STRATEGY"
+        ],
+        "resolution_state": "RESOLVED",
+        "rationale": "Case-specific sequencing consumes shared model semantics.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": "docs/PROJECT_MAPPING.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-008",
+        "subject_ref": "LAB_EVOLUTION",
+        "subject_kind": "APPLICATION_STRATEGY",
+        "classifications": [
+          "APPLICATION_STRATEGY"
+        ],
+        "resolution_state": "RESOLVED",
+        "rationale": "Case-specific sequencing consumes shared model semantics.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": "docs/LAB_EVOLUTION.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-009",
+        "subject_ref": "CONTINUE_GOVERNED_WORK",
+        "subject_kind": "POST_CASE_MODE",
+        "classifications": [
+          "APPLICATION_STRATEGY"
+        ],
+        "resolution_state": "RESOLVED",
+        "rationale": "Post-case continuation mode; not a fifth structuring case.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": ".governance/entry-action-policy.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-010",
+        "subject_ref": "GSCC_REUSABLE_PROTOCOL",
+        "subject_kind": "PROTOCOL",
+        "classifications": [
+          "MODEL"
+        ],
+        "resolution_state": "RESOLVED",
+        "rationale": "GSCC contracts, schemas and gates are reusable protocol semantics.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": "00_GSCC_ENTRY.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/GSCC_PROTOCOL_V1.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-011",
+        "subject_ref": "GSCC_INGRESS_WORKFLOWS",
+        "subject_kind": "WORKFLOW",
+        "classifications": [
+          "RUNTIME_EXECUTION"
+        ],
+        "resolution_state": "UNRESOLVED",
+        "rationale": "Execution role is clear; distribution/manifest ownership remains unresolved.",
+        "unresolved_ref": "GMA-UNRESOLVED-BOUNDARY-ITEMS#unresolved-001",
+        "provenance": [
+          {
+            "source_ref": ".github/workflows/gscc-provider-first-touch-ingress.yml",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/TEMPLATE_MANIFEST.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-012",
+        "subject_ref": "GSE_STATE_SEMANTICS",
+        "subject_kind": "STATE_MODEL",
+        "classifications": [
+          "MODEL"
+        ],
+        "resolution_state": "RESOLVED",
+        "rationale": "GSE state transitions are reusable semantics.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": "scripts/gse/session_state_engine.py",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/GSE_SESSION_STATE_ENGINE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-013",
+        "subject_ref": "GSE_REDUCER_IMPLEMENTATION",
+        "subject_kind": "IMPLEMENTATION",
+        "classifications": [
+          "RUNTIME_EXECUTION"
+        ],
+        "resolution_state": "RESOLVED",
+        "rationale": "Executable reducer implements GSE semantics and produces runtime state.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": "scripts/gse/session_state_engine.py",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-014",
+        "subject_ref": "GACR_SEMANTICS",
+        "subject_kind": "RUNTIME_CONTRACT",
+        "classifications": [
+          "MODEL"
+        ],
+        "resolution_state": "RESOLVED",
+        "rationale": "Session, claim, offer, takeover and exact-HEAD rules are reusable model semantics.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": "docs/GACR_AGENT_CONTINUITY_RELAY.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/GACR_BRIDGE_CONTRACT.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-015",
+        "subject_ref": "GACR_RELAY_DISPATCH_IMPLEMENTATION",
+        "subject_kind": "IMPLEMENTATION",
+        "classifications": [
+          "RUNTIME_EXECUTION"
+        ],
+        "resolution_state": "RESOLVED",
+        "rationale": "Relay, dispatcher and telemetry code implement GACR semantics.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": "scripts/governed_agent_continuity_relay.py",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "scripts/gacr_capacity_dispatch.py",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "scripts/gacr_agent_telemetry.py",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-016",
+        "subject_ref": "GACR_RUNTIME_RECORDS",
+        "subject_kind": "RUNTIME_STATE",
+        "classifications": [
+          "RUNTIME_EXECUTION",
+          "PROJECTION"
+        ],
+        "resolution_state": "MIXED",
+        "rationale": "Sessions, beacons, dispatches, claims and takeovers are runtime facts persisted for coordination/query.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": ".governance/control-plane-state/gacr-sessions.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/control-plane-state/gacr-dispatches.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/control-plane-state/gacr-claims.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-017",
+        "subject_ref": "GENERIC_CLIENT_WORK_SESSION_PRIMITIVES",
+        "subject_kind": "DISTRIBUTED_CLIENT_CONTRACT",
+        "classifications": [
+          "MODEL",
+          "RUNTIME_EXECUTION",
+          "PROJECTION"
+        ],
+        "resolution_state": "MIXED",
+        "rationale": "Generic client primitives combine reusable contract with instantiated client state; mapping to source truth must stay explicit.",
+        "unresolved_ref": "GMA-UNRESOLVED-BOUNDARY-ITEMS#unresolved-006",
+        "provenance": [
+          {
+            "source_ref": ".governance/work/work-items.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/sessions/sessions.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-018",
+        "subject_ref": "SOURCE_PROGRAMME_TASK_TRUTH",
+        "subject_kind": "CONTROL_PLANE_AUTHORITY",
+        "classifications": [
+          "MODEL",
+          "PROJECTION"
+        ],
+        "resolution_state": "MIXED",
+        "rationale": "Programme/task definitions are normative work facts while current status is a projection.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": ".governance/control-plane-state/tasks.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/control-plane-state/governance-model-execution-blueprint.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-019",
+        "subject_ref": "CURRENT_CHECKPOINT_HANDOFF_ACTIVITY",
+        "subject_kind": "PROJECTION",
+        "classifications": [
+          "PROJECTION"
+        ],
+        "resolution_state": "RESOLVED",
+        "rationale": "Current/checkpoint/handoff/activity expose resumable/current derived state.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": ".governance/control-plane-state/current.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/control-plane-state/checkpoint.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/control-plane-state/handoff.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-020",
+        "subject_ref": "RELATIONAL_SCHEMA_DEFINITIONS",
+        "subject_kind": "DATA_MODEL",
+        "classifications": [
+          "MODEL"
+        ],
+        "resolution_state": "RESOLVED",
+        "rationale": "Versioned SQL schema definitions are reusable normative data definitions.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": ".governance/control-plane-db/001_schema.sql",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/control-plane-db/003_canonical_authorities.sql",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-021",
+        "subject_ref": "RUNTIME_SEED_RELATIONAL_ROWS",
+        "subject_kind": "RUNTIME_SEED",
+        "classifications": [
+          "RUNTIME_EXECUTION",
+          "PROJECTION"
+        ],
+        "resolution_state": "MIXED",
+        "rationale": "Runtime seed contains concrete projected/reference rows, not rich canonical GMA bodies.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": ".governance/control-plane-db/runtime-seed.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/control-plane-db/materialize.py",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-022",
+        "subject_ref": "SQLITE_MATERIALIZED_DATABASE",
+        "subject_kind": "MATERIALIZED_PROJECTION",
+        "classifications": [
+          "PROJECTION"
+        ],
+        "resolution_state": "RESOLVED",
+        "rationale": "SQLite is deterministic validation/query projection and not source authority.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": ".governance/control-plane-db/materialize.py",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-023",
+        "subject_ref": "TEMPLATE_MANIFEST",
+        "subject_kind": "MANIFEST",
+        "classifications": [
+          "MODEL"
+        ],
+        "resolution_state": "UNRESOLVED",
+        "rationale": "Distribution, inventory and version concerns need later ownership normalization.",
+        "unresolved_ref": "GMA-UNRESOLVED-BOUNDARY-ITEMS#unresolved-001",
+        "provenance": [
+          {
+            "source_ref": ".governance/TEMPLATE_MANIFEST.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-024",
+        "subject_ref": "WORKFLOW_MODEL",
+        "subject_kind": "MIXED_CONTRACT",
+        "classifications": [
+          "MODEL",
+          "APPLICATION_STRATEGY",
+          "RUNTIME_EXECUTION"
+        ],
+        "resolution_state": "UNRESOLVED",
+        "rationale": "workflow-model mixes reusable flow semantics, case sequencing and runtime behavior.",
+        "unresolved_ref": "GMA-UNRESOLVED-BOUNDARY-ITEMS#unresolved-002",
+        "provenance": [
+          {
+            "source_ref": ".governance/workflow-model.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-025",
+        "subject_ref": "TESTS_AND_CI",
+        "subject_kind": "ASSURANCE_SURFACE",
+        "classifications": [
+          "MODEL",
+          "RUNTIME_EXECUTION"
+        ],
+        "resolution_state": "UNRESOLVED",
+        "rationale": "Tests encode normative invariants while CI executes evidence production; assurance ownership remains unresolved.",
+        "unresolved_ref": "GMA-UNRESOLVED-BOUNDARY-ITEMS#unresolved-005",
+        "provenance": [
+          {
+            "source_ref": ".github/workflows/governance-ci.yml",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "scripts/test_governance_model_integrity.py",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-026",
+        "subject_ref": "CP-CAPSULE-001",
+        "subject_kind": "PRODUCTIZATION_AUTHORITY",
+        "classifications": [
+          "MODEL"
+        ],
+        "resolution_state": "UNRESOLVED",
+        "rationale": "Capsule productization consumes multiple layers and needs an explicit productization relation.",
+        "unresolved_ref": "GMA-UNRESOLVED-BOUNDARY-ITEMS#unresolved-004",
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/GSCC_GSE_GACR_REUSABLE_CAPSULE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-027",
+        "subject_ref": "CP-SAAS-001",
+        "subject_kind": "PRODUCTIZATION_AUTHORITY",
+        "classifications": [
+          "MODEL"
+        ],
+        "resolution_state": "UNRESOLVED",
+        "rationale": "SaaS productization consumes model/runtime/projection layers and needs an explicit productization relation.",
+        "unresolved_ref": "GMA-UNRESOLVED-BOUNDARY-ITEMS#unresolved-004",
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/SAAS_PLATFORM_PROGRAM.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-028",
+        "subject_ref": "GACR_R7_R8_CAPACITY_DISPATCH",
+        "subject_kind": "CROSS_CUTTING_RUNTIME",
+        "classifications": [
+          "MODEL",
+          "RUNTIME_EXECUTION",
+          "PROJECTION"
+        ],
+        "resolution_state": "MIXED",
+        "rationale": "Capacity dispatch combines normative eligibility, executable scheduling and live offer projections.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "scripts/gacr_capacity_dispatch.py",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-029",
+        "subject_ref": "ORCHESTRATION_INTAKE_258",
+        "subject_kind": "PLANNING_COMPOSITION",
+        "classifications": [
+          "MODEL",
+          "RUNTIME_EXECUTION",
+          "PROJECTION"
+        ],
+        "resolution_state": "MIXED",
+        "rationale": "Issue #258 is planning evidence spanning model, runtime replanning and derived pools; it is not canonical authority.",
+        "unresolved_ref": null,
+        "provenance": [
+          {
+            "source_ref": "github-issue:#258",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      },
+      {
+        "boundary_item_id": "boundary-030",
+        "subject_ref": "GOVMODEL_CATALOGUE_PROGRAMME_POINTERS",
+        "subject_kind": "PROJECTION",
+        "classifications": [
+          "PROJECTION"
+        ],
+        "resolution_state": "UNRESOLVED",
+        "rationale": "Catalogue model semantics coexist with programme/current-state pointers whose freshness is subordinate to current-state authority precedence.",
+        "unresolved_ref": "GMA-UNRESOLVED-BOUNDARY-ITEMS#unresolved-003",
+        "provenance": [
+          {
+            "source_ref": ".governance/control-plane-state/governance-model-catalogue.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/control-plane-state/current.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "PENDING_VALIDATION"
+      }
+    ]
+  },
+  "content_digest": {
+    "algorithm": "sha256",
+    "canonicalization": "JSON_SORT_KEYS_COMPACT_WITH_DIGEST_VALUE_NULL",
+    "value": "8b73fceb97f19fe0f0d4de1bd7a82dc2c19fbcb7432bbe3fa83fc173d6611f53"
+  }
+}
