@@ -10,6 +10,13 @@ ROOT = Path(__file__).resolve().parents[1]
 BLUEPRINT = ROOT / ".governance/control-plane-state/governance-model-execution-blueprint.json"
 CATALOGUE = ROOT / ".governance/control-plane-state/governance-model-catalogue.json"
 GROUP_ID = re.compile(r"^GMC-G\d{2}$")
+G01_GMA_PATHS = {
+    "GMA-MODEL-BOUNDARY-MATRIX": ROOT / ".governance/control-plane-state/gma-model-boundary-matrix.json",
+    "GMA-MODEL-CLASSIFICATION-TAXONOMY": ROOT / ".governance/control-plane-state/gma-model-classification-taxonomy.json",
+    "GMA-UNRESOLVED-BOUNDARY-ITEMS": ROOT / ".governance/control-plane-state/gma-unresolved-boundary-items.json",
+}
+G01_ALLOWED_CLASSES = {"MODEL", "APPLICATION_STRATEGY", "RUNTIME_EXECUTION", "PROJECTION"}
+G01_ALLOWED_RESOLUTION_STATES = {"RESOLVED", "MIXED", "UNRESOLVED"}
 
 def load(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
