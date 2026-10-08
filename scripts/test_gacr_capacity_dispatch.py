@@ -335,6 +335,81 @@ def main() -> None:
         "all sibling sessions must share one default logical-agent offer ceiling",
     )
 
+    pending_offer_dispatches = {
+        "items": [{
+            "dispatch_id": "GACR-W-existing-logical",
+            "dispatch_kind": "WORK_OFFER",
+            "status": "READY",
+            "target_session_id": "same-a",
+            "target_logical_agent_id": "logical-shared",
+            "capacity_key": "logical-agent:logical-shared",
+            "work_item_id": "LW-PENDING",
+        }]
+    }
+    pending_offer_plan = g.parallel_work_dispatch_plan(
+        work_doc={
+            "source": "TEST",
+            "items": [{
+                "work_item_id": "LW-PENDING-NEXT",
+                "status": "READY",
+                "priority": 1,
+                "sequence": 1,
+                "dependencies": [],
+                "collision_domains": ["logical-domain-pending-next"],
+                "required_capabilities": ["CODE"],
+                "allowed_agent_roles": ["CODE_AGENT"],
+            }],
+        },
+        claims_doc=empty_claims,
+        pool=same_agent_pool,
+        dispatches_doc=pending_offer_dispatches,
+    )
+    assert_true(
+        not pending_offer_plan["assignments"],
+        "persisted pending offer must consume shared logical-agent capacity across dispatch runs",
+    )
+    pending_blocked = pending_offer_plan["unassigned"][0]
+    assert_true(
+        all(
+            "LOGICAL_AGENT_OFFER_CAPACITY_REACHED" in evaluation["reasons"]
+            for evaluation in pending_blocked["evaluations"]
+        ),
+        "pending sibling offer blocks every session surface of the same logical agent",
+    )
+    assert_true(
+        pending_offer_plan["pending_offer_capacity_counts"]
+        == {"logical-agent:logical-shared": 1},
+        "planner exposes pending logical-agent offer occupancy",
+    )
+
+    cancelled_offer_plan = g.parallel_work_dispatch_plan(
+        work_doc={
+            "source": "TEST",
+            "items": [{
+                "work_item_id": "LW-AFTER-CANCEL",
+                "status": "READY",
+                "priority": 1,
+                "sequence": 1,
+                "dependencies": [],
+                "collision_domains": ["logical-domain-after-cancel"],
+                "required_capabilities": ["CODE"],
+                "allowed_agent_roles": ["CODE_AGENT"],
+            }],
+        },
+        claims_doc=empty_claims,
+        pool=same_agent_pool,
+        dispatches_doc={
+            "items": [{
+                **pending_offer_dispatches["items"][0],
+                "status": "CANCELLED",
+            }]
+        },
+    )
+    assert_true(
+        len(cancelled_offer_plan["assignments"]) == 1,
+        "terminal/cancelled offer must release logical-agent offer capacity",
+    )
+
     same_agent_claimed = g.parallel_work_dispatch_plan(
         work_doc={
             "source": "TEST",

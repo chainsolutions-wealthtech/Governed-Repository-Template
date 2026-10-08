@@ -529,16 +529,46 @@ def _candidate_compatible(candidate: dict, item: dict) -> tuple[bool, list[str]]
     return not reasons, reasons
 
 
+PENDING_WORK_OFFER_STATUSES = {"READY", "ACCEPTED_PENDING_CLAIM"}
+
+
+def _pending_offer_capacity_counts(dispatches_doc: dict, pool_items: list[dict]) -> dict[str, int]:
+    session_capacity_key = {
+        item.get("session_id"): _capacity_key(item)
+        for item in pool_items
+        if item.get("session_id")
+    }
+    counts: dict[str, int] = {}
+    for item in dispatches_doc.get("items", []):
+        if item.get("dispatch_kind") != "WORK_OFFER":
+            continue
+        if item.get("status") not in PENDING_WORK_OFFER_STATUSES:
+            continue
+        capacity_key = item.get("capacity_key")
+        if not capacity_key:
+            logical_agent_id = str(item.get("target_logical_agent_id") or "").strip()
+            if logical_agent_id:
+                capacity_key = "logical-agent:" + logical_agent_id
+            else:
+                capacity_key = session_capacity_key.get(item.get("target_session_id"))
+        if not capacity_key:
+            continue
+        counts[str(capacity_key)] = counts.get(str(capacity_key), 0) + 1
+    return counts
+
+
 def parallel_work_dispatch_plan(
     *,
     generated_at: str | None = None,
     work_doc: dict | None = None,
     claims_doc: dict | None = None,
     pool: dict | None = None,
+    dispatches_doc: dict | None = None,
 ) -> dict:
     work_doc = work_doc or canonical_work_document()
     claims_doc = claims_doc or read_json(CLAIMS_PATH, {"claims": []})
     pool = pool or agent_pool_projection(generated_at=generated_at)
+    dispatches_doc = dispatches_doc or {"items": []}
     by_id = {item.get("work_item_id"): item for item in work_doc.get("items", []) if item.get("work_item_id")}
     ready = [item for item in work_doc.get("items", []) if item.get("status") == "READY"]
     ready.sort(key=lambda item: (-int(item.get("priority") or 0), int(item.get("sequence") or 0), str(item.get("work_item_id") or "")))
@@ -551,6 +581,7 @@ def parallel_work_dispatch_plan(
     planned_per_session: dict[str, int] = {}
     planned_per_capacity: dict[str, int] = {}
     pool_items = pool.get("items", [])
+    pending_offer_capacity_counts = _pending_offer_capacity_counts(dispatches_doc, pool_items)
     session_capacity_key = {
         item.get("session_id"): _capacity_key(item)
         for item in pool_items
@@ -595,7 +626,10 @@ def parallel_work_dispatch_plan(
         for candidate in candidates:
             session_id = candidate.get("session_id")
             capacity_key = _capacity_key(candidate)
-            occupied_logical_slots = len(occupied_sessions_per_capacity.get(capacity_key, set()))
+            occupied_logical_slots = (
+                len(occupied_sessions_per_capacity.get(capacity_key, set()))
+                + pending_offer_capacity_counts.get(capacity_key, 0)
+            )
             if (
                 occupied_logical_slots + planned_per_capacity.get(capacity_key, 0)
                 >= cfg["max_parallel_offers_per_session"]
@@ -683,6 +717,7 @@ def parallel_work_dispatch_plan(
         "parallel_assignment_count": len(assignments),
         "occupied_collision_domains": sorted(occupied_domains),
         "planned_collision_domains": sorted(planned_domains),
+        "pending_offer_capacity_counts": dict(sorted(pending_offer_capacity_counts.items())),
         "claim_transfer_performed": False,
         "write_authority_granted": False,
     }
@@ -722,12 +757,16 @@ def _cancel_stale_source_offers(store:dict, canonical_doc:dict, timestamp:str)->
 def dispatch_ready_work(*, generated_at: str | None = None) -> dict:
     timestamp=generated_at or telemetry.now_iso()
     canonical_doc=canonical_work_document()
-    plan = parallel_work_dispatch_plan(generated_at=timestamp,work_doc=canonical_doc)
     sessions = read_json(SESSIONS_PATH, {"sessions": []})
     store = read_json(DISPATCHES_PATH, {"schema_version": "1.0.0", "revision": 0, "items": []})
     changes=[]
     cancelled=_cancel_stale_source_offers(store,canonical_doc,timestamp)
     changes.extend(cancelled)
+    plan = parallel_work_dispatch_plan(
+        generated_at=timestamp,
+        work_doc=canonical_doc,
+        dispatches_doc=store,
+    )
 
     for assignment in plan.get("assignments",[]):
         work_item_id = assignment["work_item_id"]
@@ -756,6 +795,8 @@ def dispatch_ready_work(*, generated_at: str | None = None) -> dict:
             "offer_status": "PENDING_ACCEPTANCE",
             "created_at": timestamp,
             "target_session_id": target_session_id,
+            "target_logical_agent_id": assignment.get("target_logical_agent_id"),
+            "capacity_key": assignment.get("capacity_key"),
             "target_client_instance_id": session.get("client_instance_id"),
             "work_item_id": work_item_id,
             "task_id": assignment.get("task_id"),
@@ -840,7 +881,12 @@ def command_pool(_: argparse.Namespace) -> None:
 
 
 def command_plan(_: argparse.Namespace) -> None:
-    print(json.dumps(parallel_work_dispatch_plan(), indent=2, ensure_ascii=False))
+    dispatches = read_json(DISPATCHES_PATH, {"schema_version": "1.0.0", "revision": 0, "items": []})
+    print(json.dumps(
+        parallel_work_dispatch_plan(dispatches_doc=dispatches),
+        indent=2,
+        ensure_ascii=False,
+    ))
 
 
 def command_dispatch(_: argparse.Namespace) -> None:
