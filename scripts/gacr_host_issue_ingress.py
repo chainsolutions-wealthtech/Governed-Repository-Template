@@ -77,6 +77,8 @@ ALLOWED_KEYS = {
     "connection_ref",
     "client_instance_id",
     "bridge_registration_ref",
+    "same_logical_agent_session_id",
+    "continuity_evidence_ref",
     "observed_head",
     "branch",
     "task_id",
@@ -194,6 +196,20 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
     kind = str(payload.get("event") or "").lower()
     if kind not in EVENTS:
         raise ValueError("unsupported host-event type")
+    same_logical_fields = (
+        payload.get("same_logical_agent_session_id"),
+        payload.get("continuity_id"),
+        payload.get("continuity_evidence_ref"),
+    )
+    if any(value not in (None, "") for value in same_logical_fields):
+        if kind != "attach":
+            raise ValueError("same-logical-agent proof is supported only for attach events")
+        if any(value in (None, "") for value in same_logical_fields):
+            raise ValueError("same-logical-agent attach requires session, continuity_id and evidence_ref")
+        if payload.get("agent") in (None, ""):
+            raise ValueError("same-logical-agent attach requires explicit agent identity")
+        if payload.get("connection_ref") in (None, ""):
+            raise ValueError("same-logical-agent attach requires explicit connection_ref")
     if kind == "action" and payload.get("action_phase") not in ACTION_PHASES:
         raise ValueError("host action requires a supported action_phase")
     if kind == "interrupt" and payload.get("interruption_code") not in INTERRUPTION_CODES:
@@ -375,6 +391,9 @@ def ensure_session(payload: dict, repository: str) -> dict:
     add(args, "--connection-ref", payload.get("connection_ref"))
     add(args, "--client-instance-id", payload.get("client_instance_id"))
     add(args, "--bridge-registration-ref", payload.get("bridge_registration_ref"))
+    add(args, "--same-logical-agent-session-id", payload.get("same_logical_agent_session_id"))
+    add(args, "--continuity-id", payload.get("continuity_id"))
+    add(args, "--continuity-evidence-ref", payload.get("continuity_evidence_ref"))
     add(args, "--repository", repository)
     add(args, "--observed-head", payload.get("observed_head"))
     add(args, "--branch", payload.get("branch") or "main")

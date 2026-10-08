@@ -21,7 +21,17 @@ from governed_agent_continuity_relay import (
 from gacr_agent_telemetry import correlate_all, record_beacon
 
 ROOT = Path(os.environ.get("GACR_ROOT") or Path(__file__).resolve().parents[1]).resolve()
-CHRONICLE_CURRENT = ROOT / ".governance" / "control-plane-state" / "conversation-chronicles" / "current.json"
+GOV = ROOT / ".governance"
+TEMPLATE_SOURCE = (ROOT / ".template-source").exists()
+CHRONICLE_CURRENT = GOV / "control-plane-state" / "conversation-chronicles" / "current.json"
+if TEMPLATE_SOURCE:
+    CONTINUITIES_PATH = GOV / "control-plane-state" / "gacr-continuities.json"
+    FORENSICS_PATH = GOV / "control-plane-state" / "gacr-forensics.json"
+    BEACONS_PATH = GOV / "control-plane-state" / "gacr-beacons.json"
+else:
+    CONTINUITIES_PATH = GOV / "agent-relay" / "continuities.json"
+    FORENSICS_PATH = GOV / "agent-relay" / "forensics.json"
+    BEACONS_PATH = GOV / "agent-relay" / "beacons.json"
 INTERNAL_GACR_WORKFLOWS = {"Governed Agent Continuity Relay"}
 
 
@@ -530,6 +540,218 @@ def bind_presence(sessions_doc: dict, observation: dict, config: dict) -> dict:
     }
 
 
+def _same_logical_agent_sessions(sessions_doc: dict, observation: dict) -> list[dict]:
+    agent_identity = str(observation.get("agent_identity") or "").strip()
+    repository = observation.get("repository")
+    if not agent_identity or not repository:
+        return []
+    return sorted(
+        [
+            session for session in sessions_doc.get("sessions", [])
+            if session.get("repository") == repository
+            and session.get("agent_identity") == agent_identity
+        ],
+        key=lambda item: item.get("session_id") or "",
+    )
+
+
+def _continuity_proof(
+    *,
+    reference_session_id: str,
+    continuity_id: str,
+    evidence_ref: str,
+) -> dict | None:
+    if CONTINUITIES_PATH.exists():
+        continuity_doc = read_json(CONTINUITIES_PATH)
+        for item in continuity_doc.get("items", []):
+            if item.get("continuity_id") != continuity_id:
+                continue
+            for participant in item.get("participants", []):
+                if participant.get("session_id") != reference_session_id:
+                    continue
+                if participant.get("membership_state") == "TERMINAL":
+                    continue
+                refs = {
+                    participant.get("evidence_ref"),
+                    participant.get("coordination_state_ref"),
+                    participant.get("handoff_ref"),
+                }
+                if evidence_ref in refs:
+                    return {
+                        "source": "CONTINUITY_MEMBERSHIP",
+                        "continuity_id": continuity_id,
+                        "reference_session_id": reference_session_id,
+                        "evidence_ref": evidence_ref,
+                    }
+            handoff = item.get("last_handoff") or {}
+            if handoff.get("session_id") == reference_session_id and evidence_ref in {
+                handoff.get("evidence_ref"),
+                handoff.get("handoff_ref"),
+            }:
+                return {
+                    "source": "CONTINUITY_HANDOFF",
+                    "continuity_id": continuity_id,
+                    "reference_session_id": reference_session_id,
+                    "evidence_ref": evidence_ref,
+                }
+
+    if FORENSICS_PATH.exists():
+        forensic_doc = read_json(FORENSICS_PATH)
+        for item in forensic_doc.get("items", []):
+            if item.get("session_id") != reference_session_id:
+                continue
+            resume = item.get("resume_point") or {}
+            checkpoint_match = (
+                item.get("last_checkpoint_ref") == continuity_id
+                or resume.get("checkpoint_ref") == continuity_id
+            )
+            if not checkpoint_match:
+                continue
+            refs = {
+                item.get("last_evidence_ref"),
+                resume.get("evidence_ref"),
+            }
+            completed = ((item.get("actions") or {}).get("last_action_completed") or {})
+            if completed.get("checkpoint_ref") == continuity_id:
+                refs.add(completed.get("evidence_ref"))
+            if evidence_ref in refs:
+                return {
+                    "source": "GACR_FORENSICS_CHECKPOINT",
+                    "continuity_id": continuity_id,
+                    "reference_session_id": reference_session_id,
+                    "evidence_ref": evidence_ref,
+                    "forensic_id": item.get("forensic_id"),
+                }
+
+    if BEACONS_PATH.exists():
+        beacon_doc = read_json(BEACONS_PATH)
+        for item in beacon_doc.get("items", []):
+            if (
+                item.get("session_id") == reference_session_id
+                and item.get("checkpoint_ref") == continuity_id
+                and item.get("evidence_ref") == evidence_ref
+            ):
+                return {
+                    "source": "GACR_BEACON_CHECKPOINT",
+                    "continuity_id": continuity_id,
+                    "reference_session_id": reference_session_id,
+                    "evidence_ref": evidence_ref,
+                    "beacon_id": item.get("beacon_id"),
+                }
+    return None
+
+
+def _same_logical_agent_gate(
+    args: argparse.Namespace,
+    sessions_doc: dict,
+    observation: dict,
+    binding: dict,
+) -> dict | None:
+    if binding.get("state") != "CREATE":
+        return None
+
+    same_agent = _same_logical_agent_sessions(sessions_doc, observation)
+    requested = any([
+        args.same_logical_agent_session_id,
+        args.continuity_id,
+        args.continuity_evidence_ref,
+    ])
+    if not same_agent and not requested:
+        return None
+
+    candidate_ids = [item.get("session_id") for item in same_agent if item.get("session_id")]
+    if not requested:
+        return {
+            "allowed": False,
+            "reason": "LOGICAL_AGENT_REUSE_REQUIRES_EXPLICIT_CONTINUITY_PROOF",
+            "candidate_session_ids": candidate_ids,
+        }
+
+    required = {
+        "same_logical_agent_session_id": args.same_logical_agent_session_id,
+        "continuity_id": args.continuity_id,
+        "continuity_evidence_ref": args.continuity_evidence_ref,
+        "agent": args.agent,
+        "connection_ref": args.connection_ref,
+    }
+    missing = sorted(key for key, value in required.items() if value in {None, ""})
+    if missing:
+        return {
+            "allowed": False,
+            "reason": "INCOMPLETE_SAME_LOGICAL_AGENT_PROOF:" + ",".join(missing),
+            "candidate_session_ids": candidate_ids,
+        }
+    if args.claim_id:
+        return {
+            "allowed": False,
+            "reason": "SAME_LOGICAL_AGENT_ATTACH_CANNOT_INHERIT_CLAIM",
+            "candidate_session_ids": candidate_ids,
+        }
+
+    reference = next(
+        (item for item in sessions_doc.get("sessions", [])
+         if item.get("session_id") == args.same_logical_agent_session_id),
+        None,
+    )
+    if reference is None:
+        return {
+            "allowed": False,
+            "reason": "SAME_LOGICAL_AGENT_REFERENCE_SESSION_NOT_FOUND",
+            "candidate_session_ids": candidate_ids,
+        }
+    if reference.get("repository") != observation.get("repository"):
+        return {
+            "allowed": False,
+            "reason": "SAME_LOGICAL_AGENT_REFERENCE_REPOSITORY_MISMATCH",
+            "candidate_session_ids": candidate_ids,
+        }
+    if reference.get("agent_identity") != observation.get("agent_identity"):
+        return {
+            "allowed": False,
+            "reason": "SAME_LOGICAL_AGENT_IDENTITY_MISMATCH",
+            "candidate_session_ids": candidate_ids,
+        }
+    if reference.get("connection_ref") == args.connection_ref:
+        return {
+            "allowed": False,
+            "reason": "SAME_LOGICAL_AGENT_REQUIRES_NEW_RUNTIME_SURFACE",
+            "candidate_session_ids": candidate_ids,
+        }
+    connection_owners = [
+        item.get("session_id")
+        for item in sessions_doc.get("sessions", [])
+        if item.get("connection_ref") == args.connection_ref
+    ]
+    if connection_owners:
+        return {
+            "allowed": False,
+            "reason": "RUNTIME_SURFACE_ALREADY_BOUND",
+            "candidate_session_ids": sorted(x for x in connection_owners if x),
+        }
+
+    proof = _continuity_proof(
+        reference_session_id=str(args.same_logical_agent_session_id),
+        continuity_id=str(args.continuity_id),
+        evidence_ref=str(args.continuity_evidence_ref),
+    )
+    if proof is None:
+        return {
+            "allowed": False,
+            "reason": "CANONICAL_CONTINUITY_PROOF_NOT_FOUND",
+            "candidate_session_ids": candidate_ids,
+        }
+
+    return {
+        "allowed": True,
+        "reason": "EXPLICIT_CANONICAL_CONTINUITY_PROOF",
+        "candidate_session_ids": candidate_ids,
+        "reference_session": reference,
+        "continuity_id": str(args.continuity_id),
+        "evidence_ref": str(args.continuity_evidence_ref),
+        "proof": proof,
+    }
+
+
 def _claim_for_session(claims_doc: dict, session_id: str | None) -> dict | None:
     if not session_id:
         return None
@@ -689,6 +911,16 @@ def _envelope_digest(envelope: dict) -> str:
 def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, claims: dict, takeovers: dict, anchor: dict) -> dict:
     observation = build_presence_observation(args, anchor, config)
     binding = bind_presence(sessions, observation, config)
+    same_logical_agent = _same_logical_agent_gate(args, sessions, observation, binding)
+    if same_logical_agent is not None and not same_logical_agent.get("allowed"):
+        binding = {
+            "state": "UNBOUND",
+            "reason": same_logical_agent["reason"],
+            "selected_session": None,
+            "candidate_session_ids": same_logical_agent.get("candidate_session_ids") or [],
+            "connection_fingerprint": binding.get("connection_fingerprint"),
+            "presence_anchor": binding.get("presence_anchor"),
+        }
 
     if binding["state"] in {"AMBIGUOUS", "UNBOUND"}:
         presence_event = "UNBOUND_ACTIVITY"
@@ -773,6 +1005,19 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
     session["connection_fingerprint"] = fingerprint
     session["connection_fingerprint_version"] = FINGERPRINT_VERSION
     session["presence_anchor"] = presence_anchor
+    if same_logical_agent is not None:
+        if resolution != "CREATE":
+            raise ValueError("GACR_SAME_LOGICAL_AGENT_FAILED: expected a new canonical session")
+        reference = same_logical_agent["reference_session"]
+        session["logical_agent_id"] = reference.get("agent_identity")
+        session["logical_agent_relationship"] = "NEW_SESSION_SAME_LOGICAL_AGENT"
+        session["logical_agent_reference_session_id"] = reference.get("session_id")
+        session["logical_agent_continuity_id"] = same_logical_agent["continuity_id"]
+        session["logical_agent_evidence_ref"] = same_logical_agent["evidence_ref"]
+        session["logical_agent_evidence_source"] = (same_logical_agent.get("proof") or {}).get("source")
+        session["logical_agent_authority_inherited"] = False
+        session["logical_agent_claim_inherited"] = False
+        session["logical_agent_takeover_accepted"] = False
     session["surface_class"] = observation.get("surface_class")
     session["connection_method"] = observation.get("connection_method")
     if observation.get("github_actor"):
@@ -791,7 +1036,10 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
                 f"GACR_ROUTE_RECONCILIATION_REQUIRED:{route_field}:current={current or UNAVAILABLE}:requested={incoming}"
             )
 
-    presence_event = "PRESENCE_FIRST_TOUCH" if resolution == "CREATE" else "PRESENCE_RESUME"
+    if same_logical_agent is not None:
+        presence_event = "PRESENCE_NEW_SESSION_SAME_LOGICAL_AGENT"
+    else:
+        presence_event = "PRESENCE_FIRST_TOUCH" if resolution == "CREATE" else "PRESENCE_RESUME"
     envelope = build_connection_envelope(
         observation,
         session=session,
@@ -817,8 +1065,14 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
         agent_role=observation.get("agent_role"),
         capabilities=sorted(set((observation.get("capabilities") or []) + ["GACR_AUTO_ATTACH", "GACR_PRESENCE_FIRST"])),
         observed_at=observation.get("observed_at"),
-        checkpoint_ref=observation.get("checkpoint"),
-        evidence_ref=observation.get("last_evidence"),
+        checkpoint_ref=(
+            same_logical_agent.get("continuity_id")
+            if same_logical_agent is not None else observation.get("checkpoint")
+        ),
+        evidence_ref=(
+            same_logical_agent.get("evidence_ref")
+            if same_logical_agent is not None else observation.get("last_evidence")
+        ),
         connection_fingerprint=fingerprint,
         connection_envelope_digest=_envelope_digest(envelope),
         surface_class=observation.get("surface_class"),
@@ -826,7 +1080,8 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
     )
     correlation = correlate_all()
     return {
-        "status": resolution,
+        "status": "NEW_SESSION_SAME_LOGICAL_AGENT" if same_logical_agent is not None else resolution,
+        "core_session_resolution": resolution,
         "process": "GACR",
         "authority": "CP-AGENT-RELAY-001-PRESENCE-FIRST",
         "attachment_source": anchor.get("source"),
@@ -841,6 +1096,20 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
         "connection_fingerprint": fingerprint,
         "connection_envelope": envelope,
         "session": session,
+        "logical_agent_binding": (
+            {
+                "logical_agent_id": session.get("logical_agent_id"),
+                "relationship": "NEW_SESSION_SAME_LOGICAL_AGENT",
+                "reference_session_id": session.get("logical_agent_reference_session_id"),
+                "continuity_id": session.get("logical_agent_continuity_id"),
+                "evidence_ref": session.get("logical_agent_evidence_ref"),
+                "evidence_source": session.get("logical_agent_evidence_source"),
+                "claim_inherited": False,
+                "mutation_authority_inherited": False,
+                "takeover_accepted": False,
+            }
+            if same_logical_agent is not None else None
+        ),
         "beacon_id": beacon.get("beacon_id"),
         "correlation": correlation,
     }
@@ -950,6 +1219,9 @@ def main() -> None:
     p.add_argument("--connection-ref")
     p.add_argument("--client-instance-id")
     p.add_argument("--bridge-registration-ref")
+    p.add_argument("--same-logical-agent-session-id")
+    p.add_argument("--continuity-id")
+    p.add_argument("--continuity-evidence-ref")
     p.add_argument("--repository")
     p.add_argument("--repository-id")
     p.add_argument("--organization")

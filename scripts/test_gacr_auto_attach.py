@@ -250,7 +250,7 @@ def main() -> None:
         # A different GitHub workflow remains a valid external execution anchor.
         external = json.loads(run(
             env | {
-                "GITHUB_ACTOR":"external-worker",
+                "GITHUB_ACTOR":"external-worker-fresh",
                 "GITHUB_WORKFLOW":"External Governed Worker",
                 "GITHUB_RUN_ID":"1000",
                 "GITHUB_RUN_ATTEMPT":"1",

@@ -129,6 +129,28 @@ def main() -> None:
         "connection_intent",
     )
 
+    same_logical_attach = {
+        "schema": g.SCHEMA,
+        "event": "attach",
+        "agent": "logical-agent-a",
+        "provider": "chatgpt",
+        "connection_ref": "surface:new-chat",
+        "same_logical_agent_session_id": "session-old",
+        "continuity_id": "GRT-CONT-DEMO-01",
+        "continuity_evidence_ref": "github-issue-comment:8001",
+    }
+    parsed_same_logical = g.parse_issue_comment_event(
+        event(body(same_logical_attach), comment_id=90031),
+        config(),
+    )
+    assert_true(parsed_same_logical["same_logical_agent_session_id"] == "session-old", "same logical reference session parsed")
+    incomplete_same_logical = dict(same_logical_attach)
+    del incomplete_same_logical["continuity_evidence_ref"]
+    expect_error(
+        lambda: g.parse_issue_comment_event(event(body(incomplete_same_logical), comment_id=90032), config()),
+        "same-logical-agent attach",
+    )
+
     availability_payload = {
         "schema": g.SCHEMA,
         "event": "availability",
@@ -217,6 +239,10 @@ def main() -> None:
             "branch": "main",
             "entry_action": "CONTINUE_GOVERNED_WORK",
             "connection_intent": "OBSERVE",
+            "agent": "logical-agent-a",
+            "same_logical_agent_session_id": "session-old",
+            "continuity_id": "GRT-CONT-DEMO-01",
+            "continuity_evidence_ref": "github-issue-comment:8001",
         }
         resolved_route = g.ensure_session(route_payload, "example/governed")
         assert_true(resolved_route["session_id"] == "session-route", "new host route session attached")
@@ -225,6 +251,9 @@ def main() -> None:
         auto_args = auto_attach_calls[0]
         assert_true("--entry-action" in auto_args and "CONTINUE_GOVERNED_WORK" in auto_args, "entry action forwarded")
         assert_true("--connection-intent" in auto_args and "OBSERVE" in auto_args, "connection intent forwarded")
+        assert_true("--same-logical-agent-session-id" in auto_args and "session-old" in auto_args, "same logical reference forwarded")
+        assert_true("--continuity-id" in auto_args and "GRT-CONT-DEMO-01" in auto_args, "same logical continuity forwarded")
+        assert_true("--continuity-evidence-ref" in auto_args and "github-issue-comment:8001" in auto_args, "same logical evidence forwarded")
     finally:
         g.active_sessions = original_active_sessions_route
         g.run_script = original_run_route

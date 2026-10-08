@@ -384,3 +384,33 @@ callback. Continuity requests/instructions/review requests are delivered as boun
 `LIVENESS_CHALLENGE`. Neither path grants mutation authority or synthesizes heartbeat.
 A fresh challenge response may prove liveness through the existing GACR host-ingress
 rules; silence never does.
+
+
+### Governed creation of another session for the same logical agent
+
+A new stable runtime/chat/provider surface MUST NOT be grouped under an existing
+`agent_identity` merely because a client repeats the same agent string.
+
+For a new connection, GACR distinguishes:
+
+```text
+same agent_identity claimed + new stable anchor + no canonical continuity proof
+→ UNBOUND_ACTIVITY
+→ LOGICAL_AGENT_REUSE_REQUIRES_EXPLICIT_CONTINUITY_PROOF
+
+same agent_identity
++ explicit reference_session_id
++ continuity_id
++ exact canonical evidence_ref already present in continuity / forensics / beacon state
++ distinct unowned connection_ref
+→ NEW_SESSION_SAME_LOGICAL_AGENT
+```
+
+The new session may use another provider or another chat/runtime surface, but it does
+not inherit a claim, mutation authority, liveness, lease, or accepted takeover from the
+reference session. A stalled/takeover-ready reference remains stalled until the existing
+governed takeover/reconciliation machinery explicitly resolves it.
+
+Repository-minted runtime surface identifiers are allowed only as typed repository
+identifiers with repository provenance. They MUST NOT be relabeled as provider-native
+conversation/session identifiers.

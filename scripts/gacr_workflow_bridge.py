@@ -26,7 +26,8 @@ AUTO_ATTACH_ARRIVAL_CONTEXT_KEYS={
     'github_app_installation','observed_head','branch','base_branch','pull_request',
     'workflow_run_id','job_id','run_attempt','event_type','delivery_correlation_id',
     'last_action','last_evidence','entry_action','connection_intent','task_id',
-    'claim_id','heartbeat_seq','checkpoint'
+    'claim_id','heartbeat_seq','checkpoint','same_logical_agent_session_id',
+    'continuity_id','continuity_evidence_ref'
 }
 
 def expand_auto_attach_payload(payload:dict)->dict:
@@ -112,6 +113,9 @@ def main():
         add(args,'--connection-ref',payload.get('connection_ref'))
         add(args,'--client-instance-id',payload.get('client_instance_id'))
         add(args,'--bridge-registration-ref',payload.get('bridge_registration_ref'))
+        add(args,'--same-logical-agent-session-id',payload.get('same_logical_agent_session_id'))
+        add(args,'--continuity-id',payload.get('continuity_id'))
+        add(args,'--continuity-evidence-ref',payload.get('continuity_evidence_ref'))
         add(args,'--repository',payload.get('repository') or os.environ.get('GITHUB_REPOSITORY'))
         add(args,'--repository-id',payload.get('repository_id'))
         add(args,'--organization',payload.get('organization'))
