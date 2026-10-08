@@ -68,6 +68,13 @@ def participant_id(continuity_id: str, session_id: str, scope_id: str) -> str:
     return "GACR-P-" + hashlib.sha256(raw).hexdigest()[:12]
 
 
+def coordination_state_ref(state: dict, continuity_id: str) -> str:
+    continuity_id = require_id("continuity_id", continuity_id)
+    revision = int(state.get("revision", 0))
+    raw = f"{continuity_id}|revision:{revision}".encode("utf-8")
+    return "GACR-CS-" + hashlib.sha256(raw).hexdigest()[:16]
+
+
 def normalize_domains(values: list[str] | None) -> list[str]:
     domains = sorted({str(value).strip() for value in (values or []) if str(value).strip()})
     if not domains:
@@ -175,6 +182,11 @@ def declare_scope_docs(
     coordination_state_ref = str(coordination_state_ref or "").strip()
     if not coordination_state_ref:
         raise ValueError("CONTINUITY_COORDINATION_FAILED: coordination_state_ref required")
+    expected_state_ref = globals()["coordination_state_ref"](state, continuity_id)
+    if coordination_state_ref != expected_state_ref:
+        raise ValueError(
+            f"STALE_COORDINATION_STATE_REF: observed={coordination_state_ref} expected={expected_state_ref}"
+        )
     if work_mode not in WORK_MODES:
         raise ValueError("CONTINUITY_COORDINATION_FAILED: unsupported work_mode")
     domains = normalize_domains(collision_domains)
@@ -236,10 +248,13 @@ def declare_scope_docs(
 
     item["updated_at"] = timestamp
     state["revision"] = int(state.get("revision", 0)) + 1
+    next_state_ref = globals()["coordination_state_ref"](state, continuity_id)
     return {
         "status": "CONTINUITY_SCOPE_DECLARED",
         "continuity_id": continuity_id,
         "participant": record,
+        "accepted_coordination_state_ref": coordination_state_ref,
+        "next_coordination_state_ref": next_state_ref,
         "canonical_claim_conflicts": claim_conflicts,
         "authority_preserved": True,
         "grants_task_authority": False,
@@ -361,8 +376,12 @@ def command_yield(a: argparse.Namespace) -> None:
 def command_status(a: argparse.Namespace) -> None:
     state, _, _ = load_runtime()
     item = next((entry for entry in state.get("items", []) if entry.get("continuity_id") == a.continuity_id), None)
+    current_state_ref = coordination_state_ref(state, a.continuity_id)
     print(json.dumps({
         "status": "FOUND" if item else "NOT_FOUND",
+        "continuity_id": a.continuity_id,
+        "state_revision": int(state.get("revision", 0)),
+        "coordination_state_ref": current_state_ref,
         "continuity": item,
         "projection_authority": {
             "projection_only": True,

@@ -71,6 +71,9 @@ def issue_event(payload: dict, comment_id: int = 9901) -> dict:
 
 def main() -> None:
     head = "a" * 40
+
+    def receipt(value: dict, continuity_id: str) -> str:
+        return c.coordination_state_ref(value, continuity_id)
     sessions = {
         "sessions": [
             active_session("session-a"),
@@ -88,7 +91,7 @@ def main() -> None:
         repository="example/governed",
         continuity_id="GRT-CONT-DEMO-01",
         coordination_issue=259,
-        coordination_state_ref="github-issue-comment:100",
+        coordination_state_ref=receipt(state, "GRT-CONT-DEMO-01"),
         session_id="session-a",
         declared_role="CODE_AGENT",
         scope_id="gmc-g01",
@@ -102,13 +105,56 @@ def main() -> None:
     assert_true(first["status"] == "CONTINUITY_SCOPE_DECLARED", "first scope declared")
     assert_true(first["grants_mutation_authority"] is False, "scope grants no mutation authority")
     assert_true(first["participant"]["membership_state"] == "PERSISTENT", "continuity membership is durable")
+    assert_true(first["accepted_coordination_state_ref"].startswith("GACR-CS-"), "current-state receipt accepted")
+    assert_true(first["next_coordination_state_ref"] == receipt(state, "GRT-CONT-DEMO-01"), "next state receipt exposed")
+
+    stale_receipt = first["accepted_coordination_state_ref"]
+    expect_error(
+        lambda: c.declare_scope_docs(
+            state, sessions, claims,
+            repository="example/governed",
+            continuity_id="GRT-CONT-DEMO-01",
+            coordination_issue=259,
+            coordination_state_ref=stale_receipt,
+            session_id="session-b",
+            declared_role="CODE_AGENT",
+            scope_id="dispatcher-stale-receipt",
+            work_mode="READ_ONLY",
+            collision_domains=["orchestration:258:stale-receipt"],
+            observed_head=head,
+            current_head=head,
+            evidence_ref="github-issue-comment:101-stale",
+            timestamp="2026-10-07T20:00:30+00:00",
+        ),
+        "STALE_COORDINATION_STATE_REF",
+    )
+    unrelated_ref = receipt(state, "GRT-CONT-OTHER-01")
+    expect_error(
+        lambda: c.declare_scope_docs(
+            state, sessions, claims,
+            repository="example/governed",
+            continuity_id="GRT-CONT-DEMO-01",
+            coordination_issue=259,
+            coordination_state_ref=unrelated_ref,
+            session_id="session-b",
+            declared_role="CODE_AGENT",
+            scope_id="dispatcher-unrelated-receipt",
+            work_mode="READ_ONLY",
+            collision_domains=["orchestration:258:unrelated-receipt"],
+            observed_head=head,
+            current_head=head,
+            evidence_ref="github-issue-comment:101-unrelated",
+            timestamp="2026-10-07T20:00:40+00:00",
+        ),
+        "STALE_COORDINATION_STATE_REF",
+    )
 
     second = c.declare_scope_docs(
         state, sessions, claims,
         repository="example/governed",
         continuity_id="GRT-CONT-DEMO-01",
         coordination_issue=259,
-        coordination_state_ref="github-issue-comment:100",
+        coordination_state_ref=receipt(state, "GRT-CONT-DEMO-01"),
         session_id="session-b",
         declared_role="CODE_AGENT",
         scope_id="dispatcher-258",
@@ -127,7 +173,7 @@ def main() -> None:
             repository="example/governed",
             continuity_id="GRT-CONT-DEMO-01",
             coordination_issue=259,
-            coordination_state_ref="github-issue-comment:100",
+            coordination_state_ref=receipt(state, "GRT-CONT-DEMO-01"),
             session_id="session-b",
             declared_role="CODE_AGENT",
             scope_id="gmc-g01",
@@ -147,7 +193,7 @@ def main() -> None:
         repository="example/governed",
         continuity_id="GRT-CONT-WRITE-01",
         coordination_issue=259,
-        coordination_state_ref="github-issue-comment:200",
+        coordination_state_ref=receipt(write_state, "GRT-CONT-WRITE-01"),
         session_id="session-a",
         declared_role="CODE_AGENT",
         scope_id="writer-a",
@@ -164,7 +210,7 @@ def main() -> None:
             repository="example/governed",
             continuity_id="GRT-CONT-WRITE-01",
             coordination_issue=259,
-            coordination_state_ref="github-issue-comment:200",
+            coordination_state_ref=receipt(write_state, "GRT-CONT-WRITE-01"),
             session_id="session-b",
             declared_role="CODE_AGENT",
             scope_id="writer-b",
@@ -187,13 +233,14 @@ def main() -> None:
             "collision_domains": ["canonical:domain"],
         }]
     }
+    claimed_state = c.default_state()
     expect_error(
         lambda: c.declare_scope_docs(
-            c.default_state(), sessions, claimed,
+            claimed_state, sessions, claimed,
             repository="example/governed",
             continuity_id="GRT-CONT-CLAIM-01",
             coordination_issue=259,
-            coordination_state_ref="github-issue-comment:300",
+            coordination_state_ref=receipt(claimed_state, "GRT-CONT-CLAIM-01"),
             session_id="session-b",
             declared_role="CODE_AGENT",
             scope_id="writer-b",
@@ -207,13 +254,14 @@ def main() -> None:
         "FOREIGN_CANONICAL_CLAIM_COLLISION",
     )
 
+    stale_state = c.default_state()
     expect_error(
         lambda: c.declare_scope_docs(
-            c.default_state(), sessions, claims,
+            stale_state, sessions, claims,
             repository="example/governed",
             continuity_id="GRT-CONT-STALE-01",
             coordination_issue=259,
-            coordination_state_ref="github-issue-comment:400",
+            coordination_state_ref=receipt(stale_state, "GRT-CONT-STALE-01"),
             session_id="session-a",
             declared_role="CODE_AGENT",
             scope_id="stale",
@@ -227,13 +275,14 @@ def main() -> None:
         "HEAD_MOVED",
     )
 
+    return_state = c.default_state()
     expect_error(
         lambda: c.declare_scope_docs(
-            c.default_state(), sessions, claims,
+            return_state, sessions, claims,
             repository="example/governed",
             continuity_id="GRT-CONT-RETURN-01",
             coordination_issue=259,
-            coordination_state_ref="github-issue-comment:500",
+            coordination_state_ref=receipt(return_state, "GRT-CONT-RETURN-01"),
             session_id="session-old",
             declared_role="CODE_AGENT",
             scope_id="resume",
@@ -268,7 +317,7 @@ def main() -> None:
         repository="example/governed",
         continuity_id="GRT-CONT-DEMO-01",
         coordination_issue=259,
-        coordination_state_ref="github-issue-comment:600",
+        coordination_state_ref=receipt(state, "GRT-CONT-DEMO-01"),
         session_id="session-b",
         declared_role="CODE_AGENT",
         scope_id="gmc-g01",
