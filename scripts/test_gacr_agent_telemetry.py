@@ -180,6 +180,47 @@ def main():
         assert_true(secondary_corr["level"] == "EXACT", "secondary provider context remains exact")
         assert_true(secondary_corr["selected_session_id"] == "session-a", "secondary context selects canonical session")
 
+        # The same historical runtime/provider anchor on two distinct canonical
+        # sessions is ambiguous and must fail closed rather than select either.
+        collision_sessions = json.loads(g.SESSIONS_PATH.read_text(encoding="utf-8"))
+        collision_a = next(x for x in collision_sessions["sessions"] if x["session_id"] == "session-a")
+        collision_b = next(x for x in collision_sessions["sessions"] if x["session_id"] == "session-b")
+        shared_context = {
+            "provider": "chatgpt",
+            "provider_conversation_ref": None,
+            "client_instance_id": "collision-client",
+            "connection_ref": "collision-connection",
+            "provider_private_values_invented": False,
+        }
+        collision_a.setdefault("provider_contexts", []).append({
+            **shared_context,
+            "provider_context_id": "GACR-PC-cccccccccccccccc",
+        })
+        collision_b.setdefault("provider_contexts", []).append({
+            **shared_context,
+            "provider_context_id": "GACR-PC-dddddddddddddddd",
+        })
+        write(g.SESSIONS_PATH, collision_sessions)
+        collision_beacon = g.record_beacon(
+            session=None,
+            event_type="OBSERVED_GITHUB_ACTIVITY",
+            provider="chatgpt",
+            client_instance_id="collision-client",
+            connection_ref="collision-connection",
+            source="GITHUB_ACTIONS",
+        )
+        g.correlate_all()
+        collision_corr = next(
+            x for x in json.loads(g.CORRELATIONS_PATH.read_text(encoding="utf-8"))["items"]
+            if x["beacon_id"] == collision_beacon["beacon_id"]
+        )
+        assert_true(collision_corr["level"] == "AMBIGUOUS", "cross-session historical context collision must be ambiguous")
+        assert_true(collision_corr["selected_session_id"] is None, "ambiguous historical context must select no session")
+        assert_true(
+            set(collision_corr["candidate_session_ids"]) == {"session-a", "session-b"},
+            "both conflicting canonical sessions must remain visible as candidates",
+        )
+
         anonymous = g.record_beacon(
             session=None,
             event_type="OBSERVED_GITHUB_ACTIVITY",
