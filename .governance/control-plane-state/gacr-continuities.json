@@ -5,7 +5,7 @@
   "grants_task_authority": false,
   "grants_claim": false,
   "grants_mutation_authority": false,
-  "revision": 1,
+  "revision": 2,
   "items": [
     {
       "continuity_id": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
@@ -32,36 +32,34 @@
           ],
           "participant_ids": [],
           "scope_ids": [],
-          "provider_contexts": [],
-          "session_count": 1,
-          "provider_context_count": 0,
+          "provider_contexts": [
+            {
+              "provider_context_id": "GACR-PC-5d3257cb681b2198",
+              "provider_context_id_provenance": "DERIVED_GACR_PROJECTION",
+              "session_id": "session-1bb68ac942a69a77dfbb8d24",
+              "provider": "chatgpt",
+              "provider_conversation_ref": null,
+              "provider_conversation_ref_status": "UNAVAILABLE",
+              "client_instance_id": "GSCC-CLIENT-e48029d226cb16bf9b37a7d7",
+              "connection_ref": "GSCC-CONN-e2ce9a9f2d766180fd4ab04ecf77858b",
+              "runtime_surface_ref": null,
+              "runtime_surface_ref_provenance": null,
+              "repository_surface_ref": null,
+              "repository_surface_ref_provenance": null,
+              "provider_connector_app_id": null,
+              "provider_connector_client_id": null,
+              "provider_connector_installation_id": null,
+              "provider_connector_slug": null,
+              "provider_native_identity_status": "UNAVAILABLE",
+              "provider_private_values_invented": false
+            }
+          ],
           "projection_only": true,
           "grants_task_authority": false,
           "grants_claim": false,
-          "grants_mutation_authority": false
-        },
-        {
-          "logical_agent_id": "GSCC-ID-b484944fc30fe55b88948f9f",
-          "logical_agent_id_provenance": "CANONICAL_GACR_SESSION_AGENT_IDENTITY",
-          "human_alias": "FORGE",
-          "human_alias_provenance": "OWNER_ASSIGNED",
-          "alias_evidence_ref": "github-issue-comment:6049566115",
-          "routing_evidence_ref": "github-issue-comment:6049593649",
-          "reference_session_ids": [
-            "session-ba6f8db786eb9a8aa11865f2"
-          ],
-          "session_ids": [
-            "session-ba6f8db786eb9a8aa11865f2"
-          ],
-          "participant_ids": [],
-          "scope_ids": [],
-          "provider_contexts": [],
+          "grants_mutation_authority": false,
           "session_count": 1,
-          "provider_context_count": 0,
-          "projection_only": true,
-          "grants_task_authority": false,
-          "grants_claim": false,
-          "grants_mutation_authority": false
+          "provider_context_count": 1
         },
         {
           "logical_agent_id": "GSCC-ID-21df6eb30456b56be12144bf",
@@ -78,19 +76,85 @@
           ],
           "participant_ids": [],
           "scope_ids": [],
-          "provider_contexts": [],
-          "session_count": 1,
-          "provider_context_count": 0,
+          "provider_contexts": [
+            {
+              "provider_context_id": "GACR-PC-5a1c0b343c93869e",
+              "provider_context_id_provenance": "DERIVED_GACR_PROJECTION",
+              "session_id": "session-3320926e66a52ff8f4396ed2",
+              "provider": "chatgpt",
+              "provider_conversation_ref": null,
+              "provider_conversation_ref_status": "UNAVAILABLE",
+              "client_instance_id": "GSCC-CLIENT-b292bc2e55699afc86d3c56d",
+              "connection_ref": "GSCC-CONN-bbcf230ab2aadb503a07017987e391d5",
+              "runtime_surface_ref": null,
+              "runtime_surface_ref_provenance": null,
+              "repository_surface_ref": null,
+              "repository_surface_ref_provenance": null,
+              "provider_connector_app_id": null,
+              "provider_connector_client_id": null,
+              "provider_connector_installation_id": null,
+              "provider_connector_slug": null,
+              "provider_native_identity_status": "UNAVAILABLE",
+              "provider_private_values_invented": false
+            }
+          ],
           "projection_only": true,
           "grants_task_authority": false,
           "grants_claim": false,
-          "grants_mutation_authority": false
+          "grants_mutation_authority": false,
+          "session_count": 1,
+          "provider_context_count": 1
+        },
+        {
+          "logical_agent_id": "GSCC-ID-b484944fc30fe55b88948f9f",
+          "logical_agent_id_provenance": "CANONICAL_GACR_SESSION_AGENT_IDENTITY",
+          "human_alias": "FORGE",
+          "human_alias_provenance": "OWNER_ASSIGNED",
+          "alias_evidence_ref": "github-issue-comment:6049566115",
+          "routing_evidence_ref": "github-issue-comment:6049593649",
+          "reference_session_ids": [
+            "session-ba6f8db786eb9a8aa11865f2"
+          ],
+          "session_ids": [
+            "session-ba6f8db786eb9a8aa11865f2"
+          ],
+          "participant_ids": [],
+          "scope_ids": [],
+          "provider_contexts": [
+            {
+              "provider_context_id": "GACR-PC-5da6dfba924d3440",
+              "provider_context_id_provenance": "DERIVED_GACR_PROJECTION",
+              "session_id": "session-ba6f8db786eb9a8aa11865f2",
+              "provider": "chatgpt",
+              "provider_conversation_ref": null,
+              "provider_conversation_ref_status": "UNAVAILABLE",
+              "client_instance_id": "GSCC-CLIENT-70852483c97c69853dacaf89",
+              "connection_ref": "GSCC-CONN-cbcbc1a4c76b33b56013a611a29c015a",
+              "runtime_surface_ref": null,
+              "runtime_surface_ref_provenance": null,
+              "repository_surface_ref": null,
+              "repository_surface_ref_provenance": null,
+              "provider_connector_app_id": null,
+              "provider_connector_client_id": null,
+              "provider_connector_installation_id": null,
+              "provider_connector_slug": null,
+              "provider_native_identity_status": "UNAVAILABLE",
+              "provider_private_values_invented": false
+            }
+          ],
+          "projection_only": true,
+          "grants_task_authority": false,
+          "grants_claim": false,
+          "grants_mutation_authority": false,
+          "session_count": 1,
+          "provider_context_count": 1
         }
       ],
       "events": [],
       "last_sequence": 0,
       "owner_alias_requirement_ref": "github-issue-comment:6049566115",
-      "owner_alias_routing_requirement_ref": "github-issue-comment:6049593649"
+      "owner_alias_routing_requirement_ref": "github-issue-comment:6049593649",
+      "supervision_alerts": []
     }
   ]
 }
