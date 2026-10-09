@@ -729,9 +729,14 @@ def main():
     delayed_open = [
         item for item in delayed_refresh_state["items"][0]["supervision_alerts"]
         if item.get("state") == "OPEN"
+        and item.get("target_session_id") == "session-a"
     ]
-    assert len(delayed_open) == 1, "new silence interval receives a fresh supervision alert"
+    assert len(delayed_open) == 1, "new silence interval receives a fresh supervision alert for the refreshed session"
     assert delayed_open[0]["last_signal_at"] == bus.iso(new_signal), "replacement alert is keyed to the newer signal"
+    assert any(
+        item.get("state") == "OPEN" and item.get("target_session_id") == "session-b"
+        for item in delayed_refresh_state["items"][0]["supervision_alerts"]
+    ), "an independently silent session may receive its own supervision alert in the same tick"
     assert any(x.get("state") == "RESOLVED" for x in delayed_tick["changes"])
     assert any(x.get("state") == "EARLY_SUPERVISION_ALERT" for x in delayed_tick["changes"])
 
