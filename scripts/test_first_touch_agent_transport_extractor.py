@@ -78,6 +78,7 @@ provider_event={
  "client_instance_id":"client-visible-1",
  "request_id":"req-visible-1",
  "observed_at":"2026-10-06T22:20:00Z",
+ "logical_agent_alias":"FORGE",
  "actor":"Wealthtechinnovations",
  "identity":{
    "conversation_id":"UNAVAILABLE",
@@ -100,6 +101,7 @@ assert packet3["observations"]["provider.provider"]["value"]=="chatgpt"
 assert packet3["observations"]["agent.model"]["value"]=="GPT-5.6 Sol"
 assert packet3["observations"]["client.client_instance_id"]["value"]=="client-visible-1"
 assert packet3["observations"]["request.request_id"]["value"]=="req-visible-1"
+assert packet3["observations"]["request.logical_agent_alias"]["value"]=="FORGE"
 assert packet3["observations"]["connection.connection_ref"]["value"]=="conn-visible-12345678"
 assert packet3["identity"]["strength"]=="STRONG"
 assert packet3["identity"]["classification"]=="FIRST_TOUCH_CANDIDATE"

@@ -7,6 +7,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+import gacr_continuity_coordination as continuity_coordination
 from gscc_gacr.issue_control_bridge import (
     DISPATCHES_PATH,
     apply_host_control_event,
@@ -20,10 +21,12 @@ AUTO_ATTACH = ROOT / "scripts" / "gacr_auto_attach.py"
 CORE = ROOT / "scripts" / "governed_agent_continuity_relay.py"
 TELEMETRY = ROOT / "scripts" / "gacr_agent_telemetry.py"
 CAPACITY = ROOT / "scripts" / "gacr_capacity_dispatch.py"
+CONTINUITY = ROOT / "scripts" / "gacr_continuity_coordination.py"
+BUS = ROOT / "scripts" / "gacr_continuity_bus.py"
 
 PREFIX = "/gacr-host "
 SCHEMA = "gacr-host-event/v1"
-EVENTS = {"attach", "heartbeat", "action", "interrupt", "availability", "work_offer_accept", "command_ack", "challenge_response"}
+EVENTS = {"attach", "heartbeat", "action", "interrupt", "availability", "work_offer_accept", "command_ack", "challenge_response", "continuity_scope", "continuity_yield", "continuity_event", "continuity_ack", "continuity_response"}
 ACTION_PHASES = {"STARTED", "COMPLETED", "FAILED", "CANCELLED"}
 INTERRUPTION_CODES = {
     "CLIENT_DISCONNECTED",
@@ -75,6 +78,13 @@ ALLOWED_KEYS = {
     "connection_ref",
     "client_instance_id",
     "bridge_registration_ref",
+    "provider_connector_app_id",
+    "provider_connector_client_id",
+    "provider_connector_installation_id",
+    "provider_connector_slug",
+    "logical_agent_alias",
+    "same_logical_agent_session_id",
+    "continuity_evidence_ref",
     "observed_head",
     "branch",
     "task_id",
@@ -86,6 +96,13 @@ ALLOWED_KEYS = {
     "work_kind",
     "capabilities",
     "wake_channels",
+    "continuity_id",
+    "coordination_issue",
+    "coordination_state_ref",
+    "scope_id",
+    "work_mode",
+    "collision_domains",
+    "handoff_ref",
     "action_id",
     "action_label",
     "action_phase",
@@ -104,6 +121,16 @@ ALLOWED_KEYS = {
     "challenge_id",
     "nonce",
     "challenge_status",
+    "target_session_ids",
+    "target_logical_agent_alias",
+    "event_kind",
+    "payload_ref",
+    "event_id",
+    "response_ref",
+    "requires_ack",
+    "reply_to_event_id",
+    "expires_at",
+    "ack_timeout_seconds",
 }
 
 
@@ -185,6 +212,24 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
     kind = str(payload.get("event") or "").lower()
     if kind not in EVENTS:
         raise ValueError("unsupported host-event type")
+    same_logical_requested = any(
+        payload.get(key) not in (None, "")
+        for key in ("same_logical_agent_session_id", "continuity_evidence_ref")
+    )
+    if same_logical_requested:
+        same_logical_fields = (
+            payload.get("same_logical_agent_session_id"),
+            payload.get("continuity_id"),
+            payload.get("continuity_evidence_ref"),
+        )
+        if kind != "attach":
+            raise ValueError("same-logical-agent proof is supported only for attach events")
+        if any(value in (None, "") for value in same_logical_fields):
+            raise ValueError("same-logical-agent attach requires session, continuity_id and evidence_ref")
+        if payload.get("agent") in (None, ""):
+            raise ValueError("same-logical-agent attach requires explicit agent identity")
+        if payload.get("connection_ref") in (None, ""):
+            raise ValueError("same-logical-agent attach requires explicit connection_ref")
     if kind == "action" and payload.get("action_phase") not in ACTION_PHASES:
         raise ValueError("host action requires a supported action_phase")
     if kind == "interrupt" and payload.get("interruption_code") not in INTERRUPTION_CODES:
@@ -208,6 +253,51 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
     if work_kind is not None and work_kind not in CONTROL_PLANE_WORK_KINDS:
         raise ValueError("unsupported host-event work_kind")
 
+    if kind == "continuity_scope":
+        for key in ("session_id", "continuity_id", "coordination_issue", "coordination_state_ref", "scope_id", "work_mode", "observed_head"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host continuity_scope requires {key}")
+        if payload.get("work_mode") not in {"READ_ONLY", "WRITE", "REVIEW"}:
+            raise ValueError("host continuity_scope requires a supported work_mode")
+        domains = payload.get("collision_domains")
+        if not isinstance(domains, list) or not domains:
+            raise ValueError("host continuity_scope requires non-empty collision_domains")
+        if not all(isinstance(item, str) and item.strip() for item in domains):
+            raise ValueError("host continuity_scope collision_domains must be non-empty strings")
+        if not isinstance(payload.get("coordination_issue"), int) or int(payload["coordination_issue"]) <= 0:
+            raise ValueError("host continuity_scope requires a positive coordination_issue")
+    if kind == "continuity_yield":
+        for key in ("session_id", "continuity_id", "scope_id", "handoff_ref", "observed_head"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host continuity_yield requires {key}")
+    if kind == "continuity_event":
+        for key in ("session_id", "continuity_id", "event_kind", "payload_ref", "observed_head", "scope_id"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host continuity_event requires {key}")
+        domains = payload.get("collision_domains")
+        if not isinstance(domains, list) or not domains:
+            raise ValueError("host continuity_event requires non-empty collision_domains")
+        direct_targets = payload.get("target_session_ids")
+        alias_target = payload.get("target_logical_agent_alias")
+        has_direct = isinstance(direct_targets, list) and any(str(x).strip() for x in direct_targets)
+        has_alias = alias_target not in (None, "")
+        if has_direct == has_alias:
+            raise ValueError("host continuity_event requires exactly one target mode")
+        if "requires_ack" in payload and not isinstance(payload.get("requires_ack"), bool):
+            raise ValueError("host continuity_event requires_ack must be boolean")
+        if "ack_timeout_seconds" in payload and (
+            not isinstance(payload.get("ack_timeout_seconds"), int)
+            or int(payload["ack_timeout_seconds"]) <= 0
+        ):
+            raise ValueError("host continuity_event ack_timeout_seconds must be positive")
+    if kind == "continuity_ack":
+        for key in ("session_id", "continuity_id", "event_id", "observed_head"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host continuity_ack requires {key}")
+    if kind == "continuity_response":
+        for key in ("session_id", "continuity_id", "event_id", "response_ref", "observed_head"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host continuity_response requires {key}")
     if kind == "work_offer_accept":
         for key in ("session_id", "dispatch_id"):
             if payload.get(key) in (None, ""):
@@ -220,13 +310,15 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
         for key in ("session_id", "dispatch_id", "command_id", "correlation_id", "challenge_id", "nonce", "challenge_status"):
             if payload.get(key) in (None, ""):
                 raise ValueError(f"host challenge_response requires {key}")
-    for list_field in ("capabilities", "wake_channels"):
+    for list_field in ("capabilities", "wake_channels", "collision_domains", "target_session_ids"):
         if list_field in payload and not isinstance(payload.get(list_field), list):
             raise ValueError(f"{list_field} must be a JSON array")
     if isinstance(payload.get("capabilities"), list) and len(payload["capabilities"]) > 32:
         raise ValueError("too many host-event capabilities")
     if isinstance(payload.get("wake_channels"), list) and len(payload["wake_channels"]) > 8:
         raise ValueError("too many host-event wake channels")
+    if isinstance(payload.get("collision_domains"), list) and len(payload["collision_domains"]) > 32:
+        raise ValueError("too many host-event collision domains")
 
     comment_id = comment.get("id")
     if not comment_id:
@@ -236,6 +328,35 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
     payload["_actor"] = ((comment.get("user") or {}).get("login") or (event.get("sender") or {}).get("login"))
     payload["_observed_at"] = comment.get("created_at")
     return payload
+
+
+def _session_logical_agent_id(session: dict) -> str | None:
+    value = session.get("logical_agent_id") or session.get("agent_identity")
+    return str(value).strip() if value not in (None, "") else None
+
+
+def _session_values(session: dict, key: str) -> set[str]:
+    values: set[str] = set()
+    primary = session.get(key)
+    if primary not in (None, "", "UNAVAILABLE"):
+        values.add(str(primary))
+    if key in {"provider_conversation_ref", "client_instance_id", "connection_ref"}:
+        for context in session.get("provider_contexts") or []:
+            if not isinstance(context, dict):
+                continue
+            value = context.get(key)
+            if value not in (None, "", "UNAVAILABLE"):
+                values.add(str(value))
+    return values
+
+
+def resolve_owner_alias(alias: str) -> dict:
+    state = continuity_coordination.read_json(
+        continuity_coordination.STATE_PATH,
+        continuity_coordination.default_state(),
+    )
+    sessions = {"sessions": active_sessions()}
+    return continuity_coordination.resolve_logical_agent_alias_docs(state, sessions, alias=alias)
 
 
 def active_sessions() -> list[dict]:
@@ -258,13 +379,13 @@ def resolve_session(payload: dict, repository: str) -> dict | None:
             continue
         matched = False
         provider_ref = payload.get("provider_ref")
-        if provider_ref and session.get("provider_conversation_ref") == provider_ref:
+        if provider_ref and str(provider_ref) in _session_values(session, "provider_conversation_ref"):
             matched = True
         connection_ref = payload.get("connection_ref")
-        if connection_ref and session.get("connection_ref") == connection_ref:
+        if connection_ref and str(connection_ref) in _session_values(session, "connection_ref"):
             matched = True
         client_instance_id = payload.get("client_instance_id")
-        if client_instance_id and session.get("client_instance_id") == client_instance_id:
+        if client_instance_id and str(client_instance_id) in _session_values(session, "client_instance_id"):
             matched = True
         if matched:
             matches.append(session)
@@ -307,19 +428,50 @@ def run_script(path: Path, args: list[str]) -> str:
 
 
 def ensure_session(payload: dict, repository: str) -> dict:
+    alias_resolution = None
+    alias = payload.get("logical_agent_alias")
+    if alias not in (None, ""):
+        alias_resolution = resolve_owner_alias(str(alias))
+
     existing = resolve_session(payload, repository)
     explicit_provider = payload.get("provider")
     if existing:
+        if alias_resolution and _session_logical_agent_id(existing) != alias_resolution.get("logical_agent_id"):
+            raise ValueError("logical agent alias resolves to a different canonical session identity")
         existing_provider = existing.get("provider")
-        if explicit_provider not in (None, "", "other") and existing_provider in (None, "", "other"):
+        if explicit_provider not in (None, "", "other", existing_provider) and existing_provider not in (None, "", "other"):
+            raise ValueError("provider conflict on host-event session")
+
+        connector_evidence = any(
+            payload.get(key) not in (None, "")
+            for key in (
+                "provider_connector_app_id",
+                "provider_connector_client_id",
+                "provider_connector_installation_id",
+                "provider_connector_slug",
+            )
+        )
+        provider_enrichment = (
+            explicit_provider not in (None, "", "other")
+            and existing_provider in (None, "", "other")
+        )
+        provider_context_enrichment = (
+            payload.get("provider_ref") not in (None, "")
+            and payload.get("provider_ref") != existing.get("provider_conversation_ref")
+        )
+        if provider_enrichment or provider_context_enrichment or connector_evidence:
             args: list[str] = []
             add(args, "--agent", payload.get("agent") or existing.get("agent_identity") or "conversation-agent")
-            add(args, "--provider", explicit_provider)
-            add(args, "--provider-ref", payload.get("provider_ref"))
+            add(args, "--provider", explicit_provider or existing_provider or "other")
+            add(args, "--provider-ref", payload.get("provider_ref") or existing.get("provider_conversation_ref"))
             add(args, "--provider-url", payload.get("provider_url"))
             add(args, "--connection-ref", payload.get("connection_ref") or existing.get("connection_ref"))
             add(args, "--client-instance-id", payload.get("client_instance_id") or existing.get("client_instance_id"))
             add(args, "--bridge-registration-ref", payload.get("bridge_registration_ref") or existing.get("bridge_registration_ref"))
+            add(args, "--provider-connector-app-id", payload.get("provider_connector_app_id"))
+            add(args, "--provider-connector-client-id", payload.get("provider_connector_client_id"))
+            add(args, "--provider-connector-installation-id", payload.get("provider_connector_installation_id"))
+            add(args, "--provider-connector-slug", payload.get("provider_connector_slug"))
             add(args, "--repository", repository)
             add(args, "--observed-head", payload.get("observed_head"))
             add(args, "--branch", payload.get("branch") or (existing.get("relay") or {}).get("branch") or "main")
@@ -330,11 +482,30 @@ def ensure_session(payload: dict, repository: str) -> dict:
             run_script(AUTO_ATTACH, args)
             enriched = resolve_session(payload, repository)
             if not enriched:
-                raise RuntimeError("host-event provider enrichment completed but session could not be resolved")
+                raise RuntimeError("host-event provider/context enrichment completed but session could not be resolved")
             return enriched
-        if explicit_provider not in (None, "", "other", existing_provider) and existing_provider not in (None, "", "other"):
-            raise ValueError("provider conflict on host-event session")
         return existing
+
+    if alias_resolution:
+        proof_fields = (
+            payload.get("same_logical_agent_session_id"),
+            payload.get("continuity_id"),
+            payload.get("continuity_evidence_ref"),
+        )
+        if any(value in (None, "") for value in proof_fields):
+            raise ValueError(
+                "LOGICAL_AGENT_ALIAS_SURFACE_UNRESOLVED: alias identifies the intended logical agent "
+                "but does not prove this new provider/runtime surface"
+            )
+        allowed_sessions = {
+            item.get("session_id")
+            for item in alias_resolution.get("sessions") or []
+            if item.get("session_id")
+        }
+        if str(payload.get("same_logical_agent_session_id")) not in allowed_sessions:
+            raise ValueError("logical agent alias reference session is outside resolved logical agent")
+        payload = dict(payload)
+        payload["agent"] = alias_resolution["logical_agent_id"]
 
     if not any(payload.get(key) for key in ("provider_ref", "provider_url", "connection_ref", "client_instance_id")):
         raise ValueError("host-event cannot auto-attach without provider_ref/provider_url/connection_ref/client_instance_id")
@@ -347,6 +518,13 @@ def ensure_session(payload: dict, repository: str) -> dict:
     add(args, "--connection-ref", payload.get("connection_ref"))
     add(args, "--client-instance-id", payload.get("client_instance_id"))
     add(args, "--bridge-registration-ref", payload.get("bridge_registration_ref"))
+    add(args, "--provider-connector-app-id", payload.get("provider_connector_app_id"))
+    add(args, "--provider-connector-client-id", payload.get("provider_connector_client_id"))
+    add(args, "--provider-connector-installation-id", payload.get("provider_connector_installation_id"))
+    add(args, "--provider-connector-slug", payload.get("provider_connector_slug"))
+    add(args, "--same-logical-agent-session-id", payload.get("same_logical_agent_session_id"))
+    add(args, "--continuity-id", payload.get("continuity_id"))
+    add(args, "--continuity-evidence-ref", payload.get("continuity_evidence_ref"))
     add(args, "--repository", repository)
     add(args, "--observed-head", payload.get("observed_head"))
     add(args, "--branch", payload.get("branch") or "main")
@@ -441,8 +619,107 @@ def process(payload: dict, repository: str) -> dict:
 
     session = ensure_session(payload, repository)
     session_id = session["session_id"]
+    coordination_result = None
 
-    if kind == "work_offer_accept":
+    if kind == "continuity_scope":
+        args = [
+            "declare",
+            "--session-id", session_id,
+            "--continuity-id", str(payload["continuity_id"]),
+            "--coordination-issue", str(payload["coordination_issue"]),
+            "--coordination-state-ref", str(payload["coordination_state_ref"]),
+            "--scope-id", str(payload["scope_id"]),
+            "--work-mode", str(payload["work_mode"]),
+            "--observed-head", str(payload["observed_head"]),
+            "--evidence-ref", evidence_ref,
+        ]
+        add(args, "--declared-role", payload.get("agent_role"))
+        for domain in payload.get("collision_domains") or []:
+            add(args, "--collision-domain", domain)
+        coordination_result = json.loads(run_script(CONTINUITY, args))
+        hb = [
+            "heartbeat",
+            "--session-id", session_id,
+            "--source", "CLIENT_EMITTER",
+            "--action", "CONTINUITY_SCOPE_DECLARED",
+            "--evidence", evidence_ref,
+            "--observed-head", str(payload["observed_head"]),
+        ]
+        run_script(CORE, hb)
+        marker_payload = dict(payload)
+        marker_payload["checkpoint_ref"] = str(payload["continuity_id"])
+        marker_beacon(session_id, marker_payload, "CONTINUITY_SCOPE_DECLARED")
+    elif kind == "continuity_yield":
+        args = [
+            "yield",
+            "--session-id", session_id,
+            "--continuity-id", str(payload["continuity_id"]),
+            "--scope-id", str(payload["scope_id"]),
+            "--observed-head", str(payload["observed_head"]),
+            "--handoff-ref", str(payload["handoff_ref"]),
+            "--evidence-ref", evidence_ref,
+        ]
+        coordination_result = json.loads(run_script(CONTINUITY, args))
+        hb = [
+            "heartbeat",
+            "--session-id", session_id,
+            "--source", "CLIENT_EMITTER",
+            "--action", "CONTINUITY_SCOPE_YIELDED",
+            "--evidence", evidence_ref,
+            "--observed-head", str(payload["observed_head"]),
+        ]
+        run_script(CORE, hb)
+        marker_payload = dict(payload)
+        marker_payload["checkpoint_ref"] = str(payload["continuity_id"])
+        marker_beacon(session_id, marker_payload, "CONTINUITY_SCOPE_YIELDED")
+    elif kind == "continuity_event":
+        args = [
+            "emit",
+            "--continuity-id", str(payload["continuity_id"]),
+            "--from-session-id", session_id,
+            "--event-kind", str(payload["event_kind"]),
+            "--payload-ref", str(payload["payload_ref"]),
+            "--observed-head", str(payload["observed_head"]),
+            "--evidence-ref", evidence_ref,
+            "--scope-id", str(payload["scope_id"]),
+        ]
+        for target in payload.get("target_session_ids") or []:
+            add(args, "--target-session-id", target)
+        add(args, "--target-logical-agent-alias", payload.get("target_logical_agent_alias"))
+        for domain in payload.get("collision_domains") or []:
+            add(args, "--collision-domain", domain)
+        add(args, "--correlation-id", payload.get("correlation_id"))
+        add(args, "--reply-to-event-id", payload.get("reply_to_event_id"))
+        add(args, "--expires-at", payload.get("expires_at"))
+        add(args, "--ack-timeout-seconds", payload.get("ack_timeout_seconds"))
+        if payload.get("requires_ack") is False:
+            args.append("--no-requires-ack")
+        elif payload.get("requires_ack") is True:
+            args.append("--requires-ack")
+        coordination_result = json.loads(run_script(BUS, args))
+        marker_beacon(session_id, payload, "CONTINUITY_EVENT_EMITTED")
+    elif kind == "continuity_ack":
+        coordination_result = json.loads(run_script(BUS, [
+            "ack",
+            "--continuity-id", str(payload["continuity_id"]),
+            "--event-id", str(payload["event_id"]),
+            "--session-id", session_id,
+            "--observed-head", str(payload["observed_head"]),
+            "--evidence-ref", evidence_ref,
+        ]))
+        marker_beacon(session_id, payload, "CONTINUITY_EVENT_ACK")
+    elif kind == "continuity_response":
+        coordination_result = json.loads(run_script(BUS, [
+            "respond",
+            "--continuity-id", str(payload["continuity_id"]),
+            "--event-id", str(payload["event_id"]),
+            "--session-id", session_id,
+            "--response-ref", str(payload["response_ref"]),
+            "--observed-head", str(payload["observed_head"]),
+            "--evidence-ref", evidence_ref,
+        ]))
+        marker_beacon(session_id, payload, "CONTINUITY_EVENT_RESPONSE")
+    elif kind == "work_offer_accept":
         run_script(CAPACITY, [
             "accept-work",
             "--dispatch-id", str(payload["dispatch_id"]),
@@ -487,6 +764,7 @@ def process(payload: dict, repository: str) -> dict:
         "evidence_ref": evidence_ref,
         "transport": "GITHUB_ISSUE_COMMENT",
         "provenance": "CLIENT_EMITTER",
+        "coordination": coordination_result,
     }
 
 

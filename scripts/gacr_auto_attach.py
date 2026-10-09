@@ -21,7 +21,17 @@ from governed_agent_continuity_relay import (
 from gacr_agent_telemetry import correlate_all, record_beacon
 
 ROOT = Path(os.environ.get("GACR_ROOT") or Path(__file__).resolve().parents[1]).resolve()
-CHRONICLE_CURRENT = ROOT / ".governance" / "control-plane-state" / "conversation-chronicles" / "current.json"
+GOV = ROOT / ".governance"
+TEMPLATE_SOURCE = (ROOT / ".template-source").exists()
+CHRONICLE_CURRENT = GOV / "control-plane-state" / "conversation-chronicles" / "current.json"
+if TEMPLATE_SOURCE:
+    CONTINUITIES_PATH = GOV / "control-plane-state" / "gacr-continuities.json"
+    FORENSICS_PATH = GOV / "control-plane-state" / "gacr-forensics.json"
+    BEACONS_PATH = GOV / "control-plane-state" / "gacr-beacons.json"
+else:
+    CONTINUITIES_PATH = GOV / "agent-relay" / "continuities.json"
+    FORENSICS_PATH = GOV / "agent-relay" / "forensics.json"
+    BEACONS_PATH = GOV / "agent-relay" / "beacons.json"
 INTERNAL_GACR_WORKFLOWS = {"Governed Agent Continuity Relay"}
 
 
@@ -212,6 +222,10 @@ def build_presence_observation(args: argparse.Namespace, anchor: dict, config: d
 
     github_actor = args.github_actor or event.get("github_actor") or os.environ.get("GITHUB_ACTOR")
     github_app_or_installation = args.github_app_installation or event.get("github_app_or_installation")
+    provider_connector_app_id = args.provider_connector_app_id
+    provider_connector_client_id = args.provider_connector_client_id
+    provider_connector_installation_id = args.provider_connector_installation_id or event.get("github_app_or_installation")
+    provider_connector_slug = args.provider_connector_slug
 
     connection_method = _connection_method(args, anchor, surface_class)
     connection_method_provenance = "OBSERVABLE_BY_PLATFORM" if args.connection_method else "DERIVED_SAFE"
@@ -278,6 +292,14 @@ def build_presence_observation(args: argparse.Namespace, anchor: dict, config: d
         "git_provider": git_provider_provenance,
         "github_actor": "OBSERVABLE_BY_PLATFORM",
         "github_app_or_installation": "OBSERVABLE_BY_PLATFORM",
+        "provider_connector_app_id": "DECLARED_BY_AGENT_OR_CLIENT" if provider_connector_app_id else "PROVIDER_PRIVATE_UNAVAILABLE",
+        "provider_connector_client_id": "DECLARED_BY_AGENT_OR_CLIENT" if provider_connector_client_id else "PROVIDER_PRIVATE_UNAVAILABLE",
+        "provider_connector_installation_id": (
+            "DECLARED_BY_AGENT_OR_CLIENT" if args.provider_connector_installation_id
+            else "OBSERVABLE_BY_PLATFORM" if provider_connector_installation_id
+            else "PROVIDER_PRIVATE_UNAVAILABLE"
+        ),
+        "provider_connector_slug": "DECLARED_BY_AGENT_OR_CLIENT" if provider_connector_slug else "PROVIDER_PRIVATE_UNAVAILABLE",
         "connection_method": connection_method_provenance,
         "permissions": "DECLARED_BY_AGENT_OR_CLIENT" if permissions is not None else "OBSERVABLE_BY_PLATFORM",
         "capabilities": "DECLARED_BY_AGENT_OR_CLIENT",
@@ -314,6 +336,10 @@ def build_presence_observation(args: argparse.Namespace, anchor: dict, config: d
         "git_provider": git_provider,
         "github_actor": github_actor,
         "github_app_or_installation": github_app_or_installation,
+        "provider_connector_app_id": provider_connector_app_id,
+        "provider_connector_client_id": provider_connector_client_id,
+        "provider_connector_installation_id": provider_connector_installation_id,
+        "provider_connector_slug": provider_connector_slug,
         "connection_method": connection_method,
         "agent_identity": agent_identity,
         "agent_type_or_model": args.agent_type_model,
@@ -530,6 +556,294 @@ def bind_presence(sessions_doc: dict, observation: dict, config: dict) -> dict:
     }
 
 
+def _same_logical_agent_sessions(sessions_doc: dict, observation: dict) -> list[dict]:
+    agent_identity = str(observation.get("agent_identity") or "").strip()
+    repository = observation.get("repository")
+    if not agent_identity or not repository:
+        return []
+    return sorted(
+        [
+            session for session in sessions_doc.get("sessions", [])
+            if session.get("repository") == repository
+            and session.get("agent_identity") == agent_identity
+        ],
+        key=lambda item: item.get("session_id") or "",
+    )
+
+
+def _continuity_proof(
+    *,
+    reference_session_id: str,
+    continuity_id: str,
+    evidence_ref: str,
+) -> dict | None:
+    if CONTINUITIES_PATH.exists():
+        continuity_doc = read_json(CONTINUITIES_PATH)
+        for item in continuity_doc.get("items", []):
+            if item.get("continuity_id") != continuity_id:
+                continue
+            for participant in item.get("participants", []):
+                if participant.get("session_id") != reference_session_id:
+                    continue
+                if participant.get("membership_state") == "TERMINAL":
+                    continue
+                refs = {
+                    participant.get("evidence_ref"),
+                    participant.get("coordination_state_ref"),
+                    participant.get("handoff_ref"),
+                }
+                if evidence_ref in refs:
+                    return {
+                        "source": "CONTINUITY_MEMBERSHIP",
+                        "continuity_id": continuity_id,
+                        "reference_session_id": reference_session_id,
+                        "evidence_ref": evidence_ref,
+                    }
+            handoff = item.get("last_handoff") or {}
+            if handoff.get("session_id") == reference_session_id and evidence_ref in {
+                handoff.get("evidence_ref"),
+                handoff.get("handoff_ref"),
+            }:
+                return {
+                    "source": "CONTINUITY_HANDOFF",
+                    "continuity_id": continuity_id,
+                    "reference_session_id": reference_session_id,
+                    "evidence_ref": evidence_ref,
+                }
+
+    if FORENSICS_PATH.exists():
+        forensic_doc = read_json(FORENSICS_PATH)
+        for item in forensic_doc.get("items", []):
+            if item.get("session_id") != reference_session_id:
+                continue
+            resume = item.get("resume_point") or {}
+            checkpoint_match = (
+                item.get("last_checkpoint_ref") == continuity_id
+                or resume.get("checkpoint_ref") == continuity_id
+            )
+            if not checkpoint_match:
+                continue
+            refs = {
+                item.get("last_evidence_ref"),
+                resume.get("evidence_ref"),
+            }
+            completed = ((item.get("actions") or {}).get("last_action_completed") or {})
+            if completed.get("checkpoint_ref") == continuity_id:
+                refs.add(completed.get("evidence_ref"))
+            if evidence_ref in refs:
+                return {
+                    "source": "GACR_FORENSICS_CHECKPOINT",
+                    "continuity_id": continuity_id,
+                    "reference_session_id": reference_session_id,
+                    "evidence_ref": evidence_ref,
+                    "forensic_id": item.get("forensic_id"),
+                }
+
+    if BEACONS_PATH.exists():
+        beacon_doc = read_json(BEACONS_PATH)
+        for item in beacon_doc.get("items", []):
+            if (
+                item.get("session_id") == reference_session_id
+                and item.get("checkpoint_ref") == continuity_id
+                and item.get("evidence_ref") == evidence_ref
+            ):
+                return {
+                    "source": "GACR_BEACON_CHECKPOINT",
+                    "continuity_id": continuity_id,
+                    "reference_session_id": reference_session_id,
+                    "evidence_ref": evidence_ref,
+                    "beacon_id": item.get("beacon_id"),
+                }
+    return None
+
+
+def _same_logical_agent_gate(
+    args: argparse.Namespace,
+    sessions_doc: dict,
+    observation: dict,
+    binding: dict,
+) -> dict | None:
+    if binding.get("state") != "CREATE":
+        return None
+
+    same_agent = _same_logical_agent_sessions(sessions_doc, observation)
+    requested = any([
+        args.same_logical_agent_session_id,
+        args.continuity_id,
+        args.continuity_evidence_ref,
+    ])
+    if not same_agent and not requested:
+        return None
+
+    candidate_ids = [item.get("session_id") for item in same_agent if item.get("session_id")]
+    if not requested:
+        return {
+            "allowed": False,
+            "reason": "LOGICAL_AGENT_REUSE_REQUIRES_EXPLICIT_CONTINUITY_PROOF",
+            "candidate_session_ids": candidate_ids,
+        }
+
+    required = {
+        "same_logical_agent_session_id": args.same_logical_agent_session_id,
+        "continuity_id": args.continuity_id,
+        "continuity_evidence_ref": args.continuity_evidence_ref,
+        "agent": args.agent,
+        "connection_ref": args.connection_ref,
+    }
+    missing = sorted(key for key, value in required.items() if value in {None, ""})
+    if missing:
+        return {
+            "allowed": False,
+            "reason": "INCOMPLETE_SAME_LOGICAL_AGENT_PROOF:" + ",".join(missing),
+            "candidate_session_ids": candidate_ids,
+        }
+    if args.claim_id:
+        return {
+            "allowed": False,
+            "reason": "SAME_LOGICAL_AGENT_ATTACH_CANNOT_INHERIT_CLAIM",
+            "candidate_session_ids": candidate_ids,
+        }
+
+    reference = next(
+        (item for item in sessions_doc.get("sessions", [])
+         if item.get("session_id") == args.same_logical_agent_session_id),
+        None,
+    )
+    if reference is None:
+        return {
+            "allowed": False,
+            "reason": "SAME_LOGICAL_AGENT_REFERENCE_SESSION_NOT_FOUND",
+            "candidate_session_ids": candidate_ids,
+        }
+    if reference.get("repository") != observation.get("repository"):
+        return {
+            "allowed": False,
+            "reason": "SAME_LOGICAL_AGENT_REFERENCE_REPOSITORY_MISMATCH",
+            "candidate_session_ids": candidate_ids,
+        }
+    if reference.get("agent_identity") != observation.get("agent_identity"):
+        return {
+            "allowed": False,
+            "reason": "SAME_LOGICAL_AGENT_IDENTITY_MISMATCH",
+            "candidate_session_ids": candidate_ids,
+        }
+    if reference.get("connection_ref") == args.connection_ref:
+        return {
+            "allowed": False,
+            "reason": "SAME_LOGICAL_AGENT_REQUIRES_NEW_RUNTIME_SURFACE",
+            "candidate_session_ids": candidate_ids,
+        }
+    connection_owners = [
+        item.get("session_id")
+        for item in sessions_doc.get("sessions", [])
+        if item.get("connection_ref") == args.connection_ref
+    ]
+    if connection_owners:
+        return {
+            "allowed": False,
+            "reason": "RUNTIME_SURFACE_ALREADY_BOUND",
+            "candidate_session_ids": sorted(x for x in connection_owners if x),
+        }
+
+    proof = _continuity_proof(
+        reference_session_id=str(args.same_logical_agent_session_id),
+        continuity_id=str(args.continuity_id),
+        evidence_ref=str(args.continuity_evidence_ref),
+    )
+    if proof is None:
+        return {
+            "allowed": False,
+            "reason": "CANONICAL_CONTINUITY_PROOF_NOT_FOUND",
+            "candidate_session_ids": candidate_ids,
+        }
+
+    return {
+        "allowed": True,
+        "reason": "EXPLICIT_CANONICAL_CONTINUITY_PROOF",
+        "candidate_session_ids": candidate_ids,
+        "reference_session": reference,
+        "continuity_id": str(args.continuity_id),
+        "evidence_ref": str(args.continuity_evidence_ref),
+        "proof": proof,
+    }
+
+
+def _provider_context_id(session_id: str, connection_ref: str | None, provider_ref: str | None, client_instance_id: str | None) -> str:
+    raw = json.dumps(
+        {
+            "session_id": session_id,
+            "connection_ref": connection_ref or None,
+            "provider_conversation_ref": provider_ref or None,
+            "client_instance_id": client_instance_id or None,
+        },
+        sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+    )
+    return "GACR-PC-" + hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
+
+
+def _record_provider_context(session: dict, observation: dict) -> dict:
+    provenance = observation.get("field_provenance") or {}
+    connection_ref = observation.get("connection_ref") or session.get("connection_ref")
+    provider_ref = observation.get("provider_ref") or session.get("provider_conversation_ref")
+    client_instance_id = observation.get("client_instance_id") or session.get("client_instance_id")
+    context_id = _provider_context_id(str(session.get("session_id") or ""), connection_ref, provider_ref, client_instance_id)
+    observed_at = observation.get("observed_at")
+    record = {
+        "provider_context_id": context_id,
+        "provider_context_id_provenance": "DERIVED_GACR_SESSION_CONTEXT",
+        "provider": observation.get("provider") or session.get("provider") or "other",
+        "provider_conversation_ref": provider_ref,
+        "provider_conversation_ref_status": "PRESENT" if provider_ref else "UNAVAILABLE",
+        "provider_conversation_ref_provenance": provenance.get("provider_conversation_ref") if provider_ref else "PROVIDER_PRIVATE_UNAVAILABLE",
+        "client_instance_id": client_instance_id,
+        "client_instance_id_provenance": provenance.get("client_instance_id") or "CORRELATED",
+        "connection_ref": connection_ref,
+        "connection_ref_provenance": provenance.get("connection_ref") or "CORRELATED",
+        "runtime_surface_ref": connection_ref if str(connection_ref or "").startswith("GRT-SURFACE-") else None,
+        "runtime_surface_ref_provenance": "REPOSITORY_MINTED" if str(connection_ref or "").startswith("GRT-SURFACE-") else None,
+        "provider_connector_app_id": observation.get("provider_connector_app_id"),
+        "provider_connector_app_id_provenance": provenance.get("provider_connector_app_id"),
+        "provider_connector_client_id": observation.get("provider_connector_client_id"),
+        "provider_connector_client_id_provenance": provenance.get("provider_connector_client_id"),
+        "provider_connector_installation_id": observation.get("provider_connector_installation_id"),
+        "provider_connector_installation_id_provenance": provenance.get("provider_connector_installation_id"),
+        "provider_connector_slug": observation.get("provider_connector_slug"),
+        "provider_connector_slug_provenance": provenance.get("provider_connector_slug"),
+        "provider_native_identity_status": "PRESENT" if provider_ref else "UNAVAILABLE",
+        "provider_private_values_invented": False,
+        "first_seen_at": observed_at,
+        "last_seen_at": observed_at,
+        "seen_count": 1,
+    }
+    contexts = session.setdefault("provider_contexts", [])
+    existing = next((item for item in contexts if item.get("provider_context_id") == context_id), None)
+    if existing is None and provider_ref:
+        enrichable = [
+            item for item in contexts
+            if item.get("provider_conversation_ref") in (None, "", "UNAVAILABLE")
+            and item.get("connection_ref") == connection_ref
+            and item.get("client_instance_id") == client_instance_id
+        ]
+        if len(enrichable) == 1:
+            existing = enrichable[0]
+            existing["provider_context_id"] = context_id
+            existing["provider_context_id_provenance"] = "DERIVED_GACR_SESSION_CONTEXT"
+    if existing is None:
+        contexts.append(record)
+        contexts.sort(key=lambda item: item.get("provider_context_id") or "")
+        return record
+    first_seen = existing.get("first_seen_at") or observed_at
+    seen_count = int(existing.get("seen_count") or 0) + 1
+    for key, value in record.items():
+        if value not in (None, "", "UNAVAILABLE"):
+            existing[key] = value
+    existing["first_seen_at"] = first_seen
+    existing["last_seen_at"] = observed_at
+    existing["seen_count"] = seen_count
+    existing["provider_private_values_invented"] = False
+    return existing
+
+
 def _claim_for_session(claims_doc: dict, session_id: str | None) -> dict | None:
     if not session_id:
         return None
@@ -602,6 +916,26 @@ def build_connection_envelope(
             observation.get("github_app_or_installation"),
             p("github_app_or_installation", "OBSERVABLE_BY_PLATFORM"),
             "GITHUB_EVENT_OR_GATEWAY",
+        ),
+        "provider_connector_app_id": _field(
+            observation.get("provider_connector_app_id"),
+            p("provider_connector_app_id", "PROVIDER_PRIVATE_UNAVAILABLE"),
+            "CLIENT_OR_CONNECTOR_SURFACE",
+        ),
+        "provider_connector_client_id": _field(
+            observation.get("provider_connector_client_id"),
+            p("provider_connector_client_id", "PROVIDER_PRIVATE_UNAVAILABLE"),
+            "CLIENT_OR_CONNECTOR_SURFACE",
+        ),
+        "provider_connector_installation_id": _field(
+            observation.get("provider_connector_installation_id"),
+            p("provider_connector_installation_id", "PROVIDER_PRIVATE_UNAVAILABLE"),
+            "CLIENT_OR_CONNECTOR_SURFACE",
+        ),
+        "provider_connector_slug": _field(
+            observation.get("provider_connector_slug"),
+            p("provider_connector_slug", "PROVIDER_PRIVATE_UNAVAILABLE"),
+            "CLIENT_OR_CONNECTOR_SURFACE",
         ),
         "connection_method": _field(observation.get("connection_method"), p("connection_method", "DERIVED_SAFE"), "PRESENCE_OBSERVER"),
         "permissions": _field(
@@ -689,6 +1023,16 @@ def _envelope_digest(envelope: dict) -> str:
 def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, claims: dict, takeovers: dict, anchor: dict) -> dict:
     observation = build_presence_observation(args, anchor, config)
     binding = bind_presence(sessions, observation, config)
+    same_logical_agent = _same_logical_agent_gate(args, sessions, observation, binding)
+    if same_logical_agent is not None and not same_logical_agent.get("allowed"):
+        binding = {
+            "state": "UNBOUND",
+            "reason": same_logical_agent["reason"],
+            "selected_session": None,
+            "candidate_session_ids": same_logical_agent.get("candidate_session_ids") or [],
+            "connection_fingerprint": binding.get("connection_fingerprint"),
+            "presence_anchor": binding.get("presence_anchor"),
+        }
 
     if binding["state"] in {"AMBIGUOUS", "UNBOUND"}:
         presence_event = "UNBOUND_ACTIVITY"
@@ -721,6 +1065,7 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
         correlation = correlate_all()
         return {
             "status": "UNBOUND_ACTIVITY",
+            "identity_resolution": "UNRESOLVED_SURFACE",
             "process": "GACR",
             "authority": "CP-AGENT-RELAY-001-PRESENCE-FIRST",
             "presence_event": presence_event,
@@ -738,6 +1083,8 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
         }
 
     selected = binding.get("selected_session")
+    selected_provider_ref_before = (selected or {}).get("provider_conversation_ref")
+    selected_connection_ref_before = (selected or {}).get("connection_ref")
     fingerprint = binding["connection_fingerprint"]
     presence_anchor = binding["presence_anchor"]
 
@@ -773,8 +1120,22 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
     session["connection_fingerprint"] = fingerprint
     session["connection_fingerprint_version"] = FINGERPRINT_VERSION
     session["presence_anchor"] = presence_anchor
+    if same_logical_agent is not None:
+        if resolution != "CREATE":
+            raise ValueError("GACR_SAME_LOGICAL_AGENT_FAILED: expected a new canonical session")
+        reference = same_logical_agent["reference_session"]
+        session["logical_agent_id"] = reference.get("agent_identity")
+        session["logical_agent_relationship"] = "NEW_SESSION_SAME_LOGICAL_AGENT"
+        session["logical_agent_reference_session_id"] = reference.get("session_id")
+        session["logical_agent_continuity_id"] = same_logical_agent["continuity_id"]
+        session["logical_agent_evidence_ref"] = same_logical_agent["evidence_ref"]
+        session["logical_agent_evidence_source"] = (same_logical_agent.get("proof") or {}).get("source")
+        session["logical_agent_authority_inherited"] = False
+        session["logical_agent_claim_inherited"] = False
+        session["logical_agent_takeover_accepted"] = False
     session["surface_class"] = observation.get("surface_class")
     session["connection_method"] = observation.get("connection_method")
+    provider_context = _record_provider_context(session, observation)
     if observation.get("github_actor"):
         session["github_actor"] = observation["github_actor"]
     for route_field in ("entry_action", "connection_intent"):
@@ -791,7 +1152,25 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
                 f"GACR_ROUTE_RECONCILIATION_REQUIRED:{route_field}:current={current or UNAVAILABLE}:requested={incoming}"
             )
 
-    presence_event = "PRESENCE_FIRST_TOUCH" if resolution == "CREATE" else "PRESENCE_RESUME"
+    if same_logical_agent is not None:
+        identity_resolution = "NEW_SESSION_SAME_LOGICAL_AGENT"
+        presence_event = "PRESENCE_NEW_SESSION_SAME_LOGICAL_AGENT"
+    elif resolution == "CREATE":
+        identity_resolution = "NEW_LOGICAL_AGENT"
+        presence_event = "PRESENCE_FIRST_TOUCH"
+    elif (
+        (observation.get("provider_ref") and observation.get("provider_ref") != selected_provider_ref_before)
+        or (
+            observation.get("connection_ref")
+            and selected_connection_ref_before
+            and observation.get("connection_ref") != selected_connection_ref_before
+        )
+    ):
+        identity_resolution = "NEW_PROVIDER_CONTEXT_SAME_LOGICAL_AGENT"
+        presence_event = "PRESENCE_RESUME"
+    else:
+        identity_resolution = "SAME_SESSION_RESUME"
+        presence_event = "PRESENCE_RESUME"
     envelope = build_connection_envelope(
         observation,
         session=session,
@@ -817,8 +1196,14 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
         agent_role=observation.get("agent_role"),
         capabilities=sorted(set((observation.get("capabilities") or []) + ["GACR_AUTO_ATTACH", "GACR_PRESENCE_FIRST"])),
         observed_at=observation.get("observed_at"),
-        checkpoint_ref=observation.get("checkpoint"),
-        evidence_ref=observation.get("last_evidence"),
+        checkpoint_ref=(
+            same_logical_agent.get("continuity_id")
+            if same_logical_agent is not None else observation.get("checkpoint")
+        ),
+        evidence_ref=(
+            same_logical_agent.get("evidence_ref")
+            if same_logical_agent is not None else observation.get("last_evidence")
+        ),
         connection_fingerprint=fingerprint,
         connection_envelope_digest=_envelope_digest(envelope),
         surface_class=observation.get("surface_class"),
@@ -826,7 +1211,9 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
     )
     correlation = correlate_all()
     return {
-        "status": resolution,
+        "status": "NEW_SESSION_SAME_LOGICAL_AGENT" if same_logical_agent is not None else resolution,
+        "identity_resolution": identity_resolution,
+        "core_session_resolution": resolution,
         "process": "GACR",
         "authority": "CP-AGENT-RELAY-001-PRESENCE-FIRST",
         "attachment_source": anchor.get("source"),
@@ -840,7 +1227,22 @@ def observe_presence(args: argparse.Namespace, config: dict, sessions: dict, cla
         },
         "connection_fingerprint": fingerprint,
         "connection_envelope": envelope,
+        "provider_context": provider_context,
         "session": session,
+        "logical_agent_binding": (
+            {
+                "logical_agent_id": session.get("logical_agent_id"),
+                "relationship": "NEW_SESSION_SAME_LOGICAL_AGENT",
+                "reference_session_id": session.get("logical_agent_reference_session_id"),
+                "continuity_id": session.get("logical_agent_continuity_id"),
+                "evidence_ref": session.get("logical_agent_evidence_ref"),
+                "evidence_source": session.get("logical_agent_evidence_source"),
+                "claim_inherited": False,
+                "mutation_authority_inherited": False,
+                "takeover_accepted": False,
+            }
+            if same_logical_agent is not None else None
+        ),
         "beacon_id": beacon.get("beacon_id"),
         "correlation": correlation,
     }
@@ -950,12 +1352,19 @@ def main() -> None:
     p.add_argument("--connection-ref")
     p.add_argument("--client-instance-id")
     p.add_argument("--bridge-registration-ref")
+    p.add_argument("--same-logical-agent-session-id")
+    p.add_argument("--continuity-id")
+    p.add_argument("--continuity-evidence-ref")
     p.add_argument("--repository")
     p.add_argument("--repository-id")
     p.add_argument("--organization")
     p.add_argument("--git-provider")
     p.add_argument("--github-actor")
     p.add_argument("--github-app-installation")
+    p.add_argument("--provider-connector-app-id")
+    p.add_argument("--provider-connector-client-id")
+    p.add_argument("--provider-connector-installation-id")
+    p.add_argument("--provider-connector-slug")
     p.add_argument("--connection-method")
     p.add_argument("--surface-class", choices=sorted(SURFACE_CLASSES))
     p.add_argument("--agent-type-model")

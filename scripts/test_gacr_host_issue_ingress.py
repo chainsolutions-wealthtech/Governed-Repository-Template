@@ -129,6 +129,78 @@ def main() -> None:
         "connection_intent",
     )
 
+    same_logical_attach = {
+        "schema": g.SCHEMA,
+        "event": "attach",
+        "agent": "logical-agent-a",
+        "provider": "chatgpt",
+        "connection_ref": "surface:new-chat",
+        "same_logical_agent_session_id": "session-old",
+        "continuity_id": "GRT-CONT-DEMO-01",
+        "continuity_evidence_ref": "github-issue-comment:8001",
+    }
+    parsed_same_logical = g.parse_issue_comment_event(
+        event(body(same_logical_attach), comment_id=90031),
+        config(),
+    )
+    assert_true(parsed_same_logical["same_logical_agent_session_id"] == "session-old", "same logical reference session parsed")
+    incomplete_same_logical = dict(same_logical_attach)
+    del incomplete_same_logical["continuity_evidence_ref"]
+    expect_error(
+        lambda: g.parse_issue_comment_event(event(body(incomplete_same_logical), comment_id=90032), config()),
+        "same-logical-agent attach",
+    )
+
+    continuity_event_payload = {
+        "schema": g.SCHEMA,
+        "event": "continuity_event",
+        "session_id": "session-1",
+        "continuity_id": "GRT-CONT-DEMO-01",
+        "target_session_ids": ["session-2"],
+        "event_kind": "REQUEST",
+        "payload_ref": "github-issue-comment:payload",
+        "observed_head": "a" * 40,
+        "scope_id": "lab",
+        "collision_domains": ["gacr:continuity:delivery"],
+        "requires_ack": True,
+    }
+    parsed_continuity_event = g.parse_issue_comment_event(
+        event(body(continuity_event_payload), comment_id=90033),
+        config(),
+    )
+    assert_true(parsed_continuity_event["target_session_ids"] == ["session-2"], "continuity event target list parsed")
+    alias_continuity_event = dict(continuity_event_payload)
+    alias_continuity_event.pop("target_session_ids")
+    alias_continuity_event["target_logical_agent_alias"] = "FORGE"
+    parsed_alias_event = g.parse_issue_comment_event(
+        event(body(alias_continuity_event), comment_id=90034),
+        config(),
+    )
+    assert_true(parsed_alias_event["target_logical_agent_alias"] == "FORGE", "continuity event alias target parsed")
+    invalid_target_modes = dict(continuity_event_payload)
+    invalid_target_modes["target_logical_agent_alias"] = "FORGE"
+    expect_error(
+        lambda: g.parse_issue_comment_event(event(body(invalid_target_modes), comment_id=90035), config()),
+        "exactly one target mode",
+    )
+    parsed_continuity_ack = g.parse_issue_comment_event(
+        event(body({
+            "schema":g.SCHEMA,"event":"continuity_ack","session_id":"session-1",
+            "continuity_id":"GRT-CONT-DEMO-01","event_id":"GACR-E-demo","observed_head":"a"*40,
+        }), comment_id=90036),
+        config(),
+    )
+    parsed_continuity_response = g.parse_issue_comment_event(
+        event(body({
+            "schema":g.SCHEMA,"event":"continuity_response","session_id":"session-1",
+            "continuity_id":"GRT-CONT-DEMO-01","event_id":"GACR-E-demo",
+            "response_ref":"github-issue-comment:response","observed_head":"a"*40,
+        }), comment_id=90037),
+        config(),
+    )
+    assert_true(parsed_continuity_ack["event_id"] == "GACR-E-demo", "continuity ack parsed")
+    assert_true(parsed_continuity_response["response_ref"] == "github-issue-comment:response", "continuity response parsed")
+
     availability_payload = {
         "schema": g.SCHEMA,
         "event": "availability",
@@ -217,6 +289,14 @@ def main() -> None:
             "branch": "main",
             "entry_action": "CONTINUE_GOVERNED_WORK",
             "connection_intent": "OBSERVE",
+            "agent": "logical-agent-a",
+            "same_logical_agent_session_id": "session-old",
+            "continuity_id": "GRT-CONT-DEMO-01",
+            "continuity_evidence_ref": "github-issue-comment:8001",
+            "provider_connector_app_id": "1144995",
+            "provider_connector_client_id": "Iv23example",
+            "provider_connector_installation_id": "145098929",
+            "provider_connector_slug": "chatgpt-codex-connector",
         }
         resolved_route = g.ensure_session(route_payload, "example/governed")
         assert_true(resolved_route["session_id"] == "session-route", "new host route session attached")
@@ -225,6 +305,13 @@ def main() -> None:
         auto_args = auto_attach_calls[0]
         assert_true("--entry-action" in auto_args and "CONTINUE_GOVERNED_WORK" in auto_args, "entry action forwarded")
         assert_true("--connection-intent" in auto_args and "OBSERVE" in auto_args, "connection intent forwarded")
+        assert_true("--same-logical-agent-session-id" in auto_args and "session-old" in auto_args, "same logical reference forwarded")
+        assert_true("--continuity-id" in auto_args and "GRT-CONT-DEMO-01" in auto_args, "same logical continuity forwarded")
+        assert_true("--continuity-evidence-ref" in auto_args and "github-issue-comment:8001" in auto_args, "same logical evidence forwarded")
+        assert_true("--provider-connector-app-id" in auto_args and "1144995" in auto_args, "connector app id forwarded")
+        assert_true("--provider-connector-client-id" in auto_args and "Iv23example" in auto_args, "connector client id forwarded")
+        assert_true("--provider-connector-installation-id" in auto_args and "145098929" in auto_args, "connector installation id forwarded")
+        assert_true("--provider-connector-slug" in auto_args and "chatgpt-codex-connector" in auto_args, "connector slug forwarded")
     finally:
         g.active_sessions = original_active_sessions_route
         g.run_script = original_run_route
@@ -259,6 +346,10 @@ def main() -> None:
             "observed_head": "d" * 40,
             "entry_action": "CONTINUE_GOVERNED_WORK",
             "connection_intent": "OBSERVE",
+            "provider_connector_app_id": "1144995",
+            "provider_connector_client_id": "Iv23existing",
+            "provider_connector_installation_id": "145098929",
+            "provider_connector_slug": "chatgpt-codex-connector",
         }
         resolved_provider = g.ensure_session(payload_provider, "example/governed")
         assert_true(resolved_provider["provider"] == "chatgpt", "host provider enrichment should return enriched session")
@@ -266,9 +357,156 @@ def main() -> None:
         provider_auto_args = next(args for name, args in provider_calls if name == "gacr_auto_attach.py")
         assert_true("--entry-action" not in provider_auto_args, "provider enrichment must not resolve entry action")
         assert_true("--connection-intent" not in provider_auto_args, "provider enrichment must not resolve connection intent")
+        assert_true("--provider-connector-app-id" in provider_auto_args and "1144995" in provider_auto_args, "existing provider enrichment forwards connector app")
+        assert_true("--provider-connector-client-id" in provider_auto_args and "Iv23existing" in provider_auto_args, "existing provider enrichment forwards connector client")
+        assert_true("--provider-connector-installation-id" in provider_auto_args and "145098929" in provider_auto_args, "existing provider enrichment forwards installation")
+        assert_true("--provider-connector-slug" in provider_auto_args and "chatgpt-codex-connector" in provider_auto_args, "existing provider enrichment forwards connector slug")
+
+        same_provider_calls = []
+        same_provider_session = {
+            **enriched_session,
+            "provider": "chatgpt",
+            "provider_conversation_ref": "conversation-existing",
+        }
+        g.active_sessions = lambda: [same_provider_session]
+        g.run_script = lambda path, args: same_provider_calls.append((path.name, list(args))) or ""
+        same_provider_payload = {
+            "provider": "chatgpt",
+            "provider_ref": "conversation-new",
+            "connection_ref": "chronicle:demo:session-provider",
+            "client_instance_id": "chronicle:demo-provider",
+            "observed_head": "d" * 40,
+            "provider_connector_app_id": "1144995",
+            "provider_connector_client_id": "Iv23sameprovider",
+            "provider_connector_installation_id": "145098929",
+            "provider_connector_slug": "chatgpt-codex-connector",
+        }
+        same_provider_resolved = {
+            **same_provider_session,
+            "provider_conversation_ref": "conversation-new",
+        }
+        read_count = {"count": 0}
+        def same_provider_sessions():
+            read_count["count"] += 1
+            return [same_provider_session] if read_count["count"] == 1 else [same_provider_resolved]
+        g.active_sessions = same_provider_sessions
+        resolved_same_provider = g.ensure_session(same_provider_payload, "example/governed")
+        assert_true(resolved_same_provider["provider_conversation_ref"] == "conversation-new", "same provider session records new provider context")
+        same_args = next(args for name, args in same_provider_calls if name == "gacr_auto_attach.py")
+        assert_true("--provider-ref" in same_args and "conversation-new" in same_args, "same provider enrichment forwards new provider conversation")
+        assert_true("--provider-connector-client-id" in same_args and "Iv23sameprovider" in same_args, "same provider enrichment forwards connector evidence")
     finally:
         g.active_sessions = original_active_sessions_provider
         g.run_script = original_run_provider
+
+    original_resolve_owner_alias = g.resolve_owner_alias
+    original_active_sessions_alias = g.active_sessions
+    try:
+        alias_target = {
+            "status":"LOGICAL_AGENT_ALIAS_RESOLVED",
+            "human_alias":"FORGE",
+            "logical_agent_id":"logical-forge",
+            "sessions":[{"session_id":"session-forge-existing","status":"ACTIVE","relay_state":"ACTIVE"}],
+            "reference_session_ids":["session-forge-existing"],
+            "routing_status":"ROUTABLE_EXACT_SESSION",
+            "resolved_target_session_id":"session-forge-existing",
+            "grants_mutation_authority":False,
+        }
+        g.resolve_owner_alias = lambda alias: alias_target
+        existing_alias_session = {
+            "session_id":"session-forge-existing",
+            "repository":"example/governed",
+            "agent_identity":"logical-forge",
+            "status":"ACTIVE",
+            "provider":"chatgpt",
+            "provider_conversation_ref":None,
+            "connection_ref":"forge-existing-connection",
+            "client_instance_id":"forge-existing-client",
+            "provider_contexts":[],
+            "relay":{"state":"ACTIVE","branch":"main"},
+        }
+        g.active_sessions = lambda: [existing_alias_session]
+        resolved_alias = g.ensure_session({
+            "provider":"chatgpt",
+            "logical_agent_alias":"FORGE",
+            "connection_ref":"forge-existing-connection",
+            "client_instance_id":"forge-existing-client",
+            "observed_head":"f"*40,
+        }, "example/governed")
+        assert_true(resolved_alias["session_id"]=="session-forge-existing", "alias may route only after exact existing session resolution")
+
+        g.active_sessions = lambda: [existing_alias_session]
+        try:
+            g.ensure_session({
+                "provider":"chatgpt",
+                "logical_agent_alias":"FORGE",
+                "connection_ref":"forge-brand-new",
+                "client_instance_id":"forge-brand-new-client",
+                "observed_head":"f"*40,
+            }, "example/governed")
+        except ValueError as exc:
+            assert_true("ALIAS_SURFACE_UNRESOLVED" in str(exc), f"alias-only new surface must fail closed: {exc}")
+        else:
+            raise AssertionError("alias alone must not create a new provider/runtime surface")
+
+        mismatch_session = {**existing_alias_session, "agent_identity":"logical-other"}
+        g.active_sessions = lambda: [mismatch_session]
+        try:
+            g.ensure_session({
+                "provider":"chatgpt","logical_agent_alias":"FORGE",
+                "connection_ref":"forge-existing-connection","client_instance_id":"forge-existing-client",
+                "observed_head":"f"*40,
+            }, "example/governed")
+        except ValueError as exc:
+            assert_true("different canonical session identity" in str(exc), f"alias/session mismatch fails closed: {exc}")
+        else:
+            raise AssertionError("alias must not cross-bind another logical agent")
+    finally:
+        g.resolve_owner_alias = original_resolve_owner_alias
+        g.active_sessions = original_active_sessions_alias
+
+    bus_calls = []
+    bus_markers = []
+    original_processed_bus = g.evidence_processed
+    original_ensure_bus = g.ensure_session
+    original_run_bus = g.run_script
+    original_marker_bus = g.marker_beacon
+    try:
+        g.evidence_processed = lambda evidence_ref: False
+        g.ensure_session = lambda payload, repository: {"session_id":"session-1"}
+        def bus_runner(path, args):
+            bus_calls.append((path.name, list(args)))
+            if path.name == "gacr_continuity_bus.py":
+                return json.dumps({"status":"CONTINUITY_"+args[0].upper()+"_TEST"})
+            return ""
+        g.run_script = bus_runner
+        g.marker_beacon = lambda session_id, payload, event_type: bus_markers.append((session_id,event_type))
+
+        emit_result = g.process(dict(parsed_continuity_event), "example/governed")
+        assert_true(emit_result["coordination"]["status"] == "CONTINUITY_EMIT_TEST", "host continuity event invokes bus emit")
+        emit_args = next(args for name,args in bus_calls if name=="gacr_continuity_bus.py" and args[0]=="emit")
+        assert_true("--target-session-id" in emit_args and "session-2" in emit_args, "host forwards continuity target")
+        assert_true("--payload-ref" in emit_args and "github-issue-comment:payload" in emit_args, "host forwards payload ref")
+        assert_true(("session-1","CONTINUITY_EVENT_EMITTED") in bus_markers, "host continuity event records marker")
+
+        bus_calls.clear()
+        bus_markers.clear()
+        ack_result = g.process(dict(parsed_continuity_ack), "example/governed")
+        assert_true(ack_result["coordination"]["status"] == "CONTINUITY_ACK_TEST", "host continuity ack invokes bus ack")
+        assert_true(any(name=="gacr_continuity_bus.py" and args[0]=="ack" for name,args in bus_calls), "bus ack command routed")
+        assert_true(("session-1","CONTINUITY_EVENT_ACK") in bus_markers, "continuity ack records marker")
+
+        bus_calls.clear()
+        bus_markers.clear()
+        response_result = g.process(dict(parsed_continuity_response), "example/governed")
+        assert_true(response_result["coordination"]["status"] == "CONTINUITY_RESPOND_TEST", "host continuity response invokes bus respond")
+        assert_true(any(name=="gacr_continuity_bus.py" and args[0]=="respond" for name,args in bus_calls), "bus respond command routed")
+        assert_true(("session-1","CONTINUITY_EVENT_RESPONSE") in bus_markers, "continuity response records marker")
+    finally:
+        g.evidence_processed = original_processed_bus
+        g.ensure_session = original_ensure_bus
+        g.run_script = original_run_bus
+        g.marker_beacon = original_marker_bus
 
     calls = []
     original_processed = g.evidence_processed

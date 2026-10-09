@@ -31,7 +31,10 @@ DISPATCH_SCHEMA = "gscc-control-dispatch/v1"
 REQUEST_PREFIX = "/gscc-control "
 COMMAND_PREFIX = "/gscc-control-command "
 VERIFIED_CONTROL_CAPABILITIES = ["COMMAND_RECEIVE", "COMMAND_ACK", "CHALLENGE_RESPONSE"]
+CONTROL_MODE = "GSCC_CONTROL_CHANNEL"
+CONTINUITY_DISPATCH_KINDS = {"CONTINUITY_EVENT", "CONTINUITY_SUPERVISION_ALERT"}
 CHALLENGE_STATUSES = {"ACK", "BUSY", "IDLE", "CHECKPOINTING", "TERMINATING", "UNSUPPORTED"}
+MONOTONIC_TERMINAL_STATUSES = {"ACK_TIMEOUT", "EXPIRED", "FALLBACK_POLL_REQUIRED"}
 
 
 def _now() -> datetime:
@@ -152,6 +155,101 @@ def build_liveness_challenge_dispatch(
     }
 
 
+def build_continuity_control_command(
+    item: dict[str, Any],
+    *,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    if item.get("dispatch_kind") not in CONTINUITY_DISPATCH_KINDS:
+        raise ValueError("continuity dispatch required")
+    target = str(item.get("target_session_id") or "")
+    if not target:
+        raise ValueError("continuity dispatch target unavailable")
+    now = (now or _now()).astimezone(timezone.utc)
+    expiry = _parse(item.get("expires_at"))
+    if expiry is None or expiry <= now:
+        raise ValueError("continuity control dispatch expired")
+    if isinstance(item.get("command"), dict):
+        return item["command"]
+
+    seed = {
+        "dispatch_id": item.get("dispatch_id"),
+        "target_session_id": target,
+        "created_at": item.get("created_at"),
+    }
+    command_id = _id("GSCC-CMD-", seed)
+    correlation_id = str(item.get("correlation_id") or _id("GSCC-CORR-", seed))
+    message_id = _id("GSCC-MSG-", {"command_id": command_id, "correlation_id": correlation_id})
+    if item.get("dispatch_kind") == "CONTINUITY_SUPERVISION_ALERT":
+        challenge_id = _id("GSCC-CH-", {"command_id": command_id, "dispatch_id": item.get("dispatch_id")})
+        payload = {
+            "challenge_id": challenge_id,
+            "nonce": secrets.token_urlsafe(24),
+            "issued_at": _iso(now),
+            "expires_at": _iso(expiry),
+            "continuity_id": item.get("continuity_id"),
+            "supervision_alert_id": item.get("supervision_alert_id"),
+        }
+        command_type = "LIVENESS_CHALLENGE"
+    else:
+        payload = {
+            "instruction_ref": item.get("payload_ref"),
+            "continuity_id": item.get("continuity_id"),
+            "continuity_event_id": item.get("continuity_event_id"),
+            "event_kind": item.get("event_kind"),
+            "scope_id": item.get("scope_id"),
+            "collision_domains": item.get("collision_domains") or [],
+            "observed_head_sha": item.get("observed_head_sha"),
+            "projection_only": True,
+            "grants_task_authority": False,
+            "grants_claim": False,
+            "grants_mutation_authority": False,
+        }
+        command_type = "SUPERVISOR_INSTRUCTION"
+
+    command = {
+        "schema": COMMAND_SCHEMA,
+        "message_id": message_id,
+        "command_id": command_id,
+        "correlation_id": correlation_id,
+        "command_type": command_type,
+        "target_session_id": target,
+        "issued_at": _iso(now),
+        "expires_at": _iso(expiry),
+        "requires_ack": bool(item.get("requires_ack", True)),
+        "payload": payload,
+    }
+    item["command"] = command
+    return command
+
+
+def render_issue_control_comment(item: dict[str, Any]) -> str:
+    command = item.get("command") or {}
+    if not command:
+        raise ValueError("control command unavailable")
+    payload = {
+        "schema": command.get("schema"),
+        "dispatch_id": item.get("dispatch_id"),
+        "message_id": command.get("message_id"),
+        "command_id": command.get("command_id"),
+        "correlation_id": command.get("correlation_id"),
+        "command_type": command.get("command_type"),
+        "target_session_id": command.get("target_session_id"),
+        "issued_at": command.get("issued_at"),
+        "expires_at": command.get("expires_at"),
+        "requires_ack": bool(command.get("requires_ack", True)),
+    }
+    if command.get("command_type") == "LIVENESS_CHALLENGE":
+        challenge = command.get("payload") or {}
+        payload.update({
+            "challenge_id": challenge.get("challenge_id"),
+            "nonce": challenge.get("nonce"),
+        })
+    else:
+        payload["payload"] = command.get("payload") or {}
+    return COMMAND_PREFIX + json.dumps(payload, separators=(",", ":"), ensure_ascii=False)
+
+
 def render_issue_challenge_comment(item: dict[str, Any]) -> str:
     if item.get("kind") != "CONTROL_CHALLENGE":
         raise ValueError("control challenge dispatch required")
@@ -181,8 +279,8 @@ def _dispatch(store: dict[str, Any], dispatch_id: str) -> dict[str, Any]:
     if len(matches) != 1:
         raise ValueError("control dispatch not found or ambiguous")
     item = matches[0]
-    if item.get("kind") != "CONTROL_CHALLENGE":
-        raise ValueError("dispatch is not a control challenge")
+    if not isinstance(item.get("command"), dict):
+        raise ValueError("control command unavailable for dispatch")
     return item
 
 
@@ -193,11 +291,46 @@ def _validate_common(item: dict[str, Any], payload: dict[str, Any], observed: da
     for key in ("command_id", "correlation_id"):
         if payload.get(key) != command.get(key):
             raise ValueError(f"{key} mismatch")
+    if item.get("status") in MONOTONIC_TERMINAL_STATUSES:
+        return command
     expiry = _parse(item.get("expires_at") or command.get("expires_at"))
     if expiry is None or observed > expiry:
         item["status"] = "EXPIRED"
         raise ValueError("control challenge expired")
     return command
+
+
+def _record_late_control_event(
+    store: dict[str, Any],
+    item: dict[str, Any],
+    *,
+    event: str,
+    evidence_ref: str,
+    observed: datetime,
+    payload: dict[str, Any],
+) -> dict[str, Any]:
+    audit = {
+        "event": event,
+        "terminal_status": item.get("status"),
+        "evidence_ref": evidence_ref,
+        "observed_at": _iso(observed),
+        "authoritative": False,
+        "fresh_liveness": False,
+    }
+    if event == "command_ack":
+        audit["delivery_state"] = payload.get("delivery_state")
+    elif event == "challenge_response":
+        audit["challenge_status"] = payload.get("challenge_status")
+    item.setdefault("late_control_events", []).append(audit)
+    store["revision"] = int(store.get("revision", 0)) + 1
+    return {
+        "status": item.get("status"),
+        "dispatch_id": item.get("dispatch_id"),
+        "late": True,
+        "authoritative": False,
+        "fresh_liveness": False,
+        "audit": deepcopy(audit),
+    }
 
 
 def apply_host_control_event(
@@ -220,6 +353,15 @@ def apply_host_control_event(
         state = str(payload.get("delivery_state") or "")
         if state not in {"ACKNOWLEDGED", "UNSUPPORTED"}:
             raise ValueError("unsupported command ACK delivery state")
+        if item.get("status") in MONOTONIC_TERMINAL_STATUSES:
+            return _record_late_control_event(
+                store,
+                item,
+                event=event,
+                evidence_ref=evidence_ref,
+                observed=observed,
+                payload=payload,
+            )
         ack = {
             "delivery_state": state,
             "evidence_ref": evidence_ref,
@@ -230,9 +372,8 @@ def apply_host_control_event(
         store["revision"] = int(store.get("revision", 0)) + 1
         return {"status": item["status"], "dispatch_id": item["dispatch_id"], "ack": deepcopy(ack)}
 
-    ack = item.get("ack")
-    if not isinstance(ack, dict) or ack.get("delivery_state") != "ACKNOWLEDGED":
-        raise ValueError("challenge response requires prior ACKNOWLEDGED")
+    if command.get("command_type") != "LIVENESS_CHALLENGE":
+        raise ValueError("challenge response requires LIVENESS_CHALLENGE command")
     challenge = command.get("payload") or {}
     if payload.get("challenge_id") != challenge.get("challenge_id"):
         raise ValueError("challenge_id mismatch")
@@ -241,6 +382,18 @@ def apply_host_control_event(
     status = str(payload.get("challenge_status") or "")
     if status not in CHALLENGE_STATUSES:
         raise ValueError("unsupported challenge status")
+    if item.get("status") in MONOTONIC_TERMINAL_STATUSES:
+        return _record_late_control_event(
+            store,
+            item,
+            event=event,
+            evidence_ref=evidence_ref,
+            observed=observed,
+            payload=payload,
+        )
+    ack = item.get("ack")
+    if not isinstance(ack, dict) or ack.get("delivery_state") != "ACKNOWLEDGED":
+        raise ValueError("challenge response requires prior ACKNOWLEDGED")
     if item.get("response"):
         return {
             "status": "ALREADY_COMPLETED",
@@ -282,7 +435,9 @@ def canonical_control_evidence(
     for item in store.get("items") or []:
         if not isinstance(item, dict):
             continue
-        if item.get("kind") != "CONTROL_CHALLENGE" or item.get("target_session_id") != session_id:
+        if item.get("target_session_id") != session_id:
+            continue
+        if (item.get("command") or {}).get("command_type") != "LIVENESS_CHALLENGE":
             continue
         if item.get("status") != "COMPLETED":
             continue
@@ -407,20 +562,42 @@ def _github_post_comment(repository: str, issue_number: int, body: str, token: s
 def deliver_pending(*, repository: str, token: str, now: datetime | None = None) -> dict[str, Any]:
     now = (now or _now()).astimezone(timezone.utc)
     store = read_json(DISPATCHES_PATH, {"schema_version": "1.0.0", "revision": 0, "items": []})
+    config = read_json(CONFIG_PATH, {})
+    host = config.get("host_issue_bridge") or {}
+    default_issue = int(host.get("issue_number") or 0)
     delivered = []
+    changed = False
     for item in store.get("items") or []:
-        if not isinstance(item, dict) or item.get("kind") != "CONTROL_CHALLENGE" or item.get("status") != "READY":
+        if not isinstance(item, dict) or item.get("status") != "READY":
+            continue
+        legacy_challenge = item.get("kind") == "CONTROL_CHALLENGE"
+        continuity_control = (
+            item.get("dispatch_kind") in CONTINUITY_DISPATCH_KINDS
+            and item.get("preferred_delivery_mode") == CONTROL_MODE
+        )
+        if not legacy_challenge and not continuity_control:
             continue
         expiry = _parse(item.get("expires_at"))
         if expiry is None or expiry <= now:
             item["status"] = "EXPIRED"
+            changed = True
             continue
-        response = _github_post_comment(repository, int(item["issue_number"]), render_issue_challenge_comment(item), token)
+        if continuity_control:
+            build_continuity_control_command(item, now=now)
+            issue_number = int(item.get("issue_number") or default_issue)
+            body = render_issue_control_comment(item)
+        else:
+            issue_number = int(item.get("issue_number") or default_issue)
+            body = render_issue_challenge_comment(item)
+        if issue_number <= 0:
+            raise ValueError("host issue bridge issue number unavailable")
+        response = _github_post_comment(repository, issue_number, body, token)
         item["status"] = "DISPATCHED"
         item["delivered_at"] = _iso(now)
         item["delivery_evidence_ref"] = f"github-issue-comment:{response['id']}"
         delivered.append(item["dispatch_id"])
-    if delivered:
+        changed = True
+    if changed:
         store["revision"] = int(store.get("revision", 0)) + 1
         write_json(DISPATCHES_PATH, store)
     return {"status": "GSCC_CONTROL_DELIVERY_COMPLETE", "dispatch_ids": delivered, "count": len(delivered)}

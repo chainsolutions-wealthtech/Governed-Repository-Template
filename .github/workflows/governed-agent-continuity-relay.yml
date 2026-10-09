@@ -181,15 +181,23 @@ jobs:
       - name: Refresh capacity-aware work offers
         run: python3 scripts/gacr_capacity_dispatch.py dispatch-work
 
-      - name: Deliver pending GSCC issue control challenges
-        if: ${{ steps.relay.outputs.command == 'control-challenge' || (github.event_name == 'issue_comment' && startsWith(github.event.comment.body, '/gscc-control ')) }}
+      - name: Run continuity mini-loop
+        run: python3 scripts/gacr_continuity_bus.py tick
+
+      - name: Deliver pending GSCC control commands
         env:
           GITHUB_TOKEN: ${{ github.token }}
         run: python3 scripts/gscc_gacr/issue_control_bridge.py deliver
 
+      - name: Reconcile continuity delivery projection
+        run: python3 scripts/gacr_continuity_bus.py tick
+
       - name: Validate GACR state
         run: |
-          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py scripts/gacr_capacity_dispatch.py scripts/gacr_bridge_notifier.py scripts/gacr_auto_attach.py scripts/gacr_client_emitter.py scripts/gacr_host_issue_ingress.py scripts/gscc_control_issue_ingress.py scripts/gscc_gacr/issue_control_bridge.py
+          python3 -m py_compile scripts/governed_agent_continuity_relay.py scripts/gacr_workflow_bridge.py scripts/gacr_agent_telemetry.py scripts/gacr_capacity_dispatch.py scripts/gacr_bridge_notifier.py scripts/gacr_auto_attach.py scripts/gacr_client_emitter.py scripts/gacr_host_issue_ingress.py scripts/gacr_continuity_coordination.py scripts/gacr_continuity_bus.py scripts/gscc_control_issue_ingress.py scripts/gscc_gacr/issue_control_bridge.py
+          python3 scripts/test_gacr_continuity_coordination.py
+          python3 scripts/test_gacr_continuity_bus.py
+          python3 scripts/test_gscc_issue_control_bridge.py
           python3 scripts/validate_governance.py
 
       - name: Persist changed relay state
@@ -208,6 +216,7 @@ jobs:
               .governance/control-plane-state/gacr-correlations.json
               .governance/control-plane-state/gacr-dispatches.json
               .governance/control-plane-state/gacr-forensics.json
+              .governance/control-plane-state/gacr-continuities.json
             )
           else
             paths=(
@@ -218,6 +227,7 @@ jobs:
               .governance/agent-relay/correlations.json
               .governance/agent-relay/dispatches.json
               .governance/agent-relay/forensics.json
+              .governance/agent-relay/continuities.json
             )
           fi
           if git diff --quiet -- "${paths[@]}"; then
@@ -244,3 +254,32 @@ jobs:
           GACR_BRIDGE_WEBHOOK_URL: ${{ vars.GACR_BRIDGE_WEBHOOK_URL }}
           GACR_BRIDGE_WEBHOOK_TOKEN: ${{ secrets.GACR_BRIDGE_WEBHOOK_TOKEN }}
         run: python3 scripts/gacr_bridge_notifier.py
+
+      - name: Persist optional external GACR delivery state
+        if: ${{ always() }}
+        shell: bash
+        env:
+          TARGET_BRANCH: ${{ github.event.repository.default_branch || github.ref_name || 'main' }}
+        run: |
+          set -euo pipefail
+          if [ -f .template-source ]; then
+            paths=(.governance/control-plane-state/gacr-dispatches.json .governance/control-plane-state/gacr-continuities.json)
+          else
+            paths=(.governance/agent-relay/dispatches.json .governance/agent-relay/continuities.json)
+          fi
+          if git diff --quiet -- "${paths[@]}"; then
+            echo "GACR_NO_OUTBOUND_DELIVERY_STATE_CHANGE"
+            exit 0
+          fi
+          git fetch origin "$TARGET_BRANCH"
+          remote_head="$(git rev-parse FETCH_HEAD)"
+          local_head="$(git rev-parse HEAD)"
+          if [ "$remote_head" != "$local_head" ]; then
+            echo "HEAD_MOVED: local=$local_head remote=$remote_head"
+            exit 3
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "${paths[@]}"
+          git commit -m "governance: persist GACR outbound continuity delivery"
+          git push origin "HEAD:$TARGET_BRANCH"

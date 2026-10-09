@@ -113,9 +113,10 @@ def controlled_args(
     observed_at: str,
     provider: str = "other",
     provider_ref: str | None = None,
+    agent: str = "fresh-agent",
 ) -> list[str]:
     args = [
-        "--agent", "fresh-agent",
+        "--agent", agent,
         "--provider", provider,
         "--connection-ref", connection_ref,
         "--client-instance-id", client_instance_id,
@@ -162,6 +163,7 @@ def main() -> None:
             ),
         ).stdout)
         assert_true(first["status"] == "CREATE", "TEST A: first controlled touch must CREATE")
+        assert_true(first["identity_resolution"] == "NEW_LOGICAL_AGENT", "TEST A: first touch creates logical agent")
         assert_true(first["presence_event"] == "PRESENCE_FIRST_TOUCH", "TEST A: first-touch evidence")
         assert_true(first["binding"]["state"] == "BOUND", "TEST A: deterministic first touch must bind")
         sid = first["session"]["session_id"]
@@ -177,6 +179,7 @@ def main() -> None:
             ),
         ).stdout)
         assert_true(resumed["status"] == "RESUME", "TEST A: repeated controlled touch must RESUME")
+        assert_true(resumed["identity_resolution"] == "SAME_SESSION_RESUME", "TEST A: repeated touch resumes same session")
         assert_true(resumed["session"]["session_id"] == sid, "TEST A: resume same canonical session")
         assert_true(resumed["presence_event"] == "PRESENCE_RESUME", "TEST A: resume evidence")
 
@@ -237,16 +240,73 @@ def main() -> None:
             "TEST C: current HEAD may advance while identity stays frozen",
         )
 
+        unproven_same_agent = json.loads(run(
+            env,
+            *controlled_args(
+                connection_ref="gateway:instance-unproven-same-agent",
+                client_instance_id="gateway-client-unproven-same-agent",
+                head="b" * 40,
+                observed_at="2026-10-02T02:07:00+00:00",
+            ),
+        ).stdout)
+        assert_true(
+            unproven_same_agent["status"] == "UNBOUND_ACTIVITY"
+            and unproven_same_agent["identity_resolution"] == "UNRESOLVED_SURFACE",
+            "TEST C: same agent on a new surface must fail closed without continuity proof",
+        )
+        assert_true(
+            unproven_same_agent["binding"]["reason"] == "LOGICAL_AGENT_REUSE_REQUIRES_EXPLICIT_CONTINUITY_PROOF",
+            "TEST C: same agent reuse requires explicit canonical continuity proof",
+        )
+
+        forensics_path = root / ".governance" / "control-plane-state" / "gacr-forensics.json"
+        write(forensics_path, {
+            "schema_version": "1.0.0",
+            "revision": 1,
+            "items": [{
+                "forensic_id": "GACR-F-proof-same-agent",
+                "session_id": sid,
+                "repository": "example/governed",
+                "last_checkpoint_ref": "GRT-CONT-PRESENCE-01",
+                "last_evidence_ref": "github-issue-comment:proof-same-agent",
+                "resume_point": {
+                    "checkpoint_ref": "GRT-CONT-PRESENCE-01",
+                    "evidence_ref": "github-issue-comment:proof-same-agent",
+                },
+            }],
+        })
+        proven_same_agent = json.loads(run(
+            env,
+            *controlled_args(
+                connection_ref="gateway:instance-proven-same-agent",
+                client_instance_id="gateway-client-proven-same-agent",
+                head="b" * 40,
+                observed_at="2026-10-02T02:07:30+00:00",
+            ),
+            "--same-logical-agent-session-id", sid,
+            "--continuity-id", "GRT-CONT-PRESENCE-01",
+            "--continuity-evidence-ref", "github-issue-comment:proof-same-agent",
+        ).stdout)
+        assert_true(proven_same_agent["status"] == "NEW_SESSION_SAME_LOGICAL_AGENT", "TEST C: canonical proof permits same logical agent new session")
+        assert_true(proven_same_agent["identity_resolution"] == "NEW_SESSION_SAME_LOGICAL_AGENT", "TEST C: identity classification explicit")
+        assert_true(proven_same_agent["session"]["session_id"] != sid, "TEST C: new logical-agent surface gets a distinct session")
+        assert_true(proven_same_agent["session"]["logical_agent_id"] == "fresh-agent", "TEST C: canonical logical agent id preserved")
+        assert_true(proven_same_agent["session"]["logical_agent_reference_session_id"] == sid, "TEST C: reference session explicit")
+        assert_true(proven_same_agent["session"]["logical_agent_claim_inherited"] is False, "TEST C: no claim inheritance")
+        assert_true(proven_same_agent["session"]["logical_agent_authority_inherited"] is False, "TEST C: no authority inheritance")
+        assert_true(proven_same_agent["logical_agent_binding"]["evidence_source"] == "GACR_FORENSICS_CHECKPOINT", "TEST C: canonical evidence source recorded")
+
         distinct = json.loads(run(
             env,
             *controlled_args(
                 connection_ref="gateway:instance-2",
                 client_instance_id="gateway-client-2",
                 head="b" * 40,
-                observed_at="2026-10-02T02:07:00+00:00",
+                observed_at="2026-10-02T02:08:00+00:00",
+                agent="fresh-agent-distinct",
             ),
         ).stdout)
-        assert_true(distinct["status"] == "CREATE", "TEST C: distinct stable instance creates")
+        assert_true(distinct["status"] == "CREATE", "TEST C: distinct logical agent stable instance creates")
         assert_true(distinct["connection_fingerprint"] != fp, "TEST C: distinct instance fingerprint differs")
 
         same_client_new_connection = json.loads(run(
@@ -255,16 +315,17 @@ def main() -> None:
                 connection_ref="gateway:instance-3",
                 client_instance_id="gateway-client-1",
                 head="b" * 40,
-                observed_at="2026-10-02T02:07:00+00:00",
+                observed_at="2026-10-02T02:08:30+00:00",
+                agent="fresh-agent-same-client-other",
             ),
         ).stdout)
         assert_true(
             same_client_new_connection["status"] == "CREATE",
-            "TEST C: a shared client_instance_id must not collapse an explicitly distinct connection",
+            "TEST C: shared client id does not collapse a distinct logical agent and connection",
         )
         assert_true(
             same_client_new_connection["connection_fingerprint"] != fp,
-            "TEST C: distinct connection under same client has distinct fingerprint",
+            "TEST C: distinct connection under shared client has distinct fingerprint",
         )
 
         with_provider = json.loads(run(
@@ -273,9 +334,10 @@ def main() -> None:
                 connection_ref="gateway:instance-provider",
                 client_instance_id="gateway-client-provider",
                 head="c" * 40,
-                observed_at="2026-10-02T02:08:00+00:00",
+                observed_at="2026-10-02T02:09:00+00:00",
                 provider="chatgpt",
                 provider_ref="conversation-explicit-123",
+                agent="fresh-agent-provider",
             ),
         ).stdout)
         assert_true(

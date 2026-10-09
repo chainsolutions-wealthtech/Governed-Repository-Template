@@ -51,6 +51,7 @@ def build_provider_context(event:dict[str,Any], identity:dict[str,Any])->dict[st
             "idempotency_key":_reported(event,"idempotency_key"),
             "issued_at":_reported(event,"issued_at"),
             "observed_at":_reported(event,"observed_at"),
+            "logical_agent_alias":_reported(event,"logical_agent_alias"),
         },
         "agent":{
             "agent_type":_reported(event,"agent_type"),

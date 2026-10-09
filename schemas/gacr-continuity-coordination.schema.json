@@ -1,0 +1,815 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsolutions.local/schemas/gacr-continuity-coordination.schema.json",
+  "title": "GACR shared continuity coordination projection",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "authority",
+    "projection_only",
+    "grants_task_authority",
+    "grants_claim",
+    "grants_mutation_authority",
+    "revision",
+    "items"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string"
+    },
+    "authority": {
+      "const": "DERIVED_GACR_COORDINATION_PROJECTION"
+    },
+    "projection_only": {
+      "const": true
+    },
+    "grants_task_authority": {
+      "const": false
+    },
+    "grants_claim": {
+      "const": false
+    },
+    "grants_mutation_authority": {
+      "const": false
+    },
+    "revision": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "continuity_id",
+          "repository",
+          "coordination_issue",
+          "projection_only",
+          "participants"
+        ],
+        "properties": {
+          "continuity_id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 192
+          },
+          "repository": {
+            "type": "string",
+            "minLength": 1
+          },
+          "coordination_issue": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "projection_only": {
+            "const": true
+          },
+          "grants_task_authority": {
+            "const": false
+          },
+          "grants_claim": {
+            "const": false
+          },
+          "grants_mutation_authority": {
+            "const": false
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "participant_id",
+                "session_id",
+                "scope_id",
+                "work_mode",
+                "collision_domains",
+                "observed_head_sha",
+                "coordination_state_ref",
+                "status",
+                "grants_task_authority",
+                "grants_claim",
+                "grants_mutation_authority",
+                "membership_state"
+              ],
+              "properties": {
+                "participant_id": {
+                  "type": "string",
+                  "pattern": "^GACR-P-[0-9a-f]{12}$"
+                },
+                "session_id": {
+                  "type": "string"
+                },
+                "declared_role": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "scope_id": {
+                  "type": "string"
+                },
+                "work_mode": {
+                  "enum": [
+                    "READ_ONLY",
+                    "WRITE",
+                    "REVIEW"
+                  ]
+                },
+                "collision_domains": {
+                  "type": "array",
+                  "minItems": 1,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "observed_head_sha": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{40}$"
+                },
+                "coordination_state_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "status": {
+                  "enum": [
+                    "ACTIVE",
+                    "YIELDED"
+                  ]
+                },
+                "grants_task_authority": {
+                  "const": false
+                },
+                "grants_claim": {
+                  "const": false
+                },
+                "grants_mutation_authority": {
+                  "const": false
+                },
+                "membership_state": {
+                  "enum": [
+                    "PERSISTENT",
+                    "TERMINAL"
+                  ]
+                },
+                "liveness_state": {
+                  "enum": [
+                    "LIVE",
+                    "QUIET",
+                    "SUSPECTED_STALL",
+                    "STALLED",
+                    "UNREACHABLE",
+                    "UNKNOWN"
+                  ]
+                },
+                "canonical_session_status": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "canonical_relay_state": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "lease_expires_at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "last_signal_at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "runtime_projection_observed_at": {
+                  "type": "string"
+                },
+                "logical_agent_id": {
+                  "type": "string"
+                },
+                "logical_agent_id_provenance": {
+                  "type": "string"
+                },
+                "provider_contexts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "required": [
+                      "provider_context_id",
+                      "provider",
+                      "provider_native_identity_status",
+                      "provider_private_values_invented"
+                    ],
+                    "properties": {
+                      "provider_context_id": {
+                        "type": "string",
+                        "pattern": "^GACR-PC-[0-9a-f]{16}$"
+                      },
+                      "provider_context_id_provenance": {
+                        "type": "string"
+                      },
+                      "session_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "provider": {
+                        "type": "string"
+                      },
+                      "provider_conversation_ref": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "provider_conversation_ref_status": {
+                        "enum": [
+                          "PRESENT",
+                          "UNAVAILABLE"
+                        ]
+                      },
+                      "client_instance_id": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "connection_ref": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "runtime_surface_ref": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "runtime_surface_ref_provenance": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "repository_surface_ref": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "repository_surface_ref_provenance": {
+                        "type": [
+                          "string",
+                          "null"
+                        ]
+                      },
+                      "provider_native_identity_status": {
+                        "enum": [
+                          "PRESENT",
+                          "UNAVAILABLE"
+                        ]
+                      },
+                      "provider_private_values_invented": {
+                        "const": false
+                      }
+                    },
+                    "additionalProperties": true
+                  }
+                },
+                "provider_endpoint": {
+                  "type": "object",
+                  "required": [
+                    "provider",
+                    "provider_conversation_ref_status",
+                    "provider_inbound_endpoint",
+                    "repository_control_surface",
+                    "wake_route",
+                    "provider_private_values_invented"
+                  ],
+                  "properties": {
+                    "provider": {
+                      "type": "string"
+                    },
+                    "provider_conversation_ref_status": {
+                      "enum": [
+                        "PRESENT",
+                        "UNAVAILABLE"
+                      ]
+                    },
+                    "provider_conversation_ref": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "provider_inbound_endpoint": {
+                      "type": "object",
+                      "required": [
+                        "status",
+                        "kind",
+                        "endpoint_ref",
+                        "provenance"
+                      ],
+                      "properties": {
+                        "status": {
+                          "enum": [
+                            "OBSERVED",
+                            "CONFIGURED",
+                            "UNAVAILABLE"
+                          ]
+                        },
+                        "kind": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "endpoint_ref": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "provenance": {
+                          "type": "string"
+                        },
+                        "reason": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "repository_control_surface": {
+                      "type": "object",
+                      "required": [
+                        "status",
+                        "kind",
+                        "provenance"
+                      ],
+                      "properties": {
+                        "status": {
+                          "enum": [
+                            "PROVEN",
+                            "AVAILABLE",
+                            "UNAVAILABLE"
+                          ]
+                        },
+                        "kind": {
+                          "type": "string"
+                        },
+                        "endpoint_ref": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "provenance": {
+                          "type": "string"
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "wake_route": {
+                      "type": "object",
+                      "required": [
+                        "preferred",
+                        "push_capable",
+                        "wake_channels"
+                      ],
+                      "properties": {
+                        "preferred": {
+                          "enum": [
+                            "GSCC_CONTROL_CHANNEL",
+                            "EXTERNAL_BRIDGE",
+                            "POLL_REPOSITORY"
+                          ]
+                        },
+                        "push_capable": {
+                          "type": "boolean"
+                        },
+                        "wake_channels": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        }
+                      },
+                      "additionalProperties": true
+                    },
+                    "connection_ref": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "bridge_registration_ref": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "provider_private_values_invented": {
+                      "const": false
+                    }
+                  },
+                  "additionalProperties": true
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "logical_agents": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "logical_agent_id",
+                "session_ids",
+                "provider_contexts",
+                "projection_only",
+                "grants_task_authority",
+                "grants_claim",
+                "grants_mutation_authority"
+              ],
+              "properties": {
+                "logical_agent_id": {
+                  "type": "string"
+                },
+                "logical_agent_id_provenance": {
+                  "type": "string"
+                },
+                "human_alias": {
+                  "type": "string",
+                  "pattern": "^[A-Za-z][A-Za-z0-9_-]{1,63}$"
+                },
+                "human_alias_provenance": {
+                  "enum": [
+                    "OWNER_ASSIGNED"
+                  ]
+                },
+                "alias_evidence_ref": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "routing_evidence_ref": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "reference_session_ids": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "session_ids": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "participant_ids": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "scope_ids": {
+                  "type": "array",
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "provider_contexts": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "session_count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "provider_context_count": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "projection_only": {
+                  "const": true
+                },
+                "grants_task_authority": {
+                  "const": false
+                },
+                "grants_claim": {
+                  "const": false
+                },
+                "grants_mutation_authority": {
+                  "const": false
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "last_handoff": {
+            "type": [
+              "object",
+              "null"
+            ]
+          },
+          "last_sequence": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "event_id",
+                "continuity_id",
+                "sequence",
+                "correlation_id",
+                "from_session_id",
+                "target_session_ids",
+                "event_kind",
+                "created_at",
+                "expires_at",
+                "requires_ack",
+                "observed_head_sha",
+                "collision_domains",
+                "payload_ref",
+                "state",
+                "routes",
+                "projection_only",
+                "grants_task_authority",
+                "grants_claim",
+                "grants_mutation_authority"
+              ],
+              "properties": {
+                "event_id": {
+                  "type": "string",
+                  "pattern": "^GACR-E-[0-9a-f]{16}$"
+                },
+                "continuity_id": {
+                  "type": "string"
+                },
+                "sequence": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "correlation_id": {
+                  "type": "string"
+                },
+                "reply_to_event_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "from_session_id": {
+                  "type": "string"
+                },
+                "target_session_ids": {
+                  "type": "array",
+                  "minItems": 1,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "event_kind": {
+                  "enum": [
+                    "INSTRUCTION",
+                    "ACK",
+                    "REQUEST",
+                    "RESPONSE",
+                    "RESULT",
+                    "REVIEW_REQUEST",
+                    "REVIEW_RESULT",
+                    "SCOPE_UPDATE",
+                    "YIELD",
+                    "HANDOFF",
+                    "BLOCKER",
+                    "RECOVERY_REQUEST",
+                    "LOOP_TICK"
+                  ]
+                },
+                "created_at": {
+                  "type": "string"
+                },
+                "expires_at": {
+                  "type": "string"
+                },
+                "requires_ack": {
+                  "type": "boolean"
+                },
+                "observed_head_sha": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{40}$"
+                },
+                "scope_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "collision_domains": {
+                  "type": "array",
+                  "minItems": 1,
+                  "uniqueItems": true,
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "payload_ref": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "state": {
+                  "enum": [
+                    "ROUTED",
+                    "DELIVERED",
+                    "ACKED",
+                    "RESPONDED",
+                    "FALLBACK_POLL_REQUIRED",
+                    "ACK_TIMEOUT",
+                    "EXPIRED",
+                    "CANCELLED"
+                  ]
+                },
+                "routes": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "responses": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "projection_only": {
+                  "const": true
+                },
+                "grants_task_authority": {
+                  "const": false
+                },
+                "grants_claim": {
+                  "const": false
+                },
+                "grants_mutation_authority": {
+                  "const": false
+                }
+              },
+              "additionalProperties": true
+            }
+          },
+          "supervision_alerts": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "alert_id",
+                "target_session_id",
+                "detected_at",
+                "last_signal_at",
+                "threshold_seconds",
+                "state",
+                "action",
+                "dispatch_id",
+                "delivery_modes",
+                "projection_only",
+                "changes_session_status",
+                "changes_lease",
+                "grants_task_authority",
+                "grants_claim",
+                "grants_mutation_authority"
+              ],
+              "properties": {
+                "alert_id": {
+                  "type": "string",
+                  "pattern": "^GACR-SA-[0-9a-f]{16}$"
+                },
+                "target_session_id": {
+                  "type": "string"
+                },
+                "participant_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "scope_id": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "detected_at": {
+                  "type": "string"
+                },
+                "last_signal_at": {
+                  "type": "string"
+                },
+                "silence_seconds_at_detection": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "threshold_seconds": {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                "canonical_lease_expires_at": {
+                  "type": [
+                    "string",
+                    "null"
+                  ]
+                },
+                "state": {
+                  "enum": [
+                    "OPEN",
+                    "RESOLVED",
+                    "SUPERSEDED_BY_CANONICAL_LIVENESS_STATE"
+                  ]
+                },
+                "action": {
+                  "const": "EARLY_SUPERVISION_ALERT"
+                },
+                "dispatch_id": {
+                  "type": "string"
+                },
+                "preferred_delivery_mode": {
+                  "enum": [
+                    "EXTERNAL_BRIDGE",
+                    "POLL_REPOSITORY"
+                  ]
+                },
+                "delivery_modes": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "enum": [
+                      "EXTERNAL_BRIDGE",
+                      "POLL_REPOSITORY"
+                    ]
+                  }
+                },
+                "delivery_state": {
+                  "type": "string"
+                },
+                "target_live_at_detection": {
+                  "type": "boolean"
+                },
+                "resolved_at": {
+                  "type": "string"
+                },
+                "resolution": {
+                  "type": "string"
+                },
+                "projection_only": {
+                  "const": true
+                },
+                "changes_session_status": {
+                  "const": false
+                },
+                "changes_lease": {
+                  "const": false
+                },
+                "grants_task_authority": {
+                  "const": false
+                },
+                "grants_claim": {
+                  "const": false
+                },
+                "grants_mutation_authority": {
+                  "const": false
+                }
+              },
+              "additionalProperties": true
+            }
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": true
+}

@@ -25,9 +25,10 @@ def live_signal(state: str = "ACTIVE") -> dict:
     }
 
 
-def session(session_id: str, *, capabilities=None, role="qualification-client", relay_state="ACTIVE") -> dict:
+def session(session_id: str, *, capabilities=None, role="qualification-client", relay_state="ACTIVE", agent_identity=None) -> dict:
     return {
         "session_id": session_id,
+        "agent_identity": agent_identity or ("agent-" + session_id),
         "repository": "example/repo",
         "provider": "chatgpt",
         "client_instance_id": "client-" + session_id,
@@ -109,6 +110,7 @@ def main() -> None:
     assert_true(available["agent_role"] == "CODE_AGENT", "declared canonical role overrides qualification role")
     assert_true(available["declared_work_profile"]["entry_purpose"] == "WORK_ON_CONTROL_PLANE", "entry purpose recorded")
     assert_true(available["eligible_for_new_work"] is True, "released explicitly available session eligible")
+    assert_true(available["logical_agent_id"] == "agent-s1", "capacity projection uses canonical agent identity")
 
     pre_f1 = g.session_capacity_projection(
         "s1",
@@ -259,6 +261,362 @@ def main() -> None:
     assert_true(blocked["reason"] == "COLLISION_DOMAIN_BUSY", "same collision domain must not parallelize")
     assert_true(plan["write_authority_granted"] is False, "dispatch plan never grants write authority")
     assert_true(plan["claim_transfer_performed"] is False, "dispatch plan never creates/transfers claim")
+
+    same_agent_pool = {
+        "items": [
+            {
+                "session_id": "same-a",
+                "logical_agent_id": "logical-shared",
+                "client_instance_id": "client-same-a",
+                "repository": "example/repo",
+                "agent_role": "CODE_AGENT",
+                "capabilities": ["CODE"],
+                "authority_grants": [],
+                "eligible_for_new_work": True,
+                "active_claim_count": 0,
+                "in_flight_action": None,
+            },
+            {
+                "session_id": "same-b",
+                "logical_agent_id": "logical-shared",
+                "client_instance_id": "client-same-b",
+                "repository": "example/repo",
+                "agent_role": "CODE_AGENT",
+                "capabilities": ["CODE"],
+                "authority_grants": [],
+                "eligible_for_new_work": True,
+                "active_claim_count": 0,
+                "in_flight_action": None,
+            },
+        ]
+    }
+    same_agent_work = {
+        "source": "TEST",
+        "items": [
+            {
+                "work_item_id": "LW1",
+                "status": "READY",
+                "priority": 100,
+                "sequence": 1,
+                "dependencies": [],
+                "collision_domains": ["logical-domain-a"],
+                "required_capabilities": ["CODE"],
+                "allowed_agent_roles": ["CODE_AGENT"],
+            },
+            {
+                "work_item_id": "LW2",
+                "status": "READY",
+                "priority": 90,
+                "sequence": 2,
+                "dependencies": [],
+                "collision_domains": ["logical-domain-b"],
+                "required_capabilities": ["CODE"],
+                "allowed_agent_roles": ["CODE_AGENT"],
+            },
+        ],
+    }
+    same_agent_plan = g.parallel_work_dispatch_plan(
+        work_doc=same_agent_work,
+        claims_doc=empty_claims,
+        pool=same_agent_pool,
+    )
+    assert_true(len(same_agent_plan["assignments"]) == 1, "two sessions of one logical agent must not create two automatic capacity units")
+    assert_true(
+        same_agent_plan["assignments"][0]["target_logical_agent_id"] == "logical-shared",
+        "assignment preserves logical-agent trace",
+    )
+    logical_blocked = next(item for item in same_agent_plan["unassigned"] if item["work_item_id"] == "LW2")
+    assert_true(logical_blocked["reason"] == "NO_COMPATIBLE_AVAILABLE_AGENT", "second logical-agent slot must be unavailable")
+    assert_true(
+        all(
+            "LOGICAL_AGENT_OFFER_CAPACITY_REACHED" in evaluation["reasons"]
+            for evaluation in logical_blocked["evaluations"]
+        ),
+        "all sibling sessions must share one default logical-agent offer ceiling",
+    )
+
+    pending_offer_dispatches = {
+        "items": [{
+            "dispatch_id": "GACR-W-existing-logical",
+            "dispatch_kind": "WORK_OFFER",
+            "status": "READY",
+            "target_session_id": "same-a",
+            "target_logical_agent_id": "logical-shared",
+            "capacity_key": "logical-agent:logical-shared",
+            "work_item_id": "LW-PENDING",
+        }]
+    }
+    pending_offer_plan = g.parallel_work_dispatch_plan(
+        work_doc={
+            "source": "TEST",
+            "items": [{
+                "work_item_id": "LW-PENDING-NEXT",
+                "status": "READY",
+                "priority": 1,
+                "sequence": 1,
+                "dependencies": [],
+                "collision_domains": ["logical-domain-pending-next"],
+                "required_capabilities": ["CODE"],
+                "allowed_agent_roles": ["CODE_AGENT"],
+            }],
+        },
+        claims_doc=empty_claims,
+        pool=same_agent_pool,
+        dispatches_doc=pending_offer_dispatches,
+    )
+    assert_true(
+        not pending_offer_plan["assignments"],
+        "persisted pending offer must consume shared logical-agent capacity across dispatch runs",
+    )
+    pending_blocked = pending_offer_plan["unassigned"][0]
+    assert_true(
+        all(
+            "LOGICAL_AGENT_OFFER_CAPACITY_REACHED" in evaluation["reasons"]
+            for evaluation in pending_blocked["evaluations"]
+        ),
+        "pending sibling offer blocks every session surface of the same logical agent",
+    )
+    assert_true(
+        pending_offer_plan["pending_offer_capacity_counts"]
+        == {"logical-agent:logical-shared": 1},
+        "planner exposes pending logical-agent offer occupancy",
+    )
+
+    duplicate_pending_work_plan = g.parallel_work_dispatch_plan(
+        work_doc={
+            "source": "TEST",
+            "items": [{
+                "work_item_id": "LW-PENDING",
+                "status": "READY",
+                "priority": 1,
+                "sequence": 1,
+                "dependencies": [],
+                "collision_domains": ["logical-domain-duplicate-work"],
+                "required_capabilities": ["CODE"],
+                "allowed_agent_roles": ["CODE_AGENT"],
+            }],
+        },
+        claims_doc=empty_claims,
+        pool={
+            "items": [
+                {
+                    **same_agent_pool["items"][0],
+                    "session_id": "other-agent-session",
+                    "logical_agent_id": "logical-other",
+                    "client_instance_id": "client-other-agent",
+                }
+            ]
+        },
+        dispatches_doc=pending_offer_dispatches,
+    )
+    assert_true(
+        not duplicate_pending_work_plan["assignments"],
+        "same work item cannot be offered to a second logical agent while an offer is pending",
+    )
+    assert_true(
+        duplicate_pending_work_plan["unassigned"][0]["reason"] == "OFFER_ALREADY_PENDING",
+        "duplicate work offer rejection is explicit",
+    )
+
+    unavailable_store = {
+        "items": [{
+            "dispatch_id": "GACR-W-unavailable-target",
+            "dispatch_kind": "WORK_OFFER",
+            "status": "READY",
+            "offer_status": "PENDING_ACCEPTANCE",
+            "target_session_id": "same-a",
+            "target_logical_agent_id": "logical-shared",
+            "capacity_key": "logical-agent:logical-shared",
+            "work_item_id": "LW-RECLAIM",
+            "claim_created": False,
+            "grants_write_authority": False,
+        }]
+    }
+    unavailable_pool = {
+        "items": [
+            {**same_agent_pool["items"][0], "eligible_for_new_work": False, "availability_state": "UNAVAILABLE"},
+            same_agent_pool["items"][1],
+        ]
+    }
+    reclaimed = g._cancel_unavailable_target_offers(
+        unavailable_store,
+        unavailable_pool,
+        "2026-10-08T18:00:00+00:00",
+    )
+    assert_true(len(reclaimed) == 1, "pending offer is reclaimed when target session becomes unavailable")
+    assert_true(reclaimed[0]["status"] == "CANCELLED", "reclaimed offer is terminal")
+    assert_true(reclaimed[0]["cancellation_reason"] == "TARGET_SESSION_UNAVAILABLE", "reclaim reason is explicit")
+    reclaimed_plan = g.parallel_work_dispatch_plan(
+        work_doc={
+            "source": "TEST",
+            "items": [{
+                "work_item_id": "LW-RECLAIM",
+                "status": "READY",
+                "priority": 1,
+                "sequence": 1,
+                "dependencies": [],
+                "collision_domains": ["logical-domain-reclaim"],
+                "required_capabilities": ["CODE"],
+                "allowed_agent_roles": ["CODE_AGENT"],
+            }],
+        },
+        claims_doc=empty_claims,
+        pool=unavailable_pool,
+        dispatches_doc=unavailable_store,
+    )
+    assert_true(len(reclaimed_plan["assignments"]) == 1, "reclaimed work may be reassigned to available sibling session")
+    assert_true(reclaimed_plan["assignments"][0]["target_session_id"] == "same-b", "reclaimed work routes to available sibling")
+
+    accepted_unavailable_store = {
+        "items": [{
+            **unavailable_store["items"][0],
+            "dispatch_id": "GACR-W-unavailable-accepted",
+            "status": "ACCEPTED_PENDING_CLAIM",
+            "offer_status": "ACCEPTED",
+        }]
+    }
+    accepted_reclaimed = g._cancel_unavailable_target_offers(
+        accepted_unavailable_store,
+        unavailable_pool,
+        "2026-10-08T18:00:01+00:00",
+    )
+    assert_true(len(accepted_reclaimed) == 1, "accepted-pending offer without claim is reclaimable after target loss")
+    assert_true(accepted_reclaimed[0]["claim_created"] is False, "reclaim does not synthesize claim")
+
+    cancelled_offer_plan = g.parallel_work_dispatch_plan(
+        work_doc={
+            "source": "TEST",
+            "items": [{
+                "work_item_id": "LW-AFTER-CANCEL",
+                "status": "READY",
+                "priority": 1,
+                "sequence": 1,
+                "dependencies": [],
+                "collision_domains": ["logical-domain-after-cancel"],
+                "required_capabilities": ["CODE"],
+                "allowed_agent_roles": ["CODE_AGENT"],
+            }],
+        },
+        claims_doc=empty_claims,
+        pool=same_agent_pool,
+        dispatches_doc={
+            "items": [{
+                **pending_offer_dispatches["items"][0],
+                "status": "CANCELLED",
+            }]
+        },
+    )
+    assert_true(
+        len(cancelled_offer_plan["assignments"]) == 1,
+        "terminal/cancelled offer must release logical-agent offer capacity",
+    )
+
+    same_agent_claimed = g.parallel_work_dispatch_plan(
+        work_doc={
+            "source": "TEST",
+            "items": [{
+                "work_item_id": "LW3",
+                "status": "READY",
+                "priority": 1,
+                "sequence": 1,
+                "dependencies": [],
+                "collision_domains": ["logical-domain-c"],
+                "required_capabilities": ["CODE"],
+                "allowed_agent_roles": ["CODE_AGENT"],
+            }],
+        },
+        claims_doc={"claims": [{
+            "claim_id": "logical-existing-claim",
+            "session_id": "same-a",
+            "work_item_id": "LW0",
+            "status": "ACTIVE",
+            "collision_domains": ["unrelated-logical-domain"],
+        }]},
+        pool=same_agent_pool,
+    )
+    assert_true(not same_agent_claimed["assignments"], "active claim on one sibling session consumes shared logical-agent capacity")
+    assert_true(
+        all(
+            "LOGICAL_AGENT_OFFER_CAPACITY_REACHED" in evaluation["reasons"]
+            for evaluation in same_agent_claimed["unassigned"][0]["evaluations"]
+        ),
+        "sibling session cannot bypass logical-agent capacity through a new chat/runtime",
+    )
+
+    original_read_json = g.read_json
+    original_write_json = g.write_json
+    original_session_capacity_projection = g.session_capacity_projection
+    original_agent_pool_projection = g.agent_pool_projection
+    original_template_source = g.TEMPLATE_SOURCE
+    try:
+        accept_store = {
+            "schema_version": "1.0.0",
+            "revision": 0,
+            "items": [
+                {
+                    "dispatch_id": "GACR-W-accept-target",
+                    "dispatch_kind": "WORK_OFFER",
+                    "status": "READY",
+                    "target_session_id": "same-a",
+                    "work_item_id": "LW-ACCEPT",
+                },
+                {
+                    "dispatch_id": "GACR-W-accept-sibling",
+                    "dispatch_kind": "WORK_OFFER",
+                    "status": "READY",
+                    "target_session_id": "same-b",
+                    "work_item_id": "LW-OTHER",
+                },
+            ],
+        }
+        accept_claims = {"claims": []}
+        def fake_read(path, default=None):
+            if path == g.DISPATCHES_PATH:
+                return accept_store
+            if path == g.CLAIMS_PATH:
+                return accept_claims
+            return default or {}
+        g.read_json = fake_read
+        g.write_json = lambda path, value: None
+        g.session_capacity_projection = lambda session_id: {
+            "availability_state": "AVAILABLE",
+            "eligible_for_new_work": True,
+        }
+        g.agent_pool_projection = lambda: same_agent_pool
+        g.TEMPLATE_SOURCE = False
+        try:
+            g.accept_work_offer("GACR-W-accept-target", "same-a")
+        except ValueError as exc:
+            assert_true(
+                "another pending work offer" in str(exc),
+                f"sibling pending offer rejection should be explicit: {exc}",
+            )
+        else:
+            raise AssertionError("accept must fail when sibling session already owns pending logical-agent offer")
+
+        accept_store["items"] = [accept_store["items"][0]]
+        accept_claims["claims"] = [{
+            "claim_id": "sibling-active-claim",
+            "session_id": "same-b",
+            "work_item_id": "LW-CLAIMED",
+            "status": "ACTIVE",
+            "collision_domains": ["other-domain"],
+        }]
+        try:
+            g.accept_work_offer("GACR-W-accept-target", "same-a")
+        except ValueError as exc:
+            assert_true(
+                "active canonical claim" in str(exc),
+                f"sibling active claim rejection should be explicit: {exc}",
+            )
+        else:
+            raise AssertionError("accept must fail when sibling session already owns active logical-agent claim")
+    finally:
+        g.read_json = original_read_json
+        g.write_json = original_write_json
+        g.session_capacity_projection = original_session_capacity_projection
+        g.agent_pool_projection = original_agent_pool_projection
+        g.TEMPLATE_SOURCE = original_template_source
 
     claimed_plan = g.parallel_work_dispatch_plan(
         work_doc={"source":"TEST","items": [{

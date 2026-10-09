@@ -51,6 +51,7 @@ def project_pre_gacr_admission_gse_state(
     repository_baseline: dict[str, Any],
     control_proof: dict[str, Any],
     *,
+    requested_logical_agent_alias: str | None = None,
     now: datetime | None = None,
 ) -> dict[str, Any]:
     """Project Q10 from GSCC evidence only, before durable GACR continuity."""
@@ -110,6 +111,9 @@ def project_pre_gacr_admission_gse_state(
     presence_state = (twin.get("presence") or {}).get("state") or "UNKNOWN"
     liveness_state = (twin.get("liveness") or {}).get("state") or "UNKNOWN"
     control_state = (twin.get("control_channel") or {}).get("state") or "UNKNOWN"
+    alias = str(requested_logical_agent_alias or "").strip()
+    if alias in {"", "UNAVAILABLE", "UNKNOWN", "NOT_EXPOSED", "NOT_ACCESSIBLE"}:
+        alias = None
 
     result = {
         "schema": SCHEMA,
@@ -126,6 +130,9 @@ def project_pre_gacr_admission_gse_state(
         "progress": (twin.get("progress") or {}).get("state") or "UNKNOWN",
         "control_reachability": "REACHABLE" if control_state == "REACHABLE" else control_state,
         "continuity": (twin.get("continuity") or {}).get("state") or "UNKNOWN",
+        "requested_logical_agent_alias": alias,
+        "logical_agent_alias_resolution": "GACR_Q2_REQUIRED" if alias else "NOT_REQUESTED",
+        "logical_agent_alias_grants_authority": False,
         "timestamps": deepcopy(twin.get("timestamps") or {}),
         "evidence_ref": control.get("evidence_ref") if control_verified else None,
         "provenance": "GSE_DERIVED_FROM_GSCC_PRE_GACR",

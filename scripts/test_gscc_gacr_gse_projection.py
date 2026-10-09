@@ -12,6 +12,7 @@ if str(ROOT / "scripts") not in sys.path:
 
 from scripts.gse.session_state_engine import reduce_event
 from scripts.gscc_gacr import ControlValidationError, control_response_to_gse_event
+from scripts.gscc_gacr.admission_gse_projection import project_pre_gacr_admission_gse_state
 
 
 T0 = "2026-10-02T05:00:00Z"
@@ -60,6 +61,35 @@ def apply(twin, response, event_id):
 
 
 def main() -> None:
+    pre = project_pre_gacr_admission_gse_state(
+        {"connection_ref": "gscc-connection-a", "evaluated_at": T0},
+        {"repository": "owner/repo", "requested_branch": "main", "observed_head": "a" * 40, "observed_at": T0},
+        {
+            "capabilities": {"status": "VERIFIED"},
+            "control_channel": {
+                "status": "VERIFIED",
+                "state": "REACHABLE",
+                "evidence_ref": "control-proof",
+                "observed_at": T0,
+                "challenge_id": "challenge-a",
+            },
+        },
+        requested_logical_agent_alias="FORGE",
+    )
+    assert_true(pre["requested_logical_agent_alias"] == "FORGE", "Q10 must preserve owner alias request")
+    assert_true(pre["logical_agent_alias_resolution"] == "GACR_Q2_REQUIRED", "Q10 must defer alias resolution to GACR")
+    assert_true(pre["logical_agent_alias_grants_authority"] is False, "Q10 alias intent grants no authority")
+    assert_true(pre["mutation_authority_granted"] is False, "Q10 remains non-authoritative")
+
+    no_alias = project_pre_gacr_admission_gse_state(
+        {"connection_ref": "gscc-connection-b", "evaluated_at": T0},
+        {"repository": "owner/repo", "requested_branch": "main", "observed_head": "b" * 40, "observed_at": T0},
+        {"capabilities": {}, "control_channel": {}},
+        requested_logical_agent_alias="UNAVAILABLE",
+    )
+    assert_true(no_alias["requested_logical_agent_alias"] is None, "unavailable alias stays absent")
+    assert_true(no_alias["logical_agent_alias_resolution"] == "NOT_REQUESTED", "unavailable alias is not inferred")
+
     twin = base_twin()
     baseline_liveness = twin["timestamps"]["last_liveness_evidence_at"]
     baseline_progress = twin["timestamps"]["last_progress_at"]

@@ -32,11 +32,17 @@ def main() -> None:
     assert_true("git checkout --detach FETCH_HEAD" in reconcile_block, "reconciled relay ingress must execute from fetched default-branch head")
     assert_true("scripts/gacr_host_issue_ingress.py" in text, "host ingress adapter compile validation missing")
 
-    control_delivery = "Deliver pending GSCC issue control challenges"
-    assert_true(control_delivery in text, "GSCC control challenge delivery step missing")
+    control_delivery = "Deliver pending GSCC control commands"
+    delivery_reconcile = "Reconcile continuity delivery projection"
+    assert_true(control_delivery in text, "GSCC control command delivery step missing")
+    assert_true(delivery_reconcile in text, "continuity delivery reconciliation step missing")
     assert_true(
-        "startsWith(github.event.comment.body, '/gscc-control ')" in text[text.index(control_delivery)-500:text.index(control_delivery)+500],
-        "live GSCC issue control request must directly enable challenge delivery",
+        text.index(control_delivery) < text.index(delivery_reconcile) < persist,
+        "control delivery must be projected back into continuity state before persistence",
+    )
+    assert_true(
+        "startsWith(github.event.comment.body, '/gscc-control ')" in text,
+        "live GSCC issue control request must remain admitted by the workflow gate",
     )
 
     upgrader = UPGRADER.read_text(encoding="utf-8")

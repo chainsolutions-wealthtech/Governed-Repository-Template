@@ -1,0 +1,142 @@
+{
+  "schema": "agent-reconstruction-skeleton/v1",
+  "status": "APPLICABLE",
+  "authority": "COMPOSITION_OF_EXISTING_AUTHORITIES",
+  "purpose": "READ_ONLY_COLD_START_AND_CONTINUITY_RECONSTRUCTION",
+  "projection_only": true,
+  "grants_admission": false,
+  "grants_task_authority": false,
+  "grants_claim": false,
+  "grants_mutation_authority": false,
+  "block_contract": {
+    "name": "AGENT_RECONSTRUCTION_BLOCK",
+    "canonical_key": "logical_agent_id",
+    "mint_new_block_id": false,
+    "alias_is_projection_only": true,
+    "session_is_not_logical_agent": true,
+    "provider_context_is_not_session": true,
+    "reconstruction_is_not_current_arrival_binding": true
+  },
+  "selectors": [
+    "logical_agent_id",
+    "human_alias",
+    "session_id"
+  ],
+  "stages": [
+    {
+      "sequence": 1,
+      "id": "ARRIVAL",
+      "authority": "00_GSCC_ENTRY.md",
+      "action": "READ_PRE_ENTRY_AUTHORITY"
+    },
+    {
+      "sequence": 2,
+      "id": "OBSERVABLE_PACKET",
+      "authority": "scripts/first_touch_agent_transport_extractor.py",
+      "action": "ACCOUNT_FOR_EXPOSED_AND_UNAVAILABLE_PROVIDER_RUNTIME_FACTS"
+    },
+    {
+      "sequence": 3,
+      "id": "GSCC_PERSISTED_ENTRY",
+      "authority": "scripts/gscc_persisted_entry_pipeline.py",
+      "action": "CLASSIFY_AND_PERSIST_FIRST_TOUCH_CONTINUATION_OR_UNRESOLVED"
+    },
+    {
+      "sequence": 4,
+      "id": "GSE_SESSION_TWIN",
+      "authority": "scripts/gse/session_state_engine.py",
+      "action": "QUALIFY_LOGICAL_SESSION_STATE_AT_Q10"
+    },
+    {
+      "sequence": 5,
+      "id": "GACR_BINDING",
+      "authority": "scripts/gacr_auto_attach.py",
+      "action": "BIND_OR_FAIL_CLOSED_AT_Q2"
+    },
+    {
+      "sequence": 6,
+      "id": "LOGICAL_AGENT_RECONSTRUCTION",
+      "authority": "scripts/gacr_agent_reconstruction.py",
+      "action": "PROJECT_LOGICAL_AGENT_SESSIONS_PROVIDER_CONTEXTS_AND_EVIDENCE"
+    },
+    {
+      "sequence": 7,
+      "id": "CONTINUITY_BUS",
+      "authority": "scripts/gacr_continuity_bus.py",
+      "action": "PROJECT_CONTINUITY_MEMBERSHIP_EVENTS_ROUTES_AND_CONTROL_SURFACES"
+    },
+    {
+      "sequence": 8,
+      "id": "WORK_MATCHING_AND_DISPATCH",
+      "authority": "scripts/gacr_capacity_dispatch.py",
+      "action": "MATCH_CANONICAL_READY_WORK_TO_ELIGIBLE_CAPACITY_WITHOUT_GRANTING_WRITE_AUTHORITY"
+    },
+    {
+      "sequence": 9,
+      "id": "CLAIM_ACTIVATION_AND_EXECUTION",
+      "authority": ".governance/control-plane-state/gacr-claims.json",
+      "action": "REQUIRE_CANONICAL_CLAIM_AND_EXACT_HEAD_FOR_MUTABLE_WORK"
+    },
+    {
+      "sequence": 10,
+      "id": "CHECKPOINT_FORENSICS",
+      "authority": "scripts/gacr_agent_telemetry.py",
+      "action": "PERSIST_SAFE_EVIDENCE_CHECKPOINTS_AND_RECOVERY_CONTEXT"
+    },
+    {
+      "sequence": 11,
+      "id": "HANDOFF_TAKEOVER",
+      "authority": "scripts/governed_agent_continuity_relay.py",
+      "action": "HANDOFF_OR_GOVERNED_TAKEOVER_WITHOUT_SYNTHETIC_AUTHORITY"
+    },
+    {
+      "sequence": 12,
+      "id": "EXIT_RELEASE_REENTRY",
+      "authority": "00_START_HERE.md",
+      "action": "RELEASE_TO_NORMAL_GOVERNANCE_OR_REENTER_THROUGH_GSCC"
+    }
+  ],
+  "canonical_sources": {
+    "sessions": ".governance/control-plane-state/gacr-sessions.json",
+    "continuities": ".governance/control-plane-state/gacr-continuities.json",
+    "claims": ".governance/control-plane-state/gacr-claims.json",
+    "dispatches": ".governance/control-plane-state/gacr-dispatches.json",
+    "takeovers": ".governance/control-plane-state/gacr-takeovers.json",
+    "forensics": ".governance/control-plane-state/gacr-forensics.json",
+    "beacons": ".governance/control-plane-state/gacr-beacons.json",
+    "correlations": ".governance/control-plane-state/gacr-correlations.json",
+    "checkpoint": ".governance/control-plane-state/checkpoint.json",
+    "handoff": ".governance/control-plane-state/handoff.json",
+    "coordination": "docs/MULTI_AGENT_COORDINATION.md"
+  },
+  "bus_contract": {
+    "existing_bus_only": true,
+    "continuity_key": "continuity_id",
+    "participant_keys": [
+      "logical_agent_id",
+      "session_id"
+    ],
+    "routing_order": [
+      "GSCC_CONTROL_CHANNEL",
+      "EXTERNAL_BRIDGE",
+      "POLL_REPOSITORY"
+    ],
+    "new_bus_or_queue_created": false
+  },
+  "invariants": [
+    "LOGICAL_AGENT_ID_NE_SESSION_ID",
+    "SESSION_ID_NE_PROVIDER_CONTEXT_ID",
+    "PROVIDER_PRIVATE_IDS_SUPPLIED_OR_OBSERVED_ONLY",
+    "UNAVAILABLE_REMAINS_UNAVAILABLE",
+    "RECONSTRUCTION_NE_ADMISSION",
+    "RECONSTRUCTION_NE_SESSION_RESUME",
+    "RECONSTRUCTION_NE_CLAIM",
+    "RECONSTRUCTION_NE_MUTATION_AUTHORITY",
+    "ALIAS_MUST_RESOLVE_TO_EXACTLY_ONE_LOGICAL_AGENT_OR_FAIL_CLOSED",
+    "MULTIPLE_SESSIONS_OF_ONE_LOGICAL_AGENT_REMAIN_ONE_DEFAULT_AUTOMATIC_CAPACITY_UNIT",
+    "CLAIMS_REMAIN_MUTABLE_WORK_AUTHORITY",
+    "HANDOFF_AND_TAKEOVER_DO_NOT_SYNTHESIZE_WORK_AUTHORITY",
+    "EXACT_HEAD_REOBSERVATION_REQUIRED_BEFORE_MUTATION",
+    "CURRENT_ARRIVAL_MUST_STILL_PASS_GSCC_GSE_GACR_F1"
+  ]
+}

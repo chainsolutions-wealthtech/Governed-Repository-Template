@@ -111,6 +111,22 @@ Dans un repository cible déjà remis par handoff, suivre la gouvernance locale 
 Dans un repository cible initialisé, le point d'entrée préféré d'un agent est le workflow local décrit dans `docs/LOCAL_GOVERNED_ENTRY.md`. Le premier agent après bootstrap doit terminer `FIRST_AGENT_BOOTSTRAP` avant tout travail fonctionnel mutable.
 
 
+## Reconstruction d'un agent déjà connu
+
+Après une release valide, un agent peut reconstruire son contexte durable sans rejouer First Touch en utilisant la projection read-only :
+
+`python3 scripts/gacr_agent_reconstruction.py --alias <ALIAS>`
+
+ou les sélecteurs `--logical-agent-id` / `--session-id`.
+
+Contrat complet :
+
+`docs/control-plane/AGENT_RECONSTRUCTION_SKELETON.md`
+
+La projection recompose `logical_agent_id → sessions → provider contexts → continuity bus → work/claims/dispatches → takeover/forensics → checkpoint/handoff`.
+
+Elle ne remplace jamais l'identité de l'arrivée courante, ne renouvelle pas de lease et ne crée aucune autorité. Une nouvelle conversation/provider surface doit toujours être corrélée par le chemin canonique GSCC → GSE → GACR.
+
 ## Jonction après release
 
 Après la release GSCC→GSE→GACR→F1, ne pas recréer First Touch, GSE ou GACR. Reprendre la même arrivée/session et suivre la carte maître :
