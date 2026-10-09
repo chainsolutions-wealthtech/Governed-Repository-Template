@@ -29,6 +29,30 @@ ARRIVAL
 → normal governed repository workflow
 ```
 
+## Read-only cold-start reconstruction aid
+
+After this authority has been read, an arriving provider/chat/runtime surface MAY inspect the persisted history of a known logical agent before classification by using:
+
+`scripts/gacr_agent_reconstruction.py`
+
+Canonical composition contract:
+
+`.governance/agent-reconstruction-skeleton.json`
+
+Human-readable path:
+
+`docs/control-plane/AGENT_RECONSTRUCTION_SKELETON.md`
+
+This reconstruction is strictly read-only and projection-only. It may recover historical aliases, logical-agent/session/provider-context relationships, continuity bus references, work/claim/dispatch links, takeover/forensic evidence and checkpoint/handoff pointers.
+
+It MUST NOT:
+- classify the current arrival as CONTINUATION by itself;
+- bind or resume a current session;
+- create a logical identity, session, claim, dispatch or lease;
+- grant admission, invocation or mutation authority.
+
+The current arrival MUST still continue through the normal persisted GSCC → GSE → GACR → F1 gates using its own observable evidence.
+
 ## Machine-readable sequential router
 
 This document is the human-readable authority for the canonical pre-entry router.
