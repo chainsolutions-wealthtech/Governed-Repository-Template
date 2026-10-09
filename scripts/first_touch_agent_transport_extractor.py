@@ -17,7 +17,7 @@ EXPECTED={
   "connection":["connection_ref","connection_ref_origin","gscc_arrival_ref","transport_subject_ref","connection_method","surface_class","transport","transport_type","transport_layer","transport_surface","connector_name","connector_type","connector_version","api_proxy","direct_connector","github_tool_surface","user_agent","region"],
   "tool":["name","operation","category","success"],
   "github":["repository_full_name","repository_id","owner_login","owner_id","visibility","default_branch","branch","head_sha","actor_login","actor_id","permissions","installation_id"],
-  "request":["request_id","correlation_id","trace_id","idempotency_key","issued_at","observed_at"]
+  "request":["request_id","correlation_id","trace_id","idempotency_key","issued_at","observed_at","logical_agent_alias"]
 }
 
 def _value(source:dict[str,Any], key:str)->Any:
@@ -104,6 +104,7 @@ def _provider_envelope_to_host(payload:dict[str,Any])->dict[str,Any]:
       "idempotency_key":request.get("idempotency_key","UNAVAILABLE"),
       "issued_at":request.get("issued_at","UNAVAILABLE"),
       "observed_at":request.get("observed_at","UNAVAILABLE"),
+      "logical_agent_alias":request.get("logical_agent_alias","UNAVAILABLE"),
       "connection_ref_origin":identity.get("connection_ref_origin","UNAVAILABLE"),
       "gscc_arrival_ref":((payload.get("gscc_arrival") or {}).get("arrival_ref","UNAVAILABLE") if isinstance(payload.get("gscc_arrival"),dict) else "UNAVAILABLE"),
       "transport_subject_ref":((payload.get("gscc_arrival") or {}).get("transport_subject_ref","UNAVAILABLE") if isinstance(payload.get("gscc_arrival"),dict) else "UNAVAILABLE"),
