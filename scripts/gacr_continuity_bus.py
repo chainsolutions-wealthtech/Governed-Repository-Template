@@ -31,8 +31,9 @@ EVENT_KINDS = {
     "REVIEW_RESULT", "SCOPE_UPDATE", "YIELD", "HANDOFF", "BLOCKER",
     "RECOVERY_REQUEST", "LOOP_TICK",
 }
-FINAL_EVENT_STATES = {"RESPONDED", "EXPIRED", "CANCELLED"}
+FINAL_EVENT_STATES = {"ACKED", "RESPONDED", "EXPIRED", "CANCELLED"}
 FINAL_ROUTE_STATES = {"RESPONDED", "EXPIRED", "CANCELLED"}
+NON_REGRESSIBLE_ROUTE_STATES = {"ACKED", "RESPONDED", "EXPIRED", "CANCELLED"}
 CONTROL_MODE = "GSCC_CONTROL_CHANNEL"
 PUSH_MODE = "EXTERNAL_BRIDGE"
 FALLBACK_MODE = "POLL_REPOSITORY"
@@ -1000,6 +1001,21 @@ def reconcile_early_supervision_docs(
     return changes
 
 
+def _reconcile_parent_event_state(event: dict) -> str:
+    states = {route.get("delivery_state") for route in event.get("routes", [])}
+    if not states:
+        return str(event.get("state") or "ROUTED")
+    if states <= {"RESPONDED"}:
+        return "RESPONDED"
+    if states <= {"ACKED", "RESPONDED"}:
+        return "ACKED"
+    if states <= {"DELIVERED", "ACKED", "RESPONDED"}:
+        return "DELIVERED"
+    if "FALLBACK_POLL_REQUIRED" in states:
+        return "FALLBACK_POLL_REQUIRED"
+    return "ROUTED"
+
+
 def reconcile_dispatch_delivery_docs(state: dict, dispatches_doc: dict, *, timestamp: datetime) -> list[dict]:
     changes = []
     dispatch_index = {
@@ -1031,13 +1047,17 @@ def reconcile_dispatch_delivery_docs(state: dict, dispatches_doc: dict, *, times
                     changes.append({"event_id": event.get("event_id"), "target_session_id": route.get("target_session_id"), "state": "ACKED"})
                 elif (
                     status == "FALLBACK_POLL_REQUIRED"
-                    and route.get("delivery_state") not in FINAL_ROUTE_STATES
+                    and route.get("delivery_state") not in NON_REGRESSIBLE_ROUTE_STATES
                     and route.get("delivery_state") != "FALLBACK_POLL_REQUIRED"
                 ):
                     route["delivery_state"] = "FALLBACK_POLL_REQUIRED"
                     if FALLBACK_MODE not in route.setdefault("delivery_modes", []):
                         route["delivery_modes"].append(FALLBACK_MODE)
                     changes.append({"event_id": event.get("event_id"), "target_session_id": route.get("target_session_id"), "state": "FALLBACK_POLL_REQUIRED"})
+            parent_state = _reconcile_parent_event_state(event)
+            if event.get("state") != parent_state:
+                event["state"] = parent_state
+                changes.append({"event_id": event.get("event_id"), "state": parent_state})
         alerts = continuity.get("supervision_alerts") or []
         for alert in alerts:
             dispatch = dispatch_index.get(alert.get("dispatch_id"))

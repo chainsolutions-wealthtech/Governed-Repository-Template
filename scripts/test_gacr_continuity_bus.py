@@ -450,7 +450,8 @@ def main():
         collision_domains=["gacr:continuity:delivery"],
         config=endpoint_config,
     )
-    control_route = control_routed["event"]["routes"][0]
+    control_event = control_routed["event"]
+    control_route = control_event["routes"][0]
     assert control_route["preferred_delivery_mode"] == "GSCC_CONTROL_CHANNEL"
     assert control_route["delivery_modes"] == ["GSCC_CONTROL_CHANNEL", "EXTERNAL_BRIDGE", "POLL_REPOSITORY"]
     control_item = next(x for x in control_dispatches["items"] if x.get("dispatch_kind") == "CONTINUITY_EVENT")
@@ -458,6 +459,49 @@ def main():
     assert control_item["status"] == "READY"
     assert control_route["control_evidence"]["transport_proven"] is True
     assert control_route["control_evidence"]["session_reachability"] == "VERIFIED"
+
+    control_item["status"] = "DISPATCHED"
+    control_item["delivered_at"] = bus.iso(NOW + timedelta(seconds=1))
+    control_item["delivery_evidence_ref"] = "github-issue-comment:delivered"
+    bus.reconcile_dispatch_delivery_docs(
+        control_state, control_dispatches, timestamp=NOW + timedelta(seconds=1)
+    )
+    assert control_route["delivery_state"] == "DELIVERED"
+    assert control_event["state"] == "DELIVERED", "B12 delivery advances parent event"
+
+    control_item["status"] = "ACKNOWLEDGED"
+    control_item["ack"] = {
+        "delivery_state":"ACKNOWLEDGED",
+        "observed_at":bus.iso(NOW + timedelta(seconds=2)),
+        "evidence_ref":"github-issue-comment:ack",
+    }
+    bus.reconcile_dispatch_delivery_docs(
+        control_state, control_dispatches, timestamp=NOW + timedelta(seconds=2)
+    )
+    assert control_route["delivery_state"] == "ACKED"
+    assert control_event["state"] == "ACKED", "B12 ACK advances parent event"
+
+    # ACK is terminal for expiry/reconciliation but remains respondable by the
+    # explicit response path because ACKED is not a FINAL_ROUTE_STATE.
+    bus.tick_docs(
+        control_state, control_sessions, control_dispatches,
+        timestamp=NOW + timedelta(hours=5),
+        config=endpoint_config,
+    )
+    assert control_event["state"] == "ACKED", "acknowledged event must not expire as stale"
+    responded_after_ack = bus.respond_event_docs(
+        control_state, control_sessions,
+        continuity_id="GRT-CONT-DEMO-01",
+        event_id=control_event["event_id"],
+        session_id="session-b",
+        response_ref="github-issue-comment:response-after-ack",
+        observed_head=HEAD,
+        current_head=HEAD,
+        evidence_ref="github-issue-comment:response-after-ack",
+        timestamp=NOW + timedelta(hours=5, seconds=1),
+    )
+    assert responded_after_ack["status"] == "CONTINUITY_EVENT_RESPONDED"
+    assert control_event["state"] == "RESPONDED"
 
     context_history_session = session("session-context-history", provider="chatgpt")
     current_context_id = bus.provider_context_descriptor(context_history_session)["provider_context_id"]
