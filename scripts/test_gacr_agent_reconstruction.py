@@ -293,9 +293,43 @@ def test_reconstruction() -> None:
         assert_true(json.loads(ambiguous.stdout)["error"] == "ALIAS_AMBIGUOUS", "ambiguous alias error")
 
 
+def test_source_forge_projection_if_available() -> None:
+    if not (REPO_ROOT / ".template-source").exists():
+        return
+    continuity_path = REPO_ROOT / ".governance" / "control-plane-state" / "gacr-continuities.json"
+    if not continuity_path.exists():
+        return
+    continuity = json.loads(continuity_path.read_text(encoding="utf-8"))
+    forge_ids = {
+        str(logical.get("logical_agent_id"))
+        for item in continuity.get("items", [])
+        for logical in (item.get("logical_agents") or [])
+        if str(logical.get("human_alias") or "").casefold() == "forge"
+        and logical.get("logical_agent_id")
+    }
+    if not forge_ids:
+        return
+    assert_true(len(forge_ids) == 1, "source FORGE alias must remain exact")
+    result = run(REPO_ROOT, "--alias", "FORGE", "--compact")
+    assert_true(result.returncode == 0, result.stderr or result.stdout)
+    value = json.loads(result.stdout)
+    expected = next(iter(forge_ids))
+    assert_true(value["block"]["logical_agent_id"] == expected, "live FORGE logical identity")
+    assert_true(value["block"]["session_count"] >= 1, "live FORGE has reconstructable session history")
+    assert_true(value["communication_bus"]["continuity_ids"], "live FORGE retains continuity bus")
+    assert_true(value["grants_admission"] is False, "live reconstruction grants no admission")
+    assert_true(value["grants_claim"] is False, "live reconstruction grants no claim")
+    assert_true(value["grants_mutation_authority"] is False, "live reconstruction grants no mutation authority")
+    assert_true(
+        value["current_arrival_rule"] == "RECONSTRUCTION_DOES_NOT_BIND_CURRENT_ARRIVAL_RUN_GSCC_GSE_GACR_F1",
+        "live reconstruction cannot impersonate prior provider context",
+    )
+
+
 def main() -> None:
     validate_repository_contract()
     test_reconstruction()
+    test_source_forge_projection_if_available()
     print("GACR_AGENT_RECONSTRUCTION_SKELETON_PASS")
 
 
