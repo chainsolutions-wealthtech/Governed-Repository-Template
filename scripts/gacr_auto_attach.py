@@ -817,6 +817,17 @@ def _record_provider_context(session: dict, observation: dict) -> dict:
     }
     contexts = session.setdefault("provider_contexts", [])
     existing = next((item for item in contexts if item.get("provider_context_id") == context_id), None)
+    if existing is None and provider_ref:
+        enrichable = [
+            item for item in contexts
+            if item.get("provider_conversation_ref") in (None, "", "UNAVAILABLE")
+            and item.get("connection_ref") == connection_ref
+            and item.get("client_instance_id") == client_instance_id
+        ]
+        if len(enrichable) == 1:
+            existing = enrichable[0]
+            existing["provider_context_id"] = context_id
+            existing["provider_context_id_provenance"] = "DERIVED_GACR_SESSION_CONTEXT"
     if existing is None:
         contexts.append(record)
         contexts.sort(key=lambda item: item.get("provider_context_id") or "")
