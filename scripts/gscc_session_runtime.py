@@ -333,6 +333,61 @@ def prepare(db:Path,run_id:str,issue_number:int)->dict[str,Any]:
     finally: conn.close()
     return {"schema":"gscc-session-runtime/v1","runtime_id":runtime_id,"state":"WAITING_Q9_ACK","last_gate":"Q8","next_gate":"Q9","dispatch":dispatch,"authority_granted":False}
 
+def _build_gacr_attach_payload(
+    rt:dict[str,Any],
+    packet:dict[str,Any],
+    control_evidence:dict[str,Any],
+    alias_attach_proof:dict[str,Any]|None,
+)->dict[str,Any]:
+    value={
+      "schema":"gacr-host-event/v1","event":"attach",
+      "provider":packet["sections"]["provider"].get("provider"),
+      "connection_ref":rt["connection_ref"],
+      "client_instance_id":_id("GSCC-CLIENT-",rt["arrival_ref"]),
+      "agent":alias_attach_proof["logical_agent_id"] if alias_attach_proof else rt["identity_id"],
+      "logical_agent_alias":_requested_alias(packet),
+      "observed_head":packet["sections"]["github"].get("head_sha"),
+      "branch":packet["sections"]["github"].get("branch"),
+      "capabilities":["GACR_AUTO_ATTACH","GACR_PRESENCE_FIRST","COMMAND_RECEIVE","COMMAND_ACK","CHALLENGE_RESPONSE"],
+      "wake_channels":["POLL_REPOSITORY"],
+      "last_evidence":control_evidence["evidence_ref"],
+      "entry_action":"CONTINUE_GOVERNED_WORK",
+      "connection_intent":"OBSERVE",
+      "agent_role":"qualification-client",
+    }
+    if alias_attach_proof:
+      value.update({
+        "same_logical_agent_session_id":alias_attach_proof["same_logical_agent_session_id"],
+        "continuity_id":alias_attach_proof["continuity_id"],
+        "continuity_evidence_ref":alias_attach_proof["continuity_evidence_ref"],
+      })
+    return value
+
+
+def _canonical_alias_attach_proof(
+    packet:dict[str,Any],
+    *,
+    sessions_path:Path,
+    continuity_path:Path,
+    forensics_path:Path,
+)->dict[str,Any]|None:
+    if not _requested_alias(packet):
+        return None
+    sessions=(
+        json.loads(sessions_path.read_text(encoding="utf-8"))
+        if sessions_path.exists() else {"sessions":[]}
+    )
+    continuity_state=(
+        json.loads(continuity_path.read_text(encoding="utf-8"))
+        if continuity_path.exists() else default_continuity_state()
+    )
+    forensics=(
+        json.loads(forensics_path.read_text(encoding="utf-8"))
+        if forensics_path.exists() else {"items":[]}
+    )
+    return resolve_alias_attach_proof(packet,sessions,continuity_state,forensics)
+
+
 def control(
     db:Path,
     runtime_id:str,
@@ -352,11 +407,19 @@ def control(
       result=apply_host_control_event(store,payload,evidence_ref=f"gscc-runtime:{runtime_id}:{payload.get('event')}",observed_at=observed_at)
       dispatch=store["items"][0]; state=rt["state"]
       if payload.get("event")=="command_ack":
-          new_state="WAITING_Q9_RESPONSE"
+          if state not in {"WAITING_Q9_ACK","WAITING_Q9_RECHALLENGE_ACK"}:
+              raise ValueError(f"runtime is not waiting for Q9 ACK: {state}")
+          new_state=(
+              "WAITING_Q9_RECHALLENGE_RESPONSE"
+              if state=="WAITING_Q9_RECHALLENGE_ACK"
+              else "WAITING_Q9_RESPONSE"
+          )
           conn.execute("UPDATE gscc_pre_gse_control_challenges SET dispatch_json=?,status='ACKNOWLEDGED',updated_at=? WHERE challenge_row_id=?",(json.dumps(dispatch,sort_keys=True),now_iso(),row[0]))
           conn.execute("UPDATE gscc_session_runtime SET state=?,updated_at=? WHERE runtime_id=?",(new_state,now_iso(),runtime_id))
           conn.commit()
           return {"runtime_id":runtime_id,"state":new_state,"result":result,"next_gate":"Q9","authority_granted":False}
+      if state not in {"WAITING_Q9_RESPONSE","WAITING_Q9_RECHALLENGE_RESPONSE"}:
+          raise ValueError(f"runtime is not waiting for Q9 response: {state}")
       if result.get("fresh_liveness") is not True: raise ValueError("fresh challenge response required")
       control_evidence={
         "status":"VERIFIED","state":"REACHABLE","evidence_ref":f"gscc-runtime:{runtime_id}:challenge",
@@ -385,23 +448,12 @@ def control(
           requested_logical_agent_alias=_requested_alias(packet),
       )
       projection=project_to_gse(conn,identity_id=rt["identity_id"],capture_id=rt["capture_id"],classification=entry["classification"])
-      alias_attach_proof=None
-      if _requested_alias(packet):
-          sessions=(
-              json.loads(sessions_path.read_text(encoding="utf-8"))
-              if sessions_path.exists() else {"sessions":[]}
-          )
-          continuity_state=(
-              json.loads(continuity_path.read_text(encoding="utf-8"))
-              if continuity_path.exists() else default_continuity_state()
-          )
-          forensics=(
-              json.loads(forensics_path.read_text(encoding="utf-8"))
-              if forensics_path.exists() else {"items":[]}
-          )
-          alias_attach_proof=resolve_alias_attach_proof(
-              packet,sessions,continuity_state,forensics
-          )
+      alias_attach_proof=_canonical_alias_attach_proof(
+          packet,
+          sessions_path=sessions_path,
+          continuity_path=continuity_path,
+          forensics_path=forensics_path,
+      )
       conn.execute(
         "INSERT OR REPLACE INTO gscc_session_bindings(binding_id,arrival_ref,identity_id,gse_identity_id,gacr_session_id,connection_ref,binding_status,binding_level,evidence_ref,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
         (_id("GSCC-BIND-",rt["arrival_ref"]),rt["arrival_ref"],rt["identity_id"],rt["identity_id"],None,rt["connection_ref"],"GSE_VERIFIED",None,gse_state.get("evidence_ref"),now_iso(),now_iso()),
@@ -410,25 +462,94 @@ def control(
       conn.commit()
     finally: conn.close()
     _route(db,runtime_id,"Q10_GSE","Q10_GSE_VERIFIED",gse_state,rt["identity_id"])
-    gacr_attach={
-      "schema":"gacr-host-event/v1","event":"attach","provider":packet["sections"]["provider"].get("provider"),
-      "connection_ref":rt["connection_ref"],"client_instance_id":_id("GSCC-CLIENT-",rt["arrival_ref"]),
-      "agent":alias_attach_proof["logical_agent_id"] if alias_attach_proof else rt["identity_id"],
-      "logical_agent_alias":_requested_alias(packet),
-      "observed_head":packet["sections"]["github"].get("head_sha"),"branch":packet["sections"]["github"].get("branch"),
-      "capabilities":["GACR_AUTO_ATTACH","GACR_PRESENCE_FIRST","COMMAND_RECEIVE","COMMAND_ACK","CHALLENGE_RESPONSE"],
-      "wake_channels":["POLL_REPOSITORY"],"last_evidence":control_evidence["evidence_ref"],
-      "entry_action":"CONTINUE_GOVERNED_WORK","connection_intent":"OBSERVE","agent_role":"qualification-client",
-    }
-    if alias_attach_proof:
-      gacr_attach.update({
-        "same_logical_agent_session_id":alias_attach_proof["same_logical_agent_session_id"],
-        "continuity_id":alias_attach_proof["continuity_id"],
-        "continuity_evidence_ref":alias_attach_proof["continuity_evidence_ref"],
-      })
+    gacr_attach=_build_gacr_attach_payload(rt,packet,control_evidence,alias_attach_proof)
     return {
       "runtime_id":runtime_id,"state":"GSE_VERIFIED_WAITING_GACR","last_gate":"Q10_GSE","next_gate":"Q2_GACR",
       "gse_state":gse_state,"gse_projection":projection,
+      "logical_agent_alias_attach_proof":alias_attach_proof,
+      "gacr_attach":gacr_attach,
+      "authority_granted":False,
+    }
+
+
+def rechallenge(db:Path,runtime_id:str)->dict[str,Any]:
+    conn=sqlite3.connect(db)
+    try:
+      rt=_load_runtime(conn,runtime_id)
+      if rt["state"] not in {"WAITING_Q9_ACK","WAITING_Q9_RESPONSE"}:
+          raise ValueError(f"runtime cannot be rechallenged from state {rt['state']}")
+      _,packet=_packet(conn,rt["run_id"])
+      row=conn.execute(
+          "SELECT dispatch_json FROM gscc_pre_gse_control_challenges WHERE runtime_id=?",
+          (runtime_id,),
+      ).fetchone()
+      previous=json.loads(row[0]) if row else {}
+      dispatch=_pre_gse_dispatch(rt,packet)
+      if previous.get("dispatch_id"):
+          dispatch["supersedes_dispatch_id"]=previous["dispatch_id"]
+      dispatch["recovery_reason"]="FRESH_Q9_AFTER_DOWNSTREAM_OR_EXPIRED_CONTROL"
+      created=now_iso()
+      row_id=_id("GSCC-Q9-",runtime_id)
+      conn.execute(
+          "INSERT OR REPLACE INTO gscc_pre_gse_control_challenges("
+          "challenge_row_id,runtime_id,issue_number,dispatch_json,status,created_at,updated_at"
+          ") VALUES(?,?,?,?,?,?,?)",
+          (row_id,runtime_id,rt["issue_number"],json.dumps(dispatch,sort_keys=True),"READY",created,created),
+      )
+      conn.execute(
+          "UPDATE gscc_session_runtime SET "
+          "state='WAITING_Q9_RECHALLENGE_ACK',control_evidence_json=NULL,gse_state_json=NULL,"
+          "last_gate='Q8',next_gate='Q9',updated_at=? WHERE runtime_id=?",
+          (created,runtime_id),
+      )
+      conn.commit()
+    finally:
+      conn.close()
+    return {
+      "schema":"gscc-session-runtime-rechallenge/v1",
+      "runtime_id":runtime_id,
+      "state":"WAITING_Q9_RECHALLENGE_ACK",
+      "last_gate":"Q8",
+      "next_gate":"Q9",
+      "dispatch":dispatch,
+      "authority_granted":False,
+    }
+
+
+def resume_gacr_attach(
+    db:Path,
+    runtime_id:str,
+    *,
+    sessions_path:Path=SESSIONS_STATE,
+    continuity_path:Path=CONTINUITY_STATE,
+    forensics_path:Path=FORENSICS_STATE,
+)->dict[str,Any]:
+    conn=sqlite3.connect(db)
+    try:
+      rt=_load_runtime(conn,runtime_id)
+      if rt["state"]!="GSE_VERIFIED_WAITING_GACR":
+          raise ValueError(f"runtime is not waiting for GACR resume: {rt['state']}")
+      _,packet=_packet(conn,rt["run_id"])
+      control_evidence=json.loads(rt["control_evidence_json"] or "{}")
+      if control_evidence.get("status")!="VERIFIED":
+          raise ValueError("verified Q9 control evidence required for GACR resume")
+      alias_attach_proof=_canonical_alias_attach_proof(
+          packet,
+          sessions_path=sessions_path,
+          continuity_path=continuity_path,
+          forensics_path=forensics_path,
+      )
+      gacr_attach=_build_gacr_attach_payload(
+          rt,packet,control_evidence,alias_attach_proof
+      )
+    finally:
+      conn.close()
+    return {
+      "schema":"gscc-session-runtime-gacr-resume/v1",
+      "runtime_id":runtime_id,
+      "state":"GSE_VERIFIED_WAITING_GACR",
+      "last_gate":"Q10_GSE",
+      "next_gate":"Q2_GACR",
       "logical_agent_alias_attach_proof":alias_attach_proof,
       "gacr_attach":gacr_attach,
       "authority_granted":False,
@@ -653,12 +774,16 @@ def main()->None:
     p=argparse.ArgumentParser(); sub=p.add_subparsers(dest="command",required=True)
     a=sub.add_parser("prepare"); a.add_argument("--db",required=True); a.add_argument("--run-id",required=True); a.add_argument("--issue-number",required=True,type=int)
     b=sub.add_parser("control"); b.add_argument("--db",required=True); b.add_argument("--runtime-id",required=True); b.add_argument("--payload-json",required=True); b.add_argument("--observed-at",required=True)
+    q=sub.add_parser("rechallenge"); q.add_argument("--db",required=True); q.add_argument("--runtime-id",required=True)
+    x=sub.add_parser("resume-gacr"); x.add_argument("--db",required=True); x.add_argument("--runtime-id",required=True)
     g=sub.add_parser("bind-gacr"); g.add_argument("--db",required=True); g.add_argument("--runtime-id",required=True); g.add_argument("--sessions",required=True); g.add_argument("--current-head",required=True)
     r=sub.add_parser("release-f1"); r.add_argument("--db",required=True); r.add_argument("--runtime-id",required=True); r.add_argument("--receipt-json",required=True); r.add_argument("--current-head",required=True)
     s=sub.add_parser("status"); s.add_argument("--db",required=True); s.add_argument("--runtime-id",required=True)
     args=p.parse_args()
     if args.command=="prepare": result=prepare(Path(args.db),args.run_id,args.issue_number)
     elif args.command=="control": result=control(Path(args.db),args.runtime_id,json.loads(args.payload_json),args.observed_at)
+    elif args.command=="rechallenge": result=rechallenge(Path(args.db),args.runtime_id)
+    elif args.command=="resume-gacr": result=resume_gacr_attach(Path(args.db),args.runtime_id)
     elif args.command=="bind-gacr": result=bind_gacr(Path(args.db),args.runtime_id,Path(args.sessions),args.current_head)
     elif args.command=="release-f1": result=release_f1(Path(args.db),args.runtime_id,json.loads(args.receipt_json),args.current_head)
     else:

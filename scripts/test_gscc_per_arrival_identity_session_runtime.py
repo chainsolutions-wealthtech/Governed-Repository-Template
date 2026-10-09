@@ -9,8 +9,8 @@ from provider_first_tool_hook import build_envelope
 from gscc_arrival_identity import mint
 from gscc_persisted_entry_pipeline import run_pipeline
 from gscc_session_runtime import (
-    prepare, control, release_f1, resolve_alias_binding_intent,
-    resolve_alias_attach_proof,
+    prepare, control, rechallenge, resume_gacr_attach, release_f1,
+    resolve_alias_binding_intent, resolve_alias_attach_proof,
 )
 
 REPO="chainsolutions-wealthtech/Governed-Repository-Template"
@@ -71,7 +71,12 @@ def pass_q9(db,runtime,**control_kwargs):
       "delivery_state":"ACKNOWLEDGED",
     }
     a=control(db,runtime["runtime_id"],ack,ack_at,**control_kwargs)
-    assert a["state"]=="WAITING_Q9_RESPONSE",a
+    expected_ack_state=(
+        "WAITING_Q9_RECHALLENGE_RESPONSE"
+        if runtime.get("state")=="WAITING_Q9_RECHALLENGE_ACK"
+        else "WAITING_Q9_RESPONSE"
+    )
+    assert a["state"]==expected_ack_state,a
     resp={
       "event":"challenge_response",
       "session_id":d["target_session_id"],
@@ -186,7 +191,24 @@ def main():
           continuity_path=continuity_path,
           forensics_path=forensics_path,
         )
-        g2=pass_q9(db,r2)
+
+        d2=r2["dispatch"]; cmd2=d2["command"]
+        issued2=datetime.fromisoformat(cmd2["issued_at"].replace("Z","+00:00"))
+        ack2={
+          "event":"command_ack","session_id":d2["target_session_id"],
+          "dispatch_id":d2["dispatch_id"],"command_id":cmd2["command_id"],
+          "correlation_id":cmd2["correlation_id"],"delivery_state":"ACKNOWLEDGED",
+        }
+        ack2_result=control(
+          db,r2["runtime_id"],ack2,(issued2+timedelta(seconds=5)).isoformat()
+        )
+        assert ack2_result["state"]=="WAITING_Q9_RESPONSE",ack2_result
+        refreshed=rechallenge(db,r2["runtime_id"])
+        assert refreshed["runtime_id"]==r2["runtime_id"],refreshed
+        assert refreshed["state"]=="WAITING_Q9_RECHALLENGE_ACK",refreshed
+        assert refreshed["dispatch"]["dispatch_id"]!=r2["dispatch"]["dispatch_id"],refreshed
+        assert refreshed["dispatch"]["supersedes_dispatch_id"]==r2["dispatch"]["dispatch_id"],refreshed
+        g2=pass_q9(db,refreshed)
         assert g1["state"]=="GSE_VERIFIED_WAITING_GACR",g1
         assert g2["state"]=="GSE_VERIFIED_WAITING_GACR",g2
         assert g1["gacr_attach"]["connection_ref"] != g2["gacr_attach"]["connection_ref"]
@@ -199,6 +221,16 @@ def main():
         assert g1["gacr_attach"]["continuity_evidence_ref"]=="github-issue-comment:forge-proof",g1
         assert g1["logical_agent_alias_attach_proof"]["grants_claim"] is False
         assert g1["logical_agent_alias_attach_proof"]["grants_mutation_authority"] is False
+
+        resumed_attach=resume_gacr_attach(
+          db,r1["runtime_id"],
+          sessions_path=sessions_path,
+          continuity_path=continuity_path,
+          forensics_path=forensics_path,
+        )
+        assert resumed_attach["state"]=="GSE_VERIFIED_WAITING_GACR",resumed_attach
+        assert resumed_attach["gacr_attach"]==g1["gacr_attach"],resumed_attach
+        assert resumed_attach["authority_granted"] is False
 
         missing_forensics={"items":[]}
         try:
