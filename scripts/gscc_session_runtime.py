@@ -243,10 +243,15 @@ def _admission(packet:dict[str,Any], arrival_ref:str, connection_ref:str, runtim
       },
     }
 
-def _pre_gse_dispatch(runtime:dict[str,Any], packet:dict[str,Any])->dict[str,Any]:
+def _pre_gse_dispatch(
+    runtime:dict[str,Any],
+    packet:dict[str,Any],
+    *,
+    generation_salt:str|None=None,
+)->dict[str,Any]:
     issued=datetime.now(timezone.utc).replace(microsecond=0)
     expires=issued+timedelta(minutes=5)
-    seed=f"{runtime['runtime_id']}:{runtime['connection_ref']}:{issued.isoformat()}"
+    seed=f"{runtime['runtime_id']}:{runtime['connection_ref']}:{issued.isoformat()}:{generation_salt or 'initial'}"
     nonce=_id("GSCC-NONCE-",seed)
     command_id=_id("GSCC-CMD-",seed)
     challenge_id=_id("GSCC-CH-",seed,command_id)
@@ -484,9 +489,13 @@ def rechallenge(db:Path,runtime_id:str)->dict[str,Any]:
           (runtime_id,),
       ).fetchone()
       previous=json.loads(row[0]) if row else {}
-      dispatch=_pre_gse_dispatch(rt,packet)
-      if previous.get("dispatch_id"):
-          dispatch["supersedes_dispatch_id"]=previous["dispatch_id"]
+      previous_dispatch_id=previous.get("dispatch_id")
+      dispatch=_pre_gse_dispatch(
+          rt,packet,
+          generation_salt=f"rechallenge:{previous_dispatch_id or 'none'}",
+      )
+      if previous_dispatch_id:
+          dispatch["supersedes_dispatch_id"]=previous_dispatch_id
       dispatch["recovery_reason"]="FRESH_Q9_AFTER_DOWNSTREAM_OR_EXPIRED_CONTROL"
       created=now_iso()
       row_id=_id("GSCC-Q9-",runtime_id)
