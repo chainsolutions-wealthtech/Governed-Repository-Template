@@ -5,7 +5,7 @@
   "grants_task_authority": false,
   "grants_claim": false,
   "grants_mutation_authority": false,
-  "revision": 2,
+  "revision": 3,
   "items": [
     {
       "continuity_id": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
@@ -116,11 +116,42 @@
             "session-ba6f8db786eb9a8aa11865f2"
           ],
           "session_ids": [
-            "session-ba6f8db786eb9a8aa11865f2"
+            "session-ba6f8db786eb9a8aa11865f2",
+            "session-fb2dc33154cdcc8b282c8c02"
           ],
           "participant_ids": [],
           "scope_ids": [],
           "provider_contexts": [
+            {
+              "provider_context_id": "GACR-PC-19a50bad8f811bb3",
+              "provider_context_id_provenance": "DERIVED_GACR_SESSION_CONTEXT",
+              "session_id": "session-fb2dc33154cdcc8b282c8c02",
+              "provider": "chatgpt",
+              "provider_conversation_ref": null,
+              "provider_conversation_ref_status": "UNAVAILABLE",
+              "client_instance_id": "GSCC-CLIENT-603b5092ccebd172e17af8cc",
+              "connection_ref": "GSCC-CONN-a845ad476a5a0826376fbab351f57675",
+              "runtime_surface_ref": null,
+              "runtime_surface_ref_provenance": null,
+              "repository_surface_ref": null,
+              "repository_surface_ref_provenance": null,
+              "provider_connector_app_id": null,
+              "provider_connector_client_id": null,
+              "provider_connector_installation_id": null,
+              "provider_connector_slug": null,
+              "provider_native_identity_status": "UNAVAILABLE",
+              "provider_private_values_invented": false,
+              "provider_conversation_ref_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+              "client_instance_id_provenance": "DECLARED_BY_AGENT_OR_CLIENT",
+              "connection_ref_provenance": "DECLARED_BY_AGENT_OR_CLIENT",
+              "provider_connector_app_id_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+              "provider_connector_client_id_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+              "provider_connector_installation_id_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+              "provider_connector_slug_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+              "first_seen_at": "2026-10-09T19:32:43+00:00",
+              "last_seen_at": "2026-10-09T19:32:43+00:00",
+              "seen_count": 1
+            },
             {
               "provider_context_id": "GACR-PC-5da6dfba924d3440",
               "provider_context_id_provenance": "DERIVED_GACR_PROJECTION",
@@ -146,8 +177,8 @@
           "grants_task_authority": false,
           "grants_claim": false,
           "grants_mutation_authority": false,
-          "session_count": 1,
-          "provider_context_count": 1
+          "session_count": 2,
+          "provider_context_count": 2
         }
       ],
       "events": [],
