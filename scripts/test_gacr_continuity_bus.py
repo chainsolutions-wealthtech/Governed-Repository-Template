@@ -348,6 +348,88 @@ def main():
         assert with_bridge["wake_route"]["preferred"] == "EXTERNAL_BRIDGE"
         assert with_bridge["wake_route"]["push_capable"] is True
 
+    alias_state = base_state()
+    alias_state["items"][0]["logical_agents"] = [{
+        "logical_agent_id": "agent-forge",
+        "human_alias": "FORGE",
+        "human_alias_provenance": "OWNER_ASSIGNED",
+        "reference_session_ids": ["session-b"],
+        "session_ids": ["session-b"],
+        "provider_contexts": [],
+        "projection_only": True,
+        "grants_task_authority": False,
+        "grants_claim": False,
+        "grants_mutation_authority": False,
+    }]
+    alias_sessions = {
+        "sessions": [
+            session("session-a", agent="agent-emitter"),
+            session("session-b", agent="agent-forge"),
+            session("session-c", live=False, agent="agent-other"),
+        ]
+    }
+    alias_targets, alias_resolution = bus.resolve_event_targets(
+        alias_state,
+        alias_sessions,
+        continuity_id="GRT-CONT-DEMO-01",
+        target_logical_agent_alias="forge",
+    )
+    assert alias_targets == ["session-b"]
+    assert alias_resolution["logical_agent_id"] == "agent-forge"
+    assert alias_resolution["grants_mutation_authority"] is False
+    alias_emit_dispatches = {"schema_version": "1.0.0", "revision": 0, "items": []}
+    alias_emitted = bus.emit_event_docs(
+        alias_state, alias_sessions, alias_emit_dispatches,
+        continuity_id="GRT-CONT-DEMO-01",
+        from_session_id="session-a",
+        target_session_ids=alias_targets,
+        event_kind="INSTRUCTION",
+        payload_ref="github-issue-comment:alias-instruction",
+        observed_head=HEAD,
+        current_head=HEAD,
+        evidence_ref="github-issue-comment:alias-evidence",
+        timestamp=NOW,
+        scope_id="lab",
+        collision_domains=["gacr:continuity:delivery"],
+    )
+    assert alias_emitted["event"]["routes"][0]["target_session_id"] == "session-b"
+
+    try:
+        bus.resolve_event_targets(
+            alias_state, alias_sessions,
+            continuity_id="GRT-CONT-DEMO-01",
+            target_logical_agent_alias="UNKNOWN",
+        )
+    except ValueError as exc:
+        assert "LOGICAL_AGENT_ALIAS_UNKNOWN" in str(exc)
+    else:
+        raise AssertionError("unknown logical-agent alias must fail closed")
+
+    ambiguous_alias_sessions = deepcopy(alias_sessions)
+    ambiguous_alias_sessions["sessions"][2] = session("session-c", agent="agent-forge")
+    try:
+        bus.resolve_event_targets(
+            alias_state, ambiguous_alias_sessions,
+            continuity_id="GRT-CONT-DEMO-01",
+            target_logical_agent_alias="FORGE",
+        )
+    except ValueError as exc:
+        assert "not uniquely routable" in str(exc)
+    else:
+        raise AssertionError("multiple active sessions under alias must fail closed")
+
+    try:
+        bus.resolve_event_targets(
+            alias_state, alias_sessions,
+            continuity_id="GRT-CONT-DEMO-01",
+            target_session_ids=["session-b"],
+            target_logical_agent_alias="FORGE",
+        )
+    except ValueError as exc:
+        assert "choose target_session_id or target_logical_agent_alias" in str(exc)
+    else:
+        raise AssertionError("mixed direct and alias targets must fail closed")
+
     control_state = base_state()
     control_sessions = {"sessions": [session("session-a"), session("session-b", bridge=True)]}
     control_dispatches = {"schema_version": "1.0.0", "revision": 0, "items": [control_proof("session-b")]}

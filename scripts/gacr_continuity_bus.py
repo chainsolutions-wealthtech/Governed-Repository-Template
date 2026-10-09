@@ -10,6 +10,8 @@ import subprocess
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+from gacr_continuity_coordination import resolve_logical_agent_alias_docs
+
 ROOT = Path(os.environ.get("GACR_ROOT") or Path(__file__).resolve().parents[1]).resolve()
 GOV = ROOT / ".governance"
 TEMPLATE_SOURCE = (ROOT / ".template-source").exists()
@@ -1129,10 +1131,61 @@ def save_runtime(state: dict, dispatches: dict) -> None:
     write_json(DISPATCHES_PATH, dispatches)
 
 
+def resolve_event_targets(
+    state: dict,
+    sessions: dict,
+    *,
+    continuity_id: str,
+    target_session_ids: list[str] | None = None,
+    target_logical_agent_alias: str | None = None,
+) -> tuple[list[str], dict | None]:
+    explicit = normalize_targets(target_session_ids or [])
+    alias = str(target_logical_agent_alias or "").strip()
+    if explicit and alias:
+        raise ValueError("CONTINUITY_BUS_FAILED: choose target_session_id or target_logical_agent_alias, not both")
+    if explicit:
+        return explicit, None
+    if not alias:
+        raise ValueError("CONTINUITY_BUS_FAILED: at least one target is required")
+    resolution = resolve_logical_agent_alias_docs(
+        state,
+        sessions,
+        alias=alias,
+        continuity_id=continuity_id,
+    )
+    if resolution.get("routing_status") != "ROUTABLE_EXACT_SESSION":
+        raise ValueError(
+            "CONTINUITY_BUS_FAILED: logical agent alias is not uniquely routable: "
+            + str(resolution.get("routing_status") or "UNRESOLVED")
+        )
+    target = resolution.get("resolved_target_session_id")
+    if not target:
+        raise ValueError("CONTINUITY_BUS_FAILED: logical agent alias resolved no target session")
+    return [str(target)], {
+        "target_kind": "LOGICAL_AGENT_ALIAS",
+        "requested_alias": resolution.get("human_alias"),
+        "logical_agent_id": resolution.get("logical_agent_id"),
+        "resolved_target_session_id": target,
+        "routing_status": resolution.get("routing_status"),
+        "projection_only": True,
+        "grants_task_authority": False,
+        "grants_claim": False,
+        "grants_mutation_authority": False,
+    }
+
+
 def command_emit(a):
     state, sessions, dispatches = load_runtime()
     config = read_json(CONFIG_PATH, {})
-    result = emit_event_docs(state, sessions, dispatches, continuity_id=a.continuity_id, from_session_id=a.from_session_id, target_session_ids=a.target_session_id, event_kind=a.event_kind, payload_ref=a.payload_ref, observed_head=a.observed_head, current_head=git_head(), evidence_ref=a.evidence_ref, timestamp=now_utc(), scope_id=a.scope_id, collision_domains=a.collision_domain, requires_ack=a.requires_ack, correlation_id=a.correlation_id, reply_to_event_id=a.reply_to_event_id, expires_at=a.expires_at, ack_timeout_seconds=a.ack_timeout_seconds, config=config)
+    targets, alias_resolution = resolve_event_targets(
+        state,
+        sessions,
+        continuity_id=a.continuity_id,
+        target_session_ids=a.target_session_id,
+        target_logical_agent_alias=a.target_logical_agent_alias,
+    )
+    result = emit_event_docs(state, sessions, dispatches, continuity_id=a.continuity_id, from_session_id=a.from_session_id, target_session_ids=targets, event_kind=a.event_kind, payload_ref=a.payload_ref, observed_head=a.observed_head, current_head=git_head(), evidence_ref=a.evidence_ref, timestamp=now_utc(), scope_id=a.scope_id, collision_domains=a.collision_domain, requires_ack=a.requires_ack, correlation_id=a.correlation_id, reply_to_event_id=a.reply_to_event_id, expires_at=a.expires_at, ack_timeout_seconds=a.ack_timeout_seconds, config=config)
+    result["target_resolution"] = alias_resolution
     save_runtime(state, dispatches)
     print(json.dumps(result, indent=2, ensure_ascii=False))
 
@@ -1179,7 +1232,8 @@ def parser():
     emit = sub.add_parser("emit")
     emit.add_argument("--continuity-id", required=True)
     emit.add_argument("--from-session-id", required=True)
-    emit.add_argument("--target-session-id", action="append", required=True)
+    emit.add_argument("--target-session-id", action="append")
+    emit.add_argument("--target-logical-agent-alias")
     emit.add_argument("--event-kind", choices=sorted(EVENT_KINDS), required=True)
     emit.add_argument("--payload-ref", required=True)
     emit.add_argument("--observed-head", required=True)
