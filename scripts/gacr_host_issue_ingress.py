@@ -363,15 +363,39 @@ def ensure_session(payload: dict, repository: str) -> dict:
     explicit_provider = payload.get("provider")
     if existing:
         existing_provider = existing.get("provider")
-        if explicit_provider not in (None, "", "other") and existing_provider in (None, "", "other"):
+        if explicit_provider not in (None, "", "other", existing_provider) and existing_provider not in (None, "", "other"):
+            raise ValueError("provider conflict on host-event session")
+
+        connector_evidence = any(
+            payload.get(key) not in (None, "")
+            for key in (
+                "provider_connector_app_id",
+                "provider_connector_client_id",
+                "provider_connector_installation_id",
+                "provider_connector_slug",
+            )
+        )
+        provider_enrichment = (
+            explicit_provider not in (None, "", "other")
+            and existing_provider in (None, "", "other")
+        )
+        provider_context_enrichment = (
+            payload.get("provider_ref") not in (None, "")
+            and payload.get("provider_ref") != existing.get("provider_conversation_ref")
+        )
+        if provider_enrichment or provider_context_enrichment or connector_evidence:
             args: list[str] = []
             add(args, "--agent", payload.get("agent") or existing.get("agent_identity") or "conversation-agent")
-            add(args, "--provider", explicit_provider)
-            add(args, "--provider-ref", payload.get("provider_ref"))
+            add(args, "--provider", explicit_provider or existing_provider or "other")
+            add(args, "--provider-ref", payload.get("provider_ref") or existing.get("provider_conversation_ref"))
             add(args, "--provider-url", payload.get("provider_url"))
             add(args, "--connection-ref", payload.get("connection_ref") or existing.get("connection_ref"))
             add(args, "--client-instance-id", payload.get("client_instance_id") or existing.get("client_instance_id"))
             add(args, "--bridge-registration-ref", payload.get("bridge_registration_ref") or existing.get("bridge_registration_ref"))
+            add(args, "--provider-connector-app-id", payload.get("provider_connector_app_id"))
+            add(args, "--provider-connector-client-id", payload.get("provider_connector_client_id"))
+            add(args, "--provider-connector-installation-id", payload.get("provider_connector_installation_id"))
+            add(args, "--provider-connector-slug", payload.get("provider_connector_slug"))
             add(args, "--repository", repository)
             add(args, "--observed-head", payload.get("observed_head"))
             add(args, "--branch", payload.get("branch") or (existing.get("relay") or {}).get("branch") or "main")
@@ -382,10 +406,8 @@ def ensure_session(payload: dict, repository: str) -> dict:
             run_script(AUTO_ATTACH, args)
             enriched = resolve_session(payload, repository)
             if not enriched:
-                raise RuntimeError("host-event provider enrichment completed but session could not be resolved")
+                raise RuntimeError("host-event provider/context enrichment completed but session could not be resolved")
             return enriched
-        if explicit_provider not in (None, "", "other", existing_provider) and existing_provider not in (None, "", "other"):
-            raise ValueError("provider conflict on host-event session")
         return existing
 
     if not any(payload.get(key) for key in ("provider_ref", "provider_url", "connection_ref", "client_instance_id")):

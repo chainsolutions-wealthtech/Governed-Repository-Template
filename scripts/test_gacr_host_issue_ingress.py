@@ -296,6 +296,10 @@ def main() -> None:
             "observed_head": "d" * 40,
             "entry_action": "CONTINUE_GOVERNED_WORK",
             "connection_intent": "OBSERVE",
+            "provider_connector_app_id": "1144995",
+            "provider_connector_client_id": "Iv23existing",
+            "provider_connector_installation_id": "145098929",
+            "provider_connector_slug": "chatgpt-codex-connector",
         }
         resolved_provider = g.ensure_session(payload_provider, "example/governed")
         assert_true(resolved_provider["provider"] == "chatgpt", "host provider enrichment should return enriched session")
@@ -303,6 +307,44 @@ def main() -> None:
         provider_auto_args = next(args for name, args in provider_calls if name == "gacr_auto_attach.py")
         assert_true("--entry-action" not in provider_auto_args, "provider enrichment must not resolve entry action")
         assert_true("--connection-intent" not in provider_auto_args, "provider enrichment must not resolve connection intent")
+        assert_true("--provider-connector-app-id" in provider_auto_args and "1144995" in provider_auto_args, "existing provider enrichment forwards connector app")
+        assert_true("--provider-connector-client-id" in provider_auto_args and "Iv23existing" in provider_auto_args, "existing provider enrichment forwards connector client")
+        assert_true("--provider-connector-installation-id" in provider_auto_args and "145098929" in provider_auto_args, "existing provider enrichment forwards installation")
+        assert_true("--provider-connector-slug" in provider_auto_args and "chatgpt-codex-connector" in provider_auto_args, "existing provider enrichment forwards connector slug")
+
+        same_provider_calls = []
+        same_provider_session = {
+            **enriched_session,
+            "provider": "chatgpt",
+            "provider_conversation_ref": "conversation-existing",
+        }
+        g.active_sessions = lambda: [same_provider_session]
+        g.run_script = lambda path, args: same_provider_calls.append((path.name, list(args))) or ""
+        same_provider_payload = {
+            "provider": "chatgpt",
+            "provider_ref": "conversation-new",
+            "connection_ref": "chronicle:demo:session-provider",
+            "client_instance_id": "chronicle:demo-provider",
+            "observed_head": "d" * 40,
+            "provider_connector_app_id": "1144995",
+            "provider_connector_client_id": "Iv23sameprovider",
+            "provider_connector_installation_id": "145098929",
+            "provider_connector_slug": "chatgpt-codex-connector",
+        }
+        same_provider_resolved = {
+            **same_provider_session,
+            "provider_conversation_ref": "conversation-new",
+        }
+        read_count = {"count": 0}
+        def same_provider_sessions():
+            read_count["count"] += 1
+            return [same_provider_session] if read_count["count"] == 1 else [same_provider_resolved]
+        g.active_sessions = same_provider_sessions
+        resolved_same_provider = g.ensure_session(same_provider_payload, "example/governed")
+        assert_true(resolved_same_provider["provider_conversation_ref"] == "conversation-new", "same provider session records new provider context")
+        same_args = next(args for name, args in same_provider_calls if name == "gacr_auto_attach.py")
+        assert_true("--provider-ref" in same_args and "conversation-new" in same_args, "same provider enrichment forwards new provider conversation")
+        assert_true("--provider-connector-client-id" in same_args and "Iv23sameprovider" in same_args, "same provider enrichment forwards connector evidence")
     finally:
         g.active_sessions = original_active_sessions_provider
         g.run_script = original_run_provider

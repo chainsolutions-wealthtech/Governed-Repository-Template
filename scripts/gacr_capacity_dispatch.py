@@ -746,6 +746,31 @@ def _delivery_modes(session: dict) -> list[str]:
     return modes
 
 
+def _cancel_unavailable_target_offers(store: dict, pool: dict, timestamp: str) -> list[dict]:
+    availability = {
+        item.get("session_id"): bool(item.get("eligible_for_new_work"))
+        for item in pool.get("items", [])
+        if item.get("session_id")
+    }
+    cancelled = []
+    for item in store.get("items", []):
+        if item.get("dispatch_kind") != "WORK_OFFER":
+            continue
+        if item.get("status") not in PENDING_WORK_OFFER_STATUSES:
+            continue
+        target_session_id = item.get("target_session_id")
+        if target_session_id and availability.get(target_session_id) is True:
+            continue
+        item["status"] = "CANCELLED"
+        item["offer_status"] = "CANCELLED"
+        item["cancelled_at"] = timestamp
+        item["cancellation_reason"] = "TARGET_SESSION_UNAVAILABLE"
+        item["claim_created"] = False
+        item["grants_write_authority"] = False
+        cancelled.append(item)
+    return cancelled
+
+
 def _cancel_stale_source_offers(store:dict, canonical_doc:dict, timestamp:str)->list[dict]:
     if not TEMPLATE_SOURCE:
         return []
@@ -772,12 +797,17 @@ def dispatch_ready_work(*, generated_at: str | None = None) -> dict:
     canonical_doc=canonical_work_document()
     sessions = read_json(SESSIONS_PATH, {"sessions": []})
     store = read_json(DISPATCHES_PATH, {"schema_version": "1.0.0", "revision": 0, "items": []})
-    changes=[]
-    cancelled=_cancel_stale_source_offers(store,canonical_doc,timestamp)
-    changes.extend(cancelled)
+    pool = agent_pool_projection(generated_at=timestamp)
+    source_cancelled=_cancel_stale_source_offers(store,canonical_doc,timestamp)
+    target_cancelled=_cancel_unavailable_target_offers(store,pool,timestamp)
+    cancelled = source_cancelled + [
+        item for item in target_cancelled if item not in source_cancelled
+    ]
+    changes=list(cancelled)
     plan = parallel_work_dispatch_plan(
         generated_at=timestamp,
         work_doc=canonical_doc,
+        pool=pool,
         dispatches_doc=store,
     )
 

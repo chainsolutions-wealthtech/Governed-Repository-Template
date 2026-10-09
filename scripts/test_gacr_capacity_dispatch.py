@@ -418,6 +418,71 @@ def main() -> None:
         "duplicate work offer rejection is explicit",
     )
 
+    unavailable_store = {
+        "items": [{
+            "dispatch_id": "GACR-W-unavailable-target",
+            "dispatch_kind": "WORK_OFFER",
+            "status": "READY",
+            "offer_status": "PENDING_ACCEPTANCE",
+            "target_session_id": "same-a",
+            "target_logical_agent_id": "logical-shared",
+            "capacity_key": "logical-agent:logical-shared",
+            "work_item_id": "LW-RECLAIM",
+            "claim_created": False,
+            "grants_write_authority": False,
+        }]
+    }
+    unavailable_pool = {
+        "items": [
+            {**same_agent_pool["items"][0], "eligible_for_new_work": False, "availability_state": "UNAVAILABLE"},
+            same_agent_pool["items"][1],
+        ]
+    }
+    reclaimed = g._cancel_unavailable_target_offers(
+        unavailable_store,
+        unavailable_pool,
+        "2026-10-08T18:00:00+00:00",
+    )
+    assert_true(len(reclaimed) == 1, "pending offer is reclaimed when target session becomes unavailable")
+    assert_true(reclaimed[0]["status"] == "CANCELLED", "reclaimed offer is terminal")
+    assert_true(reclaimed[0]["cancellation_reason"] == "TARGET_SESSION_UNAVAILABLE", "reclaim reason is explicit")
+    reclaimed_plan = g.parallel_work_dispatch_plan(
+        work_doc={
+            "source": "TEST",
+            "items": [{
+                "work_item_id": "LW-RECLAIM",
+                "status": "READY",
+                "priority": 1,
+                "sequence": 1,
+                "dependencies": [],
+                "collision_domains": ["logical-domain-reclaim"],
+                "required_capabilities": ["CODE"],
+                "allowed_agent_roles": ["CODE_AGENT"],
+            }],
+        },
+        claims_doc=empty_claims,
+        pool=unavailable_pool,
+        dispatches_doc=unavailable_store,
+    )
+    assert_true(len(reclaimed_plan["assignments"]) == 1, "reclaimed work may be reassigned to available sibling session")
+    assert_true(reclaimed_plan["assignments"][0]["target_session_id"] == "same-b", "reclaimed work routes to available sibling")
+
+    accepted_unavailable_store = {
+        "items": [{
+            **unavailable_store["items"][0],
+            "dispatch_id": "GACR-W-unavailable-accepted",
+            "status": "ACCEPTED_PENDING_CLAIM",
+            "offer_status": "ACCEPTED",
+        }]
+    }
+    accepted_reclaimed = g._cancel_unavailable_target_offers(
+        accepted_unavailable_store,
+        unavailable_pool,
+        "2026-10-08T18:00:01+00:00",
+    )
+    assert_true(len(accepted_reclaimed) == 1, "accepted-pending offer without claim is reclaimable after target loss")
+    assert_true(accepted_reclaimed[0]["claim_created"] is False, "reclaim does not synthesize claim")
+
     cancelled_offer_plan = g.parallel_work_dispatch_plan(
         work_doc={
             "source": "TEST",
