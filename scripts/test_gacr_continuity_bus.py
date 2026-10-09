@@ -788,7 +788,12 @@ def main():
         timestamp=NOW,
     )
     tick = bus.tick_docs(timeout_state, sessions, timeout_dispatch, timestamp=NOW + timedelta(seconds=6))
-    assert tick["changes"][0]["state"] == "ACK_TIMEOUT"
+    assert any(
+        change.get("state") == "ACK_TIMEOUT"
+        and change.get("event_id") == timeout_event["event_id"]
+        and change.get("target_session_id") == "session-b"
+        for change in tick["changes"]
+    ), "timeout tick must contain the expected ACK_TIMEOUT transition regardless of projection-change ordering"
     assert timeout_event["routes"][0]["delivery_state"] == "ACK_TIMEOUT"
     assert "POLL_REPOSITORY" in timeout_event["routes"][0]["delivery_modes"]
 
