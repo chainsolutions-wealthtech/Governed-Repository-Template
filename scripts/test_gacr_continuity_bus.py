@@ -461,6 +461,18 @@ def main():
 
     context_history_session = session("session-context-history", provider="chatgpt")
     current_context_id = bus.provider_context_descriptor(context_history_session)["provider_context_id"]
+    expected_context_id = "GACR-PC-" + __import__("hashlib").sha256(
+        __import__("json").dumps(
+            {
+                "session_id": "session-context-history",
+                "connection_ref": context_history_session["connection_ref"],
+                "provider_conversation_ref": context_history_session.get("provider_conversation_ref"),
+                "client_instance_id": context_history_session["client_instance_id"],
+            },
+            sort_keys=True, separators=(",", ":"), ensure_ascii=False,
+        ).encode("utf-8")
+    ).hexdigest()[:16]
+    assert current_context_id == expected_context_id, "continuity projection must share auto-attach provider-context identity recipe"
     context_history_session["provider_contexts"] = [
         {
             "provider_context_id": current_context_id,
