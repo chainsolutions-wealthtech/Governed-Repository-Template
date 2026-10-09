@@ -432,6 +432,7 @@ def main():
 
     control_state = base_state()
     control_sessions = {"sessions": [session("session-a"), session("session-b", bridge=True)]}
+    control_sessions["sessions"][1]["relay"]["lease_expires_at"] = bus.iso(NOW + timedelta(hours=6))
     control_dispatches = {"schema_version": "1.0.0", "revision": 0, "items": [control_proof("session-b")]}
     control_routed = bus.emit_event_docs(
         control_state,
