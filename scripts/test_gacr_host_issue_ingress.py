@@ -349,6 +349,72 @@ def main() -> None:
         g.active_sessions = original_active_sessions_provider
         g.run_script = original_run_provider
 
+    original_resolve_owner_alias = g.resolve_owner_alias
+    original_active_sessions_alias = g.active_sessions
+    try:
+        alias_target = {
+            "status":"LOGICAL_AGENT_ALIAS_RESOLVED",
+            "human_alias":"FORGE",
+            "logical_agent_id":"logical-forge",
+            "sessions":[{"session_id":"session-forge-existing","status":"ACTIVE","relay_state":"ACTIVE"}],
+            "reference_session_ids":["session-forge-existing"],
+            "routing_status":"ROUTABLE_EXACT_SESSION",
+            "resolved_target_session_id":"session-forge-existing",
+            "grants_mutation_authority":False,
+        }
+        g.resolve_owner_alias = lambda alias: alias_target
+        existing_alias_session = {
+            "session_id":"session-forge-existing",
+            "repository":"example/governed",
+            "agent_identity":"logical-forge",
+            "status":"ACTIVE",
+            "provider":"chatgpt",
+            "provider_conversation_ref":None,
+            "connection_ref":"forge-existing-connection",
+            "client_instance_id":"forge-existing-client",
+            "provider_contexts":[],
+            "relay":{"state":"ACTIVE","branch":"main"},
+        }
+        g.active_sessions = lambda: [existing_alias_session]
+        resolved_alias = g.ensure_session({
+            "provider":"chatgpt",
+            "logical_agent_alias":"FORGE",
+            "connection_ref":"forge-existing-connection",
+            "client_instance_id":"forge-existing-client",
+            "observed_head":"f"*40,
+        }, "example/governed")
+        assert_true(resolved_alias["session_id"]=="session-forge-existing", "alias may route only after exact existing session resolution")
+
+        g.active_sessions = lambda: [existing_alias_session]
+        try:
+            g.ensure_session({
+                "provider":"chatgpt",
+                "logical_agent_alias":"FORGE",
+                "connection_ref":"forge-brand-new",
+                "client_instance_id":"forge-brand-new-client",
+                "observed_head":"f"*40,
+            }, "example/governed")
+        except ValueError as exc:
+            assert_true("ALIAS_SURFACE_UNRESOLVED" in str(exc), f"alias-only new surface must fail closed: {exc}")
+        else:
+            raise AssertionError("alias alone must not create a new provider/runtime surface")
+
+        mismatch_session = {**existing_alias_session, "agent_identity":"logical-other"}
+        g.active_sessions = lambda: [mismatch_session]
+        try:
+            g.ensure_session({
+                "provider":"chatgpt","logical_agent_alias":"FORGE",
+                "connection_ref":"forge-existing-connection","client_instance_id":"forge-existing-client",
+                "observed_head":"f"*40,
+            }, "example/governed")
+        except ValueError as exc:
+            assert_true("different canonical session identity" in str(exc), f"alias/session mismatch fails closed: {exc}")
+        else:
+            raise AssertionError("alias must not cross-bind another logical agent")
+    finally:
+        g.resolve_owner_alias = original_resolve_owner_alias
+        g.active_sessions = original_active_sessions_alias
+
     calls = []
     original_processed = g.evidence_processed
     original_ensure = g.ensure_session

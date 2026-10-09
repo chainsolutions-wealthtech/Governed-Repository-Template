@@ -7,6 +7,7 @@ import subprocess
 import sys
 from pathlib import Path
 
+import gacr_continuity_coordination as continuity_coordination
 from gscc_gacr.issue_control_bridge import (
     DISPATCHES_PATH,
     apply_host_control_event,
@@ -81,6 +82,7 @@ ALLOWED_KEYS = {
     "provider_connector_client_id",
     "provider_connector_installation_id",
     "provider_connector_slug",
+    "logical_agent_alias",
     "same_logical_agent_session_id",
     "continuity_evidence_ref",
     "observed_head",
@@ -290,6 +292,35 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
     return payload
 
 
+def _session_logical_agent_id(session: dict) -> str | None:
+    value = session.get("logical_agent_id") or session.get("agent_identity")
+    return str(value).strip() if value not in (None, "") else None
+
+
+def _session_values(session: dict, key: str) -> set[str]:
+    values: set[str] = set()
+    primary = session.get(key)
+    if primary not in (None, "", "UNAVAILABLE"):
+        values.add(str(primary))
+    if key in {"provider_conversation_ref", "client_instance_id", "connection_ref"}:
+        for context in session.get("provider_contexts") or []:
+            if not isinstance(context, dict):
+                continue
+            value = context.get(key)
+            if value not in (None, "", "UNAVAILABLE"):
+                values.add(str(value))
+    return values
+
+
+def resolve_owner_alias(alias: str) -> dict:
+    state = continuity_coordination.read_json(
+        continuity_coordination.STATE_PATH,
+        continuity_coordination.default_state(),
+    )
+    sessions = {"sessions": active_sessions()}
+    return continuity_coordination.resolve_logical_agent_alias_docs(state, sessions, alias=alias)
+
+
 def active_sessions() -> list[dict]:
     sessions_path, _ = state_paths()
     return read_json(sessions_path, {"sessions": []}).get("sessions", [])
@@ -310,13 +341,13 @@ def resolve_session(payload: dict, repository: str) -> dict | None:
             continue
         matched = False
         provider_ref = payload.get("provider_ref")
-        if provider_ref and session.get("provider_conversation_ref") == provider_ref:
+        if provider_ref and str(provider_ref) in _session_values(session, "provider_conversation_ref"):
             matched = True
         connection_ref = payload.get("connection_ref")
-        if connection_ref and session.get("connection_ref") == connection_ref:
+        if connection_ref and str(connection_ref) in _session_values(session, "connection_ref"):
             matched = True
         client_instance_id = payload.get("client_instance_id")
-        if client_instance_id and session.get("client_instance_id") == client_instance_id:
+        if client_instance_id and str(client_instance_id) in _session_values(session, "client_instance_id"):
             matched = True
         if matched:
             matches.append(session)
@@ -359,9 +390,16 @@ def run_script(path: Path, args: list[str]) -> str:
 
 
 def ensure_session(payload: dict, repository: str) -> dict:
+    alias_resolution = None
+    alias = payload.get("logical_agent_alias")
+    if alias not in (None, ""):
+        alias_resolution = resolve_owner_alias(str(alias))
+
     existing = resolve_session(payload, repository)
     explicit_provider = payload.get("provider")
     if existing:
+        if alias_resolution and _session_logical_agent_id(existing) != alias_resolution.get("logical_agent_id"):
+            raise ValueError("logical agent alias resolves to a different canonical session identity")
         existing_provider = existing.get("provider")
         if explicit_provider not in (None, "", "other", existing_provider) and existing_provider not in (None, "", "other"):
             raise ValueError("provider conflict on host-event session")
@@ -409,6 +447,27 @@ def ensure_session(payload: dict, repository: str) -> dict:
                 raise RuntimeError("host-event provider/context enrichment completed but session could not be resolved")
             return enriched
         return existing
+
+    if alias_resolution:
+        proof_fields = (
+            payload.get("same_logical_agent_session_id"),
+            payload.get("continuity_id"),
+            payload.get("continuity_evidence_ref"),
+        )
+        if any(value in (None, "") for value in proof_fields):
+            raise ValueError(
+                "LOGICAL_AGENT_ALIAS_SURFACE_UNRESOLVED: alias identifies the intended logical agent "
+                "but does not prove this new provider/runtime surface"
+            )
+        allowed_sessions = {
+            item.get("session_id")
+            for item in alias_resolution.get("sessions") or []
+            if item.get("session_id")
+        }
+        if str(payload.get("same_logical_agent_session_id")) not in allowed_sessions:
+            raise ValueError("logical agent alias reference session is outside resolved logical agent")
+        payload = dict(payload)
+        payload["agent"] = alias_resolution["logical_agent_id"]
 
     if not any(payload.get(key) for key in ("provider_ref", "provider_url", "connection_ref", "client_instance_id")):
         raise ValueError("host-event cannot auto-attach without provider_ref/provider_url/connection_ref/client_instance_id")
