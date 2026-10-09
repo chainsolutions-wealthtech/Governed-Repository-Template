@@ -1136,7 +1136,8 @@ def resolve_event_targets(
     target_session_ids: list[str] | None = None,
     target_logical_agent_alias: str | None = None,
 ) -> tuple[list[str], dict | None]:
-    explicit = normalize_targets(target_session_ids or [])
+    raw_targets = [str(x).strip() for x in (target_session_ids or []) if str(x).strip()]
+    explicit = normalize_targets(raw_targets) if raw_targets else []
     alias = str(target_logical_agent_alias or "").strip()
     if explicit and alias:
         raise ValueError("CONTINUITY_BUS_FAILED: choose target_session_id or target_logical_agent_alias, not both")
