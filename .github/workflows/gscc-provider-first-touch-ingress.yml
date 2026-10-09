@@ -255,7 +255,7 @@ jobs:
           retention-days: 30
 
   control:
-    if: ${{ github.event_name == 'issue_comment' && startsWith(github.event.issue.title, '[GSCC First Touch]') && github.actor != 'github-actions[bot]' && (startsWith(github.event.comment.body, '/gscc-entry-ack ') || startsWith(github.event.comment.body, '/gscc-entry-response ')) }}
+    if: ${{ github.event_name == 'issue_comment' && startsWith(github.event.issue.title, '[GSCC First Touch]') && github.actor != 'github-actions[bot]' && (startsWith(github.event.comment.body, '/gscc-entry-ack ') || startsWith(github.event.comment.body, '/gscc-entry-response ') || startsWith(github.event.comment.body, '/gscc-entry-rechallenge ') || startsWith(github.event.comment.body, '/gscc-entry-resume ')) }}
     permissions:
       contents: write
       actions: read
@@ -295,7 +295,7 @@ jobs:
           python3 scripts/first_touch_state_artifact.py restore             --repository "${GITHUB_REPOSITORY}"             --run-id "${GITHUB_RUN_ID}"             --scope "${{ steps.arrival_scope.outputs.state_scope }}"             --output "${RUNNER_TEMP}/provider-first-touch-capture.sqlite"
           test -f "${RUNNER_TEMP}/provider-first-touch-capture.sqlite"
 
-      - name: Apply Q9 control event
+      - name: Apply GSCC control or recovery event
         id: q9
         env:
           COMMENT_BODY: ${{ github.event.comment.body }}
@@ -305,28 +305,103 @@ jobs:
           import json, os
           from pathlib import Path
           raw=os.environ["COMMENT_BODY"].strip()
-          prefix="/gscc-entry-ack " if raw.startswith("/gscc-entry-ack ") else "/gscc-entry-response "
+          prefixes=(
+              ("/gscc-entry-ack ","control"),
+              ("/gscc-entry-response ","control"),
+              ("/gscc-entry-rechallenge ","rechallenge"),
+              ("/gscc-entry-resume ","resume-gacr"),
+          )
+          match=next(((prefix,mode) for prefix,mode in prefixes if raw.startswith(prefix)),None)
+          if match is None:
+              raise SystemExit("GSCC_CONTROL_OR_RECOVERY_PREFIX_INVALID")
+          prefix,mode=match
           v=json.loads(raw[len(prefix):])
-          if not isinstance(v,dict) or not isinstance(v.get("payload"),dict) or not v.get("runtime_id"):
+          if not isinstance(v,dict) or not v.get("runtime_id"):
+              raise SystemExit("GSCC_CONTROL_OR_RECOVERY_PAYLOAD_INVALID")
+          if mode=="control" and not isinstance(v.get("payload"),dict):
               raise SystemExit("GSCC_Q9_CONTROL_PAYLOAD_INVALID")
+          v["mode"]=mode
           Path(os.environ["RUNNER_TEMP"]).joinpath("control-input.json").write_text(json.dumps(v),encoding="utf-8")
           PY
           runtime_id="$(python3 -c 'import json,os,pathlib; print(json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("control-input.json").read_text())["runtime_id"])')"
-          payload="$(python3 -c 'import json,os,pathlib; print(json.dumps(json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("control-input.json").read_text())["payload"],separators=(",",":")))')"
-          python3 scripts/gscc_session_runtime.py control             --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite"             --runtime-id "$runtime_id"             --payload-json "$payload"             --observed-at "$COMMENT_AT"             > "$RUNNER_TEMP/gscc-session-control-result.json"
-          python3 - <<'PY'
+          mode="$(python3 -c 'import json,os,pathlib; print(json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("control-input.json").read_text())["mode"])')"
+          if [ "$mode" = "control" ]; then
+            payload="$(python3 -c 'import json,os,pathlib; print(json.dumps(json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("control-input.json").read_text())["payload"],separators=(",",":")))')"
+            python3 scripts/gscc_session_runtime.py control \
+              --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite" \
+              --runtime-id "$runtime_id" \
+              --payload-json "$payload" \
+              --observed-at "$COMMENT_AT" \
+              > "$RUNNER_TEMP/gscc-session-control-result.json"
+          elif [ "$mode" = "rechallenge" ]; then
+            python3 scripts/gscc_session_runtime.py rechallenge \
+              --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite" \
+              --runtime-id "$runtime_id" \
+              > "$RUNNER_TEMP/gscc-session-control-result.json"
+          else
+            python3 scripts/gscc_session_runtime.py resume-gacr \
+              --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite" \
+              --runtime-id "$runtime_id" \
+              > "$RUNNER_TEMP/gscc-session-control-result.json"
+          fi
+          MODE="$mode" python3 - <<'PY'
           import json, os
           from pathlib import Path
-          v=json.loads((Path(os.environ["RUNNER_TEMP"])/"gscc-session-control-result.json").read_text())
+          root=Path(os.environ["RUNNER_TEMP"])
+          v=json.loads((root/"gscc-session-control-result.json").read_text())
           with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
               f.write("runtime_id="+v["runtime_id"]+"\n")
               f.write("state="+v["state"]+"\n")
+              f.write("mode="+os.environ["MODE"]+"\n")
           if v["state"]=="GSE_VERIFIED_WAITING_GACR":
-              (Path(os.environ["RUNNER_TEMP"])/"gacr-attach.json").write_text(json.dumps(v["gacr_attach"],separators=(",",":")),encoding="utf-8")
+              (root/"gacr-attach.json").write_text(json.dumps(v["gacr_attach"],separators=(",",":")),encoding="utf-8")
+          if v["state"]=="WAITING_Q9_RECHALLENGE_ACK":
+              d=v["dispatch"]; cmd=d["command"]; p=cmd["payload"]
+              ack={
+                "runtime_id":v["runtime_id"],
+                "payload":{
+                  "event":"command_ack","session_id":d["target_session_id"],
+                  "dispatch_id":d["dispatch_id"],"command_id":cmd["command_id"],
+                  "correlation_id":cmd["correlation_id"],"delivery_state":"ACKNOWLEDGED",
+                },
+              }
+              response={
+                "runtime_id":v["runtime_id"],
+                "payload":{
+                  "event":"challenge_response","session_id":d["target_session_id"],
+                  "dispatch_id":d["dispatch_id"],"command_id":cmd["command_id"],
+                  "correlation_id":cmd["correlation_id"],"challenge_id":p["challenge_id"],
+                  "nonce":p["nonce"],"challenge_status":"ACK",
+                },
+              }
+              body=(
+                "### GSCC Q9 refreshed control challenge\n\n"
+                "This challenge renews Q9 for the SAME persisted arrival; it does not create a new First Touch.\n\n"
+                "`/gscc-entry-ack "+json.dumps(ack,separators=(",",":"))+"`\n\n"
+                "After the ACK is accepted:\n\n"
+                "`/gscc-entry-response "+json.dumps(response,separators=(",",":"))+"`"
+              )
+              (root/"q9-rechallenge-comment.txt").write_text(body,encoding="utf-8")
           PY
 
+      - name: Persist control-state checkpoint before downstream actions
+        if: ${{ steps.q9.outcome == 'success' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: first-touch-state-${{ steps.arrival_scope.outputs.state_scope }}-${{ github.run_id }}-${{ github.run_attempt }}-checkpoint
+          path: ${{ runner.temp }}/provider-first-touch-capture.sqlite
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Report refreshed Q9 challenge
+        if: ${{ steps.q9.outputs.state == 'WAITING_Q9_RECHALLENGE_ACK' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="$(cat "$RUNNER_TEMP/q9-rechallenge-comment.txt")"
       - name: Record accepted Q9 ACK
-        if: ${{ steps.q9.outputs.state == 'WAITING_Q9_RESPONSE' }}
+        if: ${{ steps.q9.outputs.state == 'WAITING_Q9_RESPONSE' || steps.q9.outputs.state == 'WAITING_Q9_RECHALLENGE_RESPONSE' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -350,10 +425,14 @@ jobs:
           # existing GACR arrival_context expansion contract instead of
           # dropping fields.
           arrival_context={"repository":os.environ["GITHUB_REPOSITORY"]}
-          for key in ("observed_head","branch","last_evidence","entry_action","connection_intent"):
+          for key in (
+              "observed_head","branch","last_evidence","entry_action","connection_intent",
+              "same_logical_agent_session_id","continuity_id","continuity_evidence_ref",
+          ):
               value=payload.pop(key,None)
               if value not in (None,""):
                   arrival_context[key]=value
+          payload.pop("logical_agent_alias",None)
           payload.pop("schema",None)
           payload.pop("event",None)
           payload["source"]="GSCC_PRE_GSE_RUNTIME"

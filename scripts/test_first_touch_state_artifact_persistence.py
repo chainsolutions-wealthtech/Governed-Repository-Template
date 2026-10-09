@@ -70,6 +70,9 @@ def zipped_runtime_state(root:Path,name:str,state:str,updated_at:str)->bytes:
         )
         gate={
             "WAITING_Q9_ACK":"Q9",
+            "WAITING_Q9_RESPONSE":"Q9",
+            "WAITING_Q9_RECHALLENGE_ACK":"Q9",
+            "WAITING_Q9_RECHALLENGE_RESPONSE":"Q9",
             "READY_FOR_F1":"Q12",
             "RELEASED_TO_NORMAL_GOVERNANCE":"00_START_HERE.md",
         }.get(state,state)
@@ -130,6 +133,53 @@ def test_restore_prefers_advanced_runtime_state(root:Path)->None:
         artifact_state._artifact_blob=old_blob
 
 
+def test_restore_prefers_rechallenge_over_older_ack_state(root:Path)->None:
+    old_ack=zipped_runtime_state(
+        root,"old-ack","WAITING_Q9_RESPONSE","2026-10-07T02:30:00+00:00"
+    )
+    refreshed=zipped_runtime_state(
+        root,"rechallenge","WAITING_Q9_RECHALLENGE_ACK","2026-10-07T02:31:00+00:00"
+    )
+    artifacts={
+        "artifacts":[
+            {
+                "id":11,
+                "name":"first-touch-state-arrival-retry-old",
+                "created_at":"2026-10-07T02:30:10Z",
+                "expired":False,
+                "archive_download_url":"memory://old-ack",
+                "workflow_run":{"id":201},
+            },
+            {
+                "id":12,
+                "name":"first-touch-state-arrival-retry-rechallenge",
+                "created_at":"2026-10-07T02:31:10Z",
+                "expired":False,
+                "archive_download_url":"memory://rechallenge",
+                "workflow_run":{"id":202},
+            },
+        ]
+    }
+    old_request=artifact_state._request_json
+    old_blob=artifact_state._artifact_blob
+    try:
+        artifact_state._request_json=lambda _url,_token: artifacts
+        artifact_state._artifact_blob=lambda url,_token: {
+            "memory://old-ack":old_ack,
+            "memory://rechallenge":refreshed,
+        }[url]
+        output=root/"restored-rechallenge.sqlite"
+        result=artifact_state.restore_latest(
+            "owner/repo","999",output,"token",scope="arrival-retry"
+        )
+        assert result["artifact_id"]==12,result
+        assert result["runtime_state"]=="WAITING_Q9_RECHALLENGE_ACK",result
+        assert result["runtime_state_rank"]>artifact_state.RUNTIME_STATE_RANK["WAITING_Q9_RESPONSE"],result
+    finally:
+        artifact_state._request_json=old_request
+        artifact_state._artifact_blob=old_blob
+
+
 def main():
     with tempfile.TemporaryDirectory() as td:
         root=Path(td)
@@ -150,6 +200,7 @@ def main():
         finally:
             conn.close()
         test_restore_prefers_advanced_runtime_state(root)
+        test_restore_prefers_rechallenge_over_older_ack_state(root)
     print("FIRST_TOUCH_STATE_ARTIFACT_PERSISTENCE_TEST_PASS")
 
 
