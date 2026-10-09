@@ -192,6 +192,19 @@ def resolve_logical_agent_alias_docs(
         for match in matches
         for ref in match.get("reference_session_ids") or []
     })
+    active_sessions = [
+        item for item in canonical_sessions
+        if item.get("status") == "ACTIVE" and item.get("relay_state") == "ACTIVE"
+    ]
+    if len(active_sessions) == 1:
+        routing_status = "ROUTABLE_EXACT_SESSION"
+        resolved_target_session_id = active_sessions[0]["session_id"]
+    elif not active_sessions:
+        routing_status = "NO_ACTIVE_SESSION"
+        resolved_target_session_id = None
+    else:
+        routing_status = "AMBIGUOUS_ACTIVE_SESSIONS"
+        resolved_target_session_id = None
     return {
         "status": "LOGICAL_AGENT_ALIAS_RESOLVED",
         "human_alias": alias_key,
@@ -202,6 +215,9 @@ def resolve_logical_agent_alias_docs(
             key=lambda item: (str(item.get("continuity_id") or ""), int(item.get("coordination_issue") or 0)),
         ),
         "reference_session_ids": reference_session_ids,
+        "routing_status": routing_status,
+        "resolved_target_session_id": resolved_target_session_id,
+        "routing_requires_canonical_session_resolution": True,
         "sessions": canonical_sessions,
         "provider_contexts": provider_contexts,
         "session_count": len(canonical_sessions),

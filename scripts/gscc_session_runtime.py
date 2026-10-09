@@ -12,9 +12,11 @@ from gscc.first_touch_store import project_to_gse
 from gscc_post_q1_gate_router import route_gate
 from gscc_gacr.issue_control_bridge import apply_host_control_event
 from gscc_gacr.admission_gse_projection import project_pre_gacr_admission_gse_state
+from gacr_continuity_coordination import default_state as default_continuity_state, resolve_logical_agent_alias_docs
 
 ROOT=Path(__file__).resolve().parents[1]
 MIGRATION=ROOT/".governance"/"control-plane-db"/"011_gscc_session_runtime.sql"
+CONTINUITY_STATE=ROOT/".governance"/"control-plane-state"/"gacr-continuities.json"
 
 def now_iso()->str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
@@ -39,6 +41,53 @@ def _packet(conn:sqlite3.Connection, run_id:str)->tuple[dict[str,Any],dict[str,A
 
 def _route(db:Path,runtime_id:str,gate:str,outcome:str,evidence:dict[str,Any],identity_id:str)->dict[str,Any]:
     return route_gate(db,route_run_id=f"{runtime_id}:{gate}",current_gate=gate,observed_outcome=outcome,entry_run_id=runtime_id,identity_id=identity_id,evidence=evidence)
+
+def _requested_alias(packet:dict[str,Any])->str|None:
+    request=(packet.get("sections") or {}).get("request") or {}
+    value=request.get("logical_agent_alias")
+    if value in (None,"","UNAVAILABLE","UNKNOWN","NOT_EXPOSED","NOT_ACCESSIBLE"):
+        return None
+    return str(value).strip()
+
+
+def _session_logical_agent_id(session:dict[str,Any])->str|None:
+    value=session.get("logical_agent_id") or session.get("agent_identity")
+    return str(value).strip() if value not in (None,"") else None
+
+
+def _session_connection_values(session:dict[str,Any])->set[str]:
+    values=set()
+    value=session.get("connection_ref")
+    if value not in (None,"","UNAVAILABLE"):
+        values.add(str(value))
+    for context in session.get("provider_contexts") or []:
+        if not isinstance(context,dict):
+            continue
+        value=context.get("connection_ref")
+        if value not in (None,"","UNAVAILABLE"):
+            values.add(str(value))
+    return values
+
+
+def resolve_alias_binding_intent(packet:dict[str,Any], sessions:dict[str,Any], continuity_state:dict[str,Any])->dict[str,Any]|None:
+    alias=_requested_alias(packet)
+    if not alias:
+        return None
+    result=resolve_logical_agent_alias_docs(continuity_state,sessions,alias=alias)
+    return {
+        "status":"ALIAS_RESOLVED_AT_GACR_Q2",
+        "requested_alias":result["human_alias"],
+        "logical_agent_id":result["logical_agent_id"],
+        "routing_status":result.get("routing_status"),
+        "resolved_target_session_id":result.get("resolved_target_session_id"),
+        "reference_session_ids":result.get("reference_session_ids") or [],
+        "continuity_memberships":result.get("continuity_memberships") or [],
+        "projection_only":True,
+        "grants_task_authority":False,
+        "grants_claim":False,
+        "grants_mutation_authority":False,
+    }
+
 
 def _admission(packet:dict[str,Any], arrival_ref:str, connection_ref:str, runtime_id:str)->dict[str,Any]:
     s=packet["sections"]; agent=s["agent"]; github=s["github"]; req=s["request"]
@@ -78,7 +127,11 @@ def _admission(packet:dict[str,Any], arrival_ref:str, connection_ref:str, runtim
         "connection_intent":"READ_ONLY_DISCOVERY",
         "requested_capabilities":["READ_REPOSITORY","READ_GOVERNANCE","READ_STATUS","READ_CONTEXT","READ_CAPABILITIES"],
       },
-      "continuity":{},
+      "continuity":{
+        "requested_logical_agent_alias":_requested_alias(packet),
+        "alias_request_provenance":"OWNER_SUPPLIED_ENTRY_INTENT" if _requested_alias(packet) else "NOT_REQUESTED",
+        "alias_grants_authority":False,
+      },
       "control_capabilities":{
         "heartbeat":True,
         "command_receive":True,
@@ -213,7 +266,12 @@ def control(db:Path,runtime_id:str,payload:dict[str,Any],observed_at:str)->dict[
       admission=json.loads(rt["admission_json"])
       github=packet["sections"]["github"]
       baseline={"status":"OBSERVED","repository":github.get("repository_full_name"),"observed_head":github.get("head_sha"),"requested_branch":github.get("branch"),"evidence_ref":f"gscc-runtime:{runtime_id}:baseline"}
-      gse_state=project_pre_gacr_admission_gse_state(admission,baseline,{"capabilities":capability,"control_channel":control_evidence})
+      gse_state=project_pre_gacr_admission_gse_state(
+          admission,
+          baseline,
+          {"capabilities":capability,"control_channel":control_evidence},
+          requested_logical_agent_alias=_requested_alias(packet),
+      )
       projection=project_to_gse(conn,identity_id=rt["identity_id"],capture_id=rt["capture_id"],classification=entry["classification"])
       conn.execute(
         "INSERT OR REPLACE INTO gscc_session_bindings(binding_id,arrival_ref,identity_id,gse_identity_id,gacr_session_id,connection_ref,binding_status,binding_level,evidence_ref,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
@@ -229,7 +287,8 @@ def control(db:Path,runtime_id:str,payload:dict[str,Any],observed_at:str)->dict[
       "gacr_attach":{
         "schema":"gacr-host-event/v1","event":"attach","provider":packet["sections"]["provider"].get("provider"),
         "connection_ref":rt["connection_ref"],"client_instance_id":_id("GSCC-CLIENT-",rt["arrival_ref"]),
-        "agent":rt["identity_id"],"observed_head":packet["sections"]["github"].get("head_sha"),"branch":packet["sections"]["github"].get("branch"),
+        "agent":rt["identity_id"],"logical_agent_alias":_requested_alias(packet),
+        "observed_head":packet["sections"]["github"].get("head_sha"),"branch":packet["sections"]["github"].get("branch"),
         "capabilities":["GACR_AUTO_ATTACH","GACR_PRESENCE_FIRST","COMMAND_RECEIVE","COMMAND_ACK","CHALLENGE_RESPONSE"],
         "wake_channels":["POLL_REPOSITORY"],"last_evidence":control_evidence["evidence_ref"],
         "entry_action":"CONTINUE_GOVERNED_WORK","connection_intent":"OBSERVE","agent_role":"qualification-client",
@@ -238,7 +297,13 @@ def control(db:Path,runtime_id:str,payload:dict[str,Any],observed_at:str)->dict[
     }
 
 
-def bind_gacr(db:Path,runtime_id:str,sessions_path:Path,current_head:str)->dict[str,Any]:
+def bind_gacr(
+    db:Path,
+    runtime_id:str,
+    sessions_path:Path,
+    current_head:str,
+    continuity_path:Path=CONTINUITY_STATE,
+)->dict[str,Any]:
     conn=sqlite3.connect(db)
     try:
       rt=_load_runtime(conn,runtime_id)
@@ -248,7 +313,7 @@ def bind_gacr(db:Path,runtime_id:str,sessions_path:Path,current_head:str)->dict[
       matches=[
         s for s in (sessions.get("sessions") or [])
         if isinstance(s,dict)
-        and s.get("connection_ref")==rt["connection_ref"]
+        and rt["connection_ref"] in _session_connection_values(s)
         and s.get("status")=="ACTIVE"
         and ((s.get("relay") or {}).get("state")=="ACTIVE")
       ]
@@ -257,15 +322,34 @@ def bind_gacr(db:Path,runtime_id:str,sessions_path:Path,current_head:str)->dict[
       session=matches[0]
       sid=session.get("session_id")
       if not sid: raise ValueError("GACR session id missing")
+      entry,packet=_packet(conn,rt["run_id"])
+      continuity_state=(
+          json.loads(continuity_path.read_text(encoding="utf-8"))
+          if continuity_path.exists()
+          else default_continuity_state()
+      )
+      alias_resolution=resolve_alias_binding_intent(packet,sessions,continuity_state)
+      if alias_resolution:
+          actual_logical_id=_session_logical_agent_id(session)
+          if actual_logical_id != alias_resolution["logical_agent_id"]:
+              raise ValueError(
+                  "GACR alias/session mismatch: "
+                  f"alias={alias_resolution['requested_alias']} "
+                  f"resolved={alias_resolution['logical_agent_id']} "
+                  f"session={actual_logical_id or 'UNAVAILABLE'}"
+              )
       conn.execute(
         "UPDATE gscc_session_bindings SET gacr_session_id=?,binding_status='GACR_BOUND',binding_level='EXACT',evidence_ref=?,updated_at=? WHERE arrival_ref=?",
         (sid,f"gacr-session:{sid}",now_iso(),rt["arrival_ref"]),
       )
       conn.commit()
-      entry,packet=_packet(conn,rt["run_id"])
     finally: conn.close()
 
-    _route(db,runtime_id,"Q2_GACR","Q2_GACR_VERIFIED",{"session_id":sid,"connection_ref":rt["connection_ref"]},rt["identity_id"])
+    _route(
+      db,runtime_id,"Q2_GACR","Q2_GACR_VERIFIED",
+      {"session_id":sid,"connection_ref":rt["connection_ref"],"logical_agent_alias_resolution":alias_resolution},
+      rt["identity_id"],
+    )
 
     admission=json.loads(rt["admission_json"])
     capability=json.loads(rt["capability_evidence_json"])
@@ -334,6 +418,7 @@ def bind_gacr(db:Path,runtime_id:str,sessions_path:Path,current_head:str)->dict[
     return {
       "runtime_id":runtime_id,"state":"READY_FOR_F1","last_gate":"Q12","next_gate":"F1",
       "gacr_session_id":sid,"access_grant":grant,
+      "logical_agent_alias_resolution":alias_resolution,
       "start_here_status":"NOT_YET_APPLICABLE",
       "authority_granted":False,
     }

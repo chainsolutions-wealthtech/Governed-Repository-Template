@@ -156,6 +156,8 @@ def main() -> None:
         "cold-start alias resolution reconstructs all canonical sessions",
     )
     assert_true(resolved_alias["provider_context_count"] == 1, "provider context history follows the logical agent")
+    assert_true(resolved_alias["routing_status"] == "ROUTABLE_EXACT_SESSION", "one active canonical session is alias-routable")
+    assert_true(resolved_alias["resolved_target_session_id"] == "session-forge-new", "alias resolves exact active session")
     assert_true(resolved_alias["grants_mutation_authority"] is False, "alias resolution grants no authority")
     expect_error(
         lambda: c.resolve_logical_agent_alias_docs(alias_state, alias_sessions, alias="UNKNOWN"),
@@ -178,6 +180,12 @@ def main() -> None:
         lambda: c.resolve_logical_agent_alias_docs(ambiguous_alias_state, alias_sessions, alias="FORGE"),
         "LOGICAL_AGENT_ALIAS_AMBIGUOUS",
     )
+    multiple_active_sessions = copy.deepcopy(alias_sessions)
+    multiple_active_sessions["sessions"][0]["status"] = "ACTIVE"
+    multiple_active_sessions["sessions"][0]["relay"]["state"] = "ACTIVE"
+    ambiguous_route = c.resolve_logical_agent_alias_docs(alias_state,multiple_active_sessions,alias="FORGE")
+    assert_true(ambiguous_route["routing_status"] == "AMBIGUOUS_ACTIVE_SESSIONS", "multiple active sibling sessions fail closed")
+    assert_true(ambiguous_route["resolved_target_session_id"] is None, "ambiguous alias selects no session")
 
     first = c.declare_scope_docs(
         state, sessions, claims,

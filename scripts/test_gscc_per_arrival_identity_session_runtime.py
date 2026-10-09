@@ -8,7 +8,7 @@ from pathlib import Path
 from provider_first_tool_hook import build_envelope
 from gscc_arrival_identity import mint
 from gscc_persisted_entry_pipeline import run_pipeline
-from gscc_session_runtime import prepare, control, release_f1
+from gscc_session_runtime import prepare, control, release_f1, resolve_alias_binding_intent
 
 REPO="chainsolutions-wealthtech/Governed-Repository-Template"
 HEAD="a"*40
@@ -23,8 +23,8 @@ GITHUB={
  "visibility":"public",
 }
 
-def base_envelope():
-    return build_envelope({
+def base_envelope(alias=None):
+    event={
       "provider":"chatgpt",
       "provider_product":"ChatGPT",
       "provider_family":"OpenAI",
@@ -46,7 +46,10 @@ def base_envelope():
       "operation":"pre_entry_runtime_transport",
       "category":"CONTROLLED_INGRESS",
       "success":True,
-    })
+    }
+    if alias:
+        event["logical_agent_alias"]=alias
+    return build_envelope(event)
 
 def issue_event(issue_id,number):
     return {"repository":{"id":1386478935,"full_name":REPO},"issue":{"id":issue_id,"number":number}}
@@ -79,7 +82,7 @@ def pass_q9(db,runtime):
     return control(db,runtime["runtime_id"],resp,response_at)
 
 def main():
-    e1=mint(base_envelope(),issue_event(9001,301),run_id="r1")
+    e1=mint(base_envelope("FORGE"),issue_event(9001,301),run_id="r1")
     e2=mint(base_envelope(),issue_event(9002,302),run_id="r2")
     e1_repeat=mint(base_envelope(),issue_event(9001,301),run_id="r3")
     assert e1["identity"]["connection_ref"] != e2["identity"]["connection_ref"]
@@ -106,6 +109,25 @@ def main():
         assert g1["state"]=="GSE_VERIFIED_WAITING_GACR",g1
         assert g2["state"]=="GSE_VERIFIED_WAITING_GACR",g2
         assert g1["gacr_attach"]["connection_ref"] != g2["gacr_attach"]["connection_ref"]
+        assert g1["gse_state"]["requested_logical_agent_alias"]=="FORGE",g1
+        assert g1["gse_state"]["logical_agent_alias_resolution"]=="GACR_Q2_REQUIRED",g1
+        assert g1["gacr_attach"]["logical_agent_alias"]=="FORGE",g1
+
+        alias_binding=resolve_alias_binding_intent(
+          {"sections":{"request":{"logical_agent_alias":"FORGE"}}},
+          {"sessions":[
+            {"session_id":"session-forge-old","agent_identity":"logical-forge","status":"STALLED","relay":{"state":"TAKEOVER_READY"},"provider":"chatgpt","connection_ref":"old","client_instance_id":"old-client","provider_contexts":[]},
+            {"session_id":"session-forge-live","agent_identity":"logical-forge","status":"ACTIVE","relay":{"state":"ACTIVE"},"provider":"chatgpt","connection_ref":"live","client_instance_id":"live-client","provider_contexts":[]},
+          ]},
+          {"schema_version":"1.0.0","authority":"DERIVED_GACR_COORDINATION_PROJECTION","projection_only":True,"grants_task_authority":False,"grants_claim":False,"grants_mutation_authority":False,"revision":1,"items":[{
+            "continuity_id":"GRT-CONT-ALIAS-TEST","repository":REPO,"coordination_issue":259,"projection_only":True,"participants":[],
+            "logical_agents":[{"logical_agent_id":"logical-forge","human_alias":"FORGE","human_alias_provenance":"OWNER_ASSIGNED","reference_session_ids":["session-forge-old"],"session_ids":["session-forge-old","session-forge-live"],"provider_contexts":[],"projection_only":True,"grants_task_authority":False,"grants_claim":False,"grants_mutation_authority":False}],
+          }]},
+        )
+        assert alias_binding["logical_agent_id"]=="logical-forge",alias_binding
+        assert alias_binding["routing_status"]=="ROUTABLE_EXACT_SESSION",alias_binding
+        assert alias_binding["resolved_target_session_id"]=="session-forge-live",alias_binding
+        assert alias_binding["grants_mutation_authority"] is False
 
         # F1 release is bound to the same arrival, exact GACR session, grant and HEAD.
         gacr_session_id="session-final-release"
