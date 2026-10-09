@@ -39,6 +39,7 @@ ONE MASTER MAP
 | Concern | Canonical authority |
 |---|---|
 | Target architecture / invariants | `docs/control-plane/CANONICAL_ARCHITECTURE.md` / `CP-ARCH-001` |
+| Human/operator directory (navigation only) | `docs/control-plane/SYSTEM_DIRECTORY.md` |
 | Live current state | `docs/control-plane/CURRENT_STATE.md` + `.governance/control-plane-state/current.json` |
 | Programme chronology | `docs/control-plane/PROGRAM.md` |
 | Task graph | `docs/control-plane/TASKS.md` + `.governance/control-plane-state/tasks.json` |
@@ -379,6 +380,7 @@ Forbidden:
 
 ## 14. Read-next links
 
+- Human/operator directory — agents, pôles, objects, buses, calls/wake, frontend projection: `docs/control-plane/SYSTEM_DIRECTORY.md`
 - Requirements / status / roadmap: `docs/control-plane/REQUIREMENTS_ROADMAP.md`
 - Target architecture: `docs/control-plane/CANONICAL_ARCHITECTURE.md`
 - Data/interaction model: `docs/control-plane/DATA_MODEL.md`

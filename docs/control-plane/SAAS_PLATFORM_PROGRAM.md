@@ -195,6 +195,21 @@ Minimum views:
     - rate/quota controls if required;
     - feature/version compatibility.
 
+11. **System Directory / Documentation Center**
+    - named logical agents and aliases;
+    - pôle vs runtime-pool views;
+    - object/block catalogue;
+    - bus/control-route directory;
+    - call / wake / resume semantics;
+    - continuity/work/checkpoint/handoff links;
+    - owner Q&A documentation sessions;
+    - canonical/projection/planned/historical provenance labels;
+    - read-first navigation to source authorities.
+
+    The first implementation is read-only. It MUST query live runtime authorities for
+    liveness, leases, claims, dispatch state and current capacity rather than copying
+    volatile state into UI-owned records.
+
 Every mutable control must show the authority/gate being exercised and its expected effect before execution.
 
 ## 6. SaaS and tenancy requirements
