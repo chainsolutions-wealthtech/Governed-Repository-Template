@@ -150,11 +150,40 @@ def main() -> None:
             "provider context history preserves both transport surfaces",
         )
 
+        fifth = json.loads(run(
+            env,
+            "--provider", "chatgpt",
+            "--provider-ref", "conversation-456",
+            "--connection-ref", "chronicle:CHAT-MEM-TEST:SESSION-TEST",
+            "--client-instance-id", "chronicle:CHAT-MEM-TEST",
+            "--observed-head", "b"*40,
+            "--branch", "main",
+        ).stdout)
+        assert_true(fifth["status"] == "RESUME", "new provider conversation on reused transport resumes canonical session")
+        assert_true(
+            fifth["identity_resolution"] == "NEW_PROVIDER_CONTEXT_SAME_LOGICAL_AGENT",
+            "new provider conversation on reused connection is a distinct provider context",
+        )
+        assert_true(len(fifth["session"]["provider_contexts"]) == 3, "provider conversation change must not overwrite historical context")
+        same_connection_contexts = [
+            item for item in fifth["session"]["provider_contexts"]
+            if item.get("connection_ref") == "chronicle:CHAT-MEM-TEST:SESSION-TEST"
+        ]
+        assert_true(
+            {item.get("provider_conversation_ref") for item in same_connection_contexts}
+            == {"conversation-123", "conversation-456"},
+            "same connection preserves distinct provider conversation history",
+        )
+        assert_true(
+            len({item.get("provider_context_id") for item in same_connection_contexts}) == 2,
+            "distinct provider conversations must have distinct provider context ids",
+        )
+
         sessions = json.loads((root / ".governance" / "control-plane-state" / "gacr-sessions.json").read_text())
         beacons = json.loads((root / ".governance" / "control-plane-state" / "gacr-beacons.json").read_text())
         correlations = json.loads((root / ".governance" / "control-plane-state" / "gacr-correlations.json").read_text())
         assert_true(len(sessions["sessions"]) == 1, "one canonical session")
-        assert_true(len(beacons["items"]) == 4, "each successful attach emits beacon")
+        assert_true(len(beacons["items"]) == 5, "each successful attach emits beacon")
         assert_true(any(x.get("selected_session_id") == sid for x in correlations["items"]), "correlator binds canonical session")
 
 

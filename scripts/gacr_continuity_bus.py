@@ -921,10 +921,10 @@ def reconcile_early_supervision_docs(
 
             if last_signal is None:
                 continue
-            silence_seconds = max(0, int((timestamp - last_signal).total_seconds()))
 
-            if silence_seconds <= early_supervision_after_seconds:
-                if open_alert and last_signal > parse_time(open_alert.get("detected_at")):
+            if open_alert:
+                alert_signal = parse_time(open_alert.get("last_signal_at"))
+                if alert_signal is not None and last_signal > alert_signal:
                     open_alert["state"] = "RESOLVED"
                     open_alert["resolved_at"] = iso(timestamp)
                     open_alert["resolution"] = "FRESH_SESSION_SIGNAL_OBSERVED"
@@ -932,6 +932,11 @@ def reconcile_early_supervision_docs(
                         if dispatch.get("supervision_alert_id") == open_alert.get("alert_id") and dispatch.get("status") not in {"DELIVERED", "RESOLVED", "CANCELLED"}:
                             dispatch["status"] = "RESOLVED"
                     changes.append({"alert_id": open_alert.get("alert_id"), "target_session_id": target_id, "state": "RESOLVED"})
+                    open_alert = None
+
+            silence_seconds = max(0, int((timestamp - last_signal).total_seconds()))
+
+            if silence_seconds <= early_supervision_after_seconds:
                 continue
 
             if open_alert:
@@ -1025,7 +1030,11 @@ def reconcile_dispatch_delivery_docs(state: dict, dispatches_doc: dict, *, times
                     route["acknowledged_at"] = ((dispatch.get("ack") or {}).get("observed_at") or iso(timestamp))
                     route["evidence_ref"] = ((dispatch.get("ack") or {}).get("evidence_ref") or route.get("evidence_ref"))
                     changes.append({"event_id": event.get("event_id"), "target_session_id": route.get("target_session_id"), "state": "ACKED"})
-                elif status == "FALLBACK_POLL_REQUIRED" and route.get("delivery_state") != "FALLBACK_POLL_REQUIRED":
+                elif (
+                    status == "FALLBACK_POLL_REQUIRED"
+                    and route.get("delivery_state") not in FINAL_ROUTE_STATES
+                    and route.get("delivery_state") != "FALLBACK_POLL_REQUIRED"
+                ):
                     route["delivery_state"] = "FALLBACK_POLL_REQUIRED"
                     if FALLBACK_MODE not in route.setdefault("delivery_modes", []):
                         route["delivery_modes"].append(FALLBACK_MODE)

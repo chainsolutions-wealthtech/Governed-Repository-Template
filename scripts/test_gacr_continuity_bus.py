@@ -179,6 +179,87 @@ def main():
     assert responded["status"] == "CONTINUITY_EVENT_RESPONDED"
     assert event["state"] == "RESPONDED"
 
+    fallback_preserve_state = base_state()
+    fallback_preserve_dispatches = {"schema_version": "1.0.0", "revision": 0, "items": []}
+    fallback_preserve_event = bus.emit_event_docs(
+        fallback_preserve_state, sessions, fallback_preserve_dispatches,
+        continuity_id="GRT-CONT-DEMO-01",
+        from_session_id="session-a",
+        target_session_ids=["session-b"],
+        event_kind="REQUEST",
+        payload_ref="github-issue-comment:poll-preserve",
+        observed_head=HEAD,
+        current_head=HEAD,
+        evidence_ref="github-issue-comment:poll-preserve",
+        timestamp=NOW,
+        scope_id="lab",
+        collision_domains=["gacr:continuity:delivery"],
+    )["event"]
+    fallback_route = fallback_preserve_event["routes"][0]
+    fallback_dispatch = next(
+        item for item in fallback_preserve_dispatches["items"]
+        if item.get("dispatch_id") == fallback_route["dispatch_id"]
+    )
+    fallback_dispatch["status"] = "FALLBACK_POLL_REQUIRED"
+    fallback_route["delivery_state"] = "FALLBACK_POLL_REQUIRED"
+    poll_ack = bus.ack_event_docs(
+        fallback_preserve_state, sessions,
+        continuity_id="GRT-CONT-DEMO-01",
+        event_id=fallback_preserve_event["event_id"],
+        session_id="session-b",
+        observed_head=HEAD,
+        current_head=HEAD,
+        evidence_ref="github-issue-comment:poll-ack",
+        timestamp=NOW + timedelta(seconds=4),
+    )
+    assert poll_ack["status"] == "CONTINUITY_EVENT_ACKED"
+    bus.tick_docs(
+        fallback_preserve_state, sessions, fallback_preserve_dispatches,
+        timestamp=NOW + timedelta(seconds=5),
+    )
+    assert fallback_route["delivery_state"] == "ACKED", "fallback dispatch must not overwrite polling ACK"
+
+    fallback_response_state = base_state()
+    fallback_response_dispatches = {"schema_version": "1.0.0", "revision": 0, "items": []}
+    fallback_response_event = bus.emit_event_docs(
+        fallback_response_state, sessions, fallback_response_dispatches,
+        continuity_id="GRT-CONT-DEMO-01",
+        from_session_id="session-a",
+        target_session_ids=["session-b"],
+        event_kind="REQUEST",
+        payload_ref="github-issue-comment:poll-response",
+        observed_head=HEAD,
+        current_head=HEAD,
+        evidence_ref="github-issue-comment:poll-response",
+        timestamp=NOW,
+        scope_id="lab",
+        collision_domains=["gacr:continuity:delivery"],
+    )["event"]
+    fallback_response_route = fallback_response_event["routes"][0]
+    fallback_response_dispatch = next(
+        item for item in fallback_response_dispatches["items"]
+        if item.get("dispatch_id") == fallback_response_route["dispatch_id"]
+    )
+    fallback_response_dispatch["status"] = "FALLBACK_POLL_REQUIRED"
+    fallback_response_route["delivery_state"] = "FALLBACK_POLL_REQUIRED"
+    poll_response = bus.respond_event_docs(
+        fallback_response_state, sessions,
+        continuity_id="GRT-CONT-DEMO-01",
+        event_id=fallback_response_event["event_id"],
+        session_id="session-b",
+        response_ref="github-issue-comment:poll-response-value",
+        observed_head=HEAD,
+        current_head=HEAD,
+        evidence_ref="github-issue-comment:poll-response-evidence",
+        timestamp=NOW + timedelta(seconds=4),
+    )
+    assert poll_response["status"] == "CONTINUITY_EVENT_RESPONDED"
+    bus.tick_docs(
+        fallback_response_state, sessions, fallback_response_dispatches,
+        timestamp=NOW + timedelta(seconds=5),
+    )
+    assert fallback_response_route["delivery_state"] == "RESPONDED", "fallback dispatch must not overwrite polling response"
+
     fallback = bus.emit_event_docs(
         state, sessions, dispatches,
         continuity_id="GRT-CONT-DEMO-01",
@@ -474,6 +555,42 @@ def main():
     assert any(x.get("state") == "RESOLVED" for x in resolve_tick["changes"])
     assert alert["state"] == "RESOLVED"
     assert refreshed_sessions["sessions"][0]["relay"]["lease_expires_at"] == original_supervision_sessions["sessions"][0]["relay"]["lease_expires_at"]
+
+    delayed_refresh_state = base_state()
+    delayed_refresh_sessions = {"sessions": [
+        session("session-a", silence_seconds=200),
+        session("session-b", bridge=True),
+        session("session-c", live=False),
+    ]}
+    delayed_refresh_dispatches = {"schema_version": "1.0.0", "revision": 0, "items": []}
+    bus.tick_docs(
+        delayed_refresh_state,
+        delayed_refresh_sessions,
+        delayed_refresh_dispatches,
+        timestamp=NOW,
+        early_supervision_after_seconds=120,
+    )
+    first_delayed_alert = delayed_refresh_state["items"][0]["supervision_alerts"][0]
+    new_signal = NOW + timedelta(seconds=10)
+    delayed_refresh_sessions["sessions"][0]["relay"]["last_heartbeat_at"] = bus.iso(new_signal)
+    delayed_refresh_sessions["sessions"][0]["last_seen_at"] = bus.iso(new_signal)
+    delayed_refresh_sessions["sessions"][0]["relay"]["lease_expires_at"] = bus.iso(NOW + timedelta(minutes=30))
+    delayed_tick = bus.tick_docs(
+        delayed_refresh_state,
+        delayed_refresh_sessions,
+        delayed_refresh_dispatches,
+        timestamp=NOW + timedelta(seconds=150),
+        early_supervision_after_seconds=120,
+    )
+    assert first_delayed_alert["state"] == "RESOLVED", "newer signal must resolve obsolete alert even when new silence already exceeds threshold"
+    delayed_open = [
+        item for item in delayed_refresh_state["items"][0]["supervision_alerts"]
+        if item.get("state") == "OPEN"
+    ]
+    assert len(delayed_open) == 1, "new silence interval receives a fresh supervision alert"
+    assert delayed_open[0]["last_signal_at"] == bus.iso(new_signal), "replacement alert is keyed to the newer signal"
+    assert any(x.get("state") == "RESOLVED" for x in delayed_tick["changes"])
+    assert any(x.get("state") == "EARLY_SUPERVISION_ALERT" for x in delayed_tick["changes"])
 
     expired_projection = session("session-expired-projection", live=False, provider="chatgpt")
     assert bus.derive_liveness_state(expired_projection, NOW) == "STALLED"

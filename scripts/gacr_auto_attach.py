@@ -769,16 +769,13 @@ def _same_logical_agent_gate(
 
 
 def _provider_context_id(session_id: str, connection_ref: str | None, provider_ref: str | None, client_instance_id: str | None) -> str:
-    if connection_ref:
-        anchor_kind, anchor_value = "connection_ref", connection_ref
-    elif provider_ref:
-        anchor_kind, anchor_value = "provider_conversation_ref", provider_ref
-    elif client_instance_id:
-        anchor_kind, anchor_value = "client_instance_id", client_instance_id
-    else:
-        anchor_kind, anchor_value = "session_id", session_id
     raw = json.dumps(
-        {"session_id": session_id, "anchor_kind": anchor_kind, "anchor_value": anchor_value},
+        {
+            "session_id": session_id,
+            "connection_ref": connection_ref or None,
+            "provider_conversation_ref": provider_ref or None,
+            "client_instance_id": client_instance_id or None,
+        },
         sort_keys=True, separators=(",", ":"), ensure_ascii=False,
     )
     return "GACR-PC-" + hashlib.sha256(raw.encode("utf-8")).hexdigest()[:16]
