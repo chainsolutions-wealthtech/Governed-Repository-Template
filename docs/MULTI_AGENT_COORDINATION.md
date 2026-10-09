@@ -466,3 +466,51 @@ in-flight activity, and other pending offers before changing offer state.
 The dispatcher may still choose the compatible sibling session whose declared
 role/capabilities fit a work item; this aggregation grants no claim, mutation authority,
 new queue, or provider-level limit inference.
+
+
+## Owner-assigned logical-agent alias routing
+
+Owner-assigned aliases such as `ATLAS`, `FORGE`, and `SENTINEL` are stable
+human-facing labels on the existing logical-agent continuity projection. Their
+provenance is `OWNER_ASSIGNED`. They are not session IDs, provider identities,
+roles, claims, leases, liveness evidence, or authority tokens.
+
+A fresh provider arrival may carry `logical_agent_alias` only as non-authoritative
+entry intent. The canonical route is:
+
+```text
+Provider First Touch
+  -> GSCC observable packet
+  -> GSCC admission / control proof
+  -> Q10_GSE retains requested_logical_agent_alias
+       resolution = GACR_Q2_REQUIRED
+       grants_authority = false
+  -> Q2_GACR resolves alias from gacr-continuities.json
+  -> exactly one canonical logical_agent_id
+  -> canonical sessions + provider/runtime contexts
+  -> exact active session only when uniquely routable
+  -> remaining Q6/Q7/Q11/Q12/F1 gates
+```
+
+The alias never bypasses GSCC or GSE. Unknown aliases fail closed. The same alias
+mapped to multiple logical-agent IDs fails closed. A logical agent with multiple active
+canonical sessions is `AMBIGUOUS_ACTIVE_SESSIONS` for alias-targeted routing and no
+session is selected.
+
+An alias can validate an already correlated session only when that session's canonical
+`logical_agent_id/agent_identity` equals the alias resolution. The alias alone does
+not prove that a brand-new provider/chat/runtime surface belongs to the logical agent.
+Creating another session or attaching an unresolved surface still requires the separate
+canonical same-logical-agent proof: reference session, continuity ID, and exact persisted
+continuity evidence. Without that proof the host path fails closed as
+`LOGICAL_AGENT_ALIAS_SURFACE_UNRESOLVED`.
+
+Continuity commands may target a human alias only after the same resolver returns
+`ROUTABLE_EXACT_SESSION`. The bus then routes to the resolved canonical `session_id`
+and still applies continuity membership, scope, collision-domain, exact-HEAD, liveness,
+B12/B29/polling, ACK, and expiry rules. Supplying both a direct session target and an
+alias target is rejected.
+
+Historical `provider_contexts[]` participate in exact session correlation, but
+repository-derived provider-context IDs and connector/app/installation evidence are
+never promoted to provider-native conversation identity.
