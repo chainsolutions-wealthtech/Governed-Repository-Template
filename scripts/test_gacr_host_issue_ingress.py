@@ -151,6 +151,56 @@ def main() -> None:
         "same-logical-agent attach",
     )
 
+    continuity_event_payload = {
+        "schema": g.SCHEMA,
+        "event": "continuity_event",
+        "session_id": "session-1",
+        "continuity_id": "GRT-CONT-DEMO-01",
+        "target_session_ids": ["session-2"],
+        "event_kind": "REQUEST",
+        "payload_ref": "github-issue-comment:payload",
+        "observed_head": "a" * 40,
+        "scope_id": "lab",
+        "collision_domains": ["gacr:continuity:delivery"],
+        "requires_ack": True,
+    }
+    parsed_continuity_event = g.parse_issue_comment_event(
+        event(body(continuity_event_payload), comment_id=90033),
+        config(),
+    )
+    assert_true(parsed_continuity_event["target_session_ids"] == ["session-2"], "continuity event target list parsed")
+    alias_continuity_event = dict(continuity_event_payload)
+    alias_continuity_event.pop("target_session_ids")
+    alias_continuity_event["target_logical_agent_alias"] = "FORGE"
+    parsed_alias_event = g.parse_issue_comment_event(
+        event(body(alias_continuity_event), comment_id=90034),
+        config(),
+    )
+    assert_true(parsed_alias_event["target_logical_agent_alias"] == "FORGE", "continuity event alias target parsed")
+    invalid_target_modes = dict(continuity_event_payload)
+    invalid_target_modes["target_logical_agent_alias"] = "FORGE"
+    expect_error(
+        lambda: g.parse_issue_comment_event(event(body(invalid_target_modes), comment_id=90035), config()),
+        "exactly one target mode",
+    )
+    parsed_continuity_ack = g.parse_issue_comment_event(
+        event(body({
+            "schema":g.SCHEMA,"event":"continuity_ack","session_id":"session-1",
+            "continuity_id":"GRT-CONT-DEMO-01","event_id":"GACR-E-demo","observed_head":"a"*40,
+        }), comment_id=90036),
+        config(),
+    )
+    parsed_continuity_response = g.parse_issue_comment_event(
+        event(body({
+            "schema":g.SCHEMA,"event":"continuity_response","session_id":"session-1",
+            "continuity_id":"GRT-CONT-DEMO-01","event_id":"GACR-E-demo",
+            "response_ref":"github-issue-comment:response","observed_head":"a"*40,
+        }), comment_id=90037),
+        config(),
+    )
+    assert_true(parsed_continuity_ack["event_id"] == "GACR-E-demo", "continuity ack parsed")
+    assert_true(parsed_continuity_response["response_ref"] == "github-issue-comment:response", "continuity response parsed")
+
     availability_payload = {
         "schema": g.SCHEMA,
         "event": "availability",
@@ -414,6 +464,49 @@ def main() -> None:
     finally:
         g.resolve_owner_alias = original_resolve_owner_alias
         g.active_sessions = original_active_sessions_alias
+
+    bus_calls = []
+    bus_markers = []
+    original_processed_bus = g.evidence_processed
+    original_ensure_bus = g.ensure_session
+    original_run_bus = g.run_script
+    original_marker_bus = g.marker_beacon
+    try:
+        g.evidence_processed = lambda evidence_ref: False
+        g.ensure_session = lambda payload, repository: {"session_id":"session-1"}
+        def bus_runner(path, args):
+            bus_calls.append((path.name, list(args)))
+            if path.name == "gacr_continuity_bus.py":
+                return json.dumps({"status":"CONTINUITY_"+args[0].upper()+"_TEST"})
+            return ""
+        g.run_script = bus_runner
+        g.marker_beacon = lambda session_id, payload, event_type: bus_markers.append((session_id,event_type))
+
+        emit_result = g.process(dict(parsed_continuity_event), "example/governed")
+        assert_true(emit_result["coordination"]["status"] == "CONTINUITY_EMIT_TEST", "host continuity event invokes bus emit")
+        emit_args = next(args for name,args in bus_calls if name=="gacr_continuity_bus.py" and args[0]=="emit")
+        assert_true("--target-session-id" in emit_args and "session-2" in emit_args, "host forwards continuity target")
+        assert_true("--payload-ref" in emit_args and "github-issue-comment:payload" in emit_args, "host forwards payload ref")
+        assert_true(("session-1","CONTINUITY_EVENT_EMITTED") in bus_markers, "host continuity event records marker")
+
+        bus_calls.clear()
+        bus_markers.clear()
+        ack_result = g.process(dict(parsed_continuity_ack), "example/governed")
+        assert_true(ack_result["coordination"]["status"] == "CONTINUITY_ACK_TEST", "host continuity ack invokes bus ack")
+        assert_true(any(name=="gacr_continuity_bus.py" and args[0]=="ack" for name,args in bus_calls), "bus ack command routed")
+        assert_true(("session-1","CONTINUITY_EVENT_ACK") in bus_markers, "continuity ack records marker")
+
+        bus_calls.clear()
+        bus_markers.clear()
+        response_result = g.process(dict(parsed_continuity_response), "example/governed")
+        assert_true(response_result["coordination"]["status"] == "CONTINUITY_RESPOND_TEST", "host continuity response invokes bus respond")
+        assert_true(any(name=="gacr_continuity_bus.py" and args[0]=="respond" for name,args in bus_calls), "bus respond command routed")
+        assert_true(("session-1","CONTINUITY_EVENT_RESPONSE") in bus_markers, "continuity response records marker")
+    finally:
+        g.evidence_processed = original_processed_bus
+        g.ensure_session = original_ensure_bus
+        g.run_script = original_run_bus
+        g.marker_beacon = original_marker_bus
 
     calls = []
     original_processed = g.evidence_processed

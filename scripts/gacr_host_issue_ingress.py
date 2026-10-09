@@ -121,6 +121,16 @@ ALLOWED_KEYS = {
     "challenge_id",
     "nonce",
     "challenge_status",
+    "target_session_ids",
+    "target_logical_agent_alias",
+    "event_kind",
+    "payload_ref",
+    "event_id",
+    "response_ref",
+    "requires_ack",
+    "reply_to_event_id",
+    "expires_at",
+    "ack_timeout_seconds",
 }
 
 
@@ -260,6 +270,34 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
         for key in ("session_id", "continuity_id", "scope_id", "handoff_ref", "observed_head"):
             if payload.get(key) in (None, ""):
                 raise ValueError(f"host continuity_yield requires {key}")
+    if kind == "continuity_event":
+        for key in ("session_id", "continuity_id", "event_kind", "payload_ref", "observed_head", "scope_id"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host continuity_event requires {key}")
+        domains = payload.get("collision_domains")
+        if not isinstance(domains, list) or not domains:
+            raise ValueError("host continuity_event requires non-empty collision_domains")
+        direct_targets = payload.get("target_session_ids")
+        alias_target = payload.get("target_logical_agent_alias")
+        has_direct = isinstance(direct_targets, list) and any(str(x).strip() for x in direct_targets)
+        has_alias = alias_target not in (None, "")
+        if has_direct == has_alias:
+            raise ValueError("host continuity_event requires exactly one target mode")
+        if "requires_ack" in payload and not isinstance(payload.get("requires_ack"), bool):
+            raise ValueError("host continuity_event requires_ack must be boolean")
+        if "ack_timeout_seconds" in payload and (
+            not isinstance(payload.get("ack_timeout_seconds"), int)
+            or int(payload["ack_timeout_seconds"]) <= 0
+        ):
+            raise ValueError("host continuity_event ack_timeout_seconds must be positive")
+    if kind == "continuity_ack":
+        for key in ("session_id", "continuity_id", "event_id", "observed_head"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host continuity_ack requires {key}")
+    if kind == "continuity_response":
+        for key in ("session_id", "continuity_id", "event_id", "response_ref", "observed_head"):
+            if payload.get(key) in (None, ""):
+                raise ValueError(f"host continuity_response requires {key}")
     if kind == "work_offer_accept":
         for key in ("session_id", "dispatch_id"):
             if payload.get(key) in (None, ""):
@@ -634,6 +672,53 @@ def process(payload: dict, repository: str) -> dict:
         marker_payload = dict(payload)
         marker_payload["checkpoint_ref"] = str(payload["continuity_id"])
         marker_beacon(session_id, marker_payload, "CONTINUITY_SCOPE_YIELDED")
+    elif kind == "continuity_event":
+        args = [
+            "emit",
+            "--continuity-id", str(payload["continuity_id"]),
+            "--from-session-id", session_id,
+            "--event-kind", str(payload["event_kind"]),
+            "--payload-ref", str(payload["payload_ref"]),
+            "--observed-head", str(payload["observed_head"]),
+            "--evidence-ref", evidence_ref,
+            "--scope-id", str(payload["scope_id"]),
+        ]
+        for target in payload.get("target_session_ids") or []:
+            add(args, "--target-session-id", target)
+        add(args, "--target-logical-agent-alias", payload.get("target_logical_agent_alias"))
+        for domain in payload.get("collision_domains") or []:
+            add(args, "--collision-domain", domain)
+        add(args, "--correlation-id", payload.get("correlation_id"))
+        add(args, "--reply-to-event-id", payload.get("reply_to_event_id"))
+        add(args, "--expires-at", payload.get("expires_at"))
+        add(args, "--ack-timeout-seconds", payload.get("ack_timeout_seconds"))
+        if payload.get("requires_ack") is False:
+            args.append("--no-requires-ack")
+        elif payload.get("requires_ack") is True:
+            args.append("--requires-ack")
+        coordination_result = json.loads(run_script(BUS, args))
+        marker_beacon(session_id, payload, "CONTINUITY_EVENT_EMITTED")
+    elif kind == "continuity_ack":
+        coordination_result = json.loads(run_script(BUS, [
+            "ack",
+            "--continuity-id", str(payload["continuity_id"]),
+            "--event-id", str(payload["event_id"]),
+            "--session-id", session_id,
+            "--observed-head", str(payload["observed_head"]),
+            "--evidence-ref", evidence_ref,
+        ]))
+        marker_beacon(session_id, payload, "CONTINUITY_EVENT_ACK")
+    elif kind == "continuity_response":
+        coordination_result = json.loads(run_script(BUS, [
+            "respond",
+            "--continuity-id", str(payload["continuity_id"]),
+            "--event-id", str(payload["event_id"]),
+            "--session-id", session_id,
+            "--response-ref", str(payload["response_ref"]),
+            "--observed-head", str(payload["observed_head"]),
+            "--evidence-ref", evidence_ref,
+        ]))
+        marker_beacon(session_id, payload, "CONTINUITY_EVENT_RESPONSE")
     elif kind == "work_offer_accept":
         run_script(CAPACITY, [
             "accept-work",
