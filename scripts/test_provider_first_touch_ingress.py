@@ -145,6 +145,8 @@ class ProviderFirstTouchIngressTests(unittest.TestCase):
     def test_q10_gacr_dispatch_respects_github_payload_width(self):
         workflow = (Path(__file__).resolve().parents[1] / ".github/workflows/gscc-provider-first-touch-ingress.yml").read_text(encoding="utf-8")
         self.assertIn('payload["arrival_context"]=arrival_context', workflow)
+        self.assertIn('"same_logical_agent_session_id","continuity_id","continuity_evidence_ref"', workflow.replace("\n","").replace(" ",""))
+        self.assertIn('payload.pop("logical_agent_alias",None)', workflow)
         self.assertIn('if len(payload)>10:', workflow)
         self.assertIn('GACR_DISPATCH_CLIENT_PAYLOAD_TOO_WIDE', workflow)
         self.assertNotIn('payload["repository"]=os.environ["GITHUB_REPOSITORY"]', workflow)

@@ -350,10 +350,14 @@ jobs:
           # existing GACR arrival_context expansion contract instead of
           # dropping fields.
           arrival_context={"repository":os.environ["GITHUB_REPOSITORY"]}
-          for key in ("observed_head","branch","last_evidence","entry_action","connection_intent"):
+          for key in (
+              "observed_head","branch","last_evidence","entry_action","connection_intent",
+              "same_logical_agent_session_id","continuity_id","continuity_evidence_ref",
+          ):
               value=payload.pop(key,None)
               if value not in (None,""):
                   arrival_context[key]=value
+          payload.pop("logical_agent_alias",None)
           payload.pop("schema",None)
           payload.pop("event",None)
           payload["source"]="GSCC_PRE_GSE_RUNTIME"

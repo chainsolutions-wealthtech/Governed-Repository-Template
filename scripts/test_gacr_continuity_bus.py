@@ -345,7 +345,11 @@ def main():
         )
         assert with_bridge["provider_inbound_endpoint"]["status"] == "OBSERVED"
         assert with_bridge["provider_inbound_endpoint"]["kind"] == "EXTERNAL_BRIDGE"
-        assert with_bridge["wake_route"]["preferred"] == "EXTERNAL_BRIDGE"
+        if provider == "chatgpt":
+            assert with_bridge["wake_route"]["preferred"] == "GSCC_CONTROL_CHANNEL"
+            assert with_bridge["wake_route"]["control_capable"] is True
+        else:
+            assert with_bridge["wake_route"]["preferred"] == "EXTERNAL_BRIDGE"
         assert with_bridge["wake_route"]["push_capable"] is True
 
     alias_state = base_state()
