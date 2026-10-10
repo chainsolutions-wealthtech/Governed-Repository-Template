@@ -5,7 +5,7 @@
   "grants_task_authority": false,
   "grants_claim": false,
   "grants_mutation_authority": false,
-  "revision": 11,
+  "revision": 12,
   "items": [
     {
       "continuity_id": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
@@ -248,15 +248,15 @@
               "provider_connector_installation_id_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
               "provider_connector_slug_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
               "first_seen_at": "2026-10-09T23:26:44+00:00",
-              "last_seen_at": "2026-10-09T23:26:44+00:00",
-              "seen_count": 1
+              "last_seen_at": "2026-10-10T00:30:52+00:00",
+              "seen_count": 2
             }
           ],
           "liveness_state": "LIVE",
           "canonical_session_status": "ACTIVE",
           "canonical_relay_state": "ACTIVE",
-          "lease_expires_at": "2026-10-09T23:59:55+00:00",
-          "last_signal_at": "2026-10-09T23:29:55+00:00",
+          "lease_expires_at": "2026-10-10T01:00:52+00:00",
+          "last_signal_at": "2026-10-10T00:30:52+00:00",
           "provider_endpoint": {
             "provider": "chatgpt",
             "provider_conversation_ref_status": "UNAVAILABLE",
@@ -286,7 +286,7 @@
             "bridge_registration_ref": null,
             "provider_private_values_invented": false
           },
-          "runtime_projection_observed_at": "2026-10-09T23:29:58+00:00"
+          "runtime_projection_observed_at": "2026-10-10T00:30:54+00:00"
         }
       ],
       "last_handoff": null,
@@ -331,8 +331,8 @@
               "provider_connector_installation_id_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
               "provider_connector_slug_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
               "first_seen_at": "2026-10-09T23:26:44+00:00",
-              "last_seen_at": "2026-10-09T23:26:44+00:00",
-              "seen_count": 1
+              "last_seen_at": "2026-10-10T00:30:52+00:00",
+              "seen_count": 2
             }
           ],
           "projection_only": true,
