@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 48,
+  "revision": 50,
   "items": [
     {
       "schema": "gscc-control-dispatch/v1",
@@ -512,8 +512,8 @@
     {
       "dispatch_id": "GACR-W-07d6e736dc85",
       "dispatch_kind": "WORK_OFFER",
-      "status": "READY",
-      "offer_status": "PENDING_ACCEPTANCE",
+      "status": "CANCELLED",
+      "offer_status": "CANCELLED",
       "created_at": "2026-10-10T01:29:28+00:00",
       "target_session_id": "session-61c8b67cdd815803287c8c77",
       "target_logical_agent_id": "GSCC-ID-791fc3c8a9abb4bfeb1067fd",
@@ -543,7 +543,9 @@
       "requires_exact_head_reconciliation": true,
       "may_write_before_acceptance": false,
       "claim_created": false,
-      "grants_write_authority": false
+      "grants_write_authority": false,
+      "cancelled_at": "2026-10-10T07:43:30+00:00",
+      "cancellation_reason": "TARGET_SESSION_UNAVAILABLE"
     }
   ]
 }
