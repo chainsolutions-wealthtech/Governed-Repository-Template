@@ -5,7 +5,7 @@
   "grants_task_authority": false,
   "grants_claim": false,
   "grants_mutation_authority": false,
-  "revision": 15,
+  "revision": 16,
   "items": [
     {
       "continuity_id": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
@@ -253,8 +253,8 @@
             }
           ],
           "liveness_state": "STALLED",
-          "canonical_session_status": "ACTIVE",
-          "canonical_relay_state": "ACTIVE",
+          "canonical_session_status": "STALLED",
+          "canonical_relay_state": "TAKEOVER_READY",
           "lease_expires_at": "2026-10-10T01:00:52+00:00",
           "last_signal_at": "2026-10-10T00:30:52+00:00",
           "provider_endpoint": {
@@ -286,7 +286,7 @@
             "bridge_registration_ref": null,
             "provider_private_values_invented": false
           },
-          "runtime_projection_observed_at": "2026-10-10T01:24:41+00:00"
+          "runtime_projection_observed_at": "2026-10-10T01:31:20+00:00"
         },
         {
           "participant_id": "GACR-P-2455d639a9e1",

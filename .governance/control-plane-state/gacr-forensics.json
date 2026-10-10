@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 160,
+  "revision": 161,
   "items": [
     {
       "forensic_id": "GACR-F-9e71238bc954",
@@ -8607,13 +8607,13 @@
     },
     {
       "forensic_id": "GACR-F-c98846eeb4df",
-      "generated_at": "2026-10-09T23:29:56+00:00",
+      "generated_at": "2026-10-10T01:31:19+00:00",
       "process": "GACR",
       "authority": "CP-AGENT-RELAY-001-R3",
       "session_id": "session-6f60138d3c8e00da890fed17",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-      "classification": "NO_INTERRUPTION_OBSERVED",
-      "recoverability": "CONTINUE_CURRENT_SESSION",
+      "classification": "LEASE_EXPIRED_STALL",
+      "recoverability": "TAKEOVER_RECONCILIATION_REQUIRED",
       "cause": {
         "status": "UNOBSERVED",
         "code": "UNOBSERVED_EXTERNAL_CAUSE",
@@ -8621,20 +8621,20 @@
         "note": "GACR never infers browser crash, provider timeout, network loss or tool failure from missing heartbeat alone."
       },
       "liveness": {
-        "session_status": "ACTIVE",
-        "relay_state": "ACTIVE",
-        "last_seen_at": "2026-10-09T23:29:55+00:00",
-        "last_heartbeat_at": "2026-10-09T23:29:55+00:00",
-        "lease_expires_at": "2026-10-09T23:59:55+00:00",
-        "lease_expired_at_analysis": false,
-        "stalled_at": null
+        "session_status": "STALLED",
+        "relay_state": "TAKEOVER_READY",
+        "last_seen_at": "2026-10-10T00:30:52+00:00",
+        "last_heartbeat_at": "2026-10-10T00:30:52+00:00",
+        "lease_expires_at": "2026-10-10T01:00:52+00:00",
+        "lease_expired_at_analysis": true,
+        "stalled_at": "2026-10-10T01:31:18+00:00"
       },
       "work": {
         "task_id": null,
         "branch": "main",
         "pull_request": null,
         "starting_head_sha": "a316fe090d50b06fadcb246aa2b9a6e18bcdfec2",
-        "last_observed_head_sha": "a70e96d72657f4919a9184ada79dfcd06448f396",
+        "last_observed_head_sha": "a316fe090d50b06fadcb246aa2b9a6e18bcdfec2",
         "last_written_head_sha": null,
         "active_claims": [],
         "lock_observation": "NO_INDEPENDENT_LOCK_STORE; CLAIMS_AND_COLLISION_DOMAINS_ARE_CANONICAL"
@@ -8646,17 +8646,32 @@
         "in_flight_action": null
       },
       "last_checkpoint_ref": "GRT-CONT-20261010-TEMOIN-POOLGEN-I282-01",
-      "last_evidence_ref": "github-issue-comment:6091016802",
-      "last_takeover": null,
+      "last_evidence_ref": "gscc-runtime:GSCC-RUNTIME-40d3c8965cedbf88a2be23d4:challenge",
+      "last_takeover": {
+        "takeover_id": "GACR-T-0f7dafae8de8",
+        "stalled_session_id": "session-6f60138d3c8e00da890fed17",
+        "offered_to_session_id": null,
+        "accepted_by_session_id": null,
+        "status": "READY_FOR_RECONCILIATION",
+        "created_at": "2026-10-10T01:31:18+00:00",
+        "accepted_at": null,
+        "work_item_id": null,
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "a316fe090d50b06fadcb246aa2b9a6e18bcdfec2",
+        "reconciled_head_sha": null,
+        "active_claim_count": 0
+      },
       "last_dispatch": null,
       "resume_point": {
         "task_id": null,
         "branch": "main",
         "pull_request": null,
-        "last_observed_head_sha": "a70e96d72657f4919a9184ada79dfcd06448f396",
+        "last_observed_head_sha": "a316fe090d50b06fadcb246aa2b9a6e18bcdfec2",
         "last_written_head_sha": null,
         "checkpoint_ref": "GRT-CONT-20261010-TEMOIN-POOLGEN-I282-01",
-        "evidence_ref": "github-issue-comment:6091016802",
+        "evidence_ref": "gscc-runtime:GSCC-RUNTIME-40d3c8965cedbf88a2be23d4:challenge",
         "active_claim_work_items": [],
         "collision_domains": [],
         "in_flight_action": null,
@@ -8665,12 +8680,12 @@
         "may_replay_in_flight_action_without_reconciliation": false
       },
       "evidence_counts": {
-        "beacons": 3,
-        "takeovers": 0,
+        "beacons": 4,
+        "takeovers": 1,
         "dispatches": 0,
         "active_claims": 0
       },
-      "analysis_digest": "0f6bfedb15101114d1d7e57494ae1d2e03af827bf7cf22673ae7742fb12f7328"
+      "analysis_digest": "66bb7934be23bef32bcdf812d18d48141176db8b9798d2d55c8d7e4d9cbfc7a9"
     },
     {
       "forensic_id": "GACR-F-335936f6623d",
