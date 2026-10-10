@@ -654,3 +654,23 @@ Append-only durable decisions for the source/control-plane repository.
 - A work offer remains only a scheduling proposal. Acceptance remains `ACCEPTED_PENDING_CLAIM`; claim creation, exact-HEAD reconciliation and applicable authority gates remain mandatory before mutation.
 - The per-arrival GSCC artifact restore must select the most advanced durable runtime state, then runtime update time, rather than blindly selecting the newest Actions artifact. A stale later Q9 artifact may not replace an earlier Q12/F1-ready state.
 - This R8 correction does not advance or replace `GMC-01`.
+
+
+### CPD-076 — GMC-G01 pre-G16 knowledge artifacts use source-only versioned JSON bodies
+
+- Date: 2026-10-08.
+- Owner explicitly approves the bounded GMC-G01 pre-G16 materialization gate.
+- Representation class: `SOURCE_ONLY_VERSIONED_BODY_WITH_EXISTING_REFERENCE_PROJECTION`.
+- Body encoding/package: one deterministic JSON document per GMA artifact.
+- Canonical pre-G16 content refs are:
+  - `.governance/control-plane-state/gma-model-boundary-matrix.json`;
+  - `.governance/control-plane-state/gma-model-classification-taxonomy.json`;
+  - `.governance/control-plane-state/gma-unresolved-boundary-items.json`.
+- Each body carries stable artifact identity, monotonic artifact version, subject HEAD, item-level provenance, explicit validation state, deterministic content digest, consumer metadata and append/supersede/revalidate history.
+- These source-only bodies are bounded pre-G16 knowledge artifacts. They do not establish the final Governance Model storage architecture and do not create `.governance/governance-model`, `docs/governance-model`, new `governance_*` SQL tables, a new database, a new registry or a new materializer.
+- Existing artifact/reference/revision machinery may reference these bodies; runtime-seed and SQLite remain derived/reference projections.
+- GMC-G16 remains authoritative for final normalized Governance Model storage, relational extension, materializer changes, versioning/release layout and migration.
+- Authorized operation is limited to `MATERIALIZE_G01_KNOWLEDGE_ARTIFACTS` plus the bounded validation required to evaluate GMC-G01 exit controls.
+- This decision does not authorize general Governance Model implementation, GMC-G02 implementation, GMC-G16 implementation or programme reordering.
+- Materialization uses an exact-head branch/PR/CI flow; direct mutation of `main` is not authorized.
+- GMC-G02 may be evaluated for planning unlock only after GMC-G01 reaches `VALIDATED_EXIT`; G02 remains `planning_only=true` and `implementation_authorized=false`.

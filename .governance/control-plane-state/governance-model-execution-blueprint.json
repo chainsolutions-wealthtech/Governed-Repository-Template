@@ -38,7 +38,7 @@
       "legacy_id": "GMC-01",
       "phase": "GMC-A",
       "title": "BOUNDARY — MODEL / CASE / RUNTIME / PROJECTION",
-      "status": "PLANNED",
+      "status": "VALIDATED_EXIT",
       "planning_only": true,
       "implementation_authorized": false,
       "depends_on": [
@@ -326,7 +326,7 @@
         "MODEL_CLASSIFICATION_TAXONOMY",
         "UNRESOLVED_BOUNDARY_ITEMS"
       ],
-      "canonical_storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
+      "canonical_storage_target": "Pre-G16 source-only versioned JSON bodies under .governance/control-plane-state/, authorized by CPD-076; final Governance Model storage remains GMC-G16.",
       "evidence_requirements": [
         "provenance per normalized item",
         "HEAD/version where relevant",
@@ -399,19 +399,28 @@
           "artifact_type": "MATRIX",
           "persistent_knowledge_object": true,
           "produced_by": "GMC-G01",
-          "status": "PLANNED",
-          "validation_state": "NOT_YET_PRODUCED",
+          "status": "VALIDATED",
+          "validation_state": "VALIDATED",
           "versioning": {
             "scheme": "MONOTONIC",
             "planned_initial_version": "v1"
           },
-          "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
+          "storage_target": ".governance/control-plane-state/gma-model-boundary-matrix.json",
           "required_provenance": true,
           "consumed_by": [
             "GMC-G02",
             "GMC-G03"
           ],
-          "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
+          "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE",
+          "content_ref": ".governance/control-plane-state/gma-model-boundary-matrix.json",
+          "artifact_version": "v1",
+          "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae",
+          "content_digest": {
+            "algorithm": "sha256",
+            "value": "c825075ed7be5d531a854aad5fa8935b7c08dd1bc77ddca31f08b7c2f9db7d9c"
+          },
+          "materialization_decision_id": "CPD-076",
+          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
         },
         {
           "artifact_id": "GMA-MODEL-CLASSIFICATION-TAXONOMY",
@@ -419,18 +428,27 @@
           "artifact_type": "MODEL",
           "persistent_knowledge_object": true,
           "produced_by": "GMC-G01",
-          "status": "PLANNED",
-          "validation_state": "NOT_YET_PRODUCED",
+          "status": "VALIDATED",
+          "validation_state": "VALIDATED",
           "versioning": {
             "scheme": "MONOTONIC",
             "planned_initial_version": "v1"
           },
-          "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
+          "storage_target": ".governance/control-plane-state/gma-model-classification-taxonomy.json",
           "required_provenance": true,
           "consumed_by": [
             "GMC-G02"
           ],
-          "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
+          "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE",
+          "content_ref": ".governance/control-plane-state/gma-model-classification-taxonomy.json",
+          "artifact_version": "v1",
+          "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae",
+          "content_digest": {
+            "algorithm": "sha256",
+            "value": "0ca741423cf9a7bc2fb5aa98de56abd6a8f33aa2a2d3e1fc11985ff054e04c35"
+          },
+          "materialization_decision_id": "CPD-076",
+          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
         },
         {
           "artifact_id": "GMA-UNRESOLVED-BOUNDARY-ITEMS",
@@ -438,16 +456,25 @@
           "artifact_type": "KNOWLEDGE_ARTIFACT",
           "persistent_knowledge_object": true,
           "produced_by": "GMC-G01",
-          "status": "PLANNED",
-          "validation_state": "NOT_YET_PRODUCED",
+          "status": "VALIDATED",
+          "validation_state": "VALIDATED",
           "versioning": {
             "scheme": "MONOTONIC",
             "planned_initial_version": "v1"
           },
-          "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
+          "storage_target": ".governance/control-plane-state/gma-unresolved-boundary-items.json",
           "required_provenance": true,
           "consumed_by": [],
-          "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
+          "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE",
+          "content_ref": ".governance/control-plane-state/gma-unresolved-boundary-items.json",
+          "artifact_version": "v1",
+          "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae",
+          "content_digest": {
+            "algorithm": "sha256",
+            "value": "ba185f25f63e670a357aad955b4a7bbc993afb95603692ecbf5baee548d5cc0c"
+          },
+          "materialization_decision_id": "CPD-076",
+          "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
         }
       ],
       "purpose": "Éviter de mélanger la définition réutilisable du modèle avec les stratégies de cas, l'état runtime ou les projections techniques.",
@@ -455,7 +482,38 @@
         "P12-S6 has a validated exit before real execution of GMC-G01.",
         "CP-ARCH-001 and CP-GOVMODEL-001 are readable and reconciled.",
         "Exact current main HEAD is reobserved at execution time."
-      ]
+      ],
+      "knowledge_materialization_authorized": true,
+      "knowledge_materialization_decision_id": "CPD-076",
+      "knowledge_materialization_scope": "MATERIALIZE_G01_KNOWLEDGE_ARTIFACTS",
+      "validation_evidence": [
+        {
+          "evidence_type": "GITHUB_ACTIONS_CHECK",
+          "run_id": 37712711922,
+          "job_id": 113102076849,
+          "conclusion": "success",
+          "validated_head_sha": "6bc0d7c459b9b7dcebd145c12909c690fb8de50f"
+        }
+      ],
+      "exit_control_results": [
+        {
+          "control_id": "GMC-EXIT-G01-ARTIFACTS-PRESENT",
+          "result": "PASS",
+          "evidence_ref": "github-actions:37712711922/job/113102076849"
+        },
+        {
+          "control_id": "GMC-EXIT-G01-PROVENANCE-COMPLETE",
+          "result": "PASS",
+          "evidence_ref": "github-actions:37712711922/job/113102076849"
+        },
+        {
+          "control_id": "GMC-EXIT-G01-VALIDATION-PASS",
+          "result": "PASS",
+          "evidence_ref": "github-actions:37712711922/job/113102076849"
+        }
+      ],
+      "validated_analysis_promoted_via": "CPD-076",
+      "atomic_task_status_semantics": "BLUEPRINT_PLANNING_DEFINITION_PRESERVED_UNTIL_CANONICAL_WORK_POINTER_TRANSITION"
     },
     {
       "group_id": "GMC-G02",
@@ -10368,19 +10426,28 @@
       "artifact_type": "MATRIX",
       "persistent_knowledge_object": true,
       "produced_by": "GMC-G01",
-      "status": "PLANNED",
-      "validation_state": "NOT_YET_PRODUCED",
+      "status": "VALIDATED",
+      "validation_state": "VALIDATED",
       "versioning": {
         "scheme": "MONOTONIC",
         "planned_initial_version": "v1"
       },
-      "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
+      "storage_target": ".governance/control-plane-state/gma-model-boundary-matrix.json",
       "required_provenance": true,
       "consumed_by": [
         "GMC-G02",
         "GMC-G03"
       ],
-      "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
+      "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE",
+      "content_ref": ".governance/control-plane-state/gma-model-boundary-matrix.json",
+      "artifact_version": "v1",
+      "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "c825075ed7be5d531a854aad5fa8935b7c08dd1bc77ddca31f08b7c2f9db7d9c"
+      },
+      "materialization_decision_id": "CPD-076",
+      "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
     },
     {
       "artifact_id": "GMA-MODEL-CLASSIFICATION-TAXONOMY",
@@ -10388,18 +10455,27 @@
       "artifact_type": "MODEL",
       "persistent_knowledge_object": true,
       "produced_by": "GMC-G01",
-      "status": "PLANNED",
-      "validation_state": "NOT_YET_PRODUCED",
+      "status": "VALIDATED",
+      "validation_state": "VALIDATED",
       "versioning": {
         "scheme": "MONOTONIC",
         "planned_initial_version": "v1"
       },
-      "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
+      "storage_target": ".governance/control-plane-state/gma-model-classification-taxonomy.json",
       "required_provenance": true,
       "consumed_by": [
         "GMC-G02"
       ],
-      "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
+      "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE",
+      "content_ref": ".governance/control-plane-state/gma-model-classification-taxonomy.json",
+      "artifact_version": "v1",
+      "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "0ca741423cf9a7bc2fb5aa98de56abd6a8f33aa2a2d3e1fc11985ff054e04c35"
+      },
+      "materialization_decision_id": "CPD-076",
+      "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
     },
     {
       "artifact_id": "GMA-UNRESOLVED-BOUNDARY-ITEMS",
@@ -10407,16 +10483,25 @@
       "artifact_type": "KNOWLEDGE_ARTIFACT",
       "persistent_knowledge_object": true,
       "produced_by": "GMC-G01",
-      "status": "PLANNED",
-      "validation_state": "NOT_YET_PRODUCED",
+      "status": "VALIDATED",
+      "validation_state": "VALIDATED",
       "versioning": {
         "scheme": "MONOTONIC",
         "planned_initial_version": "v1"
       },
-      "storage_target": "PLANNED Governance Model Registry / contracts / source-only authority as applicable; no target file is created by this planning task.",
+      "storage_target": ".governance/control-plane-state/gma-unresolved-boundary-items.json",
       "required_provenance": true,
       "consumed_by": [],
-      "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE"
+      "supersession_rule": "APPEND_SUPERSEDE_REVALIDATE",
+      "content_ref": ".governance/control-plane-state/gma-unresolved-boundary-items.json",
+      "artifact_version": "v1",
+      "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae",
+      "content_digest": {
+        "algorithm": "sha256",
+        "value": "ba185f25f63e670a357aad955b4a7bbc993afb95603692ecbf5baee548d5cc0c"
+      },
+      "materialization_decision_id": "CPD-076",
+      "validation_evidence_ref": "github-actions:37712711922/job/113102076849"
     },
     {
       "artifact_id": "GMA-GOVERNANCE-MODEL-METAMODEL",
