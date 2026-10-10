@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 45,
+  "revision": 46,
   "items": [
     {
       "schema": "gscc-control-dispatch/v1",
@@ -508,6 +508,42 @@
       "mutation_authority_granted": false,
       "delivered_at": "2026-10-07T23:34:35+00:00",
       "delivery_evidence_ref": "github-issue-comment:6048997483"
+    },
+    {
+      "dispatch_id": "GACR-W-07d6e736dc85",
+      "dispatch_kind": "WORK_OFFER",
+      "status": "READY",
+      "offer_status": "PENDING_ACCEPTANCE",
+      "created_at": "2026-10-10T01:29:28+00:00",
+      "target_session_id": "session-61c8b67cdd815803287c8c77",
+      "target_logical_agent_id": "GSCC-ID-791fc3c8a9abb4bfeb1067fd",
+      "capacity_key": "logical-agent:GSCC-ID-791fc3c8a9abb4bfeb1067fd",
+      "target_client_instance_id": "GSCC-CLIENT-f4004645bcb019dac21b66af",
+      "work_item_id": "GMC-G01-T01",
+      "task_id": "GMC-G01-T01",
+      "global_task_id": "GMC-01",
+      "work_package_id": "GMC-G01",
+      "planning_only": true,
+      "implementation_authorized": false,
+      "work_source": "CONTROL_PLANE_CANONICAL_TASK_GRAPH",
+      "collision_domains": [
+        "governance-model:GMC-G01"
+      ],
+      "required_capabilities": [],
+      "required_authorities": [],
+      "allowed_agent_roles": [
+        "CODE_AGENT"
+      ],
+      "delivery_modes": [
+        "POLL_REPOSITORY"
+      ],
+      "requires_f1_release": true,
+      "requires_offer_acceptance": true,
+      "requires_claim_after_acceptance": true,
+      "requires_exact_head_reconciliation": true,
+      "may_write_before_acceptance": false,
+      "claim_created": false,
+      "grants_write_authority": false
     }
   ]
 }
