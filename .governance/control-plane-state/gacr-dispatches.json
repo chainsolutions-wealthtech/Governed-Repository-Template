@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 55,
+  "revision": 58,
   "items": [
     {
       "schema": "gscc-control-dispatch/v1",
@@ -550,7 +550,7 @@
     {
       "dispatch_id": "GACR-D-b21318570084ef24",
       "dispatch_kind": "CONTINUITY_SUPERVISION_ALERT",
-      "status": "DISPATCHED",
+      "status": "CANCELLED",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
       "target_session_id": "session-a25b1dd3d2fc9a4ac174513c",
@@ -594,6 +594,54 @@
       },
       "delivered_at": "2026-10-12T00:19:15+00:00",
       "delivery_evidence_ref": "github-issue-comment:6115522866"
+    },
+    {
+      "dispatch_id": "GACR-D-0cba55ce5fa95b1b",
+      "dispatch_kind": "CONTINUITY_SUPERVISION_ALERT",
+      "status": "DISPATCHED",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
+      "target_session_id": "session-f3e53455002e451fb97fb626",
+      "target_client_instance_id": "GSCC-CLIENT-5f7a8a08b7b49e881b530e87",
+      "bridge_registration_ref": null,
+      "delivery_modes": [
+        "GSCC_CONTROL_CHANNEL",
+        "POLL_REPOSITORY"
+      ],
+      "continuity_id": "GRT-CONT-20261012-PROGRAMME-GLOBAL-01",
+      "supervision_alert_id": "GACR-SA-0fab568ed548d5a4",
+      "scope_id": "PROGRAMME-GLOBAL-ST01-LAB-READ-I289",
+      "payload_ref": "continuity:GRT-CONT-20261012-PROGRAMME-GLOBAL-01:supervision:GACR-SA-0fab568ed548d5a4",
+      "created_at": "2026-10-12T00:41:41+00:00",
+      "expires_at": "2026-10-12T00:54:01+00:00",
+      "idempotency_key": "GACR-D-0cba55ce5fa95b1b",
+      "projection_only": true,
+      "changes_session_status": false,
+      "changes_lease": false,
+      "grants_task_authority": false,
+      "grants_claim": false,
+      "grants_mutation_authority": false,
+      "command": {
+        "schema": "gscc-control-command/v1",
+        "message_id": "GSCC-MSG-217fbd7e9516d23d49f6d1d4",
+        "command_id": "GSCC-CMD-e7548014677fd822551f4e35",
+        "correlation_id": "GSCC-CORR-e7548014677fd822551f4e35",
+        "command_type": "LIVENESS_CHALLENGE",
+        "target_session_id": "session-f3e53455002e451fb97fb626",
+        "issued_at": "2026-10-12T00:41:42+00:00",
+        "expires_at": "2026-10-12T00:54:01+00:00",
+        "requires_ack": true,
+        "payload": {
+          "challenge_id": "GSCC-CH-5093b28fe8d6d8ea05d9f1c6",
+          "nonce": "HP00MIbIa9U0byHMIh09luRjhZGJigfE",
+          "issued_at": "2026-10-12T00:41:42+00:00",
+          "expires_at": "2026-10-12T00:54:01+00:00",
+          "continuity_id": "GRT-CONT-20261012-PROGRAMME-GLOBAL-01",
+          "supervision_alert_id": "GACR-SA-0fab568ed548d5a4"
+        }
+      },
+      "delivered_at": "2026-10-12T00:41:42+00:00",
+      "delivery_evidence_ref": "github-issue-comment:6115723142"
     }
   ]
 }
