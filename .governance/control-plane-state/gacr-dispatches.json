@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 51,
+  "revision": 54,
   "items": [
     {
       "schema": "gscc-control-dispatch/v1",
@@ -546,6 +546,54 @@
       "grants_write_authority": false,
       "cancelled_at": "2026-10-10T07:43:30+00:00",
       "cancellation_reason": "TARGET_SESSION_UNAVAILABLE"
+    },
+    {
+      "dispatch_id": "GACR-D-b21318570084ef24",
+      "dispatch_kind": "CONTINUITY_SUPERVISION_ALERT",
+      "status": "DISPATCHED",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
+      "target_session_id": "session-a25b1dd3d2fc9a4ac174513c",
+      "target_client_instance_id": "GSCC-CLIENT-2a500d84d9e6476187190c61",
+      "bridge_registration_ref": null,
+      "delivery_modes": [
+        "GSCC_CONTROL_CHANNEL",
+        "POLL_REPOSITORY"
+      ],
+      "continuity_id": "GRT-CONT-20261012-PROGRAMME-GLOBAL-01",
+      "supervision_alert_id": "GACR-SA-e5f3e82cc2d42889",
+      "scope_id": "PROGRAMME-GLOBAL-ST01-CADRAGE-READ",
+      "payload_ref": "continuity:GRT-CONT-20261012-PROGRAMME-GLOBAL-01:supervision:GACR-SA-e5f3e82cc2d42889",
+      "created_at": "2026-10-12T00:19:14+00:00",
+      "expires_at": "2026-10-12T00:40:35+00:00",
+      "idempotency_key": "GACR-D-b21318570084ef24",
+      "projection_only": true,
+      "changes_session_status": false,
+      "changes_lease": false,
+      "grants_task_authority": false,
+      "grants_claim": false,
+      "grants_mutation_authority": false,
+      "command": {
+        "schema": "gscc-control-command/v1",
+        "message_id": "GSCC-MSG-da661b4f6ce6e76071274435",
+        "command_id": "GSCC-CMD-1c0cf4892ec89cd703d6ac5a",
+        "correlation_id": "GSCC-CORR-1c0cf4892ec89cd703d6ac5a",
+        "command_type": "LIVENESS_CHALLENGE",
+        "target_session_id": "session-a25b1dd3d2fc9a4ac174513c",
+        "issued_at": "2026-10-12T00:19:15+00:00",
+        "expires_at": "2026-10-12T00:40:35+00:00",
+        "requires_ack": true,
+        "payload": {
+          "challenge_id": "GSCC-CH-32609445988ce930b0aaca04",
+          "nonce": "6DY3gLQygG_woa6smAbg-Tfo2IgGwL_M",
+          "issued_at": "2026-10-12T00:19:15+00:00",
+          "expires_at": "2026-10-12T00:40:35+00:00",
+          "continuity_id": "GRT-CONT-20261012-PROGRAMME-GLOBAL-01",
+          "supervision_alert_id": "GACR-SA-e5f3e82cc2d42889"
+        }
+      },
+      "delivered_at": "2026-10-12T00:19:15+00:00",
+      "delivery_evidence_ref": "github-issue-comment:6115522866"
     }
   ]
 }
