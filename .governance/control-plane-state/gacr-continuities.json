@@ -5,7 +5,7 @@
   "grants_task_authority": false,
   "grants_claim": false,
   "grants_mutation_authority": false,
-  "revision": 28,
+  "revision": 29,
   "items": [
     {
       "continuity_id": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
@@ -731,7 +731,7 @@
               "seen_count": 1
             }
           ],
-          "liveness_state": "LIVE",
+          "liveness_state": "STALLED",
           "canonical_session_status": "ACTIVE",
           "canonical_relay_state": "ACTIVE",
           "lease_expires_at": "2026-10-13T19:11:31+00:00",
@@ -765,7 +765,7 @@
             "bridge_registration_ref": null,
             "provider_private_values_invented": false
           },
-          "runtime_projection_observed_at": "2026-10-13T18:41:35+00:00"
+          "runtime_projection_observed_at": "2026-10-13T22:08:04+00:00"
         }
       ],
       "last_handoff": null,
