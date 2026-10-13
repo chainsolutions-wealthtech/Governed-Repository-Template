@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "revision": 18,
-  "last_scan_at": "2026-10-13T18:26:25+00:00",
+  "revision": 19,
+  "last_scan_at": "2026-10-13T23:00:36+00:00",
   "items": [
     {
       "takeover_id": "GACR-T-84209d225086",
@@ -1696,6 +1696,54 @@
       "branch": "main",
       "pull_request": null,
       "last_observed_head_sha": "79406d040f9e2998527253e79ec7da91624e7329",
+      "reconciled_head_sha": null,
+      "active_claim_count": 0
+    },
+    {
+      "takeover_id": "GACR-T-82338f6f08c8",
+      "stalled_session_id": "session-5f910376e3724932434a9ba5",
+      "offered_to_session_id": null,
+      "accepted_by_session_id": null,
+      "status": "READY_FOR_RECONCILIATION",
+      "created_at": "2026-10-13T23:00:36+00:00",
+      "accepted_at": null,
+      "work_item_id": null,
+      "task_id": null,
+      "branch": "main",
+      "pull_request": null,
+      "last_observed_head_sha": "49657beb2e3a87f3e97dd722733f8ff4576c02b3",
+      "reconciled_head_sha": null,
+      "active_claim_count": 0
+    },
+    {
+      "takeover_id": "GACR-T-702b9f66e5c9",
+      "stalled_session_id": "session-0aedce999ce5163fd1b81e23",
+      "offered_to_session_id": null,
+      "accepted_by_session_id": null,
+      "status": "READY_FOR_RECONCILIATION",
+      "created_at": "2026-10-13T23:00:36+00:00",
+      "accepted_at": null,
+      "work_item_id": null,
+      "task_id": null,
+      "branch": "main",
+      "pull_request": null,
+      "last_observed_head_sha": "74474d2a5d11c5f36c2ad61fc6fa4f96eaf544aa",
+      "reconciled_head_sha": null,
+      "active_claim_count": 0
+    },
+    {
+      "takeover_id": "GACR-T-17312f613088",
+      "stalled_session_id": "session-c055e0247d359a6c0d58e93f",
+      "offered_to_session_id": null,
+      "accepted_by_session_id": null,
+      "status": "READY_FOR_RECONCILIATION",
+      "created_at": "2026-10-13T23:00:36+00:00",
+      "accepted_at": null,
+      "work_item_id": null,
+      "task_id": null,
+      "branch": "main",
+      "pull_request": null,
+      "last_observed_head_sha": "9de4ff81d0f42c63c6aa9901f7405add8638d29b",
       "reconciled_head_sha": null,
       "active_claim_count": 0
     }
