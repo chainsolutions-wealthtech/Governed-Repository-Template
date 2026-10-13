@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 558,
+  "revision": 559,
   "sessions": [
     {
       "session_id": "session-68c97d4bb1ef71c86444de12",
@@ -27222,7 +27222,7 @@
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "79406d040f9e2998527253e79ec7da91624e7329",
       "last_observed_head_sha": "79406d040f9e2998527253e79ec7da91624e7329",
-      "status": "ACTIVE",
+      "status": "STALLED",
       "created_at": "2026-10-13T17:29:57+00:00",
       "last_seen_at": "2026-10-13T17:29:57+00:00",
       "client_instance_id": "GSCC-CLIENT-c80d3f6f8867f14f8f21b409",
@@ -27240,13 +27240,14 @@
       "bridge_registration_ref": null,
       "relay": {
         "process": "GACR",
-        "state": "ACTIVE",
+        "state": "TAKEOVER_READY",
         "last_heartbeat_at": "2026-10-13T17:29:57+00:00",
         "lease_expires_at": "2026-10-13T17:59:57+00:00",
-        "last_action": "REGISTER",
+        "last_action": "STALL_DETECTED",
         "task_id": null,
         "branch": "main",
-        "pull_request": null
+        "pull_request": null,
+        "stalled_at": "2026-10-13T18:26:25+00:00"
       },
       "connection_fingerprint_version": "gacr-connection-fingerprint/v1",
       "presence_anchor": {
