@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 630,
+  "revision": 632,
   "items": [
     {
       "correlation_id": "GACR-C-caffb7cb6efd",
@@ -22444,6 +22444,54 @@
       "provider_conversation_ref": null,
       "evaluations": [],
       "evaluated_at": "2026-10-14T03:03:38+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-297f11d98bf0",
+      "beacon_id": "GACR-B-ee48d9966943",
+      "level": "EXACT",
+      "selected_session_id": "session-ca18b5fa3eae9e563aa1114f",
+      "candidate_session_ids": [
+        "session-ca18b5fa3eae9e563aa1114f"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-14T03:03:59+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-707885d8d976",
+      "beacon_id": "GACR-B-e97ab5aa8567",
+      "level": "EXACT",
+      "selected_session_id": "session-ca18b5fa3eae9e563aa1114f",
+      "candidate_session_ids": [
+        "session-ca18b5fa3eae9e563aa1114f"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-14T03:04:00+00:00"
     }
   ]
 }
