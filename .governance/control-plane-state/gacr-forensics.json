@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 178,
+  "revision": 179,
   "items": [
     {
       "forensic_id": "GACR-F-9e71238bc954",
@@ -9558,7 +9558,7 @@
     },
     {
       "forensic_id": "GACR-F-79bd405adfc0",
-      "generated_at": "2026-10-14T01:07:44+00:00",
+      "generated_at": "2026-10-14T01:26:11+00:00",
       "process": "GACR",
       "authority": "CP-AGENT-RELAY-001-R3",
       "session_id": "session-33ab1923c0f3b2593728bfcb",
@@ -9574,9 +9574,9 @@
       "liveness": {
         "session_status": "ACTIVE",
         "relay_state": "ACTIVE",
-        "last_seen_at": "2026-10-14T01:07:44+00:00",
-        "last_heartbeat_at": "2026-10-14T01:07:44+00:00",
-        "lease_expires_at": "2026-10-14T01:37:44+00:00",
+        "last_seen_at": "2026-10-14T01:26:10+00:00",
+        "last_heartbeat_at": "2026-10-14T01:26:10+00:00",
+        "lease_expires_at": "2026-10-14T01:56:10+00:00",
         "lease_expired_at_analysis": false,
         "stalled_at": null
       },
@@ -9585,7 +9585,7 @@
         "branch": "main",
         "pull_request": null,
         "starting_head_sha": "e20b172b149a30ec8ece77c828e3c00614078d38",
-        "last_observed_head_sha": "7bd367fa63b6c75d166a9d851920ebc2fc259272",
+        "last_observed_head_sha": "d68d1eead76f9238011869e274bbf1a7ad2b0217",
         "last_written_head_sha": null,
         "active_claims": [],
         "lock_observation": "NO_INDEPENDENT_LOCK_STORE; CLAIMS_AND_COLLISION_DOMAINS_ARE_CANONICAL"
@@ -9597,17 +9597,17 @@
         "in_flight_action": null
       },
       "last_checkpoint_ref": "GRT-CONT-20261014-CHAINFLOW-POC-01",
-      "last_evidence_ref": "github-issue-comment:6158583520",
+      "last_evidence_ref": "github-issue-comment:6158803510",
       "last_takeover": null,
       "last_dispatch": null,
       "resume_point": {
         "task_id": null,
         "branch": "main",
         "pull_request": null,
-        "last_observed_head_sha": "7bd367fa63b6c75d166a9d851920ebc2fc259272",
+        "last_observed_head_sha": "d68d1eead76f9238011869e274bbf1a7ad2b0217",
         "last_written_head_sha": null,
         "checkpoint_ref": "GRT-CONT-20261014-CHAINFLOW-POC-01",
-        "evidence_ref": "github-issue-comment:6158583520",
+        "evidence_ref": "github-issue-comment:6158803510",
         "active_claim_work_items": [],
         "collision_domains": [],
         "in_flight_action": null,
@@ -9616,12 +9616,12 @@
         "may_replay_in_flight_action_without_reconciliation": false
       },
       "evidence_counts": {
-        "beacons": 4,
+        "beacons": 6,
         "takeovers": 0,
         "dispatches": 0,
         "active_claims": 0
       },
-      "analysis_digest": "482a99e51ff770469131954e05a329c9451ee100874783ca53da90448f189a91"
+      "analysis_digest": "eb090c4c8c13e252a2ab89e46186e9ad3017d0685cb7996ad72754b9fdb35e24"
     }
   ]
 }
