@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 568,
+  "revision": 569,
   "sessions": [
     {
       "session_id": "session-68c97d4bb1ef71c86444de12",
@@ -28477,7 +28477,7 @@
       "bridge_registration_ref": null,
       "relay": {
         "process": "GACR",
-        "state": "ACTIVE",
+        "state": "SUSPECTED_STALL",
         "last_heartbeat_at": "2026-10-14T01:26:10+00:00",
         "lease_expires_at": "2026-10-14T01:56:10+00:00",
         "last_action": "CONTINUITY_SCOPE_DECLARED",
