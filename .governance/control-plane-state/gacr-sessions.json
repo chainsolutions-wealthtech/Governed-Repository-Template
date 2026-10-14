@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 567,
+  "revision": 568,
   "sessions": [
     {
       "session_id": "session-68c97d4bb1ef71c86444de12",
@@ -28767,10 +28767,10 @@
       "connection_intent_provenance": "PROVIDED_BY_CLIENT",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "starting_head_sha": "acf98c9228918d3f6815806897f6161e2239ecb9",
-      "last_observed_head_sha": "acf98c9228918d3f6815806897f6161e2239ecb9",
+      "last_observed_head_sha": "2b5ec79b2412aca73ab3aeaa44dc3d9f2101f256",
       "status": "ACTIVE",
       "created_at": "2026-10-14T01:35:28+00:00",
-      "last_seen_at": "2026-10-14T01:35:28+00:00",
+      "last_seen_at": "2026-10-14T01:40:47+00:00",
       "client_instance_id": "GSCC-CLIENT-382eb0c9c1a084614d5839c9",
       "agent_role": "qualification-client",
       "capabilities": [
@@ -28787,12 +28787,13 @@
       "relay": {
         "process": "GACR",
         "state": "ACTIVE",
-        "last_heartbeat_at": "2026-10-14T01:35:28+00:00",
-        "lease_expires_at": "2026-10-14T02:05:28+00:00",
-        "last_action": "REGISTER",
+        "last_heartbeat_at": "2026-10-14T01:40:47+00:00",
+        "lease_expires_at": "2026-10-14T02:10:47+00:00",
+        "last_action": "CONTINUITY_SCOPE_DECLARED",
         "task_id": null,
         "branch": "main",
-        "pull_request": null
+        "pull_request": null,
+        "last_evidence": "github-issue-comment:6158974617"
       },
       "connection_fingerprint_version": "gacr-connection-fingerprint/v1",
       "presence_anchor": {
