@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 633,
+  "revision": 635,
   "items": [
     {
       "correlation_id": "GACR-C-caffb7cb6efd",
@@ -22542,6 +22542,78 @@
       "provider_conversation_ref": null,
       "evaluations": [],
       "evaluated_at": "2026-10-14T03:04:16+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-4c36a6456cc5",
+      "beacon_id": "GACR-B-bee500bb4a09",
+      "level": "EXACT",
+      "selected_session_id": "session-ca18b5fa3eae9e563aa1114f",
+      "candidate_session_ids": [
+        "session-ca18b5fa3eae9e563aa1114f"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-14T03:10:48+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-119f824b244f",
+      "beacon_id": "GACR-B-f74f4c72a13b",
+      "level": "EXACT",
+      "selected_session_id": "session-ca18b5fa3eae9e563aa1114f",
+      "candidate_session_ids": [
+        "session-ca18b5fa3eae9e563aa1114f"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-14T03:10:48+00:00"
+    },
+    {
+      "correlation_id": "GACR-C-4c442cc3a3fd",
+      "beacon_id": "GACR-B-45d3249e5c81",
+      "level": "EXACT",
+      "selected_session_id": "session-ca18b5fa3eae9e563aa1114f",
+      "candidate_session_ids": [
+        "session-ca18b5fa3eae9e563aa1114f"
+      ],
+      "reasons": [
+        "SESSION_ID_EXACT",
+        "CONNECTION_REF_EXACT"
+      ],
+      "confidence": {
+        "rule_id": "EXACT_DIRECT_ANCHOR",
+        "class": "EXACT",
+        "numeric_score": null,
+        "auto_bind_allowed": true
+      },
+      "binding_status": "BOUND",
+      "provider_identity_inferred": false,
+      "provider_conversation_ref": null,
+      "evaluations": [],
+      "evaluated_at": "2026-10-14T03:10:48+00:00"
     }
   ]
 }
