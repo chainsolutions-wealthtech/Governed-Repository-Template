@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 76,
+  "revision": 79,
   "items": [
     {
       "schema": "gscc-control-dispatch/v1",
@@ -786,6 +786,54 @@
       },
       "delivered_at": "2026-10-14T02:51:36+00:00",
       "delivery_evidence_ref": "github-issue-comment:6159801047"
+    },
+    {
+      "dispatch_id": "GACR-D-cb55bd1141126d31",
+      "dispatch_kind": "CONTINUITY_SUPERVISION_ALERT",
+      "status": "DISPATCHED",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
+      "target_session_id": "session-33ab1923c0f3b2593728bfcb",
+      "target_client_instance_id": "GSCC-CLIENT-10b2094b762bc20b8a531a75",
+      "bridge_registration_ref": null,
+      "delivery_modes": [
+        "GSCC_CONTROL_CHANNEL",
+        "POLL_REPOSITORY"
+      ],
+      "continuity_id": "GRT-CONT-20261014-CHAINFLOW-POC-01",
+      "supervision_alert_id": "GACR-SA-b40f065b185616f6",
+      "scope_id": "CHAINFLOW-I304-INDEPENDENT-DISCOVERY-READ",
+      "payload_ref": "continuity:GRT-CONT-20261014-CHAINFLOW-POC-01:supervision:GACR-SA-b40f065b185616f6",
+      "created_at": "2026-10-14T02:56:49+00:00",
+      "expires_at": "2026-10-14T03:21:34+00:00",
+      "idempotency_key": "GACR-D-cb55bd1141126d31",
+      "projection_only": true,
+      "changes_session_status": false,
+      "changes_lease": false,
+      "grants_task_authority": false,
+      "grants_claim": false,
+      "grants_mutation_authority": false,
+      "command": {
+        "schema": "gscc-control-command/v1",
+        "message_id": "GSCC-MSG-c382d2dab777339353f85ef9",
+        "command_id": "GSCC-CMD-3a17f169f31adce348e1dc49",
+        "correlation_id": "GSCC-CORR-3a17f169f31adce348e1dc49",
+        "command_type": "LIVENESS_CHALLENGE",
+        "target_session_id": "session-33ab1923c0f3b2593728bfcb",
+        "issued_at": "2026-10-14T02:56:49+00:00",
+        "expires_at": "2026-10-14T03:21:34+00:00",
+        "requires_ack": true,
+        "payload": {
+          "challenge_id": "GSCC-CH-d741157c2cfa86ad2da4edfc",
+          "nonce": "aBM4CjNV5Rm5UdFonS08hD6QaOyYFbEH",
+          "issued_at": "2026-10-14T02:56:49+00:00",
+          "expires_at": "2026-10-14T03:21:34+00:00",
+          "continuity_id": "GRT-CONT-20261014-CHAINFLOW-POC-01",
+          "supervision_alert_id": "GACR-SA-b40f065b185616f6"
+        }
+      },
+      "delivered_at": "2026-10-14T02:56:49+00:00",
+      "delivery_evidence_ref": "github-issue-comment:6159859471"
     }
   ]
 }
