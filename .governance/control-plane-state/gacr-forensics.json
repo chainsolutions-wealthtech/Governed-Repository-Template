@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 183,
+  "revision": 184,
   "items": [
     {
       "forensic_id": "GACR-F-9e71238bc954",
@@ -9803,6 +9803,73 @@
         "active_claims": 0
       },
       "analysis_digest": "477df2cb59e73976bf32eca9f72e8ef1cce813f066ca605e57e3f8122c1f72d2"
+    },
+    {
+      "forensic_id": "GACR-F-8ae11cb31240",
+      "generated_at": "2026-10-14T02:59:16+00:00",
+      "process": "GACR",
+      "authority": "CP-AGENT-RELAY-001-R3",
+      "session_id": "session-59e8f20baf71196a66cc48fe",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "classification": "NO_INTERRUPTION_OBSERVED",
+      "recoverability": "CONTINUE_CURRENT_SESSION",
+      "cause": {
+        "status": "UNOBSERVED",
+        "code": "UNOBSERVED_EXTERNAL_CAUSE",
+        "confidence": "NONE",
+        "note": "GACR never infers browser crash, provider timeout, network loss or tool failure from missing heartbeat alone."
+      },
+      "liveness": {
+        "session_status": "ACTIVE",
+        "relay_state": "ACTIVE",
+        "last_seen_at": "2026-10-14T02:59:15+00:00",
+        "last_heartbeat_at": "2026-10-14T02:59:15+00:00",
+        "lease_expires_at": "2026-10-14T03:29:15+00:00",
+        "lease_expired_at_analysis": false,
+        "stalled_at": null
+      },
+      "work": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "starting_head_sha": "0f1136531936f08b900d4ba9c204b33573e94f6f",
+        "last_observed_head_sha": "4050e47c6f20de45bcf3d446a0b2a48e097d5f1c",
+        "last_written_head_sha": null,
+        "active_claims": [],
+        "lock_observation": "NO_INDEPENDENT_LOCK_STORE; CLAIMS_AND_COLLISION_DOMAINS_ARE_CANONICAL"
+      },
+      "actions": {
+        "last_action_started": null,
+        "last_action_completed": null,
+        "last_tool_call": null,
+        "in_flight_action": null
+      },
+      "last_checkpoint_ref": "GRT-CONT-20261014-CHAINFLOW-POC-01",
+      "last_evidence_ref": "github-issue-comment:6159884374",
+      "last_takeover": null,
+      "last_dispatch": null,
+      "resume_point": {
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "4050e47c6f20de45bcf3d446a0b2a48e097d5f1c",
+        "last_written_head_sha": null,
+        "checkpoint_ref": "GRT-CONT-20261014-CHAINFLOW-POC-01",
+        "evidence_ref": "github-issue-comment:6159884374",
+        "active_claim_work_items": [],
+        "collision_domains": [],
+        "in_flight_action": null,
+        "last_completed_action": null,
+        "requires_exact_head_reobservation": true,
+        "may_replay_in_flight_action_without_reconciliation": false
+      },
+      "evidence_counts": {
+        "beacons": 4,
+        "takeovers": 0,
+        "dispatches": 0,
+        "active_claims": 0
+      },
+      "analysis_digest": "e628f99574dd13b0012c557c51e7e5c0950c30a3e09ec1ff8d65e15973219896"
     }
   ]
 }
