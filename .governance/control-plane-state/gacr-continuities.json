@@ -5,7 +5,7 @@
   "grants_task_authority": false,
   "grants_claim": false,
   "grants_mutation_authority": false,
-  "revision": 51,
+  "revision": 52,
   "items": [
     {
       "continuity_id": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
@@ -1352,11 +1352,11 @@
               "seen_count": 1
             }
           ],
-          "liveness_state": "QUIET",
+          "liveness_state": "LIVE",
           "canonical_session_status": "ACTIVE",
           "canonical_relay_state": "ACTIVE",
-          "lease_expires_at": "2026-10-14T03:13:03+00:00",
-          "last_signal_at": "2026-10-14T02:43:03+00:00",
+          "lease_expires_at": "2026-10-14T03:34:16+00:00",
+          "last_signal_at": "2026-10-14T03:04:16+00:00",
           "provider_endpoint": {
             "provider": "chatgpt",
             "provider_conversation_ref_status": "UNAVAILABLE",
@@ -1386,7 +1386,7 @@
             "bridge_registration_ref": null,
             "provider_private_values_invented": false
           },
-          "runtime_projection_observed_at": "2026-10-14T02:51:36+00:00"
+          "runtime_projection_observed_at": "2026-10-14T03:04:18+00:00"
         },
         {
           "participant_id": "GACR-P-51f4a15e265f",
@@ -1789,7 +1789,7 @@
           "silence_seconds_at_detection": 513,
           "threshold_seconds": 120,
           "canonical_lease_expires_at": "2026-10-14T03:13:03+00:00",
-          "state": "OPEN",
+          "state": "RESOLVED",
           "action": "EARLY_SUPERVISION_ALERT",
           "dispatch_id": "GACR-D-52934249a53cc8d7",
           "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
@@ -1820,7 +1820,9 @@
           "grants_claim": false,
           "grants_mutation_authority": false,
           "delivered_at": "2026-10-14T02:51:36+00:00",
-          "delivery_evidence_ref": "github-issue-comment:6159801047"
+          "delivery_evidence_ref": "github-issue-comment:6159801047",
+          "resolved_at": "2026-10-14T03:04:18+00:00",
+          "resolution": "FRESH_SESSION_SIGNAL_OBSERVED"
         },
         {
           "alert_id": "GACR-SA-b40f065b185616f6",

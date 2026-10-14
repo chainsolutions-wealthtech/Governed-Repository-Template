@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 186,
+  "revision": 187,
   "items": [
     {
       "forensic_id": "GACR-F-9e71238bc954",
@@ -9739,7 +9739,7 @@
     },
     {
       "forensic_id": "GACR-F-675a26dfba41",
-      "generated_at": "2026-10-14T03:03:38+00:00",
+      "generated_at": "2026-10-14T03:04:16+00:00",
       "process": "GACR",
       "authority": "CP-AGENT-RELAY-001-R3",
       "session_id": "session-5be3f63a470f5111a4879a73",
@@ -9755,9 +9755,9 @@
       "liveness": {
         "session_status": "ACTIVE",
         "relay_state": "ACTIVE",
-        "last_seen_at": "2026-10-14T02:43:03+00:00",
-        "last_heartbeat_at": "2026-10-14T02:43:03+00:00",
-        "lease_expires_at": "2026-10-14T03:13:03+00:00",
+        "last_seen_at": "2026-10-14T03:04:16+00:00",
+        "last_heartbeat_at": "2026-10-14T03:04:16+00:00",
+        "lease_expires_at": "2026-10-14T03:34:16+00:00",
         "lease_expired_at_analysis": false,
         "stalled_at": null
       },
@@ -9778,12 +9778,12 @@
         "in_flight_action": null
       },
       "last_checkpoint_ref": "GRT-CONT-20261014-CHAINFLOW-POC-01",
-      "last_evidence_ref": "github-issue-comment:6159934553",
+      "last_evidence_ref": "github-issue-comment:6159940588",
       "last_takeover": null,
       "last_dispatch": {
         "dispatch_id": "GACR-D-52934249a53cc8d7",
         "dispatch_kind": "CONTINUITY_SUPERVISION_ALERT",
-        "status": "ACKNOWLEDGED",
+        "status": "COMPLETED",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
         "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
         "target_session_id": "session-5be3f63a470f5111a4879a73",
@@ -9831,7 +9831,16 @@
           "delivery_state": "ACKNOWLEDGED",
           "evidence_ref": "github-issue-comment:6159934553",
           "observed_at": "2026-10-14T03:03:26+00:00"
-        }
+        },
+        "response": {
+          "challenge_status": "ACK",
+          "challenge_id": "GSCC-CH-06110bcf9661a79c6d4de2f8",
+          "fresh_liveness": true,
+          "replay": false,
+          "evidence_ref": "github-issue-comment:6159940588",
+          "observed_at": "2026-10-14T03:03:58+00:00"
+        },
+        "completed_at": "2026-10-14T03:03:58+00:00"
       },
       "resume_point": {
         "task_id": null,
@@ -9840,7 +9849,7 @@
         "last_observed_head_sha": "4080cf81abb2b694303f14f921d867152f5334d9",
         "last_written_head_sha": null,
         "checkpoint_ref": "GRT-CONT-20261014-CHAINFLOW-POC-01",
-        "evidence_ref": "github-issue-comment:6159934553",
+        "evidence_ref": "github-issue-comment:6159940588",
         "active_claim_work_items": [],
         "collision_domains": [],
         "in_flight_action": null,
@@ -9849,12 +9858,12 @@
         "may_replay_in_flight_action_without_reconciliation": false
       },
       "evidence_counts": {
-        "beacons": 5,
+        "beacons": 7,
         "takeovers": 0,
         "dispatches": 1,
         "active_claims": 0
       },
-      "analysis_digest": "a03d05aa3362ce51669a9bbe6362d4e04d733a9e16277c39713d056c9330ec2d"
+      "analysis_digest": "a5a145352c53fb92fa2b2be4bdd1f36ee1270d7bbf0d2d3059195cade6272acc"
     },
     {
       "forensic_id": "GACR-F-8ae11cb31240",
