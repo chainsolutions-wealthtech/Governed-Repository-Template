@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 198,
+  "revision": 202,
   "items": [
     {
       "forensic_id": "GACR-F-9e71238bc954",
@@ -9558,7 +9558,7 @@
     },
     {
       "forensic_id": "GACR-F-79bd405adfc0",
-      "generated_at": "2026-10-14T07:06:39+00:00",
+      "generated_at": "2026-10-14T12:50:51+00:00",
       "process": "GACR",
       "authority": "CP-AGENT-RELAY-001-R3",
       "session_id": "session-33ab1923c0f3b2593728bfcb",
@@ -9617,7 +9617,7 @@
       "last_dispatch": {
         "dispatch_id": "GACR-D-fae5503c75960fb4",
         "dispatch_kind": "CONTINUITY_SUPERVISION_ALERT",
-        "status": "DISPATCHED",
+        "status": "CANCELLED",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
         "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
         "target_session_id": "session-33ab1923c0f3b2593728bfcb",
@@ -9683,7 +9683,7 @@
         "dispatches": 3,
         "active_claims": 0
       },
-      "analysis_digest": "c9901554e593a232b1ce40b018d9230c8d61b819d7e3aeabc841b773a8d822e7"
+      "analysis_digest": "4d697dbf5306d621e8be32ba74f9f2d78af27ac3d84616d79912b98bc5f93696"
     },
     {
       "forensic_id": "GACR-F-769a233cc8ab",
@@ -9816,7 +9816,7 @@
     },
     {
       "forensic_id": "GACR-F-675a26dfba41",
-      "generated_at": "2026-10-14T07:06:39+00:00",
+      "generated_at": "2026-10-14T12:50:51+00:00",
       "process": "GACR",
       "authority": "CP-AGENT-RELAY-001-R3",
       "session_id": "session-5be3f63a470f5111a4879a73",
@@ -9875,7 +9875,7 @@
       "last_dispatch": {
         "dispatch_id": "GACR-D-5c87ad79e606d2f2",
         "dispatch_kind": "CONTINUITY_SUPERVISION_ALERT",
-        "status": "DISPATCHED",
+        "status": "CANCELLED",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
         "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
         "target_session_id": "session-5be3f63a470f5111a4879a73",
@@ -9941,11 +9941,11 @@
         "dispatches": 2,
         "active_claims": 0
       },
-      "analysis_digest": "3fa8990978e3036077fc26bad2d8647110b20dd69b1952699acf48efd0ad18d8"
+      "analysis_digest": "098bfbf966bc97f7db3c78a73c1676a5f5ba5bff83593a74bc9e99a1ea1b4ea7"
     },
     {
       "forensic_id": "GACR-F-8ae11cb31240",
-      "generated_at": "2026-10-14T07:06:39+00:00",
+      "generated_at": "2026-10-14T12:50:51+00:00",
       "process": "GACR",
       "authority": "CP-AGENT-RELAY-001-R3",
       "session_id": "session-59e8f20baf71196a66cc48fe",
@@ -10004,7 +10004,7 @@
       "last_dispatch": {
         "dispatch_id": "GACR-D-19e0af3f64c8f407",
         "dispatch_kind": "CONTINUITY_SUPERVISION_ALERT",
-        "status": "DISPATCHED",
+        "status": "CANCELLED",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
         "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
         "target_session_id": "session-59e8f20baf71196a66cc48fe",
@@ -10070,11 +10070,11 @@
         "dispatches": 1,
         "active_claims": 0
       },
-      "analysis_digest": "707a844809dc2fb6f9a9d4fbd6867bca2c00e4f7a0995770030ca3aa87c5cff5"
+      "analysis_digest": "cc8b104608903413f576019b5226058be59507fe68d66737ea242b761be739c6"
     },
     {
       "forensic_id": "GACR-F-7715ce2b81d0",
-      "generated_at": "2026-10-14T07:06:39+00:00",
+      "generated_at": "2026-10-14T12:50:51+00:00",
       "process": "GACR",
       "authority": "CP-AGENT-RELAY-001-R3",
       "session_id": "session-ca18b5fa3eae9e563aa1114f",
@@ -10133,7 +10133,7 @@
       "last_dispatch": {
         "dispatch_id": "GACR-D-9d285d18a5263d4c",
         "dispatch_kind": "CONTINUITY_SUPERVISION_ALERT",
-        "status": "DISPATCHED",
+        "status": "CANCELLED",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
         "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
         "target_session_id": "session-ca18b5fa3eae9e563aa1114f",
@@ -10199,7 +10199,7 @@
         "dispatches": 1,
         "active_claims": 0
       },
-      "analysis_digest": "cff39b61fc5413c214bb1f0eb1c7b2fec08c85f2f10aa3a1856c1cb3129ef26d"
+      "analysis_digest": "faee0eb0e5b0aecb10ffd43aa196460a37d298a5991a8f3c726db5917b8ae519"
     },
     {
       "forensic_id": "GACR-F-170980444f3b",
