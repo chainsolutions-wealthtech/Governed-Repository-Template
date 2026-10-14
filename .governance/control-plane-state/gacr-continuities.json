@@ -5,7 +5,7 @@
   "grants_task_authority": false,
   "grants_claim": false,
   "grants_mutation_authority": false,
-  "revision": 59,
+  "revision": 61,
   "items": [
     {
       "continuity_id": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
@@ -1082,7 +1082,7 @@
               "seen_count": 1
             }
           ],
-          "liveness_state": "LIVE",
+          "liveness_state": "QUIET",
           "canonical_session_status": "ACTIVE",
           "canonical_relay_state": "ACTIVE",
           "lease_expires_at": "2026-10-14T03:54:13+00:00",
@@ -1116,7 +1116,7 @@
             "bridge_registration_ref": null,
             "provider_private_values_invented": false
           },
-          "runtime_projection_observed_at": "2026-10-14T03:24:15+00:00"
+          "runtime_projection_observed_at": "2026-10-14T03:26:50+00:00"
         },
         {
           "participant_id": "GACR-P-623a6f43a1e0",
@@ -1172,7 +1172,7 @@
               "seen_count": 1
             }
           ],
-          "liveness_state": "LIVE",
+          "liveness_state": "QUIET",
           "canonical_session_status": "ACTIVE",
           "canonical_relay_state": "ACTIVE",
           "lease_expires_at": "2026-10-14T03:54:13+00:00",
@@ -1206,7 +1206,7 @@
             "bridge_registration_ref": null,
             "provider_private_values_invented": false
           },
-          "runtime_projection_observed_at": "2026-10-14T03:24:15+00:00"
+          "runtime_projection_observed_at": "2026-10-14T03:26:50+00:00"
         },
         {
           "participant_id": "GACR-P-88efb94a5406",
@@ -2138,6 +2138,49 @@
           "grants_mutation_authority": false,
           "delivered_at": "2026-10-14T03:21:17+00:00",
           "delivery_evidence_ref": "github-issue-comment:6160137406"
+        },
+        {
+          "alert_id": "GACR-SA-0d1543c783c0d4fb",
+          "target_session_id": "session-33ab1923c0f3b2593728bfcb",
+          "participant_id": "GACR-P-a307888885f4",
+          "scope_id": "CHAINFLOW-I304-INDEPENDENT-DISCOVERY-READ",
+          "detected_at": "2026-10-14T03:26:50+00:00",
+          "last_signal_at": "2026-10-14T03:24:13+00:00",
+          "silence_seconds_at_detection": 157,
+          "threshold_seconds": 120,
+          "canonical_lease_expires_at": "2026-10-14T03:54:13+00:00",
+          "state": "OPEN",
+          "action": "EARLY_SUPERVISION_ALERT",
+          "dispatch_id": "GACR-D-fae5503c75960fb4",
+          "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
+          "delivery_modes": [
+            "GSCC_CONTROL_CHANNEL",
+            "POLL_REPOSITORY"
+          ],
+          "delivery_state": "DELIVERED",
+          "target_live_at_detection": true,
+          "control_evidence": {
+            "status": "AVAILABLE",
+            "transport_proven": true,
+            "declared_capabilities_sufficient": true,
+            "required_capabilities": [
+              "COMMAND_ACK",
+              "COMMAND_RECEIVE"
+            ],
+            "session_reachability": "UNVERIFIED",
+            "session_evidence_ref": null,
+            "session_dispatch_id": null,
+            "provenance": "GACR_HOST_ISSUE_BRIDGE_LIVE_PROOF",
+            "provider_private_endpoint": false
+          },
+          "projection_only": true,
+          "changes_session_status": false,
+          "changes_lease": false,
+          "grants_task_authority": false,
+          "grants_claim": false,
+          "grants_mutation_authority": false,
+          "delivered_at": "2026-10-14T03:26:50+00:00",
+          "delivery_evidence_ref": "github-issue-comment:6160201680"
         }
       ]
     }
