@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 100,
+  "revision": 101,
   "items": [
     {
       "schema": "gscc-control-dispatch/v1",
@@ -852,7 +852,7 @@
     {
       "dispatch_id": "GACR-D-19e0af3f64c8f407",
       "dispatch_kind": "CONTINUITY_SUPERVISION_ALERT",
-      "status": "DISPATCHED",
+      "status": "CANCELLED",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
       "target_session_id": "session-59e8f20baf71196a66cc48fe",
@@ -900,7 +900,7 @@
     {
       "dispatch_id": "GACR-D-5c87ad79e606d2f2",
       "dispatch_kind": "CONTINUITY_SUPERVISION_ALERT",
-      "status": "DISPATCHED",
+      "status": "CANCELLED",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
       "target_session_id": "session-5be3f63a470f5111a4879a73",
@@ -948,7 +948,7 @@
     {
       "dispatch_id": "GACR-D-9d285d18a5263d4c",
       "dispatch_kind": "CONTINUITY_SUPERVISION_ALERT",
-      "status": "DISPATCHED",
+      "status": "CANCELLED",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
       "target_session_id": "session-ca18b5fa3eae9e563aa1114f",
@@ -1047,7 +1047,7 @@
     {
       "dispatch_id": "GACR-D-fae5503c75960fb4",
       "dispatch_kind": "CONTINUITY_SUPERVISION_ALERT",
-      "status": "DISPATCHED",
+      "status": "CANCELLED",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
       "target_session_id": "session-33ab1923c0f3b2593728bfcb",
