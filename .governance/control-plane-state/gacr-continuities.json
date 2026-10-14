@@ -5,7 +5,7 @@
   "grants_task_authority": false,
   "grants_claim": false,
   "grants_mutation_authority": false,
-  "revision": 49,
+  "revision": 51,
   "items": [
     {
       "continuity_id": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
@@ -1442,7 +1442,7 @@
               "seen_count": 1
             }
           ],
-          "liveness_state": "LIVE",
+          "liveness_state": "QUIET",
           "canonical_session_status": "ACTIVE",
           "canonical_relay_state": "ACTIVE",
           "lease_expires_at": "2026-10-14T03:29:15+00:00",
@@ -1476,7 +1476,7 @@
             "bridge_registration_ref": null,
             "provider_private_values_invented": false
           },
-          "runtime_projection_observed_at": "2026-10-14T02:59:18+00:00"
+          "runtime_projection_observed_at": "2026-10-14T03:03:41+00:00"
         }
       ],
       "last_handoff": null,
@@ -1864,6 +1864,49 @@
           "grants_mutation_authority": false,
           "delivered_at": "2026-10-14T02:56:49+00:00",
           "delivery_evidence_ref": "github-issue-comment:6159859471"
+        },
+        {
+          "alert_id": "GACR-SA-f5ff8347eddff3cf",
+          "target_session_id": "session-59e8f20baf71196a66cc48fe",
+          "participant_id": "GACR-P-51f4a15e265f",
+          "scope_id": "CHAINFLOW-CF01-REQUIREMENTS-READ",
+          "detected_at": "2026-10-14T03:03:41+00:00",
+          "last_signal_at": "2026-10-14T02:59:15+00:00",
+          "silence_seconds_at_detection": 266,
+          "threshold_seconds": 120,
+          "canonical_lease_expires_at": "2026-10-14T03:29:15+00:00",
+          "state": "OPEN",
+          "action": "EARLY_SUPERVISION_ALERT",
+          "dispatch_id": "GACR-D-19e0af3f64c8f407",
+          "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
+          "delivery_modes": [
+            "GSCC_CONTROL_CHANNEL",
+            "POLL_REPOSITORY"
+          ],
+          "delivery_state": "DELIVERED",
+          "target_live_at_detection": true,
+          "control_evidence": {
+            "status": "AVAILABLE",
+            "transport_proven": true,
+            "declared_capabilities_sufficient": true,
+            "required_capabilities": [
+              "COMMAND_ACK",
+              "COMMAND_RECEIVE"
+            ],
+            "session_reachability": "UNVERIFIED",
+            "session_evidence_ref": null,
+            "session_dispatch_id": null,
+            "provenance": "GACR_HOST_ISSUE_BRIDGE_LIVE_PROOF",
+            "provider_private_endpoint": false
+          },
+          "projection_only": true,
+          "changes_session_status": false,
+          "changes_lease": false,
+          "grants_task_authority": false,
+          "grants_claim": false,
+          "grants_mutation_authority": false,
+          "delivered_at": "2026-10-14T03:03:41+00:00",
+          "delivery_evidence_ref": "github-issue-comment:6159937427"
         }
       ]
     }
