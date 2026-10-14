@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 93,
+  "revision": 94,
   "items": [
     {
       "schema": "gscc-control-dispatch/v1",
@@ -804,7 +804,7 @@
     {
       "dispatch_id": "GACR-D-cb55bd1141126d31",
       "dispatch_kind": "CONTINUITY_SUPERVISION_ALERT",
-      "status": "DISPATCHED",
+      "status": "RESOLVED",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
       "target_session_id": "session-33ab1923c0f3b2593728bfcb",
