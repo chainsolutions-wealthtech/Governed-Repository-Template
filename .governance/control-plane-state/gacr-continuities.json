@@ -5,7 +5,7 @@
   "grants_task_authority": false,
   "grants_claim": false,
   "grants_mutation_authority": false,
-  "revision": 67,
+  "revision": 68,
   "items": [
     {
       "continuity_id": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
@@ -1622,9 +1622,9 @@
               "seen_count": 1
             }
           ],
-          "liveness_state": "QUIET",
-          "canonical_session_status": "ACTIVE",
-          "canonical_relay_state": "ACTIVE",
+          "liveness_state": "STALLED",
+          "canonical_session_status": "STALLED",
+          "canonical_relay_state": "TAKEOVER_READY",
           "lease_expires_at": "2026-10-15T22:06:11+00:00",
           "last_signal_at": "2026-10-15T21:36:11+00:00",
           "provider_endpoint": {
@@ -1656,7 +1656,7 @@
             "bridge_registration_ref": null,
             "provider_private_values_invented": false
           },
-          "runtime_projection_observed_at": "2026-10-15T21:38:52+00:00"
+          "runtime_projection_observed_at": "2026-10-15T23:34:31+00:00"
         }
       ],
       "last_handoff": null,
@@ -2341,7 +2341,7 @@
           "silence_seconds_at_detection": 161,
           "threshold_seconds": 120,
           "canonical_lease_expires_at": "2026-10-15T22:06:11+00:00",
-          "state": "OPEN",
+          "state": "SUPERSEDED_BY_CANONICAL_LIVENESS_STATE",
           "action": "EARLY_SUPERVISION_ALERT",
           "dispatch_id": "GACR-D-2866ee1ed8940945",
           "preferred_delivery_mode": "GSCC_CONTROL_CHANNEL",
@@ -2372,7 +2372,9 @@
           "grants_claim": false,
           "grants_mutation_authority": false,
           "delivered_at": "2026-10-15T21:38:52+00:00",
-          "delivery_evidence_ref": "github-issue-comment:6202830425"
+          "delivery_evidence_ref": "github-issue-comment:6202830425",
+          "resolved_at": "2026-10-15T23:34:31+00:00",
+          "resolution": "CANONICAL_GACR_STATE_OWNS_RECOVERY"
         }
       ],
       "events": [
