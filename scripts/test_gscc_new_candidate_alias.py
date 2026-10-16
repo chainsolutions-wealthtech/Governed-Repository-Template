@@ -176,7 +176,12 @@ class PersistedNewAgentRecovery(unittest.TestCase):
             )
             self.assertEqual(result["state"],"GSE_VERIFIED_WAITING_GACR")
             self.assertIsNone(result["logical_agent_alias_attach_proof"])
-            self.assertEqual(result["gacr_attach"]["agent"],p["identity_id"])
+            with sqlite3.connect(db) as conn:
+                real_gscc_identity=conn.execute(
+                    "SELECT identity_id FROM gscc_session_runtime WHERE runtime_id=?",
+                    (runtime["runtime_id"],),
+                ).fetchone()[0]
+            self.assertEqual(result["gacr_attach"]["agent"],real_gscc_identity)
             self.assertNotIn("same_logical_agent_session_id",result["gacr_attach"])
             self.assertNotIn("continuity_id",result["gacr_attach"])
             resume=resume_gacr_attach(
@@ -193,9 +198,9 @@ class PersistedNewAgentRecovery(unittest.TestCase):
                 self.assertEqual(state,"GSE_VERIFIED_WAITING_GACR")
                 rows=conn.execute(
                     "SELECT COUNT(*) FROM gscc_session_bindings WHERE arrival_ref=?",
-                    (runtime["runtime_id"],),
+                    (arrival["gscc_arrival"]["arrival_ref"],),
                 ).fetchone()[0]
-                self.assertLessEqual(rows,1)
+                self.assertEqual(rows,1)
 
 if __name__=="__main__":
     unittest.main()
