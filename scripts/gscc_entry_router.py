@@ -17,7 +17,22 @@ def load_router(path: Path = ROUTER_PATH) -> dict[str, Any]:
     return payload
 
 
-def route(current: str, outcome: str | None = None, *, path: Path = ROUTER_PATH) -> dict[str, Any]:
+def route(
+    current: str, outcome: str | None = None, *,
+    path: Path = ROUTER_PATH,
+    entry_file: str | None = None,
+    mission: str | None = None,
+    read_github=None,
+    expected_head: str | None = None,
+) -> dict[str, Any]:
+    # Explicit, authenticated Door B is selected before the existing GSCC
+    # state machine; all ordinary/current callers remain on unchanged Door A.
+    if current == "ARRIVAL" and entry_file == "00_DIRECT_OWNER_ENTRY.md":
+        from repository_entry_router import select_entry
+        return select_entry(
+            entry_file, mission, read_github=read_github,
+            expected_head=expected_head,
+        )
     router = load_router(path)
     step = next((row for row in router["routes"] if row["current"] == current), None)
     if step is None:
@@ -57,8 +72,25 @@ def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--current", required=True)
     parser.add_argument("--outcome")
+    parser.add_argument("--entry-file")
+    parser.add_argument("--mission")
+    parser.add_argument("--expected-head")
     args = parser.parse_args()
-    print(json.dumps(route(args.current, args.outcome), indent=2, ensure_ascii=False, sort_keys=True))
+    reader = None
+    if args.entry_file == "00_DIRECT_OWNER_ENTRY.md":
+        from repository_entry_router import github_reader
+        import os
+        token = os.getenv("GH_TOKEN") or os.getenv("GITHUB_TOKEN")
+        if token:
+            reader = github_reader(token)
+    decision = route(
+        args.current, args.outcome, entry_file=args.entry_file,
+        mission=args.mission, read_github=reader,
+        expected_head=args.expected_head,
+    )
+    print(json.dumps(decision, indent=2, ensure_ascii=False, sort_keys=True))
+    if decision.get("entry") == "DIRECT" and decision.get("status") != "DIRECT_OWNER_VERIFIED":
+        raise SystemExit(2)
 
 
 if __name__ == "__main__":
