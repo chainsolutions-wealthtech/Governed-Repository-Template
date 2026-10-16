@@ -5,7 +5,7 @@
   "grants_task_authority": false,
   "grants_claim": false,
   "grants_mutation_authority": false,
-  "revision": 105,
+  "revision": 108,
   "items": [
     {
       "continuity_id": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
@@ -1034,7 +1034,7 @@
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "coordination_issue": 301,
       "created_at": "2026-10-14T01:07:43+00:00",
-      "updated_at": "2026-10-16T16:34:41Z",
+      "updated_at": "2026-10-16T16:44:47Z",
       "projection_only": true,
       "grants_task_authority": false,
       "grants_claim": false,
@@ -1886,10 +1886,13 @@
           "human_alias_provenance": "OWNER_ASSIGNED",
           "alias_evidence_ref": "github-issue-comment:6220103789",
           "routing_evidence_ref": "github-issue-comment:6220103789",
-          "owner_assigned_role": null,
-          "owner_role_provenance": null,
-          "owner_role_evidence_ref": null,
-          "owner_work_items": [],
+          "owner_assigned_role": "CODE_AGENT",
+          "owner_role_provenance": "OWNER_ASSIGNED",
+          "owner_role_evidence_ref": "github-issue-comment:6220281028",
+          "owner_work_items": [
+            "GR-000302/PREP-003",
+            "GR-000302/PREP-004"
+          ],
           "reference_session_ids": [
             "session-2f8d5707f376e4b45ab7797b"
           ],
@@ -2528,6 +2531,26 @@
           "grants_claim": false,
           "grants_write": false,
           "creates_session": false
+        }
+      ],
+      "owner_role_history": [
+        {
+          "event": "OWNER_ROLE_ASSIGNED",
+          "logical_agent_id": "GSCC-ID-68711b0e5e84a6a651d0e2a3",
+          "session_id": "session-2f8d5707f376e4b45ab7797b",
+          "owner_actor": "Wealthtechinnovations",
+          "agent_role": "CODE_AGENT",
+          "work_items": [
+            "GR-000302/PREP-003",
+            "GR-000302/PREP-004"
+          ],
+          "evidence_ref": "github-issue-comment:6220281028",
+          "observed_head": "d50535fa818f643d1eb7e0e6f54101bee9623fe4",
+          "at": "2026-10-16T16:44:47Z",
+          "grants_claim": false,
+          "grants_lease": false,
+          "grants_write": false,
+          "emits_availability": false
         }
       ]
     }
