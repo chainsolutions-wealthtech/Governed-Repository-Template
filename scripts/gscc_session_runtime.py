@@ -6,7 +6,7 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 from typing import Any
 
-from gscc.admission import evaluate_admission, evaluate_access_grant
+from gscc.admission import evaluate_admission, evaluate_access_grant, validate_access_grant
 from gscc.admission_harvester import harvest_qualification_evidence
 from gscc.first_touch_store import project_to_gse
 from gscc_post_q1_gate_router import route_gate
@@ -722,6 +722,14 @@ def release_f1(db:Path,runtime_id:str,receipt:dict[str,Any],current_head:str)->d
       gacr_session_id=row[0]
       if not gacr_session_id or receipt.get("session_id")!=gacr_session_id or grant.get("session_id")!=gacr_session_id:
           raise ValueError("F1 GACR session mismatch")
+      admission=json.loads(rt["admission_json"] or "{}")
+      validity=validate_access_grant(
+          grant, connection_ref=rt["connection_ref"],
+          repository=str(admission.get("repository") or ""),
+          requested_head=current_head, session_id=gacr_session_id,
+      )
+      if validity.get("status")!="VALIDATED":
+          raise ValueError("F1_ACCESS_GRANT_NOT_CURRENT:"+str(validity.get("reason_code")))
       route_authority=receipt.get("route_authority") or {}
       if route_authority.get("session_id")!=gacr_session_id:
           raise ValueError("F1 route authority session mismatch")

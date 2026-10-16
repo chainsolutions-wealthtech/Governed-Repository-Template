@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import json, sqlite3, tempfile
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from provider_first_tool_hook import build_envelope
@@ -281,10 +281,17 @@ def main():
           "status":"AUTHORIZED",
           "connection_ref":g1["gacr_attach"]["connection_ref"],
           "session_id":gacr_session_id,
+          "repository":REPO,
           "bound_head":HEAD,
+          "issued_at":(datetime.now(timezone.utc)-timedelta(minutes=1)).isoformat(),
+          "expires_at":(datetime.now(timezone.utc)+timedelta(minutes=15)).isoformat(),
         }
         conn=sqlite3.connect(db)
         try:
+            grant["admission_id"]=json.loads(conn.execute(
+                "SELECT admission_json FROM gscc_session_runtime WHERE runtime_id=?",
+                (r1["runtime_id"],),
+            ).fetchone()[0])["admission_id"]
             conn.execute(
               "UPDATE gscc_session_bindings SET gacr_session_id=?,binding_status='GACR_BOUND',binding_level='EXACT' WHERE arrival_ref=?",
               (gacr_session_id,e1["gscc_arrival"]["arrival_ref"]),
@@ -310,6 +317,33 @@ def main():
           "exposure_receipt":"GSCC-EXPOSURE-test-release",
           "route_authority":{"session_id":gacr_session_id},
         }
+        # An expired Q12 grant cannot release F1, even with a seemingly valid receipt.
+        expired_grant={**grant,"expires_at":(datetime.now(timezone.utc)-timedelta(minutes=1)).isoformat()}
+        with sqlite3.connect(db) as conn:
+            conn.execute(
+              "UPDATE gscc_session_runtime SET access_grant_json=? WHERE runtime_id=?",
+              (json.dumps(expired_grant,sort_keys=True),r1["runtime_id"]),
+            )
+        try:
+            release_f1(db,r1["runtime_id"],receipt,HEAD)
+        except ValueError as exc:
+            assert "F1_ACCESS_GRANT_NOT_CURRENT:ACCESS_GRANT_EXPIRED" in str(exc),exc
+        else:
+            raise AssertionError("expired grant must never permit F1 release")
+
+        # Valid grant with the wrong receipt grant ID is also denied.
+        with sqlite3.connect(db) as conn:
+            conn.execute(
+              "UPDATE gscc_session_runtime SET access_grant_json=? WHERE runtime_id=?",
+              (json.dumps(grant,sort_keys=True),r1["runtime_id"]),
+            )
+        try:
+            release_f1(db,r1["runtime_id"],{**receipt,"access_grant_id":"GSCC-GRANT-wrong"},HEAD)
+        except ValueError as exc:
+            assert "F1 access grant mismatch" in str(exc),exc
+        else:
+            raise AssertionError("mismatched F1 receipt must fail closed")
+
         released=release_f1(db,r1["runtime_id"],receipt,HEAD)
         assert released["state"]=="RELEASED_TO_NORMAL_GOVERNANCE",released
         assert released["start_here_status"]=="APPLICABLE",released

@@ -504,6 +504,133 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
+  renew_q12:
+    if: ${{ github.event_name == 'issue_comment' && startsWith(github.event.issue.title, '[GSCC First Touch]') && github.actor != 'github-actions[bot]' && startsWith(github.event.comment.body, '/gscc-entry-renew-q12 ') && contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) }}
+    permissions:
+      contents: read
+      actions: read
+      issues: write
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Resolve the SAME arrival scope
+        id: arrival_scope
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          from scripts.gscc_arrival_identity import mint
+          event=json.loads(Path(os.environ["GITHUB_EVENT_PATH"]).read_text(encoding="utf-8"))
+          repository=((event.get("repository") or {}).get("full_name") or os.environ.get("GITHUB_REPOSITORY"))
+          result=mint({"repository":repository,"identity":{}},event,run_id=os.environ.get("GITHUB_RUN_ID"),run_attempt=os.environ.get("GITHUB_RUN_ATTEMPT"))
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as stream:
+              stream.write("state_scope="+result["gscc_arrival"]["state_scope"]+"\n")
+          PY
+
+      - name: Restore original arrival state
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/first_touch_state_artifact.py restore \
+            --repository "$GITHUB_REPOSITORY" \
+            --run-id "$GITHUB_RUN_ID" \
+            --scope "${{ steps.arrival_scope.outputs.state_scope }}" \
+            --output "$RUNNER_TEMP/provider-first-touch-capture.sqlite"
+          test -f "$RUNNER_TEMP/provider-first-touch-capture.sqlite"
+
+      - name: Verify same-arrival Q12 renewal using fresh canonical inputs
+        id: renewed
+        env:
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          prefix="/gscc-entry-renew-q12 "
+          raw=os.environ["COMMENT_BODY"].strip()
+          if not raw.startswith(prefix):
+              raise SystemExit("Q12_RENEWAL_COMMAND_INVALID")
+          data=json.loads(raw[len(prefix):])
+          if not isinstance(data,dict) or set(data)!={"runtime_id"}:
+              raise SystemExit("Q12_RENEWAL_FIELDS_INVALID")
+          runtime=data["runtime_id"]
+          if not isinstance(runtime,str) or not runtime.startswith("GSCC-RUNTIME-"):
+              raise SystemExit("Q12_RENEWAL_RUNTIME_REQUIRED")
+          (Path(os.environ["RUNNER_TEMP"])/"q12-renewal-request.json").write_text(
+              json.dumps(data,sort_keys=True),encoding="utf-8"
+          )
+          PY
+          runtime_id="$(python3 -c 'import json,os,pathlib; print(json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("q12-renewal-request.json").read_text())["runtime_id"])')"
+          git fetch origin main
+          current_head="$(git rev-parse FETCH_HEAD)"
+          for path in \
+              .governance/control-plane-state/gacr-sessions.json \
+              .governance/control-plane-state/gacr-dispatches.json \
+              .governance/control-plane-state/gacr-claims.json \
+              .governance/control-plane-state/tasks.json \
+              .governance/agent-relay/gscc-admission-access-policy.json; do
+            git show "FETCH_HEAD:$path" > "$RUNNER_TEMP/$(basename "$path")"
+          done
+          python3 scripts/gscc_q12_renewal.py \
+            --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite" \
+            --runtime-id "$runtime_id" \
+            --sessions "$RUNNER_TEMP/gacr-sessions.json" \
+            --dispatches "$RUNNER_TEMP/gacr-dispatches.json" \
+            --claims "$RUNNER_TEMP/gacr-claims.json" \
+            --tasks "$RUNNER_TEMP/tasks.json" \
+            --policy "$RUNNER_TEMP/gscc-admission-access-policy.json" \
+            --current-head "$current_head" \
+            > "$RUNNER_TEMP/gscc-q12-renewal-result.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          result=json.loads((Path(os.environ["RUNNER_TEMP"])/"gscc-q12-renewal-result.json").read_text())
+          if result["status"] not in {"REQUALIFIED","ALREADY_CURRENT"}:
+              raise SystemExit("Q12_RENEWAL_NOT_ACCEPTED")
+          grant=(result.get("access_grant") or {}).get("grant_id") or result.get("access_grant_id")
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as stream:
+              stream.write("state="+result["status"]+"\n")
+              stream.write("runtime_id="+result["runtime_id"]+"\n")
+              stream.write("grant_id="+str(grant)+"\n")
+              stream.write("bound_head="+str(result["bound_head"])+"\n")
+          PY
+
+      - name: Report Q12 outcome; F1 remains required
+        if: ${{ steps.renewed.outputs.state == 'REQUALIFIED' || steps.renewed.outputs.state == 'ALREADY_CURRENT' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/$GITHUB_REPOSITORY/issues/${{ github.event.issue.number }}/comments" \
+            -f body="### Q12 same-arrival requalification\n\nRuntime: ${{ steps.renewed.outputs.runtime_id }}\nStatus: ${{ steps.renewed.outputs.state }}\nGrant ID: ${{ steps.renewed.outputs.grant_id }}\nBound HEAD: ${{ steps.renewed.outputs.bound_head }}\n\nNext gate: F1. No new First Touch, session, mutation grant, or RELEASE."
+
+      - name: Persist renewed runtime of original arrival
+        uses: actions/upload-artifact@v4
+        with:
+          name: first-touch-state-${{ steps.arrival_scope.outputs.state_scope }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/provider-first-touch-capture.sqlite
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload Q12 renewal result
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-q12-renewal-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/gscc-q12-renewal-result.json
+          if-no-files-found: error
+          retention-days: 30
+
   release:
     if: ${{ github.event_name == 'issue_comment' && startsWith(github.event.issue.title, '[GSCC First Touch]') && github.actor != 'github-actions[bot]' && startsWith(github.event.comment.body, '/gscc-entry-release ') }}
     permissions:
