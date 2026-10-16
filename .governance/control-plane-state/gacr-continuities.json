@@ -5,7 +5,7 @@
   "grants_task_authority": false,
   "grants_claim": false,
   "grants_mutation_authority": false,
-  "revision": 103,
+  "revision": 105,
   "items": [
     {
       "continuity_id": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
@@ -24,6 +24,10 @@
           "human_alias_provenance": "OWNER_ASSIGNED",
           "alias_evidence_ref": "github-issue-comment:6049566115",
           "routing_evidence_ref": "github-issue-comment:6049593649",
+          "owner_assigned_role": null,
+          "owner_role_provenance": null,
+          "owner_role_evidence_ref": null,
+          "owner_work_items": [],
           "reference_session_ids": [
             "session-1bb68ac942a69a77dfbb8d24"
           ],
@@ -68,6 +72,10 @@
           "human_alias_provenance": "OWNER_ASSIGNED",
           "alias_evidence_ref": "github-issue-comment:6049566115",
           "routing_evidence_ref": "github-issue-comment:6049593649",
+          "owner_assigned_role": null,
+          "owner_role_provenance": null,
+          "owner_role_evidence_ref": null,
+          "owner_work_items": [],
           "reference_session_ids": [
             "session-3320926e66a52ff8f4396ed2"
           ],
@@ -112,6 +120,10 @@
           "human_alias_provenance": "OWNER_ASSIGNED",
           "alias_evidence_ref": "github-issue-comment:6049566115",
           "routing_evidence_ref": "github-issue-comment:6049593649",
+          "owner_assigned_role": null,
+          "owner_role_provenance": null,
+          "owner_role_evidence_ref": null,
+          "owner_work_items": [],
           "reference_session_ids": [
             "session-ba6f8db786eb9a8aa11865f2"
           ],
@@ -1874,6 +1886,10 @@
           "human_alias_provenance": "OWNER_ASSIGNED",
           "alias_evidence_ref": "github-issue-comment:6220103789",
           "routing_evidence_ref": "github-issue-comment:6220103789",
+          "owner_assigned_role": null,
+          "owner_role_provenance": null,
+          "owner_role_evidence_ref": null,
+          "owner_work_items": [],
           "reference_session_ids": [
             "session-2f8d5707f376e4b45ab7797b"
           ],
