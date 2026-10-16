@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 58,
+  "revision": 59,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -1770,7 +1770,7 @@
       "parent_or_program": "GOVERNANCE_MODEL_CATALOGUE",
       "integration_slot": "RTE-006",
       "canonical_source": ".governance/control-plane-state/tasks.json",
-      "next_action": "AWAIT_OWNER_F1_REMEDIATION_MANDATE",
+      "next_action": "REVIEW_LAB_F1_OWNER_RELEASE_CI_AND_AUTHORIZE_SEPARATE_MAIN_MERGE_BEFORE_LIVE_A_PROOF",
       "continuity_id": "GRT-CONT-20261016-F1QUEUE-001",
       "work_package_id": "GRT-CONT-20261016-F1QUEUE-001",
       "queue_registration": "PENDING_F1_BATCH_V1",
@@ -1801,24 +1801,46 @@
         {
           "order": 1,
           "action": "REGISTER_LAB_AND_PENDING_CANONICAL_QUEUE_ENTRY",
-          "status": "LAB_CANDIDATE"
+          "status": "LAB_REGISTERED_CI_VERIFIED"
         },
         {
           "order": 2,
           "action": "DIAGNOSE_AND_CORRECT_F1_WITH_LIVE_EVIDENCE",
-          "status": "AWAIT_OWNER_MANDATE"
+          "status": "LAB_IMPLEMENTED_TESTED_LIVE_A_NOT_YET_PROVEN",
+          "evidence": [
+            "scripts/gscc_owner_f1.py",
+            "scripts/test_gscc_owner_f1.py",
+            ".github/workflows/gscc-provider-first-touch-ingress.yml",
+            "schemas/gscc-owner-f1-admission-receipt.schema.json",
+            "Governance CI 38965868332 SUCCESS"
+          ]
         },
         {
           "order": 3,
           "action": "GOVERNED_RELEASE_FOR_F1_GATED_WORK_OFFERS_AND_CLAIMS",
-          "status": "BLOCKED_BY_F1"
+          "status": "BLOCKED_BY_MAIN_DEPLOYMENT_AND_LIVE_F1_ATTESTATION"
         },
         {
           "order": 4,
           "action": "BIND_REAL_AGENT_AND_SESSION_TO_GSCC_GSE_GACR_CONTINUITY",
           "status": "DEFERRED_BY_OWNER"
         }
-      ]
+      ],
+      "f1_owner_release_candidate": {
+        "status": "LAB_TESTED_NOT_PRODUCTION_VERIFIED",
+        "entry": "DOOR_A_ONLY",
+        "owner_allowlist_source": ".governance/repository-entry-gates.json",
+        "receipt_schema": "gscc-owner-f1-admission-receipt/v1",
+        "grant_schema": "gscc-access-grant/v1",
+        "requires_work_item_for_admission": false,
+        "requires_claim_for_admission": false,
+        "requires_work_lease_for_admission": false,
+        "native_permissions_enforced_per_operation": true,
+        "ci_run": "38965868332",
+        "pr": 328,
+        "merge_status": "NOT_MERGED",
+        "live_proof_status": "NOT_PERFORMED"
+      }
     }
   ],
   "unique_executable_item": "GMC-01",
