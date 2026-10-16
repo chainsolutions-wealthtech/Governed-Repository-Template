@@ -165,7 +165,7 @@ def reconcile_existing_merged_lab(
         "merged_pr": 316,
     }
     result = refresh(result)
-    if (result["status"] != "PLAN_READY"
+    if (result["status"] != "WAITING_FOR_PLAN_APPROVAL"
             or result["next_request"].get("field") != "plan_approved"):
         raise ValueError("LAB_PLAN_RECONCILE_PLAN_REAPPROVAL_REQUIRED")
     return result
