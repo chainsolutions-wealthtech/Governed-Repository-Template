@@ -180,6 +180,11 @@ jobs:
       - name: Test GACR shared continuity coordination
         run: python3 scripts/test_gacr_continuity_coordination.py
 
+      - name: Test owner assigned short aliases and canonical GACR session integrity
+        run: |
+          python3 -m py_compile scripts/gacr_owner_alias.py scripts/test_gacr_owner_alias.py
+          python3 scripts/test_gacr_owner_alias.py
+
       - name: Test canonical agent reconstruction skeleton
         run: python3 scripts/test_gacr_agent_reconstruction.py
 

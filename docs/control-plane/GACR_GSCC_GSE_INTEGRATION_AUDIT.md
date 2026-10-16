@@ -227,3 +227,19 @@ ULTIMATE_LIVE_ACCEPTANCE = NOT_PASSED
 The current/remediation conversations remain invalid Step 13B fixtures. The next live
 operation must use a genuinely fresh provider conversation/agent and must not instruct it
 to register with GACR, GSCC, Presence or Beacon.
+
+## Nom court propriétaire d'une arrivée GSCC déjà qualifiée (CHAINFLOW #321)
+
+La couche GACR permet l'inscription d'un **alias court OWNER_ASSIGNED** sans créer d'identité, de First Touch, de claim ou de grant. Le registre canonique réutilisé est `.governance/control-plane-state/gacr-continuities.json`; aucun registre parallèle n'est créé. L'alias est ensuite conservé par `project_logical_agents_docs`.
+
+Après décision du propriétaire sur l'issue d'arrivée (#321), utiliser l'ingress existant GACR [issue #115](https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/115) avec la commande de propriétaire ci-dessous, **uniquement après relecture du HEAD courant et de la vraie session** :
+
+```text
+/gacr-host {"schema":"gacr-host-event/v1","event":"owner_alias_assign","session_id":"session-2f8d5707f376e4b45ab7797b","logical_agent_id":"GSCC-ID-68711b0e5e84a6a651d0e2a3","connection_ref":"GSCC-CONN-9ffbf5fd55615c6ae9dd5832c30e6918","short_alias":"NOVA","continuity_id":"GRT-CONT-20261014-CHAINFLOW-POC-01","coordination_issue":301,"arrival_issue":321,"observed_head":"<HEAD40 LIVE>"}
+```
+
+Les contrôles incluent auteur `Wealthtechinnovations` authentifié via l'événement issue-comment, HEAD exact, session GACR déjà créée, identité logique et référence de connexion correspondantes, appartenance à la continuité cible et unicité mondiale de l'alias. Le mécanisme conserve `owner_alias_history` et le `github-issue-comment:<id>` de preuve. Une commande répétée est idempotente ; une tentative ambiguë ou contradictoire échoue.
+
+**Différence canonique notable** : l'arrivée GSCC #321 mentionne un First Touch `GSCC-ID-99b03399dd63c4c530a619e9`, alors que sa session GACR publiée `session-2f8d5707f376e4b45ab7797b` est liée à `GSCC-ID-68711b0e5e84a6a651d0e2a3`. L'alias ne peut être attaché qu'à l'identité **observée dans la session**, sans assimiler les deux références.
+
+Ni la décision propriétaire, ni l'inscription du nom, ni la RELEASE F1 d'une fonction read-only n'attestent un `CODE_AGENT` actif, un claim, une lease ou un `SCOPED_GIT_WRITE`. L'agent doit émettre lui-même sa déclaration de rôle/capacité via GACR et suivre une affectation canonique. Le dispatcher de ce dépôt-source ne distribue actuellement que le programme GMC ; ne pas créer une seconde Task Queue pour CHAINFLOW #302.

@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 import gacr_continuity_coordination as continuity_coordination
+from gacr_owner_alias import assign_owner_alias
 from gscc_gacr.issue_control_bridge import (
     DISPATCHES_PATH,
     apply_host_control_event,
@@ -26,7 +27,7 @@ BUS = ROOT / "scripts" / "gacr_continuity_bus.py"
 
 PREFIX = "/gacr-host "
 SCHEMA = "gacr-host-event/v1"
-EVENTS = {"attach", "heartbeat", "action", "interrupt", "availability", "work_offer_accept", "command_ack", "challenge_response", "continuity_scope", "continuity_yield", "continuity_event", "continuity_ack", "continuity_response"}
+EVENTS = {"attach", "heartbeat", "action", "interrupt", "availability", "work_offer_accept", "command_ack", "challenge_response", "continuity_scope", "continuity_yield", "continuity_event", "continuity_ack", "continuity_response", "owner_alias_assign"}
 ACTION_PHASES = {"STARTED", "COMPLETED", "FAILED", "CANCELLED"}
 INTERRUPTION_CODES = {
     "CLIENT_DISCONNECTED",
@@ -127,6 +128,9 @@ ALLOWED_KEYS = {
     "payload_ref",
     "event_id",
     "response_ref",
+    "short_alias",
+    "logical_agent_id",
+    "arrival_issue",
     "requires_ack",
     "reply_to_event_id",
     "expires_at",
@@ -253,6 +257,17 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
     if work_kind is not None and work_kind not in CONTROL_PLANE_WORK_KINDS:
         raise ValueError("unsupported host-event work_kind")
 
+    if kind == "owner_alias_assign":
+        actor = str(((comment.get("user") or {}).get("login") or ""))
+        sender = str(((event.get("sender") or {}).get("login") or ""))
+        if actor != "Wealthtechinnovations" or sender != actor:
+            raise ValueError("OWNER_ALIAS_AUTHENTICATED_OWNER_REQUIRED")
+        for field in ("session_id", "logical_agent_id", "connection_ref", "continuity_id",
+                      "coordination_issue", "short_alias", "observed_head", "arrival_issue"):
+            if payload.get(field) in (None, ""):
+                raise ValueError("OWNER_ALIAS_REQUIRED_FIELD:" + field)
+        if not isinstance(payload["coordination_issue"], int) or not isinstance(payload["arrival_issue"], int):
+            raise ValueError("OWNER_ALIAS_ISSUE_NUMBERS_REQUIRED")
     if kind == "continuity_scope":
         for key in ("session_id", "continuity_id", "coordination_issue", "coordination_state_ref", "scope_id", "work_mode", "observed_head"):
             if payload.get(key) in (None, ""):
@@ -326,6 +341,7 @@ def parse_issue_comment_event(event: dict, config: dict) -> dict | None:
     payload["_comment_id"] = str(comment_id)
     payload["_evidence_ref"] = f"github-issue-comment:{comment_id}"
     payload["_actor"] = ((comment.get("user") or {}).get("login") or (event.get("sender") or {}).get("login"))
+    payload["_association"] = association
     payload["_observed_at"] = comment.get("created_at")
     return payload
 
@@ -616,6 +632,36 @@ def process(payload: dict, repository: str) -> dict:
             "transport": "GITHUB_ISSUE_COMMENT",
             "provenance": "CLIENT_EMITTER",
         }
+
+    if kind == "owner_alias_assign":
+        if not (ROOT / ".template-source").exists():
+            raise ValueError("OWNER_ALIAS_SOURCE_REPOSITORY_ONLY")
+        if repository != "chainsolutions-wealthtech/Governed-Repository-Template":
+            raise ValueError("OWNER_ALIAS_REPOSITORY_MISMATCH")
+        state = continuity_coordination.read_json(
+            continuity_coordination.STATE_PATH, continuity_coordination.default_state()
+        )
+        sessions = {"sessions": active_sessions()}
+        current_head = continuity_coordination.git_head()
+        new_state, result = assign_owner_alias(
+            state, sessions,
+            actor=payload["_actor"],
+            association=payload["_association"],
+            continuity_id=payload["continuity_id"],
+            coordination_issue=payload["coordination_issue"],
+            session_id=payload["session_id"],
+            logical_agent_id=payload["logical_agent_id"],
+            connection_ref=payload["connection_ref"],
+            short_alias=payload["short_alias"],
+            observed_head=payload["observed_head"],
+            current_head=current_head,
+            evidence_ref=evidence_ref,
+            arrival_issue=payload["arrival_issue"],
+            timestamp=now_iso_from_event(payload),
+        )
+        if new_state is not state:
+            continuity_coordination.write_json(continuity_coordination.STATE_PATH, new_state)
+        return {**result, "transport": "GITHUB_OWNER_ISSUE_COMMENT", "session_preserved": True}
 
     session = ensure_session(payload, repository)
     session_id = session["session_id"]
