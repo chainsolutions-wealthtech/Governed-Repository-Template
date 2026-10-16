@@ -5,7 +5,7 @@
   "grants_task_authority": false,
   "grants_claim": false,
   "grants_mutation_authority": false,
-  "revision": 100,
+  "revision": 103,
   "items": [
     {
       "continuity_id": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
@@ -1022,7 +1022,7 @@
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "coordination_issue": 301,
       "created_at": "2026-10-14T01:07:43+00:00",
-      "updated_at": "2026-10-15T21:38:50+00:00",
+      "updated_at": "2026-10-16T16:34:41Z",
       "projection_only": true,
       "grants_task_authority": false,
       "grants_claim": false,
@@ -1868,6 +1868,60 @@
           "provider_context_count": 1
         },
         {
+          "logical_agent_id": "GSCC-ID-68711b0e5e84a6a651d0e2a3",
+          "logical_agent_id_provenance": "CANONICAL_GACR_SESSION_AGENT_IDENTITY",
+          "human_alias": "NOVA",
+          "human_alias_provenance": "OWNER_ASSIGNED",
+          "alias_evidence_ref": "github-issue-comment:6220103789",
+          "routing_evidence_ref": "github-issue-comment:6220103789",
+          "reference_session_ids": [
+            "session-2f8d5707f376e4b45ab7797b"
+          ],
+          "session_ids": [
+            "session-2f8d5707f376e4b45ab7797b"
+          ],
+          "participant_ids": [],
+          "scope_ids": [],
+          "provider_contexts": [
+            {
+              "provider_context_id": "GACR-PC-a6cb5b81406fd41b",
+              "provider_context_id_provenance": "DERIVED_GACR_SESSION_CONTEXT",
+              "session_id": "session-2f8d5707f376e4b45ab7797b",
+              "provider": "chatgpt",
+              "provider_conversation_ref": null,
+              "provider_conversation_ref_status": "UNAVAILABLE",
+              "client_instance_id": "GSCC-CLIENT-dc1d07203ecc80d4b103dd2d",
+              "connection_ref": "GSCC-CONN-9ffbf5fd55615c6ae9dd5832c30e6918",
+              "runtime_surface_ref": null,
+              "runtime_surface_ref_provenance": null,
+              "repository_surface_ref": null,
+              "repository_surface_ref_provenance": null,
+              "provider_connector_app_id": null,
+              "provider_connector_client_id": null,
+              "provider_connector_installation_id": null,
+              "provider_connector_slug": null,
+              "provider_native_identity_status": "UNAVAILABLE",
+              "provider_private_values_invented": false,
+              "provider_conversation_ref_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+              "client_instance_id_provenance": "DECLARED_BY_AGENT_OR_CLIENT",
+              "connection_ref_provenance": "DECLARED_BY_AGENT_OR_CLIENT",
+              "provider_connector_app_id_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+              "provider_connector_client_id_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+              "provider_connector_installation_id_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+              "provider_connector_slug_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+              "first_seen_at": "2026-10-16T15:47:58+00:00",
+              "last_seen_at": "2026-10-16T15:47:58+00:00",
+              "seen_count": 1
+            }
+          ],
+          "projection_only": true,
+          "grants_task_authority": false,
+          "grants_claim": false,
+          "grants_mutation_authority": false,
+          "session_count": 1,
+          "provider_context_count": 1
+        },
+        {
           "logical_agent_id": "GSCC-ID-af91491957aa37d3cc231215",
           "logical_agent_id_provenance": "CANONICAL_GACR_SESSION_AGENT_IDENTITY",
           "session_ids": [
@@ -2441,7 +2495,25 @@
           "grants_mutation_authority": false
         }
       ],
-      "last_sequence": 1
+      "last_sequence": 1,
+      "owner_alias_history": [
+        {
+          "event": "OWNER_ALIAS_ASSIGNED",
+          "alias": "NOVA",
+          "owner_actor": "Wealthtechinnovations",
+          "logical_agent_id": "GSCC-ID-68711b0e5e84a6a651d0e2a3",
+          "canonical_session_id": "session-2f8d5707f376e4b45ab7797b",
+          "arrival_issue": 321,
+          "connection_ref": "GSCC-CONN-9ffbf5fd55615c6ae9dd5832c30e6918",
+          "observed_head": "2feabdf63682e13886f38da41bae97e1ff821d38",
+          "evidence_ref": "github-issue-comment:6220103789",
+          "observed_at": "2026-10-16T16:34:41Z",
+          "grants_role": false,
+          "grants_claim": false,
+          "grants_write": false,
+          "creates_session": false
+        }
+      ]
     }
   ]
 }
