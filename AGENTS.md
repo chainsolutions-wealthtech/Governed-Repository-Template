@@ -1,7 +1,12 @@
 # AGENTS — Règles pour tout agent, humain ou automatisation
 
-> **PRIORITÉ ABSOLUE D'ENTRÉE**  
-> Avant toute autre instruction de ce fichier, lire `/00_GSCC_ENTRY.md`.  
+> **SÉLECTEUR D'ENTRÉE PRIORITAIRE — DEUX PORTES**  
+> Sans sélection explicite, lire `/00_GSCC_ENTRY.md` (porte A).  
+> Sur instruction explicite « Entre par `00_DIRECT_OWNER_ENTRY.md` », lire `/00_DIRECT_OWNER_ENTRY.md` (porte B) et faire authentifier réellement l'acteur ainsi que ses permissions GitHub avant tout travail.  
+> Ce choix précède `00_START_HERE.md` et n'attribue aucune permission.  
+>
+> **PRIORITÉ ABSOLUE D'ENTRÉE (PORTE A PAR DÉFAUT)**  
+> Avant toute autre instruction de ce fichier, lire `/00_GSCC_ENTRY.md` si la porte B n'a pas été explicitement sélectionnée.  
 > Ce chemin est prioritaire sur `00_START_HERE.md` et sur toute opération de travail gouverné.
 
 
@@ -9,8 +14,8 @@ Ce fichier s'applique à toute intervention sur `{{REPOSITORY}}`.
 
 ## Démarrage obligatoire
 
-0. lire et satisfaire `00_GSCC_ENTRY.md`; aucun agent ou nouvelle conversation ne peut entrer directement par `00_START_HERE.md`;
-1. après release/handoff GSCC → GSE → GACR, lire `00_START_HERE.md`, puis `docs/control-plane/MASTER_SYSTEM_MAP.md` pour la vue de bout en bout et `docs/control-plane/REQUIREMENTS_ROADMAP.md` pour l'état des exigences ;
+0. lire et satisfaire `00_GSCC_ENTRY.md` (porte A par défaut) ou, sur instruction explicite, valider `00_DIRECT_OWNER_ENTRY.md` (porte B authentifiée par GitHub) ; aucun agent ou nouvelle conversation ne peut entrer directement par `00_START_HERE.md` sans validation de sa porte ;
+1. après release/handoff GSCC → GSE → GACR (porte A) **ou** décision `DIRECT_OWNER_VERIFIED` (porte B), lire `00_START_HERE.md`, puis `docs/control-plane/MASTER_SYSTEM_MAP.md` pour la vue de bout en bout et `docs/control-plane/REQUIREMENTS_ROADMAP.md` pour l'état des exigences ;
 2. confirmer dépôt, branche, HEAD et état du worktree ;
 3. lire les fichiers directement concernés ;
 4. rechercher les travaux existants ;
