@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 216,
+  "revision": 218,
   "items": [
     {
       "forensic_id": "GACR-F-9e71238bc954",
@@ -9558,7 +9558,7 @@
     },
     {
       "forensic_id": "GACR-F-79bd405adfc0",
-      "generated_at": "2026-10-15T23:34:28+00:00",
+      "generated_at": "2026-10-16T06:21:52+00:00",
       "process": "GACR",
       "authority": "CP-AGENT-RELAY-001-R3",
       "session_id": "session-33ab1923c0f3b2593728bfcb",
@@ -9617,7 +9617,7 @@
       "last_dispatch": {
         "dispatch_id": "GACR-D-ec5693a514ffbb89",
         "dispatch_kind": "CONTINUITY_EVENT",
-        "status": "FALLBACK_POLL_REQUIRED",
+        "status": "EXPIRED",
         "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
         "preferred_delivery_mode": "POLL_REPOSITORY",
         "target_session_id": "session-33ab1923c0f3b2593728bfcb",
@@ -9668,7 +9668,7 @@
         "dispatches": 4,
         "active_claims": 0
       },
-      "analysis_digest": "5a758cc7b5608425a43d4677cfd765162322568c1036d5b1a5198df2af209c09"
+      "analysis_digest": "f5f96d687a5c468d8a74fe4901f9957a4b0893130d4d3bec56a95d515e8a9495"
     },
     {
       "forensic_id": "GACR-F-769a233cc8ab",
@@ -10877,13 +10877,13 @@
     },
     {
       "forensic_id": "GACR-F-4b5791564fe0",
-      "generated_at": "2026-10-16T04:35:14+00:00",
+      "generated_at": "2026-10-16T06:21:52+00:00",
       "process": "GACR",
       "authority": "CP-AGENT-RELAY-001-R3",
       "session_id": "session-84e43a33e885b3f91d613f4c",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
-      "classification": "NO_INTERRUPTION_OBSERVED",
-      "recoverability": "CONTINUE_CURRENT_SESSION",
+      "classification": "LEASE_EXPIRED_STALL",
+      "recoverability": "TAKEOVER_RECONCILIATION_REQUIRED",
       "cause": {
         "status": "UNOBSERVED",
         "code": "UNOBSERVED_EXTERNAL_CAUSE",
@@ -10891,13 +10891,13 @@
         "note": "GACR never infers browser crash, provider timeout, network loss or tool failure from missing heartbeat alone."
       },
       "liveness": {
-        "session_status": "ACTIVE",
-        "relay_state": "ACTIVE",
+        "session_status": "STALLED",
+        "relay_state": "TAKEOVER_READY",
         "last_seen_at": "2026-10-16T04:35:13+00:00",
         "last_heartbeat_at": "2026-10-16T04:35:13+00:00",
         "lease_expires_at": "2026-10-16T05:05:13+00:00",
-        "lease_expired_at_analysis": false,
-        "stalled_at": null
+        "lease_expired_at_analysis": true,
+        "stalled_at": "2026-10-16T06:21:48+00:00"
       },
       "work": {
         "task_id": null,
@@ -10917,7 +10917,22 @@
       },
       "last_checkpoint_ref": null,
       "last_evidence_ref": "github-issue-comment:6208163347",
-      "last_takeover": null,
+      "last_takeover": {
+        "takeover_id": "GACR-T-56d27b6dc305",
+        "stalled_session_id": "session-84e43a33e885b3f91d613f4c",
+        "offered_to_session_id": null,
+        "accepted_by_session_id": null,
+        "status": "READY_FOR_RECONCILIATION",
+        "created_at": "2026-10-16T06:21:48+00:00",
+        "accepted_at": null,
+        "work_item_id": null,
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null,
+        "last_observed_head_sha": "cb11460bbc528cf4d200b961bc5d6424bd302f4e",
+        "reconciled_head_sha": null,
+        "active_claim_count": 0
+      },
       "last_dispatch": {
         "schema": "gscc-control-dispatch/v1",
         "dispatch_id": "GSCC-CTRL-81712de412020516deeed4da",
@@ -10986,11 +11001,11 @@
       },
       "evidence_counts": {
         "beacons": 4,
-        "takeovers": 0,
+        "takeovers": 1,
         "dispatches": 1,
         "active_claims": 0
       },
-      "analysis_digest": "cd391e870e74124332dbdc8fec5dfd6a6c3be0e395ed88aaa661b39db377bfff"
+      "analysis_digest": "93ece734d28c48dea64f3f12b1437e9098776fb8edab2493ebd8a17c4702fa3d"
     }
   ]
 }
