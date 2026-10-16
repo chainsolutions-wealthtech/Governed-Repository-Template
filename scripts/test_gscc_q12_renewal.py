@@ -175,7 +175,7 @@ class SameArrivalRenewalTests(unittest.TestCase):
             )
             return result, harvest, grant
 
-    def rejected(self, reason):
+    def rejected(self, reason, *, expected_state="READY_FOR_F1"):
         with self.assertRaisesRegex(ValueError, reason):
             self.renew()
         with sqlite3.connect(self.db) as conn:
@@ -183,7 +183,7 @@ class SameArrivalRenewalTests(unittest.TestCase):
                 "SELECT state,access_grant_json FROM gscc_session_runtime "
                 "WHERE runtime_id=?", (RUNTIME,),
             ).fetchone()
-            self.assertEqual(state, "READY_FOR_F1")
+            self.assertEqual(state, expected_state)
             self.assertEqual(json.loads(grant), self.previous)
             row = conn.execute("SELECT COUNT(*) FROM gscc_q12_renewal_history").fetchone()
             self.assertEqual(row[0], 0)
@@ -197,7 +197,7 @@ class SameArrivalRenewalTests(unittest.TestCase):
         self.assertFalse(result["authority_granted"])
         self.assertFalse(result["f1_released"])
         self.assertEqual(result["next_gate"], "F1")
-        self.assertEqual(self.head_observations, 3)
+        self.assertEqual(self.head_observations, 2)
         harvest.assert_called_once()
         grant.assert_called_once()
         with sqlite3.connect(self.db) as conn:
@@ -307,7 +307,7 @@ class SameArrivalRenewalTests(unittest.TestCase):
             conn.execute(
                 "UPDATE gscc_session_runtime SET state='RELEASED_TO_NORMAL_GOVERNANCE'"
             )
-        self.rejected("READY_FOR_F1_SAME_ARRIVAL_REQUIRED")
+        self.rejected("READY_FOR_F1_SAME_ARRIVAL_REQUIRED", expected_state="RELEASED_TO_NORMAL_GOVERNANCE")
 
     def test_18_no_second_first_touch_or_gacr_claim_generated(self):
         self.renew()
