@@ -10,6 +10,8 @@ import urllib.error
 import urllib.request
 from pathlib import Path
 
+from governed_hold_review import MERGED_PR_REF, reexamine_authority_hold
+
 from governed_request import (
     CREATE_OWNER_CANONICAL,
     apply_answer,
@@ -67,6 +69,8 @@ def parse_command(body: str) -> tuple[str, dict] | None:
     stripped = body.strip()
     if stripped == "/governed-execute":
         return "execute", {}
+    if stripped.startswith("/governed-review-hold "):
+        return "review_hold", json.loads(stripped[len("/governed-review-hold "):].strip())
     if stripped.startswith("/governed-answer"):
         raw = stripped[len("/governed-answer"):].strip()
         return "answer", json.loads(raw)
@@ -292,8 +296,83 @@ def handle_comment(event: dict) -> None:
     if command is None:
         return
 
-    state = extract_state(issue.get("body"))
     kind, payload = command
+    if kind == "review_hold":
+        try:
+            if not isinstance(payload, dict) or set(payload) != {
+                "expected_revision", "expected_head", "reason", "evidence_refs"
+            }:
+                raise ValueError("HOLD_REVIEW_EXACT_FIELDS_REQUIRED")
+            actor = str((event.get("sender") or {}).get("login") or "")
+            comment_author = str((comment.get("user") or {}).get("login") or "")
+            author_association = str(comment.get("author_association") or "")
+            if not actor or actor != comment_author:
+                raise ValueError("HOLD_REVIEW_EVENT_ACTOR_MISMATCH")
+            # The issue payload on an issue_comment webhook can be stale.
+            # Reload the SAME issue body from GitHub just before transition.
+            number = issue["number"]
+            latest_issue = api("GET", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{number}")
+            if latest_issue.get("number") != number:
+                raise ValueError("HOLD_REVIEW_ISSUE_MISMATCH")
+            state = extract_state(latest_issue.get("body"))
+            # Independently read canonical branch HEAD, rather than trusting
+            # a user-supplied SHA in a comment or historical arrival.
+            branch = api("GET", f"/repos/{CONTROL_PLANE_REPOSITORY}/branches/main")
+            observed_head = ((branch.get("commit") or {}).get("sha"))
+            evidence_refs = payload["evidence_refs"]
+            if (not isinstance(evidence_refs, list) or len(evidence_refs) > 8
+                    or not evidence_refs or any(
+                        not isinstance(ref, str) or not MERGED_PR_REF.fullmatch(ref)
+                        for ref in evidence_refs
+                    )):
+                raise ValueError("HOLD_REVIEW_MERGED_PR_REFERENCES_REQUIRED")
+            for ref in evidence_refs:
+                pr_number = int(MERGED_PR_REF.fullmatch(ref).group(1))
+                pr = api("GET", f"/repos/{CONTROL_PLANE_REPOSITORY}/pulls/{pr_number}")
+                if (pr.get("number") != pr_number or not pr.get("merged_at")
+                        or ((pr.get("base") or {}).get("ref") != "main")):
+                    raise ValueError("HOLD_REVIEW_EVIDENCE_PR_NOT_MERGED_TO_MAIN")
+            updated = reexamine_authority_hold(
+                state,
+                expected_revision=payload["expected_revision"],
+                expected_head=payload["expected_head"],
+                observed_head=observed_head,
+                owner_actor=actor,
+                author_association=author_association,
+                evidence_refs=evidence_refs,
+                reason=payload["reason"],
+            )
+            persist_state(number, latest_issue.get("body"), updated)
+            history = updated["hold_review_history"][-1]
+            api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{number}/comments", {
+                "body": (
+                    "### Governed HOLD review — question reopened, no authority granted\\n\\n"
+                    f"Review: `{history['id']}`\\n"
+                    f"Old revision: `{history['revision_before']}`; "
+                    f"new revision: `{history['revision_after']}`\\n"
+                    f"Verified branch HEAD: `{history['verified_head']}`\\n"
+                    f"Owner actor: `{actor}`\\n"
+                    f"Merged evidence: {', '.join(evidence_refs)}\\n"
+                    "Original denial retained in hold_review_history. "
+                    "A new target HEAD observation and a new explicit owner LAB authority "
+                    "answer are required; neither a LAB grant nor a claim nor merge authority was issued."
+                )
+            })
+            api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{number}/comments", {
+                "body": render_response(updated)
+            })
+            emit_executor_outputs(updated, number)
+        except Exception as exc:
+            api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}/comments", {
+                "body": (
+                    "### Governed HOLD review refused\\n\\n"
+                    f"`{type(exc).__name__}: {exc}`\\n\\n"
+                    "No successful owner-authority re-examination is attested by this refusal."
+                )
+            })
+        return
+
+    state = extract_state(issue.get("body"))
     try:
         if kind == "answer":
             if set(payload) != {"field", "value"}:
