@@ -304,3 +304,21 @@ La transition ajoute un élément immuable dans `hold_review_history` (ancienne 
 **Ce mécanisme n'exécute aucune étape PREP, n'affecte aucun agent, n'accorde aucun claim, n'ouvre aucun LAB, ne déploie rien et ne crée pas de droit de fusion.** Les opérations mutantes exigent toujours l'assignation gouvernée, le claim unique, l'état HEAD frais, le grant et les contrôles distincts selon le périmètre. Un refus répété revient à HOLD et conserve la première décision. Si l'issue a changé de révision/HEAD, la commande échoue sans réécrire l'état.
 
 Règle d'exploitation : ne jamais envoyer une valeur `lab_authority=true` sans preuve d'une nouvelle réponse authentifiée du propriétaire ; une remise en questionnaire n'est pas un déblocage automatique.
+
+## GR-000284 — Supersession d'un plan LAB périmé lorsqu'une branche est déjà fusionnée
+
+Le réexamen P1 du HOLD sur la demande originale peut conduire à un plan préparatoire devenu inexécutable : par exemple, PREP-003 demande de créer une branche qui **existe déjà** et dont la PR a été fusionnée. Une preuve `created=true` émise aujourd'hui serait fausse. La création à nouveau ou la réécriture forcée est interdite.
+
+La commande sur **la même issue gouvernée** est :
+
+```text
+/governed-reconcile-plan {"expected_revision":12,"expected_head":"<HEAD-main-observé>","reason":"Plan original devenu périmé ; branche historique et PR fusionnée à réutiliser en lecture seule."}
+```
+
+Seul le propriétaire GitHub authentifié `Wealthtechinnovations` est admis pour cette transition. Avant mutation du marqueur d'issue, le moteur relit la révision exacte, `main`, la branche historique `lab/codeagent-gscc-f1-q12-renewal-284` et **PR #316 fusionnée sur main** via GitHub. La voie est limitée à GR-000284, phase `PLAN_READY / PLAN_APPROVAL`, absence d'approbation du plan et de toute exécution. Elle exige que l'ancienne décision de refus reste dans `hold_review_history` et que le réexamen ait reçu une nouvelle réponse propriétaire `lab_authority=true`. Une deuxième réconciliation est admise uniquement avant toute approbation/exécution, si `main` a avancé.
+
+L'ancien plan, ses exigences et sa révision ne sont jamais écrasés historiquement : `plan_reconciliation_history` reçoit une supersession versionnée (ancien plan complet, nouveau plan, HEAD et PR/branche attestés, acteur, justification et interdiction d'autorité). Le nouveau plan a quatre étapes **en lecture seule** : confirmer HEAD, vérifier PR #316, vérifier la branche **déjà existante**, contrôler la corrélation et l'absence de nouvelle écriture. Aucun `TARGET_BRANCH_CREATE` n'y figure.
+
+Après cette transition, `plan_approved` demeure absent : une **nouvelle approbation propriétaire explicite** est requise. Les preuves de chacune des étapes doivent correspondre aux lectures GitHub fraîches du HEAD, de la branche et de la PR, et à la forme exacte de l'étape courante. Le Handoff n'autorise jamais `BEGIN_LAB_EVOLUTION` pour cette branche historique ; il oriente vers la **vérification LIVE Q12/F1 d'une arrivée réelle**, sous session GACR et grant distincts. Une approbation ou des tests unitaires ne peuvent ni créer claim/lease, ni simuler challenge/receipt, ni libérer F1.
+
+Cette réparation sur #284 est **distincte** de la demande expérimentale CHAINFLOW #302 et de sa branche cible `lab/chainflow-live-poc`.

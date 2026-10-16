@@ -534,6 +534,12 @@ def make_handoff(state: dict) -> dict:
         "LAB_EVOLUTION": "BEGIN_LAB_EVOLUTION",
         "CONTINUE_GOVERNED_WORK": a.get("existing_next_action") or "RESUME_GOVERNED_WORK",
     }[action]
+    if state.get("plan_reconciliation_pending"):
+        if state.get("request_id") != "GR-000284":
+            raise ValueError("reconciled LAB handoff forbidden for other requests")
+        # The former laboratory was already merged. A read-only case handoff
+        # must never advertise authority to create/rewrite that historic LAB.
+        next_operation = "VERIFY_LIVE_SAME_ARRIVAL_Q12_F1_WITH_SEPARATE_GACR_AUTHORITY"
 
     return {
         "status": "HANDOFF_READY",

@@ -11,6 +11,7 @@ import urllib.request
 from pathlib import Path
 
 from governed_hold_review import MERGED_PR_REF, reexamine_authority_hold
+from governed_plan_reconciliation import reconcile_existing_merged_lab
 
 from governed_request import (
     CREATE_OWNER_CANONICAL,
@@ -71,6 +72,8 @@ def parse_command(body: str) -> tuple[str, dict] | None:
         return "execute", {}
     if stripped.startswith("/governed-review-hold "):
         return "review_hold", json.loads(stripped[len("/governed-review-hold "):].strip())
+    if stripped.startswith("/governed-reconcile-plan "):
+        return "reconcile_plan", json.loads(stripped[len("/governed-reconcile-plan "):].strip())
     if stripped.startswith("/governed-answer"):
         raw = stripped[len("/governed-answer"):].strip()
         return "answer", json.loads(raw)
@@ -297,6 +300,70 @@ def handle_comment(event: dict) -> None:
         return
 
     kind, payload = command
+    if kind == "reconcile_plan":
+        try:
+            if not isinstance(payload, dict) or set(payload) != {
+                "expected_revision", "expected_head", "reason"
+            }:
+                raise ValueError("LAB_PLAN_RECONCILE_EXACT_FIELDS_REQUIRED")
+            actor = str((event.get("sender") or {}).get("login") or "")
+            commenter = str(((comment.get("user") or {}).get("login") or ""))
+            association = str(comment.get("author_association") or "")
+            if not actor or actor != commenter:
+                raise ValueError("LAB_PLAN_RECONCILE_EVENT_ACTOR_MISMATCH")
+            number = issue["number"]
+            latest = api("GET", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{number}")
+            if latest.get("number") != number:
+                raise ValueError("LAB_PLAN_RECONCILE_ISSUE_MISMATCH")
+            state = extract_state(latest.get("body"))
+            canonical = api("GET", f"/repos/{CONTROL_PLANE_REPOSITORY}/branches/main")
+            current_head = (canonical.get("commit") or {}).get("sha")
+            historical = api(
+                "GET",
+                f"/repos/{CONTROL_PLANE_REPOSITORY}/branches/lab%2Fcodeagent-gscc-f1-q12-renewal-284",
+            )
+            branch_head = (historical.get("commit") or {}).get("sha")
+            merged_pr = api("GET", f"/repos/{CONTROL_PLANE_REPOSITORY}/pulls/316")
+            updated = reconcile_existing_merged_lab(
+                state,
+                expected_revision=payload["expected_revision"],
+                expected_main_head=payload["expected_head"],
+                live_main_head=current_head,
+                owner_actor=actor,
+                author_association=association,
+                branch_head=branch_head,
+                merged_pr=merged_pr,
+                reason=payload["reason"],
+            )
+            persist_state(number, latest.get("body"), updated)
+            journal = updated["plan_reconciliation_history"][-1]
+            api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{number}/comments", {
+                "body": (
+                    "### Existing merged LAB — original plan superseded (read-only)\n\n"
+                    f"Review: `{journal['id']}`\n"
+                    f"Revision: `{journal['revision_before']}` → `{journal['revision_after']}`\n"
+                    f"main HEAD: `{current_head}`\n"
+                    f"Existing branch HEAD: `{branch_head}`\n"
+                    "Verified PR #316 merged into main; previous plan remains in "
+                    "`plan_reconciliation_history`. All replacement steps are read-only. "
+                    "The previous `lab_authority=true` answer does not grant a work claim, "
+                    "write authority or a new LAB. A new explicit plan approval is required."
+                )
+            })
+            api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{number}/comments", {
+                "body": render_response(updated)
+            })
+            emit_executor_outputs(updated, number)
+        except Exception as exc:
+            api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}/comments", {
+                "body": (
+                    "### Existing LAB plan reconciliation refused\n\n"
+                    f"`{type(exc).__name__}: {exc}`\n\n"
+                    "No branch, authority, claim, or plan state was advanced by this refusal."
+                )
+            })
+        return
+
     if kind == "review_hold":
         try:
             if not isinstance(payload, dict) or set(payload) != {
@@ -408,6 +475,36 @@ def handle_comment(event: dict) -> None:
                 raise ValueError("evidence payload must contain exactly action_id, result and evidence")
             if not isinstance(payload["evidence"], dict):
                 raise ValueError("evidence must be an object")
+            if state.get("plan_reconciliation_pending"):
+                if state.get("request_id") != "GR-000284":
+                    raise ValueError("LAB_PLAN_RECONCILE_GR_MISMATCH")
+                if payload["result"] != "PASS":
+                    raise ValueError("LAB_PLAN_RECONCILE_ONLY_VERIFIED_PASS")
+                plan = state.get("execution_plan") or []
+                entry = next((p for p in plan if p.get("id") == payload["action_id"]), None)
+                if not entry or entry.get("status") != "PENDING":
+                    raise ValueError("LAB_PLAN_RECONCILE_ACTION_NOT_PENDING")
+                evidence = payload["evidence"]
+                expected = entry.get("required_evidence") or {}
+                if set(evidence) != set(expected) or any(evidence[k] != v for k, v in expected.items()):
+                    raise ValueError("LAB_PLAN_RECONCILE_EVIDENCE_MISMATCH")
+                live = api("GET", f"/repos/{CONTROL_PLANE_REPOSITORY}/branches/main")
+                live_sha = (live.get("commit") or {}).get("sha")
+                if live_sha != state["plan_reconciliation_history"][-1]["main_head_verified"]:
+                    raise ValueError("LAB_PLAN_RECONCILE_HEAD_MOVED_REPLAN_REQUIRED")
+                if payload["action_id"] != "PREP-001":
+                    branch = api(
+                        "GET",
+                        f"/repos/{CONTROL_PLANE_REPOSITORY}/branches/lab%2Fcodeagent-gscc-f1-q12-renewal-284",
+                    )
+                    pr = api("GET", f"/repos/{CONTROL_PLANE_REPOSITORY}/pulls/316")
+                    previous = state["plan_reconciliation_history"][-1]
+                    if ((branch.get("commit") or {}).get("sha") != previous["historical_branch_head"]
+                            or pr.get("number") != 316 or not pr.get("merged_at")
+                            or pr.get("merge_commit_sha") != previous["merged_pr_commit"]
+                            or (pr.get("base") or {}).get("ref") != "main"
+                            or (pr.get("head") or {}).get("ref") != previous["historical_branch"]):
+                        raise ValueError("LAB_PLAN_RECONCILE_PROVENANCE_DRIFT")
             state = apply_evidence(state, payload["action_id"], payload["result"], payload["evidence"])
         elif kind == "execute":
             pass
