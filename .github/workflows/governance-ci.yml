@@ -185,6 +185,11 @@ jobs:
           python3 -m py_compile scripts/gacr_owner_alias.py scripts/test_gacr_owner_alias.py
           python3 scripts/test_gacr_owner_alias.py
 
+      - name: Test owner CODE_AGENT role with strict CHAINFLOW work scope
+        run: |
+          python3 -m py_compile scripts/gacr_owner_role.py scripts/test_gacr_owner_role.py
+          python3 scripts/test_gacr_owner_role.py
+
       - name: Test canonical agent reconstruction skeleton
         run: python3 scripts/test_gacr_agent_reconstruction.py
 
