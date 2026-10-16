@@ -281,3 +281,26 @@ Current deterministic bindings include:
 - S1/S2 production attestation → bounded read-only disk/runtime/domain probes.
 
 For an unregistered project such as the current fresh Ekyc case, deployment remains blocked with `PROJECT_NOT_IN_CURRENT_MCP_DEPLOY_REGISTRY` until a governed registration capability exists or is explicitly provided.
+
+## P1 — Réexamen versionné de HOLD_FOR_REVIEW sur la même demande GR
+
+Cette capacité ne transforme **jamais** un accord de maintenance propriétaire, un compte GitHub disposant de `push`, ni une PR fusionnée en autorisation GACR, claim de travail, lease, admission GSCC ou droit de fusion.
+
+Un HOLD d'autorité LAB précédemment refusé peut être **réexaminé sur la même issue gouvernée**, sans nouvelle GR et sans effacement du refus, uniquement si :
+- l'état machine live reste `HOLD_FOR_REVIEW`, phase `AUTHORITY`, `lab_authority=false`, raison `lab branch/PR authority denied` ;
+- aucun plan préparatoire ni preuve d'exécution préexistante n'exige de réconciliation supplémentaire ;
+- la commande provient du compte propriétaire `Wealthtechinnovations`, avec auteur de commentaire et sender GitHub correspondants, ainsi qu'une association validée par l'événement GitHub ;
+- la révision attendue correspond à la révision actuellement relue depuis l'issue et le HEAD fourni correspond à l'observation fraîche `main` ;
+- une à huit références `github-pr:<numéro>` sont vérifiées **fusionnées sur `main`** par appels GitHub authentifiés.
+
+Syntaxe de la commande **sur l'issue d'origine** :
+
+```text
+/governed-review-hold {"expected_revision":9,"expected_head":"<SHA40 ACTUEL>","evidence_refs":["github-pr:316","github-pr:317","github-pr:318"],"reason":"Réexamen propriétaire après corrections fusionnées et vérifiées."}
+```
+
+La transition ajoute un élément immuable dans `hold_review_history` (ancienne révision, refus et baseline, acteur, HEAD, PR de preuve, justification). Elle supprime **uniquement de la projection courante** le précédent `lab_authority=false` et la baseline périmée ; la phase suivante est une **nouvelle observation HEAD** `target_observation`, validée également par l'API GitHub, puis une nouvelle réponse propriétaire explicite à `lab_authority`. Les réponses d'autorité et d'approbation du plan exigent également l'auteur propriétaire authentifié. Le refus original demeure présent dans l'historique.
+
+**Ce mécanisme n'exécute aucune étape PREP, n'affecte aucun agent, n'accorde aucun claim, n'ouvre aucun LAB, ne déploie rien et ne crée pas de droit de fusion.** Les opérations mutantes exigent toujours l'assignation gouvernée, le claim unique, l'état HEAD frais, le grant et les contrôles distincts selon le périmètre. Un refus répété revient à HOLD et conserve la première décision. Si l'issue a changé de révision/HEAD, la commande échoue sans réécrire l'état.
+
+Règle d'exploitation : ne jamais envoyer une valeur `lab_authority=true` sans preuve d'une nouvelle réponse authentifiée du propriétaire ; une remise en questionnaire n'est pas un déblocage automatique.
