@@ -1,0 +1,51 @@
+{
+  "schema": "grt-lab-minimum-pool/v1",
+  "pool_id": "GRT-POOL-20261017-LABENTRY-001",
+  "continuity_id": "GRT-CONT-20261017-LABENTRY-001",
+  "coordination_issue": 329,
+  "pr": 330,
+  "membership": "SLOTS_RESERVED_UNBOUND",
+  "can_add_agents": true,
+  "slots": [
+    {
+      "slot_id": "GRT-POOL-20261017-LABENTRY-001-ARCH",
+      "role": "LAB_ARCHITECT_MEMORY",
+      "mission": "Study existing architecture, maintain canonical memory, chronological register and design",
+      "eligible_to_propose_code": true,
+      "actual_write_authority": "NOT_ATTESTED_CHECK_GITHUB",
+      "session_id": null,
+      "agent_id": null,
+      "status": "VACANT"
+    },
+    {
+      "slot_id": "GRT-POOL-20261017-LABENTRY-001-PLAN",
+      "role": "LAB_PLANNER_COORDINATOR",
+      "mission": "Requirements, instructions, dependency-order queue, tests and observation gates",
+      "eligible_to_propose_code": true,
+      "actual_write_authority": "NOT_ATTESTED_CHECK_GITHUB",
+      "session_id": null,
+      "agent_id": null,
+      "status": "VACANT"
+    },
+    {
+      "slot_id": "GRT-POOL-20261017-LABENTRY-001-CODE",
+      "role": "LAB_CODE_AGENT",
+      "mission": "Implement gated coding assignments with anti-regression tests",
+      "eligible_to_propose_code": true,
+      "actual_write_authority": "NOT_ATTESTED_CHECK_GITHUB",
+      "session_id": null,
+      "agent_id": null,
+      "status": "VACANT"
+    },
+    {
+      "slot_id": "GRT-POOL-20261017-LABENTRY-001-REVIEW",
+      "role": "LAB_INDEPENDENT_REVIEWER",
+      "mission": "Independent architecture/security/test acceptance and review",
+      "eligible_to_propose_code": true,
+      "actual_write_authority": "NOT_ATTESTED_CHECK_GITHUB",
+      "session_id": null,
+      "agent_id": null,
+      "status": "VACANT"
+    }
+  ]
+}
