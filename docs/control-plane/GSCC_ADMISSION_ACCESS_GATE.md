@@ -890,3 +890,17 @@ A valid unchanged grant is idempotently returned as `ALREADY_CURRENT`. Otherwise
 - `release_f1` separately rejects expired or mismatched Q12 grants, even with a seemingly valid receipt.
 - Work on `GR-000284` remains separate from in-place `HOLD_FOR_REVIEW` recovery (P1) and from experimental CHAINFLOW `GR-000302 / PREP-003`; neither is automatically advanced by this route.
 - Tests: `python3 scripts/test_gscc_q12_renewal.py` and `python3 scripts/test_gscc_per_arrival_identity_session_runtime.py`. MOCK/CI evidence is not a live GACR/F1 RELEASE attestation.
+
+## First Touch d'un nouvel agent — alias candidat distinct de l'identité GACR
+
+Un `logical_agent_alias` demandé lors d'un premier contact peut être un **nom candidat non encore inscrit** dans les registres de continuité. Il n'est pas une identité canonique, une preuve de reprise, ni un claim de travail.
+
+La résolution protège trois cas distincts :
+
+1. **`FIRST_TOUCH` canonique et rôle explicitement `*_CANDIDATE`** : si l'alias est syntaxiquement valide mais inconnu du registre, aucun `same_logical_agent_session_id` ni `continuity_id` historique n'est attribué. L'attachement GACR utilise l'identité GSCC de cette arrivée. Cela n'accorde aucune autorité.
+2. **Alias canonique déjà connu** : un candidat de première arrivée ne peut pas emprunter l'identité d'un agent historique. Les continuations ordinaires ne peuvent suivre la voie d'alias déjà enregistré qu'avec les preuves canoniques existantes.
+3. **Alias malformé, ambigu ou à provenance non fiable, classification `CONTINUATION` ou rôle non candidat** : refus explicite (fail closed), sans conversion silencieuse.
+
+Après un échec Q9 lors d'un workflow, **relire l'artefact SQLite réellement persisté** avant toute reprise. Les erreurs dans les étapes aval peuvent laisser le dernier artefact dans `WAITING_Q9_RESPONSE`, même si le traitement local a temporairement atteint `Q9_VERIFIED`. Pour une réponse expirée, utiliser sur la **même issue GSCC** la commande officielle `/gscc-entry-rechallenge {"runtime_id":"..."}` si l'état persisté l'autorise, puis répondre uniquement au nouveau challenge ; pas de deuxième First Touch ni de réutilisation des anciennes valeurs nonce/dispatch. L'arrivée ne devient pas `READY_FOR_F1` avant les vrais Q10/GACR/Q12.
+
+Régression de référence : issue #321, run Q9 échoué #38923244622, `LOGICAL_AGENT_ALIAS_UNKNOWN: CHAINFLOW-CODE_AGENT-NEW-01`. Tests : `scripts/test_gscc_new_candidate_alias.py`. Les fixtures sont synthétiques ; aucune RELEASE LIVE n'est impliquée.

@@ -71,11 +71,25 @@ def _session_connection_values(session:dict[str,Any])->set[str]:
     return values
 
 
-def resolve_alias_binding_intent(packet:dict[str,Any], sessions:dict[str,Any], continuity_state:dict[str,Any])->dict[str,Any]|None:
+def resolve_alias_binding_intent(packet:dict[str,Any], sessions:dict[str,Any], continuity_state:dict[str,Any], *, classification:str|None=None)->dict[str,Any]|None:
     alias=_requested_alias(packet)
     if not alias:
         return None
-    result=resolve_logical_agent_alias_docs(continuity_state,sessions,alias=alias)
+    try:
+        result=resolve_logical_agent_alias_docs(continuity_state,sessions,alias=alias)
+    except ValueError as exc:
+        # FIRST_TOUCH and candidate role are verified by the persisted entry
+        # pipeline, not by the alias. No existing identity is borrowed.
+        role=((packet.get("sections") or {}).get("agent") or {}).get("agent_role")
+        if (str(exc).startswith("LOGICAL_AGENT_ALIAS_UNKNOWN:")
+                and classification=="FIRST_TOUCH"
+                and isinstance(role,str) and role.endswith("_CANDIDATE")):
+            return None
+        raise
+    role=((packet.get("sections") or {}).get("agent") or {}).get("agent_role")
+    if (classification=="FIRST_TOUCH"
+            and isinstance(role,str) and role.endswith("_CANDIDATE")):
+        raise ValueError("NEW_CANDIDATE_ALIAS_ALREADY_CANONICAL: "+alias)
     return {
         "status":"ALIAS_RESOLVED_AT_GACR_Q2",
         "requested_alias":result["human_alias"],
@@ -96,8 +110,9 @@ def resolve_alias_attach_proof(
     sessions:dict[str,Any],
     continuity_state:dict[str,Any],
     forensics:dict[str,Any],
+    *, classification:str|None=None,
 )->dict[str,Any]|None:
-    intent=resolve_alias_binding_intent(packet,sessions,continuity_state)
+    intent=resolve_alias_binding_intent(packet,sessions,continuity_state,classification=classification)
     if intent is None:
         return None
 
@@ -375,6 +390,7 @@ def _canonical_alias_attach_proof(
     sessions_path:Path,
     continuity_path:Path,
     forensics_path:Path,
+    classification:str|None=None,
 )->dict[str,Any]|None:
     if not _requested_alias(packet):
         return None
@@ -390,7 +406,7 @@ def _canonical_alias_attach_proof(
         json.loads(forensics_path.read_text(encoding="utf-8"))
         if forensics_path.exists() else {"items":[]}
     )
-    return resolve_alias_attach_proof(packet,sessions,continuity_state,forensics)
+    return resolve_alias_attach_proof(packet,sessions,continuity_state,forensics,classification=classification)
 
 
 def control(
@@ -458,6 +474,7 @@ def control(
           sessions_path=sessions_path,
           continuity_path=continuity_path,
           forensics_path=forensics_path,
+          classification=entry['classification'],
       )
       conn.execute(
         "INSERT OR REPLACE INTO gscc_session_bindings(binding_id,arrival_ref,identity_id,gse_identity_id,gacr_session_id,connection_ref,binding_status,binding_level,evidence_ref,created_at,updated_at) VALUES(?,?,?,?,?,?,?,?,?,?,?)",
@@ -538,7 +555,7 @@ def resume_gacr_attach(
       rt=_load_runtime(conn,runtime_id)
       if rt["state"]!="GSE_VERIFIED_WAITING_GACR":
           raise ValueError(f"runtime is not waiting for GACR resume: {rt['state']}")
-      _,packet=_packet(conn,rt["run_id"])
+      entry,packet=_packet(conn,rt["run_id"])
       control_evidence=json.loads(rt["control_evidence_json"] or "{}")
       if control_evidence.get("status")!="VERIFIED":
           raise ValueError("verified Q9 control evidence required for GACR resume")
@@ -547,6 +564,7 @@ def resume_gacr_attach(
           sessions_path=sessions_path,
           continuity_path=continuity_path,
           forensics_path=forensics_path,
+          classification=entry['classification'],
       )
       gacr_attach=_build_gacr_attach_payload(
           rt,packet,control_evidence,alias_attach_proof
@@ -596,7 +614,7 @@ def bind_gacr(
           if continuity_path.exists()
           else default_continuity_state()
       )
-      alias_resolution=resolve_alias_binding_intent(packet,sessions,continuity_state)
+      alias_resolution=resolve_alias_binding_intent(packet,sessions,continuity_state,classification=entry['classification'])
       if alias_resolution:
           actual_logical_id=_session_logical_agent_id(session)
           if actual_logical_id != alias_resolution["logical_agent_id"]:
