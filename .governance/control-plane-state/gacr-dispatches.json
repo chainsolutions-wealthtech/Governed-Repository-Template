@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 115,
+  "revision": 117,
   "items": [
     {
       "schema": "gscc-control-dispatch/v1",
@@ -1146,7 +1146,7 @@
     {
       "dispatch_id": "GACR-D-ec5693a514ffbb89",
       "dispatch_kind": "CONTINUITY_EVENT",
-      "status": "FALLBACK_POLL_REQUIRED",
+      "status": "EXPIRED",
       "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
       "preferred_delivery_mode": "POLL_REPOSITORY",
       "target_session_id": "session-33ab1923c0f3b2593728bfcb",

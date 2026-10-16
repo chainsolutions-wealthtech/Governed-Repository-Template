@@ -5,7 +5,7 @@
   "grants_task_authority": false,
   "grants_claim": false,
   "grants_mutation_authority": false,
-  "revision": 68,
+  "revision": 70,
   "items": [
     {
       "continuity_id": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
@@ -2400,7 +2400,7 @@
           ],
           "payload_ref": "github-issue-comment:6202819919",
           "provenance": "github-issue-comment:6202826964",
-          "state": "FALLBACK_POLL_REQUIRED",
+          "state": "EXPIRED",
           "routes": [
             {
               "target_session_id": "session-33ab1923c0f3b2593728bfcb",
@@ -2409,7 +2409,7 @@
               "delivery_modes": [
                 "POLL_REPOSITORY"
               ],
-              "delivery_state": "FALLBACK_POLL_REQUIRED",
+              "delivery_state": "EXPIRED",
               "target_live_at_route": false,
               "bridge_registration_ref": null,
               "control_evidence": {
