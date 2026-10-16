@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://chainsolutions.example/schemas/gscc-owner-f1-admission-receipt.schema.json",
+  "title": "Verified GitHub Owner F1 Admission Receipt",
+  "description": "Issued by the existing GSCC session runtime after signed GitHub owner proof, canonical admission, exact GACR binding and fresh HEAD; never a function exposure receipt or native permission elevation.",
+  "type": "object",
+  "required": [
+    "schema",
+    "status",
+    "receipt_id",
+    "runtime_id",
+    "admission_id",
+    "session_id",
+    "connection_ref",
+    "grant_id",
+    "head",
+    "proof_ref",
+    "verified_at",
+    "github_native_operations_subject_to_permissions",
+    "work_claim_required_for_admission"
+  ],
+  "properties": {
+    "schema": {
+      "const": "gscc-owner-f1-admission-receipt/v1"
+    },
+    "status": {
+      "const": "VERIFIED"
+    },
+    "receipt_id": {
+      "type": "string",
+      "pattern": "^GSCC-OWNER-F1-[0-9a-f]{64}$"
+    },
+    "runtime_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "admission_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "session_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "connection_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "grant_id": {
+      "type": "string",
+      "pattern": "^GSCC-GRANT-[0-9a-f]{64}$"
+    },
+    "head": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "proof_ref": {
+      "type": "string",
+      "pattern": "^github-issue-comment:[0-9]+$"
+    },
+    "verified_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "github_native_operations_subject_to_permissions": {
+      "const": true
+    },
+    "work_claim_required_for_admission": {
+      "const": false
+    }
+  },
+  "additionalProperties": false
+}
