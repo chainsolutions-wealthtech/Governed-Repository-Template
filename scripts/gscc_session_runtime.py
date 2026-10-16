@@ -86,6 +86,10 @@ def resolve_alias_binding_intent(packet:dict[str,Any], sessions:dict[str,Any], c
                 and isinstance(role,str) and role.endswith("_CANDIDATE")):
             return None
         raise
+    role=((packet.get("sections") or {}).get("agent") or {}).get("agent_role")
+    if (classification=="FIRST_TOUCH"
+            and isinstance(role,str) and role.endswith("_CANDIDATE")):
+        raise ValueError("NEW_CANDIDATE_ALIAS_ALREADY_CANONICAL: "+alias)
     return {
         "status":"ALIAS_RESOLVED_AT_GACR_Q2",
         "requested_alias":result["human_alias"],
