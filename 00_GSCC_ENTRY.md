@@ -2,11 +2,15 @@
 
 > Status: APPLICABLE
 > Repository authority: PRE-ENTRY / FIRST TOUCH / CONTINUATION GATE
-> Applies to: every agent, assistant, automation, provider integration, conversation or tool surface that intends to enter this repository's governed workflow.
+> Applies to: every agent, assistant, automation, provider integration, conversation or tool surface that selects this default governed route (Door A).
+
+## Route selection: two independent doors
+
+**Default Door A:** this file and the full unchanged GSCC/GSE/GACR/F1 sequence. **Explicit Door B:** if the operator explicitly instructs « Entre par `00_DIRECT_OWNER_ENTRY.md` », the agent must read that second file first, authenticate via the GitHub account and validate native repository permissions. The direct router is `scripts/repository_entry_router.py` backed by `.governance/repository-entry-gates.json`. Door B never claims a GSCC/GACR/F1 receipt. If B is denied, it cannot silently gain authority or fabricate a continuation; A remains a distinct default choice. This addition does not change the GSCC route or its gates when Door A is selected.
 
 ## Absolute entry rule
 
-This file MUST be processed before `00_START_HERE.md`, `AGENTS.md`, project work, mutation planning, or governed execution.
+For an arrival selecting Door A (or making no explicit choice), this file MUST be processed before `00_START_HERE.md`, `AGENTS.md`, project work, mutation planning, or governed execution.
 
 A physical repository read is NOT the same as governed admission.
 
