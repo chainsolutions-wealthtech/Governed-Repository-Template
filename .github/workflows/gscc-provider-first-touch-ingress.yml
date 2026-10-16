@@ -521,26 +521,39 @@ jobs:
                   output.write(key+"="+value+"\n")
           PY
 
-      - name: Publish canonical owner F1 receipt and grant reference
+      - name: Publish durable canonical owner F1 receipt and access grant to GitHub
         if: ${{ steps.owner_f1.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
         env:
           GH_TOKEN: ${{ github.token }}
-          SESSION_ID: ${{ steps.owner_f1.outputs.gacr_session_id }}
-          F1_RECEIPT_ID: ${{ steps.owner_f1.outputs.receipt_id }}
-          GRANT_ID: ${{ steps.owner_f1.outputs.grant_id }}
-          VERIFIED_HEAD: ${{ steps.owner_f1.outputs.head }}
         run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          root=Path(os.environ["RUNNER_TEMP"])
+          item=json.loads((root/"gscc-owner-f1-release.json").read_text(encoding="utf-8"))
+          receipt=item["owner_f1_receipt"]
+          grant=item["access_grant"]
+          if not (receipt["grant_id"] == grant["grant_id"] and
+                  receipt["head"] == grant["bound_head"] == item["released_head"] and
+                  receipt["session_id"] == grant["session_id"] == item["gacr_session_id"]):
+              raise SystemExit("OWNER_F1_DURABLE_RECEIPT_BINDING_INVALID")
+          intro=("### F1 OWNER — canonical admission confirmed\n\n"
+                 "Status: RELEASED_TO_NORMAL_GOVERNANCE\n"
+                 "Next authority: 00_START_HERE.md\n"
+                 "This receipt records admission, NOT a fabricated function exposure. "
+                 "Native GitHub tools remain governed by actual account permissions, "
+                 "branch protections and CI; no task, claim or work lease is created.\n")
+          body=(intro+"\n#### Real GSCC F1 admission receipt\n\n~~~json\n"
+                +json.dumps(receipt,ensure_ascii=False,sort_keys=True,indent=2)
+                +"\n~~~\n\n#### Canonically issued gscc-access-grant/v1\n\n~~~json\n"
+                +json.dumps(grant,ensure_ascii=False,sort_keys=True,indent=2)
+                +"\n~~~\n")
+          if len(body)>15000:
+              raise SystemExit("OWNER_F1_RECEIPT_TOO_LARGE_FOR_DURABLE_ISSUE")
+          (root/"gscc-owner-f1-github-comment.txt").write_text(body,encoding="utf-8")
+          PY
           gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
-            -f body="### F1 GitHub owner verified
-Actor: ${GITHUB_ACTOR}
-Canonical GACR session: ${SESSION_ID}
-Owner F1 admission receipt: ${F1_RECEIPT_ID}
-Canonical Access Grant: ${GRANT_ID}
-Verified HEAD: ${VERIFIED_HEAD}
-Status: RELEASED_TO_NORMAL_GOVERNANCE
-Next: 00_START_HERE.md
-
-No work item, claim or work lease required for admission. Native GitHub permissions are enforced per action. See full receipt/grant workflow artifact."
+            -f body="$(cat "$RUNNER_TEMP/gscc-owner-f1-github-comment.txt")"
 
       - name: Publish owner F1 release to existing GACR beacon
         if: ${{ steps.owner_f1.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
