@@ -1,8 +1,8 @@
 # Governed Repository Template
 
-> **MANDATORY REPOSITORY ENTRY**
+> **REPOSITORY ENTRY — PORTE A PAR DÉFAUT / PORTE B EXPLICITE**
 >
-> Any agent, assistant, automation, connector, GitHub App, API client, or tool surface that reaches this repository MUST treat `/00_GSCC_ENTRY.md` as the first repository authority.
+> By default all agents and tools MUST read `/00_GSCC_ENTRY.md` as their first entry authority (Door A). On the exact explicit request « Entre par `00_DIRECT_OWNER_ENTRY.md` », read that separate direct-owner entry authority first (Door B).
 >
 > Before planning work, reading `00_START_HERE.md`, selecting a task, or attempting any mutation:
 >
@@ -13,7 +13,9 @@
 > ```
 >
 > A successful GitHub/API read is only physical access. It is not governed admission.
-> No write, branch, commit, issue, PR, dispatch, or governed execution may be selected before the pre-entry path authorizes continuation.
+> For Door A, no governed execution is authorized before the pre-entry release. For Door B, no direct GitHub write may be attempted before the authenticated owner and native permission/HEAD checks. Role text is never authority.
+>
+> **Porte B :** `00_DIRECT_OWNER_ENTRY.md` → login GitHub authentifié → rôle → permissions natives → opérations GitHub directes sous protections. Aucun First Touch ni session GACR obligatoire pour le travail direct.
 
 Template générique de gouvernance pour les dépôts de l'organisation `chainsolutions-wealthtech`.
 
