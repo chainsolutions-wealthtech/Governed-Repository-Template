@@ -173,6 +173,11 @@ jobs:
           PYTHONPATH=scripts python3 -m py_compile scripts/test_gacr_dispatch_lab_audit.py
           PYTHONPATH=scripts python3 scripts/test_gacr_dispatch_lab_audit.py
 
+      - name: Validate F1 LAB canonical memory, chronology and non-dispatch gate
+        run: |
+          python3 -m py_compile scripts/test_lab_f1_memory.py
+          python3 scripts/test_lab_f1_memory.py
+
 
       - name: Test GACR liveness progress session context
         run: python3 scripts/test_gacr_liveness_progress_context.py

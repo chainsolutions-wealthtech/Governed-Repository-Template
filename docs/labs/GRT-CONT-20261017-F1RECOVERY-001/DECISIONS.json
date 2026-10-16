@@ -1,0 +1,34 @@
+{
+  "schema": "grt-lab-decisions/v1",
+  "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+  "revision": 1,
+  "items": [
+    {
+      "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-001",
+      "title": "Progressively build LAB-local canonical memory before task planning",
+      "decision_state": "OWNER_DIRECTED",
+      "authority": "USER_REQUEST_IN_CURRENT_CHAT",
+      "description": "All relevant observations, tests, sources, decisions and checkpoints shall be recorded chronologically in GitHub LAB, analyzed before turning into executable tasks",
+      "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331",
+      "does_not_grant_execution_authority": true
+    },
+    {
+      "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-002",
+      "title": "No parallel dispatcher or direct GACR queue writes",
+      "decision_state": "EXISTING_GOVERNANCE_RETAINED",
+      "authority": "GITHUB_CANONICAL_POLICY",
+      "description": "LAB findings only generate candidate investigations until existing canonical task/dispatcher authority explicitly releases work",
+      "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/b3d7f623b443be6b0fe987dd2c527a6a4d4a53d0/docs/LAB_EVOLUTION.md",
+      "does_not_grant_execution_authority": true
+    },
+    {
+      "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-003",
+      "title": "Avoid making premature technical remediation decisions",
+      "decision_state": "PENDING_INDEPENDENT_ANALYSIS",
+      "authority": null,
+      "description": "D03 F1 provenance and D04 acceptance compatibility require further source review; no implementation or merge approved by memory registration",
+      "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6226848855",
+      "does_not_grant_execution_authority": true
+    }
+  ]
+}

@@ -1,0 +1,182 @@
+{
+  "schema": "grt-lab-canonical-observations/v1",
+  "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+  "revision": 1,
+  "scope": "LAB_ONLY_NO_GLOBAL_AUTHORITY",
+  "source_of_truth": "LAB_GIT_HISTORY_PLUS_ISSUE_331",
+  "append_only_protocol": "Never erase or repurpose IDs; supersede with a new observation and supersedes_id",
+  "items": [
+    {
+      "id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-001",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "sequence": 1,
+      "subject": "F1_OWNER_FAILURE_EVIDENCE",
+      "status": "CONFIRMED_CODE",
+      "domain": "CASE_F1_RECOVERY",
+      "statement": "scripts/gscc_owner_f1.py and issue-comment workflow retain per-arrival state after F1 failure",
+      "limitation": "Validated unit/CI; no full live error-and-retry observation",
+      "source_refs": [
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/6ba31d9930a477afcd7d2d4885e2eff7fe13af92/scripts/gscc_owner_f1.py",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/6ba31d9930a477afcd7d2d4885e2eff7fe13af92/.github/workflows/gscc-provider-first-touch-ingress.yml",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/6ba31d9930a477afcd7d2d4885e2eff7fe13af92/scripts/test_gscc_owner_f1.py"
+      ],
+      "observed_by": "GitHub-connected ChatGPT review",
+      "session_continuity_id": null,
+      "provider_conversation_id": null,
+      "analysis_state": "OPEN_FOR_REVIEW",
+      "task_candidate_ids": []
+    },
+    {
+      "id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-002",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "sequence": 2,
+      "subject": "F1_HEAD_DRIFT_ONE_RETRY",
+      "status": "CONFIRMED_SIMULATION",
+      "domain": "CASE_F1_RECOVERY",
+      "statement": "owner F1 HEAD mismatch is reobserved at most once while preserving same runtime and identity",
+      "limitation": "Second HEAD drift fails closed; requires real E2E live proof",
+      "source_refs": [
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/6ba31d9930a477afcd7d2d4885e2eff7fe13af92/scripts/gscc_owner_f1.py",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/6ba31d9930a477afcd7d2d4885e2eff7fe13af92/scripts/test_gscc_owner_f1.py"
+      ],
+      "observed_by": "GitHub-connected ChatGPT review",
+      "session_continuity_id": null,
+      "provider_conversation_id": null,
+      "analysis_state": "OPEN_FOR_REVIEW",
+      "task_candidate_ids": []
+    },
+    {
+      "id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-003",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "sequence": 3,
+      "subject": "HUMAN_AGENT_NAME_OPTIONAL",
+      "status": "CONFIRMED_SIMULATION",
+      "domain": "CASE_AGENT_IDENTITY",
+      "statement": "Missing or UNAVAILABLE logical_agent_alias does not bind an historical GACR identity",
+      "limitation": "Actual end-to-end owner arrival without human name not yet observed",
+      "source_refs": [
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/6ba31d9930a477afcd7d2d4885e2eff7fe13af92/scripts/gscc_session_runtime.py",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/6ba31d9930a477afcd7d2d4885e2eff7fe13af92/scripts/test_gscc_new_candidate_alias.py"
+      ],
+      "observed_by": "GitHub-connected ChatGPT review",
+      "session_continuity_id": null,
+      "provider_conversation_id": null,
+      "analysis_state": "OPEN_FOR_REVIEW",
+      "task_candidate_ids": []
+    },
+    {
+      "id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-004",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "sequence": 4,
+      "subject": "F1_DISPATCH_BLOCK_SCOPE",
+      "status": "CONFIRMED_SIMULATION",
+      "domain": "CASE_GACR_DISPATCH",
+      "statement": "F1_RELEASE_NOT_VERIFIED blocks only tested session capacity; another F1 released session remains eligible",
+      "limitation": "Absence of a global repository HOLD is not yet proven for every upstream workflow",
+      "source_refs": [
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/b3d7f623b443be6b0fe987dd2c527a6a4d4a53d0/scripts/gacr_capacity_dispatch.py",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/6ba31d9930a477afcd7d2d4885e2eff7fe13af92/scripts/test_gacr_dispatch_lab_audit.py"
+      ],
+      "observed_by": "GitHub-connected ChatGPT review",
+      "session_continuity_id": null,
+      "provider_conversation_id": null,
+      "analysis_state": "OPEN_FOR_REVIEW",
+      "task_candidate_ids": []
+    },
+    {
+      "id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-005",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "sequence": 5,
+      "subject": "F1_BEACON_PROVENANCE_BOUNDARY",
+      "status": "CONFIRMED_CODE",
+      "domain": "CASE_GACR_DISPATCH",
+      "statement": "Dispatcher checks F1_RELEASED beacon event and nonempty evidence_ref, does not independently validate underlying receipt",
+      "limitation": "Synthetic beacon bypass is a local projection observation; external forgery not proven",
+      "source_refs": [
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/b3d7f623b443be6b0fe987dd2c527a6a4d4a53d0/scripts/gacr_capacity_dispatch.py",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/6ba31d9930a477afcd7d2d4885e2eff7fe13af92/scripts/test_gacr_dispatch_lab_audit.py"
+      ],
+      "observed_by": "GitHub-connected ChatGPT review",
+      "session_continuity_id": null,
+      "provider_conversation_id": null,
+      "analysis_state": "OPEN_FOR_REVIEW",
+      "task_candidate_ids": []
+    },
+    {
+      "id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-006",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "sequence": 6,
+      "subject": "STALE_WORK_OFFER_ACCEPTANCE",
+      "status": "CONFIRMED_SIMULATION",
+      "domain": "CASE_GACR_DISPATCH",
+      "statement": "accept_work_offer accepts an existing CODE_AGENT-only offer under a simulated REVIEWER capacity profile",
+      "limitation": "Acceptance remains PENDING_CLAIM; no write permission granted. Defect needs guard at acceptance",
+      "source_refs": [
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/b3d7f623b443be6b0fe987dd2c527a6a4d4a53d0/scripts/gacr_capacity_dispatch.py",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/6ba31d9930a477afcd7d2d4885e2eff7fe13af92/scripts/test_gacr_dispatch_lab_audit.py"
+      ],
+      "observed_by": "GitHub-connected ChatGPT review",
+      "session_continuity_id": null,
+      "provider_conversation_id": null,
+      "analysis_state": "OPEN_FOR_REVIEW",
+      "task_candidate_ids": []
+    },
+    {
+      "id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-007",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "sequence": 7,
+      "subject": "SINGLE_GMC_WORK_SOURCE",
+      "status": "CONFIRMED_CODE",
+      "domain": "CASE_LAB_DISPATCH_INTEGRATION",
+      "statement": "Source queue projection is tied to active GMC-01 / GMC-G01, LAB proposal queue not automatically dispatched",
+      "limitation": "Requires separate authorization to design promotion to existing canonical task graph",
+      "source_refs": [
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/b3d7f623b443be6b0fe987dd2c527a6a4d4a53d0/scripts/gacr_capacity_dispatch.py",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/6ba31d9930a477afcd7d2d4885e2eff7fe13af92/docs/labs/GRT-CONT-20261017-F1RECOVERY-001_DISPATCHER_AUDIT.md"
+      ],
+      "observed_by": "GitHub-connected ChatGPT review",
+      "session_continuity_id": null,
+      "provider_conversation_id": null,
+      "analysis_state": "OPEN_FOR_REVIEW",
+      "task_candidate_ids": []
+    },
+    {
+      "id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-008",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "sequence": 8,
+      "subject": "DISPATCH_JSON_CONCURRENT_WRITES",
+      "status": "RISK_TO_VERIFY",
+      "domain": "CASE_GACR_CONCURRENCY",
+      "statement": "Dispatcher uses JSON read-modify-write with no explicit CAS in this module",
+      "limitation": "Workflow concurrency/serialization and real collision incident not investigated conclusively",
+      "source_refs": [
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/b3d7f623b443be6b0fe987dd2c527a6a4d4a53d0/scripts/gacr_capacity_dispatch.py",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/6ba31d9930a477afcd7d2d4885e2eff7fe13af92/docs/labs/GRT-CONT-20261017-F1RECOVERY-001_DISPATCHER_AUDIT.md"
+      ],
+      "observed_by": "GitHub-connected ChatGPT review",
+      "session_continuity_id": null,
+      "provider_conversation_id": null,
+      "analysis_state": "OPEN_FOR_REVIEW",
+      "task_candidate_ids": []
+    },
+    {
+      "id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-009",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "sequence": 9,
+      "subject": "PLANNING_ONLY_OFFER_SEPARATION",
+      "status": "CONFIRMED_CODE",
+      "domain": "CASE_GACR_DISPATCH",
+      "statement": "planning_only and implementation_authorized are propagated as metadata; accepted work offer does not itself authorize code writes",
+      "limitation": "Actual downstream claim/execution gates need review",
+      "source_refs": [
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/b3d7f623b443be6b0fe987dd2c527a6a4d4a53d0/scripts/gacr_capacity_dispatch.py",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/6ba31d9930a477afcd7d2d4885e2eff7fe13af92/docs/labs/GRT-CONT-20261017-F1RECOVERY-001_DISPATCHER_AUDIT.md"
+      ],
+      "observed_by": "GitHub-connected ChatGPT review",
+      "session_continuity_id": null,
+      "provider_conversation_id": null,
+      "analysis_state": "OPEN_FOR_REVIEW",
+      "task_candidate_ids": []
+    }
+  ]
+}

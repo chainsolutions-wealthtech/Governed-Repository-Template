@@ -1,0 +1,28 @@
+{
+  "schema": "grt-lab-local-memory-checkpoint/v1",
+  "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+  "revision": 1,
+  "branch": "lab/f1-recovery-isolation-20261017",
+  "issue": 331,
+  "pull_request": 332,
+  "main_head_at_review": "b3d7f623b443be6b0fe987dd2c527a6a4d4a53d0",
+  "lab_head_before_memory_update": "6ba31d9930a477afcd7d2d4885e2eff7fe13af92",
+  "known_previous_ci": {
+    "head": "6ba31d9930a477afcd7d2d4885e2eff7fe13af92",
+    "runs": [
+      38983239494,
+      38983239541,
+      38983239500,
+      38983239514
+    ],
+    "result": "SUCCESS"
+  },
+  "phase": "OBSERVE_DOCUMENT_ANALYZE",
+  "next_action": "CONTINUE_SOURCE_BACKED_OBSERVATIONS_THEN_REVIEW_CANDIDATES",
+  "task_dispatch_status": "NOT_AUTHORIZED",
+  "main_write_status": "NONE",
+  "merge_status": "NOT_MERGED",
+  "session_id": null,
+  "agent_pool_membership": "NOT_ATTESTED",
+  "source_of_truth": "GITHUB_LAB_BRANCH_AND_ISSUE_331"
+}
