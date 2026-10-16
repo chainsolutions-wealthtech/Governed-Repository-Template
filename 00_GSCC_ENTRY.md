@@ -8,6 +8,12 @@
 
 **Default Door A:** this file and the full unchanged GSCC/GSE/GACR/F1 sequence. **Explicit Door B:** if the operator explicitly instructs « Entre par `00_DIRECT_OWNER_ENTRY.md` », the agent must read that second file first, authenticate via the GitHub account and validate native repository permissions. The direct router is `scripts/repository_entry_router.py` backed by `.governance/repository-entry-gates.json`. Door B never claims a GSCC/GACR/F1 receipt. If B is denied, it cannot silently gain authority or fabricate a continuation; A remains a distinct default choice. This addition does not change the GSCC route or its gates when Door A is selected.
 
+## GitHub owner automatic F1 on Door A (candidate LAB, October 2026)
+
+The Owner's default **Door A** still follows First Touch, Q1–Q12, GSE and the real GACR canonical session. After Q12, the canonical ingress workflow can verify the **signed GitHub issue-comment actor** and GitHub account/repository/exact HEAD. When the actor is authenticated as `Wealthtechinnovations` or `Patricked-code` (the shared allowlist in `.governance/repository-entry-gates.json`), it can issue an actual `gscc-access-grant/v1` and typed `gscc-owner-f1-admission-receipt/v1`, then persist F1 and release `00_START_HERE.md` **without requiring an assigned task, work claim or work lease**. The actual receipt and full grant are written into the authenticated arrival issue and workflow artifact.
+
+This is **not** the independent Door B, and is **not** a fabricated `gscc-function-exposure-receipt/v1`. Agent/session/HEAD binding is mandatory, the non-owner F1 function exposure remains unchanged, and GitHub functions such as `create_branch`, `create_file`, `update_file` and `create_pull_request` require their actual native permissions at execution. F1 admission cannot grant new GitHub privileges or waive branch protections, CI, claim requirements for dispatch ownership, or the no-force-push rule. Roles can be selected again after admission as routing declarations rather than privilege escalation.
+
 ## Absolute entry rule
 
 For an arrival selecting Door A (or making no explicit choice), this file MUST be processed before `00_START_HERE.md`, `AGENTS.md`, project work, mutation planning, or governed execution.
