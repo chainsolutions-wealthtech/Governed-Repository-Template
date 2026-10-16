@@ -288,6 +288,9 @@ def main() -> None:
     p.add_argument("--runtime-id",required=True)
     p.add_argument("--sessions",default=str(SESSIONS))
     p.add_argument("--dispatches",default=str(DISPATCHES))
+    p.add_argument("--claims",default=str(CLAIMS))
+    p.add_argument("--tasks",default=str(TASKS))
+    p.add_argument("--policy",default=str(POLICY))
     p.add_argument("--current-head",required=True)
     args=p.parse_args()
 
@@ -296,6 +299,8 @@ def main() -> None:
     output=renew_q12(
         Path(args.db),args.runtime_id,Path(args.sessions),
         Path(args.dispatches),args.current_head,github_request_fn=github,
+        claims_path=Path(args.claims),tasks_path=Path(args.tasks),
+        policy_path=Path(args.policy),
     )
     print(json.dumps(output,indent=2,sort_keys=True))
 
