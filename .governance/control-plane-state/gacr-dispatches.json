@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 111,
+  "revision": 113,
   "items": [
     {
       "schema": "gscc-control-dispatch/v1",
@@ -1223,6 +1223,45 @@
       },
       "delivered_at": "2026-10-15T21:38:52+00:00",
       "delivery_evidence_ref": "github-issue-comment:6202830425"
+    },
+    {
+      "schema": "gscc-control-dispatch/v1",
+      "dispatch_id": "GSCC-CTRL-3a079250f551383df742f081",
+      "kind": "CONTROL_CHALLENGE",
+      "status": "DISPATCHED",
+      "target_session_id": "session-46ee23042081f2aa974f28f9",
+      "target_connection_ref": "GSCC-CONN-c1d1f539f3f75d4d1bf57a31f493323e",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "branch": "main",
+      "issue_number": 115,
+      "delivery_modes": [
+        "GITHUB_ISSUE_COMMENT"
+      ],
+      "created_at": "2026-10-16T00:46:49+00:00",
+      "expires_at": "2026-10-16T00:51:49+00:00",
+      "command": {
+        "schema": "gscc-control-command/v1",
+        "message_id": "GSCC-MSG-ec4ba0a673284312e76331ee",
+        "command_id": "GSCC-CMD-73577199f50a98094b172a37",
+        "correlation_id": "GSCC-CORR-30f7a1a5225764a92f11caa7",
+        "command_type": "LIVENESS_CHALLENGE",
+        "target_session_id": "session-46ee23042081f2aa974f28f9",
+        "issued_at": "2026-10-16T00:46:49+00:00",
+        "expires_at": "2026-10-16T00:51:49+00:00",
+        "requires_ack": true,
+        "payload": {
+          "challenge_id": "GSCC-CH-967f0d8c5c20840d84bbce19",
+          "nonce": "2--hEFhl9yeaYqhSI6W0tqufZF4A2qUg",
+          "issued_at": "2026-10-16T00:46:49+00:00",
+          "expires_at": "2026-10-16T00:51:49+00:00"
+        }
+      },
+      "ack": null,
+      "response": null,
+      "invocation_authority_granted": false,
+      "mutation_authority_granted": false,
+      "delivered_at": "2026-10-16T00:46:52+00:00",
+      "delivery_evidence_ref": "github-issue-comment:6205433770"
     }
   ]
 }
