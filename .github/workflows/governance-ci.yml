@@ -168,6 +168,11 @@ jobs:
       - name: Test GACR capacity-aware parallel dispatch
         run: python3 scripts/test_gacr_capacity_dispatch.py
 
+      - name: LAB audit - GACR dispatcher characterization (no runtime writes)
+        run: |
+          PYTHONPATH=scripts python3 -m py_compile scripts/test_gacr_dispatch_lab_audit.py
+          PYTHONPATH=scripts python3 scripts/test_gacr_dispatch_lab_audit.py
+
 
       - name: Test GACR liveness progress session context
         run: python3 scripts/test_gacr_liveness_progress_context.py
