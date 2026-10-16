@@ -20,6 +20,11 @@ class FakeAPI:
         self.prs = 0
         self.ci = 0
 
+    def commit(self, repo, branch, parent, files, message):
+        api = lab.API.__new__(lab.API)
+        api.req = self.req
+        return lab.API.commit(api, repo, branch, parent, files, message)
+
     def req(self, method, route, data=None, missing_ok=False):
         prefix = "/repos/" + REPO
         if method == "GET" and route == prefix:
