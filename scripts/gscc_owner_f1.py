@@ -315,6 +315,60 @@ def release_owner_f1(
     }
 
 
+
+def release_owner_f1_with_head_reconciliation(
+    db: Path, runtime_id: str, event: dict[str, Any], current_head: str,
+    *,
+    sessions: dict[str, Any],
+    github_request_fn: Callable[[str], dict[str, Any]],
+    github_actor: str,
+    now: datetime | None = None,
+) -> dict[str, Any]:
+    """Retry at most once only for HEAD drift before the first F1 mutation."""
+    try:
+        result = release_owner_f1(
+            db, runtime_id, event, current_head, sessions=sessions,
+            github_request_fn=github_request_fn, github_actor=github_actor, now=now,
+        )
+        result["head_reconciliation"] = {"status": "NOT_REQUIRED", "retry_count": 0}
+        return result
+    except ValueError as failure:
+        # Issued in verify_owner_event before SQLite, grant, or route mutation.
+        # Never retry a denial about identity, permissions or session binding.
+        if str(failure) != "OWNER_F1_EXACT_LIVE_HEAD_REQUIRED":
+            raise
+
+    with sqlite3.connect(db) as connection:
+        runtime = _load_runtime(connection, runtime_id)
+    if runtime["state"] != "READY_FOR_F1":
+        raise ValueError("OWNER_F1_RETRY_REQUIRES_SAME_PENDING_RUNTIME")
+    admission = json.loads(runtime["admission_json"] or "{}")
+    repository = admission.get("repository")
+    branch = ((admission.get("admission_context") or {}).get("target") or {}).get("requested_branch")
+    if repository != (event.get("repository") or {}).get("full_name") or not branch:
+        raise ValueError("OWNER_F1_RETRY_CANONICAL_REPOSITORY_BRANCH_REQUIRED")
+    observed = github_request_fn(
+        "https://api.github.com/repos/" + repository + "/branches/" +
+        urllib.parse.quote(branch, safe="")
+    )
+    latest = (observed.get("commit") or {}).get("sha")
+    if (not isinstance(latest, str) or len(latest) != 40
+            or any(ch not in "0123456789abcdef" for ch in latest)
+            or latest == current_head):
+        raise ValueError("OWNER_F1_RETRY_FRESH_DIFFERENT_HEAD_REQUIRED")
+    # Same runtime, binding and verified actor. A second drift fails closed.
+    result = release_owner_f1(
+        db, runtime_id, event, latest, sessions=sessions,
+        github_request_fn=github_request_fn, github_actor=github_actor, now=now,
+    )
+    result["head_reconciliation"] = {
+        "status": "REOBSERVED_AND_RELEASED",
+        "retry_count": 1, "previous_head": current_head,
+        "verified_head": latest, "scope": "SAME_ARRIVAL_ONLY",
+        "global_hold_created": False,
+    }
+    return result
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Signed owner Door-A F1 admission")
     parser.add_argument("--db", required=True)
@@ -332,7 +386,7 @@ def main() -> None:
     if repository != os.environ.get("GITHUB_REPOSITORY"):
         raise SystemExit("OWNER_F1_GITHUB_EVENT_REPOSITORY_MISMATCH")
     sessions = json.loads(Path(args.sessions).read_text(encoding="utf-8"))
-    result = release_owner_f1(
+    result = release_owner_f1_with_head_reconciliation(
         Path(args.db), args.runtime_id, event, args.current_head,
         sessions=sessions,
         github_request_fn=lambda url: github_get_json(url, token=os.environ.get("GITHUB_TOKEN")),

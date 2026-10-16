@@ -47,9 +47,14 @@ def _route(db:Path,runtime_id:str,gate:str,outcome:str,evidence:dict[str,Any],id
 def _requested_alias(packet:dict[str,Any])->str|None:
     request=(packet.get("sections") or {}).get("request") or {}
     value=request.get("logical_agent_alias")
-    if value in (None,"","UNAVAILABLE","UNKNOWN","NOT_EXPOSED","NOT_ACCESSIBLE"):
+    if value is None:
         return None
-    return str(value).strip()
+    if not isinstance(value,str):
+        raise ValueError("LOGICAL_AGENT_ALIAS_INVALID_TYPE")
+    alias=value.strip()
+    if alias.upper() in ("","UNAVAILABLE","UNKNOWN","NOT_EXPOSED","NOT_ACCESSIBLE"):
+        return None
+    return alias
 
 
 def _session_logical_agent_id(session:dict[str,Any])->str|None:
