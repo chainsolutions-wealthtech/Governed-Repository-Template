@@ -377,6 +377,31 @@ def handle_comment(event: dict) -> None:
         if kind == "answer":
             if set(payload) != {"field", "value"}:
                 raise ValueError("answer payload must contain exactly field and value")
+            if state.get("hold_review_pending"):
+                field = payload["field"]
+                if field in {"lab_authority", "plan_approved"}:
+                    actor = str((event.get("sender") or {}).get("login") or "")
+                    author = str(((comment.get("user") or {}).get("login") or ""))
+                    association = str(comment.get("author_association") or "")
+                    if (actor != "Wealthtechinnovations" or author != actor
+                            or association not in {"OWNER", "MEMBER", "COLLABORATOR"}):
+                        raise ValueError("HOLD_REVIEW_REANSWER_OWNER_REQUIRED")
+                if field == "target_observation":
+                    declared = payload["value"]
+                    if not isinstance(declared, dict):
+                        raise ValueError("HOLD_REVIEW_BASELINE_OBJECT_REQUIRED")
+                    target = str((state.get("answers") or {}).get("target_repository") or "")
+                    if target != CONTROL_PLANE_REPOSITORY:
+                        raise ValueError("HOLD_REVIEW_TARGET_NOT_CANONICAL_SOURCE")
+                    observed = api("GET", f"/repos/{target}")
+                    branch_name = str(observed.get("default_branch") or "")
+                    ref = api("GET", f"/repos/{target}/branches/{branch_name}")
+                    actual = ((ref.get("commit") or {}).get("sha"))
+                    if (declared.get("exists") is not True
+                            or declared.get("default_branch") != branch_name
+                            or declared.get("head_sha") != actual
+                            or observed.get("full_name") != target):
+                        raise ValueError("HOLD_REVIEW_BASELINE_LIVE_MISMATCH")
             state = apply_answer(state, payload["field"], payload["value"])
         elif kind == "evidence":
             if set(payload) != {"action_id", "result", "evidence"}:
