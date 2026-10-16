@@ -30,3 +30,17 @@ Aucun nouveau scheduler, Task Queue, dispatcher, registre de sessions, claim ou 
 - Toute CI exécutée doit être vérifiée avant un changement d'état.
 
 **Prochaine action unique** : `REVIEW_LAB_PENDING_REGISTRY_THEN_WAIT_FOR_OWNER_F1_MANDATE`.
+
+
+## PHASE 2 — Correctif F1 de la porte A (candidat en LAB, sans fusion)
+
+- Le module `scripts/gscc_owner_f1.py` produit un **reçu d'admission propriétaire F1 authentique**, `gscc-owner-f1-admission-receipt/v1`, ainsi qu'un nouveau `gscc-access-grant/v1`.
+- La signature de l'événement GitHub `issue_comment` est le transport de preuve : auteur de l'issue = auteur du commentaire = `sender` = `github.actor`; `GET /users/{login}` corrobore l'ID et `GET /repos` / `GET /branches` revalident l'identité et le HEAD.
+- Le module utilise l'admission persistée existante, le même `runtime_id`, la même `connection_ref`, la liaison GACR exacte à la même session, et le grant Q12 préexistant ; aucun nouveau First Touch.
+- `F1 → 00_START_HERE.md` est désormais libérable **sans work item, claim, lease de travail ou attribution de tâche** quand l'acteur est un propriétaire GitHub vérifié (`Wealthtechinnovations` ou `Patricked-code`).
+- Un lease de travail n'est pas une condition d'admission ; l'authenticité de la session GACR reste indispensable. En revanche, les contrôles de claim, collision et lease pour un travail dispatché ne sont pas modifiés.
+- Le nouveau grant enregistre les rôles utilisables `CODE_AGENT`, `SUPERVISOR`, `INTAKER`, `REVIEWER`, `PLANNER_AGENT` et permet de changer de rôle opérationnel après l'admission selon les autorisations applicables.
+- `create_branch`, `create_file`, `update_file`, `create_pull_request`, lecture, revue, supervision et intake sont enregistrées comme **éligibilité aux opérations GitHub natives** ; la permission effective reste celle de GitHub au moment de chaque opération. Il n'y a aucune élévation de privilège, exemption de CI ou contournement des protections de branche.
+- Le reçu d'admission propriétaire n'est pas un faux `gscc-function-exposure-receipt/v1`. La route F1 historique et l'exposition des fonctions gouvernées des non-propriétaires restent inchangées.
+- Le workflow de la porte A doit générer, publier et conserver comme artifact le véritable reçu et son access grant, puis émettre le beacon `F1_RELEASED` sur le GACR existant, **sans créer une offre de travail**.
+- Ce correctif est un **candidat en LAB**. Il ne remplace pas le HEAD `main` tant que la PR #328 n'est pas examinée et fusionnée.
