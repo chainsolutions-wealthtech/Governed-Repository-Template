@@ -862,3 +862,31 @@ POSTMERGE_LIVE_ACCESS_GRANT = NOT_EXECUTED
 STEP_13B = NOT_EXECUTED
 ULTIMATE_LIVE_ACCEPTANCE = NOT_PASSED
 ```
+
+## GR-000284 — Renew Q12 on the same arrival after HEAD/TTL drift
+
+**Scope:** existing `READY_FOR_F1` arrival only; canonical GACR session identity, work/claim policies and previously issued grants remain distinct. This route does not retry First Touch, create a new GSCC identity, reopen a completed F1 RELEASE, or create code/merge authority.
+
+### Trigger and runtime
+
+The **same First Touch issue** may receive:
+
+```text
+/gscc-entry-renew-q12 {"runtime_id":"GSCC-RUNTIME-<existing-runtime-id>"}
+```
+
+The `renew_q12` job in `.github/workflows/gscc-provider-first-touch-ingress.yml` accepts only a GitHub OWNER/MEMBER/COLLABORATOR comment, restores that arrival's persisted SQLite state from its artifact, fetches the live `main` and canonical sessions, dispatches, claims, tasks and admission access policy, and calls `scripts/gscc_q12_renewal.py` with an independently observed GitHub HEAD.
+
+Preconditions are **cumulative**: persisted `READY_FOR_F1`, same original admission/identity/arrival, exactly one exact GACR session binding, ACTIVE session and relay, unexpired lease, exact repository/branch/connection, authorized prior grant, newly completed non-replayed host challenge **issued after the prior grant** (canonical ACK/response issue references and freshness), exact live HEAD, Q6/Q7/Q11 requalification and Q12 evaluation. A second live HEAD observation must match before commit.
+
+A valid unchanged grant is idempotently returned as `ALREADY_CURRENT`. Otherwise, only expiration or HEAD mismatch permits an issuance attempt. Successful renewal appends old/new grant, qualification and control references to the SQLite `gscc_q12_renewal_history` ledger (migration `012_gscc_q12_renewal.sql`) and atomically updates the current grant projection. It **does not** emit a RELEASE. `F1` must validate an actual exposure receipt against the new current grant and its expiry.
+
+**Important:** the SQLite runtime backup is a GitHub Actions artifact with a 30-day retention policy, not permanent canonical storage. Its generated audit lineage must also be correlated with the durable GitHub issue/workflow record; expired artifacts require separate authorized recovery. An issue comment does not establish a fresh GACR lease or liveness response. Do not simulate either to make renewal pass.
+
+### Security and boundaries
+
+- No new First Touch, session, GACR claim, lease, or mutation grant is produced here.
+- Deny stale Q12 evidence, replay, expired leases, ambiguous correlation, invalid grants, missing Q6/Q7 tasks/claims, denied Q11, and changed HEAD.
+- `release_f1` separately rejects expired or mismatched Q12 grants, even with a seemingly valid receipt.
+- Work on `GR-000284` remains separate from in-place `HOLD_FOR_REVIEW` recovery (P1) and from experimental CHAINFLOW `GR-000302 / PREP-003`; neither is automatically advanced by this route.
+- Tests: `python3 scripts/test_gscc_q12_renewal.py` and `python3 scripts/test_gscc_per_arrival_identity_session_runtime.py`. MOCK/CI evidence is not a live GACR/F1 RELEASE attestation.
