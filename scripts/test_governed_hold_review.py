@@ -133,6 +133,8 @@ class BridgeReviewTests(unittest.TestCase):
             return {"number":284,"body":self.body}
         if method=="GET" and path.endswith("/branches/main"):
             return {"commit":{"sha":HEAD}}
+        if method=="GET" and path == "/repos/"+REPO:
+            return {"full_name":REPO,"default_branch":"main"}
         if method=="GET" and "/pulls/" in path:
             return {"number":int(path.rsplit("/",1)[-1]),"merged_at":"2026-10-16T05:00:00Z","base":{"ref":"main"}}
         if method=="PATCH":
@@ -173,6 +175,49 @@ class BridgeReviewTests(unittest.TestCase):
         self.api=fake
         self.call()
         self.assertFalse(any(x[0]=="PATCH" for x in self.calls))
+
+    def _reply(self, field, value, actor=OWNER):
+        self.event["issue"]["body"]=self.body
+        self.event["sender"]["login"]=actor
+        self.event["comment"]["user"]["login"]=actor
+        self.event["comment"]["body"]="/governed-answer "+json.dumps({
+            "field":field,"value":value,
+        })
+        self.calls.clear()
+        self.call()
+
+    def test_21_forged_target_observation_is_refused(self):
+        self.call()
+        self._reply("target_observation", {
+            "exists":True,"default_branch":"main",
+            "head_sha":OLD,"governance_detected":True,
+        })
+        self.assertEqual(bridge.extract_state(self.body)["next_request"]["field"],"target_observation")
+        self.assertFalse(any(x[0]=="PATCH" for x in self.calls))
+
+    def test_22_other_actor_cannot_set_lab_authority(self):
+        self.call()
+        self._reply("target_observation", {
+            "exists":True,"default_branch":"main",
+            "head_sha":HEAD,"governance_detected":True,
+        })
+        self.assertEqual(bridge.extract_state(self.body)["next_request"]["field"],"lab_authority")
+        self._reply("lab_authority",True,actor="other-agent")
+        self.assertEqual(bridge.extract_state(self.body)["next_request"]["field"],"lab_authority")
+        self.assertFalse(any(x[0]=="PATCH" for x in self.calls))
+
+    def test_23_owner_reanswer_does_not_execute_preparation(self):
+        self.call()
+        self._reply("target_observation", {
+            "exists":True,"default_branch":"main",
+            "head_sha":HEAD,"governance_detected":True,
+        })
+        self._reply("lab_authority",True)
+        updated=bridge.extract_state(self.body)
+        self.assertEqual(updated["status"],"PLAN_READY")
+        self.assertEqual(updated["next_request"]["field"],"plan_approved")
+        self.assertFalse(updated["hold_review_history"][-1]["grants_lab_authority"])
+        self.assertTrue(all(item["status"]=="PENDING" for item in updated["execution_plan"]))
 
 if __name__=="__main__":
     unittest.main()
