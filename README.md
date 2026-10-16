@@ -16,6 +16,8 @@
 > For Door A, no governed execution is authorized before the pre-entry release. For Door B, no direct GitHub write may be attempted before the authenticated owner and native permission/HEAD checks. Role text is never authority.
 >
 > **Porte B :** `00_DIRECT_OWNER_ENTRY.md` → login GitHub authentifié → rôle → permissions natives → opérations GitHub directes sous protections. Aucun First Touch ni session GACR obligatoire pour le travail direct.
+>
+> Vérification machine : `scripts/repository_entry_router.py` (entrée A par défaut, B explicite) ; compatibilité dans `scripts/gscc_entry_router.py --current ARRIVAL --entry-file 00_DIRECT_OWNER_ENTRY.md --mission 'JE VIENS CODER'`. Les changements effectifs passent par les fonctions GitHub authentifiées.
 
 Template générique de gouvernance pour les dépôts de l'organisation `chainsolutions-wealthtech`.
 
