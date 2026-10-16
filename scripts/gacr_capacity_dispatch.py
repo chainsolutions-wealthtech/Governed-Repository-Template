@@ -439,6 +439,43 @@ def agent_pool_projection(*, generated_at: str | None = None) -> dict:
     }
 
 
+
+def _registered_pending_source_items(tasks: dict) -> list[dict]:
+    """Expose pending source tasks in the EXISTING queue, never as offers."""
+    registered = []
+    for raw in tasks.get("items", []):
+        if raw.get("queue_registration") != "PENDING_F1_BATCH_V1":
+            continue
+        if not raw.get("id") or not raw.get("continuity_id") or not raw.get("integration_slot") or not raw.get("collision_domains"):
+            continue
+        registered.append({
+            "work_item_id": raw["id"],
+            "task_id": raw["id"],
+            "title": raw.get("title"),
+            "status": "BLOCKED",
+            "queue_state": "REGISTERED_PENDING_F1",
+            "source_task_status": raw.get("status"),
+            "dispatch_release": raw.get("dispatch_release", "NOT_RELEASED"),
+            "continuity_id": raw["continuity_id"],
+            "work_package_id": raw.get("work_package_id"),
+            "integration_slot": raw["integration_slot"],
+            "dependencies": list(raw.get("depends_on") or []),
+            "collision_domains": list(raw["collision_domains"]),
+            "priority": int(raw.get("priority") or 0),
+            "sequence": int(raw.get("sequence") or 0),
+            "allowed_agent_roles": list(raw.get("allowed_agent_roles") or ["CODE_AGENT"]),
+            "required_capabilities": list(raw.get("required_capabilities") or []),
+            "repository": telemetry.repository_name(),
+            "required_f1_release": True,
+            "planning_only": True,
+            "implementation_authorized": False,
+            "grants_claim": False,
+            "grants_mutation_authority": False,
+            "work_source": SOURCE_WORK_KIND,
+        })
+    return registered
+
+
 def _source_control_plane_work_document() -> dict:
     tasks=read_json(CONTROL_TASKS_PATH, {"items":[]})
     active=[x for x in tasks.get("items",[]) if x.get("status")=="IN_PROGRESS"]
@@ -527,7 +564,7 @@ def _source_control_plane_work_document() -> dict:
         "work_package_id":package_id,
         "planning_only":bool(group.get("planning_only",True)),
         "implementation_authorized":bool(group.get("implementation_authorized",False)),
-        "items":items,
+        "items":items + _registered_pending_source_items(tasks),
     }
 
 

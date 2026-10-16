@@ -1122,3 +1122,16 @@ This programme is downstream of stabilized governance semantics and does not cha
 | SAA-015 | Release SaaS platform 1.0.0 + runbooks/recovery/upgrade | PLANNED |
 
 Canonical detailed programme: `docs/control-plane/SAAS_PLATFORM_PROGRAM.md`.
+
+
+## LAB propriétaire porte B — lot F1 en attente (candidat isolé, 2026-10-16)
+
+- Task canonique `RTE-014` dans `.governance/control-plane-state/tasks.json`, identifiant de jonction `GRT-CONT-20261016-F1QUEUE-001`.
+- LAB `lab/direct-owner-f1queue-20261016` ; [issue d'ancrage #327](https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/327).
+- Filiation `RTE-006` / `IDN-006`. Le seul global executable demeure `GMC-01`.
+- Le dispatcher existant `scripts/gacr_capacity_dispatch.py` projette `RTE-014` comme `BLOCKED / REGISTERED_PENDING_F1`, jamais en WORK_OFFER pendant cette étape.
+- Chronologie : (1) inscription LAB/registre ; (2) correction F1 sur mandat ultérieur ; (3) autorisation future de dispatch/claim sous F1 ; (4) liaison de la vraie session/identité à GSCC→GSE→GACR, expressément différée.
+- N'attribue ni session GACR, ni claim, ni F1 release, ni droit de mutation; aucune nouvelle file, aucun nouveau dispatcher.
+- [Contexte F1 #284](https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/284) : simple référence existante, non réclamée.
+
+Cette inscription sur LAB ne devient active dans la source canonique `main` qu'après revue, CI et fusion autorisée.

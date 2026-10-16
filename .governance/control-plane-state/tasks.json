@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 57,
+  "revision": 58,
   "work_package_id": "CREATE_NEW_REPOSITORY_COMPLETION",
   "objective": "Complete canonical program #12 without skipping chronological gates",
   "items": [
@@ -1758,6 +1758,67 @@
         "GMC-18"
       ],
       "next_action": "CROSS_CASE_VALIDATE_AND_FREEZE_GOVERNANCE_MODEL_1_0_0"
+    },
+    {
+      "id": "RTE-014",
+      "title": "Direct owner LAB continuity / F1-gated task queue junction",
+      "kind": "CONTINUITY_WORK_PACKAGE",
+      "status": "PLANNED",
+      "depends_on": [
+        "IDN-006"
+      ],
+      "parent_or_program": "GOVERNANCE_MODEL_CATALOGUE",
+      "integration_slot": "RTE-006",
+      "canonical_source": ".governance/control-plane-state/tasks.json",
+      "next_action": "AWAIT_OWNER_F1_REMEDIATION_MANDATE",
+      "continuity_id": "GRT-CONT-20261016-F1QUEUE-001",
+      "work_package_id": "GRT-CONT-20261016-F1QUEUE-001",
+      "queue_registration": "PENDING_F1_BATCH_V1",
+      "dispatch_release": "NOT_RELEASED",
+      "dispatch_activation_condition": "OWNER_MANDATE_AND_F1_LIVE_PROOF_AND_CANONICAL_RELEASE",
+      "required_f1_release": true,
+      "priority": 500,
+      "sequence": 1401,
+      "allowed_agent_roles": [
+        "CODE_AGENT"
+      ],
+      "required_capabilities": [
+        "CODE"
+      ],
+      "collision_domains": [
+        "gacr:f1-qualification",
+        "control-plane:canonical-task-graph"
+      ],
+      "lab_branch": "lab/direct-owner-f1queue-20261016",
+      "coordination_issue": 327,
+      "related_f1_issue": 284,
+      "lab_only_until_merged": true,
+      "actor_github_login": "Wealthtechinnovations",
+      "gacr_session_id": null,
+      "logical_agent_id": null,
+      "claim_id": null,
+      "milestones": [
+        {
+          "order": 1,
+          "action": "REGISTER_LAB_AND_PENDING_CANONICAL_QUEUE_ENTRY",
+          "status": "LAB_CANDIDATE"
+        },
+        {
+          "order": 2,
+          "action": "DIAGNOSE_AND_CORRECT_F1_WITH_LIVE_EVIDENCE",
+          "status": "AWAIT_OWNER_MANDATE"
+        },
+        {
+          "order": 3,
+          "action": "GOVERNED_RELEASE_FOR_F1_GATED_WORK_OFFERS_AND_CLAIMS",
+          "status": "BLOCKED_BY_F1"
+        },
+        {
+          "order": 4,
+          "action": "BIND_REAL_AGENT_AND_SESSION_TO_GSCC_GSE_GACR_CONTINUITY",
+          "status": "DEFERRED_BY_OWNER"
+        }
+      ]
     }
   ],
   "unique_executable_item": "GMC-01",

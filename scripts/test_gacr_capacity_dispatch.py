@@ -649,6 +649,16 @@ def main() -> None:
         assert_true(all(x["work_item_id"]!="WORK-INIT-001" for x in canonical["items"]), "source queue must exclude bootstrap WORK-INIT-001")
         assert_true(ready[0]["allowed_agent_roles"]==["CODE_AGENT"], "GMC atomic task must target code agent lane")
         assert_true(ready[0]["implementation_authorized"] is False, "planning-only task must not imply implementation authority")
+        pending=[x for x in canonical["items"] if x.get("work_item_id")=="RTE-014"]
+        assert_true(len(pending)==1, "pending source lot must be discoverable in existing GACR queue")
+        assert_true(pending[0]["continuity_id"]=="GRT-CONT-20261016-F1QUEUE-001", "continuity ID must map to canonical lot")
+        assert_true(pending[0]["status"]=="BLOCKED", "pending lot must not be READY")
+        assert_true(pending[0]["dispatch_release"]=="NOT_RELEASED", "F1 lot must not be released")
+        assert_true(pending[0]["required_f1_release"] is True, "F1 gate must stay mandatory")
+        assert_true(not pending[0]["grants_claim"] and not pending[0]["grants_mutation_authority"], "registration cannot grant authority")
+        pending_plan=g.parallel_work_dispatch_plan(work_doc=canonical, claims_doc={"claims":[]}, pool={"items":[{"session_id":"example","eligible_for_new_work":True,"agent_role":"CODE_AGENT","capabilities":["CODE"],"repository":g.telemetry.repository_name()}]})
+        assert_true(all(a["work_item_id"]!="RTE-014" for a in pending_plan["assignments"]), "pending lot must not create a work offer")
+
 
     print("GACR_CAPACITY_PARALLEL_DISPATCH_TEST_PASS")
 
