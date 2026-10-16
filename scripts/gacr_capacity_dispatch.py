@@ -19,6 +19,7 @@ DISPATCHES_PATH = telemetry.DISPATCHES_PATH
 WORK_ITEMS_PATH = GOV / "work" / "work-items.json"
 CONTROL_TASKS_PATH = GOV / "control-plane-state" / "tasks.json"
 GMC_BLUEPRINT_PATH = GOV / "control-plane-state" / "governance-model-execution-blueprint.json"
+CONTINUITIES_PATH = GOV / ("control-plane-state/gacr-continuities.json" if TEMPLATE_SOURCE else "agent-relay/continuities.json")
 CONFIG_PATH = GOV / "agent-relay" / "config.json"
 
 AVAILABILITY_STATES = {
@@ -179,6 +180,38 @@ def _interruption_is_current(interruption: dict | None, availability: dict | Non
     return str(interruption.get("observed_at") or "") >= str(availability.get("observed_at") or "")
 
 
+def _owner_role_profile(session: dict, doc: dict) -> dict:
+    """Only OWNER_ASSIGNED roles with durable GitHub proof are projected.
+    
+    Never infer authority, availability or work permissions from this role.
+    """
+    logical_id=_logical_agent_id(session)
+    if not logical_id:
+        return {}
+    matches=[]
+    for item in doc.get("items", []):
+        for g in item.get("logical_agents") or []:
+            if g.get("logical_agent_id")!=logical_id:
+                continue
+            role=g.get("owner_assigned_role")
+            if not role:
+                continue
+            evidence=str(g.get("owner_role_evidence_ref") or "")
+            if (g.get("owner_role_provenance")!="OWNER_ASSIGNED"
+                    or not evidence.startswith("github-issue-comment:")
+                    or role not in CANONICAL_AGENT_ROLES):
+                return {"conflict": True}
+            scope=g.get("owner_work_items") or []
+            if not isinstance(scope,list) or not scope:
+                return {"conflict": True}
+            matches.append((role,tuple(scope),evidence))
+    if not matches:
+        return {}
+    if len({(x[0],x[1]) for x in matches})!=1:
+        return {"conflict": True}
+    return {"agent_role":matches[0][0],"work_items":list(matches[0][1]),"evidence":matches[0][2]}
+
+
 def session_capacity_projection(
     session_id: str,
     *,
@@ -188,6 +221,7 @@ def session_capacity_projection(
     beacons_doc: dict | None = None,
     correlations_doc: dict | None = None,
     signal_projection: dict | None = None,
+    continuities_doc: dict | None = None,
 ) -> dict:
     sessions_doc = sessions_doc or read_json(SESSIONS_PATH, {"sessions": []})
     claims_doc = claims_doc or read_json(CLAIMS_PATH, {"claims": []})
@@ -205,6 +239,22 @@ def session_capacity_projection(
     interruption_current = interruption if _interruption_is_current(interruption, explicit) else None
     f1_release = _latest_f1_release(related)
     declaration = _latest_declared_work_profile(related)
+    owner_profile = _owner_role_profile(
+        session, continuities_doc if continuities_doc is not None
+        else read_json(CONTINUITIES_PATH, {"items": []})
+    )
+    declared_role=declaration.get("agent_role")
+    owner_role=owner_profile.get("agent_role")
+    owner_conflict=bool(owner_profile.get("conflict") or (
+        owner_role and declared_role and owner_role!=declared_role
+    ))
+    if not owner_conflict and owner_role and not declared_role:
+        declaration = {
+            **declaration,
+            "agent_role":owner_role,
+            "role_evidence_ref":owner_profile["evidence"],
+            "role_provenance":"OWNER_ASSIGNED",
+        }
     declared_capabilities = _latest_declared_capabilities(related)
     active_claims = _active_claims(claims_doc, session_id)
     relay = session.get("relay") or {}
@@ -243,6 +293,8 @@ def session_capacity_projection(
     standby_available = relay.get("state") == "STANDBY"
 
     blockers=[]
+    if owner_conflict:
+        blockers.append("CANONICAL_OWNER_ROLE_CONFLICT")
     if TEMPLATE_SOURCE and cfg["require_f1_release_for_source_work"] and not f1_release:
         blockers.append("F1_RELEASE_NOT_VERIFIED")
     if TEMPLATE_SOURCE and cfg["require_canonical_role_for_source_work"] and not declaration.get("agent_role"):
@@ -273,6 +325,8 @@ def session_capacity_projection(
         "client_instance_id": session.get("client_instance_id"),
         "agent_role": effective_role,
         "declared_work_profile": declaration,
+        "owner_work_items": owner_profile.get("work_items") or [],
+        "owner_role_evidence_ref": owner_profile.get("evidence"),
         "capabilities": effective_capabilities,
         "authority_grants": sorted(set(session.get("authority_grants") or [])),
         "relay_state": relay.get("state"),
@@ -312,6 +366,7 @@ def agent_pool_projection(*, generated_at: str | None = None) -> dict:
     claims = read_json(CLAIMS_PATH, {"claims": []})
     beacons = read_json(BEACONS_PATH, {"items": []})
     correlations = read_json(CORRELATIONS_PATH, {"items": []})
+    continuities = read_json(CONTINUITIES_PATH, {"items": []})
     items = []
     for session in sessions.get("sessions", []):
         session_id = session.get("session_id")
@@ -324,6 +379,7 @@ def agent_pool_projection(*, generated_at: str | None = None) -> dict:
             claims_doc=claims,
             beacons_doc=beacons,
             correlations_doc=correlations,
+            continuities_doc=continuities,
         ))
     items.sort(key=lambda item: (0 if item.get("eligible_for_new_work") else 1, str(item.get("session_id") or "")))
     counts: dict[str, int] = {}
@@ -517,6 +573,8 @@ def _candidate_compatible(candidate: dict, item: dict) -> tuple[bool, list[str]]
     if missing_authorities:
         reasons.extend([f"MISSING_AUTHORITY:{value}" for value in missing_authorities])
 
+    if candidate.get("owner_work_items") and item.get("work_item_id") not in candidate["owner_work_items"]:
+        reasons.append("OUTSIDE_OWNER_SCOPED_WORK_ITEMS")
     allowed_roles = set(item.get("allowed_agent_roles") or [])
     role = candidate.get("agent_role")
     if allowed_roles and role not in allowed_roles:
