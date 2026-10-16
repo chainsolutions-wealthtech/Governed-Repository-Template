@@ -21,7 +21,7 @@ Ce fichier s'applique à toute intervention sur `{{REPOSITORY}}`.
 4. rechercher les travaux existants ;
 5. établir la baseline et les risques ;
 6. vérifier les permissions et contraintes ;
-7. sélectionner une action compatible avec `NEXT_ACTION.md`.
+7. pour la porte A, sélectionner une action compatible avec `NEXT_ACTION.md` ; pour la porte B, choisir librement une intervention compatible avec les droits GitHub vérifiés, sans tâche préattribuée, et enregistrer la trace GitHub.
 
 ## Continuité
 
