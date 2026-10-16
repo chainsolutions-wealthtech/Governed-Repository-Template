@@ -73,7 +73,7 @@ class StateTests(unittest.TestCase):
         updated = reconcile(self.original)
         self.assertEqual(updated["request_id"], "GR-000284")
         self.assertEqual(updated["revision"], self.original["revision"] + 1)
-        self.assertEqual(updated["status"], "PLAN_READY")
+        self.assertEqual(updated["status"], "WAITING_FOR_PLAN_APPROVAL")
         self.assertEqual(updated["next_request"]["field"], "plan_approved")
         self.assertEqual(len(updated["execution_plan"]), 4)
         self.assertTrue(all(x["status"] == "PENDING" for x in updated["execution_plan"]))
