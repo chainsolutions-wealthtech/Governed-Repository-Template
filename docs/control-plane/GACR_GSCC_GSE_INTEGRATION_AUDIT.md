@@ -243,3 +243,17 @@ Les contrôles incluent auteur `Wealthtechinnovations` authentifié via l'évén
 **Différence canonique notable** : l'arrivée GSCC #321 mentionne un First Touch `GSCC-ID-99b03399dd63c4c530a619e9`, alors que sa session GACR publiée `session-2f8d5707f376e4b45ab7797b` est liée à `GSCC-ID-68711b0e5e84a6a651d0e2a3`. L'alias ne peut être attaché qu'à l'identité **observée dans la session**, sans assimiler les deux références.
 
 Ni la décision propriétaire, ni l'inscription du nom, ni la RELEASE F1 d'une fonction read-only n'attestent un `CODE_AGENT` actif, un claim, une lease ou un `SCOPED_GIT_WRITE`. L'agent doit émettre lui-même sa déclaration de rôle/capacité via GACR et suivre une affectation canonique. Le dispatcher de ce dépôt-source ne distribue actuellement que le programme GMC ; ne pas créer une seconde Task Queue pour CHAINFLOW #302.
+
+## Nom court à l'arrivée et affectation de rôle bornée
+
+Attribuer dès le First Touch un **nom court proposé**, mais ne le considérer canonique qu'après vérification de l'identité GACR et inscription `OWNER_ASSIGNED` par l'ingress existant `/gacr-host`. Exemple de nom confirmé sur le projet : **NOVA** (#321). Les noms courts ne sont pas des sessions ni des autorisations. Aucun nom n'est réutilisable entre identités logiques distinctes.
+
+Le propriétaire peut ensuite désigner le rôle professionnel de cette **même identité**, par une commande séparée sur l'issue officielle GACR #115, avec HEAD courant, session et connexion vérifiés :
+
+```text
+/gacr-host {"schema":"gacr-host-event/v1","event":"owner_role_assign","session_id":"session-2f8d5707f376e4b45ab7797b","logical_agent_id":"GSCC-ID-68711b0e5e84a6a651d0e2a3","connection_ref":"GSCC-CONN-9ffbf5fd55615c6ae9dd5832c30e6918","continuity_id":"GRT-CONT-20261014-CHAINFLOW-POC-01","coordination_issue":301,"agent_role":"CODE_AGENT","work_items":["GR-000302/PREP-003","GR-000302/PREP-004"],"observed_head":"<HEAD40-ACTUEL>"}
+```
+
+Cette décision ajoute `owner_assigned_role`, `owner_role_evidence_ref` et `owner_work_items` **dans le registre GACR existant**, avec journal de décision propriétaire. La projection des disponibilités ne doit utiliser que la provenance vérifiée. Elle bloque les offres GMC ou autres work-items hors scope CHAINFLOW même si le rôle CODE_AGENT est reconnu.
+
+**Aucun heartbeat, disponibilité, claim, lease, grant, F1 supplémentaire ni droit de création de branche n'est accordé par cette désignation.** Seule l'arrivée #321 peut publier une preuve de présence de sa propre session, accepter une offre qui lui est adressée et suivre le contrôle de mutation/HEAD. L'owner-role n'est pas un event `CLIENT_EMITTER` et ne doit pas être décrit comme tel.

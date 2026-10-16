@@ -422,6 +422,10 @@ def project_logical_agents_docs(state: dict, sessions_doc: dict) -> list[dict]:
                     "human_alias_provenance": "OWNER_ASSIGNED",
                     "alias_evidence_ref": existing.get("alias_evidence_ref"),
                     "routing_evidence_ref": existing.get("routing_evidence_ref"),
+                    "owner_assigned_role": existing.get("owner_assigned_role"),
+                    "owner_role_provenance": existing.get("owner_role_provenance"),
+                    "owner_role_evidence_ref": existing.get("owner_role_evidence_ref"),
+                    "owner_work_items": list(existing.get("owner_work_items") or []),
                     "reference_session_ids": sorted({
                         str(x) for x in (existing.get("reference_session_ids") or [])
                         if str(x).strip()
