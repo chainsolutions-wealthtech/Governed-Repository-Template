@@ -25,7 +25,7 @@ else:
     from gscc.admission import INITIAL_GSE_QUALIFICATION_REQUIREMENTS, QUALIFICATION_REQUIREMENTS, resolve_admission_session_binding
     from gscc.protocol import assert_secretless
     from gscc_gacr.issue_control_bridge import canonical_control_evidence
-    from gscc_gacr.admission_gse_projection import project_admission_gse_state
+    from gscc_gacr.admission_gse_projection import project_admission_gse_state, project_pre_gacr_admission_gse_state
     from gscc.admission_access_policy import evaluate_access_policy
 
 ROOT = Path(__file__).resolve().parents[2]

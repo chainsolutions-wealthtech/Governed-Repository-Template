@@ -84,6 +84,9 @@ jobs:
       - name: Test GSCC admission qualification harvester
         run: python3 scripts/test_gscc_admission_harvester.py
 
+      - name: Test F1 harvester package and direct-script imports
+        run: python3 scripts/test_gscc_admission_harvester_import_parity.py
+
       - name: Test GSCC issue control challenge bridge
         run: python3 scripts/test_gscc_issue_control_bridge.py
 
