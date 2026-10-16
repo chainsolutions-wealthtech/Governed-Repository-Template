@@ -62,6 +62,11 @@ jobs:
           python-version: "3.12"
       - name: Compile
         run: python3 -m py_compile scripts/provider_first_touch_ingress.py scripts/provider_first_touch_repository_enrichment.py scripts/provider_first_touch_evidence.py scripts/provider_first_tool_hook.py scripts/gscc/instrumentation.py scripts/governed_github_read_connector.py scripts/chatgpt_github_surface_instrumentation.py scripts/first_touch_entry_contract.py scripts/first_touch_state_artifact.py scripts/gscc/first_touch_handoff.py scripts/test_provider_first_touch_ingress.py scripts/test_provider_first_tool_hook.py scripts/test_provider_first_touch_repository_enrichment.py scripts/test_governed_github_read_connector.py
+      - name: Test canonical automatic owner F1 admission
+        run: |
+          PYTHONPATH=scripts python3 -m py_compile scripts/gscc_owner_f1.py scripts/test_gscc_owner_f1.py
+          PYTHONPATH=scripts python3 scripts/test_gscc_owner_f1.py
+
       - name: Test provider first-touch sidecar, repository enrichment and host hook
         run: PYTHONPATH=scripts:. python3 -m unittest scripts/test_provider_first_touch_ingress.py scripts/test_provider_first_touch_repository_enrichment.py scripts/test_provider_first_tool_hook.py scripts/test_governed_github_read_connector.py scripts/test_chatgpt_github_surface_instrumentation.py tests/test_gscc_core.py
 
@@ -479,8 +484,98 @@ jobs:
               f.write("gacr_session_id="+str(v.get("gacr_session_id"))+"\n")
           PY
 
+      - name: Auto-release verified GitHub owner F1 (no work claim)
+        if: ${{ steps.bind.outputs.state == 'READY_FOR_F1' && (github.actor == 'Wealthtechinnovations' || github.actor == 'Patricked-code') }}
+        id: owner_f1
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          RUNTIME_ID: ${{ steps.q9.outputs.runtime_id }}
+        run: |
+          set -euo pipefail
+          current_head="$(git ls-remote --exit-code origin refs/heads/main | awk '{print $1}')"
+          test -n "$current_head"
+          python3 scripts/gscc_owner_f1.py \
+            --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite" \
+            --runtime-id "$RUNTIME_ID" \
+            --sessions "$RUNNER_TEMP/gacr-sessions.json" \
+            --current-head "$current_head" \
+            > "$RUNNER_TEMP/gscc-owner-f1-release.json"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          result=json.loads((Path(os.environ["RUNNER_TEMP"])/"gscc-owner-f1-release.json").read_text())
+          receipt=result["owner_f1_receipt"]
+          grant=result["access_grant"]
+          if (result["state"]!="RELEASED_TO_NORMAL_GOVERNANCE" or
+              receipt["grant_id"]!=grant["grant_id"] or
+              receipt["session_id"]!=result["gacr_session_id"] or
+              receipt["head"]!=result["released_head"]):
+              raise SystemExit("OWNER_F1_RECEIPT_GRANT_SESSION_HEAD_INVALID")
+          with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as output:
+              for key,value in (
+                  ("state",result["state"]),
+                  ("gacr_session_id",result["gacr_session_id"]),
+                  ("receipt_id",receipt["receipt_id"]),
+                  ("grant_id",grant["grant_id"]),
+                  ("head",result["released_head"])):
+                  output.write(key+"="+value+"\n")
+          PY
+
+      - name: Publish canonical owner F1 receipt and grant reference
+        if: ${{ steps.owner_f1.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SESSION_ID: ${{ steps.owner_f1.outputs.gacr_session_id }}
+          F1_RECEIPT_ID: ${{ steps.owner_f1.outputs.receipt_id }}
+          GRANT_ID: ${{ steps.owner_f1.outputs.grant_id }}
+          VERIFIED_HEAD: ${{ steps.owner_f1.outputs.head }}
+        run: |
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="### F1 GitHub owner verified
+Actor: ${GITHUB_ACTOR}
+Canonical GACR session: ${SESSION_ID}
+Owner F1 admission receipt: ${F1_RECEIPT_ID}
+Canonical Access Grant: ${GRANT_ID}
+Verified HEAD: ${VERIFIED_HEAD}
+Status: RELEASED_TO_NORMAL_GOVERNANCE
+Next: 00_START_HERE.md
+
+No work item, claim or work lease required for admission. Native GitHub permissions are enforced per action. See full receipt/grant workflow artifact."
+
+      - name: Publish owner F1 release to existing GACR beacon
+        if: ${{ steps.owner_f1.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SESSION_ID: ${{ steps.owner_f1.outputs.gacr_session_id }}
+          F1_RECEIPT_ID: ${{ steps.owner_f1.outputs.receipt_id }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          event={"event_type":"gacr_beacon","client_payload":{
+              "event_type":"F1_RELEASED",
+              "session_id":os.environ["SESSION_ID"],
+              "source":"GITHUB_ACTIONS",
+              "evidence_ref":"gscc-owner-f1:"+os.environ["F1_RECEIPT_ID"],
+              "checkpoint_ref":"RELEASED_TO_NORMAL_GOVERNANCE",
+              "agent_role":"CODE_AGENT"}}
+          (Path(os.environ["RUNNER_TEMP"])/"owner-f1-beacon.json").write_text(
+              json.dumps(event,separators=(",",":")),encoding="utf-8")
+          PY
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/dispatches" \
+            --input "$RUNNER_TEMP/owner-f1-beacon.json"
+
+      - name: Preserve canonical owner F1 release artifact
+        if: ${{ steps.owner_f1.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-owner-f1-release-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/gscc-owner-f1-release.json
+          if-no-files-found: error
+          retention-days: 30
+
       - name: Report Q12 completion and F1 next gate
-        if: ${{ steps.bind.outputs.state == 'READY_FOR_F1' }}
+        if: ${{ steps.bind.outputs.state == 'READY_FOR_F1' && steps.owner_f1.outputs.state != 'RELEASED_TO_NORMAL_GOVERNANCE' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
