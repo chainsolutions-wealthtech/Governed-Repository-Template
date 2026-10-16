@@ -182,7 +182,7 @@
     },
     {
       "id": "GACR-DISPATCH",
-      "pattern": "^GACR-D-[0-9a-f]{12}$",
+      "pattern": "^GACR-D-(?:[0-9a-f]{12}|[0-9a-f]{16})$",
       "kind": "AGENT_WAKE_DISPATCH_RUNTIME_ID",
       "canonical_source": ".governance/agent-relay/dispatches.json"
     },
