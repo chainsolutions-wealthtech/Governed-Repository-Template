@@ -176,7 +176,7 @@ class DirectOwnerEntry(unittest.TestCase):
         self.assertIn("GSCC → GSE → GACR",old)
         self.assertIn("00_DIRECT_OWNER_ENTRY.md",doc)
         self.assertIn("00_DIRECT_OWNER_ENTRY.md",old)
-        self.assertIn("no First Touch",direct.lower().replace("aucun first touch","no First Touch").lower())
+        self.assertIn("aucun first touch",direct.lower())
         config=json.loads((ROOT/".governance/repository-entry-gates.json").read_text())
         self.assertTrue(config["direct_entry_must_be_explicit"])
         self.assertTrue(config["no_gacr_session_required"])
