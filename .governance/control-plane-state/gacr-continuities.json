@@ -5,7 +5,7 @@
   "grants_task_authority": false,
   "grants_claim": false,
   "grants_mutation_authority": false,
-  "revision": 117,
+  "revision": 119,
   "items": [
     {
       "continuity_id": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
@@ -2609,7 +2609,8 @@
       ],
       "context_joinable_by_id": true,
       "join_resolution": "CANONICAL_CONTINUITY_ID_TO_COORDINATION_ISSUE_AND_LAB_MANIFEST",
-      "next_action": "RESUME_ISSUE_327_PR_328_AND_VERIFY_LIVE_HEADS"
+      "next_action": "RESUME_ISSUE_327_PR_328_AND_VERIFY_LIVE_HEADS",
+      "supervision_alerts": []
     }
   ]
 }
