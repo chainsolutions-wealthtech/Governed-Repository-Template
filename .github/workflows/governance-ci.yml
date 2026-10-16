@@ -193,6 +193,11 @@ jobs:
       - name: Test central governed request lifecycle
         run: python3 scripts/test_control_plane_request.py
 
+      - name: Test same-request HOLD authority review and owner guards
+        run: |
+          python3 -m py_compile scripts/governed_hold_review.py scripts/test_governed_hold_review.py
+          python3 scripts/test_governed_hold_review.py
+
       - name: Test GitHub issue control plane boundary
         run: python3 scripts/test_control_plane_issue_contract.py
 
