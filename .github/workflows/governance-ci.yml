@@ -242,6 +242,14 @@ jobs:
             echo "IDENTITY_SECRET_LIFECYCLE_SOURCE_ONLY_SKIP: client repository"
           fi
 
+      - name: Test GACR dispatch namespace alignment
+        run: |
+          if [ -f .template-source ]; then
+            PYTHONPATH=scripts python3 scripts/test_gacr_dispatch_namespace_alignment.py
+          else
+            echo "GACR_DISPATCH_NAMESPACE_SOURCE_ONLY_SKIP: client repository"
+          fi
+
       - name: Validate canonical namespace and work registry
         run: |
           if [ -f .template-source ]; then
