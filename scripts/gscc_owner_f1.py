@@ -21,7 +21,14 @@ from gscc.admission import validate_access_grant
 from gscc.admission_harvester import github_get_json
 from gscc_session_runtime import _load_runtime, _route, _session_connection_values, now_iso
 
-OWNER_LOGINS = frozenset({"Wealthtechinnovations", "Patricked-code"})
+# Shared allowlist with the explicit Direct Owner entry; never a second owner registry.
+OWNER_POLICY_PATH = Path(__file__).resolve().parents[1] / ".governance" / "repository-entry-gates.json"
+_OWNER_POLICY = json.loads(OWNER_POLICY_PATH.read_text(encoding="utf-8"))
+if _OWNER_POLICY.get("schema") != "repository-entry-gates/v1":
+    raise ValueError("CANONICAL_OWNER_ALLOWLIST_REQUIRED")
+OWNER_LOGINS = frozenset(_OWNER_POLICY.get("authenticated_owner_logins") or [])
+if not OWNER_LOGINS:
+    raise ValueError("CANONICAL_OWNER_ALLOWLIST_EMPTY")
 OWNER_OPERATIONS = (
     "read", "review", "supervise", "intake", "plan", "create_branch",
     "create_file", "update_file", "create_pull_request", "review_pull_request",
