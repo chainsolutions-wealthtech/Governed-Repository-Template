@@ -198,6 +198,11 @@ jobs:
           python3 -m py_compile scripts/governed_hold_review.py scripts/test_governed_hold_review.py
           python3 scripts/test_governed_hold_review.py
 
+      - name: Test historic LAB-plan supersession and live GitHub evidence
+        run: |
+          python3 -m py_compile scripts/governed_plan_reconciliation.py scripts/test_governed_plan_reconciliation.py
+          python3 scripts/test_governed_plan_reconciliation.py
+
       - name: Test GitHub issue control plane boundary
         run: python3 scripts/test_control_plane_issue_contract.py
 
