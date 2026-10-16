@@ -654,3 +654,7 @@ Append-only durable decisions for the source/control-plane repository.
 - A work offer remains only a scheduling proposal. Acceptance remains `ACCEPTED_PENDING_CLAIM`; claim creation, exact-HEAD reconciliation and applicable authority gates remain mandatory before mutation.
 - The per-arrival GSCC artifact restore must select the most advanced durable runtime state, then runtime update time, rather than blindly selecting the newest Actions artifact. A stale later Q9 artifact may not replace an earlier Q12/F1-ready state.
 - This R8 correction does not advance or replace `GMC-01`.
+
+## 2026-10-16 — Owner decision: independent GitHub direct-entry Door B
+
+Owner approval: allow a separate **explicit** `00_DIRECT_OWNER_ENTRY.md` beside unchanged default `00_GSCC_ENTRY.md` (A). Eligible owner actors only `Wealthtechinnovations` and `Patricked-code`, **as established by GitHub authenticated API**, never a prompt literal, role, `GITHUB_ACTOR` or session guess. Route `scripts/repository_entry_router.py` and early-select through existing `scripts/gscc_entry_router.py` preserve existing path when direct not requested. Native `permissions.push` allows **attempting** writes (including main); GitHub branch protections, SHA guards, rulesets, required reviews and CI decide success. No force push, fake GSCC/GACR/F1 evidence, parallel dispatcher or second GACR. Direct work needs no prior GACR task, lease or claim. Decision applies only to selected Door B; GSCC/GSE/GACR/F1 remains default for Door A.

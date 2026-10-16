@@ -1,0 +1,57 @@
+{
+  "schema": "repository-entry-gates/v1",
+  "authority": "00_DIRECT_OWNER_ENTRY.md",
+  "default_entry": "00_GSCC_ENTRY.md",
+  "direct_entry": "00_DIRECT_OWNER_ENTRY.md",
+  "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+  "authenticated_owner_logins": [
+    "Wealthtechinnovations",
+    "Patricked-code"
+  ],
+  "mission_roles": {
+    "JE VIENS CODER": {
+      "role": "CODE_AGENT",
+      "intent": "CODE_CHANGE"
+    },
+    "JE VIENS SUPERVISER": {
+      "role": "SUPERVISOR",
+      "intent": "OBSERVE"
+    },
+    "JE VIENS FAIRE UN INTAKE": {
+      "role": "INTAKER",
+      "intent": "INFORMATION_INTAKE"
+    },
+    "JE VIENS VÉRIFIER": {
+      "role": "REVIEWER",
+      "intent": "REVIEW"
+    },
+    "JE VIENS PLANIFIER": {
+      "role": "PLANNER_AGENT",
+      "intent": "CONTEXT_INTAKE"
+    }
+  },
+  "authentication": {
+    "github_user_endpoint": "GET /user",
+    "repository_permissions_endpoint": "GET /repos/{owner}/{repo}",
+    "head_endpoint": "GET /repos/{owner}/{repo}/commits/{branch}",
+    "required_identity_source": "AUTHENTICATED_GITHUB_API_NOT_PROMPT",
+    "unknown_permissions": "DENY",
+    "unknown_head": "DENY"
+  },
+  "role_does_not_grant_permissions": true,
+  "allow_direct_main_only_if_native_permissions_allow": true,
+  "github_controls": [
+    "AUTHENTICATED_ACCOUNT",
+    "EXACT_HEAD",
+    "NATIVE_PUSH_PERMISSION",
+    "BRANCH_PROTECTION_AND_RULESETS",
+    "CI_AND_REQUIRED_REVIEWS",
+    "NO_FORCE_PUSH"
+  ],
+  "no_gacr_session_required": true,
+  "no_f1_receipt_required": true,
+  "no_dispatch_work_item_required": true,
+  "no_fake_governance_receipts": true,
+  "audit_provenance": "GITHUB_NATIVE_COMMITS_PRS_ISSUES",
+  "direct_entry_must_be_explicit": true
+}

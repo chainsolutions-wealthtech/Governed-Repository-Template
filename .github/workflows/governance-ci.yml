@@ -54,6 +54,11 @@ jobs:
       - name: Test sequential GSCC entry router
         run: python3 scripts/test_gscc_entry_router.py
 
+      - name: Test two-door GitHub-authenticated owner entry A-G
+        run: |
+          python3 -m py_compile scripts/repository_entry_router.py scripts/test_direct_owner_entry.py scripts/gscc_entry_router.py
+          python3 scripts/test_direct_owner_entry.py
+
       - name: Test persisted GSCC entry pipeline to Q1
         run: python3 scripts/test_gscc_persisted_entry_pipeline.py
 

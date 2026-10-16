@@ -1,11 +1,11 @@
 # 00_START_HERE — Point d'entrée obligatoire
 
 > **PRECONDITION ABSOLUE**  
-> `00_START_HERE.md` n'est applicable qu'après passage par `00_GSCC_ENTRY.md` puis validation/release du flux `GSCC → GSE → GACR`.
+> `00_START_HERE.md` n'est applicable qu'après passage par `00_GSCC_ENTRY.md` puis validation/release du flux `GSCC → GSE → GACR`, **ou après validation indépendante de la porte B explicite `00_DIRECT_OWNER_ENTRY.md` par GitHub authentifié**.
 >
 > Une simple lecture GitHub, y compris `get_repo` ou `fetch_file`, ne constitue pas une admission gouvernée.
 >
-> Si aucune preuve de release/handoff GSCC/GSE/GACR n'est disponible, arrêter ici et revenir à `00_GSCC_ENTRY.md`.
+> Si aucune preuve de release/handoff GSCC/GSE/GACR **ou de `DIRECT_OWNER_VERIFIED` pour la porte B explicitement demandée** n'est disponible, arrêter ici et revenir à `00_GSCC_ENTRY.md` (défaut) ou `00_DIRECT_OWNER_ENTRY.md` (demande explicite).
 
 
 > Statut : `APPLICABLE`  

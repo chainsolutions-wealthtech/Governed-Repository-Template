@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### 2026-10-16 — Direct GitHub owner entry (Door B, independent of GSCC)
+
+- Added explicit `00_DIRECT_OWNER_ENTRY.md`, a repository-entry policy and executable GitHub authenticated router with native user/permissions/HEAD checks.
+- Kept `00_GSCC_ENTRY.md` and the Q1–Q12/F1 route as the unchanged default; selected Door B before GSCC, only on an explicit instruction.
+- Added direct roles `CODE_AGENT`, `SUPERVISOR`, `INTAKER`, `REVIEWER`, `PLANNER_AGENT` and historical intent mapping, without GACR authority minting.
+- Added live GitHub permission denial, impersonation prevention, exact-HEAD guard and A–G acceptance tests to Governance CI; no second dispatcher, Task Queue or GACR source.
+- Direct `main` modification still subject to actual GitHub native permissions, branch rules, CI and expected-head; no forced writes.
+
+
 ### GACR R7 capacity-aware parallel dispatch
 
 - Added explicit AVAILABLE/WAITING/BUSY/BLOCKED/RATE_LIMITED/QUOTA_BLOCKED agent capacity states.

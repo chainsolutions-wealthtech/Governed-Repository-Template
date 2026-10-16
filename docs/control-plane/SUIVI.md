@@ -1457,3 +1457,11 @@ R8 candidate corrects both defects:
 - work offers still grant no claim or write authority.
 
 Status: candidate pending full CI, merge and live recovery/release/dispatch proof on #254.
+
+## 2026-10-16 — Direct Owner Entry Door B, additive implementation
+
+Mandate: add autonomous `00_DIRECT_OWNER_ENTRY.md` and real owner-authenticated GitHub router; preserve whole default governed route A. Historical reference: PR #32 (purpose routing plans) and R7/R8 (GACR capacity / F1 gating), without altering any GACR dispatcher or existing artifacts.
+
+Files: `.governance/repository-entry-gates.json`, `scripts/repository_entry_router.py`, updated `scripts/gscc_entry_router.py`, root/agent instruction discovery docs, `scripts/test_direct_owner_entry.py`, governance CI job and this source-only documentation. Direct roles: CODE_AGENT, SUPERVISOR, INTAKER, REVIEWER, PLANNER_AGENT; preserve intent semantics and distinguish role from permission. Login must be fetched via authenticated GitHub `/user`, effective repo permissions via GitHub `/repos`, SHA via `/commits`; missing proof fail closed. Branch LAB or direct main writes require actual GitHub acceptance and protective controls. No direct new GACR session or F1 receipt.
+
+Tests A–G: default route GSCC exact equivalence, positive real-owner simulated native permissions, negative nonowners and prompt spoofing, role/no-task cases, native push-only authorization attempt, independent LAB, missing auth/permissions and HEAD drift failures, old routing/agent docs invariants. GitHub CI verdict and PR/merge proof recorded by same repository's GitHub PR. No production direct main write claimed before a real successful native GitHub write.
