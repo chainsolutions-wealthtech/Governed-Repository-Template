@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import json, sqlite3, tempfile
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from provider_first_tool_hook import build_envelope
