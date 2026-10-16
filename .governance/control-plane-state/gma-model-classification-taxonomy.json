@@ -1,0 +1,348 @@
+{
+  "schema_version": "gma-artifact/v1",
+  "artifact_version": "v1",
+  "producer": "GMC-G01",
+  "subject": {
+    "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+    "head_sha": "c4584616d7caff334b907b5eb71cc52149107dae",
+    "programme": "GOVERNANCE_MODEL_CATALOGUE",
+    "work_package": "GMC-G01"
+  },
+  "representation": {
+    "decision_id": "CPD-076",
+    "class": "SOURCE_ONLY_VERSIONED_BODY_WITH_EXISTING_REFERENCE_PROJECTION",
+    "encoding": "JSON",
+    "package_unit": "ONE_DOCUMENT_PER_GMA_ARTIFACT",
+    "authority_scope": "SOURCE_ONLY",
+    "implementation_authority_granted": false
+  },
+  "status": "VALIDATED",
+  "validation_state": "VALIDATED",
+  "provenance_contract": {
+    "required_per_assertion": true,
+    "unknown_allowed_only_when_explicit": true
+  },
+  "supersedes": null,
+  "history": [
+    {
+      "event": "PRODUCED_V1",
+      "decision_id": "CPD-076",
+      "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+    },
+    {
+      "event": "VALIDATED_V1",
+      "decision_id": "CPD-076",
+      "validated_head_sha": "6bc0d7c459b9b7dcebd145c12909c690fb8de50f",
+      "evidence_ref": "github-actions:37712711922/job/113102076849"
+    }
+  ],
+  "validation_evidence": [
+    {
+      "evidence_type": "GITHUB_ACTIONS_CHECK",
+      "workflow": "Governance CI",
+      "run_id": 37712711922,
+      "job_id": 113102076849,
+      "conclusion": "success",
+      "validated_head_sha": "6bc0d7c459b9b7dcebd145c12909c690fb8de50f"
+    }
+  ],
+  "artifact_id": "GMA-MODEL-CLASSIFICATION-TAXONOMY",
+  "artifact_type": "MODEL",
+  "content_ref": ".governance/control-plane-state/gma-model-classification-taxonomy.json",
+  "consumed_by": [
+    "GMC-G02"
+  ],
+  "body": {
+    "classes": [
+      {
+        "class_id": "class-model",
+        "name": "MODEL",
+        "normative_definition": "Reusable semantics, contracts, invariants, identifiers and normative data definitions independent of one concrete run or case.",
+        "inclusion_rules": [
+          "reusable across cases or runtimes",
+          "normative contract or stable semantic definition"
+        ],
+        "exclusion_rules": [
+          "concrete runtime instance data",
+          "derived current-state projection",
+          "case-only sequencing"
+        ],
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/GOVERNANCE_MODEL_CATALOGUE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "VALIDATED"
+      },
+      {
+        "class_id": "class-application-strategy",
+        "name": "APPLICATION_STRATEGY",
+        "normative_definition": "Sequencing, applicability and case-specific behavior for governed repository strategies consuming shared model semantics.",
+        "inclusion_rules": [
+          "CREATE/ADOPT/MAP/LAB sequencing",
+          "post-case continuation where applicable"
+        ],
+        "exclusion_rules": [
+          "shared model definitions",
+          "runtime instance state"
+        ],
+        "provenance": [
+          {
+            "source_ref": ".governance/entry-action-policy.json",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "VALIDATED"
+      },
+      {
+        "class_id": "class-runtime-execution",
+        "name": "RUNTIME_EXECUTION",
+        "normative_definition": "Executable engines, workflows, reducers, bridges and live coordination/mutation behavior implementing model or strategy semantics.",
+        "inclusion_rules": [
+          "executable workflow/script",
+          "runtime side effects"
+        ],
+        "exclusion_rules": [
+          "normative semantics alone",
+          "materialized projection alone"
+        ],
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "scripts/governed_agent_continuity_relay.py",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "VALIDATED"
+      },
+      {
+        "class_id": "class-projection",
+        "name": "PROJECTION",
+        "normative_definition": "Current, queryable, materialized or derived state reconstructible from source authorities/runtime evidence and unable to override them.",
+        "inclusion_rules": [
+          "derived current state",
+          "materialized/query projection"
+        ],
+        "exclusion_rules": [
+          "source authority",
+          "independent normative truth"
+        ],
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": ".governance/control-plane-db/materialize.py",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ],
+        "validation_state": "VALIDATED"
+      }
+    ],
+    "resolution_states": [
+      {
+        "resolution_id": "resolution-resolved",
+        "name": "RESOLVED",
+        "definition": "Semantic layer ownership is sufficiently determined for current consumer scope."
+      },
+      {
+        "resolution_id": "resolution-mixed",
+        "name": "MIXED",
+        "definition": "Subject intentionally or historically spans multiple known semantic layers."
+      },
+      {
+        "resolution_id": "resolution-unresolved",
+        "name": "UNRESOLVED",
+        "definition": "Ownership/distribution/taxonomy remains insufficiently determined and uncertainty must remain explicit."
+      }
+    ],
+    "cross_cutting_invariants": [
+      {
+        "invariant_id": "invariant-001",
+        "statement": "Exact HEAD must be reobserved and HEAD_MOVED reconciled before mutation.",
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ]
+      },
+      {
+        "invariant_id": "invariant-002",
+        "statement": "Unknown, contradiction or insufficient authority fails closed.",
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ]
+      },
+      {
+        "invariant_id": "invariant-003",
+        "statement": "Identity, intent, role, capability and authority are distinct.",
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ]
+      },
+      {
+        "invariant_id": "invariant-004",
+        "statement": "Single-writer, claim and collision-domain safety is preserved.",
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ]
+      },
+      {
+        "invariant_id": "invariant-005",
+        "statement": "Governed lifecycle is observe→reconcile→plan→authorize→execute→verify→persist.",
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ]
+      },
+      {
+        "invariant_id": "invariant-006",
+        "statement": "Evidence, checkpoint and handoff make work resumable.",
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ]
+      },
+      {
+        "invariant_id": "invariant-007",
+        "statement": "Reuse/preserve precedes overwrite or replacement.",
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ]
+      },
+      {
+        "invariant_id": "invariant-008",
+        "statement": "Semantic equivalence is not inferred from filename equality.",
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ]
+      },
+      {
+        "invariant_id": "invariant-009",
+        "statement": "Source memory is distinct from distributed client state.",
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ]
+      },
+      {
+        "invariant_id": "invariant-010",
+        "statement": "WORK_OFFER is distinct from CLAIM and MUTATION_AUTHORITY.",
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ]
+      },
+      {
+        "invariant_id": "invariant-011",
+        "statement": "Work-unit completion is distinct from session termination.",
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ]
+      },
+      {
+        "invariant_id": "invariant-012",
+        "statement": "INTAKE is distinct from CANONICAL MEMORY and WORK ITEM.",
+        "provenance": [
+          {
+            "source_ref": "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          },
+          {
+            "source_ref": "docs/control-plane/DECISIONS_LOG.md",
+            "subject_head_sha": "c4584616d7caff334b907b5eb71cc52149107dae"
+          }
+        ]
+      }
+    ]
+  },
+  "content_digest": {
+    "algorithm": "sha256",
+    "canonicalization": "JSON_SORT_KEYS_COMPACT_WITH_DIGEST_VALUE_NULL",
+    "value": "0ca741423cf9a7bc2fb5aa98de56abd6a8f33aa2a2d3e1fc11985ff054e04c35"
+  }
+}
