@@ -58,7 +58,10 @@ def reconcile_existing_merged_lab(
             or answers.get("lab_branch_name") != EXPECTED_BRANCH
             or not state.get("hold_review_history")
             or not (state.get("hold_review_pending") or {}).get("no_write_grant")
-            or state.get("status") != "PLAN_READY"
+            or state.get("status") != (
+                "WAITING_FOR_PLAN_APPROVAL" if state.get("plan_reconciliation_history")
+                else "PLAN_READY"
+            )
             or state.get("phase") != "PLAN_APPROVAL"
             or (state.get("next_request") or {}).get("field") != "plan_approved"
             or "plan_approved" in answers
