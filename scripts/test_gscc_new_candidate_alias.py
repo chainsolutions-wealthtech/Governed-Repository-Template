@@ -158,6 +158,7 @@ class CandidateAliasPolicy(unittest.TestCase):
                     {"logical_agent_alias": "  unavailable  "}):
             pkt={"sections":{
                 "request":req,
+                "provider":{"provider":"ChatGPT"},
                 "agent":{"agent_role":"CODE_AGENT_CANDIDATE","agent_name":"UNAVAILABLE"},
                 "github":{"repository_full_name":REPO},
             }}

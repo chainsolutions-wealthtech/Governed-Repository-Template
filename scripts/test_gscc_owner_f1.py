@@ -314,7 +314,7 @@ def test_second_head_drift_fails_closed_without_loop():
             def moving(url):
                 if url.endswith("/branches/main"):
                     n.append(url)
-                    return {"name": "main", "commit": {"sha": HEAD if len(n) == 1 else "c" * 40}}
+                    return {"name": "main", "commit": {"sha": HEAD if len(n) == 1 else ("c" * 40 if len(n) == 2 else "d" * 40)}}
                 return fake_github(url)
             expect_failure(lambda: owner.release_owner_f1_with_head_reconciliation(
                 db, RUNTIME, event(), OLD_HEAD,
