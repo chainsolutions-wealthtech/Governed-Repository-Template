@@ -66,6 +66,11 @@ jobs:
       - name: Test per-arrival identity and GSE session isolation
         run: python3 scripts/test_gscc_per_arrival_identity_session_runtime.py
 
+      - name: Test GSCC new CODE_AGENT candidate alias and Q9 recovery
+        run: |
+          python3 -m py_compile scripts/gscc_session_runtime.py scripts/test_gscc_new_candidate_alias.py
+          python3 scripts/test_gscc_new_candidate_alias.py
+
       - name: Test same-arrival Q12 grant renewal and replay denial
         run: |
           python3 -m py_compile scripts/gscc_q12_renewal.py scripts/test_gscc_q12_renewal.py
