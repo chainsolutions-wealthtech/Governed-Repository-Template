@@ -12,6 +12,7 @@ from pathlib import Path
 
 from governed_hold_review import MERGED_PR_REF, reexamine_authority_hold
 from governed_plan_reconciliation import reconcile_existing_merged_lab
+from governed_gr302_reconciliation import reconcile_stale_lab_plan, BRANCH as GR302_BRANCH
 
 from governed_request import (
     CREATE_OWNER_CANONICAL,
@@ -72,6 +73,8 @@ def parse_command(body: str) -> tuple[str, dict] | None:
         return "execute", {}
     if stripped.startswith("/governed-review-hold "):
         return "review_hold", json.loads(stripped[len("/governed-review-hold "):].strip())
+    if stripped.startswith("/governed-reconcile-gr302 "):
+        return "reconcile_gr302", json.loads(stripped[len("/governed-reconcile-gr302 "):].strip())
     if stripped.startswith("/governed-reconcile-plan "):
         return "reconcile_plan", json.loads(stripped[len("/governed-reconcile-plan "):].strip())
     if stripped.startswith("/governed-answer"):
@@ -295,11 +298,110 @@ def handle_comment(event: dict) -> None:
     if not str(issue.get("title", "")).startswith("[Governed Request]"):
         return
     comment = event["comment"]
-    command = parse_command(comment.get("body") or "")
+    raw_command = comment.get("body") or ""
+    try:
+        command = parse_command(raw_command)
+    except json.JSONDecodeError as exc:
+        if issue.get("number") == 302 and raw_command.strip().startswith("/governed-reconcile-gr302"):
+            api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/302/comments", {
+                "body": (
+                    "### GR302 malformed reconciliation JSON refused\\n\\n"
+                    f"JSONDecodeError: {exc}\\n"
+                    "No state, branch, claim, lease or grant was advanced."
+                )
+            })
+            return
+        raise
     if command is None:
         return
 
     kind, payload = command
+    if kind == "reconcile_gr302":
+        committed = False
+        updated = None
+        try:
+            if issue.get("number") != 302 or not isinstance(payload, dict) or set(payload) != {
+                "expected_revision", "expected_head", "reason"
+            }:
+                raise ValueError("GR302_EXACT_ISSUE_AND_FIELDS_REQUIRED")
+            actor = str((event.get("sender") or {}).get("login") or "")
+            author = str((comment.get("user") or {}).get("login") or "")
+            association = str(comment.get("author_association") or "")
+            comment_id = comment.get("id")
+            if actor != "Wealthtechinnovations" or author != actor or (
+                not isinstance(comment_id, int) or comment_id <= 0
+            ):
+                raise ValueError("GR302_AUTHENTICATED_OWNER_COMMENT_REQUIRED")
+            target = f"/repos/{CONTROL_PLANE_REPOSITORY}"
+            latest = api("GET", f"{target}/issues/302")
+            if latest.get("number") != 302:
+                raise ValueError("GR302_ISSUE_MISMATCH")
+            old = extract_state(latest.get("body"))
+            observed = api("GET", f"{target}/branches/main")
+            live_head = (observed.get("commit") or {}).get("sha")
+            # Only authenticated 404 means absence. Never convert 403/5xx into absence.
+            try:
+                api("GET", f"{target}/branches/lab%2Fchainflow-live-poc")
+            except RuntimeError as error:
+                if f"GitHub API GET {target}/branches/lab%2Fchainflow-live-poc failed: 404 " not in str(error):
+                    raise
+            else:
+                raise ValueError("GR302_LAB_ALREADY_EXISTS")
+            updated = reconcile_stale_lab_plan(
+                old,
+                expected_revision=payload["expected_revision"],
+                expected_head=payload["expected_head"],
+                observed_head=live_head,
+                owner_actor=actor,
+                event_author=author,
+                author_association=association,
+                branch_absent=True,
+                observation_evidence=f"github-issue-comment:{comment_id}",
+                reason=payload["reason"],
+            )
+            # Re-read both source revision and mutable HEAD directly before PATCH.
+            # This is an optimistic recheck; no false claim of GitHub issue CAS.
+            immediately_before = api("GET", f"{target}/issues/302")
+            current_head = api("GET", f"{target}/branches/main")
+            if (immediately_before.get("body") != latest.get("body") or
+                    (current_head.get("commit") or {}).get("sha") != live_head):
+                raise ValueError("GR302_PRE_PERSIST_CONCURRENT_CHANGE")
+            persist_state(302, immediately_before.get("body"), updated)
+            committed = True
+            api("POST", f"{target}/issues/302/comments", {
+                "body": (
+                    "### GR-000302 stale PREP-003 reconciled, not executed\n\n"
+                    f"Reconciliation: {updated['preparation_reconciliation_history'][-1]['id']}\n"
+                    f"Rev {old['revision']} -> {updated['revision']}; main {live_head}\n"
+                    "PREP-001/002 original PASS proofs archived verbatim. "
+                    "A new owner plan approval and PREP-002R live read proof are required. "
+                    "No LAB created, no GACR claim, lease, WRITE or merge grant."
+                )
+            })
+            api("POST", f"{target}/issues/302/comments", {"body": render_response(updated)})
+            emit_executor_outputs(updated, 302)
+        except Exception as exc:
+            if committed:
+                notice = (
+                    "### GR302 reconciliation COMMITTED; notification failed\\n\\n"
+                    f"Revision persisted: {updated['revision']}. "
+                    f"Post-commit notification error: {type(exc).__name__}: {exc}. "
+                    "Read the canonical issue marker before retrying; this is NOT a refused transition."
+                )
+            else:
+                notice = (
+                    "### GR302 reconciliation refused BEFORE commit\\n\\n"
+                    f"{type(exc).__name__}: {exc}. "
+                    "No reconciled state, branch or grant was advanced by this attempt."
+                )
+            try:
+                api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/302/comments",
+                    {"body": notice})
+            except Exception:
+                # A failed status notification must fail the Actions job.
+                raise
+        return
+
     if kind == "reconcile_plan":
         try:
             if not isinstance(payload, dict) or set(payload) != {
@@ -444,6 +546,24 @@ def handle_comment(event: dict) -> None:
         if kind == "answer":
             if set(payload) != {"field", "value"}:
                 raise ValueError("answer payload must contain exactly field and value")
+            if state.get("gr302_reconciliation_pending") and payload["field"] == "plan_approved":
+                actor = str((event.get("sender") or {}).get("login") or "")
+                author = str((comment.get("user") or {}).get("login") or "")
+                association = str(comment.get("author_association") or "")
+                if (issue.get("number") != 302 or actor != "Wealthtechinnovations"
+                        or author != actor or association not in {"OWNER", "MEMBER", "COLLABORATOR"}):
+                    raise ValueError("GR302_REAPPROVAL_OWNER_REQUIRED")
+                baseline = state["preparation_reconciliation_history"][-1]["observed_new_head"]
+                observed = api("GET", f"/repos/{CONTROL_PLANE_REPOSITORY}/branches/main")
+                if (observed.get("commit") or {}).get("sha") != baseline:
+                    raise ValueError("GR302_REAPPROVAL_HEAD_MOVED")
+                try:
+                    api("GET", f"/repos/{CONTROL_PLANE_REPOSITORY}/branches/lab%2Fchainflow-live-poc")
+                except RuntimeError as error:
+                    if "failed: 404 " not in str(error):
+                        raise
+                else:
+                    raise ValueError("GR302_REAPPROVAL_LAB_ALREADY_EXISTS")
             if state.get("hold_review_pending"):
                 field = payload["field"]
                 if field in {"lab_authority", "plan_approved"}:
@@ -475,6 +595,31 @@ def handle_comment(event: dict) -> None:
                 raise ValueError("evidence payload must contain exactly action_id, result and evidence")
             if not isinstance(payload["evidence"], dict):
                 raise ValueError("evidence must be an object")
+            # No generic PASS path for a claimed LAB creation or LAB acceptance.
+            # GR302 mutation must be implemented with real, fresh, canonical
+            # claim/lease/SCOPED_GIT_WRITE and live branch/HEAD verification.
+            # Until that verifier exists, fail closed rather than "complete" a
+            # project from a GitHub issue comment supplied by any account.
+            if (issue.get("number") == 302 and state.get("request_id") == "GR-000302"
+                    and payload["action_id"] in {"PREP-003", "PREP-004"}):
+                raise ValueError("GR302_LIVE_WRITE_CLAIM_AND_LAB_VERIFIER_REQUIRED")
+            if state.get("gr302_reconciliation_pending") and payload["action_id"] == "PREP-002R":
+                if issue.get("number") != 302 or payload["result"] != "PASS":
+                    raise ValueError("GR302_REBASELINE_READ_PASS_REQUIRED")
+                expected = next(p["required_evidence"] for p in state["execution_plan"]
+                                if p["id"] == "PREP-002R")
+                if payload["evidence"] != expected:
+                    raise ValueError("GR302_REBASELINE_EVIDENCE_MISMATCH")
+                live = api("GET", f"/repos/{CONTROL_PLANE_REPOSITORY}/branches/main")
+                if (live.get("commit") or {}).get("sha") != expected["canonical_head_sha"]:
+                    raise ValueError("GR302_REBASELINE_HEAD_MOVED")
+                try:
+                    api("GET", f"/repos/{CONTROL_PLANE_REPOSITORY}/branches/lab%2Fchainflow-live-poc")
+                except RuntimeError as error:
+                    if "failed: 404 " not in str(error):
+                        raise
+                else:
+                    raise ValueError("GR302_REBASELINE_BRANCH_EXISTS")
             if state.get("plan_reconciliation_pending"):
                 if state.get("request_id") != "GR-000284":
                     raise ValueError("LAB_PLAN_RECONCILE_GR_MISMATCH")
