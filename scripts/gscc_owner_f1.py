@@ -51,6 +51,7 @@ def verify_owner_event(
     current_head: str,
     github_request_fn: Callable[[str], dict[str, Any]],
     github_actor: str,
+    runtime_id: str | None = None,
 ) -> dict[str, Any]:
     """Only GitHub-signed issue_comment context is accepted by the workflow.
 
@@ -66,17 +67,37 @@ def verify_owner_event(
     repo_event = event.get("repository") or {}
     login = comment_user.get("login")
     actor_id = comment_user.get("id")
+    owner_created_issue = (issue_user.get("login") == login
+                           and issue_user.get("id") == actor_id)
+    raw_command = comment.get("body") or ""
+    explicitly_approved = raw_command.startswith("/gscc-owner-f1-approve ")
+    if explicitly_approved:
+        try:
+            approved_request = json.loads(
+                raw_command[len("/gscc-owner-f1-approve "):].strip()
+            )
+        except (ValueError, TypeError):
+            raise ValueError("OWNER_F1_APPROVAL_PAYLOAD_INVALID") from None
+        if (not isinstance(approved_request, dict)
+                or set(approved_request) != {"runtime_id"}
+                or not isinstance(approved_request["runtime_id"], str)
+                or not runtime_id
+                or approved_request["runtime_id"] != runtime_id):
+            raise ValueError("OWNER_F1_APPROVAL_RUNTIME_MISMATCH")
+    if not owner_created_issue and not explicitly_approved:
+        raise ValueError("OWNER_F1_DELEGATED_ARRIVAL_REQUIRES_EXPLICIT_OWNER_APPROVAL")
     if not (
         isinstance(login, str) and login in OWNER_LOGINS
         and github_actor == login
         and sender.get("login") == login
         and sender.get("id") == actor_id
-        and issue_user.get("login") == login
-        and issue_user.get("id") == actor_id
+        and isinstance(issue_user.get("login"), str)
+        and isinstance(issue_user.get("id"), int)
         and issue.get("number") == issue_number
         and repo_event.get("full_name") == repository
         and isinstance(comment.get("id"), int)
         and isinstance(actor_id, int)
+        and event.get("action") == "created"
     ):
         raise ValueError("OWNER_F1_SIGNED_GITHUB_ACTOR_OR_ISSUE_BINDING_REQUIRED")
     account = github_request_fn("https://api.github.com/users/" + urllib.parse.quote(login, safe=""))
@@ -108,6 +129,13 @@ def verify_owner_event(
         "source": "GITHUB_SIGNED_ISSUE_COMMENT_AND_GITHUB_API_GET",
         "native_permissions": "CHECKED_BY_GITHUB_AT_EACH_OPERATION",
         "proof_ref": f"github-issue-comment:{comment['id']}",
+        "approval_mode": (
+            "OWNER_SELF_ENTRY" if owner_created_issue
+            else "EXPLICIT_OWNER_APPROVAL_FOR_OTHER_AGENT"
+        ),
+        "owner_created_issue": owner_created_issue,
+        "approved_runtime_id": runtime_id if explicitly_approved else None,
+        "subject_issue_author": issue_user.get("login"),
     }
 
 
@@ -144,6 +172,36 @@ def issue_owner_grant(
         "proof": proof["proof_ref"],
         "issued_at": issued.isoformat(),
     }
+    is_owner_self = proof.get("owner_created_issue") is True
+    if not is_owner_self and (
+        proof.get("approval_mode") != "EXPLICIT_OWNER_APPROVAL_FOR_OTHER_AGENT"
+        or not proof.get("approved_runtime_id")
+    ):
+        raise ValueError("OWNER_F1_DELEGATION_PROOF_NOT_SCOPED")
+    # Approval of another agent's admission never inherits owner privileges.
+    mode_fields = ({
+        "allowed_authority_classes": sorted(
+            set(previous.get("allowed_authority_classes") or [])
+            | {OWNER_CLASS, "READ_ONLY_DISCOVERY_AUTHORITY"}
+        ),
+        "allowed_native_github_operations": list(OWNER_OPERATIONS),
+        "allowed_agent_roles": list(OWNER_ROLES),
+        "active_role": "CODE_AGENT",
+        "role_change_after_admission_allowed": True,
+        "owner_permission_model": "NATIVE_GITHUB_PER_OPERATION_NOT_REPOSITORY_ROLE_ESCALATION",
+    } if is_owner_self else {
+        "allowed_authority_classes": [
+            cls for cls in (previous.get("allowed_authority_classes") or [])
+            if cls != OWNER_CLASS
+        ],
+        "allowed_native_github_operations":
+            list(previous.get("allowed_native_github_operations") or []),
+        "allowed_agent_roles": list(previous.get("allowed_agent_roles") or []),
+        "active_role": previous.get("active_role"),
+        "role_change_after_admission_allowed":
+            previous.get("role_change_after_admission_allowed", False),
+        "owner_permission_model": "OWNER_APPROVAL_DOES_NOT_DELEGATE_OWNER_GITHUB_PRIVILEGES",
+    })
     grant = deepcopy(previous)
     grant.update(
         grant_id="GSCC-GRANT-" + digest(context),
@@ -153,16 +211,12 @@ def issue_owner_grant(
         task_id=None if previous.get("task_id") is None else previous["task_id"],
         claim_id=previous.get("claim_id"),
         access_class="GOVERNED_FUNCTION_EXPOSURE_ELIGIBLE",
-        allowed_authority_classes=sorted(set(previous.get("allowed_authority_classes") or [])
-                                         | {OWNER_CLASS, "READ_ONLY_DISCOVERY_AUTHORITY"}),
-        allowed_native_github_operations=list(OWNER_OPERATIONS),
-        allowed_agent_roles=list(OWNER_ROLES),
-        active_role="CODE_AGENT",
-        role_change_after_admission_allowed=True,
         owner_identity_evidence_ref=proof["proof_ref"],
         owner_actor_login=proof["actor_login"],
         owner_actor_id=proof["actor_id"],
-        owner_permission_model="NATIVE_GITHUB_PER_OPERATION_NOT_REPOSITORY_ROLE_ESCALATION",
+        owner_approval_mode=proof["approval_mode"],
+        approved_subject_identity_id=runtime.get("identity_id"),
+        **mode_fields,
         constraints={
             **(previous.get("constraints") or {}),
             "github_native_permissions_enforced": True,
@@ -173,7 +227,10 @@ def issue_owner_grant(
             "f1_admission_requires_claim": False,
             "f1_admission_requires_work_lease": False,
             "mutation_requires_native_github_permission": True,
-            "direct_main_write": "SUBJECT_TO_NATIVE_GITHUB_PROTECTION",
+            "direct_main_write": (
+                "SUBJECT_TO_NATIVE_GITHUB_PROTECTION" if is_owner_self
+                else False
+            ),
         },
         invocation_authority_granted=False,
         mutation_authority_granted=False,
@@ -222,6 +279,7 @@ def release_owner_f1(
             event, issue_number=runtime["issue_number"], repository=admission["repository"],
             branch=branch, current_head=current_head,
             github_request_fn=github_request_fn, github_actor=github_actor,
+            runtime_id=runtime_id,
         )
         previous = json.loads(runtime["access_grant_json"] or "{}")
         grant = issue_owner_grant(
@@ -245,6 +303,8 @@ def release_owner_f1(
             "head": current_head,
             "proof_ref": proof["proof_ref"],
             "verified_at": now.isoformat(),
+            "approval_mode": proof["approval_mode"],
+            "subject_identity_id": runtime["identity_id"],
         }
         f1_receipt = {
             **receipt_material,
@@ -282,6 +342,7 @@ def release_owner_f1(
         "gacr_session_id": session_id,
         "f1_exposure_receipt": None,
         "owner_f1_admission_receipt": f1_receipt["receipt_id"],
+        "owner_approval_mode": proof["approval_mode"],
         "access_grant_id": grant["grant_id"],
         "released_head": current_head,
         "next_authority": "00_START_HERE.md",
@@ -309,6 +370,7 @@ def release_owner_f1(
         "start_here_status": "APPLICABLE",
         "next_authority": "00_START_HERE.md",
         "owner_f1_receipt": f1_receipt,
+        "owner_approval_mode": proof["approval_mode"],
         "access_grant": grant,
         "release_evidence": release_evidence,
         "authority_granted": False,
