@@ -1,7 +1,7 @@
 {
   "schema": "grt-lab-chronological-ledger/v1",
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
-  "revision": 2,
+  "revision": 3,
   "order": "AUTHORITATIVE_GITHUB_EVENT_SEQUENCE",
   "timestamp_rule": "Do not invent event timestamps; null when not verified",
   "append_only": true,
@@ -164,6 +164,21 @@
       "occurred_at_provenance": "NOT_VERIFIED",
       "actor_github_login": null,
       "agent_session_id": null
+    },
+    {
+      "seq": 13,
+      "event_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-013",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-013",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "event_type": "OWNER_REQUIRES_LAB_MINIMAL_POOL_TO_GACR_ID_LINK",
+      "summary": "Owner specified that any dedicated LAB minimal agent-pool identity must be linked to a canonical GACR identity and related objects; persist an unresolved relationship requirement without inventing pool/agent/session IDs.",
+      "source_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227560349",
+      "observed_commit": "4fdc2fa9d69bdacd583bd07da6afe219e156be23",
+      "occurred_at": null,
+      "occurred_at_provenance": "UNVERIFIED",
+      "agent_session_id": null,
+      "related_instruction_id": "GRT-LABMEM-20261017-F1RECOVERY-001-INSTR-003",
+      "related_relation_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REL-001"
     }
   ],
   "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001"

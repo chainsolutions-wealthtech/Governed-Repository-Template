@@ -1,6 +1,6 @@
 {
   "schema": "grt-lab-memory-identity/v1",
-  "revision": 2,
+  "revision": 3,
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
   "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
   "scope": "LAB_ONLY",
@@ -25,7 +25,8 @@
     "ANL": "analysis",
     "TASK": "future chronological task",
     "CLAIM": "future hierarchical claim",
-    "CHK": "checkpoint"
+    "CHK": "checkpoint",
+    "REL": "typed relation between identities"
   },
   "historical_id_crosswalk": [
     {
@@ -179,7 +180,8 @@
     "chronology": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/CHRONOLOGY.json",
     "decisions": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/DECISIONS.json",
     "task_candidates": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/TASK_CANDIDATES.json",
-    "checkpoint": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/CHECKPOINT.json"
+    "checkpoint": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/CHECKPOINT.json",
+    "pool_gacr_relation": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/POOL_GACR_LINK_REQUIREMENT.json"
   },
   "typed_new_children": [
     {
@@ -235,6 +237,35 @@
       "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-012",
       "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-012",
       "registry": "CHRONOLOGY.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-INSTR-003",
+      "registry": "OWNER_INSTRUCTIONS.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REQ-001",
+      "registry": "POOL_GACR_LINK_REQUIREMENT.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REL-001",
+      "registry": "POOL_GACR_LINK_REQUIREMENT.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-007",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-007",
+      "registry": "DECISIONS.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-013",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-013",
+      "registry": "CHRONOLOGY.json"
     }
-  ]
+  ],
+  "future_minimal_pool_gacr_link": {
+    "requirement_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REQ-001",
+    "relation_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REL-001",
+    "state": "MANDATORY_UNRESOLVED",
+    "pool_id": null,
+    "gacr_id": null
+  }
 }

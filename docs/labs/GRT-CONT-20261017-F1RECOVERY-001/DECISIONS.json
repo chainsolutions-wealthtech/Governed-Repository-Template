@@ -1,7 +1,7 @@
 {
   "schema": "grt-lab-decisions/v1",
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
-  "revision": 2,
+  "revision": 3,
   "items": [
     {
       "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-001",
@@ -58,6 +58,18 @@
       "authority": "CHAT_USER_MESSAGE_TRANSCRIBED_IN_ISSUE",
       "description": "Owner corrected assistant: future task registry and hierarchical claim module may be designed as instructed; postponing execution is not a permanent prohibition",
       "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227313169",
+      "does_not_grant_execution_authority": true
+    },
+    {
+      "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-007",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-007",
+      "title": "A future minimal LAB agent pool must be canonically linked to GACR",
+      "decision_state": "OWNER_DIRECTED",
+      "authority": "OWNER_CHAT_INSTRUCTION_TRANSCRIBED_TO_GITHUB_ISSUE",
+      "description": "The owner requires a dedicated LAB minimal pool ID to link to a real canonical GACR ID, with typed, chronologically evidenced relations to agents, sessions, roles, claims and related records. Concrete pool/GACR identifiers and pool size remain unknown, not guessed.",
+      "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227560349",
+      "related_requirement_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REQ-001",
+      "related_relation_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REL-001",
       "does_not_grant_execution_authority": true
     }
   ],

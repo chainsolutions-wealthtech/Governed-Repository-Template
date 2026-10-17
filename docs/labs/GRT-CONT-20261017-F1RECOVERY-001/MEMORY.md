@@ -45,6 +45,17 @@ Le registre [`LAB_IDENTITY_AND_RELEASES.json`](./LAB_IDENTITY_AND_RELEASES.json)
 - ID du pool d'agents de ce LAB : **non attesté**. `AGENT_CAPACITY_POOL` désigne un modèle, pas l'identifiant d'un pool réservé au LAB.
 - Continuité `GRT-CONT-20261017-F1RECOVERY-001`, liée à la mémoire `GRT-LABMEM-20261017-F1RECOVERY-001`.
 
+## Nouvelle exigence propriétaire — pool minimal LAB relié à GACR
+
+Le propriétaire impose que **tout pool minimal dédié à ce LAB**, lorsqu'il existera, ait **son propre ID**, **lié à une identité GACR canonique vérifiée** et à toutes les relations pertinentes (agents, sessions, rôles, capacités, F1 et admission quand applicable, traces, tâches, offres, claims, preuves). Ce lien doit être reconstituable chronologiquement, avec une provenance pour chaque transition.
+
+- Sous-ID d'exigence : `GRT-LABMEM-20261017-F1RECOVERY-001-REQ-001`.
+- Sous-ID de relation requise : `GRT-LABMEM-20261017-F1RECOVERY-001-REL-001`.
+- Registre : [`POOL_GACR_LINK_REQUIREMENT.json`](./POOL_GACR_LINK_REQUIREMENT.json).
+- Source : [instruction transcrite dans l'issue #331](https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227560349).
+- **État vérifié :** ID du pool LAB = non établi ; référence GACR précise = non établie. Ne pas utiliser à tort un pool `AGENT_CAPACITY_POOL` projeté ou une continuité historique étrangère.
+- Ceci est une **condition de conception du squelette**, pas un claim ni une affectation créée aujourd'hui. Les étapes de réalisation seront indiquées ultérieurement par le propriétaire.
+
 ## Sources canoniques du LAB
 
 | Registre | Rôle | Règle |

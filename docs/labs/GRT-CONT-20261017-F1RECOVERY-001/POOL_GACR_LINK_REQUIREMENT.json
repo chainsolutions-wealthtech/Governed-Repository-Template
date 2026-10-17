@@ -1,0 +1,56 @@
+{
+  "schema": "grt-lab-pool-gacr-relationship-requirement/v1",
+  "revision": 1,
+  "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
+  "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+  "relation_requirement_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REL-001",
+  "requirement_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REQ-001",
+  "owner_instruction_id": "GRT-LABMEM-20261017-F1RECOVERY-001-INSTR-003",
+  "origin_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227560349",
+  "title": "Mandatory, traceable link between LAB minimal agent pool and canonical GACR identity",
+  "state": "REQUIRED_NOT_YET_MATERIALIZED",
+  "mandatory_for_future_lab_pool": true,
+  "pool": {
+    "pool_id": null,
+    "creation_state": "NOT_CREATED_OR_ATTESTED",
+    "description": "Minimum agent pool dedicated to this LAB; actual membership and cardinality not set by owner yet"
+  },
+  "gacr": {
+    "canonical_gacr_id": null,
+    "canonical_gacr_reference_type": null,
+    "verification_state": "NOT_ATTESTED",
+    "source_of_authority": "EXISTING_GACR_AUTHORITIES_TO_BE_RECONCILED"
+  },
+  "relation": {
+    "source_pool_id": null,
+    "target_gacr_id": null,
+    "relationship_type": "LAB_POOL_LINKED_TO_GACR_CANONICAL_REFERENCE",
+    "relationship_status": "REQUIRED_UNRESOLVED",
+    "provenance_required": true,
+    "observed_sequence_required": true,
+    "relation_history_required": true,
+    "link_ref_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REL-001"
+  },
+  "related_id_families_to_map_when_observed": [
+    "GACR_CONTINUITY_ID",
+    "GSCC_CANONICAL_AGENT_ID",
+    "GACR_SESSION_ID",
+    "HUMAN_ALIAS_IF_ANY",
+    "GACR_AGENT_ROLE_AND_CAPABILITY",
+    "GSE_F1_ADMISSION_AND_RELEASE_PROOF_WHEN_APPLICABLE",
+    "GACR_AVAILABILITY_AND_BEACON",
+    "GACR_WORK_ITEM_ID",
+    "GACR_WORK_OFFER_ID",
+    "GACR_CLAIM_ID",
+    "EVIDENCE_ID",
+    "CHRONOLOGICAL_EVENT_ID"
+  ],
+  "rules": [
+    "Do not synthesize missing GACR references or pool identity",
+    "Do not alias unrelated historical GACR continuities as this LAB's GACR reference",
+    "One pool-to-GACR relationship must be explicit, auditable, source-backed and chronologically reconstructable",
+    "Pool identity and GACR identity are separate keys",
+    "Relationship registration does not grant work execution or native GitHub permissions"
+  ],
+  "creation_or_dispatch_performed": false
+}

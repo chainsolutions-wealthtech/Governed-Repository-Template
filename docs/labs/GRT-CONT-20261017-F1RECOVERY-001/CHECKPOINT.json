@@ -1,12 +1,12 @@
 {
   "schema": "grt-lab-local-memory-checkpoint/v1",
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
-  "revision": 2,
+  "revision": 3,
   "branch": "lab/f1-recovery-isolation-20261017",
   "issue": 331,
   "pull_request": 332,
   "main_head_at_review": "b41a413ba0b24278515f9cc71a718db5b32840ab",
-  "lab_head_before_memory_update": "8bb722c2c6992e459a1672bd632b75643bd85d07",
+  "lab_head_before_memory_update": "4fdc2fa9d69bdacd583bd07da6afe219e156be23",
   "known_previous_ci": {
     "head": "6ba31d9930a477afcd7d2d4885e2eff7fe13af92",
     "runs": [
@@ -18,7 +18,7 @@
     "result": "SUCCESS"
   },
   "phase": "OBSERVE_DOCUMENT_ANALYZE",
-  "next_action": "LISTEN_TO_OWNER_NEXT_SKELETON_STEP_AND_RECORD_ORIGIN_EVIDENCE_ANALYSIS",
+  "next_action": "LISTEN_TO_OWNER_NEXT_STEP_AND_MAINTAIN_POOL_TO_GACR_LINK_REQUIREMENT",
   "task_dispatch_status": "NOT_AUTHORIZED",
   "main_write_status": "NONE",
   "merge_status": "NOT_MERGED",
@@ -37,7 +37,7 @@
     "TASK_CANDIDATES.json",
     "CHECKPOINT.json"
   ],
-  "last_owner_instruction_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227313169",
+  "last_owner_instruction_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227560349",
   "current_phase": "DOCUMENT_HIERARCHICAL_MEMORY_AND_LINK_WORKFLOW_EVIDENCE",
   "task_execution_status": "DEFERRED_PER_OWNER",
   "dispatch_status": "NO_TASK_DISTRIBUTED_IN_THIS_STEP",
@@ -53,5 +53,10 @@
     ],
     "results": "4_COMPLETED_SUCCESS_WITH_SKIPPED_JOBS_AS_DOCUMENTED",
     "register_path": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/WORKFLOW_EVIDENCE.json"
-  }
+  },
+  "pool_gacr_link_requirement_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REL-001",
+  "pool_gacr_link_status": "MANDATORY_UNRESOLVED",
+  "pool_id": null,
+  "gacr_id": null,
+  "pool_or_claim_mutation_in_this_step": false
 }

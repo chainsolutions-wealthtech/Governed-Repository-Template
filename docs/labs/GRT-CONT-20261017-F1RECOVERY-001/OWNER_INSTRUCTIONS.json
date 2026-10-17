@@ -1,6 +1,6 @@
 {
   "schema": "grt-lab-owner-instructions/v1",
-  "revision": 1,
+  "revision": 2,
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
   "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
   "source_policy": "OWNER_CHAT_TEXT_TRANSCRIBED_BY_ASSISTANT_TO_GITHUB_ISSUE; does not claim a signed GitHub owner comment",
@@ -20,6 +20,17 @@
       "summary": "On each GitHub Actions workflow completion, record workflow name, run ID, tested commit, actual controls with results and failures, and link resulting evidence to observations, gaps or chronologically prepared tasks. Recalling the continuity ID should reconstruct what was discussed and why.",
       "phase": "LISTEN_AND_DOCUMENT",
       "execution_requested": false
+    },
+    {
+      "instruction_id": "GRT-LABMEM-20261017-F1RECOVERY-001-INSTR-003",
+      "requirement_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REQ-001",
+      "source_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227560349",
+      "source_kind": "OWNER_CHAT_REQUEST_TRANSCRIBED_BY_ASSISTANT",
+      "summary": "Any minimal agent pool dedicated to this LAB must be linked to a canonical GACR ID and the entire relevant identity, session, role, capacity, claim, task, and evidence chain.",
+      "interpretation_limit": "Identity type, concrete pool ID and concrete GACR reference will be determined by future owner-led steps and verification; no assignment or operational claim at this stage.",
+      "decision_class": "OWNER_REQUIREMENT",
+      "status": "RECORDED_PENDING_FUTURE_SKELETON_STEPS",
+      "new_execution_authority_granted": false
     }
   ],
   "interpretation_boundary": "The owner did not issue a permanent prohibition on designing task registries/claim modules/dispatch integration. Do not perform actual task execution or automatically distribute work without later instructions."
