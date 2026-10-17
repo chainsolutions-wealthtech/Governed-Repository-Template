@@ -35,6 +35,16 @@ La lecture de `GRT-CONT-20261017-F1RECOVERY-001` doit permettre de retrouver : l
 
 **Statut documentaire** : 9 observations techniques initiales ; 12 événements chronologiques ; 6 décisions ou qualifications ; 6 candidats d'analyse historiques non affectés. Ce ne sont pas des nombres figés.
 
+## Identité vérifiée de la continuité et du LAB
+
+Le registre [`LAB_IDENTITY_AND_RELEASES.json`](./LAB_IDENTITY_AND_RELEASES.json) conserve **cinq champs distincts** : commit testé (avec runs et résultats), branche LAB, commit de fusion réel ou nul, ID du pool d'agents attesté ou nul, et continuité préservée. Les valeurs manquantes ne sont pas inventées.
+
+- Commit vert observé avant l'enregistrement : `a8f6368d927eb1420a6f6c1378201954d354d31f` ; quatre workflows success, mais E2E live non prouvé.
+- Branche : `lab/f1-recovery-isolation-20261017`.
+- PR #332 DRAFT et non fusionnée : **aucun commit de fusion réel**. Un SHA de fusion potentielle ne vaut pas fusion.
+- ID du pool d'agents de ce LAB : **non attesté**. `AGENT_CAPACITY_POOL` désigne un modèle, pas l'identifiant d'un pool réservé au LAB.
+- Continuité `GRT-CONT-20261017-F1RECOVERY-001`, liée à la mémoire `GRT-LABMEM-20261017-F1RECOVERY-001`.
+
 ## Sources canoniques du LAB
 
 | Registre | Rôle | Règle |
