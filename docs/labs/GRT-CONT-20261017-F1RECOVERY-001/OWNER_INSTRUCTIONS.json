@@ -1,0 +1,26 @@
+{
+  "schema": "grt-lab-owner-instructions/v1",
+  "revision": 1,
+  "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+  "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
+  "source_policy": "OWNER_CHAT_TEXT_TRANSCRIBED_BY_ASSISTANT_TO_GITHUB_ISSUE; does not claim a signed GitHub owner comment",
+  "items": [
+    {
+      "instruction_id": "GRT-LABMEM-20261017-F1RECOVERY-001-INSTR-001",
+      "origin_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227027370",
+      "kind": "OWNER_REQUIREMENT",
+      "summary": "A LAB has a stable main memory ID, typed child IDs and a chronological history. Record evidence, separate code facts/test outcomes/hypotheses/owner decisions, analyze gaps and plan tasks. Future task registry and hierarchical claim module are part of the skeleton; task execution occurs later.",
+      "phase": "LISTEN_AND_DOCUMENT",
+      "execution_requested": false
+    },
+    {
+      "instruction_id": "GRT-LABMEM-20261017-F1RECOVERY-001-INSTR-002",
+      "origin_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227313169",
+      "kind": "OWNER_REQUIREMENT",
+      "summary": "On each GitHub Actions workflow completion, record workflow name, run ID, tested commit, actual controls with results and failures, and link resulting evidence to observations, gaps or chronologically prepared tasks. Recalling the continuity ID should reconstruct what was discussed and why.",
+      "phase": "LISTEN_AND_DOCUMENT",
+      "execution_requested": false
+    }
+  ],
+  "interpretation_boundary": "The owner did not issue a permanent prohibition on designing task registries/claim modules/dispatch integration. Do not perform actual task execution or automatically distribute work without later instructions."
+}
