@@ -16,6 +16,14 @@ GR-000302 reste révision 12, `EXECUTING_PREPARATION/PREP-003`, avec PREP-001 et
 - La commande ne crée pas le LAB, n'exécute pas PREP-003/004 et n'accorde aucune autorisation GACR. Une nouvelle revalidation est exigée avant l'approbation et la preuve PREP-002R si le HEAD change.
 - Un rejet retourne une preuve de refus, sans modifier le marqueur de la GR. L'issue GitHub n'offre pas de CAS atomique natif avec le pont actuel ; celui-ci vérifie l'état juste avant le PATCH, sans revendiquer une atomicité supérieure. Une sérialisation explicite du workflow d'issue est recommandée en production avant activation.
 
+## Sécurité et reprise après revue indépendante
+
+- La réconciliation peut être **répétée sur la même GR** si `main` avance encore, à condition que PREP-003/004 restent PENDING ; chaque ancien plan, sa révision et toutes les preuves PREP-002R sont conservés et un nouvel accord propriétaire est exigé.
+- **Verrou fail-closed PREP-003 et PREP-004 :** aucune commande générique `/governed-evidence PASS` ne peut clôturer la création ou la validation du LAB #302. L'exécuteur reste BLOQUÉ jusqu'à l'intégration d'un vérificateur effectif d'autorité GACR (session, claim/lease, `SCOPED_GIT_WRITE`) et de provenance GitHub (branche réellement créée, HEAD et collision). La présente PR n'invente pas ces preuves.
+- Les requêtes JSON malformées produisent un refus documenté ; une erreur de notification **après** mutation ne doit jamais être présentée comme un échec **avant** mutation : le marqueur de #302 reste source de vérité.
+- Les tests locaux ou la CI sont des preuves de code seulement, jamais un PASS métier du LAB.
+- **Promotion non automatique :** revue indépendante, vérification des remarques ouvertes, contrôles CI sur dernier HEAD et accord séparé avant fusion.
+
 ## NOVA — frontière stricte
 
 L'arrivée NOVA #321 possède un RELEASE F1 historique et un rôle propriétaire CODE_AGENT limité à GR-000302/PREP-003 et PREP-004 ; **ni présence vivante, ni work offer, ni claim/lease, ni `SCOPED_GIT_WRITE`** n'en découlent. Pour une mutation ultérieure : corrélation réelle du client NOVA, disponibilité authentifiée, assignation par le GACR existant, offer → accept → claim/lease → exact HEAD/collision → grant et seulement ensuite création LAB. Ne pas toucher à `GMC-01`.
