@@ -14,6 +14,27 @@
 - **BASE** : `main@b3d7f623b443be6b0fe987dd2c527a6a4d4a53d0`.
 - **LAB avant ce registre** : `6ba31d9930a477afcd7d2d4885e2eff7fe13af92`.
 
+## Hiérarchie canonique et workflow comme source de preuves
+
+**ID principal de mémoire** : `GRT-LABMEM-20261017-F1RECOVERY-001`. **ID de continuité de développement** : `GRT-CONT-20261017-F1RECOVERY-001`. Ces deux identifiants sont différents et reliés.
+
+- `MEMORY_IDENTITY.json` : racine mémoire et sous-ID typés `OBS`, `EVID`, `EVT`, `DEC`, `INSTR`, `TEST`, `HYP`, `GAP`, `PROB`, `REQ`, `ANL`, `TASK`, `CLAIM`, `CHK`, etc. Les 27 premiers ID historiques sont conservés et mappés, pas renommés.
+- `OWNER_INSTRUCTIONS.json` : demande d'origine et son niveau de provenance ; une retranscription dans l'issue #331 ne vaut pas signature du propriétaire dans GitHub.
+- `WORKFLOW_EVIDENCE.json` : quatre exécutions GitHub Actions, chacune avec **ID de run, commit exact, noms des jobs, contrôles lancés, conclusions, contrôles ignorés et échecs éventuels**, et liens vers des observations. Les listes exhaustives des étapes sont dans le registre.
+- Une **CI verte** est une preuve que les contrôles exécutés ont réussi ; elle ne prouve pas le fonctionnement E2E ni la correction automatique de risques déjà identifiés (notamment D03 et D04 du dispatcher).
+- Lorsqu'un nouveau workflow termine, conserver son `run_id`, SHA, source, étapes réellement exécutées et résultats, erreurs, limites et `observation_id` ou `task_id` associé. La preuve ne remplace ni une analyse ni une décision.
+
+**Chaîne d'interprétation et de préparation :**
+`ORIGINE (instruction ou problème) → OBSERVATION → PREUVE (code, test, CI) → ENRICHISSEMENT DE LA MÉMOIRE → ANALYSE DES ÉCARTS → COMPRÉHENSION DES BESOINS / PROBLÈMES → PRÉPARATION CHRONOLOGIQUE DES TÂCHES`.
+
+Le **registre des tâches** et le futur **module de claims hiérarchiques** sont des éléments du squelette à décrire dans l'ordre indiqué par le propriétaire. **Ils ne sont pas interdits.** Les exécutions des tâches viennent plus tard ; la présente mise à jour ne distribue aucune tâche et ne prend aucun claim.
+
+### Reconstitution à partir du seul ID de continuité
+
+La lecture de `GRT-CONT-20261017-F1RECOVERY-001` doit permettre de retrouver : les problèmes initiaux de récupération F1 et changement HEAD, l'alias facultatif d'agent, l'analyse du dispatcher GACR et de ses risques, les instructions de construction de la mémoire LAB, les IDs parent/enfants, la chronologie, les exigences de registre des tâches et de claims hiérarchiques, et les résultats des workflows.
+
+**Statut documentaire** : 9 observations techniques initiales ; 12 événements chronologiques ; 6 décisions ou qualifications ; 6 candidats d'analyse historiques non affectés. Ce ne sont pas des nombres figés.
+
 ## Sources canoniques du LAB
 
 | Registre | Rôle | Règle |
@@ -23,6 +44,9 @@
 | `DECISIONS.json` | Choix du propriétaire, politiques préservées, décisions en attente | `PENDING` n'est pas une autorisation |
 | `TASK_CANDIDATES.json` | Hypothèses de travaux à analyser, sans dispatch | **Pas** une Task Queue : aucun claim ni affectation |
 | `CHECKPOINT.json` | Dernier HEAD observé, prochain acte et preuve CI disponible | Snapshot révisable, Git et issue constituent l'historique |
+| `MEMORY_IDENTITY.json` | Racine LAB et sous-ID typés | Conservation des anciens identifiants |
+| `OWNER_INSTRUCTIONS.json` | Origines et demandes du propriétaire | Retenues sans fabriquer de signature GitHub |
+| `WORKFLOW_EVIDENCE.json` | Runs/commits/contrôles/résultats GitHub Actions | Preuves liées aux observations et tâches futures |
 | `MEMORY.md` | Mode d'emploi/reprise, résumé et limitations | Une nouvelle conversation doit lire les fichiers machine et le dernier commentaire d'issue |
 
 ## Chaîne de construction obligatoire
@@ -36,7 +60,7 @@
 - **F1** : correction de reprise et conservation de preuves dans PR #332, CI simulée réussie, **E2E live non prouvé**.
 - **Agent sans nom** : champ alias facultatif testé en simulation, identité GSCC réelle préservée.
 - **Dispatcher GACR** : audit D01–D08 dans [rapport spécifique](../GRT-CONT-20261017-F1RECOVERY-001_DISPATCHER_AUDIT.md) ; D03 provenance F1 et D04 revalidation d'offre sont des **risques ouverts**.
-- **Registre préexistant** : 9 observations sourcées ; 9 événements ordonnés ; 6 candidats **non distribués**.
+- **Registre préexistant** : 9 observations techniques sourcées ; 12 événements ordonnés ; 6 décisions/qualifications ; 6 candidats **non distribués**.
 - **Dernier cycle CI avant mémoire** : [Governance CI #38983239494](https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/actions/runs/38983239494) et trois contrôles GSCC success ; ce sont des tests de LAB, pas des validations de fusion ou de sécurité E2E.
 
 ## Anti-régression et limites
@@ -55,7 +79,7 @@ Depuis une nouvelle conversation GitHub connectée, demander :
 ```text
 Rejoins GRT-CONT-20261017-F1RECOVERY-001.
 Lis l'issue #331, la PR #332 et les fichiers
-docs/labs/GRT-CONT-20261017-F1RECOVERY-001/{MEMORY.md,OBSERVATIONS.json,CHRONOLOGY.json,DECISIONS.json,TASK_CANDIDATES.json,CHECKPOINT.json}.
+docs/labs/GRT-CONT-20261017-F1RECOVERY-001/{MEMORY.md,MEMORY_IDENTITY.json,OWNER_INSTRUCTIONS.json,WORKFLOW_EVIDENCE.json,OBSERVATIONS.json,CHRONOLOGY.json,DECISIONS.json,TASK_CANDIDATES.json,CHECKPOINT.json}.
 Reobserve main et LAB HEAD. Reprends le dernier checkpoint et enrichis la mémoire
 avant tout nouveau plan ou code, sans usurper une session.
 ```
