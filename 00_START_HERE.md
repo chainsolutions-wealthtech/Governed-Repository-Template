@@ -7,6 +7,8 @@
 >
 > Si aucune preuve de release/handoff GSCC/GSE/GACR **ou de `DIRECT_OWNER_VERIFIED` pour la porte B explicitement demandée** n'est disponible, arrêter ici et revenir à `00_GSCC_ENTRY.md` (défaut) ou `00_DIRECT_OWNER_ENTRY.md` (demande explicite).
 
+> **Deux voies inchangées :** la Porte A utilise désormais la preuve F1 GitHub authentifiée par le propriétaire pour toute arrivée, y compris un agent non propriétaire approuvé individuellement ; la Porte B reste une entrée directe sans F1, explicitement sélectionnée et justifiée par `DIRECT_OWNER_VERIFIED`. La preuve d'une porte n'est pas transférable à l'autre, et aucune admission ne vaut claim, attribution de tâche ou permission de mutation.
+
 
 > Statut : `APPLICABLE`  
 > Dépôt : `{{REPOSITORY}}`  
