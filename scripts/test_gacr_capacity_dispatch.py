@@ -110,6 +110,22 @@ def main() -> None:
     assert_true(available["agent_role"] == "CODE_AGENT", "declared canonical role overrides qualification role")
     assert_true(available["declared_work_profile"]["entry_purpose"] == "WORK_ON_CONTROL_PLANE", "entry purpose recorded")
     assert_true(available["eligible_for_new_work"] is True, "released explicitly available session eligible")
+    # A released session can select independent entry-action workflows, even
+    # when no canonical task is assigned and no dispatch offer exists.
+    entry = available["post_release_entry"]
+    assert_true(entry["status"] == "F1_RELEASE_BEACON_OBSERVED", "GACR exposes release correlation")
+    assert_true("LAB_EVOLUTION" in entry["choices"], "branch/LAB choice must be visible")
+    assert_true("OPT_IN_GACR_DISPATCH" in entry["choices"], "dispatcher must be opt-in")
+    assert_true(entry["lab_or_branch_setup_requires_dispatch_claim"] is False,
+                "LAB setup cannot require a dispatcher claim")
+    assert_true(entry["lab_or_branch_setup_requires_dispatch_offer"] is False,
+                "LAB setup cannot require a dispatcher offer")
+    assert_true(entry["native_github_write_permission"] == "MUST_BE_VERIFIED_LIVE",
+                "GACR must not fabricate native GitHub write access")
+    assert_true(entry["admission_proof_status"] == "REVALIDATION_REQUIRED_AT_ENTRY",
+                "F1 beacon alone cannot grant admission authority")
+    assert_true(entry["grants_mutation_authority"] is False,
+                "post-F1 free choice is not mutation authority")
     assert_true(available["logical_agent_id"] == "agent-s1", "capacity projection uses canonical agent identity")
 
     pre_f1 = g.session_capacity_projection(
@@ -123,6 +139,8 @@ def main() -> None:
     if g.TEMPLATE_SOURCE:
         assert_true(pre_f1["eligible_for_new_work"] is False, "pre-F1 source session cannot receive work")
         assert_true("F1_RELEASE_NOT_VERIFIED" in pre_f1["dispatch_blockers"], "pre-F1 blocker explicit")
+        assert_true(pre_f1["post_release_entry"]["choices"] == [],
+                    "no post-release choices before F1 observation")
 
     silent = g.session_capacity_projection(
         "s1",
@@ -134,6 +152,8 @@ def main() -> None:
     )
     assert_true(silent["availability_state"] == "UNKNOWN", "F1 release alone must not imply availability")
     assert_true(silent["eligible_for_new_work"] is False, "silent session not dispatch eligible")
+    assert_true("LAB_EVOLUTION" in silent["post_release_entry"]["choices"],
+                "entry choice must not depend on dispatcher availability")
 
     quota = g.session_capacity_projection(
         "s1",

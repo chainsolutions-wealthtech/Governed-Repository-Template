@@ -355,6 +355,31 @@ def session_capacity_projection(
         "in_flight_action": actions.get("in_flight_action"),
         "eligible_for_new_work": eligible,
         "eligibility_requires_offer_acceptance": True,
+        # Post-F1 entry routing is independent from R7/R8 work-offer eligibility.
+        # The F1 beacon is a correlation pointer, NOT a verification of the
+        # signed admission/grant. Native GitHub permissions are never inferred.
+        "post_release_entry": {
+            "status": ("F1_RELEASE_BEACON_OBSERVED" if f1_release
+                       else "NO_F1_RELEASE_BEACON"),
+            "admission_proof_status": "REVALIDATION_REQUIRED_AT_ENTRY",
+            "f1_evidence_ref": (
+                f1_release.get("evidence_ref") if f1_release else None
+            ),
+            "choices": (
+                ["OBSERVE", "REVIEW", "SUPERVISE", "INTAKE", "PLAN",
+                 "LAB_EVOLUTION", "CONTINUE_GOVERNED_WORK",
+                 "OPT_IN_GACR_DISPATCH"]
+                if f1_release else []
+            ),
+            "branch_creation_via_lab_evolution": True,
+            "lab_or_branch_setup_requires_dispatch_offer": False,
+            "lab_or_branch_setup_requires_dispatch_claim": False,
+            "native_github_write_permission": "MUST_BE_VERIFIED_LIVE",
+            "explicit_project_scope_and_branch_authority_required": True,
+            "exact_head_and_branch_protections_required": True,
+            "gacr_claim_required_for_dispatched_canonical_work": True,
+            "grants_mutation_authority": False,
+        },
         "grants_write_authority": False,
     }
     telemetry.assert_secretless(value)
