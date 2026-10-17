@@ -1,0 +1,692 @@
+{
+  "schema": "grt-lab-workflow-evidence/v1",
+  "revision": 1,
+  "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
+  "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+  "requested_by_owner": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227313169",
+  "rule": "After a workflow run, capture name, run ID, exact commit, jobs and actual checks/results/skips/failures, proof limitations, and links to observations or future tasks. Workflow is evidence generator, not a GACR agent or task.",
+  "items": [
+    {
+      "evidence_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVID-001",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
+      "type": "GITHUB_ACTIONS_WORKFLOW_RUN",
+      "name": "Governance CI",
+      "workflow_run_id": 38983895397,
+      "run_url": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/actions/runs/38983895397",
+      "tested_commit_sha": "8bb722c2c6992e459a1672bd632b75643bd85d07",
+      "tested_commit_url": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/commit/8bb722c2c6992e459a1672bd632b75643bd85d07",
+      "run_result": "SUCCESS",
+      "jobs": [
+        {
+          "name": "governance",
+          "status": "completed",
+          "conclusion": "success",
+          "checks": [
+            {
+              "name": "Set up job",
+              "result": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "result": "success"
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "result": "success"
+            },
+            {
+              "name": "Validate governed repository structure",
+              "result": "success"
+            },
+            {
+              "name": "Compile governance scripts",
+              "result": "success"
+            },
+            {
+              "name": "Test GSCC core protocol and SessionEndpoint",
+              "result": "success"
+            },
+            {
+              "name": "Test exhaustive first-touch capture",
+              "result": "success"
+            },
+            {
+              "name": "Test first-touch field block gate database",
+              "result": "success"
+            },
+            {
+              "name": "Test exhaustive expected-field registry coverage",
+              "result": "success"
+            },
+            {
+              "name": "Test live first-touch connection completeness accounting",
+              "result": "success"
+            },
+            {
+              "name": "Test first-touch entry contract",
+              "result": "success"
+            },
+            {
+              "name": "Test agent and transport First Touch extraction",
+              "result": "success"
+            },
+            {
+              "name": "Test mandatory GSCC pre-entry before START_HERE",
+              "result": "success"
+            },
+            {
+              "name": "Test sequential GSCC entry router",
+              "result": "success"
+            },
+            {
+              "name": "Test two-door GitHub-authenticated owner entry A-G",
+              "result": "success"
+            },
+            {
+              "name": "Test persisted GSCC entry pipeline to Q1",
+              "result": "success"
+            },
+            {
+              "name": "Test persisted canonical post-Q1 gate route",
+              "result": "success"
+            },
+            {
+              "name": "Test persisted GSCC state artifact continuity",
+              "result": "success"
+            },
+            {
+              "name": "Test per-arrival identity and GSE session isolation",
+              "result": "success"
+            },
+            {
+              "name": "Test GSCC new CODE_AGENT candidate alias and Q9 recovery",
+              "result": "success"
+            },
+            {
+              "name": "Test signed owner F1 admission and claim-free release",
+              "result": "success"
+            },
+            {
+              "name": "Test same-arrival Q12 grant renewal and replay denial",
+              "result": "success"
+            },
+            {
+              "name": "Test agent auto-discovery of GSCC entry",
+              "result": "success"
+            },
+            {
+              "name": "Test GSCC First Touch Q1 handoff",
+              "result": "success"
+            },
+            {
+              "name": "Test GSCC GSE GACR realignment matrix",
+              "result": "success"
+            },
+            {
+              "name": "Test GSCC observable arrival gateway",
+              "result": "success"
+            },
+            {
+              "name": "Test GSCC admission gate contract",
+              "result": "success"
+            },
+            {
+              "name": "Test GSCC admission qualification harvester",
+              "result": "success"
+            },
+            {
+              "name": "Test F1 harvester package and direct-script imports",
+              "result": "success"
+            },
+            {
+              "name": "Test GSCC issue control challenge bridge",
+              "result": "success"
+            },
+            {
+              "name": "Test GSCC admission GSE projection",
+              "result": "success"
+            },
+            {
+              "name": "Test GSCC admission access policy",
+              "result": "success"
+            },
+            {
+              "name": "Test GSCC full admission qualification",
+              "result": "success"
+            },
+            {
+              "name": "Test source-only GSCC mandatory function exposure gate",
+              "result": "success"
+            },
+            {
+              "name": "Test first GitHub API response GSCC entry directive",
+              "result": "success"
+            },
+            {
+              "name": "Test GSE deterministic SessionTwin",
+              "result": "success"
+            },
+            {
+              "name": "Test GSCC GACR bidirectional control harness",
+              "result": "success"
+            },
+            {
+              "name": "Test GSCC GACR canonical shared contract authority",
+              "result": "success"
+            },
+            {
+              "name": "Test GSCC GACR control response to canonical GSE projection",
+              "result": "success"
+            },
+            {
+              "name": "Test controlled GSCC GSE GACR end-to-end",
+              "result": "success"
+            },
+            {
+              "name": "Test master architecture documentation integrity",
+              "result": "success"
+            },
+            {
+              "name": "Test CASE 1 closure and GMC release integrity",
+              "result": "success"
+            },
+            {
+              "name": "Test bootstrap state consistency",
+              "result": "success"
+            },
+            {
+              "name": "Test connection intent routing",
+              "result": "success"
+            },
+            {
+              "name": "Test GACR agent continuity relay",
+              "result": "success"
+            },
+            {
+              "name": "Test GACR Beacon Correlator Dispatcher",
+              "result": "success"
+            },
+            {
+              "name": "Test GACR capacity-aware parallel dispatch",
+              "result": "success"
+            },
+            {
+              "name": "LAB audit - GACR dispatcher characterization (no runtime writes)",
+              "result": "success"
+            },
+            {
+              "name": "Validate F1 LAB canonical memory, chronology and non-dispatch gate",
+              "result": "success"
+            },
+            {
+              "name": "Test GACR liveness progress session context",
+              "result": "success"
+            },
+            {
+              "name": "Test GACR Correlator Dispatcher Takeover integration",
+              "result": "success"
+            },
+            {
+              "name": "Test GACR automatic continuity attachment",
+              "result": "success"
+            },
+            {
+              "name": "Test GACR Presence-First acceptance A/B/C",
+              "result": "success"
+            },
+            {
+              "name": "Test GACR client liveness and trace emitter",
+              "result": "success"
+            },
+            {
+              "name": "Test GACR provider-host issue ingress",
+              "result": "success"
+            },
+            {
+              "name": "Test GACR shared continuity coordination",
+              "result": "success"
+            },
+            {
+              "name": "Test owner assigned short aliases and canonical GACR session integrity",
+              "result": "success"
+            },
+            {
+              "name": "Test owner CODE_AGENT role with strict CHAINFLOW work scope",
+              "result": "success"
+            },
+            {
+              "name": "Test canonical agent reconstruction skeleton",
+              "result": "success"
+            },
+            {
+              "name": "Test GACR host issue workflow rerun safety",
+              "result": "success"
+            },
+            {
+              "name": "Test mandatory entry action routing",
+              "result": "success"
+            },
+            {
+              "name": "Test additive existing repository adoption",
+              "result": "success"
+            },
+            {
+              "name": "Test organization/personal repository scopes",
+              "result": "success"
+            },
+            {
+              "name": "Test central governed request lifecycle",
+              "result": "success"
+            },
+            {
+              "name": "Test same-request HOLD authority review and owner guards",
+              "result": "success"
+            },
+            {
+              "name": "Test historic LAB-plan supersession and live GitHub evidence",
+              "result": "success"
+            },
+            {
+              "name": "Test GitHub issue control plane boundary",
+              "result": "success"
+            },
+            {
+              "name": "Test generate-from-template repository executor",
+              "result": "success"
+            },
+            {
+              "name": "Test repository-local governed agent entry",
+              "result": "success"
+            },
+            {
+              "name": "Test automatic MCP credential provisioning",
+              "result": "success"
+            },
+            {
+              "name": "Test BOTH degraded SSH fallback",
+              "result": "success"
+            },
+            {
+              "name": "Test governed upgrade session HEAD continuity",
+              "result": "success"
+            },
+            {
+              "name": "Test Governance Model projection integrity",
+              "result": "success"
+            },
+            {
+              "name": "Test source-only adaptive choice question catalogue",
+              "result": "success"
+            },
+            {
+              "name": "Test source-only control-plane knowledge base",
+              "result": "success"
+            },
+            {
+              "name": "Test source-only server knowledge model",
+              "result": "success"
+            },
+            {
+              "name": "Test source-only identity and secret lifecycle",
+              "result": "success"
+            },
+            {
+              "name": "Test GACR dispatch namespace alignment",
+              "result": "success"
+            },
+            {
+              "name": "Validate canonical namespace and work registry",
+              "result": "success"
+            },
+            {
+              "name": "Test source-only governed execution engine",
+              "result": "success"
+            },
+            {
+              "name": "Test source-only project execution DAG and Loop binding",
+              "result": "success"
+            },
+            {
+              "name": "Test source-only execution package compiler",
+              "result": "success"
+            },
+            {
+              "name": "Test source-only MCP capability snapshot model",
+              "result": "success"
+            },
+            {
+              "name": "Test bounded read-only knowledge collectors",
+              "result": "success"
+            },
+            {
+              "name": "Test bounded server identity and secret metadata",
+              "result": "success"
+            },
+            {
+              "name": "Test source-only identity-secret refresh workflow",
+              "result": "success"
+            },
+            {
+              "name": "Test source-only server recipe capability matrix",
+              "result": "success"
+            },
+            {
+              "name": "Materialize canonical control-plane database",
+              "result": "success"
+            },
+            {
+              "name": "Check textual integrity",
+              "result": "success"
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "result": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "result": "success"
+            },
+            {
+              "name": "Complete job",
+              "result": "success"
+            }
+          ]
+        }
+      ],
+      "observed_failures": [],
+      "skipped_jobs": [],
+      "relationship": {
+        "observation_ids": [
+          "GRT-CONT-20261017-F1RECOVERY-001-OBS-001",
+          "GRT-CONT-20261017-F1RECOVERY-001-OBS-003",
+          "GRT-CONT-20261017-F1RECOVERY-001-OBS-005",
+          "GRT-CONT-20261017-F1RECOVERY-001-OBS-006",
+          "GRT-CONT-20261017-F1RECOVERY-001-OBS-007"
+        ],
+        "prepared_task_ids": [],
+        "notes": "Some steps characterize known open issues; success does not close D03 or D04."
+      },
+      "known_open_risks_not_fixed": [
+        "GACR-D03:F1-beacon-proof-validation",
+        "GACR-D04:stale-offer-acceptance"
+      ],
+      "proof_scope": "CI steps and job status; not proof of live F1 E2E or elimination of known defects."
+    },
+    {
+      "evidence_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVID-002",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
+      "type": "GITHUB_ACTIONS_WORKFLOW_RUN",
+      "name": "GSCC Function Exposure Gate",
+      "workflow_run_id": 38983895437,
+      "run_url": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/actions/runs/38983895437",
+      "tested_commit_sha": "8bb722c2c6992e459a1672bd632b75643bd85d07",
+      "tested_commit_url": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/commit/8bb722c2c6992e459a1672bd632b75643bd85d07",
+      "run_result": "SUCCESS",
+      "jobs": [
+        {
+          "name": "arrival-plan",
+          "status": "completed",
+          "conclusion": "success",
+          "checks": [
+            {
+              "name": "Set up job",
+              "result": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "result": "success"
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "result": "success"
+            },
+            {
+              "name": "Build mandatory GSCC end-to-end route before any function exposure",
+              "result": "success"
+            },
+            {
+              "name": "Persist route evidence as workflow artifact",
+              "result": "success"
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "result": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "result": "success"
+            },
+            {
+              "name": "Complete job",
+              "result": "success"
+            }
+          ]
+        },
+        {
+          "name": "evaluate",
+          "status": "completed",
+          "conclusion": "skipped",
+          "checks": []
+        },
+        {
+          "name": "package-evaluate",
+          "status": "completed",
+          "conclusion": "skipped",
+          "checks": []
+        }
+      ],
+      "observed_failures": [],
+      "skipped_jobs": [
+        "evaluate",
+        "package-evaluate"
+      ],
+      "relationship": {
+        "observation_ids": [],
+        "prepared_task_ids": [],
+        "notes": "Some steps characterize known open issues; success does not close D03 or D04."
+      },
+      "known_open_risks_not_fixed": [
+        "GACR-D03:F1-beacon-proof-validation",
+        "GACR-D04:stale-offer-acceptance"
+      ],
+      "proof_scope": "CI steps and job status; not proof of live F1 E2E or elimination of known defects."
+    },
+    {
+      "evidence_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVID-003",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
+      "type": "GITHUB_ACTIONS_WORKFLOW_RUN",
+      "name": "GSCC Provider First Touch Ingress",
+      "workflow_run_id": 38983895401,
+      "run_url": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/actions/runs/38983895401",
+      "tested_commit_sha": "8bb722c2c6992e459a1672bd632b75643bd85d07",
+      "tested_commit_url": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/commit/8bb722c2c6992e459a1672bd632b75643bd85d07",
+      "run_result": "SUCCESS",
+      "jobs": [
+        {
+          "name": "regression",
+          "status": "completed",
+          "conclusion": "success",
+          "checks": [
+            {
+              "name": "Set up job",
+              "result": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "result": "success"
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "result": "success"
+            },
+            {
+              "name": "Compile",
+              "result": "success"
+            },
+            {
+              "name": "Test canonical automatic owner F1 admission",
+              "result": "success"
+            },
+            {
+              "name": "Test provider first-touch sidecar, repository enrichment and host hook",
+              "result": "success"
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "result": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "result": "success"
+            },
+            {
+              "name": "Complete job",
+              "result": "success"
+            }
+          ]
+        },
+        {
+          "name": "renew_q12",
+          "status": "completed",
+          "conclusion": "skipped",
+          "checks": []
+        },
+        {
+          "name": "ingest",
+          "status": "completed",
+          "conclusion": "skipped",
+          "checks": []
+        },
+        {
+          "name": "control",
+          "status": "completed",
+          "conclusion": "skipped",
+          "checks": []
+        },
+        {
+          "name": "release",
+          "status": "completed",
+          "conclusion": "skipped",
+          "checks": []
+        }
+      ],
+      "observed_failures": [],
+      "skipped_jobs": [
+        "renew_q12",
+        "ingest",
+        "control",
+        "release"
+      ],
+      "relationship": {
+        "observation_ids": [],
+        "prepared_task_ids": [],
+        "notes": "Some steps characterize known open issues; success does not close D03 or D04."
+      },
+      "known_open_risks_not_fixed": [
+        "GACR-D03:F1-beacon-proof-validation",
+        "GACR-D04:stale-offer-acceptance"
+      ],
+      "proof_scope": "CI steps and job status; not proof of live F1 E2E or elimination of known defects."
+    },
+    {
+      "evidence_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVID-004",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
+      "type": "GITHUB_ACTIONS_WORKFLOW_RUN",
+      "name": "GSCC Observable Arrival Gateway",
+      "workflow_run_id": 38983895386,
+      "run_url": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/actions/runs/38983895386",
+      "tested_commit_sha": "8bb722c2c6992e459a1672bd632b75643bd85d07",
+      "tested_commit_url": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/commit/8bb722c2c6992e459a1672bd632b75643bd85d07",
+      "run_result": "SUCCESS",
+      "jobs": [
+        {
+          "name": "arrival",
+          "status": "completed",
+          "conclusion": "success",
+          "checks": [
+            {
+              "name": "Set up job",
+              "result": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "result": "success"
+            },
+            {
+              "name": "Run actions/setup-python@v5",
+              "result": "success"
+            },
+            {
+              "name": "Capture exhaustive first-touch evidence",
+              "result": "success"
+            },
+            {
+              "name": "Restore previous GSCC GSE First Touch state",
+              "result": "success"
+            },
+            {
+              "name": "Materialize first-touch field block gate database",
+              "result": "success"
+            },
+            {
+              "name": "Build expected first-touch field registry",
+              "result": "success"
+            },
+            {
+              "name": "Build first-touch connection completeness packet",
+              "result": "success"
+            },
+            {
+              "name": "Evaluate mandatory first-touch entry contract",
+              "result": "success"
+            },
+            {
+              "name": "Upload exhaustive first-touch evidence",
+              "result": "success"
+            },
+            {
+              "name": "Persist GSCC GSE First Touch state",
+              "result": "success"
+            },
+            {
+              "name": "Build canonical GSCC First Touch handoff",
+              "result": "skipped"
+            },
+            {
+              "name": "Upload GSCC First Touch handoff",
+              "result": "skipped"
+            },
+            {
+              "name": "Post Run actions/setup-python@v5",
+              "result": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "result": "success"
+            },
+            {
+              "name": "Complete job",
+              "result": "success"
+            }
+          ]
+        }
+      ],
+      "observed_failures": [],
+      "skipped_jobs": [],
+      "relationship": {
+        "observation_ids": [],
+        "prepared_task_ids": [],
+        "notes": "Some steps characterize known open issues; success does not close D03 or D04."
+      },
+      "known_open_risks_not_fixed": [
+        "GACR-D03:F1-beacon-proof-validation",
+        "GACR-D04:stale-offer-acceptance"
+      ],
+      "proof_scope": "CI steps and job status; not proof of live F1 E2E or elimination of known defects."
+    }
+  ]
+}

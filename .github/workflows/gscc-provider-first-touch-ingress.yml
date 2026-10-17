@@ -487,6 +487,9 @@ jobs:
       - name: Auto-release verified GitHub owner F1 (no work claim)
         if: ${{ steps.bind.outputs.state == 'READY_FOR_F1' && (github.actor == 'Wealthtechinnovations' || github.actor == 'Patricked-code') }}
         id: owner_f1
+        # Let same-arrival artifacts persist even when owner F1 is denied.
+        # The job is marked failed explicitly after preserving evidence.
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
           RUNTIME_ID: ${{ steps.q9.outputs.runtime_id }}
@@ -595,6 +598,7 @@ jobs:
           gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments"             -f body="### GSCC → GSE → GACR qualification complete\n\nRuntime: ${{ steps.q9.outputs.runtime_id }}\nGACR session: ${{ steps.bind.outputs.gacr_session_id }}\nLast gate: Q12\nNext gate: F1\n\n00_START_HERE.md remains NOT_YET_APPLICABLE until F1 validates the first requested governed function."
 
       - name: Persist resumed per-arrival runtime state
+        if: ${{ always() && steps.q9.outcome == 'success' }}
         uses: actions/upload-artifact@v4
         with:
           name: first-touch-state-${{ steps.arrival_scope.outputs.state_scope }}-${{ github.run_id }}-${{ github.run_attempt }}
@@ -603,6 +607,7 @@ jobs:
           retention-days: 30
 
       - name: Upload resumed runtime evidence
+        if: ${{ always() && steps.q9.outcome == 'success' }}
         uses: actions/upload-artifact@v4
         with:
           name: gscc-session-runtime-${{ github.run_id }}-${{ github.run_attempt }}
@@ -612,6 +617,26 @@ jobs:
           if-no-files-found: warn
           retention-days: 30
 
+      - name: Record owner F1 failure on the SAME issue
+        if: ${{ always() && steps.owner_f1.outcome == 'failure' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARRIVAL_RUNTIME: ${{ steps.q9.outputs.runtime_id }}
+        run: |
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="### Owner F1 not released — this arrival only
+
+          Runtime: ${ARRIVAL_RUNTIME}
+          F1: NOT_RELEASED, 00_START_HERE.md: NOT_YET_APPLICABLE.
+          A failed attempt never creates a global HOLD, new session or work claim.
+          The same-arrival SQLite state and evidence were checkpointed.
+          Inspect the error and recover using the same arrival; Q12 renewal requires its normal fresh proofs."
+
+      - name: Preserve explicit failed outcome after checkpoint
+        if: ${{ always() && steps.owner_f1.outcome == 'failure' }}
+        run: |
+          echo "OWNER_F1_NOT_RELEASED_THIS_ARRIVAL_ONLY"
+          exit 1
   renew_q12:
     if: ${{ github.event_name == 'issue_comment' && startsWith(github.event.issue.title, '[GSCC First Touch]') && github.actor != 'github-actions[bot]' && startsWith(github.event.comment.body, '/gscc-entry-renew-q12 ') && contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) }}
     permissions:

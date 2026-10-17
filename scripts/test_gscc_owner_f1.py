@@ -235,8 +235,119 @@ def test_binding_and_status_safety():
         owner._route = original
 
 
+
+def test_head_drift_one_safe_retry_and_other_arrival_unmodified():
+    route_calls = []
+    old_route = owner._route
+    owner._route = lambda db, runtime, gate, outcome, evidence, identity: route_calls.append(gate)
+    try:
+        with tempfile.TemporaryDirectory() as td:
+            this_arrival = Path(td) / "this.sqlite"
+            other_arrival = Path(td) / "other.sqlite"
+            make_db(this_arrival)
+            make_db(other_arrival)
+            result = owner.release_owner_f1_with_head_reconciliation(
+                this_arrival, RUNTIME, event(), OLD_HEAD,
+                sessions={"sessions": [session()]}, github_request_fn=fake_github,
+                github_actor="Wealthtechinnovations", now=NOW,
+            )
+            assert result["state"] == "RELEASED_TO_NORMAL_GOVERNANCE"
+            assert result["released_head"] == HEAD
+            assert result["head_reconciliation"]["retry_count"] == 1
+            assert result["head_reconciliation"]["scope"] == "SAME_ARRIVAL_ONLY"
+            assert route_calls == ["F1", "00_START_HERE.md"]
+            with sqlite3.connect(other_arrival) as conn:
+                state, old_grant = conn.execute(
+                    "SELECT state,access_grant_json FROM gscc_session_runtime"
+                ).fetchone()
+                assert state == "READY_FOR_F1"
+                assert json.loads(old_grant)["bound_head"] == OLD_HEAD
+    finally:
+        owner._route = old_route
+
+
+def test_invalid_identity_and_binding_not_retried_or_released():
+    route_calls = []
+    old_route = owner._route
+    owner._route = lambda *args, **kwargs: route_calls.append(args[2])
+    try:
+        with tempfile.TemporaryDirectory() as td:
+            db = Path(td) / "denied.sqlite"
+            make_db(db)
+            requests = []
+            def counted(url):
+                requests.append(url)
+                return fake_github(url)
+
+            invalid = event()
+            invalid["sender"]["login"] = "forged"
+            expect_failure(lambda: owner.release_owner_f1_with_head_reconciliation(
+                db, RUNTIME, invalid, HEAD,
+                sessions={"sessions": [session()]}, github_request_fn=counted,
+                github_actor="Wealthtechinnovations", now=NOW),
+                "OWNER_F1_SIGNED_GITHUB_ACTOR_OR_ISSUE_BINDING_REQUIRED")
+            assert requests == []
+            with sqlite3.connect(db) as conn:
+                conn.execute("UPDATE gscc_session_bindings SET binding_level='AMBIGUOUS'")
+            expect_failure(lambda: owner.release_owner_f1_with_head_reconciliation(
+                db, RUNTIME, event(), OLD_HEAD,
+                sessions={"sessions": [session()]}, github_request_fn=counted,
+                github_actor="Wealthtechinnovations", now=NOW),
+                "OWNER_F1_CANONICAL_EXACT_GACR_BINDING_REQUIRED")
+            assert requests == []
+            with sqlite3.connect(db) as conn:
+                assert conn.execute("SELECT state FROM gscc_session_runtime").fetchone()[0] == "READY_FOR_F1"
+            assert route_calls == []
+    finally:
+        owner._route = old_route
+
+
+def test_second_head_drift_fails_closed_without_loop():
+    routes = []
+    old_route = owner._route
+    owner._route = lambda *args, **kwargs: routes.append(args[2])
+    try:
+        with tempfile.TemporaryDirectory() as td:
+            db = Path(td) / "moving.sqlite"
+            make_db(db)
+            n = []
+            def moving(url):
+                if url.endswith("/branches/main"):
+                    n.append(url)
+                    return {"name": "main", "commit": {"sha": HEAD if len(n) == 1 else ("c" * 40 if len(n) == 2 else "d" * 40)}}
+                return fake_github(url)
+            expect_failure(lambda: owner.release_owner_f1_with_head_reconciliation(
+                db, RUNTIME, event(), OLD_HEAD,
+                sessions={"sessions": [session()]}, github_request_fn=moving,
+                github_actor="Wealthtechinnovations", now=NOW),
+                "OWNER_F1_EXACT_LIVE_HEAD_REQUIRED")
+            assert len(n) == 3, "original HEAD read, one reobserve, final HEAD validation"
+            with sqlite3.connect(db) as conn:
+                assert conn.execute("SELECT state FROM gscc_session_runtime").fetchone()[0] == "READY_FOR_F1"
+            assert routes == []
+    finally:
+        owner._route = old_route
+
+
+def test_f1_failed_step_persists_evidence_then_marks_job_red():
+    path = Path(__file__).resolve().parents[1] / ".github/workflows/gscc-provider-first-touch-ingress.yml"
+    src = path.read_text(encoding="utf-8")
+    f1 = src.split("      - name: Auto-release verified GitHub owner F1", 1)[1]
+    f1 = f1.split("      - name: Publish durable canonical owner F1", 1)[0]
+    assert "continue-on-error: true" in f1
+    persist = src.split("      - name: Persist resumed per-arrival runtime state", 1)[1]
+    assert "always() && steps.q9.outcome == 'success'" in persist.split(
+        "      - name: Upload resumed runtime evidence", 1)[0]
+    assert "steps.owner_f1.outcome == 'failure'" in src
+    assert "OWNER_F1_NOT_RELEASED_THIS_ARRIVAL_ONLY" in src
+    assert "exit 1" in src.split("      - name: Preserve explicit failed outcome after checkpoint", 1)[1].split("  renew_q12:", 1)[0]
+
 if __name__ == "__main__":
     test_github_event_provenance()
     test_existing_runtime_release()
     test_binding_and_status_safety()
+    test_head_drift_one_safe_retry_and_other_arrival_unmodified()
+    test_invalid_identity_and_binding_not_retried_or_released()
+    test_second_head_drift_fails_closed_without_loop()
+    test_f1_failed_step_persists_evidence_then_marks_job_red()
     print("GSCC_OWNER_F1_AUTO_ADMISSION_REGRESSION_PASS")
