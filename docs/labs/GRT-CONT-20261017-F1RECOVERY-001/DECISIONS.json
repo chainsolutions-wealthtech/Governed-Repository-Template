@@ -1,7 +1,7 @@
 {
   "schema": "grt-lab-decisions/v1",
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
-  "revision": 1,
+  "revision": 2,
   "items": [
     {
       "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-001",
@@ -29,6 +29,37 @@
       "description": "D03 F1 provenance and D04 acceptance compatibility require further source review; no implementation or merge approved by memory registration",
       "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6226848855",
       "does_not_grant_execution_authority": true
+    },
+    {
+      "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-004",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-004",
+      "title": "LAB_ROOT_TYPED_IDS",
+      "decision_state": "OWNER_DIRECTED_AS_TRANSCRIBED",
+      "authority": "CHAT_USER_MESSAGE_TRANSCRIBED_IN_ISSUE",
+      "description": "Owner requires a LAB memory root distinct from continuity ID, and typed child IDs linked to historical records",
+      "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227027370",
+      "does_not_grant_execution_authority": true
+    },
+    {
+      "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-005",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-005",
+      "title": "WORKFLOW_RUN_EVIDENCE",
+      "decision_state": "OWNER_DIRECTED_AS_TRANSCRIBED",
+      "authority": "CHAT_USER_MESSAGE_TRANSCRIBED_IN_ISSUE",
+      "description": "Owner requires each workflow run to become structured, linked evidence: run ID, tested SHA, actual checks/results and failures",
+      "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227313169",
+      "does_not_grant_execution_authority": true
+    },
+    {
+      "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-006",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-006",
+      "title": "TASK_AND_CLAIM_DESIGN_NOT_BANNED",
+      "decision_state": "OWNER_DIRECTED_AS_TRANSCRIBED",
+      "authority": "CHAT_USER_MESSAGE_TRANSCRIBED_IN_ISSUE",
+      "description": "Owner corrected assistant: future task registry and hierarchical claim module may be designed as instructed; postponing execution is not a permanent prohibition",
+      "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227313169",
+      "does_not_grant_execution_authority": true
     }
-  ]
+  ],
+  "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001"
 }
