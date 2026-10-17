@@ -1,12 +1,12 @@
 {
   "schema": "grt-lab-local-memory-checkpoint/v1",
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
-  "revision": 1,
+  "revision": 2,
   "branch": "lab/f1-recovery-isolation-20261017",
   "issue": 331,
   "pull_request": 332,
-  "main_head_at_review": "b3d7f623b443be6b0fe987dd2c527a6a4d4a53d0",
-  "lab_head_before_memory_update": "6ba31d9930a477afcd7d2d4885e2eff7fe13af92",
+  "main_head_at_review": "b41a413ba0b24278515f9cc71a718db5b32840ab",
+  "lab_head_before_memory_update": "8bb722c2c6992e459a1672bd632b75643bd85d07",
   "known_previous_ci": {
     "head": "6ba31d9930a477afcd7d2d4885e2eff7fe13af92",
     "runs": [
@@ -18,11 +18,40 @@
     "result": "SUCCESS"
   },
   "phase": "OBSERVE_DOCUMENT_ANALYZE",
-  "next_action": "CONTINUE_SOURCE_BACKED_OBSERVATIONS_THEN_REVIEW_CANDIDATES",
+  "next_action": "LISTEN_TO_OWNER_NEXT_SKELETON_STEP_AND_RECORD_ORIGIN_EVIDENCE_ANALYSIS",
   "task_dispatch_status": "NOT_AUTHORIZED",
   "main_write_status": "NONE",
   "merge_status": "NOT_MERGED",
   "session_id": null,
   "agent_pool_membership": "NOT_ATTESTED",
-  "source_of_truth": "GITHUB_LAB_BRANCH_AND_ISSUE_331"
+  "source_of_truth": "GITHUB_LAB_BRANCH_AND_ISSUE_331",
+  "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
+  "memory_structure": [
+    "MEMORY.md",
+    "MEMORY_IDENTITY.json",
+    "OWNER_INSTRUCTIONS.json",
+    "WORKFLOW_EVIDENCE.json",
+    "OBSERVATIONS.json",
+    "CHRONOLOGY.json",
+    "DECISIONS.json",
+    "TASK_CANDIDATES.json",
+    "CHECKPOINT.json"
+  ],
+  "last_owner_instruction_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227313169",
+  "current_phase": "DOCUMENT_HIERARCHICAL_MEMORY_AND_LINK_WORKFLOW_EVIDENCE",
+  "task_execution_status": "DEFERRED_PER_OWNER",
+  "dispatch_status": "NO_TASK_DISTRIBUTED_IN_THIS_STEP",
+  "hierarchical_claim_module_status": "REQUESTED_FUTURE_SKELETON_COMPONENT_NOT_IMPLEMENTED",
+  "task_registry_status": "REQUESTED_FUTURE_SKELETON_COMPONENT_NOT_IMPLEMENTED",
+  "workflow_evidence_current": {
+    "tested_head": "8bb722c2c6992e459a1672bd632b75643bd85d07",
+    "run_ids": [
+      38983895397,
+      38983895437,
+      38983895401,
+      38983895386
+    ],
+    "results": "4_COMPLETED_SUCCESS_WITH_SKIPPED_JOBS_AS_DOCUMENTED",
+    "register_path": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/WORKFLOW_EVIDENCE.json"
+  }
 }
