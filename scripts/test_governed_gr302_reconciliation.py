@@ -44,8 +44,12 @@ def held():
             {"id": "PREP-002", "name": "CAPTURE_LAB_BASELINE", "status": "DONE",
              "required_evidence": {"baseline_ready": True}},
             {"id": "PREP-003", "name": "CREATE_LAB_BRANCH", "status": "PENDING",
+             "target": REPO, "mutation_class": "TARGET_BRANCH_CREATE",
+             "instructions": "Create only the authorized LAB after genuine scoped write grant.",
              "required_evidence": {"branch": BRANCH, "base_head_sha": OLD_HEAD, "created": True}},
             {"id": "PREP-004", "name": "VERIFY_LAB_ISOLATION", "status": "PENDING",
+             "target": REPO, "mutation_class": "READ_VERIFY",
+             "instructions": "Verify LAB and canonical isolation.",
              "required_evidence": {"lab_branch": BRANCH}},
         ],
     }
