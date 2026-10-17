@@ -1,7 +1,7 @@
 {
   "schema": "grt-lab-chronological-ledger/v1",
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
-  "revision": 1,
+  "revision": 2,
   "order": "AUTHORITATIVE_GITHUB_EVENT_SEQUENCE",
   "timestamp_rule": "Do not invent event timestamps; null when not verified",
   "append_only": true,
@@ -122,6 +122,49 @@
       "occurred_at_provenance": "EXACT_TIME_NOT_CAPTURED_IN_THIS_REGISTER",
       "actor_github_login": null,
       "agent_session_id": null
+    },
+    {
+      "seq": 10,
+      "event_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-010",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-010",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "event_type": "OWNER_LAB_MEMORY_ID_AND_HIERARCHICAL_SKELETON",
+      "summary": "Owner asked for main LAB memory ID/subIDs and historical traceability. Task register and hierarchical claims are design objectives; execution later.",
+      "source_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227027370",
+      "observed_commit": "8bb722c2c6992e459a1672bd632b75643bd85d07",
+      "occurred_at": null,
+      "occurred_at_provenance": "NOT_VERIFIED",
+      "actor_github_login": null,
+      "agent_session_id": null
+    },
+    {
+      "seq": 11,
+      "event_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-011",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-011",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "event_type": "OWNER_WORKFLOW_RESULTS_AS_LINKED_PROOFS",
+      "summary": "Owner asked to attach GitHub workflow name/run ID/exact tested SHA/checks/outcomes/failures to observations/tasks.",
+      "source_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227313169",
+      "observed_commit": "8bb722c2c6992e459a1672bd632b75643bd85d07",
+      "occurred_at": null,
+      "occurred_at_provenance": "NOT_VERIFIED",
+      "actor_github_login": null,
+      "agent_session_id": null
+    },
+    {
+      "seq": 12,
+      "event_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-012",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-012",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "event_type": "GITHUB_WORKFLOW_PROOF_REGISTER_CREATED",
+      "summary": "Created typed memory identity and four linked workflow run evidence records on LAB branch, preserving existing observation IDs.",
+      "source_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227313169",
+      "observed_commit": "8bb722c2c6992e459a1672bd632b75643bd85d07",
+      "occurred_at": null,
+      "occurred_at_provenance": "NOT_VERIFIED",
+      "actor_github_login": null,
+      "agent_session_id": null
     }
-  ]
+  ],
+  "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001"
 }
