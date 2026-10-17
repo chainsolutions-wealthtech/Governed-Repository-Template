@@ -56,9 +56,6 @@ def validate():
     assert state["task_dispatch_status"]=="NOT_AUTHORIZED"
     assert state["merge_status"]=="NOT_MERGED"
     assert state["session_id"] is None
-    assert state["task_dispatch_status"]=="NOT_AUTHORIZED"
-    assert state["merge_status"]=="NOT_MERGED"
-    assert state["session_id"] is None
     assert (BASE/"MEMORY.md").exists()
     return {"observations":len(ids),"events":len(events),"decisions":len(dec),"candidates":len(tasks["items"])}
 
