@@ -298,12 +298,27 @@ def handle_comment(event: dict) -> None:
     if not str(issue.get("title", "")).startswith("[Governed Request]"):
         return
     comment = event["comment"]
-    command = parse_command(comment.get("body") or "")
+    raw_command = comment.get("body") or ""
+    try:
+        command = parse_command(raw_command)
+    except json.JSONDecodeError as exc:
+        if issue.get("number") == 302 and raw_command.strip().startswith("/governed-reconcile-gr302"):
+            api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/302/comments", {
+                "body": (
+                    "### GR302 malformed reconciliation JSON refused\\n\\n"
+                    f"JSONDecodeError: {exc}\\n"
+                    "No state, branch, claim, lease or grant was advanced."
+                )
+            })
+            return
+        raise
     if command is None:
         return
 
     kind, payload = command
     if kind == "reconcile_gr302":
+        committed = False
+        updated = None
         try:
             if issue.get("number") != 302 or not isinstance(payload, dict) or set(payload) != {
                 "expected_revision", "expected_head", "reason"
@@ -352,6 +367,7 @@ def handle_comment(event: dict) -> None:
                     (current_head.get("commit") or {}).get("sha") != live_head):
                 raise ValueError("GR302_PRE_PERSIST_CONCURRENT_CHANGE")
             persist_state(302, immediately_before.get("body"), updated)
+            committed = True
             api("POST", f"{target}/issues/302/comments", {
                 "body": (
                     "### GR-000302 stale PREP-003 reconciled, not executed\n\n"
@@ -365,13 +381,25 @@ def handle_comment(event: dict) -> None:
             api("POST", f"{target}/issues/302/comments", {"body": render_response(updated)})
             emit_executor_outputs(updated, 302)
         except Exception as exc:
-            api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/302/comments", {
-                "body": (
-                    "### GR302 reconciliation refused\n\n"
-                    f"{type(exc).__name__}: {exc}\n"
-                    "No reconciled state, branch or grant is attested by this refusal."
+            if committed:
+                notice = (
+                    "### GR302 reconciliation COMMITTED; notification failed\\n\\n"
+                    f"Revision persisted: {updated['revision']}. "
+                    f"Post-commit notification error: {type(exc).__name__}: {exc}. "
+                    "Read the canonical issue marker before retrying; this is NOT a refused transition."
                 )
-            })
+            else:
+                notice = (
+                    "### GR302 reconciliation refused BEFORE commit\\n\\n"
+                    f"{type(exc).__name__}: {exc}. "
+                    "No reconciled state, branch or grant was advanced by this attempt."
+                )
+            try:
+                api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/302/comments",
+                    {"body": notice})
+            except Exception:
+                # A failed status notification must fail the Actions job.
+                raise
         return
 
     if kind == "reconcile_plan":
@@ -567,6 +595,14 @@ def handle_comment(event: dict) -> None:
                 raise ValueError("evidence payload must contain exactly action_id, result and evidence")
             if not isinstance(payload["evidence"], dict):
                 raise ValueError("evidence must be an object")
+            # No generic PASS path for a claimed LAB creation or LAB acceptance.
+            # GR302 mutation must be implemented with real, fresh, canonical
+            # claim/lease/SCOPED_GIT_WRITE and live branch/HEAD verification.
+            # Until that verifier exists, fail closed rather than "complete" a
+            # project from a GitHub issue comment supplied by any account.
+            if (issue.get("number") == 302 and state.get("request_id") == "GR-000302"
+                    and payload["action_id"] in {"PREP-003", "PREP-004"}):
+                raise ValueError("GR302_LIVE_WRITE_CLAIM_AND_LAB_VERIFIER_REQUIRED")
             if state.get("gr302_reconciliation_pending") and payload["action_id"] == "PREP-002R":
                 if issue.get("number") != 302 or payload["result"] != "PASS":
                     raise ValueError("GR302_REBASELINE_READ_PASS_REQUIRED")
