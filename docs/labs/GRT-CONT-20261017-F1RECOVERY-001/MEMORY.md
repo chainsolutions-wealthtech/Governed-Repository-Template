@@ -65,6 +65,16 @@ Le [rapport de reconstruction](./REFERENCE_POST_F1_CONTINUITY_20261007.md) docum
 
 **Nouvelles fiches** : `OBS-010` à `OBS-014`, avec sources, limites et statut distinct. Réutiliser ce modèle pour concevoir le pool LAB relié à GACR, **sans réattribuer les anciens IDs, sans créer de pool/claim et sans supposer une autorité d'exécution**.
 
+## Exigence propriétaire — F1 GitHub du propriétaire pour toute la Porte A
+
+**Instruction** : « F1 propriétaire GitHub pour Tous ce qui passe par Porte A ». Exigence `GRT-LABMEM-20261017-F1RECOVERY-001-REQ-002`, instruction `GRT-LABMEM-20261017-F1RECOVERY-001-INSTR-004`, événement `GRT-CONT-20261017-F1RECOVERY-001-EVT-016` ; [trace propriétaire retranscrite sur l'issue #331](https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6228011274).
+
+**Parcours cible** : `00_GSCC_ENTRY.md → GSCC → GSE → GACR → Q12 → contrôle F1 GitHub adossé à une autorisation propriétaire authentique → RELEASE → 00_START_HERE.md`, pour chaque arrivée Porte A.
+
+**Frontière de confiance** : identité d'agent, authentification GitHub du propriétaire, délégation éventuelle, session GACR, rôle, capacités et permissions natives GitHub **ne sont pas interchangeables**. Un agent non propriétaire peut faire l'objet d'une autorisation authentifiée du propriétaire, mais n'hérite d'aucun privilège de propriétaire. Toute absence de preuve exigée bloque l'admission ; ni F1 fictif, ni grant inventé, ni contournement.
+
+**État** : exigence d'architecture du propriétaire enregistrée, **pas une fonctionnalité implémentée**. Aujourd'hui le code Porte A distingue toujours F1 d'exposition standard et F1 propriétaire; le contrat d'approbation/délégation des agents non propriétaires, les tests de rejet et les impacts de compatibilité restent à définir avant une modification de code. Aucune modification de `main`, GACR Dispatch, droits, claims ou admissions.
+
 ## Sources canoniques du LAB
 
 | Registre | Rôle | Règle |

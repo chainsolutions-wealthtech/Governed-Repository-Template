@@ -1,7 +1,7 @@
 {
   "schema": "grt-lab-chronological-ledger/v1",
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
-  "revision": 4,
+  "revision": 5,
   "order": "AUTHORITATIVE_GITHUB_EVENT_SEQUENCE",
   "timestamp_rule": "Do not invent event timestamps; null when not verified",
   "append_only": true,
@@ -205,6 +205,21 @@
       "occurred_at": null,
       "occurred_at_provenance": "GITHUB_COMMIT_ORDER_ONLY",
       "agent_session_id": null
+    },
+    {
+      "seq": 16,
+      "event_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-016",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-016",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "event_type": "OWNER_DIRECTS_GITHUB_OWNER_F1_FOR_ALL_DOOR_A_ARRIVALS",
+      "summary": "Owner requested owner-GitHub F1 for all Door A arrivals; design requirement recorded. Distinguish authenticated owner approval from non-owner agent identity and prevent privilege inference. No live behavior or code changed.",
+      "source_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6228011274",
+      "observed_commit": "8a9dd5d5ff098131babbce06948c3ea8879efa18",
+      "occurred_at": null,
+      "occurred_at_provenance": "UNVERIFIED",
+      "agent_session_id": null,
+      "related_instruction_id": "GRT-LABMEM-20261017-F1RECOVERY-001-INSTR-004",
+      "related_decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-008"
     }
   ],
   "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001"

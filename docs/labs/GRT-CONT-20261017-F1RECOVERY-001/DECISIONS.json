@@ -1,7 +1,7 @@
 {
   "schema": "grt-lab-decisions/v1",
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
-  "revision": 3,
+  "revision": 4,
   "items": [
     {
       "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-001",
@@ -70,6 +70,17 @@
       "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227560349",
       "related_requirement_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REQ-001",
       "related_relation_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REL-001",
+      "does_not_grant_execution_authority": true
+    },
+    {
+      "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-008",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-008",
+      "title": "Unify Door A F1 admission control around authenticated GitHub owner evidence",
+      "decision_state": "OWNER_DIRECTED_PENDING_IMPLEMENTATION_DESIGN",
+      "authority": "OWNER_CHAT_INSTRUCTION_TRANSCRIBED_TO_GITHUB_ISSUE",
+      "description": "Replace the separate Door A F1 admission variants with a single owner-GitHub-backed verification requirement for each arrival, without transferring owner privileges to non-owner agents. Retain Q1-Q12, exact GACR binding, release record, and native permissions. Non-owner delegate/approval evidence and compatibility gates must be defined before production changes.",
+      "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6228011274",
+      "related_requirement_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REQ-002",
       "does_not_grant_execution_authority": true
     }
   ],

@@ -1,7 +1,7 @@
 {
   "schema": "grt-lab-local-memory-checkpoint/v1",
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
-  "revision": 4,
+  "revision": 5,
   "branch": "lab/f1-recovery-isolation-20261017",
   "issue": 331,
   "pull_request": 332,
@@ -18,7 +18,7 @@
     "result": "SUCCESS"
   },
   "phase": "REFERENCE_POST_F1_MODEL_DOCUMENTED",
-  "next_action": "LISTEN_OWNER_NEXT_STEP_AND_USE_SOURCE_BACKED_HISTORICAL_MODEL_WITHOUT_REBINDING_AGENTS",
+  "next_action": "DESIGN_AND_VALIDATE_OWNER_GITHUB_F1_FOR_ALL_DOOR_A_WITH_NON_OWNER_PERMISSIONS_SEPARATION_BEFORE_ANY_CODE_CHANGE",
   "task_dispatch_status": "NOT_AUTHORIZED",
   "main_write_status": "NONE",
   "merge_status": "NOT_MERGED",
@@ -37,7 +37,7 @@
     "TASK_CANDIDATES.json",
     "CHECKPOINT.json"
   ],
-  "last_owner_instruction_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227560349",
+  "last_owner_instruction_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6228011274",
   "current_phase": "DOCUMENT_HIERARCHICAL_MEMORY_AND_LINK_WORKFLOW_EVIDENCE",
   "task_execution_status": "DEFERRED_PER_OWNER",
   "dispatch_status": "NO_TASK_DISTRIBUTED_IN_THIS_STEP",
@@ -68,5 +68,7 @@
     "GRT-CONT-20261017-F1RECOVERY-001-OBS-013",
     "GRT-CONT-20261017-F1RECOVERY-001-OBS-014"
   ],
-  "current_comparative_pilot_binding": "REFERENCE_ONLY_NO_POOL_MEMBER_ATTACH"
+  "current_comparative_pilot_binding": "REFERENCE_ONLY_NO_POOL_MEMBER_ATTACH",
+  "door_a_f1_owner_universal_requirement_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REQ-002",
+  "door_a_f1_owner_universal_status": "OWNER_DIRECTED_DESIGN_NOT_IMPLEMENTED"
 }

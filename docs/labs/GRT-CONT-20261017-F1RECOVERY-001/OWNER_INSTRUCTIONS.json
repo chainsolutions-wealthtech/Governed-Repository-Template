@@ -1,6 +1,6 @@
 {
   "schema": "grt-lab-owner-instructions/v1",
-  "revision": 2,
+  "revision": 3,
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
   "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
   "source_policy": "OWNER_CHAT_TEXT_TRANSCRIBED_BY_ASSISTANT_TO_GITHUB_ISSUE; does not claim a signed GitHub owner comment",
@@ -30,6 +30,17 @@
       "interpretation_limit": "Identity type, concrete pool ID and concrete GACR reference will be determined by future owner-led steps and verification; no assignment or operational claim at this stage.",
       "decision_class": "OWNER_REQUIREMENT",
       "status": "RECORDED_PENDING_FUTURE_SKELETON_STEPS",
+      "new_execution_authority_granted": false
+    },
+    {
+      "instruction_id": "GRT-LABMEM-20261017-F1RECOVERY-001-INSTR-004",
+      "requirement_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REQ-002",
+      "source_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6228011274",
+      "source_kind": "OWNER_CHAT_REQUEST_TRANSCRIBED_BY_ASSISTANT",
+      "summary": "All Door A arrivals should use the owner-GitHub-backed F1 control after existing GSCC/GSE/GACR/Q12 and before RELEASE/00_START_HERE.",
+      "interpretation_limit": "An owner-authenticated approval must be genuine, bound to the specific arrival/session/HEAD; non-owner agents retain their own identity and actual GitHub permissions. The approval/delegation contract for non-owner actors requires design and tests before implementation.",
+      "decision_class": "OWNER_ARCHITECTURE_REQUIREMENT",
+      "status": "RECORD_ONLY_NOT_IMPLEMENTED",
       "new_execution_authority_granted": false
     }
   ],
