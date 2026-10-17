@@ -49,7 +49,13 @@ def validate():
         assert task["execution_authorized"] is False
         assert all(x in ids for x in task["observation_refs"])
     state=read("CHECKPOINT")
-    assert state["phase"]=="OBSERVE_DOCUMENT_ANALYZE"
+    assert state["phase"] in {
+        "OBSERVE_DOCUMENT_ANALYZE",
+        "REFERENCE_POST_F1_MODEL_DOCUMENTED",
+    }, "unrecognized LAB documentation phase"
+    assert state["task_dispatch_status"]=="NOT_AUTHORIZED"
+    assert state["merge_status"]=="NOT_MERGED"
+    assert state["session_id"] is None
     assert state["task_dispatch_status"]=="NOT_AUTHORIZED"
     assert state["merge_status"]=="NOT_MERGED"
     assert state["session_id"] is None
