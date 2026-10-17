@@ -25,7 +25,7 @@ def reconcile_stale_lab_plan(
     event_author: str, author_association: str, branch_absent: bool,
     observation_evidence: str, reason: str,
 ) -> dict[str, Any]:
-    """Reopen only GR302/rev12/PREP-003 for fresh owner plan approval.
+    """Reopen only the same GR302/PREP-003 for fresh owner plan approval.
 
     Values describing GitHub observations are not credentials; the bridge MUST
     obtain them from authenticated webhook and fresh GitHub REST API calls.
@@ -34,7 +34,7 @@ def reconcile_stale_lab_plan(
     if (owner_actor != OWNER or event_author != OWNER or
             author_association not in ASSOCIATIONS):
         raise ValueError("GR302_OWNER_AUTHENTICATION_REQUIRED")
-    if (type(expected_revision) is not int or expected_revision != 12 or
+    if (type(expected_revision) is not int or expected_revision < 12 or
             s.get("revision") != expected_revision):
         raise ValueError("GR302_EXACT_REVISION_REQUIRED")
     if (not isinstance(expected_head, str) or not SHA40.fullmatch(expected_head)
@@ -52,28 +52,57 @@ def reconcile_stale_lab_plan(
         raise ValueError("GR302_REASON_REQUIRED")
 
     a = s.get("answers") or {}
-    if (s.get("request_id") != REQUEST or s.get("status") != "EXECUTING_PREPARATION"
-            or s.get("phase") != "PREP-003"
-            or (s.get("next_request") or {}).get("kind") != "ACTION_REQUEST"
-            or (s.get("next_request") or {}).get("action_id") != "PREP-003"
+    history = s.get("preparation_reconciliation_history") or []
+    first = not history
+    expected_phase = ("EXECUTING_PREPARATION", "PREP-003") if first else None
+    if (s.get("request_id") != REQUEST
+            or (first and (s.get("status"), s.get("phase")) != expected_phase)
             or a.get("target_repository") != REPO or a.get("entry_action") != "LAB_EVOLUTION"
             or a.get("lab_branch_name") != BRANCH
-            or a.get("lab_authority") is not True or a.get("plan_approved") is not True
-            or s.get("handoff") is not None
-            or s.get("preparation_reconciliation_history")):
+            or a.get("lab_authority") is not True
+            or (first and a.get("plan_approved") is not True)
+            or s.get("handoff") is not None):
+        raise ValueError("GR302_EXACT_PENDING_PREP003_REQUIRED")
+    if not first:
+        pending = s.get("gr302_reconciliation_pending") or {}
+        if (not pending.get("no_mutation_authority") or
+                not isinstance(history, list) or not history or
+                history[-1].get("id") != pending.get("review_id")):
+            raise ValueError("GR302_RECONCILIATION_HISTORY_REQUIRED")
+        expected_waiting = (s.get("status") == "WAITING_FOR_PLAN_APPROVAL"
+                            and s.get("phase") == "PLAN_APPROVAL"
+                            and (s.get("next_request") or {}).get("field") == "plan_approved"
+                            and "plan_approved" not in a)
+        expected_running = (s.get("status") == "EXECUTING_PREPARATION"
+                            and s.get("phase") in {"PREP-002R", "PREP-003"}
+                            and (s.get("next_request") or {}).get("action_id") == s.get("phase")
+                            and a.get("plan_approved") is True)
+        if not (expected_waiting or expected_running):
+            raise ValueError("GR302_SUPERSESSION_UNSAFE_PHASE")
+    if (not first and (a.get("target_observation") or {}).get("head_sha") == observed_head):
+        raise ValueError("GR302_SUPERSESSION_HEAD_UNCHANGED")
+    if ((s.get("next_request") or {}).get("kind") not in (
+            {"ACTION_REQUEST"} if first else {"ACTION_REQUEST", "PLAN_APPROVAL"}
+        )):
+        raise ValueError("GR302_INVALID_CURRENT_REQUEST")
+    if first and (s.get("next_request") or {}).get("action_id") != "PREP-003":
         raise ValueError("GR302_EXACT_PENDING_PREP003_REQUIRED")
     p = s.get("execution_plan")
-    if (not isinstance(p, list) or len(p) != 4
-            or [(x.get("id"), x.get("status")) for x in p] != [
-                ("PREP-001", "DONE"), ("PREP-002", "DONE"),
-                ("PREP-003", "PENDING"), ("PREP-004", "PENDING")]
-            or p[2].get("name") != "CREATE_LAB_BRANCH"
-            or p[2].get("required_evidence", {}).get("base_head_sha") != OLD_HEAD
-            or p[2].get("required_evidence", {}).get("branch") != BRANCH):
+    if (not isinstance(p, list) or len(p) != (4 if first else 5)
+            or [x.get("id") for x in p] != (["PREP-001", "PREP-002", "PREP-003", "PREP-004"]
+                                            if first else ["PREP-001", "PREP-002", "PREP-002R", "PREP-003", "PREP-004"])
+            or [x.get("status") for x in p[:2]] != ["DONE", "DONE"]
+            or (not first and p[2].get("status") not in {"DONE", "PENDING"})
+            or p[-2].get("status") != "PENDING" or p[-1].get("status") != "PENDING"
+            or p[-2].get("name") != "CREATE_LAB_BRANCH"
+            or p[-2].get("required_evidence", {}).get("base_head_sha") != (
+                OLD_HEAD if first else history[-1].get("observed_new_head"))
+            or p[-2].get("required_evidence", {}).get("branch") != BRANCH):
         raise ValueError("GR302_ORIGINAL_PLAN_MISMATCH")
     proofs = s.get("evidence") or []
     if (not isinstance(proofs, list) or
-            [x.get("action_id") for x in proofs] != ["PREP-001", "PREP-002"] or
+            [x.get("action_id") for x in proofs[:2]] != ["PREP-001", "PREP-002"] or
+            any(x.get("action_id") != "PREP-002R" for x in proofs[2:]) or
             any(x.get("result") != "PASS" for x in proofs)):
         raise ValueError("GR302_HISTORICAL_EVIDENCE_REQUIRED")
 
@@ -95,7 +124,10 @@ def reconcile_stale_lab_plan(
         },
     }
     plan = result["execution_plan"]
-    plan.insert(2, check)
+    if first:
+        plan.insert(2, check)
+    else:
+        plan[2] = check
     plan[3]["required_evidence"]["base_head_sha"] = observed_head
     result["answers"]["target_observation"] = {
         "exists": True, "default_branch": "main", "head_sha": observed_head,
