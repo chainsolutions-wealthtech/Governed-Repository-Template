@@ -24,6 +24,9 @@ def held():
         "handoff": None, "hold_reason": None,
         "answers": {
             "target_repository": REPO, "entry_action": "LAB_EVOLUTION",
+            "connection_intent": "CODE_CHANGE",
+            "objective": "Construire le LAB CHAINFLOW connecte a GSCC/GSE/GACR/F1 sans regression.",
+            "pr_required": True,
             "lab_branch_name": BRANCH, "lab_authority": True, "plan_approved": True,
             "target_observation": {"exists": True, "default_branch": "main",
                                    "head_sha": OLD_HEAD, "governance_detected": True},
