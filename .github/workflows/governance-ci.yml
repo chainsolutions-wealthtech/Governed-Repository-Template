@@ -59,6 +59,11 @@ jobs:
           python3 -m py_compile scripts/repository_entry_router.py scripts/test_direct_owner_entry.py scripts/gscc_entry_router.py
           python3 scripts/test_direct_owner_entry.py
 
+      - name: Test minimum LAB entry and fail-closed GitHub owner bootstrap
+        run: |
+          python3 -m py_compile scripts/lab_entry_bootstrap.py scripts/test_lab_entry_bootstrap.py
+          python3 scripts/test_lab_entry_bootstrap.py
+
       - name: Test persisted GSCC entry pipeline to Q1
         run: python3 scripts/test_gscc_persisted_entry_pipeline.py
 
