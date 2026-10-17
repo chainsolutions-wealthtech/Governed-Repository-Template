@@ -506,6 +506,25 @@ def build_reconstruction(
             "provider_context_count":sum(len(s.get("provider_contexts") or []) for s in projected_sessions),
         },
         "sessions":projected_sessions,
+        # Historical new/returning agents see available paths without the
+        # reconstruction becoming admission, rights, claim or execution.
+        "post_release_entry": {
+            "f1_release_beacon_seen": any(
+                item.get("event_type") == "F1_RELEASED"
+                and item.get("evidence_ref") for item in beacons
+            ),
+            "admission_proof_revalidation_required": True,
+            "choices_after_verified_release": [
+                "OBSERVE", "REVIEW", "SUPERVISE", "INTAKE", "PLAN",
+                "LAB_EVOLUTION", "CONTINUE_GOVERNED_WORK",
+                "OPT_IN_GACR_DISPATCH",
+            ],
+            "lab_or_branch_setup_requires_dispatch_claim": False,
+            "lab_or_branch_setup_requires_dispatch_offer": False,
+            "native_github_permissions": "CHECK_LIVE_AT_EACH_OPERATION",
+            "explicit_project_authority_required": True,
+            "grants_mutation_authority": False,
+        },
         "continuities":continuities,
         "communication_bus":{
             "continuity_ids":sorted(item.get("continuity_id") for item in continuities if item.get("continuity_id")),
