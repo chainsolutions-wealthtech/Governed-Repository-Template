@@ -1,7 +1,7 @@
 {
   "schema": "grt-lab-canonical-observations/v1",
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
-  "revision": 1,
+  "revision": 2,
   "scope": "LAB_ONLY_NO_GLOBAL_AUTHORITY",
   "source_of_truth": "LAB_GIT_HISTORY_PLUS_ISSUE_331",
   "append_only_protocol": "Never erase or repurpose IDs; supersede with a new observation and supersedes_id",
@@ -176,6 +176,107 @@
       "session_continuity_id": null,
       "provider_conversation_id": null,
       "analysis_state": "OPEN_FOR_REVIEW",
+      "task_candidate_ids": []
+    },
+    {
+      "id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-010",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "sequence": 10,
+      "subject": "HISTORICAL_GACR_COORDINATION_ANCHOR",
+      "status": "CONFIRMED_CODE",
+      "domain": "REFERENCE_POST_F1",
+      "statement": "GRT-CONT-20261007-2117-GMC01-DSP258-01 is a GACR projection-only continuity with coordination issue #259, three logical agents ATLAS/FORGE/SENTINEL and four historical sessions; no claim/mutation/task authority is granted by the projection.",
+      "limitation": "Logical-agent membership as projected does not prove current active participant, session eligibility or owner claim.",
+      "source_refs": [
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/b41a413ba0b24278515f9cc71a718db5b32840ab/.governance/control-plane-state/gacr-continuities.json",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/259",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/c2e3181c1878d97684a73d269e9665f178aa4776/docs/labs/GRT-CONT-20261017-F1RECOVERY-001/REFERENCE_POST_F1_CONTINUITY_20261007.md"
+      ],
+      "observed_by": "GitHub connected ChatGPT read-only audit",
+      "provider_conversation_id": null,
+      "session_continuity_id": null,
+      "analysis_state": "COMPARATIVE_REFERENCE_VERIFIED_WITH_LIMITS",
+      "task_candidate_ids": []
+    },
+    {
+      "id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-011",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "sequence": 11,
+      "subject": "F1_RELEASE_VS_GACR_SCOPE_MEMBERSHIP",
+      "status": "CONFIRMED_CODE",
+      "domain": "REFERENCE_POST_F1",
+      "statement": "A released F1 admission/session is distinct from a continuity-scope participant; declaring scope verifies canonical GACR session, exact HEAD, coordination revision and collision checks. The historical continuity projection currently has participants[] empty.",
+      "limitation": "No test was performed to make a new participant live in the historical continuity; no causal claim that F1 must always automatically populate a participant record.",
+      "source_refs": [
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/260#issuecomment-6045929500",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/260#issuecomment-6045993132",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/b41a413ba0b24278515f9cc71a718db5b32840ab/scripts/gacr_continuity_coordination.py",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/c2e3181c1878d97684a73d269e9665f178aa4776/docs/labs/GRT-CONT-20261017-F1RECOVERY-001/REFERENCE_POST_F1_CONTINUITY_20261007.md"
+      ],
+      "observed_by": "GitHub connected ChatGPT read-only audit",
+      "provider_conversation_id": null,
+      "session_continuity_id": null,
+      "analysis_state": "COMPARATIVE_REFERENCE_VERIFIED_WITH_LIMITS",
+      "task_candidate_ids": []
+    },
+    {
+      "id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-012",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "sequence": 12,
+      "subject": "GACR_CONTINUITY_PARTICIPANT_AND_BUS_GATES",
+      "status": "CONFIRMED_CODE",
+      "domain": "REFERENCE_POST_F1",
+      "statement": "The existing coordinator derives participant IDs from continuity ID, session ID and scope ID, validates collision and canonical session; the bus requires active participants and does not independently give claim or mutation authority.",
+      "limitation": "A valid scoped participant record is not itself a task authorization or active claim, and the registered historical continuity lacks active scoped participants.",
+      "source_refs": [
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/b41a413ba0b24278515f9cc71a718db5b32840ab/scripts/gacr_continuity_coordination.py",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/b41a413ba0b24278515f9cc71a718db5b32840ab/scripts/gacr_continuity_bus.py",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/c2e3181c1878d97684a73d269e9665f178aa4776/docs/labs/GRT-CONT-20261017-F1RECOVERY-001/REFERENCE_POST_F1_CONTINUITY_20261007.md"
+      ],
+      "observed_by": "GitHub connected ChatGPT read-only audit",
+      "provider_conversation_id": null,
+      "session_continuity_id": null,
+      "analysis_state": "COMPARATIVE_REFERENCE_VERIFIED_WITH_LIMITS",
+      "task_candidate_ids": []
+    },
+    {
+      "id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-013",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "sequence": 13,
+      "subject": "HISTORIC_ATLAS_ALIAS_CONTINUITY_FORENSIC_MISMATCH",
+      "status": "RISK_TO_VERIFY",
+      "domain": "REFERENCE_POST_F1",
+      "statement": "Historical October 9 diagnostic found ATLAS forensic checkpoint RELEASED_TO_NORMAL_GOVERNANCE did not match the projected continuity_id required by resolve_alias_attach_proof; current code continues to require continuity-correlated forensic evidence.",
+      "limitation": "Current forensic record and live alias re-entry for ATLAS not re-verified in this study; this is a historical static compatibility finding, not a fresh live failure or remediation.",
+      "source_refs": [
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/257#issuecomment-6088626054",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/b41a413ba0b24278515f9cc71a718db5b32840ab/scripts/gscc_session_runtime.py",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/c2e3181c1878d97684a73d269e9665f178aa4776/docs/labs/GRT-CONT-20261017-F1RECOVERY-001/REFERENCE_POST_F1_CONTINUITY_20261007.md"
+      ],
+      "observed_by": "GitHub connected ChatGPT read-only audit",
+      "provider_conversation_id": null,
+      "session_continuity_id": null,
+      "analysis_state": "COMPARATIVE_REFERENCE_VERIFIED_WITH_LIMITS",
+      "task_candidate_ids": []
+    },
+    {
+      "id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-014",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "sequence": 14,
+      "subject": "POST_F1_COORDINATION_IMPLEMENTATION_MERGE_HISTORIC",
+      "status": "CONFIRMED_CODE",
+      "domain": "REFERENCE_POST_F1",
+      "statement": "Historical PR #263 introduced an additive GACR coordination projection and was actually merged on 2026-10-09 with merge commit 47de383870a22e64b52b0e172451557acddae7c7.",
+      "limitation": "This is a merge of historical PR #263; the current LAB PR #332 remains draft and unmerged. No live end-to-end multi-agent completion is inferred.",
+      "source_refs": [
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/pull/263",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/262",
+        "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/c2e3181c1878d97684a73d269e9665f178aa4776/docs/labs/GRT-CONT-20261017-F1RECOVERY-001/REFERENCE_POST_F1_CONTINUITY_20261007.md"
+      ],
+      "observed_by": "GitHub connected ChatGPT read-only audit",
+      "provider_conversation_id": null,
+      "session_continuity_id": null,
+      "analysis_state": "COMPARATIVE_REFERENCE_VERIFIED_WITH_LIMITS",
       "task_candidate_ids": []
     }
   ]
