@@ -171,6 +171,44 @@ class GR302TransitionTests(unittest.TestCase):
                          or j["grants_write"] or j["grants_merge_authority"])
 
 
+
+    def test_27_can_rebaseline_pending_owner_approval_again(self):
+        prior = reconcile()
+        refreshed = reconcile(prior, expected_revision=13, expected_head="a"*40,
+                              observed_head="a"*40)
+        self.assertEqual(refreshed["revision"], 14)
+        self.assertEqual(len(refreshed["preparation_reconciliation_history"]), 2)
+        self.assertEqual(refreshed["preparation_reconciliation_history"][1]["old_plan"],
+                         prior["execution_plan"])
+        self.assertEqual(refreshed["execution_plan"][2]["required_evidence"]["canonical_head_sha"],
+                         "a"*40)
+        self.assertEqual(refreshed["evidence"], prior["evidence"])
+
+    def test_28_can_rebaseline_approved_before_read_receipt(self):
+        approved = apply_answer(reconcile(), "plan_approved", True)
+        refreshed = reconcile(approved, expected_revision=14, expected_head="a"*40,
+                              observed_head="a"*40)
+        self.assertEqual(refreshed["status"], "WAITING_FOR_PLAN_APPROVAL")
+        self.assertNotIn("plan_approved", refreshed["answers"])
+        self.assertEqual(len(refreshed["preparation_reconciliation_history"]), 2)
+
+    def test_29_can_rebaseline_after_read_receipt_before_lab(self):
+        approved = apply_answer(reconcile(), "plan_approved", True)
+        old_read = apply_evidence(approved, "PREP-002R", "PASS",
+                                  approved["execution_plan"][2]["required_evidence"])
+        self.assertEqual(old_read["phase"], "PREP-003")
+        next_state = reconcile(old_read, expected_revision=15, expected_head="a"*40,
+                               observed_head="a"*40)
+        self.assertEqual(len(next_state["evidence"]), 3)
+        self.assertEqual(next_state["execution_plan"][2]["status"], "PENDING")
+        self.assertEqual(next_state["execution_plan"][3]["status"], "PENDING")
+        self.assertEqual(next_state["revision"], 16)
+
+    def test_30_no_rebaseline_without_head_change(self):
+        state = reconcile()
+        with self.assertRaisesRegex(ValueError, "HEAD_UNCHANGED"):
+            reconcile(state, expected_revision=13)
+    
 class GR302BridgeTests(unittest.TestCase):
     def setUp(self):
         self.old = held()
@@ -241,6 +279,58 @@ class GR302BridgeTests(unittest.TestCase):
         self.call()
         self.assertEqual(len([x for x in self.calls if x[0] == "PATCH"]), 0)
 
+
+
+    def test_31_prep003_untrusted_pass_must_not_patch(self):
+        self.event["comment"]["body"] = "/governed-evidence " + json.dumps({
+            "action_id": "PREP-003", "result": "PASS",
+            "evidence": {"branch": BRANCH, "created": True, "base_head_sha": OLD_HEAD}
+        })
+        self.call()
+        self.assertFalse(any(row[0] == "PATCH" for row in self.calls))
+        self.assertIn("GR302_LIVE_WRITE_CLAIM_AND_LAB_VERIFIER_REQUIRED",
+                      str(self.calls[-1][2]))
+
+    def test_32_prep004_fake_pass_must_not_patch(self):
+        self.event["comment"]["body"] = "/governed-evidence " + json.dumps({
+            "action_id": "PREP-004", "result": "PASS",
+            "evidence": {"lab_branch": BRANCH, "lab_ready": True}
+        })
+        self.call()
+        self.assertFalse(any(row[0] == "PATCH" for row in self.calls))
+        self.assertIn("GR302_LIVE_WRITE_CLAIM_AND_LAB_VERIFIER_REQUIRED",
+                      str(self.calls[-1][2]))
+
+    def test_33_malformed_json_returns_refusal_without_patch(self):
+        self.event["comment"]["body"] = '/governed-reconcile-gr302 {"bad":'
+        self.call()
+        self.assertFalse(any(row[0] == "PATCH" for row in self.calls))
+        self.assertIn("malformed reconciliation JSON refused",
+                      str(self.calls[-1][2]))
+
+    def test_34_notification_after_commit_cannot_be_called_refusal(self):
+        fail_once = {"remaining": 1}
+        original_api = self.fake_api
+        def flaky(method, path, payload=None):
+            if (method == "POST" and path.endswith("/issues/302/comments")
+                    and fail_once["remaining"]):
+                fail_once["remaining"] -= 1
+                raise RuntimeError("TEMPORARY_COMMENT_FAILURE")
+            return original_api(method, path, payload)
+        with patch.object(bridge, "api", side_effect=flaky):
+            bridge.handle_comment(self.event)
+        self.assertEqual(bridge.extract_state(self.body)["revision"], 13)
+        self.assertIn("COMMITTED; notification failed",
+                      str(self.calls[-1][2]))
+        self.assertNotIn("reconciliation refused", str(self.calls[-1][2]))
+
+    def test_35_replay_after_first_commit_does_not_revert(self):
+        self.call()
+        before = self.body
+        self.calls.clear()
+        self.call()
+        self.assertEqual(self.body, before)
+        self.assertFalse(any(row[0] == "PATCH" for row in self.calls))
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
