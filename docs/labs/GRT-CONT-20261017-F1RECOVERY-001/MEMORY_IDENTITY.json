@@ -1,6 +1,6 @@
 {
   "schema": "grt-lab-memory-identity/v1",
-  "revision": 1,
+  "revision": 2,
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
   "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
   "scope": "LAB_ONLY",
@@ -169,5 +169,72 @@
   "current_activity": "OBSERVE_RECORD_ANALYZE_LISTEN",
   "no_active_claims_created_by_this_record": true,
   "no_task_dispatched_by_this_record": true,
-  "not_global_main_authority": true
+  "not_global_main_authority": true,
+  "register_paths": {
+    "memory": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/MEMORY.md",
+    "identity": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/MEMORY_IDENTITY.json",
+    "owner_instructions": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/OWNER_INSTRUCTIONS.json",
+    "workflow_evidence": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/WORKFLOW_EVIDENCE.json",
+    "observations": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/OBSERVATIONS.json",
+    "chronology": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/CHRONOLOGY.json",
+    "decisions": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/DECISIONS.json",
+    "task_candidates": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/TASK_CANDIDATES.json",
+    "checkpoint": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/CHECKPOINT.json"
+  },
+  "typed_new_children": [
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-INSTR-001",
+      "registry": "OWNER_INSTRUCTIONS.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-INSTR-002",
+      "registry": "OWNER_INSTRUCTIONS.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVID-001",
+      "registry": "WORKFLOW_EVIDENCE.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVID-002",
+      "registry": "WORKFLOW_EVIDENCE.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVID-003",
+      "registry": "WORKFLOW_EVIDENCE.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVID-004",
+      "registry": "WORKFLOW_EVIDENCE.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-004",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-004",
+      "registry": "DECISIONS.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-005",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-005",
+      "registry": "DECISIONS.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-006",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-006",
+      "registry": "DECISIONS.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-010",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-010",
+      "registry": "CHRONOLOGY.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-011",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-011",
+      "registry": "CHRONOLOGY.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-012",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-012",
+      "registry": "CHRONOLOGY.json"
+    }
+  ]
 }
