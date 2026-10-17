@@ -56,6 +56,15 @@ Le propriétaire impose que **tout pool minimal dédié à ce LAB**, lorsqu'il e
 - **État vérifié :** ID du pool LAB = non établi ; référence GACR précise = non établie. Ne pas utiliser à tort un pool `AGENT_CAPACITY_POOL` projeté ou une continuité historique étrangère.
 - Ceci est une **condition de conception du squelette**, pas un claim ni une affectation créée aujourd'hui. Les étapes de réalisation seront indiquées ultérieurement par le propriétaire.
 
+## Étude comparative du pilote GACR après F1 (7 octobre 2026)
+
+**Référence externe analysée** : `GRT-CONT-20261007-2117-GMC01-DSP258-01`, sans rattachement automatique de ses agents à notre LAB.
+Le [rapport de reconstruction](./REFERENCE_POST_F1_CONTINUITY_20261007.md) documente : arrivée GSCC #257 → intake #258 → coordination #259 → successeur #260 / superviseur #264 → LAB #262 et PR #263 **fusionnée** → mémoires #266 ; les IDs d'ATLAS/FORGE/SENTINEL et leurs sessions, les scopes GACR, les preuves F1, les trois types de pools, les claims et les frontières d'autorité.
+
+**Conclusions** : F1 release ne crée pas automatiquement une participation de scope ou un claim ; 3 agents logiques historiques dans la projection ne signifient pas 3 membres actifs. Actuellement l'entrée historique contient `participants=[]` et `events=[]`. `POOL FONDATEUR` est un libellé historique, pas un `pool_id` autonome. Un ancien diagnostic ATLAS sur la preuve forensic de continuité reste **à requalifier** sur l'état live actuel.
+
+**Nouvelles fiches** : `OBS-010` à `OBS-014`, avec sources, limites et statut distinct. Réutiliser ce modèle pour concevoir le pool LAB relié à GACR, **sans réattribuer les anciens IDs, sans créer de pool/claim et sans supposer une autorité d'exécution**.
+
 ## Sources canoniques du LAB
 
 | Registre | Rôle | Règle |

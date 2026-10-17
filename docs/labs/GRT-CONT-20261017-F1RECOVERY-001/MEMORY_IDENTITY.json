@@ -1,6 +1,6 @@
 {
   "schema": "grt-lab-memory-identity/v1",
-  "revision": 3,
+  "revision": 4,
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
   "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
   "scope": "LAB_ONLY",
@@ -181,7 +181,8 @@
     "decisions": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/DECISIONS.json",
     "task_candidates": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/TASK_CANDIDATES.json",
     "checkpoint": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/CHECKPOINT.json",
-    "pool_gacr_relation": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/POOL_GACR_LINK_REQUIREMENT.json"
+    "pool_gacr_relation": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/POOL_GACR_LINK_REQUIREMENT.json",
+    "historical_post_f1_reference": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/REFERENCE_POST_F1_CONTINUITY_20261007.md"
   },
   "typed_new_children": [
     {
@@ -258,6 +259,46 @@
     {
       "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-013",
       "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-013",
+      "registry": "CHRONOLOGY.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-010",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-010",
+      "registry": "OBSERVATIONS.json",
+      "source_scope": "HISTORICAL_COMPARATIVE_REFERENCE"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-011",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-011",
+      "registry": "OBSERVATIONS.json",
+      "source_scope": "HISTORICAL_COMPARATIVE_REFERENCE"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-012",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-012",
+      "registry": "OBSERVATIONS.json",
+      "source_scope": "HISTORICAL_COMPARATIVE_REFERENCE"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-013",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-013",
+      "registry": "OBSERVATIONS.json",
+      "source_scope": "HISTORICAL_COMPARATIVE_REFERENCE"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-014",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-014",
+      "registry": "OBSERVATIONS.json",
+      "source_scope": "HISTORICAL_COMPARATIVE_REFERENCE"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-014",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-014",
+      "registry": "CHRONOLOGY.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-015",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-015",
       "registry": "CHRONOLOGY.json"
     }
   ],

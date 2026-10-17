@@ -1,7 +1,7 @@
 {
   "schema": "grt-lab-chronological-ledger/v1",
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
-  "revision": 3,
+  "revision": 4,
   "order": "AUTHORITATIVE_GITHUB_EVENT_SEQUENCE",
   "timestamp_rule": "Do not invent event timestamps; null when not verified",
   "append_only": true,
@@ -179,6 +179,32 @@
       "agent_session_id": null,
       "related_instruction_id": "GRT-LABMEM-20261017-F1RECOVERY-001-INSTR-003",
       "related_relation_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REL-001"
+    },
+    {
+      "seq": 14,
+      "event_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-014",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-014",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "event_type": "HISTORICAL_POST_F1_COORDINATION_MODEL_RECONSTRUCTED",
+      "summary": "Compared historical #257->#258->#259 continuity, three logical agents, scoped participants vs F1 release, GACR coordination, #263 merge, and three non-interchangeable pool views with current LAB needs.",
+      "source_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/c2e3181c1878d97684a73d269e9665f178aa4776/docs/labs/GRT-CONT-20261017-F1RECOVERY-001/REFERENCE_POST_F1_CONTINUITY_20261007.md",
+      "observed_commit": "c2e3181c1878d97684a73d269e9665f178aa4776",
+      "occurred_at": null,
+      "occurred_at_provenance": "GITHUB_COMMIT_ORDER_ONLY",
+      "agent_session_id": null
+    },
+    {
+      "seq": 15,
+      "event_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-015",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-015",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "event_type": "FIVE_SOURCE_BACKED_COMPARATIVE_FINDINGS_REGISTERED",
+      "summary": "Append OBS-010 through OBS-014 preserving code facts versus historical risks, without attaching old agents/sessions to current LAB.",
+      "source_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331",
+      "observed_commit": "1d7bb46977e769ec40be1f63ac8c20e3195f6024",
+      "occurred_at": null,
+      "occurred_at_provenance": "GITHUB_COMMIT_ORDER_ONLY",
+      "agent_session_id": null
     }
   ],
   "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001"

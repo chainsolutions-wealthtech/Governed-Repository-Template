@@ -1,7 +1,7 @@
 {
   "schema": "grt-lab-local-memory-checkpoint/v1",
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
-  "revision": 3,
+  "revision": 4,
   "branch": "lab/f1-recovery-isolation-20261017",
   "issue": 331,
   "pull_request": 332,
@@ -17,8 +17,8 @@
     ],
     "result": "SUCCESS"
   },
-  "phase": "OBSERVE_DOCUMENT_ANALYZE",
-  "next_action": "LISTEN_TO_OWNER_NEXT_STEP_AND_MAINTAIN_POOL_TO_GACR_LINK_REQUIREMENT",
+  "phase": "REFERENCE_POST_F1_MODEL_DOCUMENTED",
+  "next_action": "LISTEN_OWNER_NEXT_STEP_AND_USE_SOURCE_BACKED_HISTORICAL_MODEL_WITHOUT_REBINDING_AGENTS",
   "task_dispatch_status": "NOT_AUTHORIZED",
   "main_write_status": "NONE",
   "merge_status": "NOT_MERGED",
@@ -58,5 +58,15 @@
   "pool_gacr_link_status": "MANDATORY_UNRESOLVED",
   "pool_id": null,
   "gacr_id": null,
-  "pool_or_claim_mutation_in_this_step": false
+  "pool_or_claim_mutation_in_this_step": false,
+  "historical_comparison_reference": "GRT-CONT-20261007-2117-GMC01-DSP258-01",
+  "historical_reference_report": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/REFERENCE_POST_F1_CONTINUITY_20261007.md",
+  "known_comparative_observations": [
+    "GRT-CONT-20261017-F1RECOVERY-001-OBS-010",
+    "GRT-CONT-20261017-F1RECOVERY-001-OBS-011",
+    "GRT-CONT-20261017-F1RECOVERY-001-OBS-012",
+    "GRT-CONT-20261017-F1RECOVERY-001-OBS-013",
+    "GRT-CONT-20261017-F1RECOVERY-001-OBS-014"
+  ],
+  "current_comparative_pilot_binding": "REFERENCE_ONLY_NO_POOL_MEMBER_ATTACH"
 }
