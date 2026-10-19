@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0.0",
-  "revision": 26,
-  "last_scan_at": "2026-10-16T19:00:37+00:00",
+  "revision": 27,
+  "last_scan_at": "2026-10-19T19:51:19+00:00",
   "items": [
     {
       "takeover_id": "GACR-T-84209d225086",
@@ -1968,6 +1968,22 @@
       "branch": "main",
       "pull_request": null,
       "last_observed_head_sha": "38c7fbd7aa161e5c80deab6d9cb0174f47ee49b0",
+      "reconciled_head_sha": null,
+      "active_claim_count": 0
+    },
+    {
+      "takeover_id": "GACR-T-ddc3c38d3406",
+      "stalled_session_id": "session-afb8eeacb7714ecc0f9da4d2",
+      "offered_to_session_id": null,
+      "accepted_by_session_id": null,
+      "status": "READY_FOR_RECONCILIATION",
+      "created_at": "2026-10-19T19:51:19+00:00",
+      "accepted_at": null,
+      "work_item_id": null,
+      "task_id": null,
+      "branch": "main",
+      "pull_request": null,
+      "last_observed_head_sha": "d256729b6dd1ed33dbf0303d5894d3e725017ebb",
       "reconciled_head_sha": null,
       "active_claim_count": 0
     }
