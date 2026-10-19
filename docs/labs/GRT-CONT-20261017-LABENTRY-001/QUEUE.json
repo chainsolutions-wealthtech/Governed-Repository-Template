@@ -1,0 +1,158 @@
+{
+  "schema": "grt-lab-staged-queue/v1",
+  "continuity_id": "GRT-CONT-20261017-LABENTRY-001",
+  "pool_id": "GRT-POOL-20261017-LABENTRY-001",
+  "destination": ".governance/control-plane-state/tasks.json",
+  "dispatcher": "scripts/gacr_capacity_dispatch.py",
+  "status": "STAGED_NO_CANONICAL_DISPATCH",
+  "may_issue_claims": false,
+  "work_items": [
+    {
+      "id": "GRT-CONT-20261017-LABENTRY-001-OBS",
+      "sequence": 1,
+      "title": "Observe actual repository and complete snapshot of governance",
+      "depends_on": [],
+      "suggested_pool_slot": "GRT-POOL-20261017-LABENTRY-001-ARCH",
+      "status": "PLANNED",
+      "release": "NOT_RELEASED",
+      "claim": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-20261017-LABENTRY-001-MEM",
+      "sequence": 2,
+      "title": "Write canonical memory, timeline, decisions and outstanding questions",
+      "depends_on": [
+        "GRT-CONT-20261017-LABENTRY-001-OBS"
+      ],
+      "suggested_pool_slot": "GRT-POOL-20261017-LABENTRY-001-ARCH",
+      "status": "PLANNED",
+      "release": "NOT_RELEASED",
+      "claim": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-20261017-LABENTRY-001-ARCH",
+      "sequence": 3,
+      "title": "Reverse engineer real architecture and design end state",
+      "depends_on": [
+        "GRT-CONT-20261017-LABENTRY-001-MEM"
+      ],
+      "suggested_pool_slot": "GRT-POOL-20261017-LABENTRY-001-ARCH",
+      "status": "PLANNED",
+      "release": "NOT_RELEASED",
+      "claim": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-20261017-LABENTRY-001-SPEC",
+      "sequence": 4,
+      "title": "Write detailed specifications and acceptance criteria",
+      "depends_on": [
+        "GRT-CONT-20261017-LABENTRY-001-ARCH"
+      ],
+      "suggested_pool_slot": "GRT-POOL-20261017-LABENTRY-001-PLAN",
+      "status": "PLANNED",
+      "release": "NOT_RELEASED",
+      "claim": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-20261017-LABENTRY-001-PLAN",
+      "sequence": 5,
+      "title": "Create chronological executable micro-lots and tests",
+      "depends_on": [
+        "GRT-CONT-20261017-LABENTRY-001-SPEC"
+      ],
+      "suggested_pool_slot": "GRT-POOL-20261017-LABENTRY-001-PLAN",
+      "status": "PLANNED",
+      "release": "NOT_RELEASED",
+      "claim": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-20261017-LABENTRY-001-GATE",
+      "sequence": 6,
+      "title": "Independent validation, ready-to-promote canonical work graph",
+      "depends_on": [
+        "GRT-CONT-20261017-LABENTRY-001-PLAN"
+      ],
+      "suggested_pool_slot": "GRT-POOL-20261017-LABENTRY-001-REVIEW",
+      "status": "PLANNED",
+      "release": "NOT_RELEASED",
+      "claim": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-20261017-LABENTRY-001-CODE",
+      "sequence": 7,
+      "title": "Dispatch legitimately to authenticated writable code agent",
+      "depends_on": [
+        "GRT-CONT-20261017-LABENTRY-001-GATE"
+      ],
+      "suggested_pool_slot": "GRT-POOL-20261017-LABENTRY-001-CODE",
+      "status": "PLANNED",
+      "release": "NOT_RELEASED",
+      "claim": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-20261017-LABENTRY-001-TEST",
+      "sequence": 8,
+      "title": "Test positive, negative, regression and concurrency",
+      "depends_on": [
+        "GRT-CONT-20261017-LABENTRY-001-CODE"
+      ],
+      "suggested_pool_slot": "GRT-POOL-20261017-LABENTRY-001-CODE",
+      "status": "PLANNED",
+      "release": "NOT_RELEASED",
+      "claim": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-20261017-LABENTRY-001-VERIFY",
+      "sequence": 9,
+      "title": "Independent acceptance, HEAD reconciliation, CI evidence",
+      "depends_on": [
+        "GRT-CONT-20261017-LABENTRY-001-TEST"
+      ],
+      "suggested_pool_slot": "GRT-POOL-20261017-LABENTRY-001-REVIEW",
+      "status": "PLANNED",
+      "release": "NOT_RELEASED",
+      "claim": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-20261017-LABENTRY-001-MERGE",
+      "sequence": 10,
+      "title": "Distinct owner/governed approval for PR merge",
+      "depends_on": [
+        "GRT-CONT-20261017-LABENTRY-001-VERIFY"
+      ],
+      "suggested_pool_slot": "GRT-POOL-20261017-LABENTRY-001-REVIEW",
+      "status": "PLANNED",
+      "release": "NOT_RELEASED",
+      "claim": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-20261017-LABENTRY-001-DEPLOY",
+      "sequence": 11,
+      "title": "Distinct deployment approval and smoke/rollback",
+      "depends_on": [
+        "GRT-CONT-20261017-LABENTRY-001-MERGE"
+      ],
+      "suggested_pool_slot": "GRT-POOL-20261017-LABENTRY-001-PLAN",
+      "status": "PLANNED",
+      "release": "NOT_RELEASED",
+      "claim": null,
+      "evidence": []
+    }
+  ],
+  "projection_only": true,
+  "separate_authoritative_queue_created": false,
+  "initial_lab_setup_requires_gacr_claim": false,
+  "initial_lab_setup_requires_gacr_offer": false,
+  "claim_required_when_real_canonical_task_dispatched": true,
+  "work_promotion_requires_real_gacr_identity": true
+}

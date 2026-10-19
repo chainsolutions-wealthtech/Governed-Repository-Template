@@ -1,0 +1,44 @@
+name: LAB Entry - automatic canonical LAB creation
+
+on:
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Unique LAB identifier slug (lowercase letters, numbers, hyphens)'
+        required: true
+        type: string
+      objective:
+        description: 'Objective and acceptance intent of this LAB'
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: lab-entry-${{ inputs.slug }}
+  cancel-in-progress: false
+
+jobs:
+  create-lab:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit and fail-closed tests
+        run: python3 scripts/test_lab_entry_bootstrap.py
+      - name: Authenticated creation of canonical LAB
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LAB_SLUG: ${{ inputs.slug }}
+          LAB_OBJECTIVE: ${{ inputs.objective }}
+        run: python3 scripts/lab_entry_bootstrap.py --slug "$LAB_SLUG" --objective "$LAB_OBJECTIVE"
