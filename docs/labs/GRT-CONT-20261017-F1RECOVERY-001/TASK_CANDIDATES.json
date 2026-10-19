@@ -1,0 +1,98 @@
+{
+  "schema": "grt-lab-analysis-candidates/v1",
+  "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+  "revision": 1,
+  "status": "NOT_A_CANONICAL_TASK_QUEUE",
+  "approval": "NONE",
+  "dispatcher": "NOT_CONNECTED",
+  "claims_created": 0,
+  "items": [
+    {
+      "candidate_id": "GRT-CONT-20261017-F1RECOVERY-001-CAND-01",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "order_for_analysis": 1,
+      "title": "Trace F1 beacon provenance end-to-end",
+      "observation_refs": [
+        "GRT-CONT-20261017-F1RECOVERY-001-OBS-005"
+      ],
+      "state": "ANALYZE_ONLY",
+      "priority": "NOT_DECIDED",
+      "work_item_id": null,
+      "task_claim_id": null,
+      "execution_authorized": false
+    },
+    {
+      "candidate_id": "GRT-CONT-20261017-F1RECOVERY-001-CAND-02",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "order_for_analysis": 2,
+      "title": "Specify acceptance-time compatibility and new negative tests",
+      "observation_refs": [
+        "GRT-CONT-20261017-F1RECOVERY-001-OBS-006",
+        "GRT-CONT-20261017-F1RECOVERY-001-OBS-009"
+      ],
+      "state": "ANALYZE_ONLY",
+      "priority": "NOT_DECIDED",
+      "work_item_id": null,
+      "task_claim_id": null,
+      "execution_authorized": false
+    },
+    {
+      "candidate_id": "GRT-CONT-20261017-F1RECOVERY-001-CAND-03",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "order_for_analysis": 3,
+      "title": "Design LAB work proposal promotion to existing tasks graph",
+      "observation_refs": [
+        "GRT-CONT-20261017-F1RECOVERY-001-OBS-007"
+      ],
+      "state": "ANALYZE_ONLY",
+      "priority": "NOT_DECIDED",
+      "work_item_id": null,
+      "task_claim_id": null,
+      "execution_authorized": false
+    },
+    {
+      "candidate_id": "GRT-CONT-20261017-F1RECOVERY-001-CAND-04",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "order_for_analysis": 4,
+      "title": "Review JSON write concurrency and workflow serialization",
+      "observation_refs": [
+        "GRT-CONT-20261017-F1RECOVERY-001-OBS-008"
+      ],
+      "state": "ANALYZE_ONLY",
+      "priority": "NOT_DECIDED",
+      "work_item_id": null,
+      "task_claim_id": null,
+      "execution_authorized": false
+    },
+    {
+      "candidate_id": "GRT-CONT-20261017-F1RECOVERY-001-CAND-05",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "order_for_analysis": 5,
+      "title": "Demonstrate real F1 same-arrival recovery and cross-arrival isolation",
+      "observation_refs": [
+        "GRT-CONT-20261017-F1RECOVERY-001-OBS-001",
+        "GRT-CONT-20261017-F1RECOVERY-001-OBS-002",
+        "GRT-CONT-20261017-F1RECOVERY-001-OBS-004"
+      ],
+      "state": "ANALYZE_ONLY",
+      "priority": "NOT_DECIDED",
+      "work_item_id": null,
+      "task_claim_id": null,
+      "execution_authorized": false
+    },
+    {
+      "candidate_id": "GRT-CONT-20261017-F1RECOVERY-001-CAND-06",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "order_for_analysis": 6,
+      "title": "Prove live First Touch without named alias",
+      "observation_refs": [
+        "GRT-CONT-20261017-F1RECOVERY-001-OBS-003"
+      ],
+      "state": "ANALYZE_ONLY",
+      "priority": "NOT_DECIDED",
+      "work_item_id": null,
+      "task_claim_id": null,
+      "execution_authorized": false
+    }
+  ]
+}

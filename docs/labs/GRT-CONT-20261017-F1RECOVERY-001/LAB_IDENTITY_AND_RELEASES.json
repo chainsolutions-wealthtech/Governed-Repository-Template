@@ -1,0 +1,74 @@
+{
+  "schema": "grt-lab-identity-and-release-ledger/v1",
+  "revision": 1,
+  "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
+  "development_continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+  "state": "LAB_ONLY_DRAFT_NOT_MERGED",
+  "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+  "issue": 331,
+  "pull_request": 332,
+  "tested_commit": {
+    "sha": "a8f6368d927eb1420a6f6c1378201954d354d31f",
+    "label": "MOST_RECENT_VERIFIED_GREEN_COMMIT_AT_LEDGER_CREATION",
+    "proof_type": "GITHUB_ACTIONS_COMPLETED_RUNS",
+    "workflow_runs": [
+      {
+        "id": 38986717216,
+        "name": "Governance CI",
+        "result": "SUCCESS"
+      },
+      {
+        "id": 38986716757,
+        "name": "GSCC Function Exposure Gate",
+        "result": "SUCCESS"
+      },
+      {
+        "id": 38986716687,
+        "name": "GSCC Provider First Touch Ingress",
+        "result": "SUCCESS"
+      },
+      {
+        "id": 38986716888,
+        "name": "GSCC Observable Arrival Gateway",
+        "result": "SUCCESS"
+      }
+    ],
+    "evidence_scope": "Automated checks only; not full live end-to-end runtime proof",
+    "defects_still_open": [
+      "GACR_D03_F1_EVIDENCE_TRUST_BOUNDARY",
+      "GACR_D04_STALE_OFFER_ACCEPTANCE"
+    ]
+  },
+  "lab_branch": {
+    "name": "lab/f1-recovery-isolation-20261017",
+    "head_observed_before_ledger_commit": "a8f6368d927eb1420a6f6c1378201954d354d31f"
+  },
+  "merge": {
+    "state": "NOT_MERGED",
+    "actual_merge_commit_sha": null,
+    "interpretation": "A GitHub prospective merge_commit_sha for an open PR is NOT proof of real merge."
+  },
+  "agent_pool": {
+    "pool_id": null,
+    "verification_state": "NOT_ATTESTED_FOR_THIS_LAB",
+    "source_check": "Source GACR continuities main and LAB checkpoint did not establish an agent-pool ID",
+    "projection_model": "AGENT_CAPACITY_POOL",
+    "note": "Never infer a persistent pool ID from an agent capacity projection, unrelated pool, or the development continuity ID."
+  },
+  "preserved_continuity": {
+    "id": "GRT-CONT-20261017-F1RECOVERY-001",
+    "history_issue_url": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331",
+    "linked_memory_root_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
+    "legacy_ids_preserved": true
+  },
+  "canonical_main": {
+    "observed_sha": "b41a413ba0b24278515f9cc71a718db5b32840ab",
+    "note": "Independent main evolution; LAB not merged."
+  },
+  "provenance": {
+    "primary": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/pull/332",
+    "workflow_evidence_register": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/WORKFLOW_EVIDENCE.json",
+    "memory_root_register": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/MEMORY_IDENTITY.json"
+  },
+  "register_scope": "Historical and current identifiers; no claims, assignments, dispatch, or execution performed by record."
+}

@@ -1,0 +1,88 @@
+{
+  "schema": "grt-lab-decisions/v1",
+  "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+  "revision": 4,
+  "items": [
+    {
+      "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-001",
+      "title": "Progressively build LAB-local canonical memory before task planning",
+      "decision_state": "OWNER_DIRECTED",
+      "authority": "USER_REQUEST_IN_CURRENT_CHAT",
+      "description": "All relevant observations, tests, sources, decisions and checkpoints shall be recorded chronologically in GitHub LAB, analyzed before turning into executable tasks",
+      "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331",
+      "does_not_grant_execution_authority": true
+    },
+    {
+      "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-002",
+      "title": "No parallel dispatcher or direct GACR queue writes",
+      "decision_state": "EXISTING_GOVERNANCE_RETAINED",
+      "authority": "GITHUB_CANONICAL_POLICY",
+      "description": "LAB findings only generate candidate investigations until existing canonical task/dispatcher authority explicitly releases work",
+      "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/b3d7f623b443be6b0fe987dd2c527a6a4d4a53d0/docs/LAB_EVOLUTION.md",
+      "does_not_grant_execution_authority": true
+    },
+    {
+      "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-003",
+      "title": "Avoid making premature technical remediation decisions",
+      "decision_state": "PENDING_INDEPENDENT_ANALYSIS",
+      "authority": null,
+      "description": "D03 F1 provenance and D04 acceptance compatibility require further source review; no implementation or merge approved by memory registration",
+      "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6226848855",
+      "does_not_grant_execution_authority": true
+    },
+    {
+      "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-004",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-004",
+      "title": "LAB_ROOT_TYPED_IDS",
+      "decision_state": "OWNER_DIRECTED_AS_TRANSCRIBED",
+      "authority": "CHAT_USER_MESSAGE_TRANSCRIBED_IN_ISSUE",
+      "description": "Owner requires a LAB memory root distinct from continuity ID, and typed child IDs linked to historical records",
+      "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227027370",
+      "does_not_grant_execution_authority": true
+    },
+    {
+      "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-005",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-005",
+      "title": "WORKFLOW_RUN_EVIDENCE",
+      "decision_state": "OWNER_DIRECTED_AS_TRANSCRIBED",
+      "authority": "CHAT_USER_MESSAGE_TRANSCRIBED_IN_ISSUE",
+      "description": "Owner requires each workflow run to become structured, linked evidence: run ID, tested SHA, actual checks/results and failures",
+      "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227313169",
+      "does_not_grant_execution_authority": true
+    },
+    {
+      "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-006",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-006",
+      "title": "TASK_AND_CLAIM_DESIGN_NOT_BANNED",
+      "decision_state": "OWNER_DIRECTED_AS_TRANSCRIBED",
+      "authority": "CHAT_USER_MESSAGE_TRANSCRIBED_IN_ISSUE",
+      "description": "Owner corrected assistant: future task registry and hierarchical claim module may be designed as instructed; postponing execution is not a permanent prohibition",
+      "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227313169",
+      "does_not_grant_execution_authority": true
+    },
+    {
+      "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-007",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-007",
+      "title": "A future minimal LAB agent pool must be canonically linked to GACR",
+      "decision_state": "OWNER_DIRECTED",
+      "authority": "OWNER_CHAT_INSTRUCTION_TRANSCRIBED_TO_GITHUB_ISSUE",
+      "description": "The owner requires a dedicated LAB minimal pool ID to link to a real canonical GACR ID, with typed, chronologically evidenced relations to agents, sessions, roles, claims and related records. Concrete pool/GACR identifiers and pool size remain unknown, not guessed.",
+      "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227560349",
+      "related_requirement_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REQ-001",
+      "related_relation_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REL-001",
+      "does_not_grant_execution_authority": true
+    },
+    {
+      "decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-008",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-008",
+      "title": "Unify Door A F1 admission control around authenticated GitHub owner evidence",
+      "decision_state": "OWNER_DIRECTED_PENDING_IMPLEMENTATION_DESIGN",
+      "authority": "OWNER_CHAT_INSTRUCTION_TRANSCRIBED_TO_GITHUB_ISSUE",
+      "description": "Replace the separate Door A F1 admission variants with a single owner-GitHub-backed verification requirement for each arrival, without transferring owner privileges to non-owner agents. Retain Q1-Q12, exact GACR binding, release record, and native permissions. Non-owner delegate/approval evidence and compatibility gates must be defined before production changes.",
+      "evidence_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6228011274",
+      "related_requirement_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REQ-002",
+      "does_not_grant_execution_authority": true
+    }
+  ],
+  "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001"
+}

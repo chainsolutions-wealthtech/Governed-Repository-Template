@@ -1,0 +1,330 @@
+{
+  "schema": "grt-lab-memory-identity/v1",
+  "revision": 5,
+  "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+  "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
+  "scope": "LAB_ONLY",
+  "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+  "branch": "lab/f1-recovery-isolation-20261017",
+  "issue": 331,
+  "pull_request": 332,
+  "origin_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6227027370",
+  "id_rule": "GRT-LABMEM-20261017-F1RECOVERY-001-<TYPE>-NNN",
+  "types": {
+    "OBS": "observation",
+    "EVT": "chronology",
+    "DEC": "decision",
+    "CAND": "historical analysis candidate",
+    "EVID": "evidence incl workflow runs",
+    "INSTR": "owner instruction",
+    "REQ": "owner requirement",
+    "TEST": "test result",
+    "HYP": "hypothesis",
+    "GAP": "gap",
+    "PROB": "identified problem",
+    "ANL": "analysis",
+    "TASK": "future chronological task",
+    "CLAIM": "future hierarchical claim",
+    "CHK": "checkpoint",
+    "REL": "typed relation between identities"
+  },
+  "historical_id_crosswalk": [
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-001",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-001",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-002",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-002",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-003",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-003",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-004",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-004",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-005",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-005",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-006",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-006",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-007",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-007",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-008",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-008",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-009",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-009",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-001",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-001",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-002",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-002",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-003",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-003",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-004",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-004",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-005",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-005",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-006",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-006",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-007",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-007",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-008",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-008",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-009",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-009",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-001",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-001",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-002",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-002",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-003",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-003",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-CAND-001",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-CAND-001",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-CAND-002",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-CAND-002",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-CAND-003",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-CAND-003",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-CAND-004",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-CAND-004",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-CAND-005",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-CAND-005",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-CAND-006",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-CAND-006",
+      "link_type": "PRESERVES_HISTORICAL_ID"
+    }
+  ],
+  "execution_phase": "LATER_NOT_CURRENTLY_REQUESTED",
+  "registers_future": "Chronological task register and hierarchical claim module may be designed as instructed; not forbidden by owner",
+  "current_activity": "OBSERVE_RECORD_ANALYZE_LISTEN",
+  "no_active_claims_created_by_this_record": true,
+  "no_task_dispatched_by_this_record": true,
+  "not_global_main_authority": true,
+  "register_paths": {
+    "memory": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/MEMORY.md",
+    "identity": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/MEMORY_IDENTITY.json",
+    "owner_instructions": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/OWNER_INSTRUCTIONS.json",
+    "workflow_evidence": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/WORKFLOW_EVIDENCE.json",
+    "observations": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/OBSERVATIONS.json",
+    "chronology": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/CHRONOLOGY.json",
+    "decisions": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/DECISIONS.json",
+    "task_candidates": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/TASK_CANDIDATES.json",
+    "checkpoint": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/CHECKPOINT.json",
+    "pool_gacr_relation": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/POOL_GACR_LINK_REQUIREMENT.json",
+    "historical_post_f1_reference": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/REFERENCE_POST_F1_CONTINUITY_20261007.md"
+  },
+  "typed_new_children": [
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-INSTR-001",
+      "registry": "OWNER_INSTRUCTIONS.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-INSTR-002",
+      "registry": "OWNER_INSTRUCTIONS.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVID-001",
+      "registry": "WORKFLOW_EVIDENCE.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVID-002",
+      "registry": "WORKFLOW_EVIDENCE.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVID-003",
+      "registry": "WORKFLOW_EVIDENCE.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVID-004",
+      "registry": "WORKFLOW_EVIDENCE.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-004",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-004",
+      "registry": "DECISIONS.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-005",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-005",
+      "registry": "DECISIONS.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-006",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-006",
+      "registry": "DECISIONS.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-010",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-010",
+      "registry": "CHRONOLOGY.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-011",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-011",
+      "registry": "CHRONOLOGY.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-012",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-012",
+      "registry": "CHRONOLOGY.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-INSTR-003",
+      "registry": "OWNER_INSTRUCTIONS.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REQ-001",
+      "registry": "POOL_GACR_LINK_REQUIREMENT.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REL-001",
+      "registry": "POOL_GACR_LINK_REQUIREMENT.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-007",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-007",
+      "registry": "DECISIONS.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-013",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-013",
+      "registry": "CHRONOLOGY.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-010",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-010",
+      "registry": "OBSERVATIONS.json",
+      "source_scope": "HISTORICAL_COMPARATIVE_REFERENCE"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-011",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-011",
+      "registry": "OBSERVATIONS.json",
+      "source_scope": "HISTORICAL_COMPARATIVE_REFERENCE"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-012",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-012",
+      "registry": "OBSERVATIONS.json",
+      "source_scope": "HISTORICAL_COMPARATIVE_REFERENCE"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-013",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-013",
+      "registry": "OBSERVATIONS.json",
+      "source_scope": "HISTORICAL_COMPARATIVE_REFERENCE"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-OBS-014",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-OBS-014",
+      "registry": "OBSERVATIONS.json",
+      "source_scope": "HISTORICAL_COMPARATIVE_REFERENCE"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-014",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-014",
+      "registry": "CHRONOLOGY.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-015",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-015",
+      "registry": "CHRONOLOGY.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-INSTR-004",
+      "registry": "OWNER_INSTRUCTIONS.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REQ-002",
+      "registry": "OWNER_INSTRUCTIONS.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-DEC-008",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-008",
+      "registry": "DECISIONS.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-016",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-016",
+      "registry": "CHRONOLOGY.json"
+    }
+  ],
+  "future_minimal_pool_gacr_link": {
+    "requirement_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REQ-001",
+    "relation_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REL-001",
+    "state": "MANDATORY_UNRESOLVED",
+    "pool_id": null,
+    "gacr_id": null
+  }
+}

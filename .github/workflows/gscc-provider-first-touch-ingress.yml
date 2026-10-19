@@ -487,6 +487,8 @@ jobs:
       - name: Auto-release verified GitHub owner F1 (no work claim)
         if: ${{ steps.bind.outputs.state == 'READY_FOR_F1' && (github.actor == 'Wealthtechinnovations' || github.actor == 'Patricked-code') && github.event.issue.user.login == github.actor }}
         id: owner_f1
+        # Preserve per-arrival recovery evidence before failing the job.
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
           RUNTIME_ID: ${{ steps.q9.outputs.runtime_id }}
@@ -595,6 +597,7 @@ jobs:
           gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments"             -f body="### GSCC → GSE → GACR qualification complete\n\nRuntime: ${{ steps.q9.outputs.runtime_id }}\nGACR session: ${{ steps.bind.outputs.gacr_session_id }}\nLast gate: Q12\nNext gate: F1\n\nFor arrivals not created and controlled by the authenticated GitHub owner, F1 remains pending until the owner posts: /gscc-owner-f1-approve {\"runtime_id\":\"${{ steps.q9.outputs.runtime_id }}\"} . No session is auto-admitted, and 00_START_HERE.md remains NOT_YET_APPLICABLE."
 
       - name: Persist resumed per-arrival runtime state
+        if: ${{ always() && steps.q9.outcome == 'success' }}
         uses: actions/upload-artifact@v4
         with:
           name: first-touch-state-${{ steps.arrival_scope.outputs.state_scope }}-${{ github.run_id }}-${{ github.run_attempt }}
@@ -603,6 +606,7 @@ jobs:
           retention-days: 30
 
       - name: Upload resumed runtime evidence
+        if: ${{ always() && steps.q9.outcome == 'success' }}
         uses: actions/upload-artifact@v4
         with:
           name: gscc-session-runtime-${{ github.run_id }}-${{ github.run_attempt }}
@@ -611,6 +615,25 @@ jobs:
             ${{ runner.temp }}/gscc-gacr-bind-result.json
           if-no-files-found: warn
           retention-days: 30
+
+      - name: Record owner F1 failure on the SAME issue
+        if: ${{ always() && steps.owner_f1.outcome == 'failure' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ARRIVAL_RUNTIME: ${{ steps.q9.outputs.runtime_id }}
+        run: |
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="### Owner F1 not released — this arrival only
+          Runtime: ${ARRIVAL_RUNTIME}
+          Status: NOT_RELEASED; 00_START_HERE.md: NOT_YET_APPLICABLE.
+          Per-arrival artifacts were checkpointed; no global HOLD, claim or fabricated session.
+          Recover via the same arrival with fresh canonical evidence."
+
+      - name: Preserve explicit failed outcome after checkpoint
+        if: ${{ always() && steps.owner_f1.outcome == 'failure' }}
+        run: |
+          echo "OWNER_F1_NOT_RELEASED_THIS_ARRIVAL_ONLY"
+          exit 1
 
   renew_q12:
     if: ${{ github.event_name == 'issue_comment' && startsWith(github.event.issue.title, '[GSCC First Touch]') && github.actor != 'github-actions[bot]' && startsWith(github.event.comment.body, '/gscc-entry-renew-q12 ') && contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) }}
@@ -786,6 +809,7 @@ jobs:
 
       - name: Verify owner GitHub approval and release this exact GACR-bound F1 runtime
         id: release
+        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
           COMMENT_BODY: ${{ github.event.comment.body }}
@@ -956,11 +980,39 @@ jobs:
           retention-days: 30
 
       - name: Upload normal-governance release evidence
+        if: ${{ steps.release.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
         uses: actions/upload-artifact@v4
         with:
           name: gscc-normal-governance-release-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
             ${{ runner.temp }}/gscc-owner-f1-approval.json
             ${{ runner.temp }}/gscc-owner-f1-release.json
+
+      - name: Preserve failed owner-approval arrival runtime
+        if: ${{ always() && steps.release.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-owner-f1-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/provider-first-touch-capture.sqlite
+            ${{ runner.temp }}/gscc-owner-f1-approval.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Record owner approval F1 failure on the SAME issue
+        if: ${{ always() && steps.release.outcome == 'failure' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="### Door A owner-approved F1 not released
+          Status: NOT_RELEASED; START_HERE unavailable for this arrival.
+          Original runtime is preserved; no GACR claim or global hold was created."
+
+      - name: Fail this owner approval attempt after retaining evidence
+        if: ${{ always() && steps.release.outcome == 'failure' }}
+        run: |
+          echo "OWNER_F1_APPROVAL_NOT_RELEASED"
+          exit 1
           if-no-files-found: error
           retention-days: 30
