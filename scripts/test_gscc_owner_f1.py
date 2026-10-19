@@ -158,7 +158,7 @@ def test_github_event_provenance():
     expect_failure(lambda: owner.verify_owner_event(e, issue_number=ISSUE,
         repository=REPO, branch="main", current_head=HEAD,
         github_request_fn=fake_github, github_actor="Wealthtechinnovations"),
-        "OWNER_F1_SIGNED_GITHUB_ACTOR_OR_ISSUE_BINDING_REQUIRED")
+        "OWNER_F1_DELEGATED_ARRIVAL_REQUIRES_EXPLICIT_OWNER_APPROVAL")
     expect_failure(lambda: owner.verify_owner_event(event(), issue_number=ISSUE,
         repository=REPO, branch="main", current_head=OLD_HEAD,
         github_request_fn=fake_github, github_actor="Wealthtechinnovations"),
@@ -234,6 +234,83 @@ def test_binding_and_status_safety():
     finally:
         owner._route = original
 
+
+
+def test_explicit_owner_approval_for_other_agent_is_non_privileged():
+    approved = event()
+    approved["issue"]["user"] = {"login": "external-code-agent", "id": 83552001}
+    approved["comment"]["body"] = (
+        '/gscc-owner-f1-approve {"runtime_id":"' + RUNTIME + '"}'
+    )
+    proof = owner.verify_owner_event(
+        approved, issue_number=ISSUE, repository=REPO, branch="main",
+        current_head=HEAD, github_request_fn=fake_github,
+        github_actor="Wealthtechinnovations", runtime_id=RUNTIME,
+    )
+    assert proof["approval_mode"] == "EXPLICIT_OWNER_APPROVAL_FOR_OTHER_AGENT"
+    assert proof["owner_created_issue"] is False
+    grant = owner.issue_owner_grant(
+        previous_grant(), admission=admission(),
+        runtime={"connection_ref": CONNECTION, "identity_id": "GSCC-ID-delegate"},
+        session_id=SESSION, proof=proof, now=NOW,
+    )
+    assert owner.OWNER_CLASS not in grant["allowed_authority_classes"]
+    assert not grant["allowed_native_github_operations"]
+    assert not grant["allowed_agent_roles"]
+    assert grant.get("active_role") is None
+    assert grant["constraints"]["direct_main_write"] is False
+    assert grant["mutation_authority_granted"] is False
+    assert grant["approved_subject_identity_id"] == "GSCC-ID-delegate"
+    original = owner._route
+    owner._route = lambda *args, **kwargs: None
+    try:
+        with tempfile.TemporaryDirectory() as td:
+            db = Path(td) / "runtime.sqlite"
+            make_db(db)
+            result = owner.release_owner_f1(
+                db, RUNTIME, approved, HEAD,
+                sessions={"sessions": [session()]},
+                github_request_fn=fake_github,
+                github_actor="Wealthtechinnovations", now=NOW,
+            )
+            assert result["start_here_status"] == "APPLICABLE"
+            assert result["owner_f1_receipt"]["subject_identity_id"] == "identity-owner"
+            assert result["owner_approval_mode"] == "EXPLICIT_OWNER_APPROVAL_FOR_OTHER_AGENT"
+            assert result["access_grant"]["constraints"]["direct_main_write"] is False
+            assert owner.OWNER_CLASS not in result["access_grant"]["allowed_authority_classes"]
+    finally:
+        owner._route = original
+
+    no_approval = event()
+    no_approval["issue"]["user"] = approved["issue"]["user"]
+    expect_failure(lambda: owner.verify_owner_event(
+        no_approval, issue_number=ISSUE, repository=REPO, branch="main",
+        current_head=HEAD, github_request_fn=fake_github,
+        github_actor="Wealthtechinnovations", runtime_id=RUNTIME,
+    ), "OWNER_F1_DELEGATED_ARRIVAL_REQUIRES_EXPLICIT_OWNER_APPROVAL")
+    invalid = {**approved, "comment": {
+        **approved["comment"],
+        "body": '/gscc-owner-f1-approve {"runtime_id":"other-runtime"}',
+    }}
+    expect_failure(lambda: owner.verify_owner_event(
+        invalid, issue_number=ISSUE, repository=REPO, branch="main",
+        current_head=HEAD, github_request_fn=fake_github,
+        github_actor="Wealthtechinnovations", runtime_id=RUNTIME,
+    ), "OWNER_F1_APPROVAL_RUNTIME_MISMATCH")
+    forged_sender = {**approved, "sender": {"login": "external-code-agent", "id": 83552001}}
+    expect_failure(lambda: owner.verify_owner_event(
+        forged_sender, issue_number=ISSUE, repository=REPO, branch="main",
+        current_head=HEAD, github_request_fn=fake_github,
+        github_actor="Wealthtechinnovations", runtime_id=RUNTIME,
+    ), "OWNER_F1_SIGNED_GITHUB_ACTOR_OR_ISSUE_BINDING_REQUIRED")
+    not_owner = {**approved, "comment": {
+        **approved["comment"], "user": {"login": "external-code-agent", "id": 83552001}
+    }}
+    expect_failure(lambda: owner.verify_owner_event(
+        not_owner, issue_number=ISSUE, repository=REPO, branch="main",
+        current_head=HEAD, github_request_fn=fake_github,
+        github_actor="external-code-agent", runtime_id=RUNTIME,
+    ), "OWNER_F1_SIGNED_GITHUB_ACTOR_OR_ISSUE_BINDING_REQUIRED")
 
 
 def test_head_drift_one_safe_retry_and_other_arrival_unmodified():
@@ -342,10 +419,12 @@ def test_f1_failed_step_persists_evidence_then_marks_job_red():
     assert "OWNER_F1_NOT_RELEASED_THIS_ARRIVAL_ONLY" in src
     assert "exit 1" in src.split("      - name: Preserve explicit failed outcome after checkpoint", 1)[1].split("  renew_q12:", 1)[0]
 
+
 if __name__ == "__main__":
     test_github_event_provenance()
     test_existing_runtime_release()
     test_binding_and_status_safety()
+    test_explicit_owner_approval_for_other_agent_is_non_privileged()
     test_head_drift_one_safe_retry_and_other_arrival_unmodified()
     test_invalid_identity_and_binding_not_retried_or_released()
     test_second_head_drift_fails_closed_without_loop()

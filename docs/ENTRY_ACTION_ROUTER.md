@@ -16,6 +16,8 @@ The router asks:
 
 If no action is supplied, the session is created/resumed with `entry_action = UNKNOWN`, returns the questionnaire, and mutable dispatch fails closed.
 
+**Important :** après un F1/RELEASE valide, choisir une action ne nécessite **pas** qu'une tâche ait déjà été attribuée. La session n'est pas automatiquement orientée vers GACR Dispatch : les cas de découverte, de création d'une branche/LAB et de planification sont des voies distinctes. Le dispatcher R7/R8 reste optionnel pour l'entrée, et ses offres/claims ne concernent que le travail gouverné qui lui est soumis.
+
 ## Two-dimensional routing
 
 Entry action and connection intent are distinct.
@@ -32,6 +34,8 @@ Examples:
 - `ADOPT_EXISTING_REPOSITORY + CODE_CHANGE` → still discovery-first; no mutation until the adoption plan is accepted.
 - `MAP_EXISTING_PROJECT + REVIEW` → read-only architecture mapping.
 - `LAB_EVOLUTION + CODE_CHANGE` → lab discovery first, branch/PR creation only after explicit project authority.
+- `LAB_EVOLUTION` après F1 → branch/LAB setup sur le HEAD observé, **sans offre ni claim GACR Dispatch préalable**. Vérification obligatoire des permissions GitHub réelles de l'exécuteur, de l'autorisation du périmètre et des protections de branche. Une mutation de contenu ultérieure respecte séparément l'ownership des tâches et les règles de collision.
+- `CONTINUE_GOVERNED_WORK` → l'agent peut explicitement rejoindre l'attribution GACR et son flux offre → acceptation → claim ; cela n'est pas imposé aux autres scénarios.
 - `CREATE_NEW_REPOSITORY + WORK_REQUEST` → target owner/scope resolution and explicit create authority before creation.
 
 No combination silently creates repositories, branches, PRs, servers, directories or deployments.

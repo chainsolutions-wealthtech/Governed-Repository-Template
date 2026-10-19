@@ -68,7 +68,14 @@
         "NO_HISTORY_REWRITE",
         "LAB_CHANGES_REQUIRE_VALIDATION",
         "MERGE_ONLY_AFTER_NON_REGRESSION"
-      ]
+      ],
+      "post_f1_claim_boundary": {
+        "self_initiated_lab_branch_setup_needs_work_offer": false,
+        "self_initiated_lab_branch_setup_needs_dispatcher_claim": false,
+        "owner_scope_permission_remains_required": true,
+        "native_github_write_permission_requires_live_check": true,
+        "post_branch_code_changes_use_compatible_governed_ownership": true
+      }
     },
     "UNKNOWN": {
       "ordinal": 0,
@@ -148,5 +155,34 @@
     "ENTRY_ACTION_NE_CONNECTION_INTENT",
     "ENTRY_ACTION_NE_AUTHORITY",
     "UNKNOWN_FAILS_CLOSED"
-  ]
+  ],
+  "post_f1_choice_contract": {
+    "schema": "post-f1-entry-choices/v1",
+    "applies_to": "DOOR_A_NEW_AND_RETURNING_RELEASED_AGENTS",
+    "entry_authority": "00_START_HERE.md",
+    "initial_task_or_claim_required": false,
+    "dispatcher_is_initial_entry_choice_not_mandatory": true,
+    "choices": [
+      "OBSERVE",
+      "REVIEW",
+      "SUPERVISE",
+      "INTAKE",
+      "PLAN",
+      "LAB_EVOLUTION",
+      "CONTINUE_GOVERNED_WORK",
+      "OPT_IN_GACR_DISPATCH"
+    ],
+    "gacr_projection": "scripts/gacr_capacity_dispatch.py::session_capacity_projection.post_release_entry",
+    "reconstruction_projection": "scripts/gacr_agent_reconstruction.py::post_release_entry",
+    "native_permissions_source": "LIVE_AUTHENTICATED_GITHUB_ACTOR",
+    "f1_beacon_alone_is_authority": false,
+    "current_session_identity_required": true,
+    "lab_branch_native_push_permission_required": true,
+    "lab_branch_project_scope_permission_required": true,
+    "lab_branch_exact_head_required": true,
+    "lab_branch_dispatched_claim_required": false,
+    "dispatched_canonical_task_claim_required": true,
+    "new_gacr_queue_or_dispatcher_created": false,
+    "existing_door_b_modified": false
+  }
 }

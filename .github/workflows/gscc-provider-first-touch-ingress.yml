@@ -485,10 +485,9 @@ jobs:
           PY
 
       - name: Auto-release verified GitHub owner F1 (no work claim)
-        if: ${{ steps.bind.outputs.state == 'READY_FOR_F1' && (github.actor == 'Wealthtechinnovations' || github.actor == 'Patricked-code') }}
+        if: ${{ steps.bind.outputs.state == 'READY_FOR_F1' && (github.actor == 'Wealthtechinnovations' || github.actor == 'Patricked-code') && github.event.issue.user.login == github.actor }}
         id: owner_f1
-        # Let same-arrival artifacts persist even when owner F1 is denied.
-        # The job is marked failed explicitly after preserving evidence.
+        # Preserve per-arrival recovery evidence before failing the job.
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ github.token }}
@@ -595,7 +594,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments"             -f body="### GSCC → GSE → GACR qualification complete\n\nRuntime: ${{ steps.q9.outputs.runtime_id }}\nGACR session: ${{ steps.bind.outputs.gacr_session_id }}\nLast gate: Q12\nNext gate: F1\n\n00_START_HERE.md remains NOT_YET_APPLICABLE until F1 validates the first requested governed function."
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments"             -f body="### GSCC → GSE → GACR qualification complete\n\nRuntime: ${{ steps.q9.outputs.runtime_id }}\nGACR session: ${{ steps.bind.outputs.gacr_session_id }}\nLast gate: Q12\nNext gate: F1\n\nFor arrivals not created and controlled by the authenticated GitHub owner, F1 remains pending until the owner posts: /gscc-owner-f1-approve {\"runtime_id\":\"${{ steps.q9.outputs.runtime_id }}\"} . No session is auto-admitted, and 00_START_HERE.md remains NOT_YET_APPLICABLE."
 
       - name: Persist resumed per-arrival runtime state
         if: ${{ always() && steps.q9.outcome == 'success' }}
@@ -625,18 +624,17 @@ jobs:
         run: |
           gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
             -f body="### Owner F1 not released — this arrival only
-
           Runtime: ${ARRIVAL_RUNTIME}
-          F1: NOT_RELEASED, 00_START_HERE.md: NOT_YET_APPLICABLE.
-          A failed attempt never creates a global HOLD, new session or work claim.
-          The same-arrival SQLite state and evidence were checkpointed.
-          Inspect the error and recover using the same arrival; Q12 renewal requires its normal fresh proofs."
+          Status: NOT_RELEASED; 00_START_HERE.md: NOT_YET_APPLICABLE.
+          Per-arrival artifacts were checkpointed; no global HOLD, claim or fabricated session.
+          Recover via the same arrival with fresh canonical evidence."
 
       - name: Preserve explicit failed outcome after checkpoint
         if: ${{ always() && steps.owner_f1.outcome == 'failure' }}
         run: |
           echo "OWNER_F1_NOT_RELEASED_THIS_ARRIVAL_ONLY"
           exit 1
+
   renew_q12:
     if: ${{ github.event_name == 'issue_comment' && startsWith(github.event.issue.title, '[GSCC First Touch]') && github.actor != 'github-actions[bot]' && startsWith(github.event.comment.body, '/gscc-entry-renew-q12 ') && contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) }}
     permissions:
@@ -765,7 +763,7 @@ jobs:
           retention-days: 30
 
   release:
-    if: ${{ github.event_name == 'issue_comment' && startsWith(github.event.issue.title, '[GSCC First Touch]') && github.actor != 'github-actions[bot]' && startsWith(github.event.comment.body, '/gscc-entry-release ') }}
+    if: ${{ github.event_name == 'issue_comment' && startsWith(github.event.issue.title, '[GSCC First Touch]') && (github.actor == 'Wealthtechinnovations' || github.actor == 'Patricked-code') && startsWith(github.event.comment.body, '/gscc-owner-f1-approve ') }}
     permissions:
       contents: write
       actions: read
@@ -808,48 +806,92 @@ jobs:
             --output "${RUNNER_TEMP}/provider-first-touch-capture.sqlite"
           test -f "${RUNNER_TEMP}/provider-first-touch-capture.sqlite"
 
-      - name: Validate F1 receipt and release to normal governance
+
+      - name: Verify owner GitHub approval and release this exact GACR-bound F1 runtime
         id: release
+        continue-on-error: true
         env:
+          GITHUB_TOKEN: ${{ github.token }}
           COMMENT_BODY: ${{ github.event.comment.body }}
-        shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
           import json, os
           from pathlib import Path
           raw=os.environ["COMMENT_BODY"].strip()
-          prefix="/gscc-entry-release "
+          prefix="/gscc-owner-f1-approve "
           if not raw.startswith(prefix):
-              raise SystemExit("GSCC_F1_RELEASE_PREFIX_INVALID")
-          payload=json.loads(raw[len(prefix):])
-          if not isinstance(payload,dict) or not payload.get("runtime_id") or not isinstance(payload.get("exposure_receipt"),dict):
-              raise SystemExit("GSCC_F1_RELEASE_PAYLOAD_INVALID")
-          Path(os.environ["RUNNER_TEMP"]).joinpath("gscc-f1-release-input.json").write_text(
+              raise SystemExit("OWNER_F1_APPROVAL_PREFIX_INVALID")
+          try:
+              payload=json.loads(raw[len(prefix):])
+          except json.JSONDecodeError:
+              raise SystemExit("OWNER_F1_APPROVAL_PAYLOAD_INVALID")
+          if not isinstance(payload,dict) or set(payload)!={"runtime_id"} or not isinstance(payload["runtime_id"],str) or not payload["runtime_id"]:
+              raise SystemExit("OWNER_F1_APPROVAL_RUNTIME_INVALID")
+          (Path(os.environ["RUNNER_TEMP"])/"gscc-owner-f1-approval.json").write_text(
               json.dumps(payload,ensure_ascii=False,sort_keys=True),encoding="utf-8"
           )
           PY
-          runtime_id="$(python3 -c 'import json,os,pathlib; print(json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("gscc-f1-release-input.json").read_text())["runtime_id"])')"
-          receipt="$(python3 -c 'import json,os,pathlib; print(json.dumps(json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("gscc-f1-release-input.json").read_text())["exposure_receipt"],separators=(",",":")))')"
+          runtime_id="$(python3 -c 'import json,os,pathlib; print(json.loads(pathlib.Path(os.environ["RUNNER_TEMP"]).joinpath("gscc-owner-f1-approval.json").read_text())["runtime_id"])')"
           current_head="$(git ls-remote --exit-code origin refs/heads/main | awk '{print $1}')"
           test -n "$current_head"
-          python3 scripts/gscc_session_runtime.py release-f1 \
+          git fetch origin main
+          git show FETCH_HEAD:.governance/control-plane-state/gacr-sessions.json > "$RUNNER_TEMP/gacr-sessions.json"
+          python3 scripts/gscc_owner_f1.py \
             --db "$RUNNER_TEMP/provider-first-touch-capture.sqlite" \
             --runtime-id "$runtime_id" \
-            --receipt-json "$receipt" \
+            --sessions "$RUNNER_TEMP/gacr-sessions.json" \
             --current-head "$current_head" \
-            > "$RUNNER_TEMP/gscc-normal-governance-release.json"
+            > "$RUNNER_TEMP/gscc-owner-f1-release.json"
           python3 - <<'PY'
-          import json, os
+          import json,os
           from pathlib import Path
-          v=json.loads((Path(os.environ["RUNNER_TEMP"])/"gscc-normal-governance-release.json").read_text())
+          item=json.loads((Path(os.environ["RUNNER_TEMP"])/"gscc-owner-f1-release.json").read_text())
+          receipt=item["owner_f1_receipt"]
+          grant=item["access_grant"]
+          if not (item["state"]=="RELEASED_TO_NORMAL_GOVERNANCE"
+                  and receipt["grant_id"]==grant["grant_id"]
+                  and receipt["session_id"]==item["gacr_session_id"]
+                  and receipt["head"]==grant["bound_head"]==item["released_head"]):
+              raise SystemExit("OWNER_F1_RELEASE_INTEGRITY_INVALID")
           with open(os.environ["GITHUB_OUTPUT"],"a",encoding="utf-8") as f:
-              f.write("runtime_id="+v["runtime_id"]+"\n")
-              f.write("state="+v["state"]+"\n")
-              f.write("gacr_session_id="+v["gacr_session_id"]+"\n")
-              f.write("exposure_receipt="+v["exposure_receipt"]+"\n")
-              f.write("released_head="+v["released_head"]+"\n")
+              for key,value in (
+                  ("runtime_id",item["runtime_id"]),
+                  ("state",item["state"]),
+                  ("gacr_session_id",item["gacr_session_id"]),
+                  ("owner_f1_receipt",receipt["receipt_id"]),
+                  ("released_head",item["released_head"])):
+                  f.write(key+"="+value+"\n")
           PY
+
+      - name: Publish owner-signed F1 receipt and bounded grant for this agent
+        if: ${{ steps.release.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 - <<'PY'
+          import json,os
+          from pathlib import Path
+          root=Path(os.environ["RUNNER_TEMP"])
+          d=json.loads((root/"gscc-owner-f1-release.json").read_text())
+          r=d["owner_f1_receipt"]
+          g=d["access_grant"]
+          if r["grant_id"]!=g["grant_id"] or g["bound_head"]!=d["released_head"]:
+              raise SystemExit("OWNER_F1_DURABLE_PROOF_MISMATCH")
+          intro=("### Door A — GitHub-owner-verified F1 approval\n\n"
+                 "Status: RELEASED_TO_NORMAL_GOVERNANCE\n"
+                 "Next: 00_START_HERE.md\n"
+                 "Admission is not a claim or an authorization to mutate.\n")
+          body=(intro+"\n#### Receipt\n~~~json\n"
+                +json.dumps(r,ensure_ascii=False,sort_keys=True,indent=2)
+                +"\n~~~\n#### Bounded access grant\n~~~json\n"
+                +json.dumps(g,ensure_ascii=False,sort_keys=True,indent=2)+"\n~~~\n")
+          if len(body)>16000:
+              raise SystemExit("OWNER_F1_RECEIPT_TOO_LARGE")
+          (root/"gscc-owner-f1-publication.txt").write_text(body,encoding="utf-8")
+          PY
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="$(cat "$RUNNER_TEMP/gscc-owner-f1-publication.txt")"
 
       - name: Report release to normal governed workflow
         if: ${{ steps.release.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
@@ -857,7 +899,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
-            -f body="### GSCC/GSE/GACR pre-entry released\n\nRuntime: ${{ steps.release.outputs.runtime_id }}\nGACR session: ${{ steps.release.outputs.gacr_session_id }}\nF1 receipt: ${{ steps.release.outputs.exposure_receipt }}\nReleased HEAD: ${{ steps.release.outputs.released_head }}\n\nStatus: RELEASED_TO_NORMAL_GOVERNANCE\nNext authority: 00_START_HERE.md\n\nThe pre-entry lane is complete for this arrival. Normal governed workflow must now continue from 00_START_HERE.md without replaying GSCC First Touch."
+            -f body="### GSCC/GSE/GACR pre-entry released\n\nRuntime: ${{ steps.release.outputs.runtime_id }}\nGACR session: ${{ steps.release.outputs.gacr_session_id }}\nOwner-GitHub F1 receipt: ${{ steps.release.outputs.owner_f1_receipt }}\nReleased HEAD: ${{ steps.release.outputs.released_head }}\n\nStatus: RELEASED_TO_NORMAL_GOVERNANCE\nNext authority: 00_START_HERE.md\n\nThe pre-entry lane is complete for this arrival. Normal governed workflow must now continue from 00_START_HERE.md without replaying GSCC First Touch."
 
       - name: Publish F1 release and declared work profile to GACR
         if: ${{ steps.release.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
@@ -865,7 +907,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           ISSUE_BODY: ${{ github.event.issue.body }}
           GACR_SESSION_ID: ${{ steps.release.outputs.gacr_session_id }}
-          EXPOSURE_RECEIPT: ${{ steps.release.outputs.exposure_receipt }}
+          OWNER_F1_RECEIPT: ${{ steps.release.outputs.owner_f1_receipt }}
         run: |
           python3 - <<'PY'
           import json, os
@@ -907,7 +949,7 @@ jobs:
               "session_id":os.environ["GACR_SESSION_ID"],
               "event_type":"F1_RELEASED",
               "source":"GITHUB_ACTIONS",
-              "evidence_ref":"gscc-exposure:"+os.environ["EXPOSURE_RECEIPT"],
+              "evidence_ref":"gscc-owner-f1:"+os.environ["OWNER_F1_RECEIPT"],
               "checkpoint_ref":"RELEASED_TO_NORMAL_GOVERNANCE",
           }
           if role:
@@ -938,11 +980,39 @@ jobs:
           retention-days: 30
 
       - name: Upload normal-governance release evidence
+        if: ${{ steps.release.outputs.state == 'RELEASED_TO_NORMAL_GOVERNANCE' }}
         uses: actions/upload-artifact@v4
         with:
           name: gscc-normal-governance-release-${{ github.run_id }}-${{ github.run_attempt }}
           path: |
-            ${{ runner.temp }}/gscc-f1-release-input.json
-            ${{ runner.temp }}/gscc-normal-governance-release.json
+            ${{ runner.temp }}/gscc-owner-f1-approval.json
+            ${{ runner.temp }}/gscc-owner-f1-release.json
+
+      - name: Preserve failed owner-approval arrival runtime
+        if: ${{ always() && steps.release.outcome == 'failure' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: gscc-owner-f1-failure-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/provider-first-touch-capture.sqlite
+            ${{ runner.temp }}/gscc-owner-f1-approval.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Record owner approval F1 failure on the SAME issue
+        if: ${{ always() && steps.release.outcome == 'failure' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api "repos/${GITHUB_REPOSITORY}/issues/${{ github.event.issue.number }}/comments" \
+            -f body="### Door A owner-approved F1 not released
+          Status: NOT_RELEASED; START_HERE unavailable for this arrival.
+          Original runtime is preserved; no GACR claim or global hold was created."
+
+      - name: Fail this owner approval attempt after retaining evidence
+        if: ${{ always() && steps.release.outcome == 'failure' }}
+        run: |
+          echo "OWNER_F1_APPROVAL_NOT_RELEASED"
+          exit 1
           if-no-files-found: error
           retention-days: 30
