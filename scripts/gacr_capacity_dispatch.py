@@ -355,6 +355,31 @@ def session_capacity_projection(
         "in_flight_action": actions.get("in_flight_action"),
         "eligible_for_new_work": eligible,
         "eligibility_requires_offer_acceptance": True,
+        # Post-F1 entry routing is independent from R7/R8 work-offer eligibility.
+        # The F1 beacon is a correlation pointer, NOT a verification of the
+        # signed admission/grant. Native GitHub permissions are never inferred.
+        "post_release_entry": {
+            "status": ("F1_RELEASE_BEACON_OBSERVED" if f1_release
+                       else "NO_F1_RELEASE_BEACON"),
+            "admission_proof_status": "REVALIDATION_REQUIRED_AT_ENTRY",
+            "f1_evidence_ref": (
+                f1_release.get("evidence_ref") if f1_release else None
+            ),
+            "choices": (
+                ["OBSERVE", "REVIEW", "SUPERVISE", "INTAKE", "PLAN",
+                 "LAB_EVOLUTION", "CONTINUE_GOVERNED_WORK",
+                 "OPT_IN_GACR_DISPATCH"]
+                if f1_release else []
+            ),
+            "branch_creation_via_lab_evolution": True,
+            "lab_or_branch_setup_requires_dispatch_offer": False,
+            "lab_or_branch_setup_requires_dispatch_claim": False,
+            "native_github_write_permission": "MUST_BE_VERIFIED_LIVE",
+            "explicit_project_scope_and_branch_authority_required": True,
+            "exact_head_and_branch_protections_required": True,
+            "gacr_claim_required_for_dispatched_canonical_work": True,
+            "grants_mutation_authority": False,
+        },
         "grants_write_authority": False,
     }
     telemetry.assert_secretless(value)
@@ -437,6 +462,43 @@ def agent_pool_projection(*, generated_at: str | None = None) -> dict:
         "provider_private_limit_inference": False,
         "source_f1_release_required": TEMPLATE_SOURCE and config()["require_f1_release_for_source_work"],
     }
+
+
+
+def _registered_pending_source_items(tasks: dict) -> list[dict]:
+    """Expose pending source tasks in the EXISTING queue, never as offers."""
+    registered = []
+    for raw in tasks.get("items", []):
+        if raw.get("queue_registration") != "PENDING_F1_BATCH_V1":
+            continue
+        if not raw.get("id") or not raw.get("continuity_id") or not raw.get("integration_slot") or not raw.get("collision_domains"):
+            continue
+        registered.append({
+            "work_item_id": raw["id"],
+            "task_id": raw["id"],
+            "title": raw.get("title"),
+            "status": "BLOCKED",
+            "queue_state": "REGISTERED_PENDING_F1",
+            "source_task_status": raw.get("status"),
+            "dispatch_release": raw.get("dispatch_release", "NOT_RELEASED"),
+            "continuity_id": raw["continuity_id"],
+            "work_package_id": raw.get("work_package_id"),
+            "integration_slot": raw["integration_slot"],
+            "dependencies": list(raw.get("depends_on") or []),
+            "collision_domains": list(raw["collision_domains"]),
+            "priority": int(raw.get("priority") or 0),
+            "sequence": int(raw.get("sequence") or 0),
+            "allowed_agent_roles": list(raw.get("allowed_agent_roles") or ["CODE_AGENT"]),
+            "required_capabilities": list(raw.get("required_capabilities") or []),
+            "repository": telemetry.repository_name(),
+            "required_f1_release": True,
+            "planning_only": True,
+            "implementation_authorized": False,
+            "grants_claim": False,
+            "grants_mutation_authority": False,
+            "work_source": SOURCE_WORK_KIND,
+        })
+    return registered
 
 
 def _source_control_plane_work_document() -> dict:
@@ -527,7 +589,7 @@ def _source_control_plane_work_document() -> dict:
         "work_package_id":package_id,
         "planning_only":bool(group.get("planning_only",True)),
         "implementation_authorized":bool(group.get("implementation_authorized",False)),
-        "items":items,
+        "items":items + _registered_pending_source_items(tasks),
     }
 
 

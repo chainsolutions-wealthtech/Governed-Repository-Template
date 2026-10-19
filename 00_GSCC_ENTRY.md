@@ -8,6 +8,17 @@
 
 **Default Door A:** this file and the full unchanged GSCC/GSE/GACR/F1 sequence. **Explicit Door B:** if the operator explicitly instructs « Entre par `00_DIRECT_OWNER_ENTRY.md` », the agent must read that second file first, authenticate via the GitHub account and validate native repository permissions. The direct router is `scripts/repository_entry_router.py` backed by `.governance/repository-entry-gates.json`. Door B never claims a GSCC/GACR/F1 receipt. If B is denied, it cannot silently gain authority or fabricate a continuation; A remains a distinct default choice. This addition does not change the GSCC route or its gates when Door A is selected.
 
+## Porte A — F1 vérifié par le propriétaire GitHub pour chaque arrivée
+
+Toutes les arrivées de la Porte A suivent `First Touch → GSCC → GSE → GACR → Q12 → F1 → RELEASE → 00_START_HERE.md`. L'étape F1 ne délivre un RELEASE **qu'avec une validation GitHub du propriétaire réellement vérifiée**, liée au runtime, à la session GACR, à la connexion, au dépôt et au HEAD exact. Une simple déclaration dans le prompt, un alias ou un pseudo-reçu ne suffit pas.
+
+- **Arrivée créée par le propriétaire GitHub authentifié** : le workflow conserve sa voie automatique, après les contrôles Q12/GACR et le commentaire de contrôle signé du même propriétaire. Le reçu est `gscc-owner-f1-admission-receipt/v1`, avec un `GSCC-OWNER-F1-…` réel.
+- **Arrivée créée par un autre agent ou compte** : après Q12, elle attend une approbation explicite et authentifiée du propriétaire sur **l'issue First Touch de cette arrivée** : `/gscc-owner-f1-approve {"runtime_id":"GSCC-RUNTIME-…"}`. L'ID de runtime doit correspondre à l'arrivée effectivement persistée. Le commentaire `/gscc-entry-release` seul n'est plus un chemin de libération via le workflow de la Porte A.
+- L'approbation d'un autre agent donne un justificatif F1 pour **cet agent précis**, et n'accorde **aucun** statut propriétaire, privilège natif GitHub, rôle `CODE_AGENT`, permission de modifier `main` ou claim supplémentaire. Les permissions restent celles du compte qui réalise effectivement chaque opération, les droits reconnus par Q12, les règles de branche, les capacités et les autorisations métier.
+- Le workflow conserve les traces : événement GitHub signé du propriétaire, `admission_id`, `session_id`, `connection_ref`, `GSCC-GRANT-…`, reçu propriétaire `GSCC-OWNER-F1-…`, SHA de libération, `F1_RELEASED` GACR, puis `RELEASED_TO_NORMAL_GOVERNANCE`. Sans ces preuves, l'arrivée reste non libérée.
+
+**La Porte B reste intégralement indépendante :** `00_DIRECT_OWNER_ENTRY.md` avec sélection explicite, authentification GitHub et permissions natives ; elle ne traverse pas GSCC/GSE/GACR/F1 et ne fabrique aucun reçu F1. Les deux portes peuvent rejoindre `00_START_HERE.md` avec leurs preuves respectives, sans fusionner les routes ni leurs autorités.
+
 ## Absolute entry rule
 
 For an arrival selecting Door A (or making no explicit choice), this file MUST be processed before `00_START_HERE.md`, `AGENTS.md`, project work, mutation planning, or governed execution.

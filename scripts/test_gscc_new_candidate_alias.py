@@ -150,6 +150,41 @@ class CandidateAliasPolicy(unittest.TestCase):
         self.assertEqual(result["connection_ref"],rt["connection_ref"])
 
 
+
+    def test_15_optional_name_and_alias_do_not_borrow_any_identity(self):
+        for req in ({}, {"logical_agent_alias": None},
+                    {"logical_agent_alias": ""}, {"logical_agent_alias": "   "},
+                    {"logical_agent_alias": "UNAVAILABLE"},
+                    {"logical_agent_alias": "  unavailable  "}):
+            pkt={"sections":{
+                "request":req,
+                "provider":{"provider":"ChatGPT"},
+                "agent":{"agent_role":"CODE_AGENT_CANDIDATE","agent_name":"UNAVAILABLE"},
+                "github":{"repository_full_name":REPO},
+            }}
+            with self.subTest(request=req):
+                self.assertIsNone(resolve_alias_binding_intent(
+                    pkt,EMPTY_SESSIONS,EMPTY,classification="FIRST_TOUCH"))
+                self.assertIsNone(resolve_alias_attach_proof(
+                    pkt,EMPTY_SESSIONS,EMPTY,{"items":[]},classification="FIRST_TOUCH"))
+                canonical={"identity_id":"GSCC-ID-generated-for-arrival",
+                           "arrival_ref":"GSCC-ARRIVAL-1","connection_ref":"GSCC-CONN-1"}
+                payload=_build_gacr_attach_payload(
+                    canonical,pkt,{"evidence_ref":"gscc-control:verified"},None)
+                self.assertEqual(payload["agent"],canonical["identity_id"])
+                self.assertNotIn("same_logical_agent_session_id",payload)
+                self.assertNotIn("continuity_id",payload)
+
+    def test_16_bad_explicit_alias_fails_but_unknown_continuation_cannot_impersonate(self):
+        with self.assertRaisesRegex(ValueError,"LOGICAL_AGENT_ALIAS_INVALID_TYPE"):
+            resolve_alias_binding_intent(
+                packet(alias=["FORGE"]),EMPTY_SESSIONS,EMPTY,
+                classification="FIRST_TOUCH")
+        with self.assertRaisesRegex(ValueError,"LOGICAL_AGENT_ALIAS_UNKNOWN"):
+            resolve_alias_binding_intent(
+                packet(alias="UNKNOWN-EXPLICIT-AGENT"),
+                EMPTY_SESSIONS,EMPTY,classification="CONTINUATION")
+
 class PersistedNewAgentRecovery(unittest.TestCase):
     def test_14_real_first_touch_q9_then_gse_and_resume_without_borrowing_agent(self):
         env=base_envelope(ALIAS)

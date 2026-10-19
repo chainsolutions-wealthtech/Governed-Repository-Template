@@ -238,6 +238,33 @@ The role is a routing attribute, never mutation authority.
 The source Control Plane does not dispatch from `.governance/work/work-items.json` when that surface is only generic bootstrap state. It projects the currently released global programme/work package. Unsupported or ambiguous global task state fails closed with no offer.
 
 
+## Owner-directed choice after F1: GACR is not mandatory task intake
+
+An admitted agent, whether newly arrived or legitimately resumed, reaches
+`00_START_HERE.md` before choosing what to do. **No dispatcher offer, claim,
+preassigned work item or automatic opt-in is required simply to choose a route,
+observe, plan or initialize a branch/LAB.** The active entry-action policy
+supports `LAB_EVOLUTION` (isolated branch/PR) independently of
+`CONTINUE_GOVERNED_WORK` (canonical work graph and GACR offers/claims).
+
+GACR's existing `session_capacity_projection` and read-only agent
+reconstruction expose a `post_release_entry` view for both new and historical
+logical agents. That view is **routing/capability metadata, not a durable GitHub
+ACL or authorization grant**: a F1 beacon reference alone is not a verified
+signed admission, and declared capabilities do not create real repository
+permissions. Branch and LAB setup still require explicit project scope, a
+currently authenticated GitHub actor with native push/write permission,
+a fresh exact HEAD, branch protections, collision safety and traceability.
+A later claimed canonical task retains its normal dispatcher and owner
+authority requirements.
+
+In particular, `F1_RELEASED → 00_START_HERE.md` **does not mean**
+`F1_RELEASED → GACR WORK_OFFER → CLAIM`. An agent may select
+`OPT_IN_GACR_DISPATCH` only when it chooses to work on canonically
+dispatchable tasks. No duplicate queue, new dispatcher, synthetic session,
+grant, task or claim is created by this choice model. Door B remains
+separate from the Door A F1 admission path.
+
 ## Shared continuity coordination projection
 
 GACR may maintain an additive, machine-readable coordination projection keyed by a stable `continuity_id` when several governed sessions contribute to the same long-running objective.

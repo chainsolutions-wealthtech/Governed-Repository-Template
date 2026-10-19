@@ -40,3 +40,15 @@ the existing task graph; no accidental dispatch from creating this LAB.
 Use continuity ID with issue #329, the PR, current LAB HEAD and CI evidence.
 Record decisions and chronological checkpoints as append-only artifacts.
 Link session continuities later; do not create an invented session ID.
+
+## Integration decision — Door A / B and post-release routing (19 October 2026)
+
+The entry is a voluntary `LAB_EVOLUTION` choice after an actual
+F1/RELEASE on Door A, or a separately authenticated GitHub Door B operation.
+`00_START_HERE.md` does not automatically send agents to GACR Dispatch.
+Creating the LAB branch and documenting its objective does not require a
+GACR work-offer or claim. Real account permissions and project scope remain
+necessary for writing. `POOL.json` records a pending typed canonical GACR
+binding; no logical agent or session is invented and no new queue is created.
+This integration preserves the historical evidence of prototype PR #330;
+deployment and live E2E checks must be explicitly attested afterward.

@@ -1,6 +1,6 @@
 # 00_LAB_ENTRY — Entrée automatique de création d'un LAB
 
-STATUS: CANDIDATE_LAB_ONLY / NOT_ACTIVE_ON_MAIN until approved and merged.
+STATUS: GOVERNED_OWNER_WORKFLOW_CANDIDATE; activates only when merged into main with tested workflow. No new admission door.
 This is a separate LAB creation workflow, not an implicit GSCC/GSE/GACR admission.
 
 ## Required inputs
@@ -47,3 +47,30 @@ Given just a development continuity ID, resolve the GitHub issue, branch and
 registry; read the latest checkpoint, PR, CI and HEAD. Repeated slug fails
 closed instead of overwriting an existing branch. An interrupted bootstrap
 can be investigated through its issue and existing GitHub objects.
+
+## Post-F1 voluntary LAB choice and GACR binding
+
+A Door A agent with verified F1/RELEASE reaches `00_START_HERE.md`, chooses
+`LAB_EVOLUTION`, and may prepare an isolated branch/LAB **without obtaining
+a GACR dispatcher work offer or claim for its initial setup**. Door B continues
+as a separate direct GitHub owner-authenticated entry. The LAB workflow is
+an **owner-authenticated GitHub execution mechanism**, not a third door:
+using `workflow_dispatch` does not synthesize GSCC/GSE/GACR/F1 evidence.
+
+This bootstrap does not grant native repository permissions to any agent.
+The actual GitHub executor must have the permissions needed for creating
+a branch, issue and PR. The historical or new agent's role and identity
+are independent of the GitHub owner executing this workflow.
+
+A newly created `POOL.json` has a real, separate `pool_id`, **but it is
+not operational GACR membership**: its `gacr_link_contract` remains
+`REQUIRED_NOT_YET_ATTESTED` with null GACR continuity/agent/session IDs.
+The pool cannot be declared GACR-bound until the existing
+`gacr-sessions.json` and `gacr-continuities.json` attest the exact
+agent, session, scope, evidence, role, permissions and chronology. Agent
+slots can remain vacant. Do not create a parallel GACR registry or queue.
+
+`QUEUE.json` is an ordered proposal `projection_only` and not a second
+executable task queue. First LAB setup requires neither dispatcher offer
+nor claim; promoted canonical tasks retain all dispatcher, exact HEAD,
+collision and claim rules applicable to their subsequent execution.

@@ -47,5 +47,18 @@
       "agent_id": null,
       "status": "VACANT"
     }
-  ]
+  ],
+  "gacr_link_contract": {
+    "status": "REQUIRED_NOT_YET_ATTESTED",
+    "pool_id": "GRT-POOL-20261017-LABENTRY-001",
+    "gacr_continuity_id": null,
+    "gacr_logical_agent_id": null,
+    "gacr_session_id": null,
+    "session_evidence_ref": null,
+    "owner_authorization_ref": null,
+    "binding_source": ".governance/control-plane-state/gacr-sessions.json",
+    "continuity_source": ".governance/control-plane-state/gacr-continuities.json",
+    "no_synthetic_gacr_ids": true,
+    "membership_not_inferred_from_github_actor": true
+  }
 }

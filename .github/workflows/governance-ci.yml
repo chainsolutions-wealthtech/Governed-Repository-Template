@@ -59,7 +59,7 @@ jobs:
           python3 -m py_compile scripts/repository_entry_router.py scripts/test_direct_owner_entry.py scripts/gscc_entry_router.py
           python3 scripts/test_direct_owner_entry.py
 
-      - name: Test minimum LAB entry and fail-closed GitHub owner bootstrap
+      - name: Test LAB entry pool GACR binding, post-F1 free choice and owner bootstrap
         run: |
           python3 -m py_compile scripts/lab_entry_bootstrap.py scripts/test_lab_entry_bootstrap.py
           python3 scripts/test_lab_entry_bootstrap.py
@@ -80,6 +80,11 @@ jobs:
         run: |
           python3 -m py_compile scripts/gscc_session_runtime.py scripts/test_gscc_new_candidate_alias.py
           python3 scripts/test_gscc_new_candidate_alias.py
+
+      - name: Test signed owner F1 admission and claim-free release
+        run: |
+          PYTHONPATH=scripts python3 -m py_compile scripts/gscc_owner_f1.py scripts/test_gscc_owner_f1.py
+          PYTHONPATH=scripts python3 scripts/test_gscc_owner_f1.py
 
       - name: Test same-arrival Q12 grant renewal and replay denial
         run: |

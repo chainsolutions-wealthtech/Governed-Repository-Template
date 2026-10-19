@@ -148,5 +148,11 @@
       "claim": null,
       "evidence": []
     }
-  ]
+  ],
+  "projection_only": true,
+  "separate_authoritative_queue_created": false,
+  "initial_lab_setup_requires_gacr_claim": false,
+  "initial_lab_setup_requires_gacr_offer": false,
+  "claim_required_when_real_canonical_task_dispatched": true,
+  "work_promotion_requires_real_gacr_identity": true
 }

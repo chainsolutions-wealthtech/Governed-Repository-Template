@@ -71,6 +71,21 @@ def package(slug, objective, actor, repository, head, issue, time):
     pool = {"schema": "grt-lab-minimum-pool/v1", "pool_id": pool_id,
             "continuity_id": cont, "state": "SLOTS_RESERVED_UNBOUND",
             "allow_additional_agents": True, "gacr_bindings": [],
+            # GACR must attest any later membership; a local pool ID is not a
+            # GACR agent identity, continuity ID, session ID or authority.
+            "gacr_link_contract": {
+                "status": "REQUIRED_NOT_YET_ATTESTED",
+                "pool_id": pool_id,
+                "gacr_continuity_id": None,
+                "gacr_logical_agent_id": None,
+                "gacr_session_id": None,
+                "session_evidence_ref": None,
+                "owner_authorization_ref": None,
+                "binding_source": ".governance/control-plane-state/gacr-sessions.json",
+                "continuity_source": ".governance/control-plane-state/gacr-continuities.json",
+                "no_synthetic_gacr_ids": True,
+                "membership_not_inferred_from_github_actor": True,
+            },
             "members": [
                 {"slot": role, "slot_id": pool_id + "-" + role, "role": label,
                  "responsibility": mission, "can_propose_code_change": True,
@@ -81,6 +96,11 @@ def package(slug, objective, actor, repository, head, issue, time):
              "target": ".governance/control-plane-state/tasks.json",
              "dispatcher": "scripts/gacr_capacity_dispatch.py",
              "promotion_status": "PENDING_GOVERNED_REVIEW",
+             "projection_only": True, "separate_authoritative_queue_created": False,
+             "initial_lab_setup_requires_gacr_offer": False,
+             "initial_lab_setup_requires_gacr_claim": False,
+             "claim_required_when_real_canonical_task_dispatched": True,
+             "work_promotion_requires_real_gacr_identity": True,
              "authorizes_dispatch": False, "authorizes_claim": False,
              "tasks": tasks(cont)}
     journal = [
@@ -95,6 +115,17 @@ def package(slug, objective, actor, repository, head, issue, time):
                 "base_head": head, "issue_number": issue, "pr_number": None,
                 "state": "BOOTSTRAPPING", "chronology": journal,
                 "session_continuity_links": [], "gacr_sessions": [],
+                "post_f1_entry": {
+                    "choice": "LAB_EVOLUTION",
+                    "origin": "OWNER_AUTHENTICATED_GITHUB_WORKFLOW",
+                    "is_a_new_entry_door": False,
+                    "requires_dispatcher_offer_for_lab_setup": False,
+                    "requires_dispatcher_claim_for_lab_setup": False,
+                    "gacr_identity_binding": "PENDING_VERIFIED_SESSION",
+                    "native_write": "GITHUB_AUTHENTICATED_OPERATION_ONLY",
+                    "owner_and_project_scope_verified_by_executor": True,
+                    "initial_task_assigned": False,
+                },
                 "merger_authority": False, "deployment_authority": False}
     lab_doc = "\n".join([
         "# LAB " + cont, "", "## Identity",
@@ -114,6 +145,11 @@ def package(slug, objective, actor, repository, head, issue, time):
         "## Execution and governance",
         "POOL.json reserves agent roles, not real authenticated members.",
         "Every agent must independently prove native GitHub permissions to write.",
+        "Porte A released agents can select LAB_EVOLUTION from 00_START_HERE.md.",
+        "Porte B remains direct and independent, with no F1 simulation.",
+        "LAB initial branch and documents do NOT need a GACR dispatcher claim.",
+        "A real GACR pool/session/agent binding needs verified canonical source",
+        "and may not be inferred from the GitHub actor or LAB pool ID.",
         "QUEUE.json contains staged proposals; the existing canonical task graph and",
         "GACR dispatcher alone decide actual eligible dispatch, claims and collisions.",
         "No fabricated GACR session, no claim, no task release, no automatic merge.",

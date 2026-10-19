@@ -70,8 +70,25 @@
       "event": "POOL_AND_CHRONOLOGY_REGISTRY_STAGED",
       "at": "2026-10-16T22:54:55.604Z",
       "stage": "PENDING_REVIEW"
+    },
+    {
+      "seq": 10,
+      "event": "OWNER_REQUESTS_POST_F1_LAB_CONTINUITY_INTEGRATION",
+      "at": "2026-10-19",
+      "reference": "F1 recovery PR #332 merged; free-choice PR #335 merged; integration requires real GACR relationship"
     }
   ],
   "latest_verified_head": "613c4712b8a1072afd31555692a1a98a4432d3a2",
-  "unique_next_action": "VERIFY_ALL_PR330_CI_AND_REVIEW_BASIS"
+  "unique_next_action": "VERIFY_ALL_PR330_CI_AND_REVIEW_BASIS",
+  "post_f1_entry": {
+    "choice": "LAB_EVOLUTION",
+    "origin": "OWNER_AUTHENTICATED_GITHUB_WORKFLOW",
+    "is_a_new_entry_door": false,
+    "requires_dispatcher_offer_for_lab_setup": false,
+    "requires_dispatcher_claim_for_lab_setup": false,
+    "gacr_identity_binding": "PENDING_VERIFIED_SESSION",
+    "native_write": "GITHUB_AUTHENTICATED_OPERATION_ONLY",
+    "owner_and_project_scope_verified_by_executor": true,
+    "initial_task_assigned": false
+  }
 }

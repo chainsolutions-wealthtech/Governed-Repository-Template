@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 598,
+  "revision": 599,
   "sessions": [
     {
       "session_id": "session-68c97d4bb1ef71c86444de12",
@@ -32774,6 +32774,314 @@
           },
           "connection_fingerprint": {
             "value": "GACR-FP1-da2c32747ff411d75ebce6b27700642a31f12c1c70616f37a2e904e8f9d4b333",
+            "provenance": "DERIVED_SAFE",
+            "source": "gacr-connection-fingerprint/v1"
+          }
+        }
+      }
+    },
+    {
+      "session_id": "session-afb8eeacb7714ecc0f9da4d2",
+      "agent_identity": "GSCC-ID-6e60b916a4a4c03b0dd0246b",
+      "provider": "chatgpt",
+      "provider_conversation_ref": null,
+      "provider_conversation_ref_provenance": "UNAVAILABLE",
+      "connection_ref": "GSCC-CONN-5d05b18905cd198d8dbd91eae7d02c95",
+      "connection_fingerprint": "GACR-FP1-6404519bdf1490c13a42681072626c52989f579e8404450d78f2097580cc08c3",
+      "entry_action": "CONTINUE_GOVERNED_WORK",
+      "entry_action_provenance": "PROVIDED_BY_CLIENT",
+      "connection_intent": "OBSERVE",
+      "connection_intent_provenance": "PROVIDED_BY_CLIENT",
+      "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+      "starting_head_sha": "d256729b6dd1ed33dbf0303d5894d3e725017ebb",
+      "last_observed_head_sha": "d256729b6dd1ed33dbf0303d5894d3e725017ebb",
+      "status": "ACTIVE",
+      "created_at": "2026-10-19T16:52:54+00:00",
+      "last_seen_at": "2026-10-19T16:52:54+00:00",
+      "client_instance_id": "GSCC-CLIENT-b8c7957efe7d1b8043a1865f",
+      "agent_role": "qualification-client",
+      "capabilities": [
+        "CHALLENGE_RESPONSE",
+        "COMMAND_ACK",
+        "COMMAND_RECEIVE",
+        "GACR_AUTO_ATTACH",
+        "GACR_PRESENCE_FIRST"
+      ],
+      "wake_channels": [
+        "POLL_REPOSITORY"
+      ],
+      "bridge_registration_ref": null,
+      "relay": {
+        "process": "GACR",
+        "state": "ACTIVE",
+        "last_heartbeat_at": "2026-10-19T16:52:54+00:00",
+        "lease_expires_at": "2026-10-19T17:22:54+00:00",
+        "last_action": "REGISTER",
+        "task_id": null,
+        "branch": "main",
+        "pull_request": null
+      },
+      "connection_fingerprint_version": "gacr-connection-fingerprint/v1",
+      "presence_anchor": {
+        "version": "gacr-connection-fingerprint/v1",
+        "repository_key": "1386478935",
+        "surface_class": "CONTROLLED_INSTRUMENTABLE",
+        "actor_or_app_key": "github-actions[bot]",
+        "client_instance_id_if_supplied": "GSCC-CLIENT-b8c7957efe7d1b8043a1865f",
+        "connection_ref_if_supplied": "GSCC-CONN-5d05b18905cd198d8dbd91eae7d02c95",
+        "task_id_if_known": "UNAVAILABLE",
+        "claim_id_if_known": "UNAVAILABLE",
+        "branch_if_known": "main",
+        "pull_request_if_known": "UNAVAILABLE",
+        "first_observed_head": "d256729b6dd1ed33dbf0303d5894d3e725017ebb",
+        "first_touch_time_bucket": "2026-10-19T16:50:00+00:00"
+      },
+      "surface_class": "CONTROLLED_INSTRUMENTABLE",
+      "connection_method": "controlled-repository-surface",
+      "provider_contexts": [
+        {
+          "provider_context_id": "GACR-PC-a54843f15cbc7f48",
+          "provider_context_id_provenance": "DERIVED_GACR_SESSION_CONTEXT",
+          "provider": "chatgpt",
+          "provider_conversation_ref": null,
+          "provider_conversation_ref_status": "UNAVAILABLE",
+          "provider_conversation_ref_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+          "client_instance_id": "GSCC-CLIENT-b8c7957efe7d1b8043a1865f",
+          "client_instance_id_provenance": "DECLARED_BY_AGENT_OR_CLIENT",
+          "connection_ref": "GSCC-CONN-5d05b18905cd198d8dbd91eae7d02c95",
+          "connection_ref_provenance": "DECLARED_BY_AGENT_OR_CLIENT",
+          "runtime_surface_ref": null,
+          "runtime_surface_ref_provenance": null,
+          "provider_connector_app_id": null,
+          "provider_connector_app_id_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+          "provider_connector_client_id": null,
+          "provider_connector_client_id_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+          "provider_connector_installation_id": null,
+          "provider_connector_installation_id_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+          "provider_connector_slug": null,
+          "provider_connector_slug_provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+          "provider_native_identity_status": "UNAVAILABLE",
+          "provider_private_values_invented": false,
+          "first_seen_at": "2026-10-19T16:52:54+00:00",
+          "last_seen_at": "2026-10-19T16:52:54+00:00",
+          "seen_count": 1
+        }
+      ],
+      "github_actor": "github-actions[bot]",
+      "connection_envelope": {
+        "schema": "gacr-connection-envelope/v1",
+        "surface_class": "CONTROLLED_INSTRUMENTABLE",
+        "presence_event": "PRESENCE_FIRST_TOUCH",
+        "observed_at": "2026-10-19T16:52:54+00:00",
+        "fields": {
+          "gacr_session_id": {
+            "value": "session-afb8eeacb7714ecc0f9da4d2",
+            "provenance": "CORRELATED",
+            "source": "PRESENCE_BINDER"
+          },
+          "client_instance_id": {
+            "value": "GSCC-CLIENT-b8c7957efe7d1b8043a1865f",
+            "provenance": "DECLARED_BY_AGENT_OR_CLIENT",
+            "source": "CLIENT_OR_ADAPTER_OR_SESSION"
+          },
+          "provider": {
+            "value": "chatgpt",
+            "provenance": "DECLARED_BY_AGENT_OR_CLIENT",
+            "source": "CLIENT_OR_SESSION"
+          },
+          "agent_identity": {
+            "value": "GSCC-ID-6e60b916a4a4c03b0dd0246b",
+            "provenance": "DECLARED_BY_AGENT_OR_CLIENT",
+            "source": "CLIENT_OR_SESSION"
+          },
+          "agent_type_or_model": {
+            "value": "UNAVAILABLE",
+            "provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+            "source": "CLIENT_OR_PROVIDER_PRIVATE"
+          },
+          "repository": {
+            "value": "chainsolutions-wealthtech/Governed-Repository-Template",
+            "provenance": "OBSERVABLE_BY_PLATFORM",
+            "source": "REPOSITORY_SURFACE"
+          },
+          "repository_id": {
+            "value": "1386478935",
+            "provenance": "OBSERVABLE_BY_PLATFORM",
+            "source": "REPOSITORY_SURFACE"
+          },
+          "organization": {
+            "value": "chainsolutions-wealthtech",
+            "provenance": "OBSERVABLE_BY_PLATFORM",
+            "source": "REPOSITORY_IDENTITY"
+          },
+          "git_provider": {
+            "value": "github",
+            "provenance": "DERIVED_SAFE",
+            "source": "REPOSITORY_SURFACE"
+          },
+          "github_actor": {
+            "value": "github-actions[bot]",
+            "provenance": "OBSERVABLE_BY_PLATFORM",
+            "source": "GITHUB_EVENT_OR_GATEWAY"
+          },
+          "github_app_or_installation": {
+            "value": "UNAVAILABLE",
+            "provenance": "OBSERVABLE_BY_PLATFORM",
+            "source": "GITHUB_EVENT_OR_GATEWAY"
+          },
+          "provider_connector_app_id": {
+            "value": "UNAVAILABLE",
+            "provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+            "source": "CLIENT_OR_CONNECTOR_SURFACE"
+          },
+          "provider_connector_client_id": {
+            "value": "UNAVAILABLE",
+            "provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+            "source": "CLIENT_OR_CONNECTOR_SURFACE"
+          },
+          "provider_connector_installation_id": {
+            "value": "UNAVAILABLE",
+            "provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+            "source": "CLIENT_OR_CONNECTOR_SURFACE"
+          },
+          "provider_connector_slug": {
+            "value": "UNAVAILABLE",
+            "provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+            "source": "CLIENT_OR_CONNECTOR_SURFACE"
+          },
+          "connection_method": {
+            "value": "controlled-repository-surface",
+            "provenance": "DERIVED_SAFE",
+            "source": "PRESENCE_OBSERVER"
+          },
+          "permissions": {
+            "value": "UNAVAILABLE",
+            "provenance": "OBSERVABLE_BY_PLATFORM",
+            "source": "EXPLICIT_ADAPTER_ONLY"
+          },
+          "capabilities": {
+            "value": [
+              "CHALLENGE_RESPONSE",
+              "COMMAND_ACK",
+              "COMMAND_RECEIVE",
+              "GACR_AUTO_ATTACH",
+              "GACR_PRESENCE_FIRST"
+            ],
+            "provenance": "DECLARED_BY_AGENT_OR_CLIENT",
+            "source": "CLIENT_OR_ADAPTER_OR_SESSION"
+          },
+          "entry_action": {
+            "value": "CONTINUE_GOVERNED_WORK",
+            "provenance": "DECLARED_BY_AGENT_OR_CLIENT",
+            "source": "CLIENT_OR_ADAPTER"
+          },
+          "connection_intent": {
+            "value": "OBSERVE",
+            "provenance": "DECLARED_BY_AGENT_OR_CLIENT",
+            "source": "CLIENT_OR_ADAPTER"
+          },
+          "task_id": {
+            "value": "UNAVAILABLE",
+            "provenance": "CORRELATED",
+            "source": "CLIENT_OR_SESSION"
+          },
+          "claim_id": {
+            "value": "UNAVAILABLE",
+            "provenance": "CORRELATED",
+            "source": "CLIENT_OR_CANONICAL_CLAIMS"
+          },
+          "branch": {
+            "value": "main",
+            "provenance": "OBSERVABLE_BY_PLATFORM",
+            "source": "REPOSITORY_SURFACE"
+          },
+          "base_branch": {
+            "value": "UNAVAILABLE",
+            "provenance": "OBSERVABLE_BY_PLATFORM",
+            "source": "REPOSITORY_SURFACE"
+          },
+          "HEAD": {
+            "value": "d256729b6dd1ed33dbf0303d5894d3e725017ebb",
+            "provenance": "OBSERVABLE_BY_PLATFORM",
+            "source": "REPOSITORY_SURFACE"
+          },
+          "PR": {
+            "value": "UNAVAILABLE",
+            "provenance": "OBSERVABLE_BY_PLATFORM",
+            "source": "REPOSITORY_SURFACE"
+          },
+          "workflow_run_id": {
+            "value": "39289286621",
+            "provenance": "OBSERVABLE_BY_PLATFORM",
+            "source": "GITHUB_EVENT"
+          },
+          "job_id": {
+            "value": "UNAVAILABLE",
+            "provenance": "OBSERVABLE_BY_PLATFORM",
+            "source": "GITHUB_EVENT"
+          },
+          "run_attempt": {
+            "value": "1",
+            "provenance": "OBSERVABLE_BY_PLATFORM",
+            "source": "GITHUB_EVENT"
+          },
+          "event_type": {
+            "value": "repository_dispatch",
+            "provenance": "OBSERVABLE_BY_PLATFORM",
+            "source": "REPOSITORY_SURFACE"
+          },
+          "delivery_or_correlation_id": {
+            "value": "UNAVAILABLE",
+            "provenance": "OBSERVABLE_BY_PLATFORM",
+            "source": "CONTROLLED_SURFACE"
+          },
+          "connected_at": {
+            "value": "2026-10-19T16:52:54+00:00",
+            "provenance": "CORRELATED",
+            "source": "GACR_SESSION"
+          },
+          "last_seen_at": {
+            "value": "2026-10-19T16:52:54+00:00",
+            "provenance": "CORRELATED",
+            "source": "GACR_SESSION"
+          },
+          "heartbeat_seq": {
+            "value": "UNAVAILABLE",
+            "provenance": "DECLARED_BY_AGENT_OR_CLIENT",
+            "source": "CLIENT_OR_ADAPTER"
+          },
+          "lease_expires_at": {
+            "value": "2026-10-19T17:22:54+00:00",
+            "provenance": "CORRELATED",
+            "source": "GACR_WATCH"
+          },
+          "provider_conversation_ref": {
+            "value": "UNAVAILABLE",
+            "provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+            "source": "CLIENT_OR_PROVIDER_PRIVATE"
+          },
+          "provider_conversation_url": {
+            "value": "UNAVAILABLE",
+            "provenance": "PROVIDER_PRIVATE_UNAVAILABLE",
+            "source": "NOT_PERSISTED_UNLESS_POLICY_ALLOWS"
+          },
+          "checkpoint": {
+            "value": "UNAVAILABLE",
+            "provenance": "DECLARED_BY_AGENT_OR_CLIENT",
+            "source": "CLIENT_OR_ADAPTER"
+          },
+          "last_action": {
+            "value": "REGISTER",
+            "provenance": "CORRELATED",
+            "source": "CLIENT_OR_GACR_SESSION"
+          },
+          "last_evidence": {
+            "value": "gscc-runtime:GSCC-RUNTIME-b8c7957efe7d1b8043a1865f:challenge",
+            "provenance": "DECLARED_BY_AGENT_OR_CLIENT",
+            "source": "CLIENT_OR_GACR_SESSION"
+          },
+          "connection_fingerprint": {
+            "value": "GACR-FP1-6404519bdf1490c13a42681072626c52989f579e8404450d78f2097580cc08c3",
             "provenance": "DERIVED_SAFE",
             "source": "gacr-connection-fingerprint/v1"
           }

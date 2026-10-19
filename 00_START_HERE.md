@@ -7,6 +7,8 @@
 >
 > Si aucune preuve de release/handoff GSCC/GSE/GACR **ou de `DIRECT_OWNER_VERIFIED` pour la porte B explicitement demandée** n'est disponible, arrêter ici et revenir à `00_GSCC_ENTRY.md` (défaut) ou `00_DIRECT_OWNER_ENTRY.md` (demande explicite).
 
+> **Deux voies inchangées :** la Porte A utilise désormais la preuve F1 GitHub authentifiée par le propriétaire pour toute arrivée, y compris un agent non propriétaire approuvé individuellement ; la Porte B reste une entrée directe sans F1, explicitement sélectionnée et justifiée par `DIRECT_OWNER_VERIFIED`. La preuve d'une porte n'est pas transférable à l'autre, et aucune admission ne vaut claim, attribution de tâche ou permission de mutation.
+
 
 > Statut : `APPLICABLE`  
 > Dépôt : `{{REPOSITORY}}`  
@@ -126,6 +128,18 @@ Contrat complet :
 La projection recompose `logical_agent_id → sessions → provider contexts → continuity bus → work/claims/dispatches → takeover/forensics → checkpoint/handoff`.
 
 Elle ne remplace jamais l'identité de l'arrivée courante, ne renouvelle pas de lease et ne crée aucune autorité. Une nouvelle conversation/provider surface doit toujours être corrélée par le chemin canonique GSCC → GSE → GACR.
+
+## Choix libre après F1 / RELEASE — Porte A
+
+À la sortie de F1, **tout agent gouverné, nouveau ou déjà connu**, reprend sa session GACR d'origine et arrive à `00_START_HERE.md` **sans qu'un claim, un work-item ou une offre GACR Dispatch soit obligatoire pour entrer**. Il choisit lui-même l'action initiale : observer, superviser, revoir, faire un intake, planifier, commencer l'exploration d'un projet, ouvrir une branche/PR laboratoire via `LAB_EVOLUTION`, ou rejoindre le dispatcher de tâches existant.
+
+**Branche/LAB autonome** : `LAB_EVOLUTION` est une action d'entrée gouvernée **distincte du dispatch** ; créer la branche initiale et préparer le LAB ne nécessite pas de claim émis par GACR Dispatch. L'agent doit toutefois posséder un droit d'écriture GitHub effectivement vérifié pour **son compte ou l'exécuteur réellement authentifié**, une autorisation explicite du périmètre du projet, une baseline HEAD exacte et respecter les protections, scopes/collisions et règles de non-régression. Un alias, un rôle GACR, la seule preuve F1 ou l'accord du propriétaire ne créent jamais, à eux seuls, une permission GitHub native. Les modifications ultérieures gouvernées sont soumises à leurs propres exigences d'ownership/claim/approbation.
+
+**Travail confié par GACR** : le chemin `CONTINUE_GOVERNED_WORK` peut demander des offres/claims selon le graphe de tâches canonique. Ce mécanisme est **un choix**, pas la destination automatique de toutes les arrivées libérées par F1. Une session ne reçoit pas automatiquement de tâche, offre ou claim en traversant `00_START_HERE.md`.
+
+**Mémoire GACR** : la projection existante `gacr_capacity_dispatch.py::session_capacity_projection` expose `post_release_entry` et les choix accessibles, ainsi que les exigences de permission GitHub live. Elle ne crée pas de nouveaux droits, claims, dispatcher ni session ; l'état d'un beacon F1 n'est pas une preuve cryptographique suffisante pour autoriser une écriture.
+
+**Porte B** : inchangée, directe et distincte de la Porte A.
 
 ## Jonction après release
 
