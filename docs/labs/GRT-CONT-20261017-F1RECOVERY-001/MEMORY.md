@@ -125,3 +125,12 @@ avant tout nouveau plan ou code, sans usurper une session.
 ```
 
 La mémoire évolue **au rythme des interventions enregistrées**. Elle ne se complète pas en arrière-plan lorsqu'aucun agent ne travaille.
+
+## Vérifications LIVE et fusion effective du 19 octobre 2026
+
+- **PR #333 MERGED** : F1 GitHub du propriétaire pour la Porte A ; Porte B indépendante conservée.
+- **PR #335 MERGED** : liberté de choix après RELEASE, ouverture de branche/LAB sans offre ou claim GACR pour initialisation.
+- **PR #332 MERGED** au commit `6a5d55db9054df7cb7b6f01ab5d802db2c519079` : tests CI de reprise F1 réussis, erreurs conservées par arrivée, HEAD retry borné, alias facultatif.
+- **Essai réel propriétaire E2E** : [issue #337](https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/337), [vrai reçu F1](https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/337#issuecomment-6272491746) `GSCC-OWNER-F1-68e2b4f3af26646373cbf752c37bbd26cd95d6498b9e55fe6dddbea6252a2257`, session `session-afb8eeacb7714ecc0f9da4d2`, statut `RELEASED_TO_NORMAL_GOVERNANCE` vers `00_START_HERE.md`. Aucun claim ou travail canonique créé. Ce test n'affirme **pas** qu'un agent non propriétaire a suivi ce parcours.
+- **PR #330 MERGED** au commit `066900103120e4f121fe7c52c76bff07e1887758` : entrée LAB automatique owner workflow et liens futurs GACR documentés. `workflow_dispatch` de création d'un nouveau LAB **non testé en live** ; aucun ID de pool GACR de notre LAB F1 inventé.
+- **Limites restantes** : D03/D04 du dispatcher GACR ; F1 propriétaire pour un **autre** agent non testé E2E ; rattachement actif d'un agent à un pool LAB non attesté ; essai workflow_dispatch LAB non exécuté.

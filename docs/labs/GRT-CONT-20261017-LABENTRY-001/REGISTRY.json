@@ -9,8 +9,8 @@
   "actor": "Wealthtechinnovations",
   "owner_verified": true,
   "base_main_head": "221015948640ba4c8fc386d5863d089e819c5062",
-  "state": "CANDIDATE_LAB_REVIEW_PENDING",
-  "activation": "NOT_MERGED",
+  "state": "SOURCE_BOOTSTRAP_MERGED_MAIN",
+  "activation": "MERGED_OWNER_WORKFLOW_AVAILABLE_NOT_YET_LIVE_E2E",
   "sessions": [],
   "session_continuity_links": [],
   "work_claims": [],
@@ -76,10 +76,18 @@
       "event": "OWNER_REQUESTS_POST_F1_LAB_CONTINUITY_INTEGRATION",
       "at": "2026-10-19",
       "reference": "F1 recovery PR #332 merged; free-choice PR #335 merged; integration requires real GACR relationship"
+    },
+    {
+      "seq": 11,
+      "at": "2026-10-19",
+      "event": "OWNER_LAB_BOOTSTRAP_PR_MERGED",
+      "commit": "066900103120e4f121fe7c52c76bff07e1887758",
+      "proof": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/pull/330",
+      "live_workflow_dispatch_e2e": "NOT_ATTESTED"
     }
   ],
   "latest_verified_head": "613c4712b8a1072afd31555692a1a98a4432d3a2",
-  "unique_next_action": "VERIFY_ALL_PR330_CI_AND_REVIEW_BASIS",
+  "unique_next_action": "LIVE_OWNER_LAB_WORKFLOW_DISPATCH_TEST_AND_CANONICAL_GACR_BINDING_VERIFICATION",
   "post_f1_entry": {
     "choice": "LAB_EVOLUTION",
     "origin": "OWNER_AUTHENTICATED_GITHUB_WORKFLOW",
@@ -90,5 +98,16 @@
     "native_write": "GITHUB_AUTHENTICATED_OPERATION_ONLY",
     "owner_and_project_scope_verified_by_executor": true,
     "initial_task_assigned": false
+  },
+  "merge_commit_sha": "066900103120e4f121fe7c52c76bff07e1887758",
+  "integration_head": "f4f6c38a5917dba42238eec3dbaad7a1e088ed7e",
+  "workflow_activation": {
+    "on_main": true,
+    "source_pr": 330,
+    "source_merge_commit": "066900103120e4f121fe7c52c76bff07e1887758",
+    "tests": "GOVERNANCE_CI_AND_GSCC_WORKFLOWS_SUCCESS_ON_INTEGRATION_HEAD",
+    "real_lab_workflow_dispatch_e2e": "NOT_EXECUTED",
+    "gacr_pool_session_membership": "REQUIRES_VERIFIED_REAL_AGENT_ID_AND_SESSION",
+    "test_f1_owner_issue": 337
   }
 }

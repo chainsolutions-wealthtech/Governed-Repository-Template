@@ -1,42 +1,43 @@
 {
   "schema": "grt-lab-identity-and-release-ledger/v1",
-  "revision": 1,
+  "revision": 2,
   "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
   "development_continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
-  "state": "LAB_ONLY_DRAFT_NOT_MERGED",
+  "state": "MERGED_F1_OWNER_E2E_VERIFIED",
   "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
   "issue": 331,
   "pull_request": 332,
   "tested_commit": {
-    "sha": "a8f6368d927eb1420a6f6c1378201954d354d31f",
-    "label": "MOST_RECENT_VERIFIED_GREEN_COMMIT_AT_LEDGER_CREATION",
+    "sha": "5b8577f8dd4f9452561cf4314036cf588c147a54",
+    "label": "INTEGRATION_HEAD_VERIFIED_GREEN",
     "proof_type": "GITHUB_ACTIONS_COMPLETED_RUNS",
     "workflow_runs": [
       {
-        "id": 38986717216,
+        "id": 39287910899,
         "name": "Governance CI",
         "result": "SUCCESS"
       },
       {
-        "id": 38986716757,
-        "name": "GSCC Function Exposure Gate",
-        "result": "SUCCESS"
-      },
-      {
-        "id": 38986716687,
+        "id": 39287910774,
         "name": "GSCC Provider First Touch Ingress",
         "result": "SUCCESS"
       },
       {
-        "id": 38986716888,
+        "id": 39287910698,
+        "name": "GSCC Function Exposure Gate",
+        "result": "SUCCESS"
+      },
+      {
+        "id": 39287910737,
         "name": "GSCC Observable Arrival Gateway",
         "result": "SUCCESS"
       }
     ],
-    "evidence_scope": "Automated checks only; not full live end-to-end runtime proof",
+    "evidence_scope": "CI at exact integration SHA; actual owner self-entry live F1 separately attested",
     "defects_still_open": [
       "GACR_D03_F1_EVIDENCE_TRUST_BOUNDARY",
-      "GACR_D04_STALE_OFFER_ACCEPTANCE"
+      "GACR_D04_STALE_OFFER_ACCEPTANCE",
+      "NONOWNER_F1_E2E_NOT_ATTESTED"
     ]
   },
   "lab_branch": {
@@ -44,9 +45,10 @@
     "head_observed_before_ledger_commit": "a8f6368d927eb1420a6f6c1378201954d354d31f"
   },
   "merge": {
-    "state": "NOT_MERGED",
-    "actual_merge_commit_sha": null,
-    "interpretation": "A GitHub prospective merge_commit_sha for an open PR is NOT proof of real merge."
+    "state": "MERGED",
+    "actual_merge_commit_sha": "6a5d55db9054df7cb7b6f01ab5d802db2c519079",
+    "merged_pr": 332,
+    "proof": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/pull/332"
   },
   "agent_pool": {
     "pool_id": null,
@@ -63,12 +65,20 @@
   },
   "canonical_main": {
     "observed_sha": "b41a413ba0b24278515f9cc71a718db5b32840ab",
-    "note": "Independent main evolution; LAB not merged."
+    "note": "Historic main SHA retained as former observation; PR #332 now truly merged.",
+    "latest_confirmed_merge_for_f1": "6a5d55db9054df7cb7b6f01ab5d802db2c519079"
   },
   "provenance": {
     "primary": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/pull/332",
     "workflow_evidence_register": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/WORKFLOW_EVIDENCE.json",
     "memory_root_register": "docs/labs/GRT-CONT-20261017-F1RECOVERY-001/MEMORY_IDENTITY.json"
   },
-  "register_scope": "Historical and current identifiers; no claims, assignments, dispatch, or execution performed by record."
+  "register_scope": "Historical and current identifiers; no claims, assignments, dispatch, or execution performed by record.",
+  "live_owner_e2e": {
+    "issue": 337,
+    "proof_comment": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/337#issuecomment-6272491746",
+    "receipt_id": "GSCC-OWNER-F1-68e2b4f3af26646373cbf752c37bbd26cd95d6498b9e55fe6dddbea6252a2257",
+    "session_id": "session-afb8eeacb7714ecc0f9da4d2",
+    "scope": "OWNER_SELF_ENTRY_ONLY_NOT_AGENT_POOL_MEMBER"
+  }
 }

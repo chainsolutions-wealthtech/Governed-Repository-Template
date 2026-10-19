@@ -1,7 +1,7 @@
 {
   "schema": "grt-lab-local-memory-checkpoint/v1",
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
-  "revision": 5,
+  "revision": 6,
   "branch": "lab/f1-recovery-isolation-20261017",
   "issue": 331,
   "pull_request": 332,
@@ -17,11 +17,11 @@
     ],
     "result": "SUCCESS"
   },
-  "phase": "REFERENCE_POST_F1_MODEL_DOCUMENTED",
-  "next_action": "DESIGN_AND_VALIDATE_OWNER_GITHUB_F1_FOR_ALL_DOOR_A_WITH_NON_OWNER_PERMISSIONS_SEPARATION_BEFORE_ANY_CODE_CHANGE",
+  "phase": "F1_RECOVERY_MERGED_OWNER_E2E_VERIFIED",
+  "next_action": "VERIFY_NON_OWNER_DELEGATED_F1_E2E_AND_GACR_D03_D04_SEPARATELY",
   "task_dispatch_status": "NOT_AUTHORIZED",
-  "main_write_status": "NONE",
-  "merge_status": "NOT_MERGED",
+  "main_write_status": "MERGED_VIA_PR_332",
+  "merge_status": "MERGED",
   "session_id": null,
   "agent_pool_membership": "NOT_ATTESTED",
   "source_of_truth": "GITHUB_LAB_BRANCH_AND_ISSUE_331",
@@ -38,7 +38,7 @@
     "CHECKPOINT.json"
   ],
   "last_owner_instruction_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/331#issuecomment-6228011274",
-  "current_phase": "DOCUMENT_HIERARCHICAL_MEMORY_AND_LINK_WORKFLOW_EVIDENCE",
+  "current_phase": "POST_MERGE_EVIDENCE_RECORDED",
   "task_execution_status": "DEFERRED_PER_OWNER",
   "dispatch_status": "NO_TASK_DISTRIBUTED_IN_THIS_STEP",
   "hierarchical_claim_module_status": "REQUESTED_FUTURE_SKELETON_COMPONENT_NOT_IMPLEMENTED",
@@ -70,5 +70,27 @@
   ],
   "current_comparative_pilot_binding": "REFERENCE_ONLY_NO_POOL_MEMBER_ATTACH",
   "door_a_f1_owner_universal_requirement_id": "GRT-LABMEM-20261017-F1RECOVERY-001-REQ-002",
-  "door_a_f1_owner_universal_status": "OWNER_DIRECTED_DESIGN_NOT_IMPLEMENTED"
+  "door_a_f1_owner_universal_status": "IMPLEMENTED_IN_MAIN_PR_333_AND_RECOVERY_IN_PR_332",
+  "merge_commit_sha": "6a5d55db9054df7cb7b6f01ab5d802db2c519079",
+  "f1_owner_live_e2e": {
+    "type": "ACTUAL_GITHUB_ACTIONS_ISSUE_OWNER_SELF_ENTRY",
+    "source_issue": 337,
+    "source_comment": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/337#issuecomment-6272491746",
+    "status": "RELEASED_TO_NORMAL_GOVERNANCE",
+    "f1_receipt_id": "GSCC-OWNER-F1-68e2b4f3af26646373cbf752c37bbd26cd95d6498b9e55fe6dddbea6252a2257",
+    "gscc_identity_id": "GSCC-ID-6e60b916a4a4c03b0dd0246b",
+    "runtime_id": "GSCC-RUNTIME-b8c7957efe7d1b8043a1865f",
+    "gacr_session_id": "session-afb8eeacb7714ecc0f9da4d2",
+    "released_head": "7b5982ee715dc4ba47ba2ce3f7352db27f965de6",
+    "owner_self_only": true,
+    "non_owner_delegate_e2e": "NOT_RUN",
+    "lab_pool_membership": "NOT_INFERRED",
+    "claim_created": false
+  },
+  "lab_entry_integration": {
+    "pr": 330,
+    "merge_commit": "066900103120e4f121fe7c52c76bff07e1887758",
+    "workflow_dispatch_live_e2e": "NOT_ATTESTED",
+    "pool_gacr_binding": "REQUIRED_NOT_ATTESTED"
+  }
 }

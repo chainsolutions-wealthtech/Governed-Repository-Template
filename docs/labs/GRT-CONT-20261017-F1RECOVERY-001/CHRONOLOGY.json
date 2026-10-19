@@ -1,7 +1,7 @@
 {
   "schema": "grt-lab-chronological-ledger/v1",
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
-  "revision": 5,
+  "revision": 6,
   "order": "AUTHORITATIVE_GITHUB_EVENT_SEQUENCE",
   "timestamp_rule": "Do not invent event timestamps; null when not verified",
   "append_only": true,
@@ -220,6 +220,58 @@
       "agent_session_id": null,
       "related_instruction_id": "GRT-LABMEM-20261017-F1RECOVERY-001-INSTR-004",
       "related_decision_id": "GRT-CONT-20261017-F1RECOVERY-001-DEC-008"
+    },
+    {
+      "seq": 17,
+      "event_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-017",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-017",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "event_type": "OWNER_F1_UNIVERSAL_PATH_MERGED",
+      "summary": "Owner-GitHub F1 for Door A merged as PR #333, independent Door B preserved",
+      "source_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/pull/333",
+      "observed_commit": "1970056c5719f1e78d3cb40c80b50539c5b32999",
+      "occurred_at": null,
+      "occurred_at_provenance": "SOURCE_GITHUB_COMMIT_AND_COMMENT",
+      "agent_session_id": null
+    },
+    {
+      "seq": 18,
+      "event_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-018",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-018",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "event_type": "RECOVERY_F1_PR_332_MERGED",
+      "summary": "Recovery code reconciled with main, four CI checks green; PR #332 merged",
+      "source_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/pull/332",
+      "observed_commit": "6a5d55db9054df7cb7b6f01ab5d802db2c519079",
+      "occurred_at": null,
+      "occurred_at_provenance": "SOURCE_GITHUB_COMMIT_AND_COMMENT",
+      "agent_session_id": null
+    },
+    {
+      "seq": 19,
+      "event_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-019",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-019",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "event_type": "REAL_OWNER_F1_E2E_VERIFIED",
+      "summary": "Actual First Touch issue #337 Q9 ACK/response -> GACR session -> owner F1 receipt -> RELEASE/START_HERE; no claim or task; delegated agent not exercised",
+      "source_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/337#issuecomment-6272491746",
+      "observed_commit": "7b5982ee715dc4ba47ba2ce3f7352db27f965de6",
+      "occurred_at": null,
+      "occurred_at_provenance": "SOURCE_GITHUB_COMMIT_AND_COMMENT",
+      "agent_session_id": null
+    },
+    {
+      "seq": 20,
+      "event_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-020",
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-020",
+      "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
+      "event_type": "LAB_ENTRY_PR_330_MERGED",
+      "summary": "LAB bootstrap, typed pending GACR pool contract and free post-F1 choice integrated; owner workflow_dispatch live E2E not yet run",
+      "source_ref": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/pull/330",
+      "observed_commit": "066900103120e4f121fe7c52c76bff07e1887758",
+      "occurred_at": null,
+      "occurred_at_provenance": "SOURCE_GITHUB_COMMIT_AND_COMMENT",
+      "agent_session_id": null
     }
   ],
   "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001"

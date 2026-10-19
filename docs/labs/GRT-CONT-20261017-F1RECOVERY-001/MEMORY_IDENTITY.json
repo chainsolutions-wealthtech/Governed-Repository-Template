@@ -1,6 +1,6 @@
 {
   "schema": "grt-lab-memory-identity/v1",
-  "revision": 5,
+  "revision": 6,
   "continuity_id": "GRT-CONT-20261017-F1RECOVERY-001",
   "primary_memory_id": "GRT-LABMEM-20261017-F1RECOVERY-001",
   "scope": "LAB_ONLY",
@@ -317,6 +317,26 @@
     {
       "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-016",
       "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-016",
+      "registry": "CHRONOLOGY.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-017",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-017",
+      "registry": "CHRONOLOGY.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-018",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-018",
+      "registry": "CHRONOLOGY.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-019",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-019",
+      "registry": "CHRONOLOGY.json"
+    },
+    {
+      "memory_sub_id": "GRT-LABMEM-20261017-F1RECOVERY-001-EVT-020",
+      "historical_id": "GRT-CONT-20261017-F1RECOVERY-001-EVT-020",
       "registry": "CHRONOLOGY.json"
     }
   ],
