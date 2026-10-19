@@ -75,4 +75,4 @@ Le **19 octobre 2026 à 19:09:05Z**, sur le commit documentaire `3357c64e6b3172c
 
 ## Limites de cette matrice
 
-Elle vérifie la **structure et les points d'entrée des principaux modules**, mais **pas chaque ligne de tous les 445 fichiers**. Les registres géants `gacr-sessions` et `gacr-beacons`, les revues détaillées des PR historiques, toutes les décisions implicites dans 1 413 commentaires et tous les événements de communication GACR exigent encore des preuves complémentaires. Aucune conclusion sur la cause racine du « petit problème » n'est possible sans rattacher l'incident à des traces précises.
+Elle vérifie la **structure et les points d'entrée des principaux modules**, mais **pas chaque ligne de tous les 445 fichiers**. la qualification détaillée des sessions et des beacons désormais **intégralement inventoriés en tant que blobs figés**, les revues détaillées des PR historiques, toutes les décisions implicites dans 1 413 commentaires et tous les événements de communication GACR exigent encore des preuves complémentaires. Aucune conclusion sur la cause racine du « petit problème » n'est possible sans rattacher l'incident à des traces précises.
