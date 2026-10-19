@@ -74,3 +74,19 @@ Le propriétaire veut comprendre et dater toutes les décisions, instructions, i
 - Plan de stabilisation soumis au propriétaire **avant** toute modification fonctionnelle.
 
 **Règles :** enrichir uniquement cette branche, via commits datés et gardés par HEAD ; aucune fusion automatique, aucun nouveau LAB, aucune permission inventée, aucune réécriture de mémoire. Cette page n'est pas une nouvelle autorité canonique.
+
+
+## CHECKPOINT DOCUMENTAIRE — TOUS LES COMMENTAIRES HISTORIQUES (19 octobre 2026, UTC)
+
+**Index intégral des commentaires des issues au snapshot : 1 413 / 1 413.** Relevé complet en six annexes, ordonné par date GitHub au sein de chaque partie, y compris la deuxième page des trois issues dépassant cent commentaires (#4, #49, #115). Chaque entrée conserve le numéro d'issue, l'identifiant natif du commentaire, la date de création et de modification retournée, l'auteur GitHub, son URL et la première ligne informative. **Toutes les 91 issues historiques sont couvertes ; aucune page de commentaire n'a échoué.**
+
+- [Partie 1/6 — issues #1 à #189](ALL_ISSUE_COMMENTS_01.md) : **457 commentaires**.
+- [Partie 2/6 — issues #192 à #258](ALL_ISSUE_COMMENTS_02.md) : **141 commentaires**.
+- [Partie 3/6 — issues #259 à #280](ALL_ISSUE_COMMENTS_03.md) : **276 commentaires**.
+- [Partie 4/6 — issues #281 à #296](ALL_ISSUE_COMMENTS_04.md) : **215 commentaires**.
+- [Partie 5/6 — issues #297 à #312](ALL_ISSUE_COMMENTS_05.md) : **240 commentaires**.
+- [Partie 6/6 — issues #313 à #338](ALL_ISSUE_COMMENTS_06.md) : **84 commentaires**.
+
+Le fichier [ISSUE_COMMENTS.md](ISSUE_COMMENTS.md) reste l'index **prioritaire détaillé** de 16 issues centrales, désormais complété par l'archive exhaustive à six parties. Le nombre de commentaires ne signifie pas autant de décisions. Les commentaires de PR, reviews, corps de PR, GitHub Actions, codes et identités non exposées ne sont pas compris dans ce décompte et restent à examiner.
+
+**Résultat :** le propriétaire peut désormais retrouver chacun des **247 titres de PR**, **91 titres d'issues**, **445 chemins de fichiers** et **1 413 références natives des commentaires d'issues**, avec les dates effectivement renvoyées par GitHub. Cela constitue un **index de reconstruction historique**, non un verdict de vérification de chaque instruction/code sur le fond.
