@@ -55,3 +55,9 @@ Une nouvelle instruction doit être liée à : `mission_id`, `instruction_id`, t
 - **« Reprends MISSION AUDIT »** : lire l'annuaire, les annexes historiques et le dernier lot vérifié ; poursuivre l'analyse sans rejouer.
 - **« Donne-moi l'annuaire »** : lister les missions et leurs états, agents et sessions attestés, LAB réellement créés, registres, instructions et checkpoints.
 - **« Reprends MISSION CONTINUITÉ »** : étudier le pont Porte B/GACR, sans admission ou permission fictive.
+
+## Liaison candidate — construction GRT V2
+
+**Statut : `PROPOSAL / DOCUMENTARY_ONLY / NOT_MISSION_ADMITTED`.** La construction V2 peut être recherchée depuis cet annuaire par le [contrat HUB ↔ Construction](HUB_CONSTRUCTION_BRIDGE_V01.md), l'[index des 378 pièces](HUB_CONSTRUCTION_CROSSWALK_V01.csv), le [manifeste](HUB_CONSTRUCTION_MANIFEST_V01.json) et les [critères de validation](HUB_CONSTRUCTION_ACCEPTANCE_V01.md). La filiation s'effectue par références au Programme Global **#288**, aux autorités du Control Plane et aux définitions GMC, jamais par une seconde Task Queue.
+
+Le libellé **MISSION CONSTRUCTION** est un candidat fonctionnel sans ID de mission attribué, sans claim ni agent effectif. Les missions `MISSION-AUDIT-001` et `MISSION-CONTINUITE-002` restent inchangées. Les fiches détaillées ne sont pas encore publiées durablement dans GitHub ; leur source demeure `LOCAL_ONLY`. Tout consommateur doit revalider les états et les preuves live avant une action.
