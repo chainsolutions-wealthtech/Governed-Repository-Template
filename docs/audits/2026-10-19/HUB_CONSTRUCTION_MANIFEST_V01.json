@@ -10,8 +10,13 @@
   "source": {
     "archive_name": "GRT_Dossier_Directeur_Construction_V2_2026-10-16.zip",
     "archive_sha256": "475c4f40d1648baec414871a929bbfc8062b2150574fb23e32b1fa6f3ab2935d",
-    "access": "LOCAL_ONLY_NOT_PUBLISHED",
-    "snapshot_sha": "638fcc51c77f2454990f239b8b8cca78bac8075b"
+    "access": "PARTIAL_GITHUB_25_OF_412",
+    "snapshot_sha": "638fcc51c77f2454990f239b8b8cca78bac8075b",
+    "total_source_files": 412,
+    "files_published_in_pr": 25,
+    "files_remaining": 387,
+    "candidate_contracts_fully_published": false,
+    "import_status_document": "docs/audits/2026-10-19/construction-v2-source/README_IMPORT_STATUS.md"
   },
   "index": {
     "path": "docs/audits/2026-10-19/HUB_CONSTRUCTION_CROSSWALK_V01.csv",
@@ -38,5 +43,5 @@
     "NO_SESSION_IMPERSONATION"
   ],
   "verification": "LOCAL_STRUCTURAL_ONLY_AND_GITHUB_DOCUMENTARY",
-  "note": "Manifest and crosswalk alone do not publish the 378 detailed task contracts or authorize execution."
+  "note": "Only 25/412 source files are now available verbatim in PR #339; 387 remain local. Crosswalk 378 refs does not imply 378 detailed files uploaded or execution authority."
 }
