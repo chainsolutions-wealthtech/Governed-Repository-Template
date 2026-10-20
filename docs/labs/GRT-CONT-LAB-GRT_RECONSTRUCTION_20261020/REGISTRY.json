@@ -9,8 +9,8 @@
   "created_at": "2026-10-20T02:22:11.469701+00:00",
   "base_head": "fcb813cc37f624ffa51fcd19c3800719e98a4228",
   "issue_number": 340,
-  "pr_number": null,
-  "state": "BOOTSTRAPPING",
+  "pr_number": 341,
+  "state": "DRAFT_PR_RECOVERED_PENDING_CI_AND_INDEPENDENT_REVIEW",
   "chronology": [
     {
       "seq": 1,
@@ -36,6 +36,18 @@
       "at": "2026-10-20T02:22:11.469701+00:00",
       "event": "POOL_AND_QUEUE_STAGED",
       "pool_id": "GRT-POOL-LAB-GRT_RECONSTRUCTION_20261020"
+    },
+    {
+      "seq": 5,
+      "at": "2026-10-20",
+      "event": "INTERRUPTED_BOOTSTRAP_PR_RECOVERED_BY_GITHUB_OWNER",
+      "issue": 340,
+      "pr": 341,
+      "branch": "lab/grt-reconstruction-20261020",
+      "proof": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/pull/341",
+      "head_before_reconciliation": "c5f5669ae1be98ee0942bf7e56c02a3391fe425c",
+      "ci_observed": "IN_PROGRESS",
+      "no_gacr_admission": true
     }
   ],
   "session_continuity_links": [],
