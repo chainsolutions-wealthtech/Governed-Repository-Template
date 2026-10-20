@@ -80,3 +80,7 @@ L'arbre est un **parcours de découverte**. Les véritables liens parent/enfant 
 - [Blueprint GMC]( https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/main/.governance/control-plane-state/governance-model-execution-blueprint.json )
 
 **Limites** : aucune adoption HUB ROOT, aucun registre de construction runtime, aucun système automatique de répartition, aucune preuve de disponibilité des sessions ou d'acceptation de ST01 créés par cette liaison documentaire. Ce texte n'inclut pas de transcription intégrale des conversations privées ; uniquement des faits sourcés et un projet de liaison.
+
+## Addendum de publication du 20 octobre 2026
+
+Le corpus V2 initialement qualifié `LOCAL_ONLY` est désormais **accessible sous forme de 412 fichiers extraits, dont 378 contrats `lots/*.md`**, sur cette branche de la PR #339. Référence : [dossier importé](construction-v2-source/), [attestation](construction-v2-source/README_IMPORT_STATUS.md) et [empreintes SHA-256/Git pour chaque fichier](HUB_CONSTRUCTION_FILE_HASHES_V01.json). Le ZIP source lui-même n'est pas publié comme asset ZIP. Les prescriptions historiques concernant son stockage restent consultables, mais le statut de *ses contenus* a évolué. Aucun état canonique de tâche ou droit d'exécution ne change.

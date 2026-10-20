@@ -61,3 +61,9 @@ Une nouvelle instruction doit être liée à : `mission_id`, `instruction_id`, t
 **Statut : `PROPOSAL / DOCUMENTARY_ONLY / NOT_MISSION_ADMITTED`.** La construction V2 peut être recherchée depuis cet annuaire par le [contrat HUB ↔ Construction](HUB_CONSTRUCTION_BRIDGE_V01.md), l'[index des 378 pièces](HUB_CONSTRUCTION_CROSSWALK_V01.csv), le [manifeste](HUB_CONSTRUCTION_MANIFEST_V01.json) et les [critères de validation](HUB_CONSTRUCTION_ACCEPTANCE_V01.md). La filiation s'effectue par références au Programme Global **#288**, aux autorités du Control Plane et aux définitions GMC, jamais par une seconde Task Queue.
 
 Le libellé **MISSION CONSTRUCTION** est un candidat fonctionnel sans ID de mission attribué, sans claim ni agent effectif. Les missions `MISSION-AUDIT-001` et `MISSION-CONTINUITE-002` restent inchangées. Les fiches détaillées ne sont pas encore publiées durablement dans GitHub ; leur source demeure `LOCAL_ONLY`. Tout consommateur doit revalider les états et les preuves live avant une action.
+
+## Addendum 20 octobre 2026 — fichiers détaillés V2 effectivement publiés
+
+L'état historique `LOCAL_ONLY` pour les **378 fiches individuelles** a été remplacé par une publication du **corpus complet des 412 fichiers originaux** dans [`construction-v2-source/`](construction-v2-source/). Voir [état 412/412](construction-v2-source/README_IMPORT_STATUS.md) et [412 empreintes individuelles](HUB_CONSTRUCTION_FILE_HASHES_V01.json). Le ZIP original n'est pas déposé tel quel : ce sont ses fichiers extraits, conservés octet pour octet. L'index [HUB_CONSTRUCTION_CROSSWALK_V01.csv](HUB_CONSTRUCTION_CROSSWALK_V01.csv) reste une vue de correspondance et non un registre exécutable.
+
+Cette correction de statut **ne valide ni ST01 #288, ni l'identité HUB runtime, ni une tâche READY, ni un agent/claim/permission**. Les mentions `LOCAL_ONLY` plus haut décrivent le snapshot de préparation précédent, non l'état du corpus extrait au terme de cet import.

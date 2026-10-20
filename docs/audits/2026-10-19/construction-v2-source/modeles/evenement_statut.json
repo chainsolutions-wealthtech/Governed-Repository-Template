@@ -1,0 +1,17 @@
+{
+  "schema": "draft-construction-status-event/v0",
+  "event_id": "UNASSIGNED",
+  "piece_id": "EXISTING_CANONICAL_ID_REQUIRED",
+  "previous_status": "TO_REOBSERVE",
+  "new_status": "TO_BE_APPROVED",
+  "transition_contract_ref": "UNAVAILABLE",
+  "occurred_at": "UNOBSERVED",
+  "actor_id": "UNAVAILABLE",
+  "session_id": "UNAVAILABLE",
+  "authority_ref": "UNAVAILABLE",
+  "subject_head_sha": "TO_REOBSERVE",
+  "reason": "REQUIRED",
+  "evidence_refs": [],
+  "checkpoint_ref": "UNAVAILABLE",
+  "record_status": "ILLUSTRATIVE_ONLY_NOT_PERSISTED"
+}

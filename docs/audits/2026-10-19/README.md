@@ -103,3 +103,9 @@ Les limites du premier accès texte à ces deux grands fichiers ont été résol
 Le HUB expérimental pointe désormais vers le **système de construction V2 proposé** à travers [le contrat de liaison](HUB_CONSTRUCTION_BRIDGE_V01.md), [l'index de 378 pièces candidates](HUB_CONSTRUCTION_CROSSWALK_V01.csv), [le manifeste de provenance](HUB_CONSTRUCTION_MANIFEST_V01.json) et [les contrôles d'acceptation](HUB_CONSTRUCTION_ACCEPTANCE_V01.md). Ce rattachement renvoie au [Programme Global existant #288](https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/288) et au Control Plane source, **sans nouveau moteur ni registre d'autorité**.
 
 **Limites :** `hub_root_id=null` (proposition non adoptée) ; ST01 non validé par cet ajout ; les 378 fiches détaillées résident encore dans une archive candidate `LOCAL_ONLY`, distincte de l'index CSV désormais versionné dans la PR ; aucun statut `READY` ou droit d'exécution implicite.
+
+## Addendum 20 octobre 2026 — fichiers détaillés V2 effectivement publiés
+
+L'état historique `LOCAL_ONLY` pour les **378 fiches individuelles** a été remplacé par une publication du **corpus complet des 412 fichiers originaux** dans [`construction-v2-source/`](construction-v2-source/). Voir [état 412/412](construction-v2-source/README_IMPORT_STATUS.md) et [412 empreintes individuelles](HUB_CONSTRUCTION_FILE_HASHES_V01.json). Le ZIP original n'est pas déposé tel quel : ce sont ses fichiers extraits, conservés octet pour octet. L'index [HUB_CONSTRUCTION_CROSSWALK_V01.csv](HUB_CONSTRUCTION_CROSSWALK_V01.csv) reste une vue de correspondance et non un registre exécutable.
+
+Cette correction de statut **ne valide ni ST01 #288, ni l'identité HUB runtime, ni une tâche READY, ni un agent/claim/permission**. Les mentions `LOCAL_ONLY` plus haut décrivent le snapshot de préparation précédent, non l'état du corpus extrait au terme de cet import.

@@ -35,3 +35,11 @@
 `DOOR_B` = entrée GitHub propriétaire authentifiée, sans création de session GACR.
 
 Aucun de ces périmètres ne peut usurper une autre autorité à travers ce pont.
+
+## Contrôle additionnel du 20 octobre 2026 — publication des contrats terminée
+
+- `412/412` fichiers du ZIP reconstitués **individuellement** sur la branche PR #339, dont `378` fiches `lots/*.md`.
+- Comparaison exhaustive **SHA-1 Git blob par fichier et taille en octets : `412 PASS / 0 différence`** ; source ZIP SHA-256 `475c4f40d1648baec414871a929bbfc8062b2150574fb23e32b1fa6f3ab2935d`.
+- [Journal de vérification](construction-v2-source/README_IMPORT_STATUS.md), [manifeste des 412 empreintes](HUB_CONSTRUCTION_FILE_HASHES_V01.json).
+- La mention initiale de cette page « archive LOCAL_ONLY » est désormais **historique pour les fichiers extraits** ; le ZIP en tant qu'archive unique n'est toujours pas commité.
+- Gouvernance/CI/revue devront rester contrôlées sur le dernier commit ; **ST01 n'est pas validé et aucune exécution automatique de lot n'est autorisée**.

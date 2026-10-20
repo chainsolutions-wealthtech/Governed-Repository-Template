@@ -1,0 +1,38 @@
+{
+  "source": [
+    "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+    "docs/control-plane/MASTER_SYSTEM_MAP.md",
+    "docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "docs/control-plane/PROGRAM.md",
+    "docs/control-plane/TASKS.md",
+    "docs/control-plane/SAAS_PLATFORM_PROGRAM.md",
+    "docs/control-plane/GOVERNANCE_MODEL_EXECUTION_BLUEPRINT.md",
+    ".governance/control-plane-state/governance-model-execution-blueprint.json",
+    ".governance/control-plane-state/namespace-work-registry.json"
+  ],
+  "source_head": "638fcc51c77f2454990f239b8b8cca78bac8075b",
+  "task_registry_coverage": 132,
+  "historic_records": 50,
+  "active_or_future_backlog_records": 63,
+  "gmc_legacy_aliases": 19,
+  "statuses_reconciled": {
+    "DONE": 64,
+    "SUPERSEDED": 1,
+    "PLANNED": 61,
+    "FUTURE": 5,
+    "IN_PROGRESS": 1
+  },
+  "expected_statuses": {
+    "DONE": 64,
+    "SUPERSEDED": 1,
+    "PLANNED": 61,
+    "FUTURE": 5,
+    "IN_PROGRESS": 1
+  },
+  "coverage_complete": true,
+  "no_replayed_completed_tasks": true,
+  "canonical_dependency_graph_nodes": 242,
+  "canonical_dependency_graph_directed_edges": 236,
+  "dependency_graph_acyclic": true,
+  "note": "Source task registry IDs are counted once: 50 historical, 63 ARCH/IDN/RTE/CAP/SAA, 19 legacy GMC aliases to GMC-G01..19. No canonical mutation."
+}

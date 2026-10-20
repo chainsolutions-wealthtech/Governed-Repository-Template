@@ -1,0 +1,22 @@
+{
+  "schema": "candidate-execution-registry/v0",
+  "work_id": "EXISTING_ID_REQUIRED",
+  "canonical_ref": null,
+  "status_from_canonical": null,
+  "observed_head": null,
+  "parent_work_ref": null,
+  "dependencies": [],
+  "sprint_refs_candidate": [],
+  "agent_id": null,
+  "session_id": null,
+  "claim_id": null,
+  "authority_snapshot": null,
+  "actions": [],
+  "evidence_refs": [],
+  "test_results": [],
+  "validation_decision": null,
+  "checkpoint_ref": null,
+  "handoff_ref": null,
+  "next_action": "REVALIDATE_CANONICAL_STATE",
+  "package_status": "ILLUSTRATIVE_NOT_LIVE"
+}
