@@ -1,0 +1,42 @@
+{
+  "schema": "grt-hub-construction-bridge-manifest/v0.1",
+  "created_date": "2026-10-20",
+  "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+  "pr": 339,
+  "branch": "audit/20261019-histoire-identites-stabilisation",
+  "documentary_only": true,
+  "hub_root_id": null,
+  "global_programme_issue": 288,
+  "source": {
+    "archive_name": "GRT_Dossier_Directeur_Construction_V2_2026-10-16.zip",
+    "archive_sha256": "475c4f40d1648baec414871a929bbfc8062b2150574fb23e32b1fa6f3ab2935d",
+    "access": "LOCAL_ONLY_NOT_PUBLISHED",
+    "snapshot_sha": "638fcc51c77f2454990f239b8b8cca78bac8075b"
+  },
+  "index": {
+    "path": "docs/audits/2026-10-19/HUB_CONSTRUCTION_CROSSWALK_V01.csv",
+    "candidate_pieces": 378,
+    "unique_piece_ids": 378,
+    "relationships_in_local_candidate": 1012,
+    "requirements": 35,
+    "deliverables_proposed": 20,
+    "sprints_proposed": 16
+  },
+  "sources_of_truth": [
+    "00_GSCC_ENTRY.md",
+    "00_DIRECT_OWNER_ENTRY.md",
+    "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+    "docs/control-plane/NAMESPACE_WORK_REGISTRY.md",
+    "docs/control-plane/NEXT_ACTION.md"
+  ],
+  "constraints": [
+    "NO_NEW_RUNTIME_AUTHORITY",
+    "NO_NEW_TASK_QUEUE",
+    "NO_NEW_BUS",
+    "NO_MAIN_WRITE",
+    "NO_AUTO_MERGE",
+    "NO_SESSION_IMPERSONATION"
+  ],
+  "verification": "LOCAL_STRUCTURAL_ONLY_AND_GITHUB_DOCUMENTARY",
+  "note": "Manifest and crosswalk alone do not publish the 378 detailed task contracts or authorize execution."
+}
