@@ -1,0 +1,56 @@
+{
+  "schema": "grt-development-continuity/v1",
+  "continuity_id": "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020",
+  "pool_id": "GRT-POOL-LAB-GRT_RECONSTRUCTION_20261020",
+  "branch": "lab/grt-reconstruction-20261020",
+  "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+  "objective": "Reconstruire et stabiliser la gouvernance GRT a partir de la continuite d'audit PR #339, sans modifier main, sans identite concurrente et avec validation independante des travaux.",
+  "creator_github_actor": "Patricked-code",
+  "created_at": "2026-10-20T02:22:11.469701+00:00",
+  "base_head": "fcb813cc37f624ffa51fcd19c3800719e98a4228",
+  "issue_number": 340,
+  "pr_number": null,
+  "state": "BOOTSTRAPPING",
+  "chronology": [
+    {
+      "seq": 1,
+      "at": "2026-10-20T02:22:11.469701+00:00",
+      "event": "TRUSTED_GITHUB_OWNER_ENTRY",
+      "actor": "Patricked-code",
+      "base_head": "fcb813cc37f624ffa51fcd19c3800719e98a4228"
+    },
+    {
+      "seq": 2,
+      "at": "2026-10-20T02:22:11.469701+00:00",
+      "event": "ISSUE_REGISTERED",
+      "issue": 340
+    },
+    {
+      "seq": 3,
+      "at": "2026-10-20T02:22:11.469701+00:00",
+      "event": "LAB_BRANCH_CREATED",
+      "branch": "lab/grt-reconstruction-20261020"
+    },
+    {
+      "seq": 4,
+      "at": "2026-10-20T02:22:11.469701+00:00",
+      "event": "POOL_AND_QUEUE_STAGED",
+      "pool_id": "GRT-POOL-LAB-GRT_RECONSTRUCTION_20261020"
+    }
+  ],
+  "session_continuity_links": [],
+  "gacr_sessions": [],
+  "post_f1_entry": {
+    "choice": "LAB_EVOLUTION",
+    "origin": "OWNER_AUTHENTICATED_GITHUB_WORKFLOW",
+    "is_a_new_entry_door": false,
+    "requires_dispatcher_offer_for_lab_setup": false,
+    "requires_dispatcher_claim_for_lab_setup": false,
+    "gacr_identity_binding": "PENDING_VERIFIED_SESSION",
+    "native_write": "GITHUB_AUTHENTICATED_OPERATION_ONLY",
+    "owner_and_project_scope_verified_by_executor": true,
+    "initial_task_assigned": false
+  },
+  "merger_authority": false,
+  "deployment_authority": false
+}
