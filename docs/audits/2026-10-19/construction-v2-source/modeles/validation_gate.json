@@ -1,0 +1,13 @@
+{
+  "schema": "candidate-gate/v0",
+  "gate_id": "DRAFT_ONLY",
+  "subject_work_id": "EXISTING_ID_REQUIRED",
+  "required_control_ids": [],
+  "required_evidence_types": [],
+  "checks": [],
+  "decision": "NOT_RUN",
+  "decision_actor": null,
+  "decision_ref": null,
+  "happened_at": null,
+  "failure_behavior": "HOLD_NO_SILENT_PASS"
+}

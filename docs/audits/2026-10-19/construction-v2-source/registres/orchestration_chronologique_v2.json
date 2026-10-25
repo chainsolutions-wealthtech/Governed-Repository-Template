@@ -1,0 +1,466 @@
+[
+  {
+    "id": "SPR-DRAFT-00",
+    "planning_kind": "SEQUENCE_ENVELOPE_NO_CALENDAR",
+    "title": "Consolidation du Programme Global",
+    "reference": "#288 / #292",
+    "planned_work_ids": [
+      "DRAFT-GLOBAL-CONTRACT",
+      "DRAFT-REQ-TRACE"
+    ],
+    "exit_gate_candidate": "ST01_CONTRACT_APPROVED",
+    "status": "DESIGN_ONLY",
+    "approved_owner_decision": "NONE",
+    "agent_assignment": "NONE",
+    "start_date": null,
+    "end_date": null,
+    "start_condition": [
+      "Canonical prerequisite outputs validated",
+      "Authority for actual work confirmed",
+      "No collision between claim domains"
+    ],
+    "end_condition": [
+      "Contract and all required evidence validated",
+      "Critical blockers explicitly closed",
+      "Actual accepted checkpoint and handoff"
+    ],
+    "notes": "This envelope may overlap other independent envelopes; numeric order is a presentation sequence, not authorization or all-to-all blocking."
+  },
+  {
+    "id": "SPR-DRAFT-01",
+    "planning_kind": "SEQUENCE_ENVELOPE_NO_CALENDAR",
+    "title": "Modèle, frontières et identités des objets",
+    "reference": "GMC-G01/G02",
+    "planned_work_ids": [
+      "GMC-G01",
+      "GMC-G02"
+    ],
+    "exit_gate_candidate": "MODEL_G02_VALIDATED",
+    "status": "DESIGN_ONLY",
+    "approved_owner_decision": "NONE",
+    "agent_assignment": "NONE",
+    "start_date": null,
+    "end_date": null,
+    "start_condition": [
+      "Canonical prerequisite outputs validated",
+      "Authority for actual work confirmed",
+      "No collision between claim domains"
+    ],
+    "end_condition": [
+      "Contract and all required evidence validated",
+      "Critical blockers explicitly closed",
+      "Actual accepted checkpoint and handoff"
+    ],
+    "notes": "This envelope may overlap other independent envelopes; numeric order is a presentation sequence, not authorization or all-to-all blocking."
+  },
+  {
+    "id": "SPR-DRAFT-02",
+    "planning_kind": "SEQUENCE_ENVELOPE_NO_CALENDAR",
+    "title": "Domaines, capacités et composants",
+    "reference": "GMC-G03..05",
+    "planned_work_ids": [
+      "GMC-G03",
+      "GMC-G04",
+      "GMC-G05"
+    ],
+    "exit_gate_candidate": "MODEL_G05_VALIDATED",
+    "status": "DESIGN_ONLY",
+    "approved_owner_decision": "NONE",
+    "agent_assignment": "NONE",
+    "start_date": null,
+    "end_date": null,
+    "start_condition": [
+      "Canonical prerequisite outputs validated",
+      "Authority for actual work confirmed",
+      "No collision between claim domains"
+    ],
+    "end_condition": [
+      "Contract and all required evidence validated",
+      "Critical blockers explicitly closed",
+      "Actual accepted checkpoint and handoff"
+    ],
+    "notes": "This envelope may overlap other independent envelopes; numeric order is a presentation sequence, not authorization or all-to-all blocking."
+  },
+  {
+    "id": "SPR-DRAFT-03",
+    "planning_kind": "SEQUENCE_ENVELOPE_NO_CALENDAR",
+    "title": "Objets, états et transitions",
+    "reference": "GMC-G06..08",
+    "planned_work_ids": [
+      "GMC-G06",
+      "GMC-G07",
+      "GMC-G08"
+    ],
+    "exit_gate_candidate": "MODEL_G08_VALIDATED",
+    "status": "DESIGN_ONLY",
+    "approved_owner_decision": "NONE",
+    "agent_assignment": "NONE",
+    "start_date": null,
+    "end_date": null,
+    "start_condition": [
+      "Canonical prerequisite outputs validated",
+      "Authority for actual work confirmed",
+      "No collision between claim domains"
+    ],
+    "end_condition": [
+      "Contract and all required evidence validated",
+      "Critical blockers explicitly closed",
+      "Actual accepted checkpoint and handoff"
+    ],
+    "notes": "This envelope may overlap other independent envelopes; numeric order is a presentation sequence, not authorization or all-to-all blocking."
+  },
+  {
+    "id": "SPR-DRAFT-04",
+    "planning_kind": "SEQUENCE_ENVELOPE_NO_CALENDAR",
+    "title": "Contrôles, autorité et preuves",
+    "reference": "GMC-G09..11",
+    "planned_work_ids": [
+      "GMC-G09",
+      "GMC-G10",
+      "GMC-G11"
+    ],
+    "exit_gate_candidate": "MODEL_G11_VALIDATED",
+    "status": "DESIGN_ONLY",
+    "approved_owner_decision": "NONE",
+    "agent_assignment": "NONE",
+    "start_date": null,
+    "end_date": null,
+    "start_condition": [
+      "Canonical prerequisite outputs validated",
+      "Authority for actual work confirmed",
+      "No collision between claim domains"
+    ],
+    "end_condition": [
+      "Contract and all required evidence validated",
+      "Critical blockers explicitly closed",
+      "Actual accepted checkpoint and handoff"
+    ],
+    "notes": "This envelope may overlap other independent envelopes; numeric order is a presentation sequence, not authorization or all-to-all blocking."
+  },
+  {
+    "id": "SPR-DRAFT-05",
+    "planning_kind": "SEQUENCE_ENVELOPE_NO_CALENDAR",
+    "title": "Implémentation et graphe des dépendances",
+    "reference": "GMC-G12..13",
+    "planned_work_ids": [
+      "GMC-G12",
+      "GMC-G13"
+    ],
+    "exit_gate_candidate": "MODEL_G13_VALIDATED",
+    "status": "DESIGN_ONLY",
+    "approved_owner_decision": "NONE",
+    "agent_assignment": "NONE",
+    "start_date": null,
+    "end_date": null,
+    "start_condition": [
+      "Canonical prerequisite outputs validated",
+      "Authority for actual work confirmed",
+      "No collision between claim domains"
+    ],
+    "end_condition": [
+      "Contract and all required evidence validated",
+      "Critical blockers explicitly closed",
+      "Actual accepted checkpoint and handoff"
+    ],
+    "notes": "This envelope may overlap other independent envelopes; numeric order is a presentation sequence, not authorization or all-to-all blocking."
+  },
+  {
+    "id": "SPR-DRAFT-06",
+    "planning_kind": "SEQUENCE_ENVELOPE_NO_CALENDAR",
+    "title": "Comparaison et applicabilité",
+    "reference": "GMC-G14..15",
+    "planned_work_ids": [
+      "GMC-G14",
+      "GMC-G15"
+    ],
+    "exit_gate_candidate": "MODEL_G15_VALIDATED",
+    "status": "DESIGN_ONLY",
+    "approved_owner_decision": "NONE",
+    "agent_assignment": "NONE",
+    "start_date": null,
+    "end_date": null,
+    "start_condition": [
+      "Canonical prerequisite outputs validated",
+      "Authority for actual work confirmed",
+      "No collision between claim domains"
+    ],
+    "end_condition": [
+      "Contract and all required evidence validated",
+      "Critical blockers explicitly closed",
+      "Actual accepted checkpoint and handoff"
+    ],
+    "notes": "This envelope may overlap other independent envelopes; numeric order is a presentation sequence, not authorization or all-to-all blocking."
+  },
+  {
+    "id": "SPR-DRAFT-07",
+    "planning_kind": "SEQUENCE_ENVELOPE_NO_CALENDAR",
+    "title": "Registres et intégration au Control Plane",
+    "reference": "GMC-G16..18",
+    "planned_work_ids": [
+      "GMC-G16",
+      "GMC-G17",
+      "GMC-G18"
+    ],
+    "exit_gate_candidate": "MODEL_G18_VALIDATED",
+    "status": "DESIGN_ONLY",
+    "approved_owner_decision": "NONE",
+    "agent_assignment": "NONE",
+    "start_date": null,
+    "end_date": null,
+    "start_condition": [
+      "Canonical prerequisite outputs validated",
+      "Authority for actual work confirmed",
+      "No collision between claim domains"
+    ],
+    "end_condition": [
+      "Contract and all required evidence validated",
+      "Critical blockers explicitly closed",
+      "Actual accepted checkpoint and handoff"
+    ],
+    "notes": "This envelope may overlap other independent envelopes; numeric order is a presentation sequence, not authorization or all-to-all blocking."
+  },
+  {
+    "id": "SPR-DRAFT-08",
+    "planning_kind": "SEQUENCE_ENVELOPE_NO_CALENDAR",
+    "title": "Validation commune et modèle 1.0",
+    "reference": "GMC-G19",
+    "planned_work_ids": [
+      "GMC-G19"
+    ],
+    "exit_gate_candidate": "GMC_19_ACCEPTED",
+    "status": "DESIGN_ONLY",
+    "approved_owner_decision": "NONE",
+    "agent_assignment": "NONE",
+    "start_date": null,
+    "end_date": null,
+    "start_condition": [
+      "Canonical prerequisite outputs validated",
+      "Authority for actual work confirmed",
+      "No collision between claim domains"
+    ],
+    "end_condition": [
+      "Contract and all required evidence validated",
+      "Critical blockers explicitly closed",
+      "Actual accepted checkpoint and handoff"
+    ],
+    "notes": "This envelope may overlap other independent envelopes; numeric order is a presentation sequence, not authorization or all-to-all blocking."
+  },
+  {
+    "id": "SPR-DRAFT-09",
+    "planning_kind": "SEQUENCE_ENVELOPE_NO_CALENDAR",
+    "title": "Routage adaptatif et cohérence",
+    "reference": "RTE-001..12 / ARCH",
+    "planned_work_ids": [
+      "RTE-001",
+      "RTE-002",
+      "RTE-003",
+      "RTE-004",
+      "RTE-005",
+      "RTE-006",
+      "RTE-007",
+      "RTE-008",
+      "RTE-009",
+      "RTE-010",
+      "RTE-011",
+      "RTE-012",
+      "ARCH-006"
+    ],
+    "exit_gate_candidate": "RTE_012_AND_ARCH_006_ACCEPTED",
+    "status": "DESIGN_ONLY",
+    "approved_owner_decision": "NONE",
+    "agent_assignment": "NONE",
+    "start_date": null,
+    "end_date": null,
+    "start_condition": [
+      "Canonical prerequisite outputs validated",
+      "Authority for actual work confirmed",
+      "No collision between claim domains"
+    ],
+    "end_condition": [
+      "Contract and all required evidence validated",
+      "Critical blockers explicitly closed",
+      "Actual accepted checkpoint and handoff"
+    ],
+    "notes": "This envelope may overlap other independent envelopes; numeric order is a presentation sequence, not authorization or all-to-all blocking."
+  },
+  {
+    "id": "SPR-DRAFT-10",
+    "planning_kind": "SEQUENCE_ENVELOPE_NO_CALENDAR",
+    "title": "Capsule réutilisable",
+    "reference": "CAP-001..12",
+    "planned_work_ids": [
+      "CAP-001",
+      "CAP-002",
+      "CAP-003",
+      "CAP-004",
+      "CAP-005",
+      "CAP-006",
+      "CAP-007",
+      "CAP-008",
+      "CAP-009",
+      "CAP-010",
+      "CAP-011",
+      "CAP-012"
+    ],
+    "exit_gate_candidate": "CAP_012_RELEASED",
+    "status": "DESIGN_ONLY",
+    "approved_owner_decision": "NONE",
+    "agent_assignment": "NONE",
+    "start_date": null,
+    "end_date": null,
+    "start_condition": [
+      "Canonical prerequisite outputs validated",
+      "Authority for actual work confirmed",
+      "No collision between claim domains"
+    ],
+    "end_condition": [
+      "Contract and all required evidence validated",
+      "Critical blockers explicitly closed",
+      "Actual accepted checkpoint and handoff"
+    ],
+    "notes": "This envelope may overlap other independent envelopes; numeric order is a presentation sequence, not authorization or all-to-all blocking."
+  },
+  {
+    "id": "SPR-DRAFT-11",
+    "planning_kind": "SEQUENCE_ENVELOPE_NO_CALENDAR",
+    "title": "Stratégies ADOPT/MAP/LAB",
+    "reference": "Cases and GMC-18",
+    "planned_work_ids": [
+      "ADOPT_EXISTING_REPOSITORY",
+      "MAP_EXISTING_PROJECT",
+      "LAB_EVOLUTION"
+    ],
+    "exit_gate_candidate": "CASE_E2E_VALIDATION",
+    "status": "DESIGN_ONLY",
+    "approved_owner_decision": "NONE",
+    "agent_assignment": "NONE",
+    "start_date": null,
+    "end_date": null,
+    "start_condition": [
+      "Canonical prerequisite outputs validated",
+      "Authority for actual work confirmed",
+      "No collision between claim domains"
+    ],
+    "end_condition": [
+      "Contract and all required evidence validated",
+      "Critical blockers explicitly closed",
+      "Actual accepted checkpoint and handoff"
+    ],
+    "notes": "This envelope may overlap other independent envelopes; numeric order is a presentation sequence, not authorization or all-to-all blocking."
+  },
+  {
+    "id": "SPR-DRAFT-12",
+    "planning_kind": "SEQUENCE_ENVELOPE_NO_CALENDAR",
+    "title": "Produit, API et services",
+    "reference": "SAA-001..06",
+    "planned_work_ids": [
+      "SAA-001",
+      "SAA-002",
+      "SAA-003",
+      "SAA-004",
+      "SAA-005",
+      "SAA-006"
+    ],
+    "exit_gate_candidate": "API_INTEGRATION_PASS",
+    "status": "DESIGN_ONLY",
+    "approved_owner_decision": "NONE",
+    "agent_assignment": "NONE",
+    "start_date": null,
+    "end_date": null,
+    "start_condition": [
+      "Canonical prerequisite outputs validated",
+      "Authority for actual work confirmed",
+      "No collision between claim domains"
+    ],
+    "end_condition": [
+      "Contract and all required evidence validated",
+      "Critical blockers explicitly closed",
+      "Actual accepted checkpoint and handoff"
+    ],
+    "notes": "This envelope may overlap other independent envelopes; numeric order is a presentation sequence, not authorization or all-to-all blocking."
+  },
+  {
+    "id": "SPR-DRAFT-13",
+    "planning_kind": "SEQUENCE_ENVELOPE_NO_CALENDAR",
+    "title": "Cockpit et sécurité",
+    "reference": "SAA-007..10",
+    "planned_work_ids": [
+      "SAA-007",
+      "SAA-008",
+      "SAA-009",
+      "SAA-010"
+    ],
+    "exit_gate_candidate": "COCKPIT_SECURITY_PASS",
+    "status": "DESIGN_ONLY",
+    "approved_owner_decision": "NONE",
+    "agent_assignment": "NONE",
+    "start_date": null,
+    "end_date": null,
+    "start_condition": [
+      "Canonical prerequisite outputs validated",
+      "Authority for actual work confirmed",
+      "No collision between claim domains"
+    ],
+    "end_condition": [
+      "Contract and all required evidence validated",
+      "Critical blockers explicitly closed",
+      "Actual accepted checkpoint and handoff"
+    ],
+    "notes": "This envelope may overlap other independent envelopes; numeric order is a presentation sequence, not authorization or all-to-all blocking."
+  },
+  {
+    "id": "SPR-DRAFT-14",
+    "planning_kind": "SEQUENCE_ENVELOPE_NO_CALENDAR",
+    "title": "Packaging et préproduction",
+    "reference": "SAA-011/12",
+    "planned_work_ids": [
+      "SAA-011",
+      "SAA-012"
+    ],
+    "exit_gate_candidate": "STAGING_E2E_PASS",
+    "status": "DESIGN_ONLY",
+    "approved_owner_decision": "NONE",
+    "agent_assignment": "NONE",
+    "start_date": null,
+    "end_date": null,
+    "start_condition": [
+      "Canonical prerequisite outputs validated",
+      "Authority for actual work confirmed",
+      "No collision between claim domains"
+    ],
+    "end_condition": [
+      "Contract and all required evidence validated",
+      "Critical blockers explicitly closed",
+      "Actual accepted checkpoint and handoff"
+    ],
+    "notes": "This envelope may overlap other independent envelopes; numeric order is a presentation sequence, not authorization or all-to-all blocking."
+  },
+  {
+    "id": "SPR-DRAFT-15",
+    "planning_kind": "SEQUENCE_ENVELOPE_NO_CALENDAR",
+    "title": "Production et livraison",
+    "reference": "SAA-013..15",
+    "planned_work_ids": [
+      "SAA-013",
+      "SAA-014",
+      "SAA-015"
+    ],
+    "exit_gate_candidate": "PRODUCT_1_0_RELEASE_ACCEPTED",
+    "status": "DESIGN_ONLY",
+    "approved_owner_decision": "NONE",
+    "agent_assignment": "NONE",
+    "start_date": null,
+    "end_date": null,
+    "start_condition": [
+      "Canonical prerequisite outputs validated",
+      "Authority for actual work confirmed",
+      "No collision between claim domains"
+    ],
+    "end_condition": [
+      "Contract and all required evidence validated",
+      "Critical blockers explicitly closed",
+      "Actual accepted checkpoint and handoff"
+    ],
+    "notes": "This envelope may overlap other independent envelopes; numeric order is a presentation sequence, not authorization or all-to-all blocking."
+  }
+]
