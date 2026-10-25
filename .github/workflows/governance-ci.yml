@@ -233,6 +233,11 @@ jobs:
           python3 -m py_compile scripts/governed_plan_reconciliation.py scripts/test_governed_plan_reconciliation.py
           python3 scripts/test_governed_plan_reconciliation.py
 
+      - name: Test CHAINFLOW GR302 approved HEAD rebaseline (no execution grant)
+        run: |
+          python3 -m py_compile scripts/governed_gr302_reconciliation.py scripts/test_governed_gr302_reconciliation.py scripts/control_plane_issue_bridge.py
+          python3 scripts/test_governed_gr302_reconciliation.py
+
       - name: Test GitHub issue control plane boundary
         run: python3 scripts/test_control_plane_issue_contract.py
 
