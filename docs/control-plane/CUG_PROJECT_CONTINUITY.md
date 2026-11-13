@@ -11,7 +11,10 @@ Le contrat additif de l'événement existant `governed_request_start` accepte
 `objective` et `creation: {owner, name, visibility}`. Les valeurs de propriétaire
 sont les labels CASE 1 existants. L'événement doit être émis par le bot de
 l'installation CUG autorisée dans GRT. Le flux historique sans `creation`
-conserve son comportement et sa configuration.
+conserve son comportement et sa configuration. Le workflow sérialise les
+soumissions CUG, retrouve une demande centrale existante par compte/dépôt
+et retourne la même référence lors d'une nouvelle soumission. Une demande
+déjà ouverte se poursuit dans son issue plutôt que de créer un deuxième ID.
 
 Le plan de contrôle requiert une configuration indépendante de l'ancienne App.
 Configurer `GOVERNED_CUG_APP_CLIENT_ID` et `GOVERNED_CUG_BOT_LOGIN` comme

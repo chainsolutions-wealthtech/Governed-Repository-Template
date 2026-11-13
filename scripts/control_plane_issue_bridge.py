@@ -594,6 +594,22 @@ def handle_comment(event: dict) -> None:
     )
 
 
+def find_cug_creation_request(marker: str):
+    # List directly rather than depending on the eventually indexed issue search.
+    for page in range(1, 21):
+        issues = api("GET", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues?state=all&per_page=100&page={page}")
+        if not isinstance(issues, list):
+            raise ValueError("CUG_CREATION_HISTORY_UNAVAILABLE")
+        for issue in issues:
+            if (not issue.get("pull_request") and (issue.get("user") or {}).get("login") == "github-actions[bot]"
+                    and str(issue.get("title") or "").startswith("[Governed Request]")
+                    and marker in (issue.get("body") or "").splitlines()):
+                return issue
+        if len(issues) < 100:
+            return None
+    raise ValueError("CUG_CREATION_HISTORY_LOOKUP_INCOMPLETE")
+
+
 def handle_repository_dispatch(event: dict) -> None:
     payload = event.get("client_payload") or {}
     objective = payload.get("objective")
@@ -622,6 +638,15 @@ def handle_repository_dispatch(event: dict) -> None:
         target = f"{CREATE_OWNER_CANONICAL[creation['owner']]}/{creation['name']}"
         if creation["visibility"] != "private" or target != os.getenv("GOVERNED_CUG_AUTOMATED_PRIVATE_TARGET"):
             raise SystemExit("CUG_AUTOMATED_LOCAL_TARGET_NOT_AUTHORIZED")
+    creation_marker = None
+    if creation is not None:
+        target = f"{CREATE_OWNER_CANONICAL[creation['owner']]}/{creation['name']}"
+        creation_marker = f"<!-- GRT_CUG_CREATE_TARGET:{target.casefold()} -->"
+        existing = find_cug_creation_request(creation_marker)
+        if existing is not None:
+            print(json.dumps({"status": "CUG_CREATION_REQUEST_ALREADY_EXISTS",
+                              "issue_number": existing.get("number"), "issue_url": existing.get("html_url")}))
+            return
     agent = payload.get("agent")
     provider = payload.get("provider")
     requested_title = payload.get("title")
@@ -635,6 +660,8 @@ def handle_repository_dispatch(event: dict) -> None:
         body_lines.extend(["", "### Agent identity", "", str(agent)])
     if provider:
         body_lines.extend(["", "### Provider", "", str(provider)])
+    if creation_marker is not None:
+        body_lines.extend(["", creation_marker])
     created = api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues", {
         "title": f"[Governed Request] {suffix}",
         "body": "\n".join(body_lines) + "\n",

@@ -44,11 +44,17 @@ def main():
         },
     }}
     issued = []
+    created_issues = []
     with tempfile.TemporaryDirectory() as temp:
         output = Path(temp) / "output"
         def fake_api(method, path, payload=None):
+            if method == "GET" and "?state=all" in path:
+                return created_issues
             if method == "POST" and path.endswith("/issues"):
-                return {"number": 99, "body": payload["body"]}
+                issue = {"number": 99, "body": payload["body"], "title": payload["title"],
+                         "user": {"login": "github-actions[bot]"}}
+                created_issues.append(issue)
+                return issue
             return {}
         with patch.dict(os.environ, {"GITHUB_OUTPUT": str(output), "GOVERNED_CUG_BOT_LOGIN": login}), \
                 patch.object(bridge, "api", fake_api), \
@@ -58,6 +64,8 @@ def main():
                      "CUG_CONTROL_PLANE_DISPATCH_ACTOR_NOT_AUTHORIZED")
             assert not issued
             bridge.handle_repository_dispatch(request)
+            bridge.handle_repository_dispatch(request)
+            assert len(created_issues) == len(issued) == 1
             assert "executor_required=true" in output.read_text()
             assert "use_cug=true" in output.read_text()
             state = issued[0]
