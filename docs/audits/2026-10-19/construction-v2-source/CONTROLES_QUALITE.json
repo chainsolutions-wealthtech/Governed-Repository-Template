@@ -1,0 +1,48 @@
+{
+  "date": "2026-10-16",
+  "source_head": "638fcc51c77f2454990f239b8b8cca78bac8075b",
+  "pieces_total": 354,
+  "piece_kinds": {
+    "architecture": 1,
+    "work_package": 19,
+    "atomic_task": 174,
+    "knowledge_artifact": 85,
+    "canonical_backlog_task": 63,
+    "structuring_case": 4,
+    "proposed_missing_specification": 8
+  },
+  "unique_piece_ids": true,
+  "unique_sprint_ids": true,
+  "unique_requirement_ids": true,
+  "individual_lot_files": 354,
+  "number_of_canonical_gmc_task_files": 174,
+  "number_of_gmc_work_packages": 19,
+  "number_of_gmc_artifact_refs": 85,
+  "number_of_requirements": 35,
+  "number_of_candidate_sprints": 16,
+  "typed_planning_edges": 835,
+  "no_missing_link_endpoints": true,
+  "p0_files_created": [],
+  "source_repository_mutations": 0,
+  "no_claims_or_sessions_assigned": true,
+  "limitations": [
+    "No canonically approved global director contract ST01",
+    "No current executed artifacts asserted",
+    "Future sprint and requirement links are planning proposals",
+    "No canonical registration attempted"
+  ],
+  "source_audit": "audit_matrice_GRT_2026-10-16.json previously generated and inspected",
+  "source_graph_dependencies_reconciled": 256,
+  "historical_references": 50,
+  "gmc_legacy_aliases": 19,
+  "source_dep_override_integrity": "PASS",
+  "canonical_task_registry_coverage_132": "PASS",
+  "canonical_dependency_graph_acyclic": true,
+  "historical_status_counts_reconciled": {
+    "DONE": 64,
+    "SUPERSEDED": 1,
+    "PLANNED": 61,
+    "FUTURE": 5,
+    "IN_PROGRESS": 1
+  }
+}

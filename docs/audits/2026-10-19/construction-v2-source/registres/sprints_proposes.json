@@ -1,0 +1,292 @@
+[
+  {
+    "id": "SPR-DRAFT-00",
+    "kind": "PROPOSED_SEQUENCE_BUNDLE",
+    "title": "Préparation et contrat directeur",
+    "sequence_index": 0,
+    "participating_piece_ids": [
+      "DRAFT-GLOBAL-CONTRACT",
+      "DRAFT-REQ-TRACE"
+    ],
+    "exit_criteria": "ST01 approuvé, sprints proposés rattachés aux autorités existantes",
+    "duration": "UNSPECIFIED_NO_DATE_ASSUMED",
+    "capacity": "UNRESOLVED",
+    "authorization": "NONE",
+    "status": "DESIGN_ONLY",
+    "constraint": "Les vrais sprints devront être planifiés en fonction de la capacité observée et des dépendances validées. Le sprint ne vaut pas acceptation des livrables."
+  },
+  {
+    "id": "SPR-DRAFT-01",
+    "kind": "PROPOSED_SEQUENCE_BUNDLE",
+    "title": "Frontières et métamodèle",
+    "sequence_index": 1,
+    "participating_piece_ids": [
+      "GMC-G01",
+      "GMC-G02"
+    ],
+    "exit_criteria": "Résultats de G01 puis G02 validés; sinon sprint fractionné",
+    "duration": "UNSPECIFIED_NO_DATE_ASSUMED",
+    "capacity": "UNRESOLVED",
+    "authorization": "NONE",
+    "status": "DESIGN_ONLY",
+    "constraint": "Les vrais sprints devront être planifiés en fonction de la capacité observée et des dépendances validées. Le sprint ne vaut pas acceptation des livrables."
+  },
+  {
+    "id": "SPR-DRAFT-02",
+    "kind": "PROPOSED_SEQUENCE_BUNDLE",
+    "title": "Domaines, capacités et composants",
+    "sequence_index": 2,
+    "participating_piece_ids": [
+      "GMC-G03",
+      "GMC-G04",
+      "GMC-G05"
+    ],
+    "exit_criteria": "Registres de domaines/capacités/composants validés",
+    "duration": "UNSPECIFIED_NO_DATE_ASSUMED",
+    "capacity": "UNRESOLVED",
+    "authorization": "NONE",
+    "status": "DESIGN_ONLY",
+    "constraint": "Les vrais sprints devront être planifiés en fonction de la capacité observée et des dépendances validées. Le sprint ne vaut pas acceptation des livrables."
+  },
+  {
+    "id": "SPR-DRAFT-03",
+    "kind": "PROPOSED_SEQUENCE_BUNDLE",
+    "title": "Données et états",
+    "sequence_index": 3,
+    "participating_piece_ids": [
+      "GMC-G06",
+      "GMC-G07",
+      "GMC-G08"
+    ],
+    "exit_criteria": "Objets, états et transitions identifiés avec preuves",
+    "duration": "UNSPECIFIED_NO_DATE_ASSUMED",
+    "capacity": "UNRESOLVED",
+    "authorization": "NONE",
+    "status": "DESIGN_ONLY",
+    "constraint": "Les vrais sprints devront être planifiés en fonction de la capacité observée et des dépendances validées. Le sprint ne vaut pas acceptation des livrables."
+  },
+  {
+    "id": "SPR-DRAFT-04",
+    "kind": "PROPOSED_SEQUENCE_BUNDLE",
+    "title": "Contrôles, gates et preuves",
+    "sequence_index": 4,
+    "participating_piece_ids": [
+      "GMC-G09",
+      "GMC-G10",
+      "GMC-G11"
+    ],
+    "exit_criteria": "Contrats de sûreté/validation complets",
+    "duration": "UNSPECIFIED_NO_DATE_ASSUMED",
+    "capacity": "UNRESOLVED",
+    "authorization": "NONE",
+    "status": "DESIGN_ONLY",
+    "constraint": "Les vrais sprints devront être planifiés en fonction de la capacité observée et des dépendances validées. Le sprint ne vaut pas acceptation des livrables."
+  },
+  {
+    "id": "SPR-DRAFT-05",
+    "kind": "PROPOSED_SEQUENCE_BUNDLE",
+    "title": "Traçabilité d’implémentation et dépendances",
+    "sequence_index": 5,
+    "participating_piece_ids": [
+      "GMC-G12",
+      "GMC-G13",
+      "DRAFT-DELIVERY-REG"
+    ],
+    "exit_criteria": "Graphes de références et dépendances contrôlés",
+    "duration": "UNSPECIFIED_NO_DATE_ASSUMED",
+    "capacity": "UNRESOLVED",
+    "authorization": "NONE",
+    "status": "DESIGN_ONLY",
+    "constraint": "Les vrais sprints devront être planifiés en fonction de la capacité observée et des dépendances validées. Le sprint ne vaut pas acceptation des livrables."
+  },
+  {
+    "id": "SPR-DRAFT-06",
+    "kind": "PROPOSED_SEQUENCE_BUNDLE",
+    "title": "Comparaison et applicabilité",
+    "sequence_index": 6,
+    "participating_piece_ids": [
+      "GMC-G14",
+      "GMC-G15"
+    ],
+    "exit_criteria": "Comparaisons sémantiques vérifiables",
+    "duration": "UNSPECIFIED_NO_DATE_ASSUMED",
+    "capacity": "UNRESOLVED",
+    "authorization": "NONE",
+    "status": "DESIGN_ONLY",
+    "constraint": "Les vrais sprints devront être planifiés en fonction de la capacité observée et des dépendances validées. Le sprint ne vaut pas acceptation des livrables."
+  },
+  {
+    "id": "SPR-DRAFT-07",
+    "kind": "PROPOSED_SEQUENCE_BUNDLE",
+    "title": "Matérialisation et quatre cas",
+    "sequence_index": 7,
+    "participating_piece_ids": [
+      "GMC-G16",
+      "GMC-G17",
+      "GMC-G18"
+    ],
+    "exit_criteria": "Contrats de consommation réutilisables approuvés",
+    "duration": "UNSPECIFIED_NO_DATE_ASSUMED",
+    "capacity": "UNRESOLVED",
+    "authorization": "NONE",
+    "status": "DESIGN_ONLY",
+    "constraint": "Les vrais sprints devront être planifiés en fonction de la capacité observée et des dépendances validées. Le sprint ne vaut pas acceptation des livrables."
+  },
+  {
+    "id": "SPR-DRAFT-08",
+    "kind": "PROPOSED_SEQUENCE_BUNDLE",
+    "title": "Validation du modèle commun",
+    "sequence_index": 8,
+    "participating_piece_ids": [
+      "GMC-G19",
+      "ARCH-006",
+      "DRAFT-TRACE-E2E"
+    ],
+    "exit_criteria": "Gates globaux validés; pas de release automatique",
+    "duration": "UNSPECIFIED_NO_DATE_ASSUMED",
+    "capacity": "UNRESOLVED",
+    "authorization": "NONE",
+    "status": "DESIGN_ONLY",
+    "constraint": "Les vrais sprints devront être planifiés en fonction de la capacité observée et des dépendances validées. Le sprint ne vaut pas acceptation des livrables."
+  },
+  {
+    "id": "SPR-DRAFT-09",
+    "kind": "PROPOSED_SEQUENCE_BUNDLE",
+    "title": "Routeur deux étages et reprise",
+    "sequence_index": 9,
+    "participating_piece_ids": [
+      "RTE-001",
+      "RTE-002",
+      "RTE-003",
+      "RTE-004",
+      "RTE-005",
+      "RTE-006",
+      "RTE-007",
+      "RTE-008",
+      "RTE-009",
+      "RTE-010",
+      "RTE-011",
+      "RTE-012"
+    ],
+    "exit_criteria": "Activation soumise aux gates et preuve RTE-012",
+    "duration": "UNSPECIFIED_NO_DATE_ASSUMED",
+    "capacity": "UNRESOLVED",
+    "authorization": "NONE",
+    "status": "DESIGN_ONLY",
+    "constraint": "Les vrais sprints devront être planifiés en fonction de la capacité observée et des dépendances validées. Le sprint ne vaut pas acceptation des livrables."
+  },
+  {
+    "id": "SPR-DRAFT-10",
+    "kind": "PROPOSED_SEQUENCE_BUNDLE",
+    "title": "Capsule réutilisable",
+    "sequence_index": 10,
+    "participating_piece_ids": [
+      "CAP-001",
+      "CAP-002",
+      "CAP-003",
+      "CAP-004",
+      "CAP-005",
+      "CAP-006",
+      "CAP-007",
+      "CAP-008",
+      "CAP-009",
+      "CAP-010",
+      "CAP-011",
+      "CAP-012"
+    ],
+    "exit_criteria": "Release CAP-012 seulement après preuves et prérequis",
+    "duration": "UNSPECIFIED_NO_DATE_ASSUMED",
+    "capacity": "UNRESOLVED",
+    "authorization": "NONE",
+    "status": "DESIGN_ONLY",
+    "constraint": "Les vrais sprints devront être planifiés en fonction de la capacité observée et des dépendances validées. Le sprint ne vaut pas acceptation des livrables."
+  },
+  {
+    "id": "SPR-DRAFT-11",
+    "kind": "PROPOSED_SEQUENCE_BUNDLE",
+    "title": "Trois cas encore à industrialiser",
+    "sequence_index": 11,
+    "participating_piece_ids": [
+      "ADOPT_EXISTING_REPOSITORY",
+      "MAP_EXISTING_PROJECT",
+      "LAB_EVOLUTION"
+    ],
+    "exit_criteria": "Chaque cas avec ses propres preuves E2E; sans dépendance temporelle arbitraire",
+    "duration": "UNSPECIFIED_NO_DATE_ASSUMED",
+    "capacity": "UNRESOLVED",
+    "authorization": "NONE",
+    "status": "DESIGN_ONLY",
+    "constraint": "Les vrais sprints devront être planifiés en fonction de la capacité observée et des dépendances validées. Le sprint ne vaut pas acceptation des livrables."
+  },
+  {
+    "id": "SPR-DRAFT-12",
+    "kind": "PROPOSED_SEQUENCE_BUNDLE",
+    "title": "Spécifications produit et API",
+    "sequence_index": 12,
+    "participating_piece_ids": [
+      "SAA-001",
+      "SAA-002",
+      "SAA-003",
+      "SAA-004",
+      "SAA-005",
+      "SAA-006"
+    ],
+    "exit_criteria": "Contrats produit/API/services et isolation testés",
+    "duration": "UNSPECIFIED_NO_DATE_ASSUMED",
+    "capacity": "UNRESOLVED",
+    "authorization": "NONE",
+    "status": "DESIGN_ONLY",
+    "constraint": "Les vrais sprints devront être planifiés en fonction de la capacité observée et des dépendances validées. Le sprint ne vaut pas acceptation des livrables."
+  },
+  {
+    "id": "SPR-DRAFT-13",
+    "kind": "PROPOSED_SEQUENCE_BUNDLE",
+    "title": "Cockpit et opérations gouvernées",
+    "sequence_index": 13,
+    "participating_piece_ids": [
+      "SAA-007",
+      "SAA-008",
+      "SAA-009",
+      "SAA-010"
+    ],
+    "exit_criteria": "Cockpit complet et actions gouvernées testables",
+    "duration": "UNSPECIFIED_NO_DATE_ASSUMED",
+    "capacity": "UNRESOLVED",
+    "authorization": "NONE",
+    "status": "DESIGN_ONLY",
+    "constraint": "Les vrais sprints devront être planifiés en fonction de la capacité observée et des dépendances validées. Le sprint ne vaut pas acceptation des livrables."
+  },
+  {
+    "id": "SPR-DRAFT-14",
+    "kind": "PROPOSED_SEQUENCE_BUNDLE",
+    "title": "Packaging et staging",
+    "sequence_index": 14,
+    "participating_piece_ids": [
+      "SAA-011",
+      "SAA-012"
+    ],
+    "exit_criteria": "Déploiement et E2E staging validés",
+    "duration": "UNSPECIFIED_NO_DATE_ASSUMED",
+    "capacity": "UNRESOLVED",
+    "authorization": "NONE",
+    "status": "DESIGN_ONLY",
+    "constraint": "Les vrais sprints devront être planifiés en fonction de la capacité observée et des dépendances validées. Le sprint ne vaut pas acceptation des livrables."
+  },
+  {
+    "id": "SPR-DRAFT-15",
+    "kind": "PROPOSED_SEQUENCE_BUNDLE",
+    "title": "Production, recette et livraison",
+    "sequence_index": 15,
+    "participating_piece_ids": [
+      "SAA-013",
+      "SAA-014",
+      "SAA-015"
+    ],
+    "exit_criteria": "Production/recovery/release uniquement si autorisés et attestés",
+    "duration": "UNSPECIFIED_NO_DATE_ASSUMED",
+    "capacity": "UNRESOLVED",
+    "authorization": "NONE",
+    "status": "DESIGN_ONLY",
+    "constraint": "Les vrais sprints devront être planifiés en fonction de la capacité observée et des dépendances validées. Le sprint ne vaut pas acceptation des livrables."
+  }
+]

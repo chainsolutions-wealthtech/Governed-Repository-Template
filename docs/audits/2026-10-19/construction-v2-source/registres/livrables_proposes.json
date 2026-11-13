@@ -1,0 +1,571 @@
+[
+  {
+    "id": "DEL-DRAFT-01",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Cadre du Programme Global",
+    "definition": "ST01 contract director, scope, NFRs and global acceptance",
+    "proposed_source_work_ids": [
+      "DRAFT-GLOBAL-CONTRACT",
+      "CP-ARCH-001"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-17",
+      "RQ-18"
+    ],
+    "acceptance_gate_candidate": "ST01_OWNER_APPROVAL",
+    "source_status_interpretation": "DESIGN_CONTRACT",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-02",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Capsule d’entrée réutilisée",
+    "definition": "Entry admission and session continuity reused without modifying P0",
+    "proposed_source_work_ids": [
+      "IDN-006",
+      "IDN-011",
+      "IDN-012"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-01",
+      "RQ-02",
+      "RQ-03",
+      "RQ-04",
+      "RQ-05",
+      "RQ-06",
+      "RQ-07",
+      "RQ-26"
+    ],
+    "acceptance_gate_candidate": "P0_EXISTING_PROOF",
+    "source_status_interpretation": "PRESERVE_EXISTING",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-03",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Graphe universel de construction",
+    "definition": "Program → requirement → deliverable → work → evidence, with stable references",
+    "proposed_source_work_ids": [
+      "GMC-G02",
+      "GMC-G06",
+      "GMC-G13",
+      "DRAFT-DELIVERY-REG",
+      "DRAFT-TRACE-E2E"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-17",
+      "RQ-18",
+      "RQ-22",
+      "RQ-27"
+    ],
+    "acceptance_gate_candidate": "GMC_G13_GRAPH_REVIEW",
+    "source_status_interpretation": "DESIGN_REQUIRED",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-04",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Registres de modèle normatifs",
+    "definition": "18 governance model registry types and standard contracts",
+    "proposed_source_work_ids": [
+      "GMC-G03",
+      "GMC-G04",
+      "GMC-G05",
+      "GMC-G06",
+      "GMC-G07",
+      "GMC-G08"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-17"
+    ],
+    "acceptance_gate_candidate": "GMC_G08_OUTPUTS_VALIDATED",
+    "source_status_interpretation": "MODEL_PLAN",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-05",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Contrôles, autorité et preuve",
+    "definition": "Control, gate, authority and evidence model",
+    "proposed_source_work_ids": [
+      "GMC-G09",
+      "GMC-G10",
+      "GMC-G11"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-02",
+      "RQ-06",
+      "RQ-10",
+      "RQ-15"
+    ],
+    "acceptance_gate_candidate": "GMC_G11_OUTPUTS_VALIDATED",
+    "source_status_interpretation": "MODEL_PLAN",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-06",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Matrice modèles → implémentations",
+    "definition": "Bidirectional mapping of model definitions with source artifacts and tests",
+    "proposed_source_work_ids": [
+      "GMC-G12",
+      "GMC-G13"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-18",
+      "RQ-22"
+    ],
+    "acceptance_gate_candidate": "GMC_G13_OUTPUTS_VALIDATED",
+    "source_status_interpretation": "MODEL_PLAN",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-07",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Comparateur de gouvernance",
+    "definition": "Semantic comparison, applicability and fine-grained gaps",
+    "proposed_source_work_ids": [
+      "GMC-G14",
+      "GMC-G15"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-08",
+      "RQ-17"
+    ],
+    "acceptance_gate_candidate": "GMC_G15_OUTPUTS_VALIDATED",
+    "source_status_interpretation": "MODEL_PLAN",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-08",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Matérialisation sans seconde vérité",
+    "definition": "Schemas and existing materializer adaptation contract",
+    "proposed_source_work_ids": [
+      "GMC-G16",
+      "ARCH-004",
+      "ARCH-006"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-18",
+      "RQ-22",
+      "RQ-23"
+    ],
+    "acceptance_gate_candidate": "GMC_G16_CONTRACT_VALIDATED",
+    "source_status_interpretation": "DESIGN_REQUIRED",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-09",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Consommation du modèle par le Control Plane",
+    "definition": "Validated, versioned model consumption with fail closed",
+    "proposed_source_work_ids": [
+      "GMC-G17",
+      "ARCH-005"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-10",
+      "RQ-17",
+      "RQ-18"
+    ],
+    "acceptance_gate_candidate": "GMC_G17_CONTRACT_VALIDATED",
+    "source_status_interpretation": "DESIGN_REQUIRED",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-10",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Quatre cas liés au modèle",
+    "definition": "CREATE/ADOPT/MAP/LAB common contract, specific strategies preserved",
+    "proposed_source_work_ids": [
+      "GMC-G18",
+      "GMC-G19",
+      "ADOPT_EXISTING_REPOSITORY",
+      "MAP_EXISTING_PROJECT",
+      "LAB_EVOLUTION"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-08",
+      "RQ-12",
+      "RQ-13",
+      "RQ-14"
+    ],
+    "acceptance_gate_candidate": "GMC_G19_CROSS_CASE_ACCEPTANCE",
+    "source_status_interpretation": "MODEL_RELEASE",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-11",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Routeur des intentions",
+    "definition": "Routing, one-question-at-a-time and exact resume",
+    "proposed_source_work_ids": [
+      "RTE-001",
+      "RTE-004",
+      "RTE-012"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-09",
+      "RQ-11",
+      "RQ-12",
+      "RQ-13"
+    ],
+    "acceptance_gate_candidate": "RTE_012_E2E_PROOF",
+    "source_status_interpretation": "PLANNED",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-12",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Mémoire et reprise des interventions",
+    "definition": "Trace/decision/event/checkpoint/handoff lifecycle",
+    "proposed_source_work_ids": [
+      "ARCH-004",
+      "RTE-008",
+      "RTE-012",
+      "DRAFT-STATUS-EVENTS"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-15",
+      "RQ-16",
+      "RQ-28"
+    ],
+    "acceptance_gate_candidate": "EVENT_RECONSTRUCTION_PASS",
+    "source_status_interpretation": "PARTIAL_FOUNDATION",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-13",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Distribution et claims gouvernés",
+    "definition": "Readiness criteria and dispatch with collision exclusion, not a second dispatcher",
+    "proposed_source_work_ids": [
+      "GMC-G13",
+      "ARCH-005",
+      "DRAFT-LOAD-CONTRACT"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-10",
+      "RQ-17",
+      "RQ-27"
+    ],
+    "acceptance_gate_candidate": "DISPATCH_CLAIMS_REGRESSION",
+    "source_status_interpretation": "DESIGN_REQUIRED",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-14",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Capsule publique installable",
+    "definition": "Versioned core/adapters/upgrade/test/second-provider acceptance",
+    "proposed_source_work_ids": [
+      "CAP-001",
+      "CAP-006",
+      "CAP-012"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-19",
+      "RQ-20",
+      "RQ-21",
+      "RQ-26"
+    ],
+    "acceptance_gate_candidate": "CAP_012_LIVE_PROOF",
+    "source_status_interpretation": "PLANNED",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-15",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "API gouvernée v1",
+    "definition": "Versioned OpenAPI and tested backend contracts",
+    "proposed_source_work_ids": [
+      "ARCH-008",
+      "SAA-002",
+      "SAA-006"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-24",
+      "RQ-30",
+      "RQ-31"
+    ],
+    "acceptance_gate_candidate": "OPENAPI_SECURITY_GATE",
+    "source_status_interpretation": "FUTURE",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-16",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Projection PostgreSQL",
+    "definition": "Derived runtime projection, never a second canonical source",
+    "proposed_source_work_ids": [
+      "ARCH-009",
+      "SAA-005"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-22",
+      "RQ-23",
+      "RQ-31"
+    ],
+    "acceptance_gate_candidate": "PARITY_AND_MIGRATION_PASS",
+    "source_status_interpretation": "FUTURE",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-17",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Cockpit d’administration",
+    "definition": "Read/monitor and authorized write operations respecting canonical gates",
+    "proposed_source_work_ids": [
+      "ARCH-010",
+      "SAA-007",
+      "SAA-008",
+      "SAA-009"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-25",
+      "RQ-29",
+      "RQ-30"
+    ],
+    "acceptance_gate_candidate": "COCKPIT_E2E_GATE",
+    "source_status_interpretation": "FUTURE",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-18",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Sécurité et multitenancy",
+    "definition": "Tenant isolation, secret discipline, auth!=authority, audit",
+    "proposed_source_work_ids": [
+      "SAA-001",
+      "SAA-004",
+      "SAA-010"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-02",
+      "RQ-32",
+      "RQ-35"
+    ],
+    "acceptance_gate_candidate": "SECURITY_ISOLATION_PASS",
+    "source_status_interpretation": "PLANNED",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-19",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Chaîne de livraison reproductible",
+    "definition": "Build/CI/container staging full checks and rollback",
+    "proposed_source_work_ids": [
+      "SAA-011",
+      "SAA-012",
+      "SAA-015"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-26",
+      "RQ-33",
+      "RQ-35"
+    ],
+    "acceptance_gate_candidate": "STAGING_E2E_AND_RECOVERY",
+    "source_status_interpretation": "PLANNED",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  },
+  {
+    "id": "DEL-DRAFT-20",
+    "identity_kind": "DRAFT_LOCAL_ONLY_NOT_CANONICAL",
+    "title": "Production et release",
+    "definition": "Real production deploy/review/smoke/release attestation",
+    "proposed_source_work_ids": [
+      "SAA-013",
+      "SAA-014",
+      "SAA-015"
+    ],
+    "linked_requirement_ids_proposed": [
+      "RQ-33",
+      "RQ-34",
+      "RQ-35"
+    ],
+    "acceptance_gate_candidate": "PRODUCTION_OWNER_AND_SAFETY_GATES",
+    "source_status_interpretation": "PLANNED",
+    "acceptance_criteria": [
+      "All deliverable requirements traced to source and evidence",
+      "Explicit deliverable version and source provenance",
+      "Independent review and authorized decision",
+      "No unfinished critical blocker",
+      "Checkpoint + downstream handoff"
+    ],
+    "status": "DESIGN_ONLY",
+    "final_acceptance_authority": "TO_RESOLVE_BY_EXISTING_GOVERNANCE",
+    "runtime_delivery": "NOT_ATTESTED_BY_THIS_PACKAGE"
+  }
+]

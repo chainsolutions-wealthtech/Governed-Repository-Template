@@ -1,0 +1,16 @@
+{
+  "schema": "draft-construction-handoff/v0",
+  "handoff_id": "UNASSIGNED",
+  "piece_id": "EXISTING_CANONICAL_ID_REQUIRED",
+  "agent_id": "UNAVAILABLE",
+  "session_id": "UNAVAILABLE",
+  "canonical_source": "REQUIRED",
+  "observed_head": "TO_REOBSERVE",
+  "last_verified_action": "REQUIRED",
+  "evidence_refs": [],
+  "blocked_reasons": [],
+  "next_action": "FIRST_UNVERIFIED_STEP",
+  "claim_ref": "UNAVAILABLE",
+  "lease_ref": "UNAVAILABLE",
+  "status": "ILLUSTRATIVE_ONLY_NOT_PERSISTED"
+}
