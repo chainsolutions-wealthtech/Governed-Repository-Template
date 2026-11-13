@@ -242,6 +242,12 @@ jobs:
       - name: Test repository-local governed agent entry
         run: python3 scripts/test_local_governed_entry.py
 
+      - name: Test CUG creation and project continuity
+        run: |
+          if [ -f .template-source ]; then
+            python3 scripts/test_cug_project_continuity.py
+          fi
+
       - name: Test automatic MCP credential provisioning
         run: python3 scripts/test_mcp_credential_provisioning.py
 

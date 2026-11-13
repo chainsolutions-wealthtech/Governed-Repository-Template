@@ -2,6 +2,7 @@
 from __future__ import annotations
 import copy
 from pathlib import Path
+from project_continuity import from_github
 from local_governed_entry import answer, both_discovery_needs_refresh, complete_baseline, decode_state, encode_state, mark_credentials_verified, new_request, observed_domains_for_server, reconcile_both_smart_routing, reconcile_domain_question_order, reconcile_existing_host_path_question_order, reconcile_legacy_discovery_authority, reconcile_setup_question_order, record_mcp_discovery, record_mcp_discovery_failure, require_mcp_discovery_refresh
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -11,8 +12,8 @@ def answer_expected(s,field,value):
         raise SystemExit(f"LOCAL_ENTRY_SELFTEST_FAILED: expected {field}, got {(s.get('next_request') or {}).get('field')}")
     return answer(s,field,value)
 
-def first_base():
-    s=new_request("LOCAL-1","owner/repo","a"*40,True,"first agent")
+def first_base(continuity=None):
+    s=new_request("LOCAL-1","owner/repo","a"*40,True,"first agent",continuity=continuity)
     for field,value in [
       ("agent_identity","ChatGPT"),("provider","CHATGPT"),("connection_intent","WORK_REQUEST"),
       ("project_mission","Build the governed project"),("project_scope",{"in_scope":["core"],"out_of_scope":["later"]}),
@@ -23,7 +24,8 @@ def first_base():
     return s
 
 def main():
-    s=first_base()
+    continuity=from_github("owner/repo", 12345)
+    s=first_base(continuity)
     s=answer_expected(s,"baseline_approved",True)
     s=answer_expected(s,"setup_repository_now",True)
     s=answer_expected(s,"link_mcp_server",True)
@@ -87,7 +89,9 @@ def main():
     if s["next_request"]["kind"]!="APPLY_BASELINE": raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: apply missing")
     s=complete_baseline(s,"b"*40,"LOCAL-000001-S1")
     if s["status"]!="LOCAL_HANDOFF_READY": raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: first handoff")
+    assert s["handoff"]["project_continuity"] == continuity
     persisted=decode_state(encode_state(s))
+    assert persisted["project_continuity"] == continuity
     if persisted["handoff"]["setup"]["workflow_model"]!="REGULATORY_AFRICAFUNDS_GOVERNED_FLOW":
         raise SystemExit("LOCAL_ENTRY_SELFTEST_FAILED: setup persistence")
 

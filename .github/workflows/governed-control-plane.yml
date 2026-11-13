@@ -40,21 +40,38 @@ jobs:
           python-version: '3.12'
 
       - name: Compile control plane
-        run: python3 -m py_compile scripts/governed_request.py scripts/control_plane_issue_bridge.py scripts/control_plane_create_repository.py scripts/control_plane_upgrade_local_entry.py scripts/control_plane_local_command.py scripts/control_plane_local_start.py scripts/control_plane_provision_mcp_credential.py
+        run: python3 -m py_compile scripts/governed_request.py scripts/control_plane_issue_bridge.py scripts/control_plane_create_repository.py scripts/control_plane_upgrade_local_entry.py scripts/control_plane_local_command.py scripts/control_plane_local_start.py scripts/control_plane_provision_mcp_credential.py scripts/project_continuity.py scripts/verify_cug_app.py
+
+      - name: Verify CUG before accepting a machine creation request
+        if: github.event_name == 'repository_dispatch' && github.event.client_payload.creation != null
+        env:
+          GOVERNED_CUG_BOT_LOGIN: ${{ vars.GOVERNED_CUG_BOT_LOGIN }}
+          GOVERNED_CUG_APP_CLIENT_ID: ${{ vars.GOVERNED_CUG_APP_CLIENT_ID }}
+          GOVERNED_CUG_APP_PRIVATE_KEY: ${{ secrets.GOVERNED_CUG_APP_PRIVATE_KEY }}
+        run: python3 scripts/verify_cug_app.py
 
       - name: Process governed request
         id: process
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOVERNED_CUG_BOT_LOGIN: ${{ vars.GOVERNED_CUG_BOT_LOGIN }}
         run: python3 scripts/control_plane_issue_bridge.py
+
+      - name: Verify CUG GitHub App identity for governed creation
+        if: steps.process.outputs.use_cug == 'true' && !(github.event_name == 'repository_dispatch' && github.event.client_payload.creation != null)
+        env:
+          GOVERNED_CUG_BOT_LOGIN: ${{ vars.GOVERNED_CUG_BOT_LOGIN }}
+          GOVERNED_CUG_APP_CLIENT_ID: ${{ vars.GOVERNED_CUG_APP_CLIENT_ID }}
+          GOVERNED_CUG_APP_PRIVATE_KEY: ${{ secrets.GOVERNED_CUG_APP_PRIVATE_KEY }}
+        run: python3 scripts/verify_cug_app.py
 
       - name: Mint target-owner GitHub App installation token
         if: steps.process.outputs.executor_required == 'true'
         id: creator-token
         uses: actions/create-github-app-token@v3
         with:
-          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
-          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          client-id: ${{ (steps.process.outputs.use_cug == 'true' && vars.GOVERNED_CUG_APP_CLIENT_ID) || vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ (steps.process.outputs.use_cug == 'true' && secrets.GOVERNED_CUG_APP_PRIVATE_KEY) || secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
           owner: ${{ steps.process.outputs.target_owner_canonical }}
           permission-administration: write
           permission-contents: read
@@ -71,9 +88,10 @@ jobs:
         id: upgrade-token
         uses: actions/create-github-app-token@v3
         with:
-          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
-          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          client-id: ${{ (steps.process.outputs.use_cug == 'true' && vars.GOVERNED_CUG_APP_CLIENT_ID) || vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ (steps.process.outputs.use_cug == 'true' && secrets.GOVERNED_CUG_APP_PRIVATE_KEY) || secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
           owner: ${{ steps.process.outputs.upgrade_target_owner }}
+          repositories: ${{ steps.process.outputs.use_cug == 'true' && steps.process.outputs.upgrade_target_repository_name || '' }}
           permission-contents: write
           permission-workflows: write
           permission-issues: write
@@ -92,9 +110,10 @@ jobs:
         id: local-start-token
         uses: actions/create-github-app-token@v3
         with:
-          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
-          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          client-id: ${{ (steps.process.outputs.use_cug == 'true' && vars.GOVERNED_CUG_APP_CLIENT_ID) || vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ (steps.process.outputs.use_cug == 'true' && secrets.GOVERNED_CUG_APP_PRIVATE_KEY) || secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
           owner: ${{ steps.process.outputs.local_start_target_owner }}
+          repositories: ${{ steps.process.outputs.use_cug == 'true' && steps.process.outputs.local_start_target_repository_name || '' }}
           permission-contents: write
           permission-issues: write
 
@@ -107,16 +126,18 @@ jobs:
             --target-repository "${{ steps.process.outputs.local_start_target_repository }}" \
             --expected-head "${{ steps.process.outputs.local_start_expected_head }}" \
             --objective-b64 "${{ steps.process.outputs.local_start_objective_b64 }}" \
-            --source-issue "${{ steps.process.outputs.issue_number }}"
+            --source-issue "${{ steps.process.outputs.issue_number }}" \
+            --continuity-b64 "${{ steps.process.outputs.local_start_continuity_b64 }}"
 
       - name: Mint target-owner token for machine local command
         if: steps.process.outputs.local_command_required == 'true'
         id: local-command-token
         uses: actions/create-github-app-token@v3
         with:
-          client-id: ${{ vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
-          private-key: ${{ secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
+          client-id: ${{ (steps.process.outputs.use_cug == 'true' && vars.GOVERNED_CUG_APP_CLIENT_ID) || vars.GOVERNED_GITHUB_APP_CLIENT_ID }}
+          private-key: ${{ (steps.process.outputs.use_cug == 'true' && secrets.GOVERNED_CUG_APP_PRIVATE_KEY) || secrets.GOVERNED_GITHUB_APP_PRIVATE_KEY }}
           owner: ${{ steps.process.outputs.local_command_target_owner }}
+          repositories: ${{ steps.process.outputs.use_cug == 'true' && steps.process.outputs.local_command_target_repository_name || '' }}
           permission-contents: write
           permission-issues: read
           permission-secrets: write

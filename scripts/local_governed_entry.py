@@ -24,13 +24,14 @@ def q(i,f,t,choices=None,typ="string",extra=None):
     if extra:d.update(extra)
     return d
 
-def new_request(request_id,repository,head_sha,first_agent_required,initial_context=None):
+def new_request(request_id,repository,head_sha,first_agent_required,initial_context=None,*,continuity=None):
     mode="FIRST_AGENT_BOOTSTRAP" if first_agent_required else "NORMAL_GOVERNED_ENTRY"
     s={"schema_version":"1.1.0","request_id":request_id,"repository":repository,"mode":mode,
        "status":"REQUEST_CREATED","phase":"START","revision":1,"expected_head_sha":head_sha,
        "answers":{},"next_request":None,"baseline_package":None,"setup_package":None,
        "mcp_discovery":None,"credentials_verified":False,"handoff":None,"hold_reason":None}
     if initial_context:s["answers"]["initial_context"]=initial_context
+    if continuity is not None:s["project_continuity"]=copy.deepcopy(continuity)
     return refresh(s)
 
 def baseline_reqs(s):
@@ -450,6 +451,7 @@ def refresh(s):
           "agent_identity":s["answers"]["agent_identity"],"provider":s["answers"]["provider"],
           "connection_intent":s["answers"]["connection_intent"],"local_entry_action":s["answers"]["local_entry_action"],
           "requested_objective":s["answers"]["requested_objective"]}
+        if "project_continuity" in s:s["handoff"]["project_continuity"]=copy.deepcopy(s["project_continuity"])
         s["next_request"]={"kind":"HANDOFF","id":"LOCAL_HANDOFF_READY","handoff":copy.deepcopy(s["handoff"]),"text":"Local governed entry complete."};return s
 
     if s["baseline_package"] is None:s["baseline_package"]=build_baseline(s)
@@ -848,6 +850,7 @@ def complete_baseline(s,new_head,session_id):
     s["handoff"]={"status":"LOCAL_HANDOFF_READY","repository":s["repository"],"baseline_commit_sha":new_head,
       "session_id":session_id,"next_action":"EXECUTE_FIRST_PROJECT_WORK_ITEM","first_work_objective":s["answers"]["first_work_objective"],
       "setup":copy.deepcopy(s.get("setup_package"))}
+    if "project_continuity" in s:s["handoff"]["project_continuity"]=copy.deepcopy(s["project_continuity"])
     s["next_request"]={"kind":"HANDOFF","id":"LOCAL_HANDOFF_READY","text":"First-agent baseline and setup committed.","handoff":copy.deepcopy(s["handoff"])}
     return s
 

@@ -2,6 +2,7 @@
 from __future__ import annotations
 import json, os, re, subprocess, urllib.error, urllib.parse, urllib.request
 from pathlib import Path
+from project_continuity import IDENTITY, validate_projection
 from local_governed_entry import answer, both_discovery_needs_refresh, credential_requirements, decode_state, encode_state, mark_credentials_verified, new_request, require_mcp_discovery_refresh
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -97,7 +98,11 @@ def opened(event):
         refuse_untrusted(issue["number"]);return
     if (ROOT/".template-source").exists():return
     n=issue["number"];rid=f"LOCAL-{n:06d}"
-    s=new_request(rid,os.environ["GITHUB_REPOSITORY"],head(),first_agent_required(),strip_marker(issue.get("body")))
+    repo = os.environ["GITHUB_REPOSITORY"]
+    continuity = read_json(".governance/local-entry/state.json").get(IDENTITY)
+    if continuity is not None:
+        continuity = validate_projection(continuity, repo, os.environ.get("GITHUB_REPOSITORY_ID", ""))
+    s=new_request(rid,repo,head(),first_agent_required(),strip_marker(issue.get("body")),continuity=continuity)
     persist(n,issue.get("body"),s);api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{n}/comments",{"body":render(s)});emit_outputs(s,n)
 
 def commented(event):
@@ -152,10 +157,20 @@ def dispatch_start(event):
         raise SystemExit(f"HEAD_MOVED: expected={expected} observed={observed}")
     if not isinstance(objective,str) or not objective.strip():
         raise SystemExit("LOCAL_DISPATCH_FAILED: objective required")
+    repo = os.environ["GITHUB_REPOSITORY"]
+    existing = read_json(".governance/local-entry/state.json").get(IDENTITY)
+    incoming = p.get(IDENTITY)
+    if existing is not None:
+        existing = validate_projection(existing, repo, os.environ.get("GITHUB_REPOSITORY_ID", ""))
+    continuity = existing
+    if incoming is not None:
+        continuity = validate_projection(incoming, repo, os.environ.get("GITHUB_REPOSITORY_ID", ""))
+        if existing is not None and continuity != existing:
+            raise ValueError("PROJECT_CONTINUITY_ALREADY_BOUND")
     created=api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues",{"title":f"{TITLE_PREFIX} {str(p.get('title') or objective.splitlines()[0])[:80]}","body":f"### Initial objective\n\n{objective.strip()}\n"})
     number=int(created["number"]); rid=f"LOCAL-{number:06d}"
     issue=api("GET",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{number}")
-    s=new_request(rid,os.environ["GITHUB_REPOSITORY"],observed,first_agent_required(),strip_marker(issue.get("body")))
+    s=new_request(rid,repo,observed,first_agent_required(),strip_marker(issue.get("body")),continuity=continuity)
     persist(number,issue.get("body"),s)
     api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{number}/comments",{"body":render(s)})
     emit_outputs(s,number)

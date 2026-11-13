@@ -502,6 +502,8 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
         fail("control plane client role is invalid")
 
     expected_source_only = {
+        "scripts/verify_cug_app.py",
+        "scripts/test_cug_project_continuity.py",
         ".github/workflows/governed-control-plane.yml",
         ".github/ISSUE_TEMPLATE/governed-request.yml",
         "docs/control-plane",

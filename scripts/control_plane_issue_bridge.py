@@ -13,6 +13,8 @@ from pathlib import Path
 from governed_hold_review import MERGED_PR_REF, reexamine_authority_hold
 from governed_plan_reconciliation import reconcile_existing_merged_lab
 
+from project_continuity import IDENTITY
+
 from governed_request import (
     CREATE_OWNER_CANONICAL,
     apply_answer,
@@ -184,6 +186,10 @@ def render_response(state: dict) -> str:
     return "\n".join(lines)
 
 
+def valid_repo_output(value: str) -> bool:
+    return re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9-]{0,38}/[A-Za-z0-9_.-]{1,100}", value) is not None
+
+
 def emit_executor_outputs(
     state: dict,
     issue_number: int,
@@ -200,21 +206,26 @@ def emit_executor_outputs(
         and next_request.get("kind") == "ACTION_REQUEST"
         and next_request.get("action_id") == "PREP-001"
     )
+    use_cug = state.get("credential_provider") == "CUG" and (
+        required or any((upgrade_payload, local_command_payload, local_start_payload))
+    )
     lines = [
         f"executor_required={'true' if required else 'false'}",
         f"upgrade_required={'true' if upgrade_payload else 'false'}",
         f"local_command_required={'true' if local_command_payload else 'false'}",
         f"local_start_required={'true' if local_start_payload else 'false'}",
         f"issue_number={issue_number}",
+        f"use_cug={str(use_cug).lower()}",
     ]
     if upgrade_payload:
         target_repository = str(upgrade_payload.get("target_repository") or "")
         expected_head = str(upgrade_payload.get("expected_head") or "")
-        if "/" not in target_repository or len(expected_head) != 40:
+        if not valid_repo_output(target_repository) or not re.fullmatch(r"[0-9a-f]{40}", expected_head):
             raise ValueError("upgrade payload requires target_repository owner/name and expected_head")
         lines.extend([
             f"upgrade_target_repository={target_repository}",
             f"upgrade_target_owner={target_repository.split('/',1)[0]}",
+            f"upgrade_target_repository_name={target_repository.split('/',1)[1]}",
             f"upgrade_expected_head={expected_head}",
         ])
     if local_command_payload:
@@ -225,7 +236,7 @@ def emit_executor_outputs(
         target_issue = local_command_payload.get("issue_number")
         expected_head = str(local_command_payload.get("expected_head") or "")
         command = local_command_payload.get("command")
-        if "/" not in target_repository or not isinstance(target_issue, int) or target_issue < 1:
+        if not valid_repo_output(target_repository) or type(target_issue) is not int or target_issue < 1:
             raise ValueError("local command target_repository/issue_number invalid")
         if not re.fullmatch(r"[0-9a-f]{40}", expected_head):
             raise ValueError("local command expected_head must be a lowercase 40-char SHA")
@@ -242,6 +253,7 @@ def emit_executor_outputs(
             f"local_command_kind={command.get('kind','')}",
             f"local_command_target_repository={target_repository}",
             f"local_command_target_owner={target_repository.split('/',1)[0]}",
+            f"local_command_target_repository_name={target_repository.split('/',1)[1]}",
             f"local_command_target_issue={target_issue}",
             f"local_command_expected_head={expected_head}",
             f"local_command_b64={command_b64}",
@@ -253,16 +265,26 @@ def emit_executor_outputs(
         target_repository = str(local_start_payload.get("target_repository") or "")
         expected_head = str(local_start_payload.get("expected_head") or "")
         objective = str(local_start_payload.get("objective") or "").strip()
-        if "/" not in target_repository:
+        if not valid_repo_output(target_repository):
             raise ValueError("local start target_repository invalid")
         if not re.fullmatch(r"[0-9a-f]{40}", expected_head):
             raise ValueError("local start expected_head must be a lowercase 40-char SHA")
         if not objective:
             raise ValueError("local start objective is required")
         objective_b64 = base64.urlsafe_b64encode(objective.encode("utf-8")).decode("ascii").rstrip("=")
+        handoff = state.get("handoff") or {}
+        continuity = handoff.get(IDENTITY)
+        if IDENTITY in state and (continuity != state[IDENTITY] or state.get("status") != "HANDOFF_READY" or handoff.get("expected_head_sha") != expected_head):
+            raise ValueError("PROJECT_CONTINUITY_HANDOFF_REQUIRED")
+        if continuity is not None:
+            if continuity.get("github_repository", "").casefold() != target_repository.casefold():
+                raise ValueError("PROJECT_CONTINUITY_TARGET_MISMATCH")
+            encoded = base64.urlsafe_b64encode(json.dumps(continuity, separators=(",", ":")).encode()).decode()
+            lines.append(f"local_start_continuity_b64={encoded}")
         lines.extend([
             f"local_start_target_repository={target_repository}",
             f"local_start_target_owner={target_repository.split('/',1)[0]}",
+            f"local_start_target_repository_name={target_repository.split('/',1)[1]}",
             f"local_start_expected_head={expected_head}",
             f"local_start_objective_b64={objective_b64}",
         ])
@@ -440,7 +462,25 @@ def handle_comment(event: dict) -> None:
         return
 
     state = extract_state(issue.get("body"))
+    if state.get("credential_provider") == "CUG":
+        issue = api("GET", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{issue['number']}")
+        state = extract_state(issue.get("body"))
+        if state.get("credential_provider") != "CUG":
+            raise ValueError("CUG_CONTROL_PLANE_STATE_DRIFT")
+        if kind == "evidence" and payload.get("action_id") == "PREP-001":
+            raise ValueError("CUG_CREATION_EVIDENCE_MUST_COME_FROM_EXECUTOR")
     try:
+        if state.get("credential_provider") == "CUG":
+            actor = (event.get("sender") or {}).get("login")
+            author = (comment.get("user") or {}).get("login")
+            trusted = comment.get("author_association") in {"OWNER", "MEMBER", "COLLABORATOR"}
+            approved_bot = bool(actor) and actor == os.getenv("GOVERNED_CUG_BOT_LOGIN")
+            if not actor or actor != author or not (trusted or approved_bot):
+                raise ValueError("CUG_CONTROL_PLANE_ACTOR_NOT_AUTHORIZED")
+            if kind in {"local_start", "local_command", "upgrade_local_entry"}:
+                handoff = state.get("handoff") or {}
+                if state.get("status") != "HANDOFF_READY" or payload.get("target_repository") != handoff.get("target_repository"):
+                    raise ValueError("CUG_TARGET_OUTSIDE_HANDOFF")
         if kind == "answer":
             if set(payload) != {"field", "value"}:
                 raise ValueError("answer payload must contain exactly field and value")
@@ -550,6 +590,19 @@ def handle_repository_dispatch(event: dict) -> None:
     objective = payload.get("objective")
     if not isinstance(objective, str) or not objective.strip():
         raise SystemExit("CONTROL_PLANE_DISPATCH_FAILED: client_payload.objective is required")
+    creation = payload.get("creation")
+    if creation is not None:
+        actor = (event.get("sender") or {}).get("login")
+        authorized = os.getenv("GOVERNED_CUG_BOT_LOGIN")
+        if not authorized or not actor or actor != authorized or not authorized.endswith("[bot]"):
+            raise SystemExit("CUG_CONTROL_PLANE_DISPATCH_ACTOR_NOT_AUTHORIZED")
+        if not isinstance(creation, dict) or set(creation) != {"owner", "name", "visibility"}:
+            raise SystemExit("CUG_CONTROL_PLANE_CREATION_FIELDS_INVALID")
+        # Validate before opening a durable request, then rebind it to its real GitHub issue ID.
+        if creation["owner"] not in CREATE_OWNER_CANONICAL or creation["visibility"] not in {"public", "private"}:
+            raise SystemExit("CUG_CONTROL_PLANE_CREATION_SCOPE_INVALID")
+        if not isinstance(creation["name"], str) or not valid_repo_output("owner/" + creation["name"]) or creation["name"] in {".", ".."}:
+            raise SystemExit("CUG_CONTROL_PLANE_CREATION_NAME_INVALID")
     agent = payload.get("agent")
     provider = payload.get("provider")
     requested_title = payload.get("title")
@@ -567,6 +620,22 @@ def handle_repository_dispatch(event: dict) -> None:
         "title": f"[Governed Request] {suffix}",
         "body": "\n".join(body_lines) + "\n",
     })
+    if creation is not None:
+        number = created.get("number")
+        if type(number) is not int or number < 1:
+            raise ValueError("CUG_CONTROL_PLANE_ISSUE_ID_INVALID")
+        state = new_request(f"GR-{number:06d}", actor, "github", objective)
+        state["credential_provider"] = "CUG"
+        for field, value in (
+            ("entry_action", "CREATE_NEW_REPOSITORY"),
+            ("creation_target_owner", creation["owner"]),
+            ("repository_name", creation["name"]),
+            ("visibility", creation["visibility"]),
+        ):
+            state = apply_answer(state, field, value)
+        persist_state(number, created.get("body") or "\n".join(body_lines), state)
+        api("POST", f"/repos/{CONTROL_PLANE_REPOSITORY}/issues/{number}/comments", {"body": render_response(state)})
+        emit_executor_outputs(state, number)
     print(json.dumps({
         "status": "GOVERNED_REQUEST_ISSUE_CREATED",
         "issue_number": created.get("number"),

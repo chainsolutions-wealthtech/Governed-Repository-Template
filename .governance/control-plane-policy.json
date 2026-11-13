@@ -70,6 +70,8 @@
     "LEGACY_AUTHORIZED_ROUTE_EVIDENCE_MAY_BE_REUSED_WITHOUT_REDUNDANT_NETWORK_REPLAY"
   ],
   "source_only_paths": [
+    "scripts/verify_cug_app.py",
+    "scripts/test_cug_project_continuity.py",
     ".github/workflows/governed-control-plane.yml",
     ".github/ISSUE_TEMPLATE/governed-request.yml",
     "docs/control-plane",

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from __future__ import annotations
-import argparse, json, subprocess, sys
+import argparse, json, os, subprocess, sys
+from project_continuity import IDENTITY, validate_projection
 from datetime import datetime, timezone
 from pathlib import Path
 from local_governed_entry import complete_baseline
@@ -30,6 +31,11 @@ def main():
         api("POST",f"/repos/{repo}/issues/{args.issue_number}/comments",{"body":f"### LOCAL HEAD_MOVED\n\nExpected {expected}, remote {remote}. Baseline write stopped; reconcile then retry /local-execute."})
         raise SystemExit(3)
 
+    continuity = state.get(IDENTITY)
+    if continuity is not None:
+        continuity = validate_projection(continuity, repo, os.environ.get("GITHUB_REPOSITORY_ID", ""))
+        current_identity = readj(".governance/local-entry/state.json").get(IDENTITY, continuity)
+        validate_projection(current_identity, repo, os.environ.get("GITHUB_REPOSITORY_ID", ""))
     a=state["answers"];now=datetime.now(timezone.utc).replace(microsecond=0).isoformat()
     session_id=f"LOCAL-{args.issue_number:06d}-S1";scope=a["project_scope"]
 
@@ -116,10 +122,12 @@ def main():
     local=readj(".governance/local-entry/state.json")
     local.update({"status":"PROJECT_BASELINE_READY","first_agent_completed":True,"first_agent_session_id":session_id,
                   "baseline_subject_head":expected,"baseline_completed_at":now,"last_local_entry_issue":args.issue_number})
+    if continuity is not None:local[IDENTITY]=continuity
     writej(".governance/local-entry/state.json",local)
     writej(".governance/local-entry/receipt.json",{"schema_version":"1.0.0","repository":repo,"request_id":state["request_id"],
         "session_id":session_id,"baseline_subject_head":expected,"project_profile_status":pp["selection_status"],
-        "next_action":"EXECUTE_FIRST_PROJECT_WORK_ITEM","completed_at":now})
+        "next_action":"EXECUTE_FIRST_PROJECT_WORK_ITEM","completed_at":now,
+        **({IDENTITY:continuity} if continuity is not None else {})})
 
     sessions=readj(".governance/sessions/sessions.json")
     sessions["revision"]=int(sessions.get("revision",0))+1

@@ -170,6 +170,11 @@ def main() -> None:
     existing = github_api(token, "GET", f"/repos/{canonical_owner}/{repository_name}", allow_404=True)
     recovered_existing = False
     if existing is not None:
+        if state.get("credential_provider") == "CUG":
+            # Do not claim an unrelated or partially created project from its name/template.
+            # A future resume must prove the same creation from durable evidence.
+            fail_without_advancing(args.issue_number, "CUG_CREATE_TARGET_ALREADY_EXISTS: verify the original creation before resuming.")
+            return
         if not target_matches_governed_template(token, canonical_owner, repository_name):
             fail_without_advancing(
                 args.issue_number,
@@ -205,6 +210,7 @@ def main() -> None:
         "created": True,
         "recovered_existing": recovered_existing,
         "initial_head_sha": initial_head,
+        **({"github_repository_id": created.get("id")} if state.get("credential_provider") == "CUG" else {}),
     }
     state = apply_evidence(state, "PREP-001", "PASS", evidence)
     persist_state(args.issue_number, issue.get("body"), state)

@@ -157,6 +157,7 @@ def main():
       ".governance/local-entry-policy.json","schemas/local-entry-request.schema.json","schemas/local-entry-receipt.schema.json",
       "schemas/infrastructure-intent.schema.json","docs/LOCAL_GOVERNED_ENTRY.md","scripts/local_governed_entry.py",
       "scripts/local_entry_issue_bridge.py","scripts/local_entry_apply_baseline.py","scripts/test_local_governed_entry.py",
+      "scripts/project_continuity.py",
       "scripts/initialize_governance.py","scripts/auto_bootstrap.py","scripts/finalize_bootstrap.py","scripts/governance_agent.py",
       "scripts/validate_governance.py","scripts/adopt_existing_repository.py","scripts/test_bootstrap_consistency.py","scripts/test_connection_intent.py","scripts/test_entry_action_router.py","scripts/test_repository_scope.py","scripts/test_governance_model_integrity.py",".github/workflows/governed-local-entry.yml",
       ".github/ISSUE_TEMPLATE/governed-local-entry.yml",".github/workflows/governance-ci.yml",

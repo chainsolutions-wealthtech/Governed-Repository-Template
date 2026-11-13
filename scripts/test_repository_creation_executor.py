@@ -21,6 +21,7 @@ def state_for(owner_label: str, name: str, visibility: str) -> dict:
 
 def run_case(owner_label: str, canonical_owner: str, visibility: str) -> None:
     state = state_for(owner_label, "executor-selftest", visibility)
+    state["credential_provider"] = "CUG"
     issue_body = "selftest\n\n<!-- GOVERNED_REQUEST_STATE:" + encode_state(state) + " -->\n"
     captured = {"persisted": None, "comments": [], "generate_payload": None, "paths": [], "commit_attempts": 0}
 
@@ -46,7 +47,7 @@ def run_case(owner_label: str, canonical_owner: str, visibility: str) -> None:
             return None
         if method == "POST" and path == "/repos/chainsolutions-wealthtech/Governed-Repository-Template/generate":
             captured["generate_payload"] = payload
-            return {"full_name": f"{canonical_owner}/executor-selftest", "default_branch": "main"}
+            return {"full_name": f"{canonical_owner}/executor-selftest", "default_branch": "main", "id": 123456789}
         if method == "GET" and path == f"/repos/{canonical_owner}/executor-selftest/commits/main":
             captured["commit_attempts"] += 1
             if captured["commit_attempts"] == 1:
@@ -94,6 +95,7 @@ def run_case(owner_label: str, canonical_owner: str, visibility: str) -> None:
         raise SystemExit("CREATE_EXECUTOR_SELFTEST_FAILED: repository evidence mismatch")
     if persisted["evidence"][0]["evidence"]["visibility"] != visibility:
         raise SystemExit("CREATE_EXECUTOR_SELFTEST_FAILED: visibility evidence mismatch")
+    assert persisted["project_continuity"]["project_continuity_id"] == "WT-PROJECT-GITHUB-123456789"
     if persisted["next_request"].get("action_id") != "PREP-002":
         raise SystemExit("CREATE_EXECUTOR_SELFTEST_FAILED: executor did not advance to PREP-002")
 

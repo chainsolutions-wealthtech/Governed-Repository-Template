@@ -9,6 +9,8 @@ import re
 import urllib.error
 import urllib.request
 
+from project_continuity import IDENTITY, validate_projection
+
 CENTRAL = "chainsolutions-wealthtech/Governed-Repository-Template"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 
@@ -39,6 +41,7 @@ def main() -> None:
     p.add_argument("--expected-head",required=True)
     p.add_argument("--objective-b64",required=True)
     p.add_argument("--source-issue",required=True,type=int)
+    p.add_argument("--continuity-b64",default="")
     args=p.parse_args()
     if "/" not in args.target_repository:
         raise SystemExit("LOCAL_START_TARGET_INVALID")
@@ -52,6 +55,10 @@ def main() -> None:
     if not objective:
         raise SystemExit("LOCAL_START_OBJECTIVE_REQUIRED")
     info=gh("GET",f"/repos/{args.target_repository}")
+    continuity = {}
+    if args.continuity_b64:
+        value = json.loads(base64.urlsafe_b64decode(args.continuity_b64))
+        continuity[IDENTITY] = validate_projection(value, info.get("full_name"), info.get("id"))
     branch=info.get("default_branch") or "main"
     ref=gh("GET",f"/repos/{args.target_repository}/git/ref/heads/{branch}")
     remote=ref["object"]["sha"]
@@ -63,7 +70,8 @@ def main() -> None:
         "source_repository":CENTRAL,
         "source_issue":args.source_issue,
         "expected_head":args.expected_head,
-        "objective":objective
+        "objective":objective,
+        **continuity
       }
     })
     print(json.dumps({
