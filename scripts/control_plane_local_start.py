@@ -59,6 +59,9 @@ def main() -> None:
     if args.continuity_b64:
         value = json.loads(base64.urlsafe_b64decode(args.continuity_b64))
         continuity[IDENTITY] = validate_projection(value, info.get("full_name"), info.get("id"))
+        request_id = continuity[IDENTITY].get("source_request_id")
+        if request_id is not None and request_id != f"GR-{args.source_issue:06d}":
+            raise ValueError("PROJECT_CONTINUITY_SOURCE_REQUEST_MISMATCH")
     branch=info.get("default_branch") or "main"
     ref=gh("GET",f"/repos/{args.target_repository}/git/ref/heads/{branch}")
     remote=ref["object"]["sha"]

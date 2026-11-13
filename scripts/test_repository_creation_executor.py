@@ -6,10 +6,11 @@ import sys
 
 import control_plane_create_repository as executor
 from governed_request import apply_answer, encode_state, new_request
+from project_continuity import project_identity_from_request
 
 
 def state_for(owner_label: str, name: str, visibility: str) -> dict:
-    state = new_request("SELFTEST-CREATE-EXECUTOR", "agent", "test", None)
+    state = new_request("GR-000099", "agent", "test", None)
     state = apply_answer(state, "entry_action", "CREATE_NEW_REPOSITORY")
     state = apply_answer(state, "creation_target_owner", owner_label)
     state = apply_answer(state, "repository_name", name)
@@ -22,6 +23,7 @@ def state_for(owner_label: str, name: str, visibility: str) -> dict:
 def run_case(owner_label: str, canonical_owner: str, visibility: str) -> None:
     state = state_for(owner_label, "executor-selftest", visibility)
     state["credential_provider"] = "CUG"
+    state["project_continuity_id"] = project_identity_from_request(state["request_id"])
     issue_body = "selftest\n\n<!-- GOVERNED_REQUEST_STATE:" + encode_state(state) + " -->\n"
     captured = {"persisted": None, "comments": [], "generate_payload": None, "paths": [], "commit_attempts": 0}
 
@@ -95,7 +97,7 @@ def run_case(owner_label: str, canonical_owner: str, visibility: str) -> None:
         raise SystemExit("CREATE_EXECUTOR_SELFTEST_FAILED: repository evidence mismatch")
     if persisted["evidence"][0]["evidence"]["visibility"] != visibility:
         raise SystemExit("CREATE_EXECUTOR_SELFTEST_FAILED: visibility evidence mismatch")
-    assert persisted["project_continuity"]["project_continuity_id"] == "WT-PROJECT-GITHUB-123456789"
+    assert persisted["project_continuity"]["project_continuity_id"] == "WT-PROJECT-GRT-1386478935-GR-000099"
     if persisted["next_request"].get("action_id") != "PREP-002":
         raise SystemExit("CREATE_EXECUTOR_SELFTEST_FAILED: executor did not advance to PREP-002")
 

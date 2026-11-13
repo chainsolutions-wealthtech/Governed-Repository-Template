@@ -25,7 +25,7 @@ d'installation, de registre ou de production.
 
 | Phase | Entrée | Sortie |
 |---|---|---|
-| Demande | Acteur CUG vérifié, objectif, propriétaire, nom et visibilité | État de demande GRT et plan CASE 1 |
+| Demande | Acteur CUG vérifié, objectif, propriétaire, nom et visibilité | État de demande GRT, ID projet et plan CASE 1 |
 | PREP-001 | Plan et jeton de l'installation CUG du compte | Dépôt GitHub créé, ID numérique observé, HEAD initial et projection de continuité |
 | PREP-002 à 004 | Bootstrap, observation d'infrastructure, référence GitHub | Preuves préparatoires et handoff central exact-HEAD |
 | Entrée locale | Handoff, repo exact et éventuelle projection | État local, même continuité, questions applicables |
@@ -41,10 +41,11 @@ pas utilisé pour rejouer une création incertaine.
 
 ## Même identifiant sur les deux côtés
 
-Pour un nouveau projet CASE 1 initié par son dépôt, `project_continuity_id`
-est dérivé de l'identifiant numérique GitHub attesté à la création. Il ne
-dépend ni du nom du dépôt, ni de son propriétaire affiché, ni de la session
-ou du run. Les dépôts historiques n'ont pas d'identifiant attribué par défaut.
+Pour un nouveau projet CASE 1 initié par CUG, `project_continuity_id`
+est attribué à l'ouverture de la demande centrale, avant la création du
+dépôt. Il associe l'ID du plan de contrôle GRT à l'ID de sa demande. Le dépôt
+GitHub est ensuite rattaché par son propre ID numérique. L'identité projet
+ne dépend ni du dépôt cible, ni du serveur, ni de la session ou du run. Les dépôts historiques n'ont pas d'identifiant attribué par défaut.
 Les anciens reçus et leurs autorisations restent inchangés.
 
 Le workflow central transmet la projection dans son handoff. Le dépôt la

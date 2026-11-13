@@ -165,6 +165,10 @@ def dispatch_start(event):
     continuity = existing
     if incoming is not None:
         continuity = validate_projection(incoming, repo, os.environ.get("GITHUB_REPOSITORY_ID", ""))
+        request_id = continuity.get("source_request_id")
+        source_issue = p.get("source_issue")
+        if request_id is not None and (type(source_issue) is not int or request_id != f"GR-{source_issue:06d}"):
+            raise ValueError("PROJECT_CONTINUITY_SOURCE_REQUEST_MISMATCH")
         if existing is not None and continuity != existing:
             raise ValueError("PROJECT_CONTINUITY_ALREADY_BOUND")
     created=api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues",{"title":f"{TITLE_PREFIX} {str(p.get('title') or objective.splitlines()[0])[:80]}","body":f"### Initial objective\n\n{objective.strip()}\n"})

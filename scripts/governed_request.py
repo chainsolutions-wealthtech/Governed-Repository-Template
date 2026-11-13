@@ -730,7 +730,12 @@ def apply_evidence(state: dict, action_id: str, result: str, evidence: dict) -> 
         if state.get("credential_provider") == "CUG" and "github_repository_id" not in evidence:
             raise ValueError("PROJECT_CONTINUITY_GITHUB_EVIDENCE_REQUIRED")
         if state.get("credential_provider") == "CUG" and "github_repository_id" in evidence:
-            projection = from_github(evidence["repository"], evidence["github_repository_id"])
+            projection = from_github(
+                evidence["repository"], evidence["github_repository_id"],
+                request_id=state["request_id"],
+            )
+            if state.get("project_continuity_id") != projection["project_continuity_id"]:
+                raise ValueError("PROJECT_CONTINUITY_ROOT_MISMATCH")
             if state.get(IDENTITY, projection) != projection:
                 raise ValueError("PROJECT_CONTINUITY_ALREADY_BOUND")
             state[IDENTITY] = projection

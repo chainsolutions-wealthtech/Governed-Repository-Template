@@ -57,6 +57,8 @@ def main():
             assert "use_cug=true" in output.read_text()
             state = issued[0]
             assert state["request_id"] == "GR-000099"
+            assert state["project_continuity_id"] == "WT-PROJECT-GRT-1386478935-GR-000099"
+            assert IDENTITY not in state
             for action in state["execution_plan"]:
                 action_id = action["id"]
                 evidence = {k: "planned" if isinstance(v, str) and v.startswith("<") else v
@@ -67,7 +69,7 @@ def main():
                              "PROJECT_CONTINUITY_GITHUB_EVIDENCE_REQUIRED")
                     evidence["github_repository_id"] = 123456
                 state = apply_evidence(state, action_id, "PASS", evidence)
-            identity = from_github(repo, 123456)
+            identity = from_github(repo, 123456, request_id="GR-000099")
             assert state[IDENTITY] == state["handoff"][IDENTITY] == identity
             rejected(lambda: bridge.emit_executor_outputs(state, 99, local_start_payload={
                 "target_repository": repo, "expected_head": "b" * 40, "objective": "Test",

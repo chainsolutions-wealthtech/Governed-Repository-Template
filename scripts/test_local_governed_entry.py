@@ -24,7 +24,7 @@ def first_base(continuity=None):
     return s
 
 def main():
-    continuity=from_github("owner/repo", 12345)
+    continuity=from_github("owner/repo", 12345, request_id="GR-000001")
     s=first_base(continuity)
     s=answer_expected(s,"baseline_approved",True)
     s=answer_expected(s,"setup_repository_now",True)

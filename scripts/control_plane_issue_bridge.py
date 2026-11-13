@@ -13,7 +13,7 @@ from pathlib import Path
 from governed_hold_review import MERGED_PR_REF, reexamine_authority_hold
 from governed_plan_reconciliation import reconcile_existing_merged_lab
 
-from project_continuity import IDENTITY
+from project_continuity import IDENTITY, project_identity_from_request
 
 from governed_request import (
     CREATE_OWNER_CANONICAL,
@@ -473,7 +473,7 @@ def handle_comment(event: dict) -> None:
         if state.get("credential_provider") == "CUG":
             actor = (event.get("sender") or {}).get("login")
             author = (comment.get("user") or {}).get("login")
-            trusted = comment.get("author_association") in {"OWNER", "MEMBER", "COLLABORATOR"}
+            trusted = comment.get("author_association") in {"OWNER", "MEMBER"}
             approved_bot = bool(actor) and actor == os.getenv("GOVERNED_CUG_BOT_LOGIN")
             if not actor or actor != author or not (trusted or approved_bot):
                 raise ValueError("CUG_CONTROL_PLANE_ACTOR_NOT_AUTHORIZED")
@@ -599,7 +599,8 @@ def handle_repository_dispatch(event: dict) -> None:
         if not isinstance(creation, dict) or set(creation) != {"owner", "name", "visibility"}:
             raise SystemExit("CUG_CONTROL_PLANE_CREATION_FIELDS_INVALID")
         # Validate before opening a durable request, then rebind it to its real GitHub issue ID.
-        if creation["owner"] not in CREATE_OWNER_CANONICAL or creation["visibility"] not in {"public", "private"}:
+        if (not isinstance(creation["owner"], str) or creation["owner"] not in CREATE_OWNER_CANONICAL
+                or creation["visibility"] not in ("public", "private")):
             raise SystemExit("CUG_CONTROL_PLANE_CREATION_SCOPE_INVALID")
         if not isinstance(creation["name"], str) or not valid_repo_output("owner/" + creation["name"]) or creation["name"] in {".", ".."}:
             raise SystemExit("CUG_CONTROL_PLANE_CREATION_NAME_INVALID")
@@ -626,6 +627,7 @@ def handle_repository_dispatch(event: dict) -> None:
             raise ValueError("CUG_CONTROL_PLANE_ISSUE_ID_INVALID")
         state = new_request(f"GR-{number:06d}", actor, "github", objective)
         state["credential_provider"] = "CUG"
+        state["project_continuity_id"] = project_identity_from_request(state["request_id"])
         for field, value in (
             ("entry_action", "CREATE_NEW_REPOSITORY"),
             ("creation_target_owner", creation["owner"]),
