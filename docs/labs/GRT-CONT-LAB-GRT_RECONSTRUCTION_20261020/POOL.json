@@ -1,0 +1,67 @@
+{
+  "schema": "grt-lab-minimum-pool/v1",
+  "pool_id": "GRT-POOL-LAB-GRT_RECONSTRUCTION_20261020",
+  "continuity_id": "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020",
+  "state": "SLOTS_RESERVED_UNBOUND",
+  "allow_additional_agents": true,
+  "gacr_bindings": [],
+  "gacr_link_contract": {
+    "status": "REQUIRED_NOT_YET_ATTESTED",
+    "pool_id": "GRT-POOL-LAB-GRT_RECONSTRUCTION_20261020",
+    "gacr_continuity_id": null,
+    "gacr_logical_agent_id": null,
+    "gacr_session_id": null,
+    "session_evidence_ref": null,
+    "owner_authorization_ref": null,
+    "binding_source": ".governance/control-plane-state/gacr-sessions.json",
+    "continuity_source": ".governance/control-plane-state/gacr-continuities.json",
+    "no_synthetic_gacr_ids": true,
+    "membership_not_inferred_from_github_actor": true
+  },
+  "members": [
+    {
+      "slot": "ARCH",
+      "slot_id": "GRT-POOL-LAB-GRT_RECONSTRUCTION_20261020-ARCH",
+      "role": "ARCHITECT_MEMORY",
+      "responsibility": "Architecture, memory, chronology, code/documentation",
+      "can_propose_code_change": true,
+      "session_id": null,
+      "agent_id": null,
+      "status": "VACANT",
+      "actual_write_permission": "NOT_ATTESTED_MUST_CHECK_GITHUB"
+    },
+    {
+      "slot": "PLAN",
+      "slot_id": "GRT-POOL-LAB-GRT_RECONSTRUCTION_20261020-PLAN",
+      "role": "PLANNER_COORDINATOR",
+      "responsibility": "Specifications, ordered tasks and code/documentation",
+      "can_propose_code_change": true,
+      "session_id": null,
+      "agent_id": null,
+      "status": "VACANT",
+      "actual_write_permission": "NOT_ATTESTED_MUST_CHECK_GITHUB"
+    },
+    {
+      "slot": "CODE",
+      "slot_id": "GRT-POOL-LAB-GRT_RECONSTRUCTION_20261020-CODE",
+      "role": "CODE_AGENT",
+      "responsibility": "Non-regressive implementation and tests",
+      "can_propose_code_change": true,
+      "session_id": null,
+      "agent_id": null,
+      "status": "VACANT",
+      "actual_write_permission": "NOT_ATTESTED_MUST_CHECK_GITHUB"
+    },
+    {
+      "slot": "REVIEW",
+      "slot_id": "GRT-POOL-LAB-GRT_RECONSTRUCTION_20261020-REVIEW",
+      "role": "INDEPENDENT_REVIEWER",
+      "responsibility": "Independent verification, test fixes and documentation",
+      "can_propose_code_change": true,
+      "session_id": null,
+      "agent_id": null,
+      "status": "VACANT",
+      "actual_write_permission": "NOT_ATTESTED_MUST_CHECK_GITHUB"
+    }
+  ]
+}
