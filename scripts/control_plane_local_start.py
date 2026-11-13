@@ -10,6 +10,7 @@ import urllib.error
 import urllib.request
 
 from project_continuity import IDENTITY, validate_projection
+from local_governed_entry import validate_cug_machine_answers
 
 CENTRAL = "chainsolutions-wealthtech/Governed-Repository-Template"
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
@@ -42,6 +43,7 @@ def main() -> None:
     p.add_argument("--objective-b64",required=True)
     p.add_argument("--source-issue",required=True,type=int)
     p.add_argument("--continuity-b64",default="")
+    p.add_argument("--answers-b64",default="")
     args=p.parse_args()
     if "/" not in args.target_repository:
         raise SystemExit("LOCAL_START_TARGET_INVALID")
@@ -62,11 +64,33 @@ def main() -> None:
         request_id = continuity[IDENTITY].get("source_request_id")
         if request_id is not None and request_id != f"GR-{args.source_issue:06d}":
             raise ValueError("PROJECT_CONTINUITY_SOURCE_REQUEST_MISMATCH")
+    if args.answers_b64:
+        if not continuity:
+            raise ValueError("CUG_MACHINE_ANSWERS_REQUIRE_CONTINUITY")
+        continuity["cug_machine_answers"] = validate_cug_machine_answers(
+            json.loads(base64.urlsafe_b64decode(args.answers_b64))
+        )
     branch=info.get("default_branch") or "main"
     ref=gh("GET",f"/repos/{args.target_repository}/git/ref/heads/{branch}")
     remote=ref["object"]["sha"]
     if remote!=args.expected_head:
         raise SystemExit(f"HEAD_MOVED: expected={args.expected_head} remote={remote}")
+    if args.answers_b64:
+        bot = os.getenv("GOVERNED_CUG_BOT_LOGIN", "")
+        if not re.fullmatch(r"[a-z0-9-]{1,80}\[bot\]", bot) or info.get("private") is not True:
+            raise ValueError("CUG_AUTOMATED_LOCAL_TARGET_NOT_AUTHORIZED")
+        # GitHub repository variables are not secrets. The template only
+        # accepts the machine questionnaire from this authenticated sender.
+        path = f"/repos/{args.target_repository}/actions/variables"
+        try:
+            current = gh("GET", path + "/GOVERNED_CUG_BOT_LOGIN")
+        except RuntimeError as error:
+            if "failed: 404 " not in str(error):
+                raise
+            gh("POST", path, {"name": "GOVERNED_CUG_BOT_LOGIN", "value": bot})
+            current = gh("GET", path + "/GOVERNED_CUG_BOT_LOGIN")
+        if current.get("value") != bot:
+            raise ValueError("CUG_AUTOMATED_LOCAL_BOT_MISMATCH")
     gh("POST",f"/repos/{args.target_repository}/dispatches",{
       "event_type":"governed_local_start",
       "client_payload":{

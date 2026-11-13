@@ -14,6 +14,7 @@ from governed_hold_review import MERGED_PR_REF, reexamine_authority_hold
 from governed_plan_reconciliation import reconcile_existing_merged_lab
 
 from project_continuity import IDENTITY, project_identity_from_request
+from local_governed_entry import validate_cug_machine_answers
 
 from governed_request import (
     CREATE_OWNER_CANONICAL,
@@ -278,6 +279,9 @@ def emit_executor_outputs(
             raise ValueError("local start objective is required")
         objective_b64 = base64.urlsafe_b64encode(objective.encode("utf-8")).decode("ascii").rstrip("=")
         handoff = state.get("handoff") or {}
+        if "cug_machine_answers" in state:
+            answers_b64 = base64.urlsafe_b64encode(json.dumps(state["cug_machine_answers"], separators=(",", ":")).encode()).decode()
+            lines.append(f"local_start_answers_b64={answers_b64}")
         continuity = handoff.get(IDENTITY)
         if IDENTITY in state and (continuity != state[IDENTITY] or state.get("status") != "HANDOFF_READY" or handoff.get("expected_head_sha") != expected_head):
             raise ValueError("PROJECT_CONTINUITY_HANDOFF_REQUIRED")
@@ -609,6 +613,15 @@ def handle_repository_dispatch(event: dict) -> None:
             raise SystemExit("CUG_CONTROL_PLANE_CREATION_SCOPE_INVALID")
         if not isinstance(creation["name"], str) or not valid_repo_output("owner/" + creation["name"]) or creation["name"] in {".", ".."}:
             raise SystemExit("CUG_CONTROL_PLANE_CREATION_NAME_INVALID")
+    if creation is not None and len(objective.encode()) > 4096:
+        raise SystemExit("CUG_CONTROL_PLANE_OBJECTIVE_TOO_LARGE")
+    if "local_answers" in payload and creation is None:
+        raise SystemExit("CUG_MACHINE_ANSWERS_REQUIRE_CREATION")
+    machine_answers = validate_cug_machine_answers(payload["local_answers"]) if "local_answers" in payload else None
+    if machine_answers is not None:
+        target = f"{CREATE_OWNER_CANONICAL[creation['owner']]}/{creation['name']}"
+        if creation["visibility"] != "private" or target != os.getenv("GOVERNED_CUG_AUTOMATED_PRIVATE_TARGET"):
+            raise SystemExit("CUG_AUTOMATED_LOCAL_TARGET_NOT_AUTHORIZED")
     agent = payload.get("agent")
     provider = payload.get("provider")
     requested_title = payload.get("title")
@@ -633,6 +646,8 @@ def handle_repository_dispatch(event: dict) -> None:
         state = new_request(f"GR-{number:06d}", actor, "github", objective)
         state["credential_provider"] = "CUG"
         state["project_continuity_id"] = project_identity_from_request(state["request_id"])
+        if machine_answers is not None:
+            state["cug_machine_answers"] = machine_answers
         for field, value in (
             ("entry_action", "CREATE_NEW_REPOSITORY"),
             ("creation_target_owner", creation["owner"]),

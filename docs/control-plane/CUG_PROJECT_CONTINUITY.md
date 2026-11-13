@@ -37,8 +37,17 @@ l'entrée locale si la preuve exacte du bootstrap est disponible. Si le
 bootstrap n'est pas encore attesté après la fenêtre d'observation, la demande
 reste à PREP-002 et la commande gouvernée de reprise réobserve cette étape.
 Le questionnaire local, ses validations et le reçu gardent leurs transitions
-historiques. Cette version ne fournit pas encore de boucle autonome pour les
-consommer ni de point d'entrée déployé dans le serveur MCP. Une cible qui existe
+historiques. Le mode facultatif `local_answers` consomme seulement les réponses
+explicitement présentes dans la demande, en respectant l'ordre des questions.
+Il ne choisit pas de serveur ni de domaine à la place du propriétaire. Pour
+ce premier pilote, configurer un dépôt privé exact dans
+`GOVERNED_CUG_AUTOMATED_PRIVATE_TARGET` et l'autorité Actions Variables de
+l'installation CUG. Le parcours observe l'ouverture locale, retrouve la porte
+de secret et réutilise le provisionneur GRT. Le retour à la découverte utilise
+le seul endpoint MCP de ce parcours, sans redirection, et exige une réponse
+MCP valide. Si les approbations explicites et les autres réponses sont
+fournies, le workflow local applique alors la baseline sous garde de HEAD.
+Il n'existe pas encore de point d'entrée déployé dans le serveur MCP. Une cible qui existe
 déjà au moment de PREP-001 sur la voie CUG est arrêtée pour réconciliation,
 pas adoptée sur la seule concordance de son nom. Le parcours normal n'est
 pas utilisé pour rejouer une création incertaine.

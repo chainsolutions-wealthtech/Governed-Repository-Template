@@ -696,6 +696,66 @@ def answer(s,field,value):
     s["answers"][field]=value;s["revision"]+=1
     return refresh(s)
 
+# Values only. The local state machine still selects each admissible question.
+CUG_MACHINE_FIELDS = {
+    "agent_identity", "provider", "connection_intent", "project_mission", "project_scope",
+    "project_profile", "architecture_status", "architecture_notes", "infrastructure_status",
+    "external_systems", "constraints", "first_work_objective", "baseline_approved",
+    "setup_repository_now", "link_mcp_server", "mcp_transport", "mcp_discovery_scope",
+    "domain_strategy", "runtime_mutation_policy", "mcp_discovery_approved",
+    "production_server_selection", "domain_intent", "workflow_model", "setup_approved",
+}
+CUG_MCP_ENDPOINT = "https://mcp.wealthtechinnovations.com/mcp"
+
+
+def validate_cug_machine_answers(values):
+    if not isinstance(values, dict) or not set(values).issubset(CUG_MACHINE_FIELDS):
+        raise ValueError("CUG_MACHINE_ANSWERS_INVALID")
+    if len(json.dumps(values, ensure_ascii=False).encode()) > 8192:
+        raise ValueError("CUG_MACHINE_ANSWERS_TOO_LARGE")
+    for field, value in values.items():
+        if validate(field, value):
+            raise ValueError(f"CUG_MACHINE_ANSWER_INVALID:{field}")
+    restricted = {"mcp_transport": {"DIRECT_MCP_TOKEN"}, "runtime_mutation_policy": {"READ_ONLY_DISCOVERY"},
+                  "domain_intent": {"NO_PUBLIC_DOMAIN", "DECIDE_LATER"},
+                  "production_server_selection": {"DECIDE_LATER"}}
+    for field, choices in restricted.items():
+        if field in values and (not isinstance(values[field], str) or values[field] not in choices):
+            raise ValueError(f"CUG_MACHINE_ANSWER_OUTSIDE_SCOPE:{field}")
+    for field in ("external_systems", "constraints"):
+        if field in values and not all(isinstance(v, str) for v in values[field]):
+            raise ValueError(f"CUG_MACHINE_ANSWER_INVALID:{field}")
+    if "project_scope" in values:
+        scope = values["project_scope"]
+        if set(scope) != {"in_scope", "out_of_scope"} or not all(
+            isinstance(v, str) for group in scope.values() for v in group
+        ):
+            raise ValueError("CUG_MACHINE_ANSWER_INVALID:project_scope")
+    return copy.deepcopy(values)
+
+
+def advance_cug_machine_answers(state):
+    values = state.get("cug_machine_answers")
+    if values is None:
+        return state
+    values = validate_cug_machine_answers(values)
+    for _ in range(len(values) + 2):
+        question = state.get("next_request") or {}
+        if question.get("kind") not in {"QUESTION", "PLAN_APPROVAL"}:
+            return state
+        field = question.get("field")
+        if field == "mcp_endpoint":
+            value = CUG_MCP_ENDPOINT
+        elif field in values:
+            value = values[field]
+        else:
+            return state
+        if question.get("choices") is not None and value not in question["choices"]:
+            raise ValueError(f"CUG_MACHINE_ANSWER_NOT_OFFERED:{field}")
+        state = answer(state, field, value)
+    raise ValueError("CUG_MACHINE_ANSWER_LOOP_EXCEEDED")
+
+
 def reconcile_legacy_discovery_authority(s):
     s=copy.deepcopy(s)
     if s.get("mode")!="FIRST_AGENT_BOOTSTRAP":

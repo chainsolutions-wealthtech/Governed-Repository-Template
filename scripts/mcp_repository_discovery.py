@@ -12,8 +12,8 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 
-from local_governed_entry import record_mcp_discovery, record_mcp_discovery_failure
-from local_entry_issue_bridge import api, extract_state, persist, render
+from local_governed_entry import CUG_MCP_ENDPOINT, advance_cug_machine_answers, record_mcp_discovery, record_mcp_discovery_failure
+from local_entry_issue_bridge import api, emit_outputs, extract_state, persist, render
 
 DIRECT_TO_SSH = {
     "ping": "ping",
@@ -115,7 +115,12 @@ def parse_mcp_body(raw: str):
     return events[-1] if events else {"raw": raw[:12000]}
 
 
-def post(endpoint, token, payload, session_id=None):
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+def post(endpoint, token, payload, session_id=None, *, reject_redirects=False):
     headers = {
         "Authorization": f"Bearer {token}",
         "Content-Type": "application/json",
@@ -130,25 +135,30 @@ def post(endpoint, token, payload, session_id=None):
         headers=headers,
         data=json.dumps(payload).encode(),
     )
-    with urllib.request.urlopen(req, timeout=30) as response:
+    open_request = urllib.request.build_opener(NoRedirect).open if reject_redirects else urllib.request.urlopen
+    with open_request(req, timeout=30) as response:
         return (
             parse_mcp_body(response.read().decode(errors="replace")),
             response.headers.get("Mcp-Session-Id") or session_id,
         )
 
 
-def call_tool(endpoint, token, session_id, idx, name):
+def call_tool(endpoint, token, session_id, idx, name, **options):
     payload = {
         "jsonrpc": "2.0",
         "id": idx,
         "method": "tools/call",
         "params": {"name": name, "arguments": {}},
     }
-    result, _ = post(endpoint, token, payload, session_id)
+    result, _ = post(endpoint, token, payload, session_id, **options)
+    if options.get("reject_redirects") and (not isinstance(result, dict)
+            or result.get("id") != idx or "error" in result
+            or not isinstance(result.get("result"), dict) or result["result"].get("isError") is True):
+        raise RuntimeError(f"CUG_MCP_TOOL_RESPONSE_INVALID:{name}")
     return result
 
 
-def discover_direct(endpoint, token):
+def discover_direct(endpoint, token, **options):
     initialize = {
         "jsonrpc": "2.0",
         "id": 1,
@@ -159,13 +169,18 @@ def discover_direct(endpoint, token):
             "clientInfo": {"name": "governed-repository-bootstrap", "version": "1.0"},
         },
     }
-    init_result, session = post(endpoint, token, initialize)
+    init_result, session = post(endpoint, token, initialize, **options)
+    if options.get("reject_redirects") and (not isinstance(init_result, dict)
+            or init_result.get("id") != 1 or "error" in init_result
+            or not isinstance(init_result.get("result"), dict)):
+        raise RuntimeError("CUG_MCP_INITIALIZATION_UNVERIFIED")
     try:
         post(
             endpoint,
             token,
             {"jsonrpc": "2.0", "method": "notifications/initialized", "params": {}},
             session,
+            **options,
         )
     except Exception:
         pass
@@ -175,7 +190,7 @@ def discover_direct(endpoint, token):
         try:
             observed[name] = {
                 "status": "PASS",
-                "result": call_tool(endpoint, token, session, idx, name),
+                "result": call_tool(endpoint, token, session, idx, name, **options),
             }
         except Exception as exc:
             observed[name] = {"status": "ERROR", "error": str(exc)[:1000]}
@@ -412,6 +427,8 @@ def main():
     endpoint = os.environ.get("GOVERNED_MCP_URL") or answers.get("mcp_endpoint")
     if not isinstance(endpoint, str) or not endpoint:
         raise SystemExit("MCP_ENDPOINT_MISSING")
+    if state.get("cug_machine_answers") is not None and (endpoint != CUG_MCP_ENDPOINT or transport != "DIRECT_MCP_TOKEN"):
+        raise SystemExit("CUG_MCP_DIRECT_ENDPOINT_MISMATCH")
 
     observed_at = datetime.now(timezone.utc).replace(microsecond=0).isoformat()
     evidence = {
@@ -428,7 +445,10 @@ def main():
             if not token:
                 raise RuntimeError("MCP_DIRECT_CREDENTIAL_MISSING")
             evidence["selected_transport"] = "DIRECT_MCP_TOKEN"
-            evidence["direct_mcp"] = discover_direct(endpoint, token)
+            options = {"reject_redirects": True} if state.get("cug_machine_answers") is not None else {}
+            evidence["direct_mcp"] = discover_direct(endpoint, token, **options)
+            if options and evidence["direct_mcp"].get("status") != "PASS":
+                raise RuntimeError("CUG_MCP_DISCOVERY_NOT_FULLY_ATTESTED")
 
         elif transport == "SSH":
             profile = answers.get("ssh_connection_profile")
@@ -506,8 +526,10 @@ def main():
         )
         raise SystemExit(code)
 
-    state2 = record_mcp_discovery(state, evidence)
+    state2 = advance_cug_machine_answers(record_mcp_discovery(state, evidence))
     persist(args.issue_number, issue.get("body"), state2)
+    if state.get("cug_machine_answers") is not None:
+        emit_outputs(state2, args.issue_number)
     api(
         "POST",
         f"/repos/{repository}/issues/{args.issue_number}/comments",

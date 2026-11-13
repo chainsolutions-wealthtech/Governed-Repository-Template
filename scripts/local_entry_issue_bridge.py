@@ -3,7 +3,7 @@ from __future__ import annotations
 import json, os, re, subprocess, urllib.error, urllib.parse, urllib.request
 from pathlib import Path
 from project_continuity import IDENTITY, validate_projection
-from local_governed_entry import answer, both_discovery_needs_refresh, credential_requirements, decode_state, encode_state, mark_credentials_verified, new_request, require_mcp_discovery_refresh
+from local_governed_entry import advance_cug_machine_answers, validate_cug_machine_answers, answer, both_discovery_needs_refresh, credential_requirements, decode_state, encode_state, mark_credentials_verified, new_request, require_mcp_discovery_refresh
 
 ROOT=Path(__file__).resolve().parents[1]
 TITLE_PREFIX="[Governed Local Entry]"
@@ -171,10 +171,33 @@ def dispatch_start(event):
             raise ValueError("PROJECT_CONTINUITY_SOURCE_REQUEST_MISMATCH")
         if existing is not None and continuity != existing:
             raise ValueError("PROJECT_CONTINUITY_ALREADY_BOUND")
-    created=api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues",{"title":f"{TITLE_PREFIX} {str(p.get('title') or objective.splitlines()[0])[:80]}","body":f"### Initial objective\n\n{objective.strip()}\n"})
+    values = p.get("cug_machine_answers")
+    marker = ""
+    if values is not None:
+        if incoming is None:
+            raise ValueError("CUG_MACHINE_ANSWERS_REQUIRE_CONTINUITY")
+        bot = os.getenv("GOVERNED_CUG_BOT_LOGIN")
+        if not bot or sender.get("login") != bot:
+            raise ValueError("CUG_MACHINE_LOCAL_ACTOR_NOT_AUTHORIZED")
+        values = validate_cug_machine_answers(values)
+    if incoming is not None:
+        marker = f"\n<!-- GRT_PROJECT_REQUEST:{continuity['source_request_id']} -->\n"
+        issues = api("GET", f"/repos/{repo}/issues?state=all&per_page=100")
+        if not isinstance(issues, list):
+            raise ValueError("CUG_LOCAL_ENTRY_HISTORY_UNAVAILABLE")
+        if any(marker.strip() in (issue.get("body") or "").splitlines() for issue in issues):
+            print("CUG_LOCAL_ENTRY_ALREADY_EXISTS")
+            return
+    first = first_agent_required()
+    if values is not None and not first:
+        raise ValueError("CUG_MACHINE_FIRST_ENTRY_ONLY")
+    created=api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues",{"title":f"{TITLE_PREFIX} {str(p.get('title') or objective.strip().splitlines()[0])[:80]}","body":f"### Initial objective\n\n{objective.strip()}\n{marker}"})
     number=int(created["number"]); rid=f"LOCAL-{number:06d}"
     issue=api("GET",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{number}")
-    s=new_request(rid,repo,observed,first_agent_required(),strip_marker(issue.get("body")),continuity=continuity)
+    s=new_request(rid,repo,observed,first,strip_marker(issue.get("body")),continuity=continuity)
+    if values is not None:
+        s["cug_machine_answers"] = values
+        s = advance_cug_machine_answers(s)
     persist(number,issue.get("body"),s)
     api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{number}/comments",{"body":render(s)})
     emit_outputs(s,number)
@@ -203,6 +226,12 @@ def dispatch_machine_command(event):
     s=extract_state(issue.get("body"))
     if s.get("expected_head_sha")!=expected:
         raise SystemExit(f"LOCAL_STATE_HEAD_MOVED: expected={expected} state={s.get('expected_head_sha')}")
+    if s.get("cug_machine_answers") is not None:
+        bot = os.getenv("GOVERNED_CUG_BOT_LOGIN")
+        source_issue = p.get("source_issue")
+        if (not bot or sender.get("login") != bot or type(source_issue) is not int
+                or s[IDENTITY].get("source_request_id") != f"GR-{source_issue:06d}"):
+            raise SystemExit("CUG_MACHINE_LOCAL_ACTOR_NOT_AUTHORIZED")
     try:
         if command["kind"]=="answer":
             if set(command)!={"kind","field","value"}:raise ValueError("answer requires kind/field/value")
@@ -228,6 +257,7 @@ def dispatch_machine_command(event):
     except Exception as exc:
         api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{number}/comments",{"body":f"### Governed machine local command refused\n\n`{type(exc).__name__}: {exc}`\n\nNo state advanced."})
         return
+    s = advance_cug_machine_answers(s)
     persist(number,issue.get("body"),s)
     api("POST",f"/repos/{os.environ['GITHUB_REPOSITORY']}/issues/{number}/comments",{"body":render(s)})
     emit_outputs(s,number)

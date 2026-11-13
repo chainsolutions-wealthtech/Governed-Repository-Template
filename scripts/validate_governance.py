@@ -504,6 +504,7 @@ def validate_control_plane(profile: dict, template_mode: bool) -> None:
     expected_source_only = {
         "scripts/verify_cug_app.py",
         "scripts/control_plane_cug_bootstrap_handoff.py",
+        "scripts/control_plane_cug_local_gate.py",
         "scripts/test_cug_project_continuity.py",
         ".github/workflows/governed-control-plane.yml",
         ".github/ISSUE_TEMPLATE/governed-request.yml",

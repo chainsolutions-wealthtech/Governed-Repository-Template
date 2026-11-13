@@ -14,6 +14,10 @@ from unittest.mock import patch
 
 import control_plane_issue_bridge as bridge
 from control_plane_cug_bootstrap_handoff import prepare
+from control_plane_cug_local_gate import observe_gate
+from local_governed_entry import CUG_MCP_ENDPOINT, advance_cug_machine_answers, encode_state, mark_credentials_verified, new_request, record_mcp_discovery
+from mcp_repository_discovery import discover_direct
+from test_local_governed_entry import first_base
 import control_plane_local_start as starter
 import local_entry_issue_bridge as local
 from project_continuity import IDENTITY, from_github, validate_projection
@@ -125,13 +129,59 @@ def main():
     with patch.dict(os.environ, {"GITHUB_REPOSITORY": repo, "GITHUB_REPOSITORY_ID": "123456"}), \
             patch.object(local, "head", return_value=head), patch.object(local, "read_json", return_value={}), \
             patch.object(local, "first_agent_required", return_value=True), \
-            patch.object(local, "api", return_value={"number": 9, "body": "Test"}), \
+            patch.object(local, "api", side_effect=lambda method, path, payload=None: [] if "?state=" in path else {"number": 9, "body": "Test"}), \
             patch.object(local, "persist") as persist, patch.object(local, "emit_outputs"), redirect_stdout(StringIO()):
         local.dispatch_start({"sender": {"type": "Bot"}, "client_payload": payloads[0]})
         assert persist.call_args.args[-1][IDENTITY] == identity
     verify_identity({"id": 5417646, "client_id": "sample", "slug": "test-cug"}, "sample", login)
     rejected(lambda: verify_identity({"id": 1, "client_id": "sample", "slug": "test-cug"}, "sample", login),
              "CUG_APP_IDENTITY_MISMATCH")
+    questionnaire = {k: v for k, v in first_base()["answers"].items() if k != "initial_context"}
+    questionnaire.update(baseline_approved=True, setup_repository_now=True, link_mcp_server=True,
+        mcp_transport="DIRECT_MCP_TOKEN", mcp_discovery_scope="INFRASTRUCTURE_AND_DOMAIN_READONLY",
+        domain_strategy="NO_DOMAIN_YET", runtime_mutation_policy="READ_ONLY_DISCOVERY",
+        mcp_discovery_approved=True, production_server_selection="DECIDE_LATER",
+        domain_intent="NO_PUBLIC_DOMAIN", workflow_model="STANDARD_GOVERNED_FLOW", setup_approved=True)
+    first = new_request("LOCAL-000009", repo, head, True, continuity=identity)
+    first["cug_machine_answers"] = questionnaire
+    waiting = advance_cug_machine_answers(first)
+    assert waiting["next_request"]["kind"] == "CREDENTIAL_GATE"
+    assert waiting["answers"]["mcp_endpoint"] == CUG_MCP_ENDPOINT
+    state["cug_machine_answers"] = questionnaire
+    marker = "<!-- GRT_PROJECT_REQUEST:GR-000099 -->"
+    body = f"{marker}\n<!-- GOVERNED_LOCAL_ENTRY_STATE:{encode_state(waiting)} -->"
+    def local_read(path):
+        if path == f"/repos/{repo}":
+            return {"id": 123456, "full_name": repo, "private": True}
+        return [{"number": 9, "title": "[Governed Local Entry] test", "user": {"login": "github-actions[bot]"}, "body": body}]
+    assert observe_gate(state, repo, head, local_read, attempts=1) == ("READY", 9)
+    rejected(lambda: observe_gate(state, repo, "e" * 40, local_read, attempts=1),
+             "CUG_LOCAL_GATE_PROOF_INVALID")
+    discovery_state = mark_credentials_verified(waiting)
+    assert discovery_state["next_request"]["kind"] == "MCP_DISCOVERY"
+    def mcp_result(endpoint, token, payload, session_id=None, **options):
+        assert endpoint == CUG_MCP_ENDPOINT and options["reject_redirects"]
+        return {"id": payload.get("id"), "result": {"content": []}}, "fixture-session"
+    with patch("mcp_repository_discovery.post", side_effect=mcp_result):
+        direct = discover_direct(CUG_MCP_ENDPOINT, "fixture-only", reject_redirects=True)
+    assert direct["status"] == "PASS"
+    with patch("mcp_repository_discovery.post", return_value=({"id": 1, "error": {}}, "fixture-session")):
+        try:
+            discover_direct(CUG_MCP_ENDPOINT, "fixture-only", reject_redirects=True)
+        except RuntimeError as exc:
+            assert str(exc) == "CUG_MCP_INITIALIZATION_UNVERIFIED"
+        else:
+            raise AssertionError("MCP error accepted as successful discovery")
+    applied = advance_cug_machine_answers(record_mcp_discovery(discovery_state,
+        {"status": "PASS", "selected_transport": "DIRECT_MCP_TOKEN", "direct_mcp": direct}))
+    assert applied["next_request"]["kind"] == "APPLY_BASELINE"
+    assert applied[IDENTITY] == identity
+    rejected(lambda: advance_cug_machine_answers({**first, "cug_machine_answers": {"mcp_endpoint": "https://example.org"}}),
+             "CUG_MACHINE_ANSWERS_INVALID")
+    partial = {**questionnaire}
+    del partial["baseline_approved"]
+    unanswered = advance_cug_machine_answers({**first, "cug_machine_answers": partial})
+    assert unanswered["next_request"]["field"] == "baseline_approved"
     print("CUG_PROJECT_CONTINUITY_SELFTEST_PASS")
 
 

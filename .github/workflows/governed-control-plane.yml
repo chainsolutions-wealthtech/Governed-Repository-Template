@@ -31,7 +31,7 @@ jobs:
         )
       )
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 
@@ -40,7 +40,7 @@ jobs:
           python-version: '3.12'
 
       - name: Compile control plane
-        run: python3 -m py_compile scripts/governed_request.py scripts/control_plane_issue_bridge.py scripts/control_plane_create_repository.py scripts/control_plane_upgrade_local_entry.py scripts/control_plane_local_command.py scripts/control_plane_local_start.py scripts/control_plane_provision_mcp_credential.py scripts/project_continuity.py scripts/verify_cug_app.py scripts/control_plane_cug_bootstrap_handoff.py
+        run: python3 -m py_compile scripts/governed_request.py scripts/control_plane_issue_bridge.py scripts/control_plane_create_repository.py scripts/control_plane_upgrade_local_entry.py scripts/control_plane_local_command.py scripts/control_plane_local_start.py scripts/control_plane_provision_mcp_credential.py scripts/project_continuity.py scripts/verify_cug_app.py scripts/control_plane_cug_bootstrap_handoff.py scripts/control_plane_cug_local_gate.py
 
       - name: Verify CUG before accepting a machine creation request
         if: github.event_name == 'repository_dispatch' && github.event.client_payload.creation != null
@@ -55,6 +55,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GOVERNED_CUG_BOT_LOGIN: ${{ vars.GOVERNED_CUG_BOT_LOGIN }}
+          GOVERNED_CUG_AUTOMATED_PRIVATE_TARGET: ${{ vars.GOVERNED_CUG_AUTOMATED_PRIVATE_TARGET }}
         run: python3 scripts/control_plane_issue_bridge.py
 
       - name: Verify CUG GitHub App identity for governed creation
@@ -136,18 +137,43 @@ jobs:
           repositories: ${{ steps.process.outputs.use_cug == 'true' && (steps.cug-handoff.outputs.local_start_target_repository_name || steps.process.outputs.local_start_target_repository_name) || '' }}
           permission-contents: write
           permission-issues: write
+          permission-variables: ${{ (steps.cug-handoff.outputs.local_start_answers_b64 != '' || steps.process.outputs.local_start_answers_b64 != '') && 'write' || '' }}
 
       - name: Dispatch governed machine local start
         if: steps.cug-handoff.outputs.local_start_required == 'true' || steps.process.outputs.local_start_required == 'true'
         env:
           GOVERNED_TARGET_TOKEN: ${{ steps.local-start-token.outputs.token }}
+          GOVERNED_CUG_BOT_LOGIN: ${{ vars.GOVERNED_CUG_BOT_LOGIN }}
         run: |
           python3 scripts/control_plane_local_start.py \
             --target-repository "${{ steps.cug-handoff.outputs.local_start_target_repository || steps.process.outputs.local_start_target_repository }}" \
             --expected-head "${{ steps.cug-handoff.outputs.local_start_expected_head || steps.process.outputs.local_start_expected_head }}" \
             --objective-b64 "${{ steps.cug-handoff.outputs.local_start_objective_b64 || steps.process.outputs.local_start_objective_b64 }}" \
             --source-issue "${{ steps.process.outputs.issue_number }}" \
-            --continuity-b64 "${{ steps.cug-handoff.outputs.local_start_continuity_b64 || steps.process.outputs.local_start_continuity_b64 }}"
+            --continuity-b64 "${{ steps.cug-handoff.outputs.local_start_continuity_b64 || steps.process.outputs.local_start_continuity_b64 }}" \
+            --answers-b64 "${{ steps.cug-handoff.outputs.local_start_answers_b64 || steps.process.outputs.local_start_answers_b64 }}"
+
+      - name: Mint scoped CUG token for local credential gate
+        if: steps.process.outputs.use_cug == 'true' && (steps.cug-handoff.outputs.local_start_answers_b64 != '' || steps.process.outputs.local_start_answers_b64 != '')
+        id: cug-local-gate-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GOVERNED_CUG_APP_CLIENT_ID }}
+          private-key: ${{ secrets.GOVERNED_CUG_APP_PRIVATE_KEY }}
+          owner: ${{ steps.cug-handoff.outputs.local_start_target_owner || steps.process.outputs.local_start_target_owner }}
+          repositories: ${{ steps.cug-handoff.outputs.local_start_target_repository_name || steps.process.outputs.local_start_target_repository_name }}
+          permission-contents: write
+          permission-issues: read
+          permission-secrets: write
+
+      - name: Follow local credential gate and resume direct MCP discovery
+        if: steps.cug-local-gate-token.outcome == 'success'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GOVERNED_TARGET_TOKEN: ${{ steps.cug-local-gate-token.outputs.token }}
+          GOVERNED_CUG_AUTOMATED_PRIVATE_TARGET: ${{ vars.GOVERNED_CUG_AUTOMATED_PRIVATE_TARGET }}
+          GOVERNED_MCP_AUTH_TOKEN: ${{ secrets.GOVERNED_MCP_AUTH_TOKEN }}
+        run: python3 scripts/control_plane_cug_local_gate.py --issue-number "${{ steps.process.outputs.issue_number }}"
 
       - name: Mint target-owner token for machine local command
         if: steps.process.outputs.local_command_required == 'true'

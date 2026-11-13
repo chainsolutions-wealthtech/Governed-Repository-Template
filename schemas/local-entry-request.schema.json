@@ -51,6 +51,9 @@
         "null"
       ]
     },
+    "cug_machine_answers": {
+      "type": "object"
+    },
     "project_continuity": {
       "type": "object"
     },
