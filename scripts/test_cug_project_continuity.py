@@ -13,6 +13,7 @@ import tempfile
 from unittest.mock import patch
 
 import control_plane_issue_bridge as bridge
+from control_plane_cug_bootstrap_handoff import prepare
 import control_plane_local_start as starter
 import local_entry_issue_bridge as local
 from project_continuity import IDENTITY, from_github, validate_projection
@@ -59,7 +60,7 @@ def main():
             assert state["request_id"] == "GR-000099"
             assert state["project_continuity_id"] == "WT-PROJECT-GRT-1386478935-GR-000099"
             assert IDENTITY not in state
-            for action in state["execution_plan"]:
+            for action in state["execution_plan"][:1]:
                 action_id = action["id"]
                 evidence = {k: "planned" if isinstance(v, str) and v.startswith("<") else v
                             for k, v in action["required_evidence"].items()}
@@ -70,6 +71,32 @@ def main():
                     evidence["github_repository_id"] = 123456
                 state = apply_evidence(state, action_id, "PASS", evidence)
             identity = from_github(repo, 123456, request_id="GR-000099")
+            init = "b" * 40
+            final = "c" * 40
+            prefix = f"/repos/{repo}"
+            receipt = {"repository": repo, "canonical_branch": "main",
+                "template_repository": bridge.CONTROL_PLANE_REPOSITORY, "input_head_sha": head,
+                "initialized": True, "validation": "PASS", "initialization_commit_sha": init,
+                "attestation_subject_sha": init, "attestation_model": "CHILD_COMMIT_ATTESTS_INITIALIZATION_COMMIT",
+                "github_run_id": "31", "template_revision": "2.8.6"}
+            observations = {
+                prefix: {"id": 123456, "full_name": repo, "default_branch": "main"},
+                prefix+"/git/ref/heads/main": {"object": {"sha": final}},
+                prefix+f"/contents/.governance/bootstrap-receipt.json?ref={final}": {
+                    "encoding": "base64", "content": base64.b64encode(json.dumps(receipt).encode()).decode()},
+                prefix+f"/commits/{final}": {"sha": final, "parents": [{"sha": init}]},
+                prefix+f"/commits/{init}": {"sha": init, "parents": [{"sha": head}]},
+                prefix+"/actions/runs/31": {"id": 31, "repository": {"id": 123456}, "head_sha": head,
+                    "path": ".github/workflows/governance-auto-bootstrap.yml", "status": "completed", "conclusion": "success"},
+                prefix+"/actions/runs/31/jobs": {"jobs": [{"name": "bootstrap", "conclusion": "success",
+                    "steps": [{"name": "Verify remote bootstrap attestation", "conclusion": "skipped"}]}]},
+            }
+            def observe(path, **kwargs):
+                return observations[path]
+            rejected(lambda: prepare(state, repo, observe, attempts=1), "CUG_BOOTSTRAP_ATTESTATION_STEP_UNVERIFIED")
+            observations[prefix+"/actions/runs/31/jobs"]["jobs"][0]["steps"][0]["conclusion"] = "success"
+            state = prepare(state, repo, observe, attempts=1)
+            head = final
             assert state[IDENTITY] == state["handoff"][IDENTITY] == identity
             rejected(lambda: bridge.emit_executor_outputs(state, 99, local_start_payload={
                 "target_repository": repo, "expected_head": "b" * 40, "objective": "Test",

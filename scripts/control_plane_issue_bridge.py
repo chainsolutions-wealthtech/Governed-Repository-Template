@@ -206,8 +206,12 @@ def emit_executor_outputs(
         and next_request.get("kind") == "ACTION_REQUEST"
         and next_request.get("action_id") == "PREP-001"
     )
+    resume_cug_bootstrap = (
+        state.get("credential_provider") == "CUG" and next_request.get("action_id") == "PREP-002"
+        and not any((upgrade_payload, local_command_payload, local_start_payload))
+    )
     use_cug = state.get("credential_provider") == "CUG" and (
-        required or any((upgrade_payload, local_command_payload, local_start_payload))
+        required or resume_cug_bootstrap or any((upgrade_payload, local_command_payload, local_start_payload))
     )
     lines = [
         f"executor_required={'true' if required else 'false'}",
@@ -216,6 +220,7 @@ def emit_executor_outputs(
         f"local_start_required={'true' if local_start_payload else 'false'}",
         f"issue_number={issue_number}",
         f"use_cug={str(use_cug).lower()}",
+        f"cug_bootstrap_required={str(use_cug and (required or resume_cug_bootstrap)).lower()}",
     ]
     if upgrade_payload:
         target_repository = str(upgrade_payload.get("target_repository") or "")
@@ -288,7 +293,7 @@ def emit_executor_outputs(
             f"local_start_expected_head={expected_head}",
             f"local_start_objective_b64={objective_b64}",
         ])
-    if required:
+    if required or resume_cug_bootstrap:
         lines.extend([
             f"target_owner_label={state['answers'].get('creation_target_owner', '')}",
             f"target_owner_canonical={CREATE_OWNER_CANONICAL.get(state['answers'].get('creation_target_owner', ''), '')}",
@@ -467,7 +472,7 @@ def handle_comment(event: dict) -> None:
         state = extract_state(issue.get("body"))
         if state.get("credential_provider") != "CUG":
             raise ValueError("CUG_CONTROL_PLANE_STATE_DRIFT")
-        if kind == "evidence" and payload.get("action_id") == "PREP-001":
+        if kind == "evidence":
             raise ValueError("CUG_CREATION_EVIDENCE_MUST_COME_FROM_EXECUTOR")
     try:
         if state.get("credential_provider") == "CUG":

@@ -32,9 +32,13 @@ d'installation, de registre ou de production.
 | Découverte optionnelle | Choix et approbation de découverte, moyen d'accès selon le mode | Provisionnement séparé de la preuve de l'appel MCP |
 | Baseline | Réponses, résultats, approbation | État local, reçu versionné, handoff et point de reprise |
 
-Les étapes après PREP-001 gardent leurs transitions, décisions et commandes
-historiques. Cette version ne fournit ni boucle centrale autonome pour les
-consommer, ni point d'entrée déployé dans le serveur MCP. Une cible qui existe
+Le workflow observe automatiquement PREP-002 à PREP-004 et déclenche
+l'entrée locale si la preuve exacte du bootstrap est disponible. Si le
+bootstrap n'est pas encore attesté après la fenêtre d'observation, la demande
+reste à PREP-002 et la commande gouvernée de reprise réobserve cette étape.
+Le questionnaire local, ses validations et le reçu gardent leurs transitions
+historiques. Cette version ne fournit pas encore de boucle autonome pour les
+consommer ni de point d'entrée déployé dans le serveur MCP. Une cible qui existe
 déjà au moment de PREP-001 sur la voie CUG est arrêtée pour réconciliation,
 pas adoptée sur la seule concordance de son nom. Le parcours normal n'est
 pas utilisé pour rejouer une création incertaine.
