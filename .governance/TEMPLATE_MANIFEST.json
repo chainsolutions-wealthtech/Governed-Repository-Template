@@ -55,6 +55,7 @@
       "scripts/control_plane_create_repository.py",
       "scripts/test_repository_creation_executor.py",
       "scripts/local_governed_entry.py",
+      "scripts/project_continuity.py",
       "scripts/local_entry_issue_bridge.py",
       "scripts/local_entry_apply_baseline.py",
       "scripts/test_local_governed_entry.py",
@@ -163,6 +164,10 @@
       "schemas/gscc-access-grant.schema.json"
     ],
     "control_plane_source_only": [
+      "scripts/verify_cug_app.py",
+      "scripts/control_plane_cug_bootstrap_handoff.py",
+      "scripts/control_plane_cug_local_gate.py",
+      "scripts/test_cug_project_continuity.py",
       ".github/workflows/governed-control-plane.yml",
       ".github/ISSUE_TEMPLATE/governed-request.yml",
       "docs/control-plane",

@@ -8,6 +8,8 @@ import json
 import re
 from typing import Any
 
+from project_continuity import IDENTITY, from_github
+
 CONTROL_PLANE_REPOSITORY = "chainsolutions-wealthtech/Governed-Repository-Template"
 ENTRY_ACTIONS = [
     "CREATE_NEW_REPOSITORY",
@@ -557,6 +559,7 @@ def make_handoff(state: dict) -> dict:
             "NEXT_ACTION.md",
             "STATUS.md",
         ],
+        **({IDENTITY: copy.deepcopy(state[IDENTITY])} if IDENTITY in state else {}),
         "evidence_summary": copy.deepcopy(state["evidence"]),
         "constraints": [
             "REOBSERVE_HEAD_BEFORE_TARGET_WRITE",
@@ -723,6 +726,19 @@ def apply_evidence(state: dict, action_id: str, result: str, evidence: dict) -> 
     if evidence_error:
         raise ValueError(evidence_error)
 
+    if action_id == "PREP-001" and state["answers"].get("entry_action") == "CREATE_NEW_REPOSITORY":
+        if state.get("credential_provider") == "CUG" and "github_repository_id" not in evidence:
+            raise ValueError("PROJECT_CONTINUITY_GITHUB_EVIDENCE_REQUIRED")
+        if state.get("credential_provider") == "CUG" and "github_repository_id" in evidence:
+            projection = from_github(
+                evidence["repository"], evidence["github_repository_id"],
+                request_id=state["request_id"],
+            )
+            if state.get("project_continuity_id") != projection["project_continuity_id"]:
+                raise ValueError("PROJECT_CONTINUITY_ROOT_MISMATCH")
+            if state.get(IDENTITY, projection) != projection:
+                raise ValueError("PROJECT_CONTINUITY_ALREADY_BOUND")
+            state[IDENTITY] = projection
     action["status"] = "DONE"
     state["evidence"].append({"action_id": action_id, "result": result, "evidence": evidence})
     state["revision"] += 1

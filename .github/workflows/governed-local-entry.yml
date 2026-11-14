@@ -14,7 +14,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: governed-local-entry-${{ github.event.issue.number || github.run_id }}
+  group: governed-local-entry-${{ github.event.client_payload.project_continuity.project_continuity_id || github.event.issue.number || github.run_id }}
   cancel-in-progress: false
 
 jobs:
@@ -51,9 +51,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GOVERNED_MCP_URL: ${{ vars.GOVERNED_MCP_URL }}
           GOVERNED_MCP_AUTH_TOKEN: ${{ secrets.GOVERNED_MCP_AUTH_TOKEN }}
+          GOVERNED_CUG_BOT_LOGIN: ${{ vars.GOVERNED_CUG_BOT_LOGIN }}
         run: python3 scripts/local_entry_issue_bridge.py
 
       - name: Discover MCP infrastructure and domains
+        id: discovery
         if: steps.process.outputs.mcp_discovery_required == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -62,7 +64,7 @@ jobs:
         run: python3 scripts/mcp_repository_discovery.py --issue-number "${{ steps.process.outputs.issue_number }}"
 
       - name: Apply approved first-agent baseline
-        if: steps.process.outputs.apply_required == 'true'
+        if: steps.process.outputs.apply_required == 'true' || steps.discovery.outputs.apply_required == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python3 scripts/local_entry_apply_baseline.py --issue-number "${{ steps.process.outputs.issue_number }}"

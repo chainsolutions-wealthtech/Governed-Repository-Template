@@ -24,13 +24,14 @@ def q(i,f,t,choices=None,typ="string",extra=None):
     if extra:d.update(extra)
     return d
 
-def new_request(request_id,repository,head_sha,first_agent_required,initial_context=None):
+def new_request(request_id,repository,head_sha,first_agent_required,initial_context=None,*,continuity=None):
     mode="FIRST_AGENT_BOOTSTRAP" if first_agent_required else "NORMAL_GOVERNED_ENTRY"
     s={"schema_version":"1.1.0","request_id":request_id,"repository":repository,"mode":mode,
        "status":"REQUEST_CREATED","phase":"START","revision":1,"expected_head_sha":head_sha,
        "answers":{},"next_request":None,"baseline_package":None,"setup_package":None,
        "mcp_discovery":None,"credentials_verified":False,"handoff":None,"hold_reason":None}
     if initial_context:s["answers"]["initial_context"]=initial_context
+    if continuity is not None:s["project_continuity"]=copy.deepcopy(continuity)
     return refresh(s)
 
 def baseline_reqs(s):
@@ -450,6 +451,7 @@ def refresh(s):
           "agent_identity":s["answers"]["agent_identity"],"provider":s["answers"]["provider"],
           "connection_intent":s["answers"]["connection_intent"],"local_entry_action":s["answers"]["local_entry_action"],
           "requested_objective":s["answers"]["requested_objective"]}
+        if "project_continuity" in s:s["handoff"]["project_continuity"]=copy.deepcopy(s["project_continuity"])
         s["next_request"]={"kind":"HANDOFF","id":"LOCAL_HANDOFF_READY","handoff":copy.deepcopy(s["handoff"]),"text":"Local governed entry complete."};return s
 
     if s["baseline_package"] is None:s["baseline_package"]=build_baseline(s)
@@ -694,6 +696,66 @@ def answer(s,field,value):
     s["answers"][field]=value;s["revision"]+=1
     return refresh(s)
 
+# Values only. The local state machine still selects each admissible question.
+CUG_MACHINE_FIELDS = {
+    "agent_identity", "provider", "connection_intent", "project_mission", "project_scope",
+    "project_profile", "architecture_status", "architecture_notes", "infrastructure_status",
+    "external_systems", "constraints", "first_work_objective", "baseline_approved",
+    "setup_repository_now", "link_mcp_server", "mcp_transport", "mcp_discovery_scope",
+    "domain_strategy", "runtime_mutation_policy", "mcp_discovery_approved",
+    "production_server_selection", "domain_intent", "workflow_model", "setup_approved",
+}
+CUG_MCP_ENDPOINT = "https://mcp.wealthtechinnovations.com/mcp"
+
+
+def validate_cug_machine_answers(values):
+    if not isinstance(values, dict) or not set(values).issubset(CUG_MACHINE_FIELDS):
+        raise ValueError("CUG_MACHINE_ANSWERS_INVALID")
+    if len(json.dumps(values, ensure_ascii=False).encode()) > 8192:
+        raise ValueError("CUG_MACHINE_ANSWERS_TOO_LARGE")
+    for field, value in values.items():
+        if validate(field, value):
+            raise ValueError(f"CUG_MACHINE_ANSWER_INVALID:{field}")
+    restricted = {"mcp_transport": {"DIRECT_MCP_TOKEN"}, "runtime_mutation_policy": {"READ_ONLY_DISCOVERY"},
+                  "domain_intent": {"NO_PUBLIC_DOMAIN", "DECIDE_LATER"},
+                  "production_server_selection": {"DECIDE_LATER"}}
+    for field, choices in restricted.items():
+        if field in values and (not isinstance(values[field], str) or values[field] not in choices):
+            raise ValueError(f"CUG_MACHINE_ANSWER_OUTSIDE_SCOPE:{field}")
+    for field in ("external_systems", "constraints"):
+        if field in values and not all(isinstance(v, str) for v in values[field]):
+            raise ValueError(f"CUG_MACHINE_ANSWER_INVALID:{field}")
+    if "project_scope" in values:
+        scope = values["project_scope"]
+        if set(scope) != {"in_scope", "out_of_scope"} or not all(
+            isinstance(v, str) for group in scope.values() for v in group
+        ):
+            raise ValueError("CUG_MACHINE_ANSWER_INVALID:project_scope")
+    return copy.deepcopy(values)
+
+
+def advance_cug_machine_answers(state):
+    values = state.get("cug_machine_answers")
+    if values is None:
+        return state
+    values = validate_cug_machine_answers(values)
+    for _ in range(len(values) + 2):
+        question = state.get("next_request") or {}
+        if question.get("kind") not in {"QUESTION", "PLAN_APPROVAL"}:
+            return state
+        field = question.get("field")
+        if field == "mcp_endpoint":
+            value = CUG_MCP_ENDPOINT
+        elif field in values:
+            value = values[field]
+        else:
+            return state
+        if question.get("choices") is not None and value not in question["choices"]:
+            raise ValueError(f"CUG_MACHINE_ANSWER_NOT_OFFERED:{field}")
+        state = answer(state, field, value)
+    raise ValueError("CUG_MACHINE_ANSWER_LOOP_EXCEEDED")
+
+
 def reconcile_legacy_discovery_authority(s):
     s=copy.deepcopy(s)
     if s.get("mode")!="FIRST_AGENT_BOOTSTRAP":
@@ -848,6 +910,7 @@ def complete_baseline(s,new_head,session_id):
     s["handoff"]={"status":"LOCAL_HANDOFF_READY","repository":s["repository"],"baseline_commit_sha":new_head,
       "session_id":session_id,"next_action":"EXECUTE_FIRST_PROJECT_WORK_ITEM","first_work_objective":s["answers"]["first_work_objective"],
       "setup":copy.deepcopy(s.get("setup_package"))}
+    if "project_continuity" in s:s["handoff"]["project_continuity"]=copy.deepcopy(s["project_continuity"])
     s["next_request"]={"kind":"HANDOFF","id":"LOCAL_HANDOFF_READY","text":"First-agent baseline and setup committed.","handoff":copy.deepcopy(s["handoff"])}
     return s
 
