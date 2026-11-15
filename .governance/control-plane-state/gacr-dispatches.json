@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "revision": 477,
+  "revision": 479,
   "items": [
     {
       "schema": "gscc-control-dispatch/v1",
