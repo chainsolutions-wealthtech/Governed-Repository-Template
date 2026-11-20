@@ -1,0 +1,169 @@
+{
+  "schema": "grt-lab-staged-queue/v1",
+  "continuity_id": "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020",
+  "target": ".governance/control-plane-state/tasks.json",
+  "dispatcher": "scripts/gacr_capacity_dispatch.py",
+  "promotion_status": "PENDING_GOVERNED_REVIEW",
+  "projection_only": true,
+  "separate_authoritative_queue_created": false,
+  "initial_lab_setup_requires_gacr_offer": false,
+  "initial_lab_setup_requires_gacr_claim": false,
+  "claim_required_when_real_canonical_task_dispatched": true,
+  "work_promotion_requires_real_gacr_identity": true,
+  "authorizes_dispatch": false,
+  "authorizes_claim": false,
+  "tasks": [
+    {
+      "id": "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-01-OBSERVE",
+      "sequence": 1,
+      "depends_on": [],
+      "suggested_role": "ARCH",
+      "objective": "Inspect repository, governance, HEAD, risks and baseline",
+      "status": "PLANNED",
+      "dispatch_release": "NOT_RELEASED",
+      "claim_id": null,
+      "lease_id": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-02-MEMORY",
+      "sequence": 2,
+      "depends_on": [
+        "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-01-OBSERVE"
+      ],
+      "suggested_role": "ARCH",
+      "objective": "Create chronological canonical memory and checkpoint trail",
+      "status": "PLANNED",
+      "dispatch_release": "NOT_RELEASED",
+      "claim_id": null,
+      "lease_id": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-03-ARCH",
+      "sequence": 3,
+      "depends_on": [
+        "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-02-MEMORY"
+      ],
+      "suggested_role": "ARCH",
+      "objective": "Document existing and target architecture, impacts",
+      "status": "PLANNED",
+      "dispatch_release": "NOT_RELEASED",
+      "claim_id": null,
+      "lease_id": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-04-SPEC",
+      "sequence": 4,
+      "depends_on": [
+        "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-03-ARCH"
+      ],
+      "suggested_role": "PLAN",
+      "objective": "Write specifications, acceptance, negative tests",
+      "status": "PLANNED",
+      "dispatch_release": "NOT_RELEASED",
+      "claim_id": null,
+      "lease_id": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-05-PLAN",
+      "sequence": 5,
+      "depends_on": [
+        "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-04-SPEC"
+      ],
+      "suggested_role": "PLAN",
+      "objective": "Break implementation into dependency-ordered lots with evidence",
+      "status": "PLANNED",
+      "dispatch_release": "NOT_RELEASED",
+      "claim_id": null,
+      "lease_id": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-06-REVIEW",
+      "sequence": 6,
+      "depends_on": [
+        "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-05-PLAN"
+      ],
+      "suggested_role": "REVIEW",
+      "objective": "Independently review and request canonical queue promotion",
+      "status": "PLANNED",
+      "dispatch_release": "NOT_RELEASED",
+      "claim_id": null,
+      "lease_id": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-07-CODE",
+      "sequence": 7,
+      "depends_on": [
+        "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-06-REVIEW"
+      ],
+      "suggested_role": "CODE",
+      "objective": "Implement claimed lots under real permissions without regression",
+      "status": "PLANNED",
+      "dispatch_release": "NOT_RELEASED",
+      "claim_id": null,
+      "lease_id": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-08-TEST",
+      "sequence": 8,
+      "depends_on": [
+        "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-07-CODE"
+      ],
+      "suggested_role": "CODE",
+      "objective": "Run tests and capture independent CI evidence",
+      "status": "PLANNED",
+      "dispatch_release": "NOT_RELEASED",
+      "claim_id": null,
+      "lease_id": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-09-VERIFY",
+      "sequence": 9,
+      "depends_on": [
+        "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-08-TEST"
+      ],
+      "suggested_role": "REVIEW",
+      "objective": "Reconcile HEAD, review code, attest LAB readiness",
+      "status": "PLANNED",
+      "dispatch_release": "NOT_RELEASED",
+      "claim_id": null,
+      "lease_id": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-10-MERGE",
+      "sequence": 10,
+      "depends_on": [
+        "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-09-VERIFY"
+      ],
+      "suggested_role": "REVIEW",
+      "objective": "Separate authorized PR merge gate",
+      "status": "PLANNED",
+      "dispatch_release": "NOT_RELEASED",
+      "claim_id": null,
+      "lease_id": null,
+      "evidence": []
+    },
+    {
+      "id": "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-11-DEPLOY",
+      "sequence": 11,
+      "depends_on": [
+        "GRT-CONT-LAB-GRT_RECONSTRUCTION_20261020-10-MERGE"
+      ],
+      "suggested_role": "PLAN",
+      "objective": "Separate deployment, smoke and rollback gate",
+      "status": "PLANNED",
+      "dispatch_release": "NOT_RELEASED",
+      "claim_id": null,
+      "lease_id": null,
+      "evidence": []
+    }
+  ]
+}
