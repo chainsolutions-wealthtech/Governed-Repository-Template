@@ -1,0 +1,459 @@
+[
+  {
+    "id": "RQ-01",
+    "title": "Mandatory pre-entry before normal repository work",
+    "status": "LIVE_PROVEN",
+    "remaining": "package portably in CAP",
+    "links_to_canonical_work_ids_proposed": [
+      "IDN-006",
+      "CAP-001"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-02",
+    "title": "No fabricated provider identity",
+    "status": "LIVE_PROVEN",
+    "remaining": "preserve across adapters",
+    "links_to_canonical_work_ids_proposed": [
+      "IDN-001",
+      "CAP-011"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-03",
+    "title": "Per-arrival isolated durable state",
+    "status": "LIVE_PROVEN",
+    "remaining": "backend abstraction CAP-007",
+    "links_to_canonical_work_ids_proposed": [
+      "IDN-004",
+      "IDN-010",
+      "CAP-007"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-04",
+    "title": "Correlated liveness before GSE progression",
+    "status": "LIVE_PROVEN",
+    "remaining": "cross-adapter proof",
+    "links_to_canonical_work_ids_proposed": [
+      "IDN-006",
+      "CAP-009"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-05",
+    "title": "Q10 GSE must precede Q2 GACR",
+    "status": "LIVE_PROVEN",
+    "remaining": "preserve in public capsule contract",
+    "links_to_canonical_work_ids_proposed": [
+      "IDN-006",
+      "CAP-001"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-06",
+    "title": "F1 validates actual requested function",
+    "status": "LIVE_PROVEN",
+    "remaining": "portable adapter contract",
+    "links_to_canonical_work_ids_proposed": [
+      "IDN-006",
+      "CAP-009"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-07",
+    "title": "Release enters normal governance exactly once",
+    "status": "LIVE_PROVEN",
+    "remaining": "formalize release→junction schema",
+    "links_to_canonical_work_ids_proposed": [
+      "IDN-006",
+      "RTE-012"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-08",
+    "title": "Four structuring cases + continuation mode remain distinct",
+    "status": "IMPLEMENTED",
+    "remaining": "industrialize Cases 2–4",
+    "links_to_canonical_work_ids_proposed": [
+      "GMC-G18",
+      "RTE-003"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-09",
+    "title": "Connection intent is separate from authority",
+    "status": "IMPLEMENTED",
+    "remaining": "bind into two-stage router",
+    "links_to_canonical_work_ids_proposed": [
+      "RTE-004",
+      "IDN-008"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-10",
+    "title": "Role is separate from authority",
+    "status": "PARTIAL",
+    "remaining": "ARCH-005 + normalized registry",
+    "links_to_canonical_work_ids_proposed": [
+      "ARCH-005",
+      "IDN-007"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-11",
+    "title": "Two-stage entry purpose routing",
+    "status": "PLANNED_NOT_ACTIVE",
+    "remaining": "RTE-001..RTE-012",
+    "links_to_canonical_work_ids_proposed": [
+      "RTE-001",
+      "RTE-004",
+      "RTE-011"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-12",
+    "title": "Ask only applicable unresolved questions",
+    "status": "IMPLEMENTED_CASE1",
+    "remaining": "generalize across router/cases",
+    "links_to_canonical_work_ids_proposed": [
+      "RTE-007",
+      "RTE-012"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-13",
+    "title": "Resume without replaying completed questions",
+    "status": "IMPLEMENTED_CASE1",
+    "remaining": "exact generic RTE resume",
+    "links_to_canonical_work_ids_proposed": [
+      "RTE-012",
+      "IDN-010"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-14",
+    "title": "Owner feedback returns to earliest affected phase only",
+    "status": "IMPLEMENTED",
+    "remaining": "cross-case generalization",
+    "links_to_canonical_work_ids_proposed": [
+      "GMC-G08",
+      "RTE-012"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-15",
+    "title": "Durable event/evidence history",
+    "status": "IMPLEMENTED",
+    "remaining": "broader runtime projection",
+    "links_to_canonical_work_ids_proposed": [
+      "GMC-G11",
+      "ARCH-004"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-16",
+    "title": "Agent activity/continuity is queryable",
+    "status": "IMPLEMENTED",
+    "remaining": "normalize with broader identity registry",
+    "links_to_canonical_work_ids_proposed": [
+      "IDN-010",
+      "GMC-G12"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-17",
+    "title": "One canonical model shared by all four cases",
+    "status": "PLANNED",
+    "remaining": "GMC-01..GMC-19",
+    "links_to_canonical_work_ids_proposed": [
+      "GMC-G18",
+      "GMC-G19"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-18",
+    "title": "No parallel truth across architecture/program/tasks/current/handoff",
+    "status": "PARTIAL",
+    "remaining": "ARCH-006",
+    "links_to_canonical_work_ids_proposed": [
+      "ARCH-006",
+      "GMC-G16"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-19",
+    "title": "Reusable capsule installable outside full Template",
+    "status": "PLANNED",
+    "remaining": "CAP-001..CAP-012",
+    "links_to_canonical_work_ids_proposed": [
+      "CAP-001",
+      "CAP-012"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-20",
+    "title": "Second provider/generic adapter parity",
+    "status": "PLANNED",
+    "remaining": "CAP-011",
+    "links_to_canonical_work_ids_proposed": [
+      "CAP-011"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-21",
+    "title": "Clean second-repository capsule installation",
+    "status": "PLANNED",
+    "remaining": "CAP-010",
+    "links_to_canonical_work_ids_proposed": [
+      "CAP-010"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-22",
+    "title": "Deterministic relational projection",
+    "status": "IMPLEMENTED",
+    "remaining": "extend for GMC/identity normalization",
+    "links_to_canonical_work_ids_proposed": [
+      "GMC-G16",
+      "ARCH-004"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-23",
+    "title": "PostgreSQL must remain a projection, not authority",
+    "status": "FUTURE",
+    "remaining": "evaluate after common model stabilizes",
+    "links_to_canonical_work_ids_proposed": [
+      "ARCH-009",
+      "SAA-005"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-24",
+    "title": "Governance API exposes validated semantics only",
+    "status": "FUTURE",
+    "remaining": "ARCH-008 / downstream",
+    "links_to_canonical_work_ids_proposed": [
+      "ARCH-008",
+      "SAA-002"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-25",
+    "title": "Admin UI is downstream of workflow semantics",
+    "status": "FUTURE",
+    "remaining": "ARCH-010 / downstream",
+    "links_to_canonical_work_ids_proposed": [
+      "ARCH-010",
+      "SAA-007"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-26",
+    "title": "Client upgrades preserve mutable client state",
+    "status": "LIVE_PROVEN_CASE1",
+    "remaining": "reuse across remaining cases",
+    "links_to_canonical_work_ids_proposed": [
+      "CAP-008",
+      "GMC-G17"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-27",
+    "title": "New information enriches existing programme",
+    "status": "IMPLEMENTED",
+    "remaining": "continuous enforcement",
+    "links_to_canonical_work_ids_proposed": [
+      "RTE-006",
+      "GMC-G02"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-28",
+    "title": "Every meaningful interruption has checkpoint/handoff",
+    "status": "IMPLEMENTED",
+    "remaining": "expose later via API/UI",
+    "links_to_canonical_work_ids_proposed": [
+      "IDN-010",
+      "GMC-G11"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-29",
+    "title": "Complete autonomous admin cockpit",
+    "status": "PLANNED",
+    "remaining": "SAA-007..SAA-009",
+    "links_to_canonical_work_ids_proposed": [
+      "SAA-007",
+      "SAA-008",
+      "SAA-009"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-30",
+    "title": "Full versioned REST/OpenAPI API",
+    "status": "PLANNED",
+    "remaining": "SAA-002 + SAA-006",
+    "links_to_canonical_work_ids_proposed": [
+      "SAA-002",
+      "SAA-006"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-31",
+    "title": "Governed backend service/microservice architecture",
+    "status": "PLANNED",
+    "remaining": "SAA-003..SAA-006",
+    "links_to_canonical_work_ids_proposed": [
+      "SAA-003",
+      "SAA-006"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-32",
+    "title": "SaaS-ready tenancy/isolation",
+    "status": "PLANNED",
+    "remaining": "SAA-001 + SAA-004 + SAA-010",
+    "links_to_canonical_work_ids_proposed": [
+      "SAA-001",
+      "SAA-004",
+      "SAA-010"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-33",
+    "title": "Reproducible production deployment",
+    "status": "PLANNED",
+    "remaining": "SAA-011..SAA-014",
+    "links_to_canonical_work_ids_proposed": [
+      "SAA-011",
+      "SAA-012",
+      "SAA-013"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-34",
+    "title": "Production URL mcp.wealthtechinnovations.com/template",
+    "status": "PLANNED",
+    "remaining": "SAA-013",
+    "links_to_canonical_work_ids_proposed": [
+      "SAA-013"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  },
+  {
+    "id": "RQ-35",
+    "title": "Operational backup/restore/upgrade/rollback",
+    "status": "PLANNED",
+    "remaining": "SAA-010 + SAA-015",
+    "links_to_canonical_work_ids_proposed": [
+      "SAA-010",
+      "SAA-015"
+    ],
+    "link_status": "PROPOSED_NOT_YET_CANONICALLY_ASSERTED",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "delivery_acceptance": "Trace to validated deliverable(s), tests and accepted evidence not yet universally demonstrated."
+  }
+]

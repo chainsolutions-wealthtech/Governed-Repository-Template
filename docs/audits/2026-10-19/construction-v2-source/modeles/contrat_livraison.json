@@ -1,0 +1,13 @@
+{
+  "schema": "candidate-delivery-contract/v0",
+  "id": "DEL-DRAFT-EXAMPLE",
+  "identity_status": "NOT_CANONICAL",
+  "parent_programme_ref": "CP-ARCH-001",
+  "requirement_refs": [],
+  "work_item_refs": [],
+  "required_artifact_refs": [],
+  "acceptance_controls": [],
+  "actual_validation_records": [],
+  "actual_release_ref": null,
+  "status": "DESIGN_ONLY"
+}
