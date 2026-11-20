@@ -42,3 +42,15 @@ Gouverner la découverte, l'identité, le rattachement, la traçabilité et la d
 - Vérifié : GRT `00_DIRECT_OWNER_ENTRY.md`, `AGENTS.md`, `docs/control-plane/MASTER_SYSTEM_MAP.md`, `REQUIREMENTS_ROADMAP.md`, `NEXT_ACTION.md`, `GOVERNANCE_MODEL_EXECUTION_BLUEPRINT.md` ; identité GitHub `Wealthtechinnovations`, permission `admin`, HEAD main ci-dessus.
 - Non vérifié dans cette passe : HEAD et code CUG actuel, installations et permissions CUG, compatibilité du validateur, CI de cette branche, état des serveurs, couverture de tous les dépôts.
 - Aucun droit supplémentaire ni changement de phase GMC n'est accordé par cette proposition. Le `NEXT_ACTION` canonique demeure `GMC_01_SEPARATE_GOVERNANCE_MODEL_FROM_APPLICATION_STRATEGIES` jusqu'à validation explicite de ses gates.
+
+## Modèle documentaire hiérarchique et pilotage Loop Engineering (candidat)
+
+- **Grand projet** : identifiant stable, inventaire des dépôts composants, architecture, roadmap consolidée, décisions transversales et index des sous-projets ; aucune copie des mémoires enfants.
+- **Projet** : autorité de contexte, SUIVI, intentions, décisions, architecture, roadmap, TODO/TASKS, preuves, continuité ; références explicites aux documents du grand projet.
+- **Sous-projet / composant** : identité et dépendances, contrats, architecture locale, tâches et suivi propres ; héritage explicite des politiques parentes, sans fusion d'autorité.
+- **Chantier / workblock** : objectif d'origine et ses évolutions chronologiques, propriétaire, périmètre de collision, prérequis, SHA/PR, validations, NEXT_ACTION et point de reprise.
+- **Document** : registre `document_id`, `entity_id`, `parent_entity_id`, `authority_ref`, `canonical_path`, `source_commit`, `status` et version de schéma. Un document absent est `MISSING` et ne peut être déclaré rempli sur la seule existence d'un modèle.
+
+**Ordre de travail proposé pour Loop Engineering / Open Engineering à qualifier** : réception de l'intention → lecture des autorités → inventaire et preuves → classification projet/chantier → cartographie → architecture actuelle/cible → roadmap → décomposition des tâches et dépendances → attribution bornée à l'agent codeur → tests/CI/revue → fusion gouvernée → déploiement gouverné → attestation → mémoire et reprise. Les agents observent et proposent ; aucun moteur autonome ni permission ne résulte de ce texte. La documentation est actualisée par PR sur son autorité existante, jamais par écriture multi-dépôts implicite.
+
+**Déploiement MCP** : la stratégie GRT ne remplace pas `Patricked-code/MCP/.github/workflows/mcp-deploy.yml`. Si l'autodeploy main est activé, la fusion autorisée peut déclencher le déploiement via OIDC après CI main ; ne pas doubler le job par un déclenchement manuel concurrent. L'attestation GitHub, S1, image et runtime doit être rapprochée sur le SHA exact.
