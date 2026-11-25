@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-16",
+  "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+  "observed_head": "638fcc51c77f2454990f239b8b8cca78bac8075b",
+  "status": "PASS",
+  "errors": [],
+  "pieces_total": 378,
+  "canonical_and_existing_piece_count": 346,
+  "proposed_specification_count": 8,
+  "new_case_design_tasks": 24,
+  "livrables_proposed": 20,
+  "sprints_proposed": 16,
+  "requirements": 35,
+  "requirements_with_at_least_one_candidate_livrable": 35,
+  "relations_typed": 1012,
+  "individual_piece_files_verified": 378,
+  "no_duplicate_piece_ids": true,
+  "no_local_dependency_cycles": true,
+  "source_git_mutation": false,
+  "p0_untouched": true,
+  "work_items_released_to_execution": 0,
+  "interpretation": "Proof of planning data integrity only. Does not verify live runtime, completed work, canonical approval, claims, releases or production."
+}

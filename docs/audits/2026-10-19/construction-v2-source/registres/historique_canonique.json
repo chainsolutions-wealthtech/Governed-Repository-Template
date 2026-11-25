@@ -1,0 +1,352 @@
+[
+  {
+    "id": "P12-S1",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "P12-S2",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "P12-S3",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "P12-S4",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "P12-S5",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "P12-S6",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-A",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-B",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-C",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-D",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-E-A",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-E-B",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-E",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-F",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-G",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-H",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-I-A",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-I-B-A",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-I-B-B",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-I-B-C",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-I-B-D",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-I-B-E",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-I-B-F",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-I-B-G",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-I-B",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-13-I",
+    "source_status": "SUPERSEDED",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-A",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-B",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-C",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-D",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-E",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-F",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-G",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-H",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-I",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-J",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-K-A",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-K",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-L",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-M",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-N",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-O",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-P-A",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-P",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-I-A",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-I-B",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-J-A",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-J-B",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-J-C",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  },
+  {
+    "id": "C1-12-J-C-A",
+    "source_status": "DONE",
+    "kind": "HISTORICAL_CANONICAL_TASK_REFERENCE",
+    "source": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/blob/638fcc51c77f2454990f239b8b8cca78bac8075b/.governance/control-plane-state/tasks.json",
+    "planning_action": "PRESERVE_AND_REUSE_NO_NEW_DISPATCH"
+  }
+]

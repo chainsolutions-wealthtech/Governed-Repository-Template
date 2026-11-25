@@ -1,0 +1,27 @@
+{
+  "kind": "CONSTRUCTION_PLANNING_PROJECTION",
+  "date": "2026-10-16",
+  "repository": "chainsolutions-wealthtech/Governed-Repository-Template",
+  "observed_head": "638fcc51c77f2454990f239b8b8cca78bac8075b",
+  "canonical_authorities_unchanged": true,
+  "git_mutation_performed": false,
+  "p0_entry_untouched": true,
+  "admission_granted": false,
+  "provenance": [
+    "docs/control-plane/CANONICAL_ARCHITECTURE.md",
+    "docs/control-plane/MASTER_SYSTEM_MAP.md",
+    "docs/control-plane/REQUIREMENTS_ROADMAP.md",
+    "docs/control-plane/PROGRAM.md",
+    "docs/control-plane/TASKS.md",
+    "docs/control-plane/SAAS_PLATFORM_PROGRAM.md",
+    "docs/control-plane/GOVERNANCE_MODEL_EXECUTION_BLUEPRINT.md",
+    ".governance/control-plane-state/governance-model-execution-blueprint.json",
+    ".governance/control-plane-state/namespace-work-registry.json"
+  ],
+  "critical_note": "Existing canonical IDs referenced unchanged; DRAFT and SPR-DRAFT IDs exist only in this planning package. Nothing registered as canonical in GitHub.",
+  "program_global_st01_issue": "https://github.com/chainsolutions-wealthtech/Governed-Repository-Template/issues/288",
+  "chronology_warning": "Global ST01 director contract pending. No actual implementation of the programme is authorized merely by this package.",
+  "task_graph_canonical_dependency_reconciliation": "DONE_AT_PLANNING_SNAPSHOT",
+  "historical_task_refs_read_only": 50,
+  "legacy_id_aliases": 19
+}
